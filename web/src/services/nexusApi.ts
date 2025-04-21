@@ -87,8 +87,8 @@ export class NexusApi {
   async getPostTaggers(authorId: string, postId: string, label: string, viewerId?: string, skip?: number, limit?: number): Promise<TaggersInfoDTO> {
     const params = new URLSearchParams();
     if (viewerId) params.append('viewer_id', viewerId);
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/post/${authorId}/${postId}/taggers/${label}?${params}`);
     return response.json();
@@ -97,9 +97,9 @@ export class NexusApi {
   async getPostTags(authorId: string, postId: string, viewerId?: string, skipTags?: number, limitTags?: number, limitTaggers?: number): Promise<TagDetails[]> {
     const params = new URLSearchParams();
     if (viewerId) params.append('viewer_id', viewerId);
-    if (skipTags) params.append('skip_tags', skipTags.toString());
-    if (limitTags) params.append('limit_tags', limitTags.toString());
-    if (limitTaggers) params.append('limit_taggers', limitTaggers.toString());
+    params.append('skip_tags', (skipTags ?? 0).toString());
+    params.append('limit_tags', (limitTags ?? 5).toString());
+    params.append('limit_taggers', (limitTaggers ?? 5).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/post/${authorId}/${postId}/tags?${params}`);
     return response.json();
@@ -109,10 +109,10 @@ export class NexusApi {
   async searchTags(label: string, sorting?: string, start?: number, end?: number, skip?: number, limit?: number): Promise<TagSearch[]> {
     const params = new URLSearchParams();
     if (sorting) params.append('sorting', sorting);
-    if (start) params.append('start', start.toString());
-    if (end) params.append('end', end.toString());
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('start', (start ?? 0).toString());
+    params.append('end', (end ?? 100).toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/search/tags/${label}?${params}`);
     return response.json();
@@ -121,8 +121,8 @@ export class NexusApi {
   async searchUsers(username?: string, skip?: number, limit?: number): Promise<UserSearch> {
     const params = new URLSearchParams();
     if (username) params.append('username', username);
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/search/users?${params}`);
     return response.json();
@@ -154,10 +154,10 @@ export class NexusApi {
     if (order) params.append('order', order);
     if (tags) params.append('tags', tags.join(','));
     if (kind) params.append('kind', kind);
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
-    if (start) params.append('start', start.toString());
-    if (end) params.append('end', end.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
+    params.append('start', (start ?? 0).toString());
+    params.append('end', (end ?? 100).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/stream/posts?${params}`);
     return response.json();
@@ -179,12 +179,12 @@ export class NexusApi {
     const params = new URLSearchParams();
     if (userId) params.append('user_id', userId);
     if (viewerId) params.append('viewer_id', viewerId);
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
     if (source) params.append('source', source);
     if (reach) params.append('reach', reach);
     if (timeframe) params.append('timeframe', timeframe);
-    if (preview) params.append('preview', preview.toString());
+    params.append('preview', (preview ?? false).toString());
     if (authorId) params.append('author_id', authorId);
     if (postId) params.append('post_id', postId);
     if (depth) params.append('depth', depth.toString());
@@ -212,8 +212,8 @@ export class NexusApi {
     const params = new URLSearchParams();
     params.append('username', username);
     if (viewerId) params.append('viewer_id', viewerId);
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/stream/users/username?${params}`);
     return response.json();
@@ -232,8 +232,8 @@ export class NexusApi {
     if (userId) params.append('user_id', userId);
     if (reach) params.append('reach', reach);
     if (taggersLimit) params.append('taggers_limit', taggersLimit.toString());
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
     if (timeframe) params.append('timeframe', timeframe);
 
     const response = await fetch(`${this.baseUrl}/v0/tags/hot?${params}`);
@@ -250,8 +250,8 @@ export class NexusApi {
   ): Promise<Vec> {
     const params = new URLSearchParams();
     if (userId) params.append('user_id', userId);
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
     if (timeframe) params.append('timeframe', timeframe);
 
     const response = await fetch(`${this.baseUrl}/v0/tags/taggers/${label}/${reach}?${params}`);
@@ -280,8 +280,8 @@ export class NexusApi {
 
   async getUserFollowers(userId: string, skip?: number, limit?: number): Promise<Followers> {
     const params = new URLSearchParams();
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/user/${userId}/followers?${params}`);
     return response.json();
@@ -289,8 +289,8 @@ export class NexusApi {
 
   async getUserFollowing(userId: string, skip?: number, limit?: number): Promise<Following> {
     const params = new URLSearchParams();
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/user/${userId}/following?${params}`);
     return response.json();
@@ -298,8 +298,8 @@ export class NexusApi {
 
   async getUserFriends(userId: string, skip?: number, limit?: number): Promise<Friends> {
     const params = new URLSearchParams();
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/user/${userId}/friends?${params}`);
     return response.json();
@@ -307,8 +307,8 @@ export class NexusApi {
 
   async getUserMuted(userId: string, skip?: number, limit?: number): Promise<Muted> {
     const params = new URLSearchParams();
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
 
     const response = await fetch(`${this.baseUrl}/v0/user/${userId}/muted?${params}`);
     return response.json();
@@ -322,8 +322,8 @@ export class NexusApi {
     end?: string
   ): Promise<Notification[]> {
     const params = new URLSearchParams();
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
     if (start) params.append('start', start);
     if (end) params.append('end', end);
 
@@ -345,8 +345,8 @@ export class NexusApi {
     depth?: number
   ): Promise<TaggersInfoDTO> {
     const params = new URLSearchParams();
-    if (skip) params.append('skip', skip.toString());
-    if (limit) params.append('limit', limit.toString());
+    params.append('skip', (skip ?? 0).toString());
+    params.append('limit', (limit ?? 10).toString());
     if (viewerId) params.append('viewer_id', viewerId);
     if (depth) params.append('depth', depth.toString());
 
@@ -363,9 +363,9 @@ export class NexusApi {
     depth?: number
   ): Promise<TagDetails> {
     const params = new URLSearchParams();
-    if (skipTags) params.append('skip_tags', skipTags.toString());
-    if (limitTags) params.append('limit_tags', limitTags.toString());
-    if (limitTaggers) params.append('limit_taggers', limitTaggers.toString());
+    params.append('skip_tags', (skipTags ?? 0).toString());
+    params.append('limit_tags', (limitTags ?? 5).toString());
+    params.append('limit_taggers', (limitTaggers ?? 5).toString());
     if (viewerId) params.append('viewer_id', viewerId);
     if (depth) params.append('depth', depth.toString());
 
