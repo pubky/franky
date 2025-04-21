@@ -1,0 +1,82 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Atomic Design Pattern Structure
+
+## Overview
+We follow the Atomic Design methodology which consists of five distinct levels:
+
+1. Atoms
+2. Molecules
+3. Organisms
+4. Templates
+5. Pages
+
+## Directory Structure
+Components are organized in the following structure:
+
+```
+web/
+└── app/
+    └── components/
+        ├── atoms/        # Basic building blocks (buttons, inputs, labels)
+        ├── molecules/    # Simple component groups (form fields, search bars)
+        ├── organisms/    # Complex UI sections (headers, forms, cards)
+        ├── templates/    # Page-level component layouts
+        └── pages/        # Final compositions
+```
+
+## Component Guidelines
+
+### Atoms
+- Basic building blocks of matter
+- Cannot be broken down further without ceasing to be functional
+- Examples: buttons, inputs, labels, icons
+
+### Molecules
+- Groups of atoms bonded together
+- Serve as the foundation for larger components
+- Examples: search forms, navigation items, form fields
+
+### Organisms
+- Complex UI components composed of molecules and atoms
+- Distinct sections of an interface
+- Examples: headers, footers, forms, cards
+
+### Templates
+- Page-level objects that place components into a layout
+- Focus on content structure rather than final content
+- Examples: article templates, product templates
+
+### Pages
+- Specific instances of templates
+- Show what a UI looks like with real content
+- The most concrete level of the system
+
+## Naming Convention
+- Prefix each component with its atomic level
+- Example: `AtomButton.tsx`, `MoleculeSearchBar.tsx`, `OrganismHeader.tsx`
+
+## Import Structure
+```typescript
+// Atoms
+import AtomButton from '@/components/atoms/AtomButton'
+import AtomInput from '@/components/atoms/AtomInput'
+
+// Molecules
+import MoleculeSearchBar from '@/components/molecules/MoleculeSearchBar'
+
+// Organisms
+import OrganismHeader from '@/components/organisms/OrganismHeader'
+```
+
+## Best Practices
+1. Keep atoms as simple and single-purpose as possible
+2. Molecules should focus on doing one thing well
+3. Organisms should be independent and reusable
+4. Templates should be focused on layout structure
+5. Document component dependencies clearly
+6. Use TypeScript interfaces for all component props
+7. Maintain a consistent naming convention across all levels

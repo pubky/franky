@@ -1,0 +1,42 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Styling Guidelines
+
+## CSS Architecture
+1. Use CSS Modules for component-specific styles
+2. Follow BEM naming convention for class names
+3. Keep styles modular and reusable
+4. Use CSS variables for theme values
+
+## Best Practices
+1. Mobile-first responsive design
+2. Maintain consistent spacing using design tokens
+3. Use semantic class names
+4. Avoid deep nesting of selectors
+5. Keep specificity low
+
+## Example Structure
+```css
+/* componentName.module.css */
+.container {
+  /* Base styles */
+}
+
+.container__element {
+  /* Element styles */
+}
+
+.container__element--modifier {
+  /* Modifier styles */
+}
+```
+
+## Theme Guidelines
+1. Use design tokens for colors, spacing, and typography
+2. Maintain dark/light mode compatibility
+3. Follow accessibility guidelines for contrast ratios
+4. Keep consistent spacing scales
+

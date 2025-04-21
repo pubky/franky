@@ -1,0 +1,27 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Project Structure
+
+This is a Next.js project with TypeScript. The main project structure is organized as follows:
+
+## Web Directory
+The `web` directory contains the main Next.js application:
+
+- [package.json](mdc:web/package.json) - Project configurations and dependencies
+- [tsconfig.json](mdc:web/tsconfig.json) - TypeScript configurations
+- [next.config.ts](mdc:web/next.config.ts) - Next.js configurations
+- [app/](mdc:web/app) - Main application directory (routes and components)
+- [public/](mdc:web/public) - Static files
+
+## Documentation
+- [docs/](mdc:docs) - Project documentation
+
+## Code Conventions
+1. We use TypeScript for all code
+2. React components should be functional and use hooks
+3. We follow Next.js 14+ App Router conventions
+4. We use ESLint to maintain code quality
+

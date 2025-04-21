@@ -1,0 +1,37 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Component Guidelines
+
+## Component Structure
+1. Each component should be in its own file
+2. Use TypeScript to define props and types
+3. Use export default for the main component
+4. Keep components small and focused on a single responsibility
+
+## Structure Example
+```typescript
+import { FC } from 'react'
+
+interface ComponentProps {
+  // define props here
+}
+
+const Component: FC<ComponentProps> = ({ /* props */ }) => {
+  return (
+    // JSX here
+  )
+}
+
+export default Component
+```
+
+## Best Practices
+1. Use custom hooks for reusable logic
+2. Keep state as local as possible
+3. Use memo() only when needed for optimization
+4. Document complex props with comments
+5. Follow web accessibility principles
+
