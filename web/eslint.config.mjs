@@ -11,6 +11,26 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    plugins: ["spellcheck"],
+    files: ["**/*.{js,jsx,ts,tsx}"],
+    rules: {
+      "spellcheck/spell-checker": [
+        "warn",
+        {
+          comments: true,
+          strings: false,
+          identifiers: false,
+          lang: "en_US",
+          skipWords: ["dexie", "indexeddb", "db"],
+          skipIfMatch: [
+            "http://[^s]*",
+            "^[-\\w]+/[-\\w\\.]+$" // For import paths
+          ]
+        }
+      ]
+    }
+  }
 ];
 
 export default eslintConfig;
