@@ -1,5 +1,6 @@
 import { IUserModel, UserPK, UserDetails, UserCounts, UserRelationship, TagDetails, Timestamp, SyncStatus } from './types';
 import { db } from '../database';
+import { ErrorHandler } from '../../utils/errorHandler';
 
 export class UserModel implements IUserModel {
   id: UserPK;
@@ -32,31 +33,103 @@ export class UserModel implements IUserModel {
 
   // Returns user's tags with pagination
   static async get_tags(user_pk: UserPK, skip: number = 0, limit: number = 20): Promise<TagDetails[]> {
-    const user = await db.users.get(user_pk);
-    if (!user) return [];
-    
-    return user.tags.slice(skip, skip + limit);
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk, skip, limit }
+          });
+        }
+        
+        return user.tags.slice(skip, skip + limit);
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch tags for user ${user_pk}: ${error}`,
+        context: { user_pk, skip, limit }
+      }
+    );
   }
 
   // Returns taggers for a specific tag of the user
   static async get_taggers(user_pk: UserPK, label: string): Promise<UserPK[]> {
-    const user = await db.users.get(user_pk);
-    if (!user) return [];
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk, label }
+          });
+        }
 
-    const tag = user.tags.find(t => t.label === label);
-    return tag?.taggers || [];
+        const tag = user.tags.find(t => t.label === label);
+        if (!tag) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `Tag "${label}" not found for user ${user_pk}`,
+            context: { user_pk, label }
+          });
+        }
+
+        return tag.taggers;
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch taggers for user ${user_pk} and tag ${label}: ${error}`,
+        context: { user_pk, label }
+      }
+    );
   }
 
   // Returns the list of users that user_pk is following
   static async get_following(user_pk: UserPK): Promise<UserPK[]> {
-    const user = await db.users.get(user_pk);
-    return user?.following || [];
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk }
+          });
+        }
+
+        return user.following;
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch following list for user ${user_pk}: ${error}`,
+        context: { user_pk }
+      }
+    );
   }
 
   // Returns the list of users following user_pk
   static async get_followers(user_pk: UserPK): Promise<UserPK[]> {
-    const user = await db.users.get(user_pk);
-    return user?.followers || [];
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk }
+          });
+        }
+
+        return user.followers;
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch followers for user ${user_pk}: ${error}`,
+        context: { user_pk }
+      }
+    );
   }
 
   // Returns a preview of the user (basic information)
@@ -66,26 +139,75 @@ export class UserModel implements IUserModel {
     image: string;
     status: string;
   } | null> {
-    const user = await db.users.get(user_pk);
-    if (!user) return null;
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk }
+          });
+        }
 
-    return {
-      id: user.id,
-      name: user.details.name,
-      image: user.details.image,
-      status: user.details.status
-    };
+        return {
+          id: user.id,
+          name: user.details.name,
+          image: user.details.image,
+          status: user.details.status
+        };
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch preview for user ${user_pk}: ${error}`,
+        context: { user_pk }
+      }
+    );
   }
 
   // Returns only the user's name
-  static async get_name(user_pk: UserPK): Promise<string | null> {
-    const user = await db.users.get(user_pk);
-    return user?.details.name || null;
+  static async get_name(user_pk: UserPK): Promise<string> {
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk }
+          });
+        }
+
+        return user.details.name;
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch name for user ${user_pk}: ${error}`,
+        context: { user_pk }
+      }
+    );
   }
 
   // Returns the complete user model
-  static async get_user(user_pk: UserPK): Promise<UserModel | null> {
-    const user = await db.users.get(user_pk);
-    return user ? new UserModel(user) : null;
+  static async get_user(user_pk: UserPK): Promise<UserModel> {
+    return ErrorHandler.handleAsync(
+      async () => {
+        const user = await db.users.get(user_pk);
+        if (!user) {
+          return ErrorHandler.handle(null, {
+            type: 'NOT_FOUND',
+            message: `User not found with ID: ${user_pk}`,
+            context: { user_pk }
+          });
+        }
+
+        return new UserModel(user);
+      },
+      {
+        type: 'DATABASE',
+        message: (error) => `Failed to fetch user ${user_pk}: ${error}`,
+        context: { user_pk }
+      }
+    );
   }
 }
