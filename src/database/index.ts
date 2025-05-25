@@ -2,16 +2,20 @@ import Dexie from 'dexie';
 import { logger } from '@/lib/logger';
 import { DB_VERSION, DB_NAME } from './config';
 import { todoTableSchema } from './schemas/todo';
+import { userTableSchema } from './schemas/user';
 import type { Todo } from './schemas/todo';
+import type { User } from './schemas/user';
 
 class AppDatabase extends Dexie {
   todos!: Dexie.Table<Todo>;
+  users!: Dexie.Table<User>;
 
   constructor() {
     super(DB_NAME);
     
     this.version(DB_VERSION).stores({
       todos: todoTableSchema,
+      users: userTableSchema,
     });
   }
 

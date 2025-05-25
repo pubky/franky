@@ -1,4 +1,7 @@
 import { type Table } from 'dexie';
+import db from '@/database';
+import { indexedDB } from 'fake-indexeddb';
+import { DB_NAME } from '@/database/config';
 
 /**
  * Helper to create test data for database tests
@@ -15,4 +18,13 @@ export function createTestData<T extends { id?: number }>(
  */
 export function clearTable<T>(table: Table<T>): Promise<void> {
   return table.clear();
+}
+
+/**
+ * Helper to reset the database (close, delete and reopen)
+ */
+export async function resetDatabase(): Promise<void> {
+  await db.close();
+  indexedDB.deleteDatabase(DB_NAME);
+  await db.open();
 } 
