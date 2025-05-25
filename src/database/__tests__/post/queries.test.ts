@@ -5,15 +5,19 @@ import {
   generateTestUserId,
   generateTestPostId,
   createTestPost,
+  createTestUsers,
 } from '@/test/helpers';
 
 describe('PostModel Queries', () => {
   const TEST_USER_ID = generateTestUserId(0);
   const TEST_USER_ID_2 = generateTestUserId(1);
+  const TEST_USER_ID_3 = generateTestUserId(2);
   const TEST_POST_ID = generateTestPostId(TEST_USER_ID, 0);
 
   beforeEach(async () => {
     await resetDatabase();
+    // Create all test users first
+    await createTestUsers(3);
   });
 
   describe('getTags', () => {
@@ -52,7 +56,6 @@ describe('PostModel Queries', () => {
   describe('getTaggers', () => {
     beforeEach(async () => {
       await createTestPost(TEST_USER_ID, 0);
-      const TEST_USER_ID_3 = generateTestUserId(2);
       
       await postModel.tag('PUT', TEST_USER_ID_2, TEST_POST_ID, 'important');
       await postModel.tag('PUT', TEST_USER_ID_3, TEST_POST_ID, 'important');
@@ -121,6 +124,89 @@ describe('PostModel Queries', () => {
       const post = await postModel.getPost(nonExistentId);
 
       expect(post).toBeNull();
+    });
+  });
+
+  describe('getReposts', () => {
+    beforeEach(async () => {
+      await createTestPost(TEST_USER_ID, 0);
+    });
+
+    it('should get all reposts of a post', async () => {
+      // Create multiple reposts
+      await postModel.repost(TEST_POST_ID, 'First repost');
+      await postModel.repost(TEST_POST_ID, 'Second repost');
+      await postModel.repost(TEST_POST_ID, 'Third repost');
+
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      expect(reposts).toHaveLength(3);
+      expect(reposts.every(post => post.details.kind === 'repost')).toBe(true);
+      expect(reposts.every(post => post.relationships.repost === TEST_POST_ID)).toBe(true);
+    });
+
+    it('should return empty array for post with no reposts', async () => {
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+      expect(reposts).toHaveLength(0);
+    });
+
+    it('should return empty array for non-existent post', async () => {
+      const nonExistentId = generateTestPostId('non-existent-user', 0);
+      const reposts = await postModel.getReposts(nonExistentId);
+      expect(reposts).toHaveLength(0);
+    });
+
+    it('should get reposts in chronological order', async () => {
+      // Create reposts with delays to ensure different timestamps
+      await postModel.repost(TEST_POST_ID, 'First repost');
+      await new Promise(resolve => setTimeout(resolve, 10));
+      await postModel.repost(TEST_POST_ID, 'Second repost');
+      await new Promise(resolve => setTimeout(resolve, 10));
+      await postModel.repost(TEST_POST_ID, 'Third repost');
+
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      expect(reposts).toHaveLength(3);
+      expect(reposts[0].details.content).toBe('First repost');
+      expect(reposts[1].details.content).toBe('Second repost');
+      expect(reposts[2].details.content).toBe('Third repost');
+    });
+  });
+
+  describe('getAllReposts', () => {
+    beforeEach(async () => {
+      // Create multiple posts and reposts
+      await createTestPost(TEST_USER_ID, 0);
+      await createTestPost(TEST_USER_ID, 1);
+    });
+
+    it('should get all reposts in the system', async () => {
+      // Create reposts for different posts
+      await postModel.repost(TEST_POST_ID, 'Repost of first post');
+      await postModel.repost(TEST_POST_ID, 'Another repost of first post');
+      await postModel.repost(generateTestPostId(TEST_USER_ID, 1), 'Repost of second post');
+
+      const allReposts = await postModel.getAllReposts();
+
+      expect(allReposts).toHaveLength(3);
+      expect(allReposts.every(post => post.details.kind === 'repost')).toBe(true);
+    });
+
+    it('should return empty array when no reposts exist', async () => {
+      const allReposts = await postModel.getAllReposts();
+      expect(allReposts).toHaveLength(0);
+    });
+
+    it('should not include non-repost posts', async () => {
+      // Create a mix of posts and reposts
+      await postModel.repost(TEST_POST_ID, 'A repost');
+      await createTestPost(TEST_USER_ID, 2); // Another regular post
+      await postModel.reply(TEST_POST_ID, 'A reply'); // A reply
+
+      const allReposts = await postModel.getAllReposts();
+
+      expect(allReposts).toHaveLength(1);
+      expect(allReposts[0].details.content).toBe('A repost');
     });
   });
 }); 

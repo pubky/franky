@@ -7,6 +7,7 @@ import {
   generateTestPostId,
   createTestPostDetails,
   createTestPost,
+  createTestUsers,
 } from '@/test/helpers';
 
 describe('PostModel Mutations', () => {
@@ -16,6 +17,8 @@ describe('PostModel Mutations', () => {
 
   beforeEach(async () => {
     await resetDatabase();
+    // Create all test users first
+    await createTestUsers(2);
   });
 
   describe('new', () => {
@@ -121,7 +124,6 @@ describe('PostModel Mutations', () => {
   describe('bookmark', () => {
     beforeEach(async () => {
       await createTestPost(TEST_USER_ID, 0);
-      await userModel.new(TEST_USER_ID_2);
     });
 
     it('should bookmark a post', async () => {
@@ -151,14 +153,110 @@ describe('PostModel Mutations', () => {
       await createTestPost(TEST_USER_ID, 0);
     });
 
-    it('should create a repost', async () => {
+    it('should create a repost and update original post counts', async () => {
       const content = 'Reposting this!';
       await postModel.repost(TEST_POST_ID, content);
 
-      const post = await postModel.getPost(TEST_POST_ID);
+      // Check original post
+      const originalPost = await postModel.getPost(TEST_POST_ID);
+      expect(originalPost?.counts.reposts).toBe(1);
+
+      // Find the repost
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      expect(reposts).toHaveLength(1);
+      const repost = reposts[0];
+
+      // Check repost properties
+      expect(repost.details.kind).toBe('repost');
+      expect(repost.details.content).toBe(content);
+      expect(repost.relationships.repost).toBe(TEST_POST_ID);
+      expect(repost.details.author).toBe(TEST_USER_ID);
+      expect(repost.id).toMatch(new RegExp(`^${TEST_USER_ID}:repost-\\d+-\\d+$`));
+      expect(repost.details.uri).toBe(`repost://${TEST_POST_ID}`);
+    });
+
+    it('should handle multiple reposts of the same post', async () => {
+      // Create two reposts
+      await postModel.repost(TEST_POST_ID, 'First repost');
+      await postModel.repost(TEST_POST_ID, 'Second repost');
+
+      // Check original post
+      const originalPost = await postModel.getPost(TEST_POST_ID);
+      expect(originalPost?.counts.reposts).toBe(2);
+
+      // Find all reposts
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      expect(reposts).toHaveLength(2);
+      expect(reposts[0].details.content).toBe('First repost');
+      expect(reposts[1].details.content).toBe('Second repost');
+    });
+
+    it('should not create repost for non-existent post', async () => {
+      const nonExistentId = generateTestPostId('non-existent-user', 0);
+      await postModel.repost(nonExistentId, 'Should not work');
+
+      // Check that no repost was created
+      const reposts = await postModel.getAllReposts();
+
+      expect(reposts).toHaveLength(0);
+    });
+
+    it('should maintain repost count integrity after post deletion', async () => {
+      // Create a repost
+      await postModel.repost(TEST_POST_ID, 'Repost to be orphaned');
       
-      expect(post?.counts.reposts).toBe(1);
-      expect(post?.relationships.repost).toBe(content);
+      // Delete original post
+      await postModel.delete(TEST_POST_ID);
+
+      // Check that repost still exists but is orphaned
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      expect(reposts).toHaveLength(1);
+      expect(reposts[0].relationships.repost).toBe(TEST_POST_ID);
+    });
+
+    it('should create repost with correct initial state', async () => {
+      await postModel.repost(TEST_POST_ID, 'Test repost');
+
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      const repost = reposts[0];
+
+      // Check that repost has correct initial state
+      expect(repost.counts).toEqual({
+        tags: 0,
+        unique_tags: 0,
+        replies: 0,
+        reposts: 0,
+      });
+      expect(repost.tags).toHaveLength(0);
+      expect(repost.bookmarked).toBe(false);
+      expect(repost.indexed_at).toBeNull();
+      expect(repost.sync_status).toBe('local');
+      expect(repost.sync_ttl).toBeGreaterThan(repost.updated_at);
+    });
+
+    it('should allow interactions with reposts', async () => {
+      // Create a repost
+      await postModel.repost(TEST_POST_ID, 'Original repost');
+      
+      // Find the repost
+      const reposts = await postModel.getReposts(TEST_POST_ID);
+
+      const repost = reposts[0];
+
+      // Test that we can interact with the repost
+      await postModel.tag('PUT', TEST_USER_ID_2, repost.id, 'test-tag');
+      await postModel.bookmark('PUT', TEST_USER_ID_2, repost.id);
+      await postModel.reply(repost.id, 'Reply to repost');
+
+      // Check that interactions worked
+      const updatedRepost = await postModel.getPost(repost.id);
+      expect(updatedRepost?.counts.tags).toBe(1);
+      expect(updatedRepost?.bookmarked).toBe(true);
+      expect(updatedRepost?.counts.replies).toBe(1);
     });
   });
 
