@@ -5,6 +5,7 @@ import {
   type UserPK,
   type UserDetails,
   type TagDetails,
+  type UserCounts,
   DEFAULT_USER_COUNTS,
   DEFAULT_USER_DETAILS,
   DEFAULT_USER_RELATIONSHIP,
@@ -162,6 +163,19 @@ export class UserModel {
       logger.debug('Updated mute status:', { action, from_pk, to_pk });
     } catch (error) {
       logger.error('Failed to update mute status:', error);
+      throw error;
+    }
+  }
+
+  async updateCounts(user_id: UserPK, counts: Partial<UserCounts>): Promise<void> {
+    try {
+      await this.table.where('id').equals(user_id).modify(user => {
+        user.counts = { ...user.counts, ...counts };
+        user.updated_at = Date.now();
+      });
+      logger.debug('Updated user counts:', { user_id, counts });
+    } catch (error) {
+      logger.error('Failed to update user counts:', error);
       throw error;
     }
   }

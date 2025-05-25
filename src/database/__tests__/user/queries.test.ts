@@ -6,7 +6,7 @@ import {
   createTestUserDetails,
   createTestUsers,
   createTagRelationship,
-  createFollowRelationship
+  createFollowRelationship,
 } from '@/test/helpers';
 
 describe('UserModel Queries', () => {

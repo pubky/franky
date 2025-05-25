@@ -1,1 +1,2 @@
-export { todoModel } from './todo'; 
+export { userModel } from './user';
+export { postModel } from './post'; 

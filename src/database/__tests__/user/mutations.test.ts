@@ -4,7 +4,7 @@ import {
   resetDatabase,
   generateTestUserId,
   createTestUserDetails,
-  createTestUsers
+  createTestUsers,
 } from '@/test/helpers';
 
 describe('UserModel Mutations', () => {

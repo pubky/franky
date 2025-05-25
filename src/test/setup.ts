@@ -1,7 +1,8 @@
-import { beforeAll, afterAll, afterEach } from 'vitest';
+import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
+import db from '@/database';
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_VERSION_DB = '1';
@@ -13,10 +14,15 @@ afterEach(() => {
 });
 
 // Global setup/teardown
-beforeAll(() => {
-  // Add any global setup here
+beforeAll(async () => {
+  await db.initialize();
 });
 
-afterAll(() => {
-  // Add any global cleanup here
+afterAll(async () => {
+  await db.delete();
+});
+
+beforeEach(async () => {
+  await db.delete();
+  await db.initialize();
 }); 

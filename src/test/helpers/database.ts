@@ -21,7 +21,7 @@ export function clearTable<T>(table: Table<T>): Promise<void> {
 }
 
 /**
- * Helper to reset the database (close, delete and reopen)
+ * Helper to reset the database (delete and initialize)
  */
 export async function resetDatabase(): Promise<void> {
   await db.close();
