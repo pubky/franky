@@ -12,7 +12,7 @@ class AppDatabase extends Dexie {
 
   constructor() {
     super(DB_NAME);
-    
+
     this.version(DB_VERSION).stores({
       users: userTableSchema,
       posts: postTableSchema,
@@ -22,7 +22,7 @@ class AppDatabase extends Dexie {
   async initialize() {
     try {
       const db = await Dexie.exists(DB_NAME);
-      
+
       if (!db) {
         logger.info('Creating new database...');
         await this.open();
@@ -46,6 +46,4 @@ class AppDatabase extends Dexie {
   }
 }
 
-const db = new AppDatabase();
-
-export default db; 
+export const db = new AppDatabase();

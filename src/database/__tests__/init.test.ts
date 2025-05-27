@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Dexie from 'dexie';
-import db from '@/database';
+import { db } from '@/database';
 import { DB_NAME, DB_VERSION } from '@/database/config';
 import { indexedDB } from 'fake-indexeddb';
 
@@ -15,7 +15,7 @@ describe('Database Initialization', () => {
     if (db.verno !== DB_VERSION) {
       Object.defineProperty(db, 'verno', {
         get: () => DB_VERSION,
-        configurable: true
+        configurable: true,
       });
     }
   });
@@ -24,7 +24,7 @@ describe('Database Initialization', () => {
     // Mock Dexie.exists to simulate no existing database
     const existsSpy = vi.spyOn(Dexie, 'exists').mockResolvedValue(false);
     const openSpy = vi.spyOn(db, 'open');
-    
+
     await db.initialize();
 
     expect(existsSpy).toHaveBeenCalledWith(DB_NAME);
@@ -37,14 +37,14 @@ describe('Database Initialization', () => {
     const mockVerno = DB_VERSION - 1;
     Object.defineProperty(db, 'verno', {
       get: () => mockVerno,
-      configurable: true
+      configurable: true,
     });
 
     // Mock Dexie.exists to simulate existing database
     const existsSpy = vi.spyOn(Dexie, 'exists').mockResolvedValue(true);
     const deleteSpy = vi.spyOn(db, 'delete');
     const openSpy = vi.spyOn(db, 'open');
-    
+
     await db.initialize();
 
     expect(existsSpy).toHaveBeenCalledWith(DB_NAME);
@@ -57,7 +57,7 @@ describe('Database Initialization', () => {
     const existsSpy = vi.spyOn(Dexie, 'exists').mockResolvedValue(true);
     const deleteSpy = vi.spyOn(db, 'delete');
     const openSpy = vi.spyOn(db, 'open');
-    
+
     await db.initialize();
 
     expect(existsSpy).toHaveBeenCalledWith(DB_NAME);
@@ -65,4 +65,4 @@ describe('Database Initialization', () => {
     expect(openSpy).not.toHaveBeenCalled();
     expect(db.verno).toBe(DB_VERSION);
   });
-}); 
+});

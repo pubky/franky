@@ -2,7 +2,7 @@ import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
-import db from '@/database';
+import { db } from '@/database';
 
 // Mock environment variables
 process.env.NEXT_PUBLIC_VERSION_DB = '1';
@@ -25,4 +25,4 @@ afterAll(async () => {
 beforeEach(async () => {
   await db.delete();
   await db.initialize();
-}); 
+});

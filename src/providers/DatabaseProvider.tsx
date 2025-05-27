@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useEffect, useState, type ReactNode } from 'react';
-import db from '@/database';
+import { db } from '@/database';
 import { logger } from '@/lib/logger';
 
 interface DatabaseContextType {
@@ -31,9 +31,5 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     initDatabase();
   }, []);
 
-  return (
-    <DatabaseContext.Provider value={{ isReady, error }}>
-      {children}
-    </DatabaseContext.Provider>
-  );
-} 
+  return <DatabaseContext.Provider value={{ isReady, error }}>{children}</DatabaseContext.Provider>;
+}

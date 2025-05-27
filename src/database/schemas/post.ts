@@ -1,65 +1,40 @@
-import { type UserPK } from './user';
+import { PostPK, SyncStatus, Timestamp } from '../types';
+import {
+  NexusPost,
+  NexusPostCounts,
+  NexusPostDetails,
+  NexusPostRelationships,
+  NexusPostTag,
+} from '@/services/nexus/types';
 
-export type PostPK = `${UserPK}:${string}`;
+export type PostCounts = NexusPostCounts;
+export type TagDetails = NexusPostTag;
+export type PostRelationships = NexusPostRelationships;
+export type PostDetails = NexusPostDetails;
 
-export type PostKind = 'post' | 'reply' | 'repost';
-
-export interface PostCounts {
-  tags: number;
-  unique_tags: number;
-  replies: number;
-  reposts: number;
-}
-
-export interface TagDetails {
-  label: string;
-  relationship: boolean;
-  taggers: string[];
-  taggers_count: number;
-}
-
-export interface PostRelationships {
-  mentioned: string[];
-  replied: string | null;
-  repost: string | null;
-}
-
-export interface PostDetails {
-  attachments: string[];
-  author: UserPK;
-  content: string;
-  kind: PostKind;
-  uri: string;
-  indexed_at: number;
-}
-
-export interface Post {
+export interface Post extends NexusPost {
   id: PostPK;
-  counts: PostCounts;
-  relationships: PostRelationships;
-  details: PostDetails;
-  tags: TagDetails[];
-  bookmarked: boolean;
-  indexed_at: number | null;
-  updated_at: number;
-  sync_status: string;
-  sync_ttl: number;
+  indexed_at: Timestamp | null; // timestamp from Nexus service
+  created_at: Timestamp;
+  sync_status: SyncStatus;
+  sync_ttl: Timestamp;
 }
-
-export const DEFAULT_POST_COUNTS: PostCounts = {
-  tags: 0,
-  unique_tags: 0,
-  replies: 0,
-  reposts: 0,
-};
-
-export const DEFAULT_POST_RELATIONSHIPS: PostRelationships = {
-  mentioned: [],
-  replied: null,
-  repost: null,
-};
-
-export const DEFAULT_SYNC_TTL = 3600000; // 1 hour in milliseconds 
 
 // Schema for Dexie table
-export const postTableSchema = 'id, details.author, details.kind, indexed_at, updated_at, sync_status, sync_ttl, bookmarked, *tags.label, relationships.replied, relationships.repost'; 
+export const postTableSchema = `
+  &id,
+  details.author,
+  details.kind,
+  indexed_at,
+  updated_at,
+  sync_status,
+  sync_ttl,
+  bookmarked,
+  [sync_status+sync_ttl],
+  [details.author+details.kind],
+  *tags.label,
+  relationships.replied,
+  relationships.repost,
+  [relationships.replied+details.author],
+  [relationships.repost+details.author]
+`;

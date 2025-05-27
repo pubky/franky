@@ -5,7 +5,7 @@ type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 class Logger {
   private shouldLog(level: LogLevel): boolean {
     if (level === 'error') return true; // Always log errors
-    if (level === 'warn') return true;  // Always log warnings
+    if (level === 'warn') return true; // Always log warnings
     return isDebug; // Only log debug and info in debug mode
   }
 
@@ -34,4 +34,4 @@ class Logger {
   }
 }
 
-export const logger = new Logger(); 
+export const logger = new Logger();

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { userModel } from '@/database/models/user';
-import { postModel } from '@/database/models/post';
+import { userModel } from '@/database/controllers/user';
+import { postModel } from '@/database/controllers/post';
 import { type UserPK } from '@/database/schemas/user';
 import { type PostPK } from '@/database/schemas/post';
 
@@ -26,13 +26,13 @@ export function ModelTester() {
     try {
       const newUserId = `user:${generateRandomId()}` as UserPK;
       setUserId(newUserId);
-      
-      await userModel.new(newUserId, {
+
+      await userModel.create(newUserId, {
         name: `Test User ${generateRandomId()}`,
         bio: 'Test user for model testing',
         image: 'https://via.placeholder.com/150',
         links: [],
-        status: 'Testing'
+        status: 'Testing',
       });
     } catch (error) {
       console.error('Error creating user:', error);
@@ -45,7 +45,7 @@ export function ModelTester() {
       const newPostId = `${userId}:post-${Date.now()}-${generateRandomId()}` as PostPK;
       setPostId(newPostId);
 
-      await postModel.new({
+      await postModel.create({
         id: newPostId,
         details: {
           author: userId,
@@ -161,9 +161,13 @@ export function ModelTester() {
     <div className="p-4 space-y-6">
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Model Testing Interface</h2>
-        <p className="text-sm text-gray-600">Current User ID: <span className="font-mono">{userId}</span></p>
-        <p className="text-sm text-gray-600">Current Post ID: <span className="font-mono">{postId}</span></p>
-        
+        <p className="text-sm text-gray-600">
+          Current User ID: <span className="font-mono">{userId}</span>
+        </p>
+        <p className="text-sm text-gray-600">
+          Current Post ID: <span className="font-mono">{postId}</span>
+        </p>
+
         {/* User Section */}
         <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-xl font-semibold">Users</h3>
@@ -235,4 +239,4 @@ export function ModelTester() {
       </div>
     </div>
   );
-} 
+}
