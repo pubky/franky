@@ -1,6 +1,12 @@
 import { type PostCounts, type PostRelationships } from './schemas/post';
 import { type UserCounts, type UserDetails, type UserRelationship } from './schemas/user';
 
+// Pagination defaults
+export const DEFAULT_PAGINATION = {
+  skip: 0,
+  limit: 20,
+} as const;
+
 // Post defaults
 export const DEFAULT_POST_COUNTS: PostCounts = {
   tags: 0,

@@ -9,3 +9,9 @@ export type Timestamp = number;
 export type SyncStatus = 'local' | 'homeserver' | 'nexus';
 
 export type HomeserverActions = 'PUT' | 'DEL';
+
+// Pagination parameters
+export interface PaginationParams {
+  skip?: number;
+  limit?: number;
+}

@@ -4,8 +4,8 @@ import { type Post, type TagDetails } from '../schemas/post';
 import { type UserCounts, User } from '../schemas/user';
 import { db } from '@/database';
 import { UserController } from './user';
-import { HomeserverActions, PostPK, UserPK } from '../types';
-import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS } from '../defaults';
+import { HomeserverActions, PostPK, UserPK, PaginationParams } from '../types';
+import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS, DEFAULT_PAGINATION } from '../defaults';
 import { SYNC_TTL } from '../config';
 import { NexusPost } from '@/services/nexus/types';
 
@@ -251,8 +251,9 @@ export class PostController {
     return post;
   }
 
-  static async getTags(id: PostPK, skip = 0, limit = 20): Promise<TagDetails[]> {
+  static async getTags(id: PostPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<TagDetails[]> {
     const post = await this.checkIfPostExists(id);
+    const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
     logger.debug('Retrieved post tags:', { id });
     return post.tags.slice(skip, skip + limit);
   }

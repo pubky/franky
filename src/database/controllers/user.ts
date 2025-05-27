@@ -1,9 +1,9 @@
 import { Table } from 'dexie';
 import { logger } from '@/lib/logger';
 import { type User, type UserDetails, type TagDetails, type UserCounts } from '../schemas/user';
-import { HomeserverActions, UserPK } from '../types';
+import { HomeserverActions, UserPK, PaginationParams } from '../types';
 import { NexusUser } from '@/services/nexus/types';
-import { DEFAULT_USER_COUNTS, DEFAULT_USER_DETAILS, DEFAULT_USER_RELATIONSHIP } from '../defaults';
+import { DEFAULT_USER_COUNTS, DEFAULT_USER_DETAILS, DEFAULT_USER_RELATIONSHIP, DEFAULT_PAGINATION } from '../defaults';
 import { SYNC_TTL } from '../config';
 import { db } from '@/database';
 
@@ -77,38 +77,64 @@ export class UserController {
       await Promise.all([this.checkIfUserExists(fromPK), this.checkIfUserExists(toPK)]);
 
       await db.transaction('rw', this.table, async () => {
-        const updateRelationship = async (userId: UserPK, targetId: UserPK, isFollowing: boolean) => {
-          const listKey = isFollowing ? 'following' : 'followers';
-          const countKey = isFollowing ? 'following' : 'followers';
-          const otherUser = isFollowing ? targetId : userId;
-
-          await this.table
-            .where('id')
-            .equals(userId)
-            .modify((user) => {
-              if (action === 'PUT') {
-                if (!user[listKey].includes(otherUser)) {
-                  user[listKey].push(otherUser);
-                  user.counts[countKey]++;
-
-                  // check if they are friends
-                  if (user.relationship.following) {
-                    user.counts.friends++;
-                  }
-                }
-              } else {
-                user[listKey] = user[listKey].filter((id) => id !== otherUser);
-                user.counts[countKey] = Math.max(0, user.counts[countKey] - 1);
+        // Update follower (fromPK)
+        await this.table
+          .where('id')
+          .equals(fromPK)
+          .modify((user) => {
+            if (action === 'PUT') {
+              if (!user.following.includes(toPK)) {
+                user.following.push(toPK);
+                user.counts.following++;
+                user.relationship.following = true;
               }
-              user.updated_at = Date.now();
-            });
-        };
+            } else {
+              user.following = user.following.filter((id) => id !== toPK);
+              user.counts.following = Math.max(0, user.counts.following - 1);
+              user.relationship.following = false;
+            }
+            user.updated_at = Date.now();
+          });
 
-        // Update follower's following list
-        await updateRelationship(fromPK, toPK, true);
+        // Update followed user (toPK)
+        await this.table
+          .where('id')
+          .equals(toPK)
+          .modify((user) => {
+            if (action === 'PUT') {
+              if (!user.followers.includes(fromPK)) {
+                user.followers.push(fromPK);
+                user.counts.followers++;
+                user.relationship.followed_by = true;
+              }
+            } else {
+              user.followers = user.followers.filter((id) => id !== fromPK);
+              user.counts.followers = Math.max(0, user.counts.followers - 1);
+              user.relationship.followed_by = false;
+            }
+            user.updated_at = Date.now();
+          });
 
-        // Update followed user's followers list
-        await updateRelationship(toPK, fromPK, false);
+        // Update friends count if both users follow each other
+        if (action === 'PUT') {
+          const [follower, followed] = await Promise.all([this.getUser(fromPK), this.getUser(toPK)]);
+
+          if (follower.following.includes(toPK) && followed.following.includes(fromPK)) {
+            await Promise.all([
+              this.updateCounts(fromPK, { friends: follower.counts.friends + 1 }),
+              this.updateCounts(toPK, { friends: followed.counts.friends + 1 }),
+            ]);
+          }
+        } else {
+          const [follower, followed] = await Promise.all([this.getUser(fromPK), this.getUser(toPK)]);
+
+          if (follower.counts.friends > 0 && followed.counts.friends > 0) {
+            await Promise.all([
+              this.updateCounts(fromPK, { friends: Math.max(0, follower.counts.friends - 1) }),
+              this.updateCounts(toPK, { friends: Math.max(0, followed.counts.friends - 1) }),
+            ]);
+          }
+        }
       });
 
       logger.debug('Updated follow relationship:', { action, fromPK, toPK });
@@ -238,9 +264,10 @@ export class UserController {
     }
   }
 
-  static async getTags(userPK: UserPK, skip = 0, limit = 20): Promise<TagDetails[]> {
+  static async getTags(userPK: UserPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<TagDetails[]> {
     try {
       const user = await this.checkIfUserExists(userPK);
+      const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
       logger.debug('Getting tags for user:', { userPK, skip, limit });
       return user.tags.slice(skip, skip + limit);
     } catch (error) {
@@ -261,9 +288,10 @@ export class UserController {
     }
   }
 
-  static async getFollowing(userPK: UserPK, skip = 0, limit = 20): Promise<UserPK[]> {
+  static async getFollowing(userPK: UserPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<UserPK[]> {
     try {
       const user = await this.checkIfUserExists(userPK);
+      const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
       logger.debug('Getting following list for user:', { userPK, skip, limit });
       return user.following.slice(skip, skip + limit);
     } catch (error) {
@@ -272,11 +300,19 @@ export class UserController {
     }
   }
 
-  static async getFollowers(userPK: UserPK, skip = 0, limit = 20): Promise<UserPK[]> {
+  static async getFollowers(userPK: UserPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<UserPK[]> {
     try {
-      const user = await this.checkIfUserExists(userPK);
+      // Ensure user exists
+      await this.checkIfUserExists(userPK);
+      const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
       logger.debug('Getting followers list for user:', { userPK, skip, limit });
-      return user.followers.slice(skip, skip + limit);
+
+      // Get all followers that match the user
+      const followers = await this.table.where('following').equals(userPK).toArray();
+
+      // Extract the follower IDs and apply pagination
+      const followerIds = followers.map((follower) => follower.id);
+      return followerIds.slice(skip, skip + limit);
     } catch (error) {
       logger.error('Failed to get followers list:', error);
       throw error;
