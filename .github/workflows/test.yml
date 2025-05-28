@@ -2,7 +2,10 @@ name: Test
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches:
+      - '**' # Run on PRs targeting any branch
+  # Enable manual trigger
+  workflow_dispatch:
 
 jobs:
   test:
