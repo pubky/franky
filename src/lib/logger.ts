@@ -1,11 +1,13 @@
 const isDebug = process.env.NEXT_PUBLIC_DEBUG_MODE === 'true';
+const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST;
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 class Logger {
   private shouldLog(level: LogLevel): boolean {
-    if (level === 'error') return true; // Always log errors
-    if (level === 'warn') return true; // Always log warnings
+    if (isTest) return false; // Suppress all logs during tests
+    if (level === 'error') return true; // Always log errors in non-test environments
+    if (level === 'warn') return true; // Always log warnings in non-test environments
     return isDebug; // Only log debug and info in debug mode
   }
 
