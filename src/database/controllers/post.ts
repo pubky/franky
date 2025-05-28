@@ -33,7 +33,7 @@ export class PostController {
     return { post, user };
   }
 
-  static async create(post: NexusPost): Promise<Post> {
+  static async createOrUpdate(post: NexusPost): Promise<Post> {
     try {
       // Validate user exists
       const user = await UserController.checkIfUserExists(post.details.author);
@@ -66,7 +66,7 @@ export class PostController {
       };
 
       await db.transaction('rw', [this.table, this.userTable], async () => {
-        await this.table.add(newPost);
+        await this.table.put(newPost);
 
         // Update user's post count
         await UserController.updateCounts(user.id, {

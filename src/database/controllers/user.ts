@@ -20,7 +20,7 @@ export class UserController {
     return user;
   }
 
-  static async create(user: NexusUser): Promise<User> {
+  static async createOrUpdate(user: NexusUser): Promise<User> {
     const now = Date.now();
     const newUser: User = {
       id: user.details.id,
@@ -39,7 +39,7 @@ export class UserController {
 
     try {
       await db.transaction('rw', this.table, async () => {
-        await this.table.add(newUser);
+        await this.table.put(newUser);
       });
 
       logger.debug('Created new user:', { id: newUser.id });

@@ -34,7 +34,7 @@ describe('UserController', () => {
         muted: false,
       },
     };
-    return await UserController.create(testUser);
+    return await UserController.createOrUpdate(testUser);
   };
 
   describe('create', () => {
@@ -68,7 +68,7 @@ describe('UserController', () => {
         },
       };
 
-      const user = await UserController.create(testUser);
+      const user = await UserController.createOrUpdate(testUser);
 
       expect(user).toBeDefined();
       expect(user.id).toBe(testUser.details.id);

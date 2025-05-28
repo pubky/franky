@@ -38,7 +38,7 @@ export async function createTestPost(userId: string, index: number, details: Par
     sync_status: 'local',
     sync_ttl: Date.now() + SYNC_TTL,
   };
-  return PostController.create(post);
+  return PostController.createOrUpdate(post);
 }
 
 export async function createTestPosts(userId: string, count: number): Promise<Post[]> {

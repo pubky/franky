@@ -35,7 +35,7 @@ describe('PostController', () => {
         muted: false,
       },
     };
-    return await UserController.create(testUser);
+    return await UserController.createOrUpdate(testUser);
   };
 
   // Helper function to create a test post
@@ -64,7 +64,7 @@ describe('PostController', () => {
       },
       bookmark: null,
     };
-    return await PostController.create(testPost);
+    return await PostController.createOrUpdate(testPost);
   };
 
   describe('create', () => {
@@ -95,7 +95,7 @@ describe('PostController', () => {
         bookmark: null,
       };
 
-      const post = await PostController.create(testPost);
+      const post = await PostController.createOrUpdate(testPost);
 
       expect(post).toBeDefined();
       expect(post.id).toBe(testPost.details.id);
@@ -137,7 +137,7 @@ describe('PostController', () => {
         bookmark: null,
       };
 
-      const post = await PostController.create(testPost);
+      const post = await PostController.createOrUpdate(testPost);
 
       expect(post.tags).toHaveLength(1);
       expect(post.counts.tags).toBe(1);
@@ -170,7 +170,7 @@ describe('PostController', () => {
         bookmark: null,
       };
 
-      await expect(PostController.create(testPost)).rejects.toThrow('User not found');
+      await expect(PostController.createOrUpdate(testPost)).rejects.toThrow('User not found');
     });
   });
 
