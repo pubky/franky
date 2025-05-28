@@ -1,344 +1,367 @@
-import { Table } from 'dexie';
 import { logger } from '@/lib/logger';
-import { type User, type UserDetails, type TagDetails, type UserCounts } from '../schemas/user';
-import { HomeserverActions, UserPK, PaginationParams } from '../types';
-import { NexusUser } from '@/services/nexus/types';
-import { DEFAULT_USER_COUNTS, DEFAULT_USER_DETAILS, DEFAULT_USER_RELATIONSHIP, DEFAULT_PAGINATION } from '../defaults';
-import { SYNC_TTL } from '../config';
-import { db } from '@/database';
+import { UserPK, type PaginationParams } from '../types';
+import { type NexusUser } from '@/services/nexus/types';
+import { User } from '../model/User';
+import { type User as UserSchema } from '../schemas/user';
 
 export class UserController {
-  private static table: Table<User> = db.table('users');
-
   private constructor() {
     // Prevent instantiation
   }
 
-  static async checkIfUserExists(userPK: UserPK): Promise<User> {
-    const user = await this.getUser(userPK);
+  static async get(userPK: UserPK): Promise<User> {
+    const user = await User.findById(userPK);
     if (!user) throw new Error(`User not found: ${userPK}`);
     return user;
   }
 
-  static async createOrUpdate(user: NexusUser): Promise<User> {
-    const now = Date.now();
-    const newUser: User = {
-      id: user.details.id,
-      details: { ...DEFAULT_USER_DETAILS, ...user.details },
-      counts: { ...DEFAULT_USER_COUNTS },
-      tags: [],
-      relationship: { ...DEFAULT_USER_RELATIONSHIP },
-      followers: [],
-      following: [],
-      mutes: [],
-      indexed_at: null, // TODO
-      updated_at: now, // TODO
-      sync_status: 'local', // TODO
-      sync_ttl: now + SYNC_TTL,
+  static async getAll(): Promise<User[]> {
+    try {
+      const users = await User.findAll();
+      logger.debug('Retrieved all users');
+      return users;
+    } catch (error) {
+      logger.error('Failed to get all users:', error);
+      throw error;
+    }
+  }
+
+  static async getByIds(userPKs: UserPK[]): Promise<User[]> {
+    try {
+      const users = await Promise.all(
+        userPKs.map(async (id) => {
+          try {
+            return await this.get(id);
+          } catch (error) {
+            logger.warn(`Failed to get user ${id}:`, error);
+            return null;
+          }
+        }),
+      );
+      return users.filter((user): user is User => user !== null);
+    } catch (error) {
+      logger.error('Failed to get users by ids:', error);
+      throw error;
+    }
+  }
+
+  static async save(userData: NexusUser): Promise<User> {
+    try {
+      const existingUser = await User.findById(userData.details.id);
+      if (existingUser) {
+        await existingUser.edit(userData);
+        return existingUser;
+      }
+      return User.create(userData);
+    } catch (error) {
+      logger.error('Failed to save user:', error);
+      throw error;
+    }
+  }
+
+  static async delete(userPK: UserPK): Promise<void> {
+    try {
+      const user = await this.get(userPK);
+      await user.delete();
+      logger.debug('Deleted user:', { userPK });
+    } catch (error) {
+      logger.error('Failed to delete user:', error);
+      throw error;
+    }
+  }
+
+  static async search(query: Partial<UserSchema>): Promise<User[]> {
+    try {
+      const users = await User.findAll();
+      return users.filter((user) => {
+        return Object.entries(query).every(([key, value]) => {
+          return user[key as keyof User] === value;
+        });
+      });
+    } catch (error) {
+      logger.error('Failed to search users:', error);
+      throw error;
+    }
+  }
+
+  static async count(query?: Partial<UserSchema>): Promise<number> {
+    try {
+      const users = await User.findAll();
+      if (query) {
+        return users.filter((user) => {
+          return Object.entries(query).every(([key, value]) => {
+            return user[key as keyof User] === value;
+          });
+        }).length;
+      }
+      return users.length;
+    } catch (error) {
+      logger.error('Failed to count users:', error);
+      throw error;
+    }
+  }
+
+  static async bulkSave(usersData: NexusUser[]): Promise<User[]> {
+    const results: User[] = [];
+
+    await Promise.all(
+      usersData.map(async (userData) => {
+        try {
+          const user = await this.save(userData);
+          results.push(user);
+        } catch (error) {
+          logger.warn(`Failed to save user ${userData.details.id}:`, error);
+        }
+      }),
+    );
+
+    logger.debug('Bulk save operation completed:', {
+      total: usersData.length,
+      successful: results.length,
+    });
+
+    return results;
+  }
+
+  static async bulkDelete(userPKs: UserPK[]): Promise<{ success: UserPK[]; failed: UserPK[] }> {
+    const results = {
+      success: [] as UserPK[],
+      failed: [] as UserPK[],
     };
 
-    try {
-      await db.transaction('rw', this.table, async () => {
-        await this.table.put(newUser);
-      });
-
-      logger.debug('Created new user:', { id: newUser.id });
-      return newUser;
-    } catch (error) {
-      logger.error('Failed to create user:', error);
-      throw error;
-    }
-  }
-
-  static async edit(details: Partial<UserDetails> & { id: UserPK }): Promise<void> {
-    try {
-      await this.checkIfUserExists(details.id);
-
-      await db.transaction('rw', this.table, async () => {
-        await this.table
-          .where('id')
-          .equals(details.id)
-          .modify((user) => {
-            user.details = { ...user.details, ...details };
-            user.updated_at = Date.now();
-          });
-      });
-
-      logger.debug('Updated user details:', { id: details.id, details });
-    } catch (error) {
-      logger.error('Failed to edit user:', error);
-      throw error;
-    }
-  }
-
-  static async follow(action: HomeserverActions, fromPK: UserPK, toPK: UserPK): Promise<void> {
-    try {
-      // Validate both users exist
-      await Promise.all([this.checkIfUserExists(fromPK), this.checkIfUserExists(toPK)]);
-
-      await db.transaction('rw', this.table, async () => {
-        // Update follower (fromPK)
-        await this.table
-          .where('id')
-          .equals(fromPK)
-          .modify((user) => {
-            if (action === 'PUT') {
-              if (!user.following.includes(toPK)) {
-                user.following.push(toPK);
-                user.counts.following++;
-                user.relationship.following = true;
-              }
-            } else {
-              user.following = user.following.filter((id) => id !== toPK);
-              user.counts.following = Math.max(0, user.counts.following - 1);
-              user.relationship.following = false;
-            }
-            user.updated_at = Date.now();
-          });
-
-        // Update followed user (toPK)
-        await this.table
-          .where('id')
-          .equals(toPK)
-          .modify((user) => {
-            if (action === 'PUT') {
-              if (!user.followers.includes(fromPK)) {
-                user.followers.push(fromPK);
-                user.counts.followers++;
-                user.relationship.followed_by = true;
-              }
-            } else {
-              user.followers = user.followers.filter((id) => id !== fromPK);
-              user.counts.followers = Math.max(0, user.counts.followers - 1);
-              user.relationship.followed_by = false;
-            }
-            user.updated_at = Date.now();
-          });
-
-        // Update friends count if both users follow each other
-        if (action === 'PUT') {
-          const [follower, followed] = await Promise.all([this.getUser(fromPK), this.getUser(toPK)]);
-
-          if (follower.following.includes(toPK) && followed.following.includes(fromPK)) {
-            await Promise.all([
-              this.updateCounts(fromPK, { friends: follower.counts.friends + 1 }),
-              this.updateCounts(toPK, { friends: followed.counts.friends + 1 }),
-            ]);
-          }
-        } else {
-          const [follower, followed] = await Promise.all([this.getUser(fromPK), this.getUser(toPK)]);
-
-          if (follower.counts.friends > 0 && followed.counts.friends > 0) {
-            await Promise.all([
-              this.updateCounts(fromPK, { friends: Math.max(0, follower.counts.friends - 1) }),
-              this.updateCounts(toPK, { friends: Math.max(0, followed.counts.friends - 1) }),
-            ]);
-          }
+    await Promise.all(
+      userPKs.map(async (userPK) => {
+        try {
+          await this.delete(userPK);
+          results.success.push(userPK);
+        } catch (error) {
+          logger.warn(`Failed to delete user ${userPK}:`, error);
+          results.failed.push(userPK);
         }
+      }),
+    );
+
+    logger.debug('Bulk delete operation completed:', {
+      total: userPKs.length,
+      successful: results.success.length,
+      failed: results.failed.length,
+    });
+
+    return results;
+  }
+
+  // User relationship get methods with fallback capabilities
+  static async getFollowing(userPK: UserPK, pagination?: PaginationParams): Promise<UserPK[]> {
+    try {
+      const user = await this.get(userPK);
+      const following = user.getFollowing(pagination);
+
+      // TODO: If empty or stale, try fetching from API/other services
+
+      return following;
+    } catch (error) {
+      logger.error('Failed to get following:', error);
+      throw error;
+    }
+  }
+
+  static async getFollowers(userPK: UserPK, pagination?: PaginationParams): Promise<UserPK[]> {
+    try {
+      const user = await this.get(userPK);
+      const followers = user.getFollowers(pagination);
+
+      // TODO: If empty or stale, try fetching from API/other services
+
+      return followers;
+    } catch (error) {
+      logger.error('Failed to get followers:', error);
+      throw error;
+    }
+  }
+
+  static async getMuted(userPK: UserPK, pagination?: PaginationParams): Promise<UserPK[]> {
+    try {
+      const user = await this.get(userPK);
+      const muted = user.getMuted(pagination);
+
+      // TODO: If empty or stale, try fetching from API/other services
+
+      return muted;
+    } catch (error) {
+      logger.error('Failed to get muted users:', error);
+      throw error;
+    }
+  }
+
+  // User relationship action methods
+  static async muteUser(sourceUserPK: UserPK, targetUserPK: UserPK): Promise<void> {
+    try {
+      const [sourceUser, targetUser] = await Promise.all([this.get(sourceUserPK), this.get(targetUserPK)]);
+
+      // Execute Model Action
+      await sourceUser.mute('PUT', targetUser);
+
+      // TODO: Call other services HERE
+
+      logger.debug('Additional services processed for mute action', {
+        sourceUser: sourceUser.details.id,
+        targetUser: targetUser.details.id,
       });
-
-      logger.debug('Updated follow relationship:', { action, fromPK, toPK });
     } catch (error) {
-      logger.error('Failed to update follow relationship:', error);
+      logger.error('Failed to mute user:', error);
       throw error;
     }
   }
 
-  static async tag(action: HomeserverActions, fromPK: UserPK, toPK: UserPK, label: string): Promise<void> {
+  static async bulkMuteUsers(
+    sourceUserPK: UserPK,
+    targetUserPKs: UserPK[],
+  ): Promise<{ success: UserPK[]; failed: UserPK[] }> {
+    const results = {
+      success: [] as UserPK[],
+      failed: [] as UserPK[],
+    };
+
+    const sourceUser = await this.get(sourceUserPK);
+
+    // Process each mute in parallel
+    await Promise.all(
+      targetUserPKs.map(async (targetPK) => {
+        try {
+          const targetUser = await this.get(targetPK);
+          await sourceUser.mute('PUT', targetUser);
+
+          // TODO: Call other services HERE
+
+          results.success.push(targetPK);
+        } catch (error) {
+          logger.warn(`Failed to mute user ${targetPK}:`, error);
+          results.failed.push(targetPK);
+        }
+      }),
+    );
+
+    logger.debug('Bulk mute operation completed:', {
+      total: targetUserPKs.length,
+      successful: results.success.length,
+      failed: results.failed.length,
+    });
+
+    return results;
+  }
+
+  static async follow(sourceUserPK: UserPK, targetUserPK: UserPK): Promise<void> {
     try {
-      // Validate both users exist
-      await Promise.all([this.checkIfUserExists(fromPK), this.checkIfUserExists(toPK)]);
+      const [sourceUser, targetUser] = await Promise.all([this.get(sourceUserPK), this.get(targetUserPK)]);
 
-      await db.transaction('rw', this.table, async () => {
-        // Update tagged user (receiver)
-        await this.table
-          .where('id')
-          .equals(toPK)
-          .modify((user) => {
-            if (action === 'PUT') {
-              const existingTag = user.tags.find((t) => t.label === label);
-              if (existingTag) {
-                if (!existingTag.taggers.includes(fromPK)) {
-                  existingTag.taggers.push(fromPK);
-                  existingTag.taggers_count++;
-                  user.counts.tags++;
-                }
-              } else {
-                user.tags.push({
-                  label,
-                  relationship: false,
-                  taggers: [fromPK],
-                  taggers_count: 1,
-                });
-                user.counts.tags++;
-                user.counts.unique_tags++;
-              }
-            } else {
-              // DELETE
-              const tagIndex = user.tags.findIndex((t) => t.label === label);
-              if (tagIndex >= 0) {
-                const tag = user.tags[tagIndex];
-                tag.taggers = tag.taggers.filter((id) => id !== fromPK);
-                tag.taggers_count--;
-                user.counts.tags = Math.max(0, user.counts.tags - 1);
+      // Execute Model Action
+      await sourceUser.follow('PUT', targetUser);
 
-                if (tag.taggers.length === 0) {
-                  user.tags.splice(tagIndex, 1);
-                  user.counts.unique_tags = Math.max(0, user.counts.unique_tags - 1);
-                }
-              }
-            }
-            user.updated_at = Date.now();
-          });
+      // TODO: Call other services HERE
 
-        // Update tagger user (sender)
-        await this.table
-          .where('id')
-          .equals(fromPK)
-          .modify((user) => {
-            if (action === 'PUT') {
-              user.counts.tagged++;
-            } else {
-              user.counts.tagged = Math.max(0, user.counts.tagged - 1);
-            }
-            user.updated_at = Date.now();
-          });
+      logger.debug('Additional services processed for follow action', {
+        sourceUser: sourceUser.details.id,
+        targetUser: targetUser.details.id,
       });
-
-      logger.debug('Updated tag:', { action, fromPK, toPK, label });
     } catch (error) {
-      logger.error('Failed to update tag:', error);
+      logger.error('Failed to follow user:', error);
       throw error;
     }
   }
 
-  static async mute(action: HomeserverActions, fromPK: UserPK, toPK: UserPK): Promise<void> {
-    try {
-      // Validate both users exist
-      await Promise.all([this.checkIfUserExists(fromPK), this.checkIfUserExists(toPK)]);
+  static async bulkFollow(
+    sourceUserPK: UserPK,
+    targetUserPKs: UserPK[],
+  ): Promise<{ success: UserPK[]; failed: UserPK[] }> {
+    const results = {
+      success: [] as UserPK[],
+      failed: [] as UserPK[],
+    };
 
-      await db.transaction('rw', this.table, async () => {
-        await this.table
-          .where('id')
-          .equals(fromPK)
-          .modify((user) => {
-            if (action === 'PUT') {
-              if (!user.mutes.includes(toPK)) {
-                user.mutes.push(toPK);
-                user.relationship.muted = true;
-              }
-            } else {
-              user.mutes = user.mutes.filter((id) => id !== toPK);
-              user.relationship.muted = false;
-            }
-            user.updated_at = Date.now();
-          });
+    const sourceUser = await this.get(sourceUserPK);
+
+    // Process each follow in parallel
+    await Promise.all(
+      targetUserPKs.map(async (targetPK) => {
+        try {
+          const targetUser = await this.get(targetPK);
+          await sourceUser.follow('PUT', targetUser);
+
+          // TODO: Call other services HERE
+
+          results.success.push(targetPK);
+        } catch (error) {
+          logger.warn(`Failed to follow user ${targetPK}:`, error);
+          results.failed.push(targetPK);
+        }
+      }),
+    );
+
+    logger.debug('Bulk follow operation completed:', {
+      total: targetUserPKs.length,
+      successful: results.success.length,
+      failed: results.failed.length,
+    });
+
+    return results;
+  }
+
+  static async tag(sourceUserPK: UserPK, targetUserPK: UserPK, label: string): Promise<void> {
+    try {
+      const [sourceUser, targetUser] = await Promise.all([this.get(sourceUserPK), this.get(targetUserPK)]);
+
+      // Execute Model Action
+      await sourceUser.tag('PUT', targetUser, label);
+
+      // TODO: Call other services HERE
+
+      logger.debug('Additional services processed for tag action', {
+        sourceUser: sourceUser.details.id,
+        targetUser: targetUser.details.id,
+        label,
       });
-
-      logger.debug('Updated mute status:', { action, fromPK, toPK });
     } catch (error) {
-      logger.error('Failed to update mute status:', error);
+      logger.error('Failed to tag user:', error);
       throw error;
     }
   }
 
-  static async updateCounts(userPK: UserPK, counts: Partial<UserCounts>): Promise<void> {
-    try {
-      // Validate user exists
-      await this.checkIfUserExists(userPK);
+  static async bulkTag(
+    sourceUserPK: UserPK,
+    targetUserPKs: UserPK[],
+    label: string,
+  ): Promise<{ success: UserPK[]; failed: UserPK[] }> {
+    const results = {
+      success: [] as UserPK[],
+      failed: [] as UserPK[],
+    };
 
-      await db.transaction('rw', this.table, async () => {
-        await this.table
-          .where('id')
-          .equals(userPK)
-          .modify((user) => {
-            user.counts = { ...user.counts, ...counts };
-            user.updated_at = Date.now();
-          });
-      });
+    const sourceUser = await this.get(sourceUserPK);
 
-      logger.debug('Updated user counts:', { userPK, counts });
-    } catch (error) {
-      logger.error('Failed to update user counts:', error);
-      throw error;
-    }
-  }
+    // Process each tag in parallel
+    await Promise.all(
+      targetUserPKs.map(async (targetPK) => {
+        try {
+          const targetUser = await this.get(targetPK);
+          await sourceUser.tag('PUT', targetUser, label);
 
-  static async getTags(userPK: UserPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<TagDetails[]> {
-    try {
-      const user = await this.checkIfUserExists(userPK);
-      const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
-      logger.debug('Getting tags for user:', { userPK, skip, limit });
-      return user.tags.slice(skip, skip + limit);
-    } catch (error) {
-      logger.error('Failed to get user tags:', error);
-      throw error;
-    }
-  }
+          // TODO: Call other services HERE
 
-  static async getTaggers(userPK: UserPK, label: string): Promise<UserPK[]> {
-    try {
-      const user = await this.checkIfUserExists(userPK);
-      const tag = user.tags.find((t) => t.label === label);
-      logger.debug('Getting taggers for user:', { userPK, label });
-      return tag?.taggers || [];
-    } catch (error) {
-      logger.error('Failed to get taggers:', error);
-      throw error;
-    }
-  }
+          results.success.push(targetPK);
+        } catch (error) {
+          logger.warn(`Failed to tag user ${targetPK}:`, error);
+          results.failed.push(targetPK);
+        }
+      }),
+    );
 
-  static async getFollowing(userPK: UserPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<UserPK[]> {
-    try {
-      const user = await this.checkIfUserExists(userPK);
-      const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
-      logger.debug('Getting following list for user:', { userPK, skip, limit });
-      return user.following.slice(skip, skip + limit);
-    } catch (error) {
-      logger.error('Failed to get following list:', error);
-      throw error;
-    }
-  }
+    logger.debug('Bulk tag operation completed:', {
+      total: targetUserPKs.length,
+      successful: results.success.length,
+      failed: results.failed.length,
+      label,
+    });
 
-  static async getFollowers(userPK: UserPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<UserPK[]> {
-    try {
-      // Ensure user exists
-      await this.checkIfUserExists(userPK);
-      const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
-      logger.debug('Getting followers list for user:', { userPK, skip, limit });
-
-      // Get all followers that match the user
-      const followers = await this.table.where('following').equals(userPK).toArray();
-
-      // Extract the follower IDs and apply pagination
-      const followerIds = followers.map((follower) => follower.id);
-      return followerIds.slice(skip, skip + limit);
-    } catch (error) {
-      logger.error('Failed to get followers list:', error);
-      throw error;
-    }
-  }
-
-  static async getName(userPK: UserPK): Promise<string> {
-    try {
-      const user = await this.checkIfUserExists(userPK);
-      logger.debug('Getting user name:', { userPK });
-      return user.details.name;
-    } catch (error) {
-      logger.error('Failed to get user name:', error);
-      throw error;
-    }
-  }
-
-  static async getUser(userPK: UserPK): Promise<User> {
-    try {
-      const user = await this.table.get(userPK);
-      logger.debug('Getting user:', { userPK });
-      if (!user) throw new Error(`User not found: ${userPK}`);
-      return user;
-    } catch (error) {
-      logger.error('Failed to get user:', error);
-      throw error;
-    }
+    return results;
   }
 }

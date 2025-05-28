@@ -54,7 +54,7 @@ export async function createTestUsers(count: number): Promise<UserPK[]> {
       followers: [],
       following: [],
       tags: [],
-      mutes: [],
+      muted: [],
       indexed_at: null,
       updated_at: Date.now(),
       sync_status: 'local',

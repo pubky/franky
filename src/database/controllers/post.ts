@@ -1,283 +1,207 @@
-import { Table } from 'dexie';
 import { logger } from '@/lib/logger';
-import { type Post, type TagDetails } from '../schemas/post';
-import { type UserCounts, User } from '../schemas/user';
-import { db } from '@/database';
+import { type PostPK, type UserPK } from '../types';
+import { type NexusPost } from '@/services/nexus/types';
+import { Post } from '../model/Post';
+import { type Post as PostSchema } from '../schemas/post';
 import { UserController } from './user';
-import { HomeserverActions, PostPK, UserPK, PaginationParams } from '../types';
-import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS, DEFAULT_PAGINATION } from '../defaults';
-import { SYNC_TTL } from '../config';
-import { NexusPost } from '@/services/nexus/types';
 
 export class PostController {
-  private static table: Table<Post> = db.table('posts');
-  private static userTable: Table<User> = db.table('users');
-
   private constructor() {
     // Prevent instantiation
   }
 
-  static async checkIfPostExists(id: PostPK): Promise<Post> {
-    const post = await this.table.get(id);
-    if (!post) throw new Error(`Post not found: ${id}`);
+  static async get(postPK: PostPK): Promise<Post> {
+    const post = await Post.findById(postPK);
+    if (!post) throw new Error(`Post not found: ${postPK}`);
     return post;
   }
 
-  static async authorizePostAction(userPK: UserPK, id: PostPK): Promise<{ post: Post; user: User }> {
-    const post = await this.checkIfPostExists(id);
-    const user = await UserController.checkIfUserExists(userPK);
-
-    if (post?.details.author !== userPK)
-      throw new Error(`Unauthorized: User ${userPK} is not the author of post ${id}`);
-
-    return { post, user };
-  }
-
-  static async createOrUpdate(post: NexusPost): Promise<Post> {
+  static async getAll(): Promise<Post[]> {
     try {
-      // Validate user exists
-      const user = await UserController.checkIfUserExists(post.details.author);
-
-      // prevent duplicate tags
-      const uniqueTags = post.tags.filter((t, index, self) => self.indexOf(t) === index);
-
-      // create new post
-      const now = Date.now();
-
-      const newPost: Post = {
-        id: post.details.id,
-        details: {
-          ...post.details,
-          author: user.id,
-          indexed_at: now,
-        },
-        counts: {
-          ...DEFAULT_POST_COUNTS,
-          tags: uniqueTags.length,
-          unique_tags: uniqueTags.length,
-        },
-        relationships: { ...DEFAULT_POST_RELATIONSHIPS },
-        tags: uniqueTags,
-        bookmark: null,
-        indexed_at: null, // TODO
-        created_at: now, // TODO
-        sync_status: 'local', // TODO
-        sync_ttl: now + SYNC_TTL,
-      };
-
-      await db.transaction('rw', [this.table, this.userTable], async () => {
-        await this.table.put(newPost);
-
-        // Update user's post count
-        await UserController.updateCounts(user.id, {
-          posts: user.counts.posts + 1,
-          tagged: user.counts.tagged + uniqueTags?.length,
-        });
-      });
-
-      logger.debug('Created new post:', { id: newPost.id });
-      return newPost;
+      const posts = await Post.findAll();
+      logger.debug('Retrieved all posts');
+      return posts;
     } catch (error) {
-      logger.error('Failed to create post:', error);
+      logger.error('Failed to get all posts:', error);
       throw error;
     }
   }
 
-  static async delete(userPK: UserPK, id: PostPK): Promise<void> {
+  static async getByIds(postPKs: PostPK[]): Promise<Post[]> {
     try {
-      // Validate user exists and owns the post
-      const post = await this.checkIfPostExists(id);
-      const user = await UserController.checkIfUserExists(userPK);
+      const posts = await Promise.all(
+        postPKs.map(async (id) => {
+          try {
+            return await this.get(id);
+          } catch (error) {
+            logger.warn(`Failed to get post ${id}:`, error);
+            return null;
+          }
+        }),
+      );
+      return posts.filter((post): post is Post => post !== null);
+    } catch (error) {
+      logger.error('Failed to get posts by ids:', error);
+      throw error;
+    }
+  }
 
-      if (post.details.author !== userPK) {
-        throw new Error(`Unauthorized: User ${userPK} is not the author of post ${id}`);
+  static async save(postData: NexusPost): Promise<Post> {
+    try {
+      // Validate author exists
+      await UserController.get(postData.details.author);
+
+      const existingPost = await Post.findById(postData.details.id);
+      if (existingPost) {
+        await existingPost.edit(postData);
+        return existingPost;
       }
 
-      // delete the post from indexedDB
-      await db.transaction('rw', [this.table, this.userTable], async () => {
-        // Check if post relationships are empty
-        // No mentions, no replies, no reposts, no tags, no bookmarks
-        if (
-          post.relationships.mentioned.length === 0 &&
-          post.relationships.replied === null &&
-          post.relationships.reposted === null &&
-          post.tags.length === 0 &&
-          post.bookmark === null
-        ) {
-          // Update user post count
-          const countsUpdate: Partial<UserCounts> = {
-            posts: Math.max(0, user.counts.posts - 1),
-          };
-          await UserController.updateCounts(userPK, countsUpdate);
+      // Create new post
+      const newPost = await Post.create(postData);
 
-          // delete the post from indexedDB
-          await this.table.delete(id);
+      // Update author's post count (this should be handled by User model if needed)
+      // TODO: Consider if this should be in User model or here
 
-          logger.debug('Deleted post from indexedDB:', { id });
-          return;
-        }
+      return newPost;
+    } catch (error) {
+      logger.error('Failed to save post:', error);
+      throw error;
+    }
+  }
 
-        // change the content of the post to '[DELETED]'
-        await this.table
-          .where('id')
-          .equals(id)
-          .modify((post) => {
-            post.details.content = '[DELETED]';
-          });
-      });
+  static async delete(postPK: PostPK, userPK?: UserPK): Promise<void> {
+    try {
+      const post = await this.get(postPK);
 
-      logger.debug('Deleted post [DELETED]:', { id });
+      // Check authorization if userPK is provided
+      if (userPK && !post.canUserEdit(userPK)) {
+        throw new Error(`Unauthorized: User ${userPK} is not the author of post ${postPK}`);
+      }
+
+      // If post has relationships, just mark as deleted
+      if (post.hasRelationships()) {
+        post.markAsDeleted();
+        await post.save();
+        logger.debug('Marked post as deleted:', { postPK });
+      } else {
+        // No relationships, safe to delete completely
+        await post.delete();
+        logger.debug('Deleted post completely:', { postPK });
+      }
     } catch (error) {
       logger.error('Failed to delete post:', error);
       throw error;
     }
   }
 
-  static async tag(action: HomeserverActions, fromPK: UserPK, id: PostPK, label: string): Promise<void> {
+  static async search(query: Partial<PostSchema>): Promise<Post[]> {
     try {
-      await db.transaction('rw', [this.table, this.userTable], async () => {
-        const post = await this.checkIfPostExists(id);
-        const author = await UserController.checkIfUserExists(post.details.author);
-        const tagger = await UserController.checkIfUserExists(fromPK);
-
-        // Update post tags
-        await this.table
-          .where('id')
-          .equals(id)
-          .modify((p) => {
-            if (action === 'PUT') {
-              // PUT TAG
-              const existingTag = p.tags.find((t) => t.label === label);
-              if (existingTag) {
-                // Check if the tagger is not already in the taggers array
-                if (!existingTag.taggers.includes(tagger.id)) {
-                  existingTag.taggers.push(tagger.id);
-                  existingTag.taggers_count++;
-                  p.counts.tags++;
-                }
-              } else {
-                p.tags.push({
-                  label,
-                  relationship: false,
-                  taggers: [tagger.id],
-                  taggers_count: 1,
-                });
-                p.counts.tags++;
-              }
-            } else {
-              // DELETE TAG
-              // Check if the tag exists
-              const tagIndex = p.tags.findIndex((t) => t.label === label);
-              if (tagIndex >= 0) {
-                // Check if the tagger is in the taggers array and remove it
-                const tag = p.tags[tagIndex];
-                tag.taggers = tag.taggers.filter((id) => id !== tagger.id);
-
-                // Decrement the taggers count
-                tag.taggers_count--;
-
-                // Decrement the tags count
-                p.counts.tags = Math.max(0, p.counts.tags - 1);
-
-                // If the tag has no taggers, remove the tag
-                if (tag.taggers.length === 0) {
-                  p.tags.splice(tagIndex, 1);
-                }
-              }
-            }
-
-            // Update the post counts
-            p.counts.unique_tags = p.tags.length;
-            p.sync_status = 'local';
-            p.created_at = Date.now();
-          });
-
-        // Update author tagged counts
-        await UserController.updateCounts(author.id, {
-          tagged: Math.max(0, author.counts.tagged + (action === 'PUT' ? 1 : -1)),
+      const posts = await Post.findAll();
+      return posts.filter((post) => {
+        return Object.entries(query).every(([key, value]) => {
+          return post[key as keyof Post] === value;
         });
       });
-
-      logger.debug('Updated post tag:', { action, fromPK, id, label });
     } catch (error) {
-      logger.error('Failed to update post tag:', error);
+      logger.error('Failed to search posts:', error);
       throw error;
     }
   }
 
-  static async bookmark(action: HomeserverActions, fromPK: UserPK, id: PostPK): Promise<void> {
+  static async count(query?: Partial<PostSchema>): Promise<number> {
     try {
-      await db.transaction('rw', [this.table, this.userTable], async () => {
-        const user = await UserController.checkIfUserExists(fromPK);
-
-        // Update post's bookmark status
-        await this.table
-          .where('id')
-          .equals(id)
-          .modify((post) => {
-            post.bookmark = action === 'PUT' ? { created_at: Date.now(), updated_at: Date.now() } : null;
-            post.sync_status = 'local';
-            post.created_at = Date.now();
+      const posts = await Post.findAll();
+      if (query) {
+        return posts.filter((post) => {
+          return Object.entries(query).every(([key, value]) => {
+            return post[key as keyof Post] === value;
           });
-
-        // Update user's bookmark count
-        await UserController.updateCounts(user.id, {
-          bookmarks: Math.max(0, user.counts.bookmarks + (action === 'PUT' ? 1 : -1)),
-        });
-      });
-
-      logger.debug('Updated post bookmark:', { action, fromPK, id });
+        }).length;
+      }
+      return posts.length;
     } catch (error) {
-      logger.error('Failed to update post bookmark:', error);
+      logger.error('Failed to count posts:', error);
       throw error;
     }
   }
 
-  static async edit(): Promise<void> {
-    // TODO: insert this method when we have a way to edit a post
+  static async bulkSave(postsData: NexusPost[]): Promise<Post[]> {
+    const results: Post[] = [];
+
+    await Promise.all(
+      postsData.map(async (postData) => {
+        try {
+          const post = await this.save(postData);
+          results.push(post);
+        } catch (error) {
+          logger.warn(`Failed to save post ${postData.details.id}:`, error);
+        }
+      }),
+    );
+
+    logger.debug('Bulk save operation completed:', {
+      total: postsData.length,
+      successful: results.length,
+    });
+
+    return results;
   }
 
-  static async repost(): Promise<void> {
-    // TODO: insert this method when we have a way to repost a post
+  static async bulkDelete(postPKs: PostPK[], userPK?: UserPK): Promise<{ success: PostPK[]; failed: PostPK[] }> {
+    const results = {
+      success: [] as PostPK[],
+      failed: [] as PostPK[],
+    };
+
+    await Promise.all(
+      postPKs.map(async (postPK) => {
+        try {
+          await this.delete(postPK, userPK);
+          results.success.push(postPK);
+        } catch (error) {
+          logger.warn(`Failed to delete post ${postPK}:`, error);
+          results.failed.push(postPK);
+        }
+      }),
+    );
+
+    logger.debug('Bulk delete operation completed:', {
+      total: postPKs.length,
+      successful: results.success.length,
+      failed: results.failed.length,
+    });
+
+    return results;
   }
 
-  static async reply(): Promise<void> {
-    // TODO: insert this method when we have a way to reply to a post
+  // Post-specific methods
+  static async getReplies(postPK: PostPK): Promise<Post[]> {
+    try {
+      return await Post.findReplies(postPK);
+    } catch (error) {
+      logger.error('Failed to get post replies:', error);
+      throw error;
+    }
   }
 
-  static async getPost(id: PostPK): Promise<Post> {
-    const post = await this.checkIfPostExists(id);
-    logger.debug('Retrieved post:', { id });
-    return post;
+  static async getReposts(postPK: PostPK): Promise<Post[]> {
+    try {
+      return await Post.findReposts(postPK);
+    } catch (error) {
+      logger.error('Failed to get post reposts:', error);
+      throw error;
+    }
   }
 
-  static async getTags(id: PostPK, pagination: PaginationParams = DEFAULT_PAGINATION): Promise<TagDetails[]> {
-    const post = await this.checkIfPostExists(id);
-    const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
-    logger.debug('Retrieved post tags:', { id });
-    return post.tags.slice(skip, skip + limit);
+  static async getByAuthor(authorPK: UserPK): Promise<Post[]> {
+    try {
+      return await Post.findByAuthor(authorPK);
+    } catch (error) {
+      logger.error('Failed to get posts by author:', error);
+      throw error;
+    }
   }
 
-  static async getTaggers(id: PostPK, label: string): Promise<UserPK[]> {
-    const post = await this.checkIfPostExists(id);
-    const tag = post.tags.find((t) => t.label === label);
-    logger.debug('Retrieved post taggers:', { id, label });
-    return tag?.taggers || [];
-  }
-
-  static async getReplies(id: PostPK): Promise<Post[]> {
-    const replies = await this.table.where('relationships.replied').equals(id).toArray();
-    logger.debug('Retrieved post replies:', { id });
-    return replies;
-  }
-
-  static async getReposts(id: PostPK): Promise<Post[]> {
-    const reposts = await this.table
-      .where('details.kind')
-      .equals('repost')
-      .and((post) => post.relationships.reposted === id)
-      .toArray();
-    logger.debug('Retrieved post reposts:', { id });
-    return reposts;
-  }
+  // TODO: Add tag, bookmark, reply, repost methods following same pattern as UserController
 }

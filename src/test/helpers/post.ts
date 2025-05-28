@@ -2,8 +2,7 @@ import { type Post, type PostDetails } from '@/database/schemas/post';
 import { PostController } from '@/database/controllers/post';
 import { generateTestUserId } from './user';
 import { PostPK } from '@/database/types';
-import { DEFAULT_POST_COUNTS } from '@/database/defaults';
-import { DEFAULT_POST_RELATIONSHIPS } from '@/database/defaults';
+import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS } from '@/database/schemas/defaults/post';
 import { SYNC_TTL } from '@/database/config';
 
 export function generateTestPostId(userId: string, index: number): PostPK {
@@ -38,7 +37,7 @@ export async function createTestPost(userId: string, index: number, details: Par
     sync_status: 'local',
     sync_ttl: Date.now() + SYNC_TTL,
   };
-  return PostController.createOrUpdate(post);
+  return await PostController.save(post);
 }
 
 export async function createTestPosts(userId: string, count: number): Promise<Post[]> {

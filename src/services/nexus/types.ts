@@ -1,4 +1,5 @@
 import { type UserPK, type PostPK, type Timestamp } from '@/database/types';
+import { Tag } from '../../database/model/Tag';
 
 // Common types
 
@@ -43,7 +44,7 @@ export interface NexusUserRelationship {
   muted: boolean;
 }
 
-export interface NexusUserTag {
+export interface NexusTag {
   label: string;
   taggers: UserPK[];
   taggers_count: number;
@@ -53,7 +54,7 @@ export interface NexusUserTag {
 export interface NexusUser {
   details: NexusUserDetails;
   counts: NexusUserCounts;
-  tags: NexusUserTag[];
+  tags: NexusTag[];
   relationship: NexusUserRelationship;
 }
 
@@ -75,13 +76,6 @@ export interface NexusPostCounts {
   reposts: number;
 }
 
-export interface NexusPostTag {
-  label: string;
-  taggers: UserPK[];
-  taggers_count: number;
-  relationship: boolean;
-}
-
 export interface NexusPostRelationships {
   replied: string | null;
   reposted: string | null;
@@ -91,7 +85,7 @@ export interface NexusPostRelationships {
 export interface NexusPost {
   details: NexusPostDetails;
   counts: NexusPostCounts;
-  tags: NexusPostTag[];
+  tags: Tag[];
   relationships: NexusPostRelationships;
   bookmark: NexusBookmark | null;
 }

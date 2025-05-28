@@ -1,14 +1,8 @@
 import { PostPK, SyncStatus, Timestamp } from '../types';
-import {
-  NexusPost,
-  NexusPostCounts,
-  NexusPostDetails,
-  NexusPostRelationships,
-  NexusPostTag,
-} from '@/services/nexus/types';
+import { NexusPost, NexusPostCounts, NexusPostDetails, NexusPostRelationships, NexusTag } from '@/services/nexus/types';
 
 export type PostCounts = NexusPostCounts;
-export type TagDetails = NexusPostTag;
+export type PostTag = NexusTag;
 export type PostRelationships = NexusPostRelationships;
 export type PostDetails = NexusPostDetails;
 
@@ -34,7 +28,7 @@ export const postTableSchema = `
   [details.author+details.kind],
   *tags.label,
   relationships.replied,
-  relationships.repost,
+  relationships.reposted,
   [relationships.replied+details.author],
-  [relationships.repost+details.author]
+  [relationships.reposted+details.author]
 `;
