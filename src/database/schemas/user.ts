@@ -8,9 +8,9 @@ export type UserTag = NexusTag;
 
 export interface User extends NexusUser {
   id: UserPK;
-  following: UserPK[];
-  followers: UserPK[];
-  muted: UserPK[];
+  following: UserPK[]; // TODO: wrap in wot shared model
+  followers: UserPK[]; // TODO: wrap in wot shared model
+  muted: UserPK[]; // TODO: wrap in wot shared model
   indexed_at: Timestamp | null;
   updated_at: Timestamp;
   sync_status: SyncStatus;

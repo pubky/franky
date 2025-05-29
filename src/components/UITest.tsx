@@ -1,23 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { UserController } from '@/database/controllers/user';
 import { PostController } from '@/database/controllers/post';
-import { nexusService } from '@/services/nexus';
+import { NexusService } from '@/services/nexus';
 import { logger } from '@/lib/logger';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/database';
 import { type User } from '@/database/schemas/user';
 import { type Post } from '@/database/schemas/post';
+import { type PostPK, type UserPK } from '@/database/types';
+
+interface Stats {
+  users: number;
+  posts: number;
+}
+
+interface BulkActionResult {
+  success: number;
+  failed: number;
+}
 
 export function UITestes() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState<{ users: number; posts: number } | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   // Selection state
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserPK[]>([]);
+  const [selectedPosts, setSelectedPosts] = useState<PostPK[]>([]);
   const [selectAllUsers, setSelectAllUsers] = useState(false);
   const [selectAllPosts, setSelectAllPosts] = useState(false);
 
@@ -29,46 +40,38 @@ export function UITestes() {
   const userCount = useLiveQuery(() => db.users.count());
   const postCount = useLiveQuery(() => db.posts.count());
 
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
   const handleBootstrap = async () => {
     try {
       setIsLoading(true);
-      setError(null);
+      clearError();
       setStats(null);
 
       // Fetch data from bootstrap endpoint
-      const bootstrapData = await nexusService.bootstrap('7oognktdczbpf17qt94u7537n5i6xcacks9twtf39mxsm5o53ogo');
+      const bootstrapData = await NexusService.bootstrap('7oognktdczbpf17qt94u7537n5i6xcacks9twtf39mxsm5o53ogo');
 
-      // Save users
-      const savedUsers = await Promise.all(
-        bootstrapData.users.map(async (user) => {
-          try {
-            return await UserController.save(user);
-          } catch (error) {
-            logger.error('Failed to save user:', error);
-            return null;
-          }
-        }),
-      );
+      // Use optimized bulk operations
+      const [savedUsers, savedPosts] = await Promise.allSettled([
+        UserController.bulkSave(bootstrapData.users),
+        PostController.bulkSave(bootstrapData.posts),
+      ]);
 
-      // Save posts
-      const savedPosts = await Promise.all(
-        bootstrapData.posts.map(async (post) => {
-          try {
-            return await PostController.save(post);
-          } catch (error) {
-            logger.error('Failed to save post:', error);
-            return null;
-          }
-        }),
-      );
+      const usersResult = savedUsers.status === 'fulfilled' ? savedUsers.value : [];
+      const postsResult = savedPosts.status === 'fulfilled' ? savedPosts.value : [];
 
       // Update stats
       setStats({
-        users: savedUsers.filter(Boolean).length,
-        posts: savedPosts.filter(Boolean).length,
+        users: usersResult.length,
+        posts: postsResult.length,
       });
 
-      logger.debug('Bootstrap data saved successfully');
+      logger.debug('Bootstrap data saved successfully', {
+        users: usersResult.length,
+        posts: postsResult.length,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bootstrap data';
       setError(message);
@@ -78,20 +81,21 @@ export function UITestes() {
     }
   };
 
-  // Clear database function
   const handleClearDatabase = async () => {
     try {
       setIsLoading(true);
-      setError(null);
+      clearError();
 
       await db.delete();
       await db.open();
 
+      // Reset state
       setStats(null);
       setSelectedUsers([]);
       setSelectedPosts([]);
       setSelectAllUsers(false);
       setSelectAllPosts(false);
+
       logger.debug('Database cleared successfully');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to clear database';
@@ -103,40 +107,30 @@ export function UITestes() {
   };
 
   // User selection handlers
-  const handleUserSelection = (userId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedUsers((prev) => [...prev, userId]);
-    } else {
-      setSelectedUsers((prev) => prev.filter((id) => id !== userId));
-    }
-  };
+  const handleUserSelection = useCallback((userId: UserPK, checked: boolean) => {
+    setSelectedUsers((prev) => (checked ? [...prev, userId] : prev.filter((id) => id !== userId)));
+  }, []);
 
-  const handleSelectAllUsers = (checked: boolean) => {
-    setSelectAllUsers(checked);
-    if (checked && users) {
-      setSelectedUsers(users.map((user) => user.details.id));
-    } else {
-      setSelectedUsers([]);
-    }
-  };
+  const handleSelectAllUsers = useCallback(
+    (checked: boolean) => {
+      setSelectAllUsers(checked);
+      setSelectedUsers(checked && users ? users.map((user) => user.details.id) : []);
+    },
+    [users],
+  );
 
   // Post selection handlers
-  const handlePostSelection = (postId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedPosts((prev) => [...prev, postId]);
-    } else {
-      setSelectedPosts((prev) => prev.filter((id) => id !== postId));
-    }
-  };
+  const handlePostSelection = useCallback((postId: PostPK, checked: boolean) => {
+    setSelectedPosts((prev) => (checked ? [...prev, postId] : prev.filter((id) => id !== postId)));
+  }, []);
 
-  const handleSelectAllPosts = (checked: boolean) => {
-    setSelectAllPosts(checked);
-    if (checked && posts) {
-      setSelectedPosts(posts.map((post) => post.details.id));
-    } else {
-      setSelectedPosts([]);
-    }
-  };
+  const handleSelectAllPosts = useCallback(
+    (checked: boolean) => {
+      setSelectAllPosts(checked);
+      setSelectedPosts(checked && posts ? posts.map((post) => post.details.id) : []);
+    },
+    [posts],
+  );
 
   // Bulk delete handlers
   const handleBulkDeleteUsers = async () => {
@@ -144,27 +138,15 @@ export function UITestes() {
 
     try {
       setIsLoading(true);
-      setError(null);
+      clearError();
 
-      const result = await UserController.bulkDelete(selectedUsers);
+      await UserController.bulkDelete(selectedUsers);
 
-      setStats((prev) =>
-        prev
-          ? {
-              ...prev,
-              users: prev.users - result.success.length,
-            }
-          : null,
-      );
-
+      // Reset selection
       setSelectedUsers([]);
       setSelectAllUsers(false);
 
-      if (result.failed.length > 0) {
-        setError(`Failed to delete ${result.failed.length} users: ${result.failed.join(', ')}`);
-      }
-
-      logger.debug('Bulk delete users completed:', result);
+      logger.debug('Bulk delete users completed:', selectedUsers.length);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bulk delete users';
       setError(message);
@@ -179,49 +161,45 @@ export function UITestes() {
 
     try {
       setIsLoading(true);
-      setError(null);
+      clearError();
 
-      let result: { success: string[]; failed: string[] };
+      let result: BulkActionResult;
 
       if (forceDelete) {
         // Force delete by directly removing from database
-        result = { success: [], failed: [] };
+        result = { success: 0, failed: 0 };
 
-        await Promise.all(
+        await Promise.allSettled(
           selectedPosts.map(async (postId) => {
             try {
               await db.posts.delete(postId);
-              result.success.push(postId);
+              result.success++;
             } catch (error) {
               logger.warn(`Failed to force delete post ${postId}:`, error);
-              result.failed.push(postId);
+              result.failed++;
             }
           }),
         );
       } else {
-        // Normal delete through controller
-        result = await PostController.bulkDelete(selectedPosts as `${string}:${string}`[]);
+        // Normal delete through controller (smart deletion)
+        await PostController.bulkDelete(selectedPosts);
+        result = { success: selectedPosts.length, failed: 0 };
       }
 
-      setStats((prev) =>
-        prev
-          ? {
-              ...prev,
-              posts: prev.posts - result.success.length,
-            }
-          : null,
-      );
-
+      // Reset selection
       setSelectedPosts([]);
       setSelectAllPosts(false);
 
-      if (result.failed.length > 0) {
-        setError(`Failed to delete ${result.failed.length} posts: ${result.failed.join(', ')}`);
-      } else if (forceDelete) {
-        setError(`Force deleted ${result.success.length} posts (bypassed relationships check)`);
+      // Show feedback message
+      if (result.failed > 0) {
+        setError(`Successfully processed ${result.success} posts, failed: ${result.failed}`);
       }
 
-      logger.debug('Bulk delete posts completed:', { result, forceDelete });
+      logger.debug('Bulk delete posts completed:', {
+        total: selectedPosts.length,
+        result,
+        forceDelete,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bulk delete posts';
       setError(message);
@@ -233,38 +211,28 @@ export function UITestes() {
 
   // Table rendering functions
   const renderUserTable = () => {
-    if (!users) return <div>Loading users...</div>;
-    if (users.length === 0) return <div>No users found</div>;
+    if (!users) return <div className="text-center py-4">Loading users...</div>;
+    if (users.length === 0) return <div className="text-center py-4 text-gray-500">No users found</div>;
 
     return (
       <div className="space-y-4">
-        {/* Bulk actions - Fixed height container */}
+        {/* Bulk actions */}
         {selectedUsers.length > 0 && (
-          <div className="h-16 flex items-center">
-            <div
-              className={`w-full transition-all duration-300 ease-in-out ${
-                selectedUsers.length > 0
-                  ? 'opacity-100 transform translate-y-0'
-                  : 'opacity-0 transform -translate-y-2 pointer-events-none'
-              }`}
+          <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <span className="text-sm text-blue-700 font-medium">
+              {selectedUsers.length} user{selectedUsers.length !== 1 ? 's' : ''} selected
+            </span>
+            <button
+              onClick={handleBulkDeleteUsers}
+              disabled={isLoading}
+              className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 disabled:bg-gray-400 transition-colors"
             >
-              <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm text-blue-700">
-                  {selectedUsers.length} user{selectedUsers.length !== 1 ? 's' : ''} selected
-                </span>
-                <button
-                  onClick={handleBulkDeleteUsers}
-                  disabled={isLoading}
-                  className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 disabled:bg-gray-400"
-                >
-                  Delete Selected
-                </button>
-              </div>
-            </div>
+              Delete Selected
+            </button>
           </div>
         )}
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -295,7 +263,10 @@ export function UITestes() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {users.map((user: User) => (
-                <tr key={user.details.id} className={selectedUsers.includes(user.details.id) ? 'bg-blue-50' : ''}>
+                <tr
+                  key={user.details.id}
+                  className={`hover:bg-gray-50 ${selectedUsers.includes(user.details.id) ? 'bg-blue-50' : ''}`}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
@@ -304,15 +275,34 @@ export function UITestes() {
                       className="rounded border-gray-300"
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.details.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.details.name}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate">
-                    {user.details.bio}
+                  <td
+                    className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 max-w-[200px] truncate"
+                    title={user.details.id}
+                  >
+                    {user.details.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.details.status || '-'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.counts.followers}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.counts.following}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.counts.posts}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{user.details.name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title={user.details.bio}>
+                    {user.details.bio || '-'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        user.details.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {user.details.status || 'unknown'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                    {user.counts.followers.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                    {user.counts.following.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                    {user.counts.posts.toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -323,49 +313,39 @@ export function UITestes() {
   };
 
   const renderPostTable = () => {
-    if (!posts) return <div>Loading posts...</div>;
-    if (posts.length === 0) return <div>No posts found</div>;
+    if (!posts) return <div className="text-center py-4">Loading posts...</div>;
+    if (posts.length === 0) return <div className="text-center py-4 text-gray-500">No posts found</div>;
 
     return (
       <div className="space-y-4">
-        {/* Bulk actions - Fixed height container */}
+        {/* Bulk actions */}
         {selectedPosts.length > 0 && (
-          <div className="h-16 flex items-center">
-            <div
-              className={`w-full transition-all duration-300 ease-in-out ${
-                selectedPosts.length > 0
-                  ? 'opacity-100 transform translate-y-0'
-                  : 'opacity-0 transform -translate-y-2 pointer-events-none'
-              }`}
-            >
-              <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm text-blue-700">
-                  {selectedPosts.length} post{selectedPosts.length !== 1 ? 's' : ''} selected
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleBulkDeletePosts(false)}
-                    disabled={isLoading}
-                    className="px-3 py-1 bg-orange-500 text-white text-sm rounded hover:bg-orange-600 disabled:bg-gray-400"
-                    title="Mark posts with relationships as [DELETED], fully delete posts without relationships"
-                  >
-                    Delete Selected
-                  </button>
-                  <button
-                    onClick={() => handleBulkDeletePosts(true)}
-                    disabled={isLoading}
-                    className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:bg-gray-400"
-                    title="Force delete all selected posts from database, bypassing relationships check"
-                  >
-                    Force Delete
-                  </button>
-                </div>
-              </div>
+          <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <span className="text-sm text-blue-700 font-medium">
+              {selectedPosts.length} post{selectedPosts.length !== 1 ? 's' : ''} selected
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleBulkDeletePosts(false)}
+                disabled={isLoading}
+                className="px-3 py-1 bg-orange-500 text-white text-sm rounded hover:bg-orange-600 disabled:bg-gray-400 transition-colors"
+                title="Smart deletion: marks posts with relationships as [DELETED], fully deletes posts without relationships"
+              >
+                Smart Delete
+              </button>
+              <button
+                onClick={() => handleBulkDeletePosts(true)}
+                disabled={isLoading}
+                className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 disabled:bg-gray-400 transition-colors"
+                title="Force delete all selected posts from database, bypassing relationships check"
+              >
+                Force Delete
+              </button>
             </div>
           </div>
         )}
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto border rounded-lg">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -387,12 +367,6 @@ export function UITestes() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kind</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Replies
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Reposts
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Mentions
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -402,7 +376,10 @@ export function UITestes() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {posts.map((post: Post) => (
-                <tr key={post.details.id} className={selectedPosts.includes(post.details.id) ? 'bg-blue-50' : ''}>
+                <tr
+                  key={post.details.id}
+                  className={`hover:bg-gray-50 ${selectedPosts.includes(post.details.id) ? 'bg-blue-50' : ''}`}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <input
                       type="checkbox"
@@ -411,42 +388,50 @@ export function UITestes() {
                       className="rounded border-gray-300"
                     />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{post.details.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.details.author}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-xs truncate">
-                    {post.details.content.length > 50
-                      ? `${post.details.content.slice(0, 50)}...`
-                      : post.details.content}
+                  <td
+                    className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 max-w-[200px] truncate"
+                    title={post.details.id}
+                  >
+                    {post.details.id}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.details.kind}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.counts.tags}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{post.counts.replies}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex flex-col">
-                      <span>{post.counts.reposts}</span>
-                    </div>
+                  <td
+                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 max-w-[150px] truncate"
+                    title={post.details.author}
+                  >
+                    {post.details.author}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex flex-col space-y-1">
-                      <span className="text-xs text-gray-400">
-                        {post.relationships.mentioned.length} mention
-                        {post.relationships.mentioned.length !== 1 ? 's' : ''}
-                      </span>
-                      {post.relationships.mentioned.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {post.relationships.mentioned.slice(0, 3).map((userId) => (
-                            <span key={userId} className="text-xs bg-blue-100 text-blue-700 px-1 rounded">
-                              @{userId}
-                            </span>
-                          ))}
-                          {post.relationships.mentioned.length > 3 && (
-                            <span className="text-xs text-gray-400">
-                              +{post.relationships.mentioned.length - 3} more
-                            </span>
-                          )}
-                        </div>
+                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                    <div className="max-w-xs truncate" title={post.details.content}>
+                      {post.details.content === '[DELETED]' ? (
+                        <span className="text-red-500 italic">[DELETED]</span>
+                      ) : post.details.content.length > 80 ? (
+                        `${post.details.content.slice(0, 80)}...`
+                      ) : (
+                        post.details.content
                       )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                      {post.details.kind}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">{post.counts.tags}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {post.relationships.mentioned.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {post.relationships.mentioned.slice(0, 2).map((userId) => (
+                          <span key={userId} className="text-xs bg-blue-100 text-blue-700 px-1 rounded">
+                            @{userId.slice(-8)}
+                          </span>
+                        ))}
+                        {post.relationships.mentioned.length > 2 && (
+                          <span className="text-xs text-gray-400">+{post.relationships.mentioned.length - 2}</span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <span
@@ -473,37 +458,35 @@ export function UITestes() {
   };
 
   return (
-    <div className="p-4 space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Database Management</h2>
+    <div className="p-6 space-y-8 max-w-7xl mx-auto">
+      <div className="space-y-6">
+        <h2 className="text-3xl font-bold text-gray-900">Database Management</h2>
 
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-medium text-gray-900">Load Bootstrap Data</h3>
-            <p className="text-sm text-gray-600">Load sample data from the Nexus service</p>
+        {/* Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white border rounded-lg p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-2">Load Bootstrap Data</h3>
+            <p className="text-sm text-gray-600 mb-4">Load sample data from the Nexus service</p>
             <button
               onClick={handleBootstrap}
               disabled={isLoading}
-              className={`
-                w-full px-4 py-2 rounded font-medium transition-colors
-                ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}
-              `}
+              className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+                isLoading ? 'bg-gray-400 cursor-not-allowed text-white' : 'bg-blue-500 hover:bg-blue-600 text-white'
+              }`}
             >
               {isLoading ? 'Loading...' : 'Load Bootstrap Data'}
             </button>
           </div>
 
-          <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-            <h3 className="font-medium text-gray-900">Clear Database</h3>
-            <p className="text-sm text-gray-600">Remove all data from the local database</p>
+          <div className="bg-white border rounded-lg p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-2">Clear Database</h3>
+            <p className="text-sm text-gray-600 mb-4">Remove all data from the local database and reset state</p>
             <button
               onClick={handleClearDatabase}
               disabled={isLoading}
-              className={`
-                w-full px-4 py-2 rounded font-medium transition-colors
-                ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 text-white'}
-              `}
+              className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+                isLoading ? 'bg-gray-400 cursor-not-allowed text-white' : 'bg-red-500 hover:bg-red-600 text-white'
+              }`}
             >
               {isLoading ? 'Clearing...' : 'Clear Database'}
             </button>
@@ -511,57 +494,52 @@ export function UITestes() {
         </div>
 
         {/* Database Stats */}
-        <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">{userCount ?? 0}</div>
-            <div className="text-sm text-gray-500 uppercase tracking-wide">Total Users</div>
+        <div className="grid grid-cols-2 gap-6">
+          <div className="bg-white border rounded-lg p-6 text-center shadow-sm">
+            <div className="text-4xl font-bold text-blue-600 mb-2">{userCount?.toLocaleString() ?? 0}</div>
+            <div className="text-sm text-gray-500 uppercase tracking-wide font-medium">Total Users</div>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">{postCount ?? 0}</div>
-            <div className="text-sm text-gray-500 uppercase tracking-wide">Total Posts</div>
+          <div className="bg-white border rounded-lg p-6 text-center shadow-sm">
+            <div className="text-4xl font-bold text-blue-600 mb-2">{postCount?.toLocaleString() ?? 0}</div>
+            <div className="text-sm text-gray-500 uppercase tracking-wide font-medium">Total Posts</div>
           </div>
         </div>
 
-        {/* Status Display */}
-        <div className="min-h-[70px] flex items-center">
-          <div
-            className={`w-full transition-all duration-300 ease-in-out ${
-              stats ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-2 pointer-events-none'
-            }`}
-          >
-            {stats && (
-              <div className="text-sm text-gray-600 space-y-1 p-3 bg-green-50 rounded-lg">
-                <p>✅ Saved {stats.users} users</p>
-                <p>✅ Saved {stats.posts} posts</p>
+        {/* Success Message */}
+        {stats && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <div className="text-green-600 text-sm">
+                <div className="font-medium mb-1">✅ Bootstrap completed successfully!</div>
+                <div>
+                  Saved {stats.users.toLocaleString()} users and {stats.posts.toLocaleString()} posts
+                </div>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Error Display */}
-        {error && (
-          <div className="min-h-[40px] flex items-center">
-            <div
-              className={`w-full transition-all duration-300 ease-in-out ${
-                error ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform -translate-y-2 pointer-events-none'
-              }`}
-            >
-              {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded">{error}</div>}
             </div>
           </div>
         )}
 
-        {/* Users Table */}
-        <div className="mt-8">
-          <h3 className="text-xl font-semibold mb-4">Users ({users?.length ?? 0})</h3>
+        {/* Error Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="text-red-600 text-sm">{error}</div>
+              <button onClick={clearError} className="text-red-600 hover:text-red-800 text-sm font-medium">
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Users Section */}
+        <div className="space-y-4">
+          <h3 className="text-2xl font-semibold text-gray-900">Users ({users?.length.toLocaleString() ?? 0})</h3>
           {renderUserTable()}
         </div>
 
-        {/* Posts Table */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-semibold">Posts ({posts?.length ?? 0})</h3>
-          </div>
+        {/* Posts Section */}
+        <div className="space-y-4">
+          <h3 className="text-2xl font-semibold text-gray-900">Posts ({posts?.length.toLocaleString() ?? 0})</h3>
           {renderPostTable()}
         </div>
       </div>

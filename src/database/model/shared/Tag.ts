@@ -1,7 +1,7 @@
 import { type UserPK, type PaginationParams } from '@/database/types';
 import { logger } from '@/lib/logger';
 import { type NexusTag } from '@/services/nexus/types';
-import { DEFAULT_PAGINATION } from '../schemas/defaults/common';
+import { DEFAULT_PAGINATION } from '@/database/schemas/defaults/common';
 
 export class Tag implements NexusTag {
   label: string;

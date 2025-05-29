@@ -2,9 +2,9 @@ import { type NexusBootstrapResponse } from './types';
 import { logger } from '@/lib/logger';
 
 export class NexusService {
-  private baseUrl = process.env.NEXT_PUBLIC_NEXUS_URL || 'https://nexus.staging.pubky.app/v0';
+  private static baseUrl = process.env.NEXT_PUBLIC_NEXUS_URL || 'https://nexus.staging.pubky.app/v0';
 
-  async bootstrap(userPK: string): Promise<NexusBootstrapResponse> {
+  static async bootstrap(userPK: string): Promise<NexusBootstrapResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/bootstrap/${userPK}`);
 
@@ -20,6 +20,3 @@ export class NexusService {
     }
   }
 }
-
-// Export a singleton instance
-export const nexusService = new NexusService();

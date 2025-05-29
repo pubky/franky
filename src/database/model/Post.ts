@@ -1,12 +1,13 @@
-import { type PostPK, type UserPK, type Timestamp, type SyncStatus } from '@/database/types';
+import { type PostPK, type Timestamp, type SyncStatus } from '@/database/types';
 import { logger } from '@/lib/logger';
 import { type NexusPost } from '@/services/nexus/types';
 import { Table } from 'dexie';
 import { db } from '@/database';
 import { SYNC_TTL } from '../config';
 import { type Post as PostSchema } from '../schemas/post';
-import { Tag } from './Tag';
+import { Tag } from './shared/Tag';
 import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS } from '../schemas/defaults/post';
+import { Post as PostType } from '@/database/schemas/post';
 
 export class Post implements NexusPost {
   private static table: Table<PostSchema> = db.table('posts');
@@ -22,15 +23,7 @@ export class Post implements NexusPost {
   sync_status: SyncStatus;
   sync_ttl: Timestamp;
 
-  constructor(
-    post: NexusPost & {
-      bookmark: PostSchema['bookmark'];
-      indexed_at: Timestamp | null;
-      created_at: Timestamp;
-      sync_status: SyncStatus;
-      sync_ttl: Timestamp;
-    },
-  ) {
+  constructor(post: PostType) {
     this.id = post.details.id;
     this.details = post.details;
     this.counts = post.counts;
@@ -65,33 +58,20 @@ export class Post implements NexusPost {
     }
   }
 
-  async delete(): Promise<void> {
-    try {
-      await db.transaction('rw', Post.table, async () => {
-        await Post.table.delete(this.details.id);
-      });
-
-      logger.debug('Deleted post from database:', { id: this.details.id });
-    } catch (error) {
-      logger.error('Failed to delete post:', error);
-      throw error;
-    }
-  }
-
-  async edit(updates: Partial<NexusPost>): Promise<void> {
+  async edit(updates: Partial<PostType>): Promise<void> {
     try {
       const now = Date.now();
 
-      // Update the instance properties
       if (updates.details) this.details = { ...this.details, ...updates.details };
       if (updates.counts) this.counts = { ...this.counts, ...updates.counts };
       if (updates.relationships) this.relationships = { ...this.relationships, ...updates.relationships };
       if (updates.tags) this.tags = updates.tags.map((tag) => new Tag(tag));
+      if (updates.bookmark) this.bookmark = updates.bookmark;
+      if (updates.indexed_at) this.indexed_at = updates.indexed_at;
 
       this.created_at = now;
       this.sync_ttl = now + SYNC_TTL;
 
-      // Save to database
       await this.save();
 
       logger.debug('Updated post:', { id: this.details.id, updates });
@@ -101,38 +81,14 @@ export class Post implements NexusPost {
     }
   }
 
-  // Static methods for database operations
-  static async findById(id: PostPK): Promise<Post | null> {
-    try {
-      const postData = await this.table.get(id);
-      if (!postData) return null;
-
-      return new Post(postData);
-    } catch (error) {
-      logger.error('Failed to find post:', error);
-      throw error;
-    }
-  }
-
-  static async findAll(): Promise<Post[]> {
-    try {
-      const postsData = await this.table.toArray();
-      return postsData.map((postData) => new Post(postData));
-    } catch (error) {
-      logger.error('Failed to find all posts:', error);
-      throw error;
-    }
-  }
-
-  static async create(post: NexusPost): Promise<Post> {
+  static async insert(post: NexusPost): Promise<Post> {
     try {
       const now = Date.now();
-
-      // Remove duplicate tags
       const uniqueTags = post.tags.filter((tag, index, self) => self.findIndex((t) => t.label === tag.label) === index);
 
       const newPost = new Post({
         ...post,
+        id: post.details.id,
         tags: uniqueTags,
         counts: {
           ...DEFAULT_POST_COUNTS,
@@ -150,6 +106,7 @@ export class Post implements NexusPost {
       });
 
       await newPost.save();
+      logger.debug('Created post:', { id: newPost.details.id });
       return newPost;
     } catch (error) {
       logger.error('Failed to create post:', error);
@@ -157,57 +114,140 @@ export class Post implements NexusPost {
     }
   }
 
-  // Post-specific methods
-  static async findReplies(postId: PostPK): Promise<Post[]> {
+  async delete(): Promise<void> {
     try {
-      const repliesData = await this.table.where('relationships.replied').equals(postId).toArray();
-      return repliesData.map((postData) => new Post(postData));
+      if (
+        this.relationships.mentioned.length > 0 ||
+        this.relationships.replied !== null ||
+        this.relationships.reposted !== null ||
+        this.tags.length > 0 ||
+        this.bookmark !== null
+      ) {
+        this.details.content = '[DELETED]';
+        await this.save();
+        logger.debug('Marked post as deleted:', { postPK: this.details.id });
+      } else {
+        await db.transaction('rw', Post.table, async () => {
+          await Post.table.delete(this.details.id);
+        });
+        logger.debug('Deleted post completely:', { postPK: this.details.id });
+      }
     } catch (error) {
-      logger.error('Failed to find post replies:', error);
+      logger.error('Failed to delete post:', error);
       throw error;
     }
   }
 
-  static async findReposts(postId: PostPK): Promise<Post[]> {
+  static async findById(id: PostPK): Promise<Post> {
     try {
-      const repostsData = await this.table
-        .where('details.kind')
-        .equals('repost')
-        .and((post) => post.relationships.reposted === postId)
-        .toArray();
-      return repostsData.map((postData) => new Post(postData));
+      const postData = await this.table.get(id);
+      if (!postData) throw new Error(`Post not found: ${id}`);
+
+      logger.debug('Found post:', { id });
+      return new Post(postData);
     } catch (error) {
-      logger.error('Failed to find post reposts:', error);
+      logger.error('Failed to find post:', error);
       throw error;
     }
   }
 
-  static async findByAuthor(authorId: UserPK): Promise<Post[]> {
+  static async find(postPKs: PostPK[]): Promise<Post[]> {
     try {
-      const postsData = await this.table.where('details.author').equals(authorId).toArray();
+      const postsData = await this.table.where('id').anyOf(postPKs).toArray();
+      logger.debug('Found posts:', postsData);
+      if (postsData.length !== postPKs.length)
+        throw new Error(`Failed to find all posts: ${postPKs.length - postsData.length} posts not found`);
+      logger.debug('Found posts:', postsData);
       return postsData.map((postData) => new Post(postData));
     } catch (error) {
-      logger.error('Failed to find posts by author:', error);
+      logger.error('Failed to find posts:', error);
       throw error;
     }
   }
 
-  // Instance methods for post operations
-  canUserEdit(userId: UserPK): boolean {
-    return this.details.author === userId;
+  static async bulkSave(posts: NexusPost[]): Promise<Post[]> {
+    try {
+      const now = Date.now();
+      const postsToSave: PostSchema[] = posts.map((post) => {
+        const uniqueTags = post.tags.filter(
+          (tag, index, self) => self.findIndex((t) => t.label === tag.label) === index,
+        );
+
+        return {
+          ...post,
+          id: post.details.id,
+          tags: uniqueTags,
+          counts: {
+            ...DEFAULT_POST_COUNTS,
+            tags: uniqueTags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+            unique_tags: uniqueTags.length,
+          },
+          relationships: post.relationships
+            ? { ...DEFAULT_POST_RELATIONSHIPS, ...post.relationships }
+            : { ...DEFAULT_POST_RELATIONSHIPS },
+          bookmark: post.bookmark || null,
+          indexed_at: null,
+          created_at: now,
+          sync_status: 'local' as const,
+          sync_ttl: now + SYNC_TTL,
+        };
+      });
+
+      await db.transaction('rw', this.table, async () => {
+        await this.table.bulkPut(postsToSave);
+      });
+
+      const results = postsToSave.map((postData) => new Post(postData));
+      logger.debug('Bulk saved posts:', { posts: posts.map((post) => post.details.id) });
+      return results;
+    } catch (error) {
+      logger.error('Failed to bulk save posts:', error);
+      throw error;
+    }
   }
 
-  hasRelationships(): boolean {
-    return (
-      this.relationships.mentioned.length > 0 ||
-      this.relationships.replied !== null ||
-      this.relationships.reposted !== null ||
-      this.tags.length > 0 ||
-      this.bookmark !== null
-    );
-  }
+  static async bulkDelete(postPKs: PostPK[]): Promise<void> {
+    try {
+      // For bulk delete, we need to check relationships first
+      const posts = await this.table.where('id').anyOf(postPKs).toArray();
+      const postsWithRelationships: PostPK[] = [];
+      const postsToDelete: PostPK[] = [];
 
-  markAsDeleted(): void {
-    this.details.content = '[DELETED]';
+      for (const postData of posts) {
+        const hasRelationships =
+          postData.relationships.mentioned.length > 0 ||
+          postData.relationships.replied !== null ||
+          postData.relationships.reposted !== null ||
+          postData.tags.length > 0 ||
+          postData.bookmark !== null;
+
+        if (hasRelationships) {
+          postsWithRelationships.push(postData.id);
+        } else {
+          postsToDelete.push(postData.id);
+        }
+      }
+
+      await db.transaction('rw', this.table, async () => {
+        // Mark posts with relationships as deleted
+        if (postsWithRelationships.length > 0) {
+          const updates = postsWithRelationships.map((id) => ({
+            key: id,
+            changes: { 'details.content': '[DELETED]' },
+          }));
+          await this.table.bulkUpdate(updates);
+        }
+
+        // Delete posts without relationships
+        if (postsToDelete.length > 0) {
+          await this.table.bulkDelete(postsToDelete);
+        }
+      });
+
+      logger.debug('Bulk deleted posts:', { postPKs });
+    } catch (error) {
+      logger.error('Failed to bulk delete posts:', error);
+      throw error;
+    }
   }
 }
