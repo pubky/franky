@@ -4,9 +4,11 @@ import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 import { db } from '@/database';
 
-// Mock environment variables
-process.env.NEXT_PUBLIC_VERSION_DB = '1';
+// Configure test environment variables before importing env validation
+process.env.NEXT_PUBLIC_DB_VERSION = '1';
 process.env.NEXT_PUBLIC_DEBUG_MODE = 'false';
+process.env.NEXT_PUBLIC_NEXUS_URL = 'https://nexus.staging.pubky.app/v0';
+process.env.NEXT_PUBLIC_SYNC_TTL = '300000';
 
 // Run cleanup after each test case
 afterEach(() => {

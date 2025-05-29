@@ -1,8 +1,9 @@
 import { type NexusBootstrapResponse } from './types';
 import { logger } from '@/lib/logger';
+import { env } from '@/lib/env';
 
 export class NexusService {
-  private static baseUrl = process.env.NEXT_PUBLIC_NEXUS_URL || 'https://nexus.staging.pubky.app/v0';
+  private static baseUrl = env.NEXT_PUBLIC_NEXUS_URL;
 
   static async bootstrap(userPK: string): Promise<NexusBootstrapResponse> {
     try {

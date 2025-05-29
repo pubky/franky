@@ -1,5 +1,7 @@
-const isDebug = process.env.NEXT_PUBLIC_DEBUG_MODE === 'true';
-const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST;
+import { env } from './env';
+
+const isDebug = env.NEXT_PUBLIC_DEBUG_MODE;
+const isTest = env.NODE_ENV === 'test' || Boolean(env.VITEST);
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
