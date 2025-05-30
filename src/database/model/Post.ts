@@ -5,8 +5,8 @@ import { Table } from 'dexie';
 import { db } from '@/database';
 import { SYNC_TTL } from '../config';
 import { type Post as PostSchema } from '../schemas/post';
-import { Tag } from './shared/Tag';
-import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS } from '../schemas/defaults/post';
+import { Tag } from './shared/tag';
+
 import { Post as PostType } from '@/database/schemas/post';
 
 export class Post implements NexusPost {
@@ -83,27 +83,7 @@ export class Post implements NexusPost {
 
   static async insert(post: NexusPost): Promise<Post> {
     try {
-      const now = Date.now();
-      const uniqueTags = post.tags.filter((tag, index, self) => self.findIndex((t) => t.label === tag.label) === index);
-
-      const newPost = new Post({
-        ...post,
-        id: post.details.id,
-        tags: uniqueTags,
-        counts: {
-          ...DEFAULT_POST_COUNTS,
-          tags: uniqueTags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-          unique_tags: uniqueTags.length,
-        },
-        relationships: post.relationships
-          ? { ...DEFAULT_POST_RELATIONSHIPS, ...post.relationships }
-          : { ...DEFAULT_POST_RELATIONSHIPS },
-        bookmark: post.bookmark || null,
-        indexed_at: null,
-        created_at: now,
-        sync_status: 'local',
-        sync_ttl: now + SYNC_TTL,
-      });
+      const newPost = new Post(this.toSchema(post));
 
       await newPost.save();
       logger.debug('Created post:', { id: newPost.details.id });
@@ -167,31 +147,7 @@ export class Post implements NexusPost {
 
   static async bulkSave(posts: NexusPost[]): Promise<Post[]> {
     try {
-      const now = Date.now();
-      const postsToSave: PostSchema[] = posts.map((post) => {
-        const uniqueTags = post.tags.filter(
-          (tag, index, self) => self.findIndex((t) => t.label === tag.label) === index,
-        );
-
-        return {
-          ...post,
-          id: post.details.id,
-          tags: uniqueTags,
-          counts: {
-            ...DEFAULT_POST_COUNTS,
-            tags: uniqueTags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-            unique_tags: uniqueTags.length,
-          },
-          relationships: post.relationships
-            ? { ...DEFAULT_POST_RELATIONSHIPS, ...post.relationships }
-            : { ...DEFAULT_POST_RELATIONSHIPS },
-          bookmark: post.bookmark || null,
-          indexed_at: null,
-          created_at: now,
-          sync_status: 'local' as const,
-          sync_ttl: now + SYNC_TTL,
-        };
-      });
+      const postsToSave: PostSchema[] = posts.map((post) => this.toSchema(post));
 
       await db.transaction('rw', this.table, async () => {
         await this.table.bulkPut(postsToSave);
@@ -249,5 +205,21 @@ export class Post implements NexusPost {
       logger.error('Failed to bulk delete posts:', error);
       throw error;
     }
+  }
+
+  private static toSchema(post: NexusPost, overrides: Partial<PostSchema> = {}): PostSchema {
+    const now = Date.now();
+    return {
+      id: post.details.id,
+      details: post.details,
+      counts: post.counts,
+      relationships: post.relationships,
+      tags: post.tags.map((tag) => new Tag(tag)),
+      bookmark: post.bookmark || null,
+      indexed_at: overrides.indexed_at ?? null,
+      created_at: overrides.created_at ?? now,
+      sync_status: overrides.sync_status ?? 'local',
+      sync_ttl: overrides.sync_ttl ?? now + SYNC_TTL,
+    };
   }
 }

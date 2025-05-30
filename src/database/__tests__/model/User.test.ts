@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { User } from '../../model/User';
-import { Tag } from '../../model/shared/Tag';
+import { User } from '../../model/user';
+import { Tag } from '../../model/shared/tag';
 import { type NexusUser } from '@/services/nexus/types';
 import { DEFAULT_USER_COUNTS, DEFAULT_USER_RELATIONSHIP } from '../../schemas/defaults/user';
 import { generateTestUserId, createTestUserDetails, resetDatabase } from '@/test/helpers';

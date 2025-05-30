@@ -1,5 +1,5 @@
 import { UserPK } from '../types';
-import { User } from '../model/User';
+import { User } from '../model/user';
 import { NexusUser } from '@/services/nexus/types';
 
 export class UserController {

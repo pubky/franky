@@ -10,7 +10,7 @@ import { Table } from 'dexie';
 import { db } from '@/database';
 import { SYNC_TTL } from '../config';
 import { type User as UserSchema } from '../schemas/user';
-import { Tag } from './shared/Tag';
+import { Tag } from './shared/tag';
 import { User as UserType } from '@/database/schemas/user';
 
 export class User implements NexusUser {
@@ -91,19 +91,7 @@ export class User implements NexusUser {
 
   static async insert(user: NexusUser): Promise<User> {
     try {
-      const now = Date.now();
-      const newUser = new User({
-        ...user,
-        id: user.details.id,
-        following: [],
-        followers: [],
-        muted: [],
-        indexed_at: null,
-        updated_at: now,
-        sync_status: 'local',
-        sync_ttl: now + SYNC_TTL,
-      });
-
+      const newUser = new User(this.toSchema(user));
       await newUser.save();
       logger.debug('Created user:', { id: newUser.details.id });
       return newUser;
@@ -155,18 +143,7 @@ export class User implements NexusUser {
 
   static async bulkSave(users: NexusUser[]): Promise<User[]> {
     try {
-      const now = Date.now();
-      const usersToSave: UserSchema[] = users.map((user) => ({
-        ...user,
-        id: user.details.id,
-        following: [],
-        followers: [],
-        muted: [],
-        indexed_at: null,
-        updated_at: now,
-        sync_status: 'local' as const,
-        sync_ttl: now + SYNC_TTL,
-      }));
+      const usersToSave: UserSchema[] = users.map((user) => this.toSchema(user));
 
       await db.transaction('rw', this.table, async () => {
         await this.table.bulkPut(usersToSave);
@@ -191,5 +168,23 @@ export class User implements NexusUser {
       logger.error('Failed to bulk delete users:', error);
       throw error;
     }
+  }
+
+  private static toSchema(user: NexusUser, overrides: Partial<UserSchema> = {}): UserSchema {
+    const now = Date.now();
+    return {
+      id: user.details.id,
+      details: user.details,
+      counts: user.counts,
+      tags: user.tags.map((tag) => new Tag(tag)),
+      relationship: user.relationship,
+      following: overrides.following ?? [],
+      followers: overrides.followers ?? [],
+      muted: overrides.muted ?? [],
+      indexed_at: overrides.indexed_at ?? null,
+      updated_at: overrides.updated_at ?? now,
+      sync_status: overrides.sync_status ?? 'local',
+      sync_ttl: overrides.sync_ttl ?? now + SYNC_TTL,
+    };
   }
 }
