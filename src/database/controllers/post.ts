@@ -1,6 +1,6 @@
 import { type PostPK } from '../types';
 import { type NexusPost } from '@/services/nexus/types';
-import { Post } from '../model/post';
+import { Post } from '../model/_post';
 
 export class PostController {
   private constructor() {} // Prevent instantiation

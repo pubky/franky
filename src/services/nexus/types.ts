@@ -1,5 +1,5 @@
 import { type UserPK, type PostPK, type Timestamp } from '@/database/types';
-import { Tag } from '@/database/model/shared/tag';
+import { Tag } from '@/database/model/shared/_tag';
 
 // Common types
 

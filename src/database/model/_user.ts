@@ -10,7 +10,7 @@ import { Table } from 'dexie';
 import { db } from '@/database';
 import { SYNC_TTL } from '../config';
 import { type User as UserSchema } from '../schemas/user';
-import { Tag } from './shared/tag';
+import { Tag } from './shared/_tag';
 import { User as UserType } from '@/database/schemas/user';
 
 export class User implements NexusUser {
