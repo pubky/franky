@@ -6,6 +6,7 @@ import { db } from '@/database';
 import { SYNC_TTL } from '../config';
 import { type Post as PostSchema } from '../schemas/post';
 import { Tag } from './shared/tag';
+import { createDatabaseError, DatabaseErrorType } from '@/lib/error';
 
 import { Post as PostType } from '@/database/schemas/post';
 
@@ -53,8 +54,10 @@ export class Post implements NexusPost {
 
       logger.debug('Saved post to database:', { id: this.details.id });
     } catch (error) {
-      logger.error('Failed to save post:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save post ${this.details.id}`, 500, {
+        error,
+        postId: this.details.id,
+      });
     }
   }
 
@@ -76,21 +79,25 @@ export class Post implements NexusPost {
 
       logger.debug('Updated post:', { id: this.details.id, updates });
     } catch (error) {
-      logger.error('Failed to update post:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.UPDATE_FAILED, `Failed to update post ${this.details.id}`, 500, {
+        error,
+        postId: this.details.id,
+        updates,
+      });
     }
   }
 
   static async insert(post: NexusPost): Promise<Post> {
     try {
       const newPost = new Post(this.toSchema(post));
-
       await newPost.save();
       logger.debug('Created post:', { id: newPost.details.id });
       return newPost;
     } catch (error) {
-      logger.error('Failed to create post:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to create post ${post.details.id}`, 500, {
+        error,
+        postId: post.details.id,
+      });
     }
   }
 
@@ -113,35 +120,53 @@ export class Post implements NexusPost {
         logger.debug('Deleted post completely:', { postPK: this.details.id });
       }
     } catch (error) {
-      logger.error('Failed to delete post:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, `Failed to delete post ${this.details.id}`, 500, {
+        error,
+        postId: this.details.id,
+      });
     }
   }
 
   static async findById(id: PostPK): Promise<Post> {
     try {
       const postData = await this.table.get(id);
-      if (!postData) throw new Error(`Post not found: ${id}`);
+      if (!postData) {
+        throw createDatabaseError(DatabaseErrorType.POST_NOT_FOUND, `Post not found: ${id}`, 404, { postId: id });
+      }
 
       logger.debug('Found post:', { id });
       return new Post(postData);
     } catch (error) {
-      logger.error('Failed to find post:', error);
-      throw error;
+      if (error instanceof Error && error.name === 'AppError') throw error;
+
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, `Failed to find post ${id}`, 500, {
+        error,
+        postId: id,
+      });
     }
   }
 
   static async find(postPKs: PostPK[]): Promise<Post[]> {
     try {
       const postsData = await this.table.where('id').anyOf(postPKs).toArray();
-      logger.debug('Found posts:', postsData);
-      if (postsData.length !== postPKs.length)
-        throw new Error(`Failed to find all posts: ${postPKs.length - postsData.length} posts not found`);
+      if (postsData.length !== postPKs.length) {
+        const missingPosts = postPKs.filter((id) => !postsData.find((post) => post.id === id));
+        throw createDatabaseError(
+          DatabaseErrorType.POST_NOT_FOUND,
+          `Failed to find all posts: ${postPKs.length - postsData.length} posts not found`,
+          404,
+          { missingPosts },
+        );
+      }
       logger.debug('Found posts:', postsData);
       return postsData.map((postData) => new Post(postData));
     } catch (error) {
-      logger.error('Failed to find posts:', error);
-      throw error;
+      if (error instanceof Error && error.name === 'AppError') throw error;
+
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to find posts', 500, {
+        error,
+        postIds: postPKs,
+      });
     }
   }
 
@@ -157,14 +182,15 @@ export class Post implements NexusPost {
       logger.debug('Bulk saved posts:', { posts: posts.map((post) => post.details.id) });
       return results;
     } catch (error) {
-      logger.error('Failed to bulk save posts:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk save posts', 500, {
+        error,
+        postIds: posts.map((p) => p.details.id),
+      });
     }
   }
 
   static async bulkDelete(postPKs: PostPK[]): Promise<void> {
     try {
-      // For bulk delete, we need to check relationships first
       const posts = await this.table.where('id').anyOf(postPKs).toArray();
       const postsWithRelationships: PostPK[] = [];
       const postsToDelete: PostPK[] = [];
@@ -185,7 +211,6 @@ export class Post implements NexusPost {
       }
 
       await db.transaction('rw', this.table, async () => {
-        // Mark posts with relationships as deleted
         if (postsWithRelationships.length > 0) {
           const updates = postsWithRelationships.map((id) => ({
             key: id,
@@ -194,7 +219,6 @@ export class Post implements NexusPost {
           await this.table.bulkUpdate(updates);
         }
 
-        // Delete posts without relationships
         if (postsToDelete.length > 0) {
           await this.table.bulkDelete(postsToDelete);
         }
@@ -202,24 +226,33 @@ export class Post implements NexusPost {
 
       logger.debug('Bulk deleted posts:', { postPKs });
     } catch (error) {
-      logger.error('Failed to bulk delete posts:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete posts', 500, {
+        error,
+        postIds: postPKs,
+      });
     }
   }
 
   private static toSchema(post: NexusPost, overrides: Partial<PostSchema> = {}): PostSchema {
-    const now = Date.now();
-    return {
-      id: post.details.id,
-      details: post.details,
-      counts: post.counts,
-      relationships: post.relationships,
-      tags: post.tags.map((tag) => new Tag(tag)),
-      bookmark: post.bookmark || null,
-      indexed_at: overrides.indexed_at ?? null,
-      created_at: overrides.created_at ?? now,
-      sync_status: overrides.sync_status ?? 'local',
-      sync_ttl: overrides.sync_ttl ?? now + SYNC_TTL,
-    };
+    try {
+      const now = Date.now();
+      return {
+        id: post.details.id,
+        details: post.details,
+        counts: post.counts,
+        relationships: post.relationships,
+        tags: post.tags.map((tag) => new Tag(tag)),
+        bookmark: post.bookmark || null,
+        indexed_at: overrides.indexed_at ?? null,
+        created_at: overrides.created_at ?? now,
+        sync_status: overrides.sync_status ?? 'local',
+        sync_ttl: overrides.sync_ttl ?? now + SYNC_TTL,
+      };
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.INVALID_DATA, 'Failed to convert post to schema', 500, {
+        error,
+        post,
+      });
+    }
   }
 }

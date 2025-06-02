@@ -12,6 +12,7 @@ import { SYNC_TTL } from '../config';
 import { type User as UserSchema } from '../schemas/user';
 import { Tag } from './shared/tag';
 import { User as UserType } from '@/database/schemas/user';
+import { createDatabaseError, DatabaseErrorType } from '@/lib/error';
 
 export class User implements NexusUser {
   private static table: Table<UserSchema> = db.table('users');
@@ -59,8 +60,10 @@ export class User implements NexusUser {
 
       logger.debug('Saved user to database:', { id: this.details.id });
     } catch (error) {
-      logger.error('Failed to save user:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save user ${this.details.id}`, 500, {
+        error,
+        userId: this.details.id,
+      });
     }
   }
 
@@ -84,8 +87,11 @@ export class User implements NexusUser {
 
       logger.debug('Updated user:', { id: this.details.id, updates });
     } catch (error) {
-      logger.error('Failed to edit user:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.UPDATE_FAILED, `Failed to update user ${this.details.id}`, 500, {
+        error,
+        userId: this.details.id,
+        updates,
+      });
     }
   }
 
@@ -96,8 +102,10 @@ export class User implements NexusUser {
       logger.debug('Created user:', { id: newUser.details.id });
       return newUser;
     } catch (error) {
-      logger.error('Failed to create user:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to create user ${user.details.id}`, 500, {
+        error,
+        userId: user.details.id,
+      });
     }
   }
 
@@ -109,35 +117,53 @@ export class User implements NexusUser {
 
       logger.debug('Deleted user from database:', { id: this.details.id });
     } catch (error) {
-      logger.error('Failed to delete user:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, `Failed to delete user ${this.details.id}`, 500, {
+        error,
+        userId: this.details.id,
+      });
     }
   }
 
   static async findById(id: UserPK): Promise<User> {
     try {
       const userData = await this.table.get(id);
-      if (!userData) throw new Error(`User not found: ${id}`);
+      if (!userData) {
+        throw createDatabaseError(DatabaseErrorType.POST_NOT_FOUND, `User not found: ${id}`, 404, { userId: id });
+      }
 
       logger.debug('Found user:', { id });
       return new User(userData);
     } catch (error) {
-      logger.error('Failed to find user:', error);
-      throw error;
+      if (error instanceof Error && error.name === 'AppError') throw error;
+
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, `Failed to find user ${id}`, 500, {
+        error,
+        userId: id,
+      });
     }
   }
 
   static async find(userPKs: UserPK[]): Promise<User[]> {
     try {
       const users = await this.table.where('id').anyOf(userPKs).toArray();
-      logger.debug('Found users:', users);
-      if (users.length !== userPKs.length)
-        throw new Error(`Failed to find all users: ${userPKs.length - users.length} users not found`);
+      if (users.length !== userPKs.length) {
+        const missingUsers = userPKs.filter((id) => !users.find((user) => user.id === id));
+        throw createDatabaseError(
+          DatabaseErrorType.POST_NOT_FOUND,
+          `Failed to find all users: ${userPKs.length - users.length} users not found`,
+          404,
+          { missingUsers },
+        );
+      }
       logger.debug('Found users:', users);
       return users.map((userData) => new User(userData));
     } catch (error) {
-      logger.error('Failed to find users:', error);
-      throw error;
+      if (error instanceof Error && error.name === 'AppError') throw error;
+
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to find users', 500, {
+        error,
+        userIds: userPKs,
+      });
     }
   }
 
@@ -153,8 +179,10 @@ export class User implements NexusUser {
       logger.debug('Bulk saved users:', { users: users.map((user) => user.details.id) });
       return results;
     } catch (error) {
-      logger.error('Failed to bulk save users:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk save users', 500, {
+        error,
+        userIds: users.map((u) => u.details.id),
+      });
     }
   }
 
@@ -165,26 +193,35 @@ export class User implements NexusUser {
       });
       logger.debug('Bulk deleted users:', { userPKs });
     } catch (error) {
-      logger.error('Failed to bulk delete users:', error);
-      throw error;
+      throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete users', 500, {
+        error,
+        userIds: userPKs,
+      });
     }
   }
 
   private static toSchema(user: NexusUser, overrides: Partial<UserSchema> = {}): UserSchema {
-    const now = Date.now();
-    return {
-      id: user.details.id,
-      details: user.details,
-      counts: user.counts,
-      tags: user.tags.map((tag) => new Tag(tag)),
-      relationship: user.relationship,
-      following: overrides.following ?? [],
-      followers: overrides.followers ?? [],
-      muted: overrides.muted ?? [],
-      indexed_at: overrides.indexed_at ?? null,
-      updated_at: overrides.updated_at ?? now,
-      sync_status: overrides.sync_status ?? 'local',
-      sync_ttl: overrides.sync_ttl ?? now + SYNC_TTL,
-    };
+    try {
+      const now = Date.now();
+      return {
+        id: user.details.id,
+        details: user.details,
+        counts: user.counts,
+        tags: user.tags.map((tag) => new Tag(tag)),
+        relationship: user.relationship,
+        following: overrides.following ?? [],
+        followers: overrides.followers ?? [],
+        muted: overrides.muted ?? [],
+        indexed_at: overrides.indexed_at ?? null,
+        updated_at: overrides.updated_at ?? now,
+        sync_status: overrides.sync_status ?? 'local',
+        sync_ttl: overrides.sync_ttl ?? now + SYNC_TTL,
+      };
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.INVALID_DATA, 'Failed to convert user to schema', 500, {
+        error,
+        user,
+      });
+    }
   }
 }

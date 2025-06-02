@@ -5,9 +5,9 @@ const isTest = env.NODE_ENV === 'test' || Boolean(env.VITEST);
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-class Logger {
+export class Logger {
   private shouldLog(level: LogLevel): boolean {
-    if (isTest) return false; // Suppress all logs during tests
+    if (isTest) return false; // Don't log during tests unless explicitly enabled
     if (level === 'error') return true; // Always log errors in non-test environments
     if (level === 'warn') return true; // Always log warnings in non-test environments
     return isDebug; // Only log debug and info in debug mode
@@ -38,4 +38,18 @@ class Logger {
   }
 }
 
-export const logger = new Logger();
+let loggerInstance: Logger | null = null;
+
+export function getLogger(): Logger {
+  if (!loggerInstance) {
+    loggerInstance = new Logger();
+  }
+  return loggerInstance;
+}
+
+// For testing purposes
+export function setLogger(logger: Logger): void {
+  loggerInstance = logger;
+}
+
+export const logger = getLogger();
