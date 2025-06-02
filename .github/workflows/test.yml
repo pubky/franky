@@ -1,6 +1,9 @@
 name: Tests
 
 on:
+  push:
+    branches:
+      - master
   pull_request:
     branches:
       - '**' # Run on PRs targeting any branch
