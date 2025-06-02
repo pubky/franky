@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PostController } from '../../controllers/post';
-import { Post } from '../../model/_post';
+import { Post } from '../../model/post';
 import { type NexusPost } from '@/services/nexus/types';
 import { DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS } from '../../schemas/defaults/post';
 import { generateTestUserId, generateTestPostId, createTestPostDetails, resetDatabase } from '@/test/helpers';

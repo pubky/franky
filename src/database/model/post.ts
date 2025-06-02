@@ -5,7 +5,7 @@ import { Table } from 'dexie';
 import { db } from '@/database';
 import { SYNC_TTL } from '../config';
 import { type Post as PostSchema } from '../schemas/post';
-import { Tag } from './shared/_tag';
+import { Tag } from './shared/tag';
 
 import { Post as PostType } from '@/database/schemas/post';
 
