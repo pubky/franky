@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { createCommonError, CommonErrorType } from './error';
-import { logger } from './logger';
 
 /**
  * Environment Variables Schema with Zod validation
@@ -90,23 +89,3 @@ function parseEnv(): Env {
  * Use this instead of process.env directly
  */
 export const env = parseEnv();
-
-/**
- * Development helper to log current environment
- */
-export function logEnvironment(): void {
-  if (env.NEXT_PUBLIC_DEBUG_MODE) {
-    logger.info('Environment Configuration:', {
-      NODE_ENV: env.NODE_ENV,
-      DB_VERSION: env.NEXT_PUBLIC_DB_VERSION,
-      DEBUG_MODE: env.NEXT_PUBLIC_DEBUG_MODE,
-      NEXUS_URL: env.NEXT_PUBLIC_NEXUS_URL,
-      SYNC_TTL: `${env.NEXT_PUBLIC_SYNC_TTL}ms (${env.NEXT_PUBLIC_SYNC_TTL / 1000}s)`,
-    });
-  }
-}
-
-// Log environment on import in development
-if (typeof window === 'undefined' && env.NODE_ENV === 'development') {
-  logEnvironment();
-}
