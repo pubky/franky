@@ -1,4 +1,4 @@
-import { getLogger } from './logger';
+import { Logger } from './logger';
 
 export enum NexusErrorType {
   INVALID_REQUEST = 'INVALID_REQUEST',
@@ -9,7 +9,6 @@ export enum NexusErrorType {
   BOOTSTRAP_FAILED = 'BOOTSTRAP_FAILED',
   NETWORK_ERROR = 'NETWORK_ERROR',
   INVALID_RESPONSE = 'INVALID_RESPONSE',
-  UNAUTHORIZED = 'UNAUTHORIZED',
 
   // TODO: Add more error types
 }
@@ -86,17 +85,15 @@ export class AppError extends Error {
       stack: this.stack,
     };
 
-    const logger = getLogger();
-
     switch (true) {
       case this.statusCode >= 500:
-        logger.error(`[${this.type}] ${this.message}`, errorContext);
+        Logger.error(`[${this.type}] ${this.message}`, errorContext);
         break;
       case this.statusCode >= 400:
-        logger.warn(`[${this.type}] ${this.message}`, errorContext);
+        Logger.warn(`[${this.type}] ${this.message}`, errorContext);
         break;
       default:
-        logger.info(`[${this.type}] ${this.message}`, errorContext);
+        Logger.info(`[${this.type}] ${this.message}`, errorContext);
     }
   }
 }
@@ -118,8 +115,6 @@ export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
   switch (status) {
     case 400:
       return NexusErrorType.INVALID_REQUEST;
-    case 401:
-      return NexusErrorType.UNAUTHORIZED;
     case 404:
       return NexusErrorType.RESOURCE_NOT_FOUND;
     case 429:

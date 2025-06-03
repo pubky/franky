@@ -1,5 +1,5 @@
 import { type UserPK, type Timestamp, type SyncStatus } from '@/database/types';
-import { logger } from '@/lib/logger';
+import { Logger } from '@/lib/logger';
 import {
   type NexusUser,
   type NexusUserDetails,
@@ -58,7 +58,7 @@ export class User implements NexusUser {
         });
       });
 
-      logger.debug('Saved user to database:', { id: this.details.id });
+      Logger.debug('Saved user to database:', { id: this.details.id });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save user ${this.details.id}`, 500, {
         error,
@@ -85,7 +85,7 @@ export class User implements NexusUser {
 
       await this.save();
 
-      logger.debug('Updated user:', { id: this.details.id, updates });
+      Logger.debug('Updated user:', { id: this.details.id, updates });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.UPDATE_FAILED, `Failed to update user ${this.details.id}`, 500, {
         error,
@@ -99,7 +99,7 @@ export class User implements NexusUser {
     try {
       const newUser = new User(this.toSchema(user));
       await newUser.save();
-      logger.debug('Created user:', { id: newUser.details.id });
+      Logger.debug('Created user:', { id: newUser.details.id });
       return newUser;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to create user ${user.details.id}`, 500, {
@@ -115,7 +115,7 @@ export class User implements NexusUser {
         await User.table.delete(this.details.id);
       });
 
-      logger.debug('Deleted user from database:', { id: this.details.id });
+      Logger.debug('Deleted user from database:', { id: this.details.id });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, `Failed to delete user ${this.details.id}`, 500, {
         error,
@@ -131,7 +131,7 @@ export class User implements NexusUser {
         throw createDatabaseError(DatabaseErrorType.POST_NOT_FOUND, `User not found: ${id}`, 404, { userId: id });
       }
 
-      logger.debug('Found user:', { id });
+      Logger.debug('Found user:', { id });
       return new User(userData);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
@@ -155,7 +155,7 @@ export class User implements NexusUser {
           { missingUsers },
         );
       }
-      logger.debug('Found users:', users);
+      Logger.debug('Found users:', users);
       return users.map((userData) => new User(userData));
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
@@ -176,7 +176,7 @@ export class User implements NexusUser {
       });
 
       const results = usersToSave.map((userData) => new User(userData));
-      logger.debug('Bulk saved users:', { users: users.map((user) => user.details.id) });
+      Logger.debug('Bulk saved users:', { users: users.map((user) => user.details.id) });
       return results;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk save users', 500, {
@@ -191,7 +191,7 @@ export class User implements NexusUser {
       await db.transaction('rw', this.table, async () => {
         await this.table.bulkDelete(userPKs);
       });
-      logger.debug('Bulk deleted users:', { userPKs });
+      Logger.debug('Bulk deleted users:', { userPKs });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete users', 500, {
         error,

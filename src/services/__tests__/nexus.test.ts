@@ -44,19 +44,6 @@ describe('NexusService', () => {
       });
     });
 
-    it('should throw UNAUTHORIZED error on 401', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-        statusText: 'Unauthorized',
-      });
-
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
-        type: NexusErrorType.UNAUTHORIZED,
-        statusCode: 401,
-      });
-    });
-
     it('should throw RESOURCE_NOT_FOUND error on 404', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,

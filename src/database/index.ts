@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import { logger } from '@/lib/logger';
+import { Logger } from '@/lib/logger';
 import { DB_VERSION, DB_NAME } from './config';
 import { userTableSchema } from './schemas/user';
 import { postTableSchema } from './schemas/post';
@@ -31,7 +31,7 @@ class AppDatabase extends Dexie {
       const db = await Dexie.exists(DB_NAME);
 
       if (!db) {
-        logger.info('Creating new database...');
+        Logger.info('Creating new database...');
         await this.open();
         return;
       }
@@ -39,7 +39,7 @@ class AppDatabase extends Dexie {
       const currentVersion = this.verno;
 
       if (currentVersion !== DB_VERSION) {
-        logger.info(`Database version mismatch. Current: ${currentVersion}, Expected: ${DB_VERSION}`);
+        Logger.info(`Database version mismatch. Current: ${currentVersion}, Expected: ${DB_VERSION}`);
         try {
           await this.delete();
         } catch (error) {
@@ -52,7 +52,7 @@ class AppDatabase extends Dexie {
 
         try {
           await this.open();
-          logger.info('Database recreated with new schema');
+          Logger.info('Database recreated with new schema');
         } catch (error) {
           throw createDatabaseError(DatabaseErrorType.DB_OPEN_FAILED, 'Failed to open database after recreation', 500, {
             error,
@@ -60,7 +60,7 @@ class AppDatabase extends Dexie {
           });
         }
       } else {
-        logger.debug('Database version is current');
+        Logger.debug('Database version is current');
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;

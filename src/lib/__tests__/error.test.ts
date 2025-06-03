@@ -9,7 +9,7 @@ import {
   createCommonError,
   mapHttpStatusToNexusErrorType,
 } from '../error';
-import { Logger, setLogger } from '../logger';
+import { Logger } from '@/lib/logger';
 
 // Create mock before imports using vi.hoisted
 const mockLogger = vi.hoisted(() => ({
@@ -31,9 +31,10 @@ vi.mock('@/lib/env', () => ({
 describe('Error Library', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    const logger = new Logger();
-    Object.assign(logger, mockLogger);
-    setLogger(logger);
+    Logger.error = mockLogger.error;
+    Logger.warn = mockLogger.warn;
+    Logger.info = mockLogger.info;
+    Logger.debug = mockLogger.debug;
   });
 
   describe('AppError', () => {
@@ -123,7 +124,6 @@ describe('Error Library', () => {
   describe('HTTP Status Mapping', () => {
     it('should map HTTP status codes to correct Nexus error types', () => {
       expect(mapHttpStatusToNexusErrorType(400)).toBe(NexusErrorType.INVALID_REQUEST);
-      expect(mapHttpStatusToNexusErrorType(401)).toBe(NexusErrorType.UNAUTHORIZED);
       expect(mapHttpStatusToNexusErrorType(404)).toBe(NexusErrorType.RESOURCE_NOT_FOUND);
       expect(mapHttpStatusToNexusErrorType(429)).toBe(NexusErrorType.RATE_LIMIT_EXCEEDED);
       expect(mapHttpStatusToNexusErrorType(503)).toBe(NexusErrorType.SERVICE_UNAVAILABLE);

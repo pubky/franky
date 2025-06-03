@@ -1,5 +1,5 @@
 import { type PostPK, type Timestamp, type SyncStatus } from '@/database/types';
-import { logger } from '@/lib/logger';
+import { Logger } from '@/lib/logger';
 import { type NexusPost } from '@/services/nexus/types';
 import { Table } from 'dexie';
 import { db } from '@/database';
@@ -52,7 +52,7 @@ export class Post implements NexusPost {
         });
       });
 
-      logger.debug('Saved post to database:', { id: this.details.id });
+      Logger.debug('Saved post to database:', { id: this.details.id });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save post ${this.details.id}`, 500, {
         error,
@@ -77,7 +77,7 @@ export class Post implements NexusPost {
 
       await this.save();
 
-      logger.debug('Updated post:', { id: this.details.id, updates });
+      Logger.debug('Updated post:', { id: this.details.id, updates });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.UPDATE_FAILED, `Failed to update post ${this.details.id}`, 500, {
         error,
@@ -91,7 +91,7 @@ export class Post implements NexusPost {
     try {
       const newPost = new Post(this.toSchema(post));
       await newPost.save();
-      logger.debug('Created post:', { id: newPost.details.id });
+      Logger.debug('Created post:', { id: newPost.details.id });
       return newPost;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to create post ${post.details.id}`, 500, {
@@ -112,12 +112,12 @@ export class Post implements NexusPost {
       ) {
         this.details.content = '[DELETED]';
         await this.save();
-        logger.debug('Marked post as deleted:', { postPK: this.details.id });
+        Logger.debug('Marked post as deleted:', { postPK: this.details.id });
       } else {
         await db.transaction('rw', Post.table, async () => {
           await Post.table.delete(this.details.id);
         });
-        logger.debug('Deleted post completely:', { postPK: this.details.id });
+        Logger.debug('Deleted post completely:', { postPK: this.details.id });
       }
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, `Failed to delete post ${this.details.id}`, 500, {
@@ -134,7 +134,7 @@ export class Post implements NexusPost {
         throw createDatabaseError(DatabaseErrorType.POST_NOT_FOUND, `Post not found: ${id}`, 404, { postId: id });
       }
 
-      logger.debug('Found post:', { id });
+      Logger.debug('Found post:', { id });
       return new Post(postData);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
@@ -158,7 +158,7 @@ export class Post implements NexusPost {
           { missingPosts },
         );
       }
-      logger.debug('Found posts:', postsData);
+      Logger.debug('Found posts:', postsData);
       return postsData.map((postData) => new Post(postData));
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
@@ -179,7 +179,7 @@ export class Post implements NexusPost {
       });
 
       const results = postsToSave.map((postData) => new Post(postData));
-      logger.debug('Bulk saved posts:', { posts: posts.map((post) => post.details.id) });
+      Logger.debug('Bulk saved posts:', { posts: posts.map((post) => post.details.id) });
       return results;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk save posts', 500, {
@@ -224,7 +224,7 @@ export class Post implements NexusPost {
         }
       });
 
-      logger.debug('Bulk deleted posts:', { postPKs });
+      Logger.debug('Bulk deleted posts:', { postPKs });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete posts', 500, {
         error,
