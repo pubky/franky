@@ -3,6 +3,8 @@ import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import 'fake-indexeddb/auto';
 import { db } from '@/database';
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Configure test environment variables before importing env validation
 process.env.NEXT_PUBLIC_DB_VERSION = '1';
@@ -13,6 +15,7 @@ process.env.NEXT_PUBLIC_SYNC_TTL = '300000';
 // Run cleanup after each test case
 afterEach(() => {
   cleanup();
+  vi.clearAllMocks();
 });
 
 // Global setup/teardown

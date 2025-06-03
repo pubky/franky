@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createCommonError, CommonErrorType } from './error';
 
 /**
  * Environment Variables Schema with Zod validation
@@ -60,13 +61,26 @@ function parseEnv(): Env {
 
     return parsed;
   } catch (error) {
-    console.error('❌ Environment validation failed:');
     if (error instanceof z.ZodError) {
-      error.errors.forEach((err) => {
-        console.error(`  - ${err.path.join('.')}: ${err.message}`);
-      });
+      const details = error.errors.reduce(
+        (acc, err) => {
+          acc[err.path.join('.')] = err.message;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+
+      throw createCommonError(
+        CommonErrorType.ENV_VALIDATION_ERROR,
+        'Environment configuration validation failed',
+        500,
+        { details },
+      );
     }
-    throw new Error('Invalid environment configuration');
+
+    throw createCommonError(CommonErrorType.ENV_TYPE_ERROR, 'Unexpected error during environment configuration', 500, {
+      error,
+    });
   }
 }
 
@@ -75,24 +89,3 @@ function parseEnv(): Env {
  * Use this instead of process.env directly
  */
 export const env = parseEnv();
-
-/**
- * Development helper to log current environment
- */
-export function logEnvironment(): void {
-  if (env.NEXT_PUBLIC_DEBUG_MODE) {
-    console.log('🔧 Environment Configuration:');
-    console.table({
-      NODE_ENV: env.NODE_ENV,
-      DB_VERSION: env.NEXT_PUBLIC_DB_VERSION,
-      DEBUG_MODE: env.NEXT_PUBLIC_DEBUG_MODE,
-      NEXUS_URL: env.NEXT_PUBLIC_NEXUS_URL,
-      SYNC_TTL: `${env.NEXT_PUBLIC_SYNC_TTL}ms (${env.NEXT_PUBLIC_SYNC_TTL / 1000}s)`,
-    });
-  }
-}
-
-// Log environment on import in development
-if (typeof window === 'undefined' && env.NODE_ENV === 'development') {
-  logEnvironment();
-}

@@ -4,12 +4,13 @@ import { useState, useCallback } from 'react';
 import { UserController } from '@/database/controllers/user';
 import { PostController } from '@/database/controllers/post';
 import { NexusService } from '@/services/nexus';
-import { logger } from '@/lib/logger';
+import { Logger } from '@/lib/logger';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/database';
 import { type User } from '@/database/schemas/user';
 import { type Post } from '@/database/schemas/post';
 import { type PostPK, type UserPK } from '@/database/types';
+import { AppError, CommonErrorType } from '@/lib/error';
 
 interface Stats {
   users: number;
@@ -68,14 +69,14 @@ export function UITestes() {
         posts: postsResult.length,
       });
 
-      logger.debug('Bootstrap data saved successfully', {
+      Logger.debug('Bootstrap data saved successfully', {
         users: usersResult.length,
         posts: postsResult.length,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bootstrap data';
       setError(message);
-      logger.error('Failed to bootstrap data:', error);
+      Logger.error('Failed to bootstrap data:', error);
     } finally {
       setIsLoading(false);
     }
@@ -96,11 +97,11 @@ export function UITestes() {
       setSelectAllUsers(false);
       setSelectAllPosts(false);
 
-      logger.debug('Database cleared successfully');
+      Logger.debug('Database cleared successfully');
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to clear database';
       setError(message);
-      logger.error('Failed to clear database:', error);
+      Logger.error('Failed to clear database:', error);
     } finally {
       setIsLoading(false);
     }
@@ -146,11 +147,11 @@ export function UITestes() {
       setSelectedUsers([]);
       setSelectAllUsers(false);
 
-      logger.debug('Bulk delete users completed:', selectedUsers.length);
+      Logger.debug('Bulk delete users completed:', selectedUsers.length);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bulk delete users';
       setError(message);
-      logger.error('Failed to bulk delete users:', error);
+      Logger.error('Failed to bulk delete users:', error);
     } finally {
       setIsLoading(false);
     }
@@ -175,7 +176,7 @@ export function UITestes() {
               await db.posts.delete(postId);
               result.success++;
             } catch (error) {
-              logger.warn(`Failed to force delete post ${postId}:`, error);
+              Logger.warn(`Failed to force delete post ${postId}:`, error);
               result.failed++;
             }
           }),
@@ -195,7 +196,7 @@ export function UITestes() {
         setError(`Successfully processed ${result.success} posts, failed: ${result.failed}`);
       }
 
-      logger.debug('Bulk delete posts completed:', {
+      Logger.debug('Bulk delete posts completed:', {
         total: selectedPosts.length,
         result,
         forceDelete,
@@ -203,7 +204,7 @@ export function UITestes() {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bulk delete posts';
       setError(message);
-      logger.error('Failed to bulk delete posts:', error);
+      Logger.error('Failed to bulk delete posts:', error);
     } finally {
       setIsLoading(false);
     }
@@ -463,7 +464,7 @@ export function UITestes() {
         <h2 className="text-3xl font-bold text-gray-900">Database Management</h2>
 
         {/* Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white border rounded-lg p-6 shadow-sm">
             <h3 className="font-semibold text-gray-900 mb-2">Load Bootstrap Data</h3>
             <p className="text-sm text-gray-600 mb-4">Load sample data from the Nexus service</p>
@@ -489,6 +490,19 @@ export function UITestes() {
               }`}
             >
               {isLoading ? 'Clearing...' : 'Clear Database'}
+            </button>
+          </div>
+
+          <div className="bg-white border rounded-lg p-6 shadow-sm">
+            <h3 className="font-semibold text-gray-900 mb-2">Test Error Page</h3>
+            <p className="text-sm text-gray-600 mb-4">Trigger an error to test the error handling</p>
+            <button
+              onClick={() => {
+                throw new AppError(CommonErrorType.UNEXPECTED_ERROR, 'This is a test error from UI', 500);
+              }}
+              className="w-full px-4 py-2 rounded-lg font-medium transition-colors bg-orange-500 hover:bg-orange-600 text-white"
+            >
+              Trigger Error
             </button>
           </div>
         </div>

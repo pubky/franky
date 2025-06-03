@@ -1,5 +1,5 @@
 import { type UserPK, type PaginationParams } from '@/database/types';
-import { logger } from '@/lib/logger';
+import { Logger } from '@/lib/logger';
 import { type NexusTag } from '@/services/nexus/types';
 import { DEFAULT_PAGINATION } from '@/database/schemas/defaults/common';
 
@@ -54,7 +54,7 @@ export class Tag implements NexusTag {
   getTaggers(pagination: PaginationParams = DEFAULT_PAGINATION): UserPK[] {
     try {
       const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
-      logger.debug('Getting taggers with pagination:', {
+      Logger.debug('Getting taggers with pagination:', {
         label: this.label,
         skip,
         limit,
@@ -62,7 +62,7 @@ export class Tag implements NexusTag {
       });
       return this.taggers.slice(skip, skip + limit);
     } catch (error) {
-      logger.error('Failed to get taggers:', error);
+      Logger.error('Failed to get taggers:', error);
       throw error;
     }
   }
