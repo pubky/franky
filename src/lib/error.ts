@@ -88,12 +88,15 @@ export class AppError extends Error {
 
     const logger = getLogger();
 
-    if (this.statusCode >= 500) {
-      logger.error(`[${this.type}] ${this.message}`, errorContext);
-    } else if (this.statusCode >= 400) {
-      logger.warn(`[${this.type}] ${this.message}`, errorContext);
-    } else {
-      logger.info(`[${this.type}] ${this.message}`, errorContext);
+    switch (true) {
+      case this.statusCode >= 500:
+        logger.error(`[${this.type}] ${this.message}`, errorContext);
+        break;
+      case this.statusCode >= 400:
+        logger.warn(`[${this.type}] ${this.message}`, errorContext);
+        break;
+      default:
+        logger.info(`[${this.type}] ${this.message}`, errorContext);
     }
   }
 }
