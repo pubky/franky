@@ -61,12 +61,6 @@ export enum CommonErrorType {
 
 export type AppErrorType = NexusErrorType | HomeserverErrorType | DatabaseErrorType | CommonErrorType;
 
-export interface ErrorDetails {
-  code: string;
-  message: string;
-  details?: Record<string, unknown>;
-}
-
 export class AppError extends Error {
   public readonly type: AppErrorType;
   public readonly details?: Record<string, unknown>;
