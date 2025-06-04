@@ -37,6 +37,15 @@ const envSchema = z.object({
     .default('300000') // 5 minutes in milliseconds
     .transform((val) => (typeof val === 'string' ? parseInt(val, 10) : val)),
 
+  NEXT_PUBLIC_TESTNET: z
+    .string()
+    .transform((val) => val === 'true')
+    .pipe(z.boolean())
+    .default('false'),
+
+  NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app'),
+
+  NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
   // Test environment variable (optional)
   VITEST: z.string().optional(),
 });
@@ -56,6 +65,9 @@ function parseEnv(): Env {
       NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
       NEXT_PUBLIC_SYNC_TTL: process.env.NEXT_PUBLIC_SYNC_TTL,
+      NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
+      NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
+      NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
       VITEST: process.env.VITEST,
     });
 

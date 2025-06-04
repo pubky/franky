@@ -14,13 +14,15 @@ export enum NexusErrorType {
 }
 
 export enum HomeserverErrorType {
-  CONNECTION_FAILED = 'CONNECTION_FAILED',
-  MESSAGE_SEND_FAILED = 'MESSAGE_SEND_FAILED',
-  USER_NOT_FOUND = 'USER_NOT_FOUND',
-  INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
-  SERVER_ERROR = 'SERVER_ERROR',
-
-  // TODO: Add more error types
+  SIGNUP_FAILED = 'SIGNUP_FAILED',
+  FETCH_FAILED = 'FETCH_FAILED',
+  LOGOUT_FAILED = 'LOGOUT_FAILED',
+  INVALID_HOMESERVER_KEY = 'INVALID_HOMESERVER_KEY',
+  INVALID_PUBLIC_KEY = 'INVALID_PUBLIC_KEY',
+  INVALID_SECRET_KEY = 'INVALID_SECRET_KEY',
+  NOT_AUTHENTICATED = 'NOT_AUTHENTICATED',
+  SESSION_EXPIRED = 'SESSION_EXPIRED',
+  NETWORK_ERROR = 'NETWORK_ERROR',
 }
 
 export enum DatabaseErrorType {
@@ -58,7 +60,7 @@ export enum CommonErrorType {
   ENV_TYPE_ERROR = 'ENV_TYPE_ERROR',
 }
 
-export type AppErrorType = NexusErrorType | HomeserverErrorType | DatabaseErrorType | CommonErrorType;
+export type AppErrorType = NexusErrorType | DatabaseErrorType | CommonErrorType | HomeserverErrorType;
 
 export class AppError extends Error {
   public readonly type: AppErrorType;
@@ -129,10 +131,10 @@ export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
 export function createHomeserverError(
   type: HomeserverErrorType,
   message: string,
-  statusCode?: number,
-  details?: Record<string, unknown>,
+  statusCode: number,
+  data?: Record<string, unknown>,
 ): AppError {
-  return new AppError(type, message, statusCode, details);
+  return new AppError(type, message, statusCode, data);
 }
 
 export function createCommonError(

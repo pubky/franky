@@ -22,7 +22,7 @@ interface BulkActionResult {
   failed: number;
 }
 
-export function UITestes() {
+export function BootstrapTest() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
