@@ -1,16 +1,9 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { UserController } from '@/database/controllers/user';
-import { PostController } from '@/database/controllers/post';
-import { NexusService } from '@/services/nexus';
-import { Logger } from '@/lib/logger';
+import { UserController, PostController, NexusService, db, UserSchema, PostSchema, UserPK, PostPK } from '@/core';
+import { Logger, AppError, CommonErrorType } from '@/libs';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '@/database';
-import { type User } from '@/database/schemas/user';
-import { type Post } from '@/database/schemas/post';
-import { type PostPK, type UserPK } from '@/database/types';
-import { AppError, CommonErrorType } from '@/lib/error';
 
 interface Stats {
   users: number;
@@ -263,7 +256,7 @@ export function BootstrapTest() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user: User) => (
+              {users.map((user: UserSchema) => (
                 <tr
                   key={user.details.id}
                   className={`hover:bg-gray-50 ${selectedUsers.includes(user.details.id) ? 'bg-blue-50' : ''}`}
@@ -376,7 +369,7 @@ export function BootstrapTest() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {posts.map((post: Post) => (
+              {posts.map((post: PostSchema) => (
                 <tr
                   key={post.details.id}
                   className={`hover:bg-gray-50 ${selectedPosts.includes(post.details.id) ? 'bg-blue-50' : ''}`}

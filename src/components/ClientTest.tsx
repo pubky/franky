@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { homeserverService } from '@/services/homeserver';
-import { Logger } from '@/lib/logger';
-import type { SignupResult } from '@/services/homeserver/types';
-import { AppError, createCommonError, CommonErrorType } from '@/lib/error';
+import { Logger, AppError, createCommonError, CommonErrorType } from '@/libs';
+import { HomeserverService, type SignupResult } from '@/core';
+import { env } from '@/libs/env/env';
 
-export default function ClientTest() {
+export function ClientTest() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [signupToken, setSignupToken] = useState<string | null>(null);
@@ -19,6 +18,8 @@ export default function ClientTest() {
     publicKey: null,
     session: null,
   });
+
+  const homeserverService = HomeserverService.getInstance();
 
   const clearError = () => {
     setError(null);
@@ -60,10 +61,23 @@ export default function ClientTest() {
       clearError();
 
       Logger.debug('Generating signup token...');
-      const response = await fetch('https://admin.homeserver.staging.pubky.app/generate_signup_token', {
+      // Staging
+      const endpoint = env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
+      const password = env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
+
+      if (!endpoint || !password) {
+        throw new Error(
+          'Missing required environment variables: NEXT_PUBLIC_HOMESERVER_ADMIN_URL or NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD',
+        );
+      }
+
+      // Testnet
+      // const endpoint = 'http://localhost:6288/generate_signup_token';
+      // const password = 'admin';
+      const response = await fetch(endpoint, {
         method: 'GET',
         headers: {
-          'X-Admin-Password': 'voyage tuition cabin arm stock guitar soon salute',
+          'X-Admin-Password': password,
         },
       });
 
@@ -208,7 +222,7 @@ export default function ClientTest() {
             </button>
             <button
               onClick={handleGenerateSignupToken}
-              disabled={isLoading || !!signupToken}
+              disabled={isLoading || homeserverStatus.isAuthenticated}
               className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 transition-colors"
             >
               Generate Signup Token
