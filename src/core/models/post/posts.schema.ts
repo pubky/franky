@@ -9,4 +9,4 @@ export interface PostSchema extends NexusPost {
 }
 
 // Schema for Dexie table
-export const postTableSchema = '&id, indexed_at, created_at, sync_status, sync_ttl, bookmarked';
+export const postTableSchema = '&id, indexed_at, created_at, sync_status, sync_ttl, bookmark';

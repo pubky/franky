@@ -41,14 +41,25 @@ export class Post implements NexusPost {
         await Post.table.put({
           ...this,
           id: this.details.id,
-          tags: this.tags.map((tag) => tag.toJSON()),
+          tags: this.tags.map((tag) => ({
+            label: tag.label,
+            taggers: tag.taggers,
+            taggers_count: tag.taggers_count,
+            relationship: tag.relationship,
+          })),
         });
       });
 
       Logger.debug('Saved post to database:', { id: this.details.id });
     } catch (error) {
+      Logger.error('Error saving post:', error);
+      Logger.error('Post data:', {
+        id: this.details.id,
+        details: this.details,
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save post ${this.details.id}`, 500, {
-        error,
+        error: error instanceof Error ? error.message : String(error),
         postId: this.details.id,
       });
     }
