@@ -17,57 +17,6 @@ describe('AuthController', () => {
     vi.restoreAllMocks();
   });
 
-  describe('generateSignupToken', () => {
-    it('should generate a signup token', async () => {
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('test-token'),
-      });
-
-      const token = await AuthController.generateSignupToken();
-
-      expect(token).toBe('test-token');
-      expect(fetchMock).toHaveBeenCalledWith(
-        'http://localhost:6288/generate_signup_token',
-        expect.objectContaining({
-          method: 'GET',
-          headers: {
-            'X-Admin-Password': 'admin',
-          },
-        }),
-      );
-    });
-
-    it('should throw error if token generation fails', async () => {
-      fetchMock.mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-        text: vi.fn().mockResolvedValue('Unauthorized'),
-      });
-
-      await expect(AuthController.generateSignupToken()).rejects.toThrow('Failed to generate signup token');
-      expect(fetchMock).toHaveBeenCalled();
-    });
-  });
-
-  describe('generateKeypair', () => {
-    it('should generate a new keypair', async () => {
-      const homeserverService = HomeserverService.getInstance();
-
-      // Spy on the method
-      const spy = vi.spyOn(homeserverService, 'generateRandomKeypair');
-
-      const result = await AuthController.generateKeypair();
-
-      expect(spy).toHaveBeenCalled();
-      expect(result).toBeDefined();
-      expect(result.publicKey).toBeDefined();
-      expect(result.secretKey).toBeDefined();
-
-      spy.mockRestore();
-    });
-  });
-
   describe('getKeypair', () => {
     it('should return current keypair if exists', async () => {
       const homeserverService = HomeserverService.getInstance();
@@ -178,6 +127,50 @@ describe('AuthController', () => {
       expect(generateKeypairSpy).toHaveBeenCalled();
 
       generateKeypairSpy.mockRestore();
+    });
+
+    it('should throw error if token generation fails', async () => {
+      const mockUserDetails: NexusUserDetails = {
+        name: 'Test User',
+        bio: 'Test Bio',
+        id: 'test-id',
+        links: null,
+        status: null,
+        image: null,
+        indexed_at: Date.now(),
+      };
+
+      fetchMock.mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        text: vi.fn().mockResolvedValue('Unauthorized'),
+      });
+
+      await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to generate signup token');
+      expect(fetchMock).toHaveBeenCalled();
+    });
+
+    it('should throw error if user save fails', async () => {
+      const mockUserDetails: NexusUserDetails = {
+        name: 'Test User',
+        bio: 'Test Bio',
+        id: 'test-id',
+        links: null,
+        status: null,
+        image: null,
+        indexed_at: Date.now(),
+      };
+
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        text: vi.fn().mockResolvedValue('mock-token'),
+      });
+
+      const insertSpy = vi.spyOn(User, 'insert').mockRejectedValueOnce(new Error('Database error'));
+
+      await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to save user to database');
+
+      insertSpy.mockRestore();
     });
   });
 

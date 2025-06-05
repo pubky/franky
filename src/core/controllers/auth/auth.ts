@@ -41,7 +41,7 @@ export class AuthController {
     try {
       await User.insert(userData);
     } catch {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to save user to database', 400);
     }
 
     try {
@@ -49,13 +49,8 @@ export class AuthController {
       const result = await homeserverService.signup(keypair, signupToken);
       return result;
     } catch {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to complete signup process', 400);
     }
-  }
-
-  static async generateKeypair(): Promise<Keypair> {
-    const homeserverService = HomeserverService.getInstance();
-    return homeserverService.generateRandomKeypair();
   }
 
   static async getKeypair(): Promise<Keypair | null> {
@@ -72,8 +67,8 @@ export class AuthController {
     return homeserverService.logout(keypair.publicKey().z32());
   }
 
-  // TODO: remove this once we have a proper signup token endpoint
-  static async generateSignupToken(): Promise<string> {
+  // Private method used internally by signUp
+  private static async generateSignupToken(): Promise<string> {
     const endpoint = env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
     const password = env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 

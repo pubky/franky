@@ -1,20 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { Logger, AppError, createCommonError, CommonErrorType } from '@/libs';
-import { SignupResult, UserDetails, AuthController } from '@/core';
+import { Logger, AppError } from '@/libs';
+import { SignupResult, UserDetails, AuthController, User } from '@/core';
 import { faker } from '@faker-js/faker';
 
 export function ClientTest() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [signupToken, setSignupToken] = useState<string | null>(null);
-  const [homeserverStatus, setHomeserverStatus] = useState<{
+  const [authStatus, setAuthStatus] = useState<{
     isAuthenticated: boolean;
+    user: UserDetails | null;
     publicKey: string | null;
     session: SignupResult['session'] | null;
   }>({
     isAuthenticated: false,
+    user: null,
     publicKey: null,
     session: null,
   });
@@ -23,70 +24,10 @@ export function ClientTest() {
     setError(null);
   };
 
-  const handleGenerateKeypair = async () => {
-    try {
-      setIsLoading(true);
-      clearError();
-
-      const keypair = await AuthController.generateKeypair();
-      if (!keypair) {
-        throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
-      }
-      const publicKey = keypair.publicKey().z32();
-      const secretKey = keypair.secretKey().toString();
-
-      setHomeserverStatus((prev) => ({
-        ...prev,
-        publicKey,
-      }));
-
-      Logger.debug('Generated new keypair:', { publicKey, secretKey });
-    } catch (error) {
-      let message = 'Failed to generate keypair';
-      if (error instanceof AppError) {
-        message = error.message;
-      }
-      setError(message);
-      Logger.error('Failed to generate keypair:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGenerateSignupToken = async () => {
-    try {
-      setIsLoading(true);
-      clearError();
-
-      Logger.debug('Generating signup token...');
-      const token = await AuthController.generateSignupToken();
-      setSignupToken(token);
-      Logger.debug('Generated signup token:', token);
-    } catch (error) {
-      let message = 'Failed to generate signup token';
-      if (error instanceof AppError) {
-        message = error.message;
-      }
-      setError(message);
-      Logger.error('Failed to generate signup token:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleSignup = async () => {
     try {
       setIsLoading(true);
       clearError();
-
-      const keypair = await AuthController.getKeypair();
-      if (!keypair) {
-        throw createCommonError(CommonErrorType.INVALID_INPUT, 'No keypair available. Generate one first.', 400);
-      }
-
-      if (!signupToken) {
-        throw createCommonError(CommonErrorType.INVALID_INPUT, 'No signup token available. Generate one first.', 400);
-      }
 
       // Generate fake user details using Faker
       const fakeUser: UserDetails = {
@@ -109,11 +50,31 @@ export function ClientTest() {
       };
 
       const result = await AuthController.signUp(fakeUser);
-      setHomeserverStatus((prev) => ({
-        ...prev,
-        isAuthenticated: true,
-        session: result.session,
-      }));
+
+      // Get the keypair to get the public key
+      const keypair = await AuthController.getKeypair();
+      const publicKey = keypair?.publicKey().z32() || null;
+
+      // Get the saved user from database
+      if (publicKey) {
+        try {
+          const savedUser = await User.findById(publicKey);
+          setAuthStatus({
+            isAuthenticated: true,
+            user: savedUser.details,
+            publicKey,
+            session: result.session,
+          });
+        } catch {
+          // If user not found in DB, use the fake user data with the public key
+          setAuthStatus({
+            isAuthenticated: true,
+            user: { ...fakeUser, id: publicKey },
+            publicKey,
+            session: result.session,
+          });
+        }
+      }
 
       Logger.debug('Signup successful:', result);
     } catch (error) {
@@ -134,12 +95,12 @@ export function ClientTest() {
       clearError();
 
       await AuthController.logout();
-      setHomeserverStatus({
+      setAuthStatus({
         isAuthenticated: false,
+        user: null,
         publicKey: null,
         session: null,
       });
-      setSignupToken(null);
 
       Logger.debug('Logout successful');
     } catch (error) {
@@ -159,31 +120,62 @@ export function ClientTest() {
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Homeserver</h2>
       <div className="bg-white border rounded-lg p-4 sm:p-6 shadow-sm">
         <div className="space-y-4">
-          {/* Status Display */}
+          {/* User Profile and Status Display */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
+            <div className="space-y-4">
+              {/* Authentication Status */}
+              <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500">Status:</span>
                 <span
-                  className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    homeserverStatus.isAuthenticated ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    authStatus.isAuthenticated ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                   }`}
                 >
-                  {homeserverStatus.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
+                  {authStatus.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
                 </span>
               </div>
-              {homeserverStatus.publicKey && (
-                <div>
-                  <span className="text-sm text-gray-500">Public Key:</span>
-                  <span className="ml-2 text-sm font-mono text-gray-900 text-wrap break-all">
-                    {homeserverStatus.publicKey}
-                  </span>
-                </div>
-              )}
-              {signupToken && (
-                <div>
-                  <span className="text-sm text-gray-500">Signup Token:</span>
-                  <span className="ml-2 text-sm font-mono text-gray-900 text-wrap break-all">{signupToken}</span>
+
+              {/* User Profile when authenticated */}
+              {authStatus.isAuthenticated && authStatus.user && (
+                <div className="pt-4 border-t border-gray-200 space-y-3">
+                  <div>
+                    <span className="text-sm text-gray-500">Name:</span>
+                    <p className="text-base font-medium text-gray-900">{authStatus.user.name}</p>
+                  </div>
+
+                  {authStatus.user.bio && (
+                    <div>
+                      <span className="text-sm text-gray-500">Bio:</span>
+                      <p className="text-sm text-gray-700">{authStatus.user.bio}</p>
+                    </div>
+                  )}
+
+                  <div>
+                    <span className="text-sm text-gray-500">Public Key:</span>
+                    <p className="text-sm font-mono text-gray-900 break-all bg-gray-100 p-2 rounded mt-1">
+                      {authStatus.publicKey}
+                    </p>
+                  </div>
+
+                  {authStatus.user.links && authStatus.user.links.length > 0 && (
+                    <div>
+                      <span className="text-sm text-gray-500">Links:</span>
+                      <ul className="mt-1 space-y-1">
+                        {authStatus.user.links.map((link, index) => (
+                          <li key={index} className="text-sm">
+                            <a
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              {link.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -191,34 +183,23 @@ export function ClientTest() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={handleGenerateKeypair}
-              disabled={isLoading || homeserverStatus.isAuthenticated}
-              className="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
-            >
-              Generate Keypair
-            </button>
-            <button
-              onClick={handleGenerateSignupToken}
-              disabled={isLoading || homeserverStatus.isAuthenticated}
-              className="w-full sm:w-auto px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 transition-colors"
-            >
-              Generate Signup Token
-            </button>
-            <button
-              onClick={handleSignup}
-              disabled={isLoading || !homeserverStatus.publicKey || !signupToken || homeserverStatus.isAuthenticated}
-              className="w-full sm:w-auto px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-400 transition-colors"
-            >
-              Signup
-            </button>
-            <button
-              onClick={handleLogout}
-              disabled={isLoading || !homeserverStatus.isAuthenticated}
-              className="w-full sm:w-auto px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 transition-colors"
-            >
-              Logout
-            </button>
+            {!authStatus.isAuthenticated ? (
+              <button
+                onClick={handleSignup}
+                disabled={isLoading}
+                className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 disabled:bg-gray-400 transition-colors"
+              >
+                {isLoading ? 'Signing up...' : 'Sign Up with Random User'}
+              </button>
+            ) : (
+              <button
+                onClick={handleLogout}
+                disabled={isLoading}
+                className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 transition-colors"
+              >
+                {isLoading ? 'Logging out...' : 'Logout'}
+              </button>
+            )}
           </div>
 
           {/* Error Display */}

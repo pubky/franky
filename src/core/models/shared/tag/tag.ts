@@ -64,13 +64,4 @@ export class Tag implements NexusTag {
       throw error;
     }
   }
-
-  toJSON(): NexusTag {
-    return {
-      label: this.label,
-      taggers: this.taggers,
-      taggers_count: this.taggers_count,
-      relationship: this.relationship,
-    };
-  }
 }
