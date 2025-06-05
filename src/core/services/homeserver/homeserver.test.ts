@@ -20,8 +20,9 @@ vi.doMock('@synonymdev/pubky', () => {
     z32: vi.fn(() => 'test-public-key-z32'),
   });
 
-  const MockClient = vi.fn().mockImplementation(createMockClient) as any;
-  MockClient.testnet = vi.fn(createMockClient);
+  const MockClient = vi.fn().mockImplementation(createMockClient) as unknown as typeof Client;
+  // @ts-expect-error - Mocking the testnet method
+  MockClient.testnet = vi.fn(createMockClient) as unknown as typeof Client;
 
   return {
     Client: MockClient,
@@ -41,6 +42,7 @@ let Keypair: typeof import('@synonymdev/pubky').Keypair;
 let PublicKey: typeof import('@synonymdev/pubky').PublicKey;
 import { HomeserverErrorType } from '@/libs';
 import { User } from '@/core';
+import { Client } from '@synonymdev/pubky';
 
 // Define types for mock functions
 type MockClient = {
@@ -102,7 +104,7 @@ describe('HomeserverService', () => {
       sync_status: 'local',
       sync_ttl: Date.now() + 300000,
       save: vi.fn().mockResolvedValue(undefined),
-    } as any;
+    } as unknown as User;
   });
 
   afterEach(() => {
