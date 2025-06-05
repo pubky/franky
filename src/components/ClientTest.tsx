@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Logger, AppError, createCommonError, CommonErrorType } from '@/libs';
-import { HomeserverService, type SignupResult } from '@/core';
-import { env } from '@/libs/env/env';
+import { SignupResult, UserDetails, AuthController } from '@/core';
+import { faker } from '@faker-js/faker';
 
 export function ClientTest() {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,8 +19,6 @@ export function ClientTest() {
     session: null,
   });
 
-  const homeserverService = HomeserverService.getInstance();
-
   const clearError = () => {
     setError(null);
   };
@@ -30,7 +28,7 @@ export function ClientTest() {
       setIsLoading(true);
       clearError();
 
-      const keypair = homeserverService.generateRandomKeypair();
+      const keypair = await AuthController.generateKeypair();
       if (!keypair) {
         throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
       }
@@ -61,42 +59,7 @@ export function ClientTest() {
       clearError();
 
       Logger.debug('Generating signup token...');
-      // Staging
-      const endpoint = env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
-      const password = env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
-
-      if (!endpoint || !password) {
-        throw new Error(
-          'Missing required environment variables: NEXT_PUBLIC_HOMESERVER_ADMIN_URL or NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD',
-        );
-      }
-
-      // Testnet
-      // const endpoint = 'http://localhost:6288/generate_signup_token';
-      // const password = 'admin';
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'X-Admin-Password': password,
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        Logger.error('Failed to generate signup token:', { status: response.status, error: errorText });
-        throw createCommonError(
-          CommonErrorType.NETWORK_ERROR,
-          `Failed to generate signup token: ${response.status} ${errorText}`,
-          response.status,
-        );
-      }
-
-      const token = (await response.text()).trim();
-      if (!token) {
-        Logger.error('No token in response');
-        throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
-      }
-
+      const token = await AuthController.generateSignupToken();
       setSignupToken(token);
       Logger.debug('Generated signup token:', token);
     } catch (error) {
@@ -116,7 +79,7 @@ export function ClientTest() {
       setIsLoading(true);
       clearError();
 
-      const keypair = homeserverService.getCurrentKeypair();
+      const keypair = await AuthController.getKeypair();
       if (!keypair) {
         throw createCommonError(CommonErrorType.INVALID_INPUT, 'No keypair available. Generate one first.', 400);
       }
@@ -125,7 +88,27 @@ export function ClientTest() {
         throw createCommonError(CommonErrorType.INVALID_INPUT, 'No signup token available. Generate one first.', 400);
       }
 
-      const result = await homeserverService.signup(keypair, signupToken);
+      // Generate fake user details using Faker
+      const fakeUser: UserDetails = {
+        name: faker.person.fullName(),
+        bio: faker.person.bio(),
+        image: null,
+        links: [
+          {
+            title: faker.company.name(),
+            url: faker.internet.url(),
+          },
+          {
+            title: faker.company.catchPhrase(),
+            url: faker.internet.url(),
+          },
+        ],
+        status: null,
+        id: '',
+        indexed_at: 0,
+      };
+
+      const result = await AuthController.signUp(fakeUser);
       setHomeserverStatus((prev) => ({
         ...prev,
         isAuthenticated: true,
@@ -150,12 +133,7 @@ export function ClientTest() {
       setIsLoading(true);
       clearError();
 
-      const publicKey = homeserverService.getCurrentPublicKey();
-      if (!publicKey) {
-        throw createCommonError(CommonErrorType.INVALID_INPUT, 'No active session to logout', 400);
-      }
-
-      await homeserverService.logout(publicKey);
+      await AuthController.logout();
       setHomeserverStatus({
         isAuthenticated: false,
         publicKey: null,
