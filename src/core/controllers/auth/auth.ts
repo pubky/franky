@@ -38,12 +38,19 @@ export class AuthController {
       ...DEFAULT_NEW_USER,
     };
 
-    await User.insert(userData);
+    try {
+      await User.insert(userData);
+    } catch {
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
+    }
 
-    // Sign up
-    const result = await homeserverService.signup(keypair, signupToken);
-
-    return result;
+    try {
+      // Sign up
+      const result = await homeserverService.signup(keypair, signupToken);
+      return result;
+    } catch {
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
+    }
   }
 
   static async generateKeypair(): Promise<Keypair> {

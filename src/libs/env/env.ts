@@ -62,12 +62,6 @@ export type Env = z.infer<typeof envSchema>;
  * Throws an error if validation fails
  */
 function parseEnv(): Env {
-  console.log('All process.env:', {
-    NEXT_PUBLIC_HOMESERVER_ADMIN_URL: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL,
-    NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
-    NODE_ENV: process.env.NODE_ENV,
-  });
-
   try {
     const parsed = envSchema.parse({
       NODE_ENV: process.env.NODE_ENV,
