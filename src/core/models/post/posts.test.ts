@@ -1,6 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Post, NexusPost, DEFAULT_POST_COUNTS, DEFAULT_POST_RELATIONSHIPS, Tag, PostSchema } from '@/core';
-import { resetDatabase, generateTestUserId, generateTestPostId, createTestPostDetails } from '@/test';
+import {
+  Post,
+  NexusPost,
+  DEFAULT_POST_COUNTS,
+  DEFAULT_POST_RELATIONSHIPS,
+  Tag,
+  resetDatabase,
+  PostSchema,
+  generateTestPostId,
+  createTestPostDetails,
+  generateTestUserId,
+} from '@/core';
 
 describe('Post Model', () => {
   beforeEach(async () => {

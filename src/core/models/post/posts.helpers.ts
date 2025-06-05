@@ -5,8 +5,8 @@ import {
   PostPK,
   DEFAULT_POST_COUNTS,
   DEFAULT_POST_RELATIONSHIPS,
+  generateTestUserId,
 } from '@/core';
-import { generateTestUserId } from '@/test';
 import { SYNC_TTL } from '@/config';
 
 export function generateTestPostId(userId: string, index: number): PostPK {

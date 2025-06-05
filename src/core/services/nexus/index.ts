@@ -1,2 +1,2 @@
-export * from './nexus';
 export * from './nexus.types';
+export * from './bootstrap';

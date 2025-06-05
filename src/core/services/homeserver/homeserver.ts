@@ -1,6 +1,14 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
 import { FetchOptions, SignupResult, KeyPair } from '@/core';
-import { AppError, createCommonError, CommonErrorType, HomeserverErrorType, createHomeserverError, env } from '@/libs';
+import {
+  AppError,
+  createCommonError,
+  CommonErrorType,
+  HomeserverErrorType,
+  createHomeserverError,
+  env,
+  Logger,
+} from '@/libs';
 
 export class HomeserverService {
   private static instance: HomeserverService;
@@ -32,6 +40,7 @@ export class HomeserverService {
       const session = await this.client.signup(keypair, this.homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
       this.currentSession = session;
+      Logger.debug('Signup result:', { session });
       return { session };
     } catch (error) {
       if (error instanceof AppError) {
@@ -71,6 +80,8 @@ export class HomeserverService {
         );
       }
 
+      Logger.debug('Fetching data from homeserver:', { url, options });
+
       return await this.client.fetch(url, options);
     } catch (error) {
       if (error instanceof AppError) {
@@ -107,6 +118,7 @@ export class HomeserverService {
 
       this.currentKeypair = null;
       this.currentSession = null;
+      Logger.debug('Logged out from homeserver');
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
@@ -134,6 +146,7 @@ export class HomeserverService {
     try {
       const keypair = Keypair.random();
       this.currentKeypair = keypair;
+      Logger.debug('Generated random keypair:', { keypair });
       return keypair;
     } catch (error) {
       throw createCommonError(CommonErrorType.NETWORK_ERROR, 'Failed to generate random keypair', 500, { error });
@@ -143,6 +156,7 @@ export class HomeserverService {
   generateRandomKeys(): KeyPair {
     try {
       const keypair = this.generateRandomKeypair();
+      Logger.debug('Generated random keys:', { keypair });
       return {
         publicKey: keypair.publicKey().z32(),
         secretKey: keypair.secretKey().toString(),
@@ -162,6 +176,7 @@ export class HomeserverService {
       }
       const keypair = Keypair.fromSecretKey(secretKey);
       this.currentKeypair = keypair;
+      Logger.debug('Keypair from secret key:', { keypair });
       return keypair;
     } catch (error) {
       throw createHomeserverError(HomeserverErrorType.INVALID_SECRET_KEY, 'Invalid secret key format', 400, { error });
@@ -169,22 +184,27 @@ export class HomeserverService {
   }
 
   getClient(): Client {
+    Logger.debug('Getting client:', { client: this.client });
     return this.client;
   }
 
   getCurrentKeypair(): Keypair | null {
+    Logger.debug('Getting current keypair:', { keypair: this.currentKeypair });
     return this.currentKeypair;
   }
 
   getCurrentSession(): SignupResult['session'] | null {
+    Logger.debug('Getting current session:', { session: this.currentSession });
     return this.currentSession;
   }
 
   isAuthenticated(): boolean {
+    Logger.debug('Checking if authenticated:', { authenticated: this.currentSession !== null });
     return this.currentSession !== null;
   }
 
   getCurrentPublicKey(): string | null {
+    Logger.debug('Getting current public key:', { publicKey: this.currentKeypair?.publicKey().z32() });
     return this.currentKeypair?.publicKey().z32() ?? null;
   }
 }

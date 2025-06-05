@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { UserController, PostController, NexusService, db, UserSchema, PostSchema, UserPK, PostPK } from '@/core';
+import { UserController, PostController, BootstrapService, db, UserSchema, PostSchema, UserPK, PostPK } from '@/core';
 import { Logger, AppError, CommonErrorType } from '@/libs';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -45,7 +45,7 @@ export function BootstrapTest() {
       setStats(null);
 
       // Fetch data from bootstrap endpoint
-      const bootstrapData = await NexusService.bootstrap('7oognktdczbpf17qt94u7537n5i6xcacks9twtf39mxsm5o53ogo');
+      const bootstrapData = await BootstrapService.get('7oognktdczbpf17qt94u7537n5i6xcacks9twtf39mxsm5o53ogo');
 
       // Use optimized bulk operations
       const [savedUsers, savedPosts] = await Promise.allSettled([

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
-import { HomeserverService, User } from '@/core';
-import type { NexusUserDetails } from '../../services/nexus/nexus.types';
+import { HomeserverService, User, NexusUserDetails } from '@/core';
 
 // Mock fetch globalmente
 const fetchMock = vi.fn();
@@ -107,28 +106,6 @@ describe('AuthController', () => {
       insertSpy.mockRestore();
     });
 
-    it('should throw error if keypair generation fails', async () => {
-      const mockUserDetails: NexusUserDetails = {
-        name: 'Test User',
-        bio: 'Test Bio',
-        id: 'test-id',
-        links: null,
-        status: null,
-        image: null,
-        indexed_at: Date.now(),
-      };
-
-      const homeserverService = HomeserverService.getInstance();
-      const generateKeypairSpy = vi
-        .spyOn(homeserverService, 'generateRandomKeypair')
-        .mockReturnValue(null as unknown as import('@synonymdev/pubky').Keypair);
-
-      await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to generate keypair');
-      expect(generateKeypairSpy).toHaveBeenCalled();
-
-      generateKeypairSpy.mockRestore();
-    });
-
     it('should throw error if token generation fails', async () => {
       const mockUserDetails: NexusUserDetails = {
         name: 'Test User',
@@ -148,29 +125,6 @@ describe('AuthController', () => {
 
       await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to generate signup token');
       expect(fetchMock).toHaveBeenCalled();
-    });
-
-    it('should throw error if user save fails', async () => {
-      const mockUserDetails: NexusUserDetails = {
-        name: 'Test User',
-        bio: 'Test Bio',
-        id: 'test-id',
-        links: null,
-        status: null,
-        image: null,
-        indexed_at: Date.now(),
-      };
-
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('mock-token'),
-      });
-
-      const insertSpy = vi.spyOn(User, 'insert').mockRejectedValueOnce(new Error('Database error'));
-
-      await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to save user to database');
-
-      insertSpy.mockRestore();
     });
   });
 

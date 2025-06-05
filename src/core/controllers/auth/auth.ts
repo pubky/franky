@@ -5,21 +5,18 @@ import { Keypair } from '@synonymdev/pubky';
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
-  static async signUp(userDetails: UserDetails): Promise<SignupResult> {
+  static async signUp(
+    userDetails: UserDetails,
+    // signupToken?: string TODO: remove this once we have a proper signup token endpoint
+  ): Promise<SignupResult> {
     const homeserverService = HomeserverService.getInstance();
 
     // Generate keypair
     const keypair = homeserverService.generateRandomKeypair();
-    if (!keypair) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate keypair', 400);
-    }
 
     // Generate signup token
+    // TODO: remove this once we have a proper signup token endpoint
     const signupToken = await this.generateSignupToken();
-
-    if (!signupToken) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to generate signup token', 400);
-    }
 
     // Save user to database
     const publicKey = keypair.publicKey().z32();
@@ -38,19 +35,11 @@ export class AuthController {
       ...DEFAULT_NEW_USER,
     };
 
-    try {
-      await User.insert(userData);
-    } catch {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to save user to database', 400);
-    }
+    // save user to database
+    await User.insert(userData);
 
-    try {
-      // Sign up
-      const result = await homeserverService.signup(keypair, signupToken);
-      return result;
-    } catch {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Failed to complete signup process', 400);
-    }
+    // Sign up
+    return await homeserverService.signup(keypair, signupToken);
   }
 
   static async getKeypair(): Promise<Keypair | null> {
@@ -67,7 +56,7 @@ export class AuthController {
     return homeserverService.logout(keypair.publicKey().z32());
   }
 
-  // Private method used internally by signUp
+  // TODO: remove this once we have a proper signup token endpoint
   private static async generateSignupToken(): Promise<string> {
     const endpoint = env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
     const password = env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { NexusService } from '@/core';
+import { BootstrapService } from '@/core';
 import { NexusErrorType } from '@/libs';
 
 describe('NexusService', () => {
@@ -23,7 +23,7 @@ describe('NexusService', () => {
         json: () => Promise.resolve(mockResponse),
       });
 
-      const result = await NexusService.bootstrap(userPK);
+      const result = await BootstrapService.get(userPK);
       expect(result).toEqual(mockResponse);
     });
 
@@ -34,7 +34,7 @@ describe('NexusService', () => {
         statusText: 'Bad Request',
       });
 
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
+      await expect(BootstrapService.get(userPK)).rejects.toMatchObject({
         type: NexusErrorType.INVALID_REQUEST,
         statusCode: 400,
         details: expect.objectContaining({
@@ -51,7 +51,7 @@ describe('NexusService', () => {
         statusText: 'Not Found',
       });
 
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
+      await expect(BootstrapService.get(userPK)).rejects.toMatchObject({
         type: NexusErrorType.RESOURCE_NOT_FOUND,
         statusCode: 404,
       });
@@ -63,7 +63,7 @@ describe('NexusService', () => {
         json: () => Promise.reject(new Error('Invalid JSON')),
       });
 
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
+      await expect(BootstrapService.get(userPK)).rejects.toMatchObject({
         type: NexusErrorType.INVALID_RESPONSE,
         statusCode: 500,
         details: expect.objectContaining({
@@ -76,7 +76,7 @@ describe('NexusService', () => {
     it('should throw NETWORK_ERROR on fetch failure', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network failure'));
 
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
+      await expect(BootstrapService.get(userPK)).rejects.toMatchObject({
         type: NexusErrorType.NETWORK_ERROR,
         statusCode: 500,
         details: expect.objectContaining({
@@ -93,7 +93,7 @@ describe('NexusService', () => {
         statusText: 'Too Many Requests',
       });
 
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
+      await expect(BootstrapService.get(userPK)).rejects.toMatchObject({
         type: NexusErrorType.RATE_LIMIT_EXCEEDED,
         statusCode: 429,
       });
@@ -106,7 +106,7 @@ describe('NexusService', () => {
         statusText: 'Service Unavailable',
       });
 
-      await expect(NexusService.bootstrap(userPK)).rejects.toMatchObject({
+      await expect(BootstrapService.get(userPK)).rejects.toMatchObject({
         type: NexusErrorType.SERVICE_UNAVAILABLE,
         statusCode: 503,
       });

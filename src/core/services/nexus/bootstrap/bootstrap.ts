@@ -1,10 +1,10 @@
 import { env, createNexusError, NexusErrorType, mapHttpStatusToNexusErrorType } from '@/libs';
 import { NexusBootstrapResponse } from '@/core';
 
-export class NexusService {
+export class BootstrapService {
   private static baseUrl = env.NEXT_PUBLIC_NEXUS_URL;
 
-  static async bootstrap(userPK: string): Promise<NexusBootstrapResponse> {
+  static async get(userPK: string): Promise<NexusBootstrapResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/bootstrap/${userPK}`);
 

@@ -67,7 +67,7 @@ const nexusUrl = env.NEXT_PUBLIC_NEXUS_URL; // string (validated URL)
 
 1. **Development**: Create a `.env.local` file in the project root
 2. **Production**: Set environment variables in your deployment platform
-3. **Testing**: Variables are set in `src/test/setup.ts`
+3. **Testing**: Variables are set in `src/config/test.ts`
 
 ### Example .env.local
 

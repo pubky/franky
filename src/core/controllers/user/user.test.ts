@@ -1,6 +1,14 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { UserController, User, NexusUser, DEFAULT_USER_COUNTS, DEFAULT_USER_RELATIONSHIP } from '@/core';
-import { generateTestUserId, createTestUserDetails, resetDatabase } from '@/test';
+import {
+  UserController,
+  User,
+  NexusUser,
+  DEFAULT_USER_COUNTS,
+  DEFAULT_USER_RELATIONSHIP,
+  resetDatabase,
+  generateTestUserId,
+  createTestUserDetails,
+} from '@/core';
 
 describe('UserController', () => {
   beforeEach(async () => {
