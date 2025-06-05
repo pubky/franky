@@ -128,7 +128,7 @@ export class User implements NexusUser {
     try {
       const userData = await this.table.get(id);
       if (!userData) {
-        throw createDatabaseError(DatabaseErrorType.POST_NOT_FOUND, `User not found: ${id}`, 404, { userId: id });
+        throw createDatabaseError(DatabaseErrorType.USER_NOT_FOUND, `User not found: ${id}`, 404, { userId: id });
       }
 
       Logger.debug('Found user:', { id });
@@ -149,7 +149,7 @@ export class User implements NexusUser {
       if (users.length !== userPKs.length) {
         const missingUsers = userPKs.filter((id) => !users.find((user) => user.id === id));
         throw createDatabaseError(
-          DatabaseErrorType.POST_NOT_FOUND,
+          DatabaseErrorType.USER_NOT_FOUND,
           `Failed to find all users: ${userPKs.length - users.length} users not found`,
           404,
           { missingUsers },

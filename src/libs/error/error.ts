@@ -26,6 +26,7 @@ export enum HomeserverErrorType {
 }
 
 export enum DatabaseErrorType {
+  USER_NOT_FOUND = 'USER_NOT_FOUND',
   POST_NOT_FOUND = 'POST_NOT_FOUND',
   SAVE_FAILED = 'SAVE_FAILED',
   UPDATE_FAILED = 'UPDATE_FAILED',

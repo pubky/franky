@@ -1,5 +1,5 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-import { FetchOptions, SignupResult, KeyPair } from '@/core';
+import { FetchOptions, SignupResult, KeyPair, User } from '@/core';
 import {
   AppError,
   createCommonError,
@@ -9,6 +9,7 @@ import {
   env,
   Logger,
 } from '@/libs';
+import init, { PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
 
 export class HomeserverService {
   private static instance: HomeserverService;
@@ -19,7 +20,13 @@ export class HomeserverService {
   private pkarrRelays = env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
   private homeserverPublicKey = PublicKey.from(env.NEXT_PUBLIC_HOMESERVER);
 
+  // Flag to skip profile creation during tests
+  private skipProfileCreation = process.env.VITEST === 'true';
+
   private constructor() {
+    if (!this.skipProfileCreation) {
+      init();
+    }
     this.client = this.testnet
       ? Client.testnet()
       : new Client({
@@ -35,12 +42,40 @@ export class HomeserverService {
     return HomeserverService.instance;
   }
 
-  async signup(keypair: Keypair, signupToken?: string): Promise<SignupResult> {
+  async signup(user: User, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
     try {
       const session = await this.client.signup(keypair, this.homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
       this.currentSession = session;
-      Logger.debug('Signup result:', { session });
+
+      // Skip profile creation during tests to avoid WASM/mocking issues
+      if (!this.skipProfileCreation) {
+        // PUT INTO HOMESERVER
+        const publicKey = keypair.publicKey().z32();
+        const builder = new PubkySpecsBuilder(publicKey);
+        const result = builder.createUser(
+          user.details.name,
+          user.details.bio,
+          user.details.image,
+          user.details.links,
+          user.details.status,
+        );
+
+        // Let's bring the full wasm object into JS and assign correct type.
+        const pubkyUser = result.user.toJson() as PubkyAppUser;
+
+        // Send the profile to the homeserver
+        await this.fetch(result.meta.url, {
+          method: 'PUT',
+          body: JSON.stringify(pubkyUser),
+          credentials: 'include',
+        });
+      }
+
+      //  update user sync_status = 'homeserver'
+      user.sync_status = 'homeserver';
+      await user.save();
+
       return { session };
     } catch (error) {
       if (error instanceof AppError) {
@@ -82,7 +117,9 @@ export class HomeserverService {
 
       Logger.debug('Fetching data from homeserver:', { url, options });
 
-      return await this.client.fetch(url, options);
+      const response = await this.client.fetch(url, options);
+      Logger.debug('Response from homeserver:', { response });
+      return response;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;

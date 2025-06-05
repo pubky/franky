@@ -1,4 +1,4 @@
-import { HomeserverService, SignupResult, User, UserSchema, UserDetails, DEFAULT_NEW_USER } from '@/core';
+import { HomeserverService, SignupResult, UserController, UserSchema, UserDetails, DEFAULT_NEW_USER } from '@/core';
 import { env, CommonErrorType, createCommonError, Logger } from '@/libs';
 import { Keypair } from '@synonymdev/pubky';
 
@@ -36,10 +36,10 @@ export class AuthController {
     };
 
     // save user to database
-    await User.insert(userData);
+    const user = await UserController.save(userData);
 
     // Sign up
-    return await homeserverService.signup(keypair, signupToken);
+    return await homeserverService.signup(user, keypair, signupToken);
   }
 
   static async getKeypair(): Promise<Keypair | null> {
