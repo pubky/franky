@@ -68,11 +68,10 @@ export class HomeserverService {
         await this.fetch(result.meta.url, {
           method: 'PUT',
           body: JSON.stringify(pubkyUser),
-          credentials: 'include',
         });
       }
 
-      //  update user sync_status = 'homeserver'
+      // update user sync_status = 'homeserver'
       user.sync_status = 'homeserver';
       await user.save();
 
@@ -117,7 +116,7 @@ export class HomeserverService {
 
       Logger.debug('Fetching data from homeserver:', { url, options });
 
-      const response = await this.client.fetch(url, options);
+      const response = await this.client.fetch(url, { ...options, credentials: 'include' });
       Logger.debug('Response from homeserver:', { response });
       return response;
     } catch (error) {
