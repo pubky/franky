@@ -1,37 +1,38 @@
-import { UserPK, User, NexusUser } from '@/core';
+import { UserModelPK, UserModel, NexusUser, UserModelSchema } from '@/core';
 
 export class UserController {
   private constructor() {} // Prevent instantiation
 
-  static async get(userPK: UserPK): Promise<User> {
-    return await User.findById(userPK);
+  static async get(userPK: UserModelPK): Promise<UserModel> {
+    return await UserModel.findById(userPK);
   }
 
-  static async getByIds(userPKs: UserPK[]): Promise<User[]> {
-    return await User.find(userPKs);
+  static async getByIds(userPKs: UserModelPK[]): Promise<UserModel[]> {
+    return await UserModel.find(userPKs);
   }
 
-  static async save(userData: NexusUser): Promise<User> {
+  // userData can be NexusUser or UserModelSchema because it can come from the homeserver or the database
+  static async save(userData: NexusUser | UserModelSchema): Promise<UserModel> {
     try {
-      const existingUser = await User.findById(userData.details.id);
+      const existingUser = await UserModel.findById(userData.details.id);
       await existingUser.edit(userData);
       return existingUser;
     } catch {
       // User doesn't exist, create new one
-      return await User.insert(userData);
+      return await UserModel.insert(userData);
     }
   }
 
-  static async delete(userPK: UserPK): Promise<void> {
+  static async delete(userPK: UserModelPK): Promise<void> {
     const user = await this.get(userPK);
     return await user.delete();
   }
 
-  static async bulkSave(usersData: NexusUser[]): Promise<User[]> {
-    return await User.bulkSave(usersData);
+  static async bulkSave(usersData: NexusUser[]): Promise<UserModel[]> {
+    return await UserModel.bulkSave(usersData);
   }
 
-  static async bulkDelete(userPKs: UserPK[]): Promise<void> {
-    return await User.bulkDelete(userPKs);
+  static async bulkDelete(userPKs: UserModelPK[]): Promise<void> {
+    return await UserModel.bulkDelete(userPKs);
   }
 }

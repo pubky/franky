@@ -1,12 +1,12 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-import { FetchOptions, SignupResult, KeyPair, User } from '@/core';
+import { FetchOptions, SignupResult, UserModel, KeyPair } from '@/core';
 import {
   AppError,
+  HomeserverErrorType,
   createCommonError,
   CommonErrorType,
-  HomeserverErrorType,
   createHomeserverError,
-  env,
+  Env,
   Logger,
 } from '@/libs';
 import init, { PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
@@ -16,9 +16,9 @@ export class HomeserverService {
   private client: Client;
   private currentKeypair: Keypair | null = null;
   private currentSession: SignupResult['session'] | null = null;
-  private testnet = env.NEXT_PUBLIC_TESTNET.toString() === 'true';
-  private pkarrRelays = env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
-  private homeserverPublicKey = PublicKey.from(env.NEXT_PUBLIC_HOMESERVER);
+  private testnet = Env.NEXT_PUBLIC_TESTNET.toString() === 'true';
+  private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
+  private homeserverPublicKey = PublicKey.from(Env.NEXT_PUBLIC_HOMESERVER);
 
   // Flag to skip profile creation during tests
   private skipProfileCreation = process.env.VITEST === 'true';
@@ -42,7 +42,49 @@ export class HomeserverService {
     return HomeserverService.instance;
   }
 
-  async signup(user: User, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
+  // async createPost(post: PostControllerNewData): Promise<NexusPostDetails> {
+  //   try {
+  //     if (!this.currentKeypair) {
+  //       throw createHomeserverError(
+  //         HomeserverErrorType.NOT_AUTHENTICATED,
+  //         'Not authenticated. Please signup first.',
+  //         401,
+  //       );
+  //     }
+
+  //     Logger.debug('Creating post on homeserver:', { post });
+
+  //     const builder = new PubkySpecsBuilder(this.currentKeypair.publicKey().z32());
+  //     const kind = post.kind === 'short' ? PubkyAppPostKind.Short : PubkyAppPostKind.Long;
+  //     const result = builder.createPost(post.content, kind, post.uri ?? '');
+
+  //     const response = await this.fetch(result.meta.url, {
+  //       method: 'PUT',
+  //       body: JSON.stringify(result.post.toJson()),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
+  //         originalError: response.statusText,
+  //       });
+  //     }
+
+  //     return {
+  //       ...post,
+  //       uri: result.meta.url,
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof AppError) {
+  //       throw error;
+  //     }
+
+  //     throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
+  //       originalError: error instanceof Error ? error.message : 'Unknown error',
+  //     });
+  //   }
+  // }
+
+  async signup(user: UserModel, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
     try {
       const session = await this.client.signup(keypair, this.homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
@@ -192,7 +234,7 @@ export class HomeserverService {
   generateRandomKeys(): KeyPair {
     try {
       const keypair = this.generateRandomKeypair();
-      Logger.debug('Generated random keys:', { keypair });
+
       return {
         publicKey: keypair.publicKey().z32(),
         secretKey: keypair.secretKey().toString(),

@@ -1,8 +1,8 @@
-import { env, createNexusError, NexusErrorType, mapHttpStatusToNexusErrorType } from '@/libs';
-import { NexusBootstrapResponse } from '@/core';
+import { Env, createNexusError, NexusErrorType, mapHttpStatusToNexusErrorType } from '@/libs';
+import { type NexusBootstrapResponse } from '@/core';
 
 export class BootstrapService {
-  private static baseUrl = env.NEXT_PUBLIC_NEXUS_URL;
+  private static baseUrl = Env.NEXT_PUBLIC_NEXUS_URL;
 
   static async get(userPK: string): Promise<NexusBootstrapResponse> {
     try {

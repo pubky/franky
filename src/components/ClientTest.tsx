@@ -2,15 +2,23 @@
 
 import { useState } from 'react';
 import { Logger, AppError } from '@/libs';
-import { SignupResult, UserDetails, AuthController, User } from '@/core';
+import {
+  SignupResult,
+  AuthController,
+  UserModel,
+  UserControllerNewData,
+  // PostController,
+  // type PostControllerNewData,
+} from '@/core';
 import { faker } from '@faker-js/faker';
 
 export function ClientTest() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // const [lastCreatedPost, setLastCreatedPost] = useState<PostControllerNewData | null>(null);
   const [authStatus, setAuthStatus] = useState<{
     isAuthenticated: boolean;
-    user: UserDetails | null;
+    user: UserModel | null;
     publicKey: string | null;
     session: SignupResult['session'] | null;
   }>({
@@ -30,7 +38,7 @@ export function ClientTest() {
       clearError();
 
       // Generate fake user details using Faker
-      const fakeUser: UserDetails = {
+      const fakeUser: UserControllerNewData = {
         name: faker.person.fullName(),
         bio: faker.person.bio(),
         image: null,
@@ -44,9 +52,6 @@ export function ClientTest() {
             url: faker.internet.url(),
           },
         ],
-        status: null,
-        id: '',
-        indexed_at: 0,
       };
 
       const result = await AuthController.signUp(fakeUser);
@@ -58,10 +63,10 @@ export function ClientTest() {
       // Get the saved user from database
       if (publicKey) {
         try {
-          const savedUser = await User.findById(publicKey);
+          const savedUser = await UserModel.findById(publicKey);
           setAuthStatus({
             isAuthenticated: true,
-            user: savedUser.details,
+            user: savedUser,
             publicKey,
             session: result.session,
           });
@@ -69,7 +74,7 @@ export function ClientTest() {
           // If user not found in DB, use the fake user data with the public key
           setAuthStatus({
             isAuthenticated: true,
-            user: { ...fakeUser, id: publicKey },
+            user: { ...fakeUser, id: publicKey } as unknown as UserModel,
             publicKey,
             session: result.session,
           });
@@ -115,6 +120,40 @@ export function ClientTest() {
     }
   };
 
+  const handleCreatePost = async () => {
+    try {
+      setIsLoading(true);
+      clearError();
+
+      if (!authStatus.publicKey) {
+        throw new Error('User not authenticated');
+      }
+
+      // Generate fake post data
+      // const fakePost: PostControllerNewData = {
+      //   content: faker.lorem.paragraph(),
+      //   id: faker.string.uuid(),
+      //   indexed_at: Date.now(),
+      //   author: authStatus.publicKey,
+      //   kind: 'short',
+      //   attachments: null,
+      // };
+
+      // const result = await PostController.create(fakePost);
+      // setLastCreatedPost(fakePost);
+      // Logger.debug('Post created successfully:', result);
+    } catch (error) {
+      let message = 'Failed to create post';
+      if (error instanceof AppError) {
+        message = error.message;
+      }
+      setError(message);
+      Logger.error('Failed to create post:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 space-y-4 max-w-7xl mx-auto">
       <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Homeserver</h2>
@@ -140,13 +179,13 @@ export function ClientTest() {
                 <div className="pt-4 border-t border-gray-200 space-y-3">
                   <div>
                     <span className="text-sm text-gray-500">Name:</span>
-                    <p className="text-base font-medium text-gray-900">{authStatus.user.name}</p>
+                    <p className="text-base font-medium text-gray-900">{authStatus.user.details.name}</p>
                   </div>
 
-                  {authStatus.user.bio && (
+                  {authStatus.user.details.bio && (
                     <div>
                       <span className="text-sm text-gray-500">Bio:</span>
-                      <p className="text-sm text-gray-700">{authStatus.user.bio}</p>
+                      <p className="text-sm text-gray-700">{authStatus.user.details.bio}</p>
                     </div>
                   )}
 
@@ -157,11 +196,11 @@ export function ClientTest() {
                     </p>
                   </div>
 
-                  {authStatus.user.links && authStatus.user.links.length > 0 && (
+                  {authStatus.user.details.links && authStatus.user.details.links.length > 0 && (
                     <div>
                       <span className="text-sm text-gray-500">Links:</span>
                       <ul className="mt-1 space-y-1">
-                        {authStatus.user.links.map((link, index) => (
+                        {authStatus.user.details.links.map((link, index) => (
                           <li key={index} className="text-sm">
                             <a
                               href={link.url}
@@ -192,15 +231,48 @@ export function ClientTest() {
                 {isLoading ? 'Signing up...' : 'Sign Up with Random User'}
               </button>
             ) : (
-              <button
-                onClick={handleLogout}
-                disabled={isLoading}
-                className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 transition-colors"
-              >
-                {isLoading ? 'Logging out...' : 'Logout'}
-              </button>
+              <div className="w-full space-y-4 sm:space-y-0 sm:space-x-4 flex flex-col sm:flex-row">
+                <button
+                  onClick={handleLogout}
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 transition-colors"
+                >
+                  {isLoading ? 'Logging out...' : 'Logout'}
+                </button>
+                <button
+                  onClick={handleCreatePost}
+                  disabled={isLoading}
+                  className="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-gray-400 transition-colors"
+                >
+                  {isLoading ? 'Creating post...' : 'Create Random Post'}
+                </button>
+              </div>
             )}
           </div>
+
+          {/* Last Created Post Display */}
+          {/* {lastCreatedPost && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">Last Created Post</h3>
+              <div className="space-y-2">
+                <p className="text-green-700">
+                  <strong>Content:</strong> {lastCreatedPost.content}
+                </p>
+                <p className="text-green-700">
+                  <strong>ID:</strong> {lastCreatedPost.id}
+                </p>
+                <p className="text-green-700">
+                  <strong>Author:</strong> {lastCreatedPost.author}
+                </p>
+                <p className="text-green-700">
+                  <strong>Kind:</strong> {lastCreatedPost.kind}
+                </p>
+                <p className="text-green-700">
+                  <strong>URI:</strong> {lastCreatedPost.uri}
+                </p>
+              </div>
+            </div>
+          )} */}
 
           {/* Error Display */}
           {error && (

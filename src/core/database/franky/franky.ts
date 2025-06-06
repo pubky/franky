@@ -1,12 +1,12 @@
 import Dexie from 'dexie';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 import { DB_VERSION, DB_NAME } from '@/config';
-import { UserSchema, userTableSchema } from '@/core/models/user/user.schema';
-import { PostSchema, postTableSchema } from '@/core/models/post/posts.schema';
+import { UserModelSchema, userTableSchema } from '@/core/models/user/user.schema';
+import { PostModelSchema, postTableSchema } from '@/core/models/post/posts.schema';
 
 class AppDatabase extends Dexie {
-  users!: Dexie.Table<UserSchema>;
-  posts!: Dexie.Table<PostSchema>;
+  users!: Dexie.Table<UserModelSchema>;
+  posts!: Dexie.Table<PostModelSchema>;
 
   constructor() {
     super(DB_NAME);

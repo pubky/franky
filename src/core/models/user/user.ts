@@ -1,40 +1,40 @@
 import { Table } from 'dexie';
 import {
-  UserPK,
-  Timestamp,
-  SyncStatus,
-  UserSchema,
+  type UserModelPK,
+  type Timestamp,
+  type SyncStatus,
+  type UserModelSchema,
+  type NexusUser,
+  type NexusUserDetails,
+  type NexusUserCounts,
+  type NexusUserRelationship,
   db,
-  Tag,
-  NexusUser,
-  NexusUserDetails,
-  NexusUserCounts,
-  NexusUserRelationship,
+  TagModel,
 } from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 import { SYNC_TTL } from '@/config/sync';
 
-export class User implements NexusUser {
-  private static table: Table<UserSchema> = db.table('users');
+export class UserModel implements UserModelSchema {
+  private static table: Table<UserModelSchema> = db.table('users');
 
-  id: UserPK;
+  id: UserModelPK;
   details: NexusUserDetails;
   counts: NexusUserCounts;
-  tags: Tag[];
+  tags: TagModel[];
   relationship: NexusUserRelationship;
-  following: UserPK[];
-  followers: UserPK[];
-  muted: UserPK[];
+  following: UserModelPK[];
+  followers: UserModelPK[];
+  muted: UserModelPK[];
   indexed_at: Timestamp | null;
   updated_at: Timestamp;
   sync_status: SyncStatus;
   sync_ttl: Timestamp;
 
-  constructor(user: UserSchema) {
+  constructor(user: UserModelSchema) {
     this.id = user.id;
     this.details = user.details;
     this.counts = user.counts;
-    this.tags = user.tags.map((tag) => new Tag(tag));
+    this.tags = user.tags.map((tag) => new TagModel(tag));
     this.relationship = user.relationship;
     this.following = user.following;
     this.followers = user.followers;
@@ -45,17 +45,15 @@ export class User implements NexusUser {
     this.sync_ttl = user.sync_ttl;
   }
 
+  // Database operations
   async save(): Promise<void> {
     try {
       const now = Date.now();
       this.updated_at = now;
       this.sync_ttl = now + SYNC_TTL;
 
-      await db.transaction('rw', User.table, async () => {
-        await User.table.put({
-          ...this,
-          id: this.details.id,
-        });
+      await db.transaction('rw', UserModel.table, async () => {
+        await UserModel.table.put({ ...this });
       });
 
       Logger.debug('Saved user to database:', { id: this.details.id });
@@ -67,25 +65,16 @@ export class User implements NexusUser {
     }
   }
 
-  async edit(updates: Partial<UserSchema>): Promise<void> {
+  async edit(updates: Partial<UserModelSchema>): Promise<void> {
     try {
-      const now = Date.now();
+      Object.assign(this, updates);
 
-      if (updates.details) this.details = { ...this.details, ...updates.details };
-      if (updates.counts) this.counts = { ...this.counts, ...updates.counts };
-      if (updates.tags) this.tags = updates.tags.map((tag) => new Tag(tag));
-      if (updates.relationship) this.relationship = { ...this.relationship, ...updates.relationship };
-      if (updates.following) this.following = updates.following;
-      if (updates.followers) this.followers = updates.followers;
-      if (updates.muted) this.muted = updates.muted;
-      if (updates.indexed_at) this.indexed_at = updates.indexed_at;
+      const now = Date.now();
 
       this.updated_at = now;
       this.sync_ttl = now + SYNC_TTL;
 
       await this.save();
-
-      Logger.debug('Updated user:', { id: this.details.id, updates });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.UPDATE_FAILED, `Failed to update user ${this.details.id}`, 500, {
         error,
@@ -95,11 +84,18 @@ export class User implements NexusUser {
     }
   }
 
-  static async insert(user: NexusUser): Promise<User> {
+  // user can be NexusUser or UserModelSchema because it can come from the homeserver or the database
+  static async insert(user: NexusUser | UserModelSchema): Promise<UserModel> {
     try {
-      const newUser = new User(this.toSchema(user));
+      // check if user is a NexusUser by checking if it has a sync_status property
+      const isUserSchema = 'sync_status' in user;
+      if (!isUserSchema) {
+        user = this.toSchema(user as NexusUser);
+      }
+
+      const newUser = new UserModel(user as UserModelSchema);
       await newUser.save();
-      Logger.debug('Created user:', { id: newUser.details.id });
+
       return newUser;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to create user ${user.details.id}`, 500, {
@@ -111,8 +107,8 @@ export class User implements NexusUser {
 
   async delete(): Promise<void> {
     try {
-      await db.transaction('rw', User.table, async () => {
-        await User.table.delete(this.details.id);
+      await db.transaction('rw', UserModel.table, async () => {
+        await UserModel.table.delete(this.details.id);
       });
 
       Logger.debug('Deleted user from database:', { id: this.details.id });
@@ -124,7 +120,7 @@ export class User implements NexusUser {
     }
   }
 
-  static async findById(id: UserPK): Promise<User> {
+  static async findById(id: UserModelPK): Promise<UserModel> {
     try {
       const userData = await this.table.get(id);
       if (!userData) {
@@ -132,7 +128,8 @@ export class User implements NexusUser {
       }
 
       Logger.debug('Found user:', { id });
-      return new User(userData);
+
+      return new UserModel(userData);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
 
@@ -143,7 +140,7 @@ export class User implements NexusUser {
     }
   }
 
-  static async find(userPKs: UserPK[]): Promise<User[]> {
+  static async find(userPKs: UserModelPK[]): Promise<UserModel[]> {
     try {
       const users = await this.table.where('id').anyOf(userPKs).toArray();
       if (users.length !== userPKs.length) {
@@ -155,8 +152,10 @@ export class User implements NexusUser {
           { missingUsers },
         );
       }
+
       Logger.debug('Found users:', users);
-      return users.map((userData) => new User(userData));
+
+      return users.map((userData) => new UserModel(userData));
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
 
@@ -167,16 +166,26 @@ export class User implements NexusUser {
     }
   }
 
-  static async bulkSave(users: NexusUser[]): Promise<User[]> {
+  // users can be NexusUser[] or UserModelSchema[] because it can come from the homeserver or the database
+  static async bulkSave(users: NexusUser[] | UserModelSchema[]): Promise<UserModel[]> {
     try {
-      const usersToSave: UserSchema[] = users.map((user) => this.toSchema(user));
+      let usersToSave: UserModelSchema[];
+      // check if users are types as NexusUser
+      const isUserSchema = users.every((user) => 'sync_status' in user);
+      if (!isUserSchema) {
+        usersToSave = users.map((user) => this.toSchema(user));
+      } else {
+        usersToSave = users as UserModelSchema[];
+      }
 
       await db.transaction('rw', this.table, async () => {
         await this.table.bulkPut(usersToSave);
       });
 
-      const results = usersToSave.map((userData) => new User(userData));
+      const results = usersToSave.map((userData) => new UserModel(userData));
+
       Logger.debug('Bulk saved users:', { users: users.map((user) => user.details.id) });
+
       return results;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk save users', 500, {
@@ -186,11 +195,12 @@ export class User implements NexusUser {
     }
   }
 
-  static async bulkDelete(userPKs: UserPK[]): Promise<void> {
+  static async bulkDelete(userPKs: UserModelPK[]): Promise<void> {
     try {
       await db.transaction('rw', this.table, async () => {
         await this.table.bulkDelete(userPKs);
       });
+
       Logger.debug('Bulk deleted users:', { userPKs });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete users', 500, {
@@ -200,14 +210,15 @@ export class User implements NexusUser {
     }
   }
 
-  private static toSchema(user: NexusUser, overrides: Partial<UserSchema> = {}): UserSchema {
+  // convert NexusUser to UserModelSchema
+  private static toSchema(user: NexusUser, overrides: Partial<UserModelSchema> = {}): UserModelSchema {
     try {
       const now = Date.now();
       return {
         id: user.details.id,
         details: user.details,
         counts: user.counts,
-        tags: user.tags.map((tag) => new Tag(tag)),
+        tags: user.tags.map((tag) => new TagModel(tag)),
         relationship: user.relationship,
         following: overrides.following ?? [],
         followers: overrides.followers ?? [],

@@ -1,7 +1,7 @@
-import { PostPK, SyncStatus, Timestamp, NexusPost } from '@/core';
+import { PostModelPK, SyncStatus, Timestamp, NexusPost } from '@/core';
 
-export interface PostSchema extends NexusPost {
-  id: PostPK;
+export interface PostModelSchema extends NexusPost {
+  id: PostModelPK;
   indexed_at: Timestamp | null; // timestamp from Nexus service
   created_at: Timestamp;
   sync_status: SyncStatus;

@@ -1,12 +1,19 @@
-import { HomeserverService, SignupResult, UserController, UserSchema, UserDetails, DEFAULT_NEW_USER } from '@/core';
-import { env, CommonErrorType, createCommonError, Logger } from '@/libs';
+import {
+  type UserControllerNewData,
+  type UserModelSchema,
+  HomeserverService,
+  SignupResult,
+  UserController,
+  DEFAULT_NEW_USER,
+} from '@/core';
+import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
 import { Keypair } from '@synonymdev/pubky';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
   static async signUp(
-    userDetails: UserDetails,
+    newUser: UserControllerNewData,
     // signupToken?: string TODO: remove this once we have a proper signup token endpoint
   ): Promise<SignupResult> {
     const homeserverService = HomeserverService.getInstance();
@@ -21,15 +28,15 @@ export class AuthController {
     // Save user to database
     const publicKey = keypair.publicKey().z32();
     const now = Date.now();
-    const userData: UserSchema = {
+    const userData: UserModelSchema = {
       id: publicKey,
       details: {
         id: publicKey,
-        name: userDetails.name,
-        bio: userDetails.bio || '',
-        links: null,
+        name: newUser.name,
+        bio: newUser.bio || '',
+        links: newUser.links || null,
         status: null,
-        image: userDetails.image || null,
+        image: null, // TODO: add image
         indexed_at: now,
       },
       ...DEFAULT_NEW_USER,
@@ -58,8 +65,8 @@ export class AuthController {
 
   // TODO: remove this once we have a proper signup token endpoint
   private static async generateSignupToken(): Promise<string> {
-    const endpoint = env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
-    const password = env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
+    const endpoint = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
+    const password = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 
     if (!endpoint || !password) {
       throw new Error(

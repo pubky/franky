@@ -1,7 +1,16 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { UserController, PostController, BootstrapService, db, UserSchema, PostSchema, UserPK, PostPK } from '@/core';
+import {
+  type UserModelSchema,
+  type PostModelSchema,
+  type UserModelPK,
+  type PostModelPK,
+  UserController,
+  PostController,
+  BootstrapService,
+  db,
+} from '@/core';
 import { Logger, AppError, CommonErrorType } from '@/libs';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -21,8 +30,8 @@ export function BootstrapTest() {
   const [stats, setStats] = useState<Stats | null>(null);
 
   // Selection state
-  const [selectedUsers, setSelectedUsers] = useState<UserPK[]>([]);
-  const [selectedPosts, setSelectedPosts] = useState<PostPK[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserModelPK[]>([]);
+  const [selectedPosts, setSelectedPosts] = useState<PostModelPK[]>([]);
   const [selectAllUsers, setSelectAllUsers] = useState(false);
   const [selectAllPosts, setSelectAllPosts] = useState(false);
 
@@ -101,7 +110,7 @@ export function BootstrapTest() {
   };
 
   // User selection handlers
-  const handleUserSelection = useCallback((userId: UserPK, checked: boolean) => {
+  const handleUserSelection = useCallback((userId: UserModelPK, checked: boolean) => {
     setSelectedUsers((prev) => (checked ? [...prev, userId] : prev.filter((id) => id !== userId)));
   }, []);
 
@@ -114,7 +123,7 @@ export function BootstrapTest() {
   );
 
   // Post selection handlers
-  const handlePostSelection = useCallback((postId: PostPK, checked: boolean) => {
+  const handlePostSelection = useCallback((postId: PostModelPK, checked: boolean) => {
     setSelectedPosts((prev) => (checked ? [...prev, postId] : prev.filter((id) => id !== postId)));
   }, []);
 
@@ -256,7 +265,7 @@ export function BootstrapTest() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user: UserSchema) => (
+              {users.map((user: UserModelSchema) => (
                 <tr
                   key={user.details.id}
                   className={`hover:bg-gray-50 ${selectedUsers.includes(user.details.id) ? 'bg-blue-50' : ''}`}
@@ -369,7 +378,7 @@ export function BootstrapTest() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {posts.map((post: PostSchema) => (
+              {posts.map((post: PostModelSchema) => (
                 <tr
                   key={post.details.id}
                   className={`hover:bg-gray-50 ${selectedPosts.includes(post.details.id) ? 'bg-blue-50' : ''}`}

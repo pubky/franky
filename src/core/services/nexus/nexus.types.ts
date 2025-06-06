@@ -1,4 +1,4 @@
-import { UserPK, Timestamp, PostPK, Tag } from '@/core';
+import { type UserModelPK, type Timestamp, type PostModelPK, type TagModel } from '@/core';
 
 export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
 
@@ -16,7 +16,7 @@ export interface NexusUserLink {
 export interface NexusUserDetails {
   name: string;
   bio: string;
-  id: UserPK;
+  id: UserModelPK;
   links: NexusUserLink[] | null;
   status: string | null;
   image: string | null;
@@ -43,7 +43,7 @@ export interface NexusUserRelationship {
 
 export interface NexusTag {
   label: string;
-  taggers: UserPK[];
+  taggers: UserModelPK[];
   taggers_count: number;
   relationship: boolean;
 }
@@ -58,9 +58,9 @@ export interface NexusUser {
 // Post types
 export interface NexusPostDetails {
   content: string;
-  id: PostPK;
+  id: PostModelPK;
   indexed_at: number;
-  author: UserPK;
+  author: UserModelPK;
   kind: NexusPostKind;
   uri: string;
   attachments: string[] | null;
@@ -76,25 +76,19 @@ export interface NexusPostCounts {
 export interface NexusPostRelationships {
   replied: string | null;
   reposted: string | null;
-  mentioned: UserPK[];
+  mentioned: UserModelPK[];
 }
 
 export interface NexusPost {
   details: NexusPostDetails;
   counts: NexusPostCounts;
-  tags: Tag[];
+  tags: TagModel[];
   relationships: NexusPostRelationships;
   bookmark: NexusBookmark | null;
 }
 
 export interface NexusList {
   stream: string[];
-  influencers: UserPK[];
-  recommended: UserPK[];
-}
-
-export interface NexusBootstrapResponse {
-  users: NexusUser[];
-  posts: NexusPost[];
-  list: NexusList;
+  influencers: UserModelPK[];
+  recommended: UserModelPK[];
 }

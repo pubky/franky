@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  User,
-  Tag,
+  UserModel,
+  TagModel,
   NexusUser,
   DEFAULT_USER_COUNTS,
   DEFAULT_USER_RELATIONSHIP,
@@ -25,7 +25,7 @@ describe('User Model', () => {
     }),
     counts: DEFAULT_USER_COUNTS,
     tags: [
-      new Tag({
+      new TagModel({
         label: 'test-tag',
         taggers: [testUserId2],
         taggers_count: 1,
@@ -37,7 +37,7 @@ describe('User Model', () => {
 
   describe('Constructor and Properties', () => {
     it('should create a User instance with all properties', () => {
-      const user = new User({
+      const user = new UserModel({
         ...mockNexusUser,
         id: mockNexusUser.details.id,
         following: [],
@@ -49,34 +49,34 @@ describe('User Model', () => {
         sync_ttl: Date.now() + 3600000,
       });
 
-      expect(user).toBeInstanceOf(User);
+      expect(user).toBeInstanceOf(UserModel);
       expect(user.details.id).toBe(testUserId1);
       expect(user.details.name).toBe('Test User 1');
       expect(user.tags).toHaveLength(1);
-      expect(user.tags[0]).toBeInstanceOf(Tag);
+      expect(user.tags[0]).toBeInstanceOf(TagModel);
     });
   });
 
   describe('Static Methods', () => {
     it('should insert and find user by id', async () => {
-      const user = await User.insert(mockNexusUser);
-      expect(user).toBeInstanceOf(User);
+      const user = await UserModel.insert(mockNexusUser);
+      expect(user).toBeInstanceOf(UserModel);
       expect(user.details.id).toBe(testUserId1);
 
-      const foundUser = await User.findById(testUserId1);
-      expect(foundUser).toBeInstanceOf(User);
+      const foundUser = await UserModel.findById(testUserId1);
+      expect(foundUser).toBeInstanceOf(UserModel);
       expect(foundUser.details.id).toBe(testUserId1);
       expect(foundUser.details.name).toBe('Test User 1');
     });
 
     it('should throw error for non-existent user', async () => {
       const nonExistentId = generateTestUserId(999);
-      await expect(User.findById(nonExistentId)).rejects.toThrow(`User not found: ${nonExistentId}`);
+      await expect(UserModel.findById(nonExistentId)).rejects.toThrow(`User not found: ${nonExistentId}`);
     });
 
     it('should find users by ids', async () => {
-      await User.insert(mockNexusUser);
-      await User.insert({
+      await UserModel.insert(mockNexusUser);
+      await UserModel.insert({
         ...mockNexusUser,
         details: createTestUserDetails({
           id: testUserId2,
@@ -84,10 +84,10 @@ describe('User Model', () => {
         }),
       });
 
-      const users = await User.find([testUserId1, testUserId2]);
+      const users = await UserModel.find([testUserId1, testUserId2]);
       expect(users).toHaveLength(2);
-      expect(users[0]).toBeInstanceOf(User);
-      expect(users[1]).toBeInstanceOf(User);
+      expect(users[0]).toBeInstanceOf(UserModel);
+      expect(users[1]).toBeInstanceOf(UserModel);
     });
 
     it('should bulk save users', async () => {
@@ -102,16 +102,16 @@ describe('User Model', () => {
         },
       ];
 
-      const results = await User.bulkSave(usersData);
+      const results = await UserModel.bulkSave(usersData);
       expect(results).toHaveLength(2);
       results.forEach((user) => {
-        expect(user).toBeInstanceOf(User);
+        expect(user).toBeInstanceOf(UserModel);
       });
     });
 
     it('should bulk delete users', async () => {
-      await User.insert(mockNexusUser);
-      await User.insert({
+      await UserModel.insert(mockNexusUser);
+      await UserModel.insert({
         ...mockNexusUser,
         details: createTestUserDetails({
           id: testUserId2,
@@ -119,25 +119,25 @@ describe('User Model', () => {
         }),
       });
 
-      await User.bulkDelete([testUserId1, testUserId2]);
+      await UserModel.bulkDelete([testUserId1, testUserId2]);
 
-      await expect(User.findById(testUserId1)).rejects.toThrow();
-      await expect(User.findById(testUserId2)).rejects.toThrow();
+      await expect(UserModel.findById(testUserId1)).rejects.toThrow();
+      await expect(UserModel.findById(testUserId2)).rejects.toThrow();
     });
   });
 
   describe('Instance Methods', () => {
-    let user: User;
+    let user: UserModel;
 
     beforeEach(async () => {
-      user = await User.insert(mockNexusUser);
+      user = await UserModel.insert(mockNexusUser);
     });
 
     it('should save user to database', async () => {
       user.details.name = 'Updated Name';
       await user.save();
 
-      const foundUser = await User.findById(testUserId1);
+      const foundUser = await UserModel.findById(testUserId1);
       expect(foundUser.details.name).toBe('Updated Name');
     });
 
@@ -148,14 +148,14 @@ describe('User Model', () => {
 
       expect(user.details.name).toBe('Edited Name');
 
-      const foundUser = await User.findById(testUserId1);
+      const foundUser = await UserModel.findById(testUserId1);
       expect(foundUser.details.name).toBe('Edited Name');
     });
 
     it('should delete user from database', async () => {
       await user.delete();
 
-      await expect(User.findById(testUserId1)).rejects.toThrow(`User not found: ${testUserId1}`);
+      await expect(UserModel.findById(testUserId1)).rejects.toThrow(`User not found: ${testUserId1}`);
     });
   });
 });

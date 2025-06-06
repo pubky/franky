@@ -1,9 +1,9 @@
-import { UserPK, PaginationParams, NexusTag, DEFAULT_PAGINATION } from '@/core';
+import { UserModelPK, PaginationParams, NexusTag, DEFAULT_PAGINATION } from '@/core';
 import { Logger } from '@/libs';
 
-export class Tag implements NexusTag {
+export class TagModel implements NexusTag {
   label: string;
-  taggers: UserPK[];
+  taggers: UserModelPK[];
   taggers_count: number;
   relationship: boolean;
 
@@ -14,23 +14,23 @@ export class Tag implements NexusTag {
     this.relationship = tag.relationship;
   }
 
-  static findByLabel(tags: Tag[], label: string): Tag | undefined {
-    return tags.find((tag) => tag.label === label);
+  static findByLabel(tags: TagModel[], label: string): TagModel[] {
+    return tags.filter((tag) => tag.label === label);
   }
 
-  static findByTagger(tags: Tag[], taggerId: UserPK): Tag[] {
+  static findByTagger(tags: TagModel[], taggerId: UserModelPK): TagModel[] {
     return tags.filter((tag) => tag.taggers.includes(taggerId));
   }
 
-  static getUniqueLabels(tags: Tag[]): string[] {
+  static getUniqueLabels(tags: TagModel[]): string[] {
     return [...new Set(tags.map((tag) => tag.label))];
   }
 
-  hasUser(userId: UserPK): boolean {
+  hasUser(userId: UserModelPK): boolean {
     return this.taggers.includes(userId);
   }
 
-  addTagger(userId: UserPK): boolean {
+  addTagger(userId: UserModelPK): boolean {
     if (this.hasUser(userId)) return false;
 
     this.taggers.push(userId);
@@ -38,7 +38,7 @@ export class Tag implements NexusTag {
     return true;
   }
 
-  removeTagger(userId: UserPK): boolean {
+  removeTagger(userId: UserModelPK): boolean {
     const initialLength = this.taggers.length;
     this.taggers = this.taggers.filter((id) => id !== userId);
 
@@ -49,7 +49,7 @@ export class Tag implements NexusTag {
     return false;
   }
 
-  getTaggers(pagination: PaginationParams = DEFAULT_PAGINATION): UserPK[] {
+  getTaggers(pagination: PaginationParams = DEFAULT_PAGINATION): UserModelPK[] {
     try {
       const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
       Logger.debug('Getting taggers with pagination:', {

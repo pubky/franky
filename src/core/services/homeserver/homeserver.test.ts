@@ -41,7 +41,7 @@ let HomeserverService: typeof import('@/core/services/homeserver/homeserver').Ho
 let Keypair: typeof import('@synonymdev/pubky').Keypair;
 let PublicKey: typeof import('@synonymdev/pubky').PublicKey;
 import { HomeserverErrorType } from '@/libs';
-import { User } from '@/core';
+import { UserModel } from '@/core';
 import { Client } from '@synonymdev/pubky';
 
 // Define types for mock functions
@@ -52,7 +52,7 @@ type MockClient = {
 };
 
 describe('HomeserverService', () => {
-  let mockUser: User;
+  let mockUser: UserModel;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -104,7 +104,7 @@ describe('HomeserverService', () => {
       sync_status: 'local',
       sync_ttl: Date.now() + 300000,
       save: vi.fn().mockResolvedValue(undefined),
-    } as unknown as User;
+    } as unknown as UserModel;
   });
 
   afterEach(() => {
@@ -300,7 +300,7 @@ describe('HomeserverService', () => {
 
       const response = await service.fetch(url);
 
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, undefined);
+      expect(mockClient.fetch).toHaveBeenCalledWith(url, { credentials: 'include' });
       expect(response).toBeInstanceOf(Response);
     });
 
@@ -310,7 +310,6 @@ describe('HomeserverService', () => {
       const options = {
         method: 'PUT' as const,
         body: JSON.stringify({ message: 'Hello World' }),
-        credentials: 'include' as const,
       };
 
       const mockClient = service.getClient() as unknown as MockClient;
@@ -319,7 +318,7 @@ describe('HomeserverService', () => {
 
       await service.fetch(url, options);
 
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, options);
+      expect(mockClient.fetch).toHaveBeenCalledWith(url, { ...options, credentials: 'include' });
     });
 
     it('should delete data (DELETE)', async () => {
@@ -327,7 +326,6 @@ describe('HomeserverService', () => {
       const url = 'pubky://test-key/data';
       const options = {
         method: 'DELETE' as const,
-        credentials: 'include' as const,
       };
 
       const mockClient = service.getClient() as unknown as MockClient;
@@ -336,7 +334,7 @@ describe('HomeserverService', () => {
 
       await service.fetch(url, options);
 
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, options);
+      expect(mockClient.fetch).toHaveBeenCalledWith(url, { ...options, credentials: 'include' });
     });
 
     it('should handle fetch errors', async () => {
@@ -400,11 +398,9 @@ describe('HomeserverService', () => {
 
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      await service.fetch('pubky://test-key/data', { credentials: 'omit' });
+      await service.fetch('pubky://test-key/data');
 
-      expect(mockClient.fetch).toHaveBeenCalledWith('pubky://test-key/data', {
-        credentials: 'omit',
-      });
+      expect(mockClient.fetch).toHaveBeenCalledWith('pubky://test-key/data', { credentials: 'include' });
     });
   });
 
