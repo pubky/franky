@@ -1,14 +1,14 @@
+import { Keypair } from '@synonymdev/pubky';
 import {
   type UserControllerNewData,
   type UserModelSchema,
+  type SignupResult,
   HomeserverService,
-  SignupResult,
   UserController,
   DEFAULT_NEW_USER,
   DEFAULT_USER_DETAILS,
 } from '@/core';
-import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
-import { Keypair } from '@synonymdev/pubky';
+import { Env, CommonErrorType, createCommonError } from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
@@ -26,7 +26,7 @@ export class AuthController {
     // TODO: remove this once we have a proper signup token endpoint
     const signupToken = await this.generateSignupToken();
 
-    // Save user to database
+    // Save user to database and update sync_status = 'local'
     const id = keypair.publicKey().z32();
     const userData: UserModelSchema = {
       id,
@@ -42,7 +42,13 @@ export class AuthController {
     const user = await UserController.insert(userData);
 
     // Sign up
-    return await homeserverService.signup(user, keypair, signupToken);
+    const signupResult = await homeserverService.signup(user, keypair, signupToken);
+
+    // update user sync_status = 'homeserver'
+    user.sync_status = 'homeserver';
+    await user.save();
+
+    return signupResult;
   }
 
   static async getKeypair(): Promise<Keypair | null> {
@@ -65,8 +71,10 @@ export class AuthController {
     const password = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 
     if (!endpoint || !password) {
-      throw new Error(
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
         'Missing required environment variables: NEXT_PUBLIC_HOMESERVER_ADMIN_URL or NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD',
+        400,
       );
     }
 
@@ -79,7 +87,6 @@ export class AuthController {
 
     if (!response.ok) {
       const errorText = await response.text();
-      Logger.error('Failed to generate signup token', { status: response.status, error: errorText });
       throw createCommonError(
         CommonErrorType.NETWORK_ERROR,
         `Failed to generate signup token: ${response.status} ${errorText}`,
@@ -89,7 +96,6 @@ export class AuthController {
 
     const token = (await response.text()).trim();
     if (!token) {
-      Logger.error('No token in response');
       throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
     }
 

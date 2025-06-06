@@ -1,6 +1,6 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-import init, { PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
-import { type UserModel, type KeyPair, type FetchOptions, type SignupResult } from '@/core';
+import init, { PostResult, PubkyAppPostKind, PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
+import { type UserModel, type KeyPair, type FetchOptions, type SignupResult, type PostModelSchema } from '@/core';
 import {
   AppError,
   HomeserverErrorType,
@@ -42,47 +42,44 @@ export class HomeserverService {
     return HomeserverService.instance;
   }
 
-  // async createPost(post: PostControllerNewData): Promise<NexusPostDetails> {
-  //   try {
-  //     if (!this.currentKeypair) {
-  //       throw createHomeserverError(
-  //         HomeserverErrorType.NOT_AUTHENTICATED,
-  //         'Not authenticated. Please signup first.',
-  //         401,
-  //       );
-  //     }
+  async createPost(post: PostModelSchema): Promise<PostResult> {
+    try {
+      if (!this.currentKeypair) {
+        throw createHomeserverError(
+          HomeserverErrorType.NOT_AUTHENTICATED,
+          'Not authenticated. Please signup first.',
+          401,
+        );
+      }
 
-  //     Logger.debug('Creating post on homeserver', { post });
+      Logger.debug('Creating post on homeserver', { post });
 
-  //     const builder = new PubkySpecsBuilder(this.currentKeypair.publicKey().z32());
-  //     const kind = post.kind === 'short' ? PubkyAppPostKind.Short : PubkyAppPostKind.Long;
-  //     const result = builder.createPost(post.content, kind, post.uri ?? '');
+      const builder = new PubkySpecsBuilder(this.currentKeypair.publicKey().z32());
+      const kind = post.details.kind === 'short' ? PubkyAppPostKind.Short : PubkyAppPostKind.Long;
+      const result = builder.createPost(post.details.content, kind, null, null, post.details.attachments);
 
-  //     const response = await this.fetch(result.meta.url, {
-  //       method: 'PUT',
-  //       body: JSON.stringify(result.post.toJson()),
-  //     });
+      const response = await this.fetch(result.meta.url, {
+        method: 'PUT',
+        body: JSON.stringify(result.post.toJson()),
+      });
 
-  //     if (!response.ok) {
-  //       throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
-  //         originalError: response.statusText,
-  //       });
-  //     }
+      if (!response.ok) {
+        throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
+          originalError: response.statusText,
+        });
+      }
+      Logger.debug('Post created on homeserver', { post });
+      return result;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
 
-  //     return {
-  //       ...post,
-  //       uri: result.meta.url,
-  //     };
-  //   } catch (error) {
-  //     if (error instanceof AppError) {
-  //       throw error;
-  //     }
-
-  //     throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
-  //       originalError: error instanceof Error ? error.message : 'Unknown error',
-  //     });
-  //   }
-  // }
+      throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
+        originalError: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
 
   async signup(user: UserModel, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
     try {
@@ -113,9 +110,7 @@ export class HomeserverService {
         });
       }
 
-      // update user sync_status = 'homeserver'
-      user.sync_status = 'homeserver';
-      await user.save();
+      Logger.debug('Signup successful', { session });
 
       return { session };
     } catch (error) {

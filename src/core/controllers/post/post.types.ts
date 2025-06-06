@@ -1,5 +1,3 @@
-import { PostModelPK, NexusPostDetails } from '@/core';
+import { NexusPostDetails } from '@/core';
 
-export type PostControllerNewData = Omit<NexusPostDetails, 'uri'> & {
-  id: PostModelPK;
-};
+export type PostControllerNewData = Omit<NexusPostDetails, 'id' | 'uri'>;

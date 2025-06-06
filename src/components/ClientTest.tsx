@@ -3,19 +3,20 @@
 import { useState } from 'react';
 import { Logger, AppError } from '@/libs';
 import {
-  SignupResult,
-  AuthController,
+  type SignupResult,
+  type PostControllerNewData,
+  type UserControllerNewData,
   UserModel,
-  UserControllerNewData,
-  // PostController,
-  // type PostControllerNewData,
+  AuthController,
+  PostController,
+  PostModel,
 } from '@/core';
 import { faker } from '@faker-js/faker';
 
 export function ClientTest() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // const [lastCreatedPost, setLastCreatedPost] = useState<PostControllerNewData | null>(null);
+  const [lastCreatedPost, setLastCreatedPost] = useState<PostModel | null>(null);
   const [authStatus, setAuthStatus] = useState<{
     isAuthenticated: boolean;
     user: UserModel | null;
@@ -80,8 +81,6 @@ export function ClientTest() {
           });
         }
       }
-
-      Logger.debug('Signup successful', result);
     } catch (error) {
       let message = 'Failed to signup';
       if (error instanceof AppError) {
@@ -130,18 +129,17 @@ export function ClientTest() {
       }
 
       // Generate fake post data
-      // const fakePost: PostControllerNewData = {
-      //   content: faker.lorem.paragraph(),
-      //   id: faker.string.uuid(),
-      //   indexed_at: Date.now(),
-      //   author: authStatus.publicKey,
-      //   kind: 'short',
-      //   attachments: null,
-      // };
+      const fakePost: PostControllerNewData = {
+        content: faker.lorem.paragraph(),
+        indexed_at: Date.now(),
+        author: authStatus.publicKey,
+        kind: 'short',
+        attachments: null,
+      };
 
-      // const result = await PostController.create(fakePost);
-      // setLastCreatedPost(fakePost);
-      // Logger.debug('Post created successfully', result);
+      const post = await PostController.create(fakePost);
+
+      setLastCreatedPost(post);
     } catch (error) {
       let message = 'Failed to create post';
       if (error instanceof AppError) {
@@ -251,28 +249,47 @@ export function ClientTest() {
           </div>
 
           {/* Last Created Post Display */}
-          {/* {lastCreatedPost && (
+          {lastCreatedPost && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-4">
               <h3 className="text-lg font-semibold text-green-800 mb-2">Last Created Post</h3>
               <div className="space-y-2">
                 <p className="text-green-700">
-                  <strong>Content:</strong> {lastCreatedPost.content}
+                  <strong>Content:</strong> {lastCreatedPost.details.content}
                 </p>
                 <p className="text-green-700">
                   <strong>ID:</strong> {lastCreatedPost.id}
                 </p>
                 <p className="text-green-700">
-                  <strong>Author:</strong> {lastCreatedPost.author}
+                  <strong>Author:</strong>{' '}
+                  <a
+                    href={`https://staging.pubky.app/profile/${lastCreatedPost.details.author}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all"
+                  >
+                    {lastCreatedPost.details.author}
+                  </a>
                 </p>
                 <p className="text-green-700">
-                  <strong>Kind:</strong> {lastCreatedPost.kind}
+                  <strong>Kind:</strong> {lastCreatedPost.details.kind}
                 </p>
                 <p className="text-green-700">
-                  <strong>URI:</strong> {lastCreatedPost.uri}
+                  <strong>URI:</strong> <span className="break-all">{lastCreatedPost.details.uri}</span>
+                </p>
+                <p className="text-green-700">
+                  <strong>Staging Link:</strong>{' '}
+                  <a
+                    href={`https://staging.pubky.app/post/${lastCreatedPost.details.author}/${lastCreatedPost.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all"
+                  >
+                    {`${lastCreatedPost.id}`}
+                  </a>
                 </p>
               </div>
             </div>
-          )} */}
+          )}
 
           {/* Error Display */}
           {error && (

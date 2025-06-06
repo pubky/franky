@@ -1,29 +1,46 @@
 import {
-  // type PostControllerNewData,
+  type PostControllerNewData,
   type NexusPost,
   PostModelPK,
   PostModel,
-  // HomeserverService,
+  HomeserverService,
   PostModelSchema,
+  DEFAULT_NEW_POST,
+  DEFAULT_POST_DETAILS,
 } from '@/core';
 
 export class PostController {
   private constructor() {} // Prevent instantiation
 
-  // static async create(newPost: PostControllerNewData): Promise<PostModel> {
-  //   const homeserver = HomeserverService.getInstance();
-  //   const homeserverPost = await homeserver.createPost(newPost);
+  static async create(newPost: PostControllerNewData): Promise<PostModel> {
+    const homeserver = HomeserverService.getInstance();
 
-  //   // save post to database
-  //   await PostModel.insert(homeserverPost);
+    // create post sync_status = 'local'
+    const postData: PostModelSchema = {
+      id: '',
+      ...DEFAULT_NEW_POST,
+      details: {
+        ...DEFAULT_POST_DETAILS,
+        ...newPost,
+      },
+      created_at: Date.now(),
+    };
 
-  //   const post = homeserver.createPost(newPost);
+    // save post to database
+    const post = await PostModel.insert(postData);
 
-  //   post.sync_status = 'homeserver';
-  //   await post.save();
+    // create post on homeserver
+    const result = await homeserver.createPost(postData);
 
-  //   return post;
-  // }
+    // update post sync_status = 'homeserver'
+    post.details.uri = result.meta.url;
+    post.details.id = result.meta.id;
+    post.id = result.meta.id;
+    post.sync_status = 'homeserver';
+    await post.save();
+
+    return post;
+  }
 
   static async insert(postData: NexusPost | PostModelSchema): Promise<PostModel> {
     return await PostModel.insert(postData);
