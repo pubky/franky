@@ -78,7 +78,7 @@ export function BootstrapTest() {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bootstrap data';
       setError(message);
-      Logger.error('Failed to bootstrap data:', error);
+      Logger.error('Failed to bootstrap data', error);
     } finally {
       setIsLoading(false);
     }
@@ -103,7 +103,7 @@ export function BootstrapTest() {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to clear database';
       setError(message);
-      Logger.error('Failed to clear database:', error);
+      Logger.error('Failed to clear database', error);
     } finally {
       setIsLoading(false);
     }
@@ -149,11 +149,11 @@ export function BootstrapTest() {
       setSelectedUsers([]);
       setSelectAllUsers(false);
 
-      Logger.debug('Bulk delete users completed:', selectedUsers.length);
+      Logger.debug('Bulk delete users completed', selectedUsers.length);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bulk delete users';
       setError(message);
-      Logger.error('Failed to bulk delete users:', error);
+      Logger.error('Failed to bulk delete users', error);
     } finally {
       setIsLoading(false);
     }
@@ -198,7 +198,7 @@ export function BootstrapTest() {
         setError(`Successfully processed ${result.success} posts, failed: ${result.failed}`);
       }
 
-      Logger.debug('Bulk delete posts completed:', {
+      Logger.debug('Bulk delete posts completed', {
         total: selectedPosts.length,
         result,
         forceDelete,
@@ -206,7 +206,7 @@ export function BootstrapTest() {
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to bulk delete posts';
       setError(message);
-      Logger.error('Failed to bulk delete posts:', error);
+      Logger.error('Failed to bulk delete posts', error);
     } finally {
       setIsLoading(false);
     }

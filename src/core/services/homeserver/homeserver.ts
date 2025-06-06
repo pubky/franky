@@ -52,7 +52,7 @@ export class HomeserverService {
   //       );
   //     }
 
-  //     Logger.debug('Creating post on homeserver:', { post });
+  //     Logger.debug('Creating post on homeserver', { post });
 
   //     const builder = new PubkySpecsBuilder(this.currentKeypair.publicKey().z32());
   //     const kind = post.kind === 'short' ? PubkyAppPostKind.Short : PubkyAppPostKind.Long;
@@ -157,7 +157,7 @@ export class HomeserverService {
 
       const response = await this.client.fetch(url, { ...options, credentials: 'include' });
 
-      Logger.debug('Response from homeserver:', { response });
+      Logger.debug('Response from homeserver', { response });
 
       return response;
     } catch (error) {
@@ -222,7 +222,7 @@ export class HomeserverService {
     try {
       const keypair = Keypair.random();
       this.currentKeypair = keypair;
-      Logger.debug('Generated random keypair:', { keypair });
+      Logger.debug('Generated random keypair', { keypair });
       return keypair;
     } catch (error) {
       if (error instanceof AppError) {
@@ -256,7 +256,7 @@ export class HomeserverService {
       const keypair = Keypair.fromSecretKey(secretKey);
       this.currentKeypair = keypair;
 
-      Logger.debug('Keypair from secret key:', { keypair });
+      Logger.debug('Keypair from secret key', { keypair });
 
       return keypair;
     } catch (error) {
@@ -269,31 +269,31 @@ export class HomeserverService {
 
   getClient(): Client {
     const client = this.client;
-    Logger.debug('Getting client:', { client });
+    Logger.debug('Getting client', { client });
     return client;
   }
 
   getCurrentKeypair(): Keypair | null {
     const keypair = this.currentKeypair;
-    Logger.debug('Getting current keypair:', { keypair });
+    Logger.debug('Getting current keypair', { keypair });
     return keypair;
   }
 
   getCurrentSession(): SignupResult['session'] | null {
     const session = this.currentSession;
-    Logger.debug('Getting current session:', { session });
+    Logger.debug('Getting current session', { session });
     return session;
   }
 
   isAuthenticated(): boolean {
     const isAuthenticated = this.currentSession !== null;
-    Logger.debug('Checking if authenticated:', { isAuthenticated });
+    Logger.debug('Checking if authenticated', { isAuthenticated });
     return isAuthenticated;
   }
 
   getCurrentPublicKey(): string | null {
     const publicKey = this.currentKeypair?.publicKey().z32();
-    Logger.debug('Getting current public key:', { publicKey });
+    Logger.debug('Getting current public key', { publicKey });
     return publicKey ?? null;
   }
 }

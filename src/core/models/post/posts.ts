@@ -54,7 +54,7 @@ export class PostModel implements PostModelSchema {
         await PostModel.table.put({ ...this });
       });
 
-      Logger.debug('Saved post to database:', { id: this.details.id });
+      Logger.debug('Saved post to database', { id: this.details.id });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save post ${this.details.id}`, 500, {
         error: error instanceof Error ? error.message : String(error),
@@ -114,12 +114,12 @@ export class PostModel implements PostModelSchema {
       ) {
         this.details.content = '[DELETED]';
         await this.save();
-        Logger.debug('Marked post as deleted:', { postPK: this.details.id });
+        Logger.debug('Marked post as deleted', { postPK: this.details.id });
       } else {
         await db.transaction('rw', PostModel.table, async () => {
           await PostModel.table.delete(this.details.id);
         });
-        Logger.debug('Deleted post completely:', { postPK: this.details.id });
+        Logger.debug('Deleted post completely', { postPK: this.details.id });
       }
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, `Failed to delete post ${this.details.id}`, 500, {
@@ -136,7 +136,7 @@ export class PostModel implements PostModelSchema {
         throw createDatabaseError(DatabaseErrorType.POST_NOT_FOUND, `Post not found: ${id}`, 404, { postId: id });
       }
 
-      Logger.debug('Found post:', { id });
+      Logger.debug('Found post', { id });
 
       return new PostModel(postData);
     } catch (error) {
@@ -162,7 +162,7 @@ export class PostModel implements PostModelSchema {
         );
       }
 
-      Logger.debug('Found posts:', postsData);
+      Logger.debug('Found posts', postsData);
 
       return postsData.map((postData) => new PostModel(postData));
     } catch (error) {
@@ -193,7 +193,7 @@ export class PostModel implements PostModelSchema {
 
       const results = postsToSave.map((postData) => new PostModel(postData));
 
-      Logger.debug('Bulk saved posts:', { posts: posts.map((post) => post.details.id) });
+      Logger.debug('Bulk saved posts', { posts: posts.map((post) => post.details.id) });
 
       return results;
     } catch (error) {
@@ -239,7 +239,7 @@ export class PostModel implements PostModelSchema {
         }
       });
 
-      Logger.debug('Bulk deleted posts:', { postPKs });
+      Logger.debug('Bulk deleted posts', { postPKs });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete posts', 500, {
         error,

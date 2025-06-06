@@ -81,14 +81,14 @@ export function ClientTest() {
         }
       }
 
-      Logger.debug('Signup successful:', result);
+      Logger.debug('Signup successful', result);
     } catch (error) {
       let message = 'Failed to signup';
       if (error instanceof AppError) {
         message = error.message;
       }
       setError(message);
-      Logger.error('Failed to signup:', error);
+      Logger.error('Failed to signup', error);
     } finally {
       setIsLoading(false);
     }
@@ -114,7 +114,7 @@ export function ClientTest() {
         message = error.message;
       }
       setError(message);
-      Logger.error('Failed to logout:', error);
+      Logger.error('Failed to logout', error);
     } finally {
       setIsLoading(false);
     }
@@ -141,14 +141,14 @@ export function ClientTest() {
 
       // const result = await PostController.create(fakePost);
       // setLastCreatedPost(fakePost);
-      // Logger.debug('Post created successfully:', result);
+      // Logger.debug('Post created successfully', result);
     } catch (error) {
       let message = 'Failed to create post';
       if (error instanceof AppError) {
         message = error.message;
       }
       setError(message);
-      Logger.error('Failed to create post:', error);
+      Logger.error('Failed to create post', error);
     } finally {
       setIsLoading(false);
     }

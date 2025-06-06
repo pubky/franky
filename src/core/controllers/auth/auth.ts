@@ -79,7 +79,7 @@ export class AuthController {
 
     if (!response.ok) {
       const errorText = await response.text();
-      Logger.error('Failed to generate signup token:', { status: response.status, error: errorText });
+      Logger.error('Failed to generate signup token', { status: response.status, error: errorText });
       throw createCommonError(
         CommonErrorType.NETWORK_ERROR,
         `Failed to generate signup token: ${response.status} ${errorText}`,

@@ -56,7 +56,7 @@ export class UserModel implements UserModelSchema {
         await UserModel.table.put({ ...this });
       });
 
-      Logger.debug('Saved user to database:', { id: this.details.id });
+      Logger.debug('Saved user to database', { id: this.details.id });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, `Failed to save user ${this.details.id}`, 500, {
         error,
@@ -111,7 +111,7 @@ export class UserModel implements UserModelSchema {
         await UserModel.table.delete(this.details.id);
       });
 
-      Logger.debug('Deleted user from database:', { id: this.details.id });
+      Logger.debug('Deleted user from database', { id: this.details.id });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, `Failed to delete user ${this.details.id}`, 500, {
         error,
@@ -127,7 +127,7 @@ export class UserModel implements UserModelSchema {
         throw createDatabaseError(DatabaseErrorType.USER_NOT_FOUND, `User not found: ${id}`, 404, { userId: id });
       }
 
-      Logger.debug('Found user:', { id });
+      Logger.debug('Found user', { id });
 
       return new UserModel(userData);
     } catch (error) {
@@ -153,7 +153,7 @@ export class UserModel implements UserModelSchema {
         );
       }
 
-      Logger.debug('Found users:', users);
+      Logger.debug('Found users', users);
 
       return users.map((userData) => new UserModel(userData));
     } catch (error) {
@@ -184,7 +184,7 @@ export class UserModel implements UserModelSchema {
 
       const results = usersToSave.map((userData) => new UserModel(userData));
 
-      Logger.debug('Bulk saved users:', { users: users.map((user) => user.details.id) });
+      Logger.debug('Bulk saved users', { users: users.map((user) => user.details.id) });
 
       return results;
     } catch (error) {
@@ -201,7 +201,7 @@ export class UserModel implements UserModelSchema {
         await this.table.bulkDelete(userPKs);
       });
 
-      Logger.debug('Bulk deleted users:', { userPKs });
+      Logger.debug('Bulk deleted users', { userPKs });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk delete users', 500, {
         error,

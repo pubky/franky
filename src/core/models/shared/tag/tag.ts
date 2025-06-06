@@ -52,7 +52,7 @@ export class TagModel implements NexusTag {
   getTaggers(pagination: PaginationParams = DEFAULT_PAGINATION): UserModelPK[] {
     try {
       const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
-      Logger.debug('Getting taggers with pagination:', {
+      Logger.debug('Getting taggers with pagination', {
         label: this.label,
         skip,
         limit,
@@ -60,7 +60,7 @@ export class TagModel implements NexusTag {
       });
       return this.taggers.slice(skip ?? 0, (skip ?? 0) + (limit ?? 0));
     } catch (error) {
-      Logger.error('Failed to get taggers:', error);
+      Logger.error('Failed to get taggers', error);
       throw error;
     }
   }
