@@ -110,6 +110,9 @@ export class HomeserverService {
         });
       }
 
+      // Save user after successful signup
+      await user.save();
+
       Logger.debug('Signup successful', { session });
 
       return { session };
