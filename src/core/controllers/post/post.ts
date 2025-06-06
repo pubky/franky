@@ -25,6 +25,10 @@ export class PostController {
   //   return post;
   // }
 
+  static async insert(postData: NexusPost | PostModelSchema): Promise<PostModel> {
+    return await PostModel.insert(postData);
+  }
+
   static async get(postPK: PostModelPK): Promise<PostModel> {
     return await PostModel.findById(postPK);
   }
@@ -41,7 +45,7 @@ export class PostController {
       return existingPost;
     } catch {
       // Post doesn't exist, create new one
-      return await PostModel.insert(postData);
+      return this.insert(postData);
     }
   }
 

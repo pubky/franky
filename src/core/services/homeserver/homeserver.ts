@@ -1,5 +1,6 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-import { FetchOptions, SignupResult, UserModel, KeyPair } from '@/core';
+import init, { PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
+import { type UserModel, type KeyPair, type FetchOptions, type SignupResult } from '@/core';
 import {
   AppError,
   HomeserverErrorType,
@@ -9,7 +10,6 @@ import {
   Env,
   Logger,
 } from '@/libs';
-import init, { PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
 
 export class HomeserverService {
   private static instance: HomeserverService;
@@ -124,7 +124,6 @@ export class HomeserverService {
       }
 
       if (error instanceof Error) {
-        console.error('Error during signup:', error);
         if (error.message.includes('invalid public key')) {
           throw createHomeserverError(
             HomeserverErrorType.INVALID_HOMESERVER_KEY,
@@ -156,10 +155,10 @@ export class HomeserverService {
         );
       }
 
-      Logger.debug('Fetching data from homeserver:', { url, options });
-
       const response = await this.client.fetch(url, { ...options, credentials: 'include' });
+
       Logger.debug('Response from homeserver:', { response });
+
       return response;
     } catch (error) {
       if (error instanceof AppError) {
@@ -167,7 +166,6 @@ export class HomeserverService {
       }
 
       if (error instanceof Error) {
-        console.error('Error during fetch:', error);
         throw createHomeserverError(HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
           originalError: error.message,
           url,
@@ -196,6 +194,7 @@ export class HomeserverService {
 
       this.currentKeypair = null;
       this.currentSession = null;
+
       Logger.debug('Logged out from homeserver');
     } catch (error) {
       if (error instanceof AppError) {
@@ -203,7 +202,6 @@ export class HomeserverService {
       }
 
       if (error instanceof Error) {
-        console.error('Error during logout:', error);
         if (error.message.includes('invalid public key')) {
           throw createHomeserverError(HomeserverErrorType.INVALID_PUBLIC_KEY, 'Invalid public key for logout', 400, {
             publicKey,
@@ -227,6 +225,9 @@ export class HomeserverService {
       Logger.debug('Generated random keypair:', { keypair });
       return keypair;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw createCommonError(CommonErrorType.NETWORK_ERROR, 'Failed to generate random keypair', 500, { error });
     }
   }
@@ -254,35 +255,45 @@ export class HomeserverService {
       }
       const keypair = Keypair.fromSecretKey(secretKey);
       this.currentKeypair = keypair;
+
       Logger.debug('Keypair from secret key:', { keypair });
+
       return keypair;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw createHomeserverError(HomeserverErrorType.INVALID_SECRET_KEY, 'Invalid secret key format', 400, { error });
     }
   }
 
   getClient(): Client {
-    Logger.debug('Getting client:', { client: this.client });
-    return this.client;
+    const client = this.client;
+    Logger.debug('Getting client:', { client });
+    return client;
   }
 
   getCurrentKeypair(): Keypair | null {
-    Logger.debug('Getting current keypair:', { keypair: this.currentKeypair });
-    return this.currentKeypair;
+    const keypair = this.currentKeypair;
+    Logger.debug('Getting current keypair:', { keypair });
+    return keypair;
   }
 
   getCurrentSession(): SignupResult['session'] | null {
-    Logger.debug('Getting current session:', { session: this.currentSession });
-    return this.currentSession;
+    const session = this.currentSession;
+    Logger.debug('Getting current session:', { session });
+    return session;
   }
 
   isAuthenticated(): boolean {
-    Logger.debug('Checking if authenticated:', { authenticated: this.currentSession !== null });
-    return this.currentSession !== null;
+    const isAuthenticated = this.currentSession !== null;
+    Logger.debug('Checking if authenticated:', { isAuthenticated });
+    return isAuthenticated;
   }
 
   getCurrentPublicKey(): string | null {
-    Logger.debug('Getting current public key:', { publicKey: this.currentKeypair?.publicKey().z32() });
-    return this.currentKeypair?.publicKey().z32() ?? null;
+    const publicKey = this.currentKeypair?.publicKey().z32();
+    Logger.debug('Getting current public key:', { publicKey });
+    return publicKey ?? null;
   }
 }

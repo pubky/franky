@@ -3,6 +3,10 @@ import { UserModelPK, UserModel, NexusUser, UserModelSchema } from '@/core';
 export class UserController {
   private constructor() {} // Prevent instantiation
 
+  static async insert(userData: NexusUser | UserModelSchema): Promise<UserModel> {
+    return await UserModel.insert(userData);
+  }
+
   static async get(userPK: UserModelPK): Promise<UserModel> {
     return await UserModel.findById(userPK);
   }
@@ -19,7 +23,7 @@ export class UserController {
       return existingUser;
     } catch {
       // User doesn't exist, create new one
-      return await UserModel.insert(userData);
+      return this.insert(userData);
     }
   }
 

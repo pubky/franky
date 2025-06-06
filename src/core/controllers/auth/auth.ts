@@ -5,6 +5,7 @@ import {
   SignupResult,
   UserController,
   DEFAULT_NEW_USER,
+  DEFAULT_USER_DETAILS,
 } from '@/core';
 import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
 import { Keypair } from '@synonymdev/pubky';
@@ -26,24 +27,19 @@ export class AuthController {
     const signupToken = await this.generateSignupToken();
 
     // Save user to database
-    const publicKey = keypair.publicKey().z32();
-    const now = Date.now();
+    const id = keypair.publicKey().z32();
     const userData: UserModelSchema = {
-      id: publicKey,
+      id,
       details: {
-        id: publicKey,
-        name: newUser.name,
-        bio: newUser.bio || '',
-        links: newUser.links || null,
-        status: null,
-        image: null, // TODO: add image
-        indexed_at: now,
+        id,
+        ...DEFAULT_USER_DETAILS,
+        ...newUser,
       },
       ...DEFAULT_NEW_USER,
     };
 
     // save user to database
-    const user = await UserController.save(userData);
+    const user = await UserController.insert(userData);
 
     // Sign up
     return await homeserverService.signup(user, keypair, signupToken);

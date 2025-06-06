@@ -210,15 +210,10 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(service.signup(mockUser, keypair, 'invalid-key')).rejects.toMatchObject({
         type: HomeserverErrorType.SIGNUP_FAILED,
         statusCode: 500,
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Error during signup:', error);
-
-      consoleSpy.mockRestore();
     });
 
     it('should logout successfully', async () => {
@@ -259,15 +254,10 @@ describe('HomeserverService', () => {
 
       await service.signup(mockUser, keypair, homeserverKey);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Error during logout:', error);
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -344,15 +334,10 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(service.fetch('invalid-url')).rejects.toMatchObject({
         type: HomeserverErrorType.FETCH_FAILED,
         statusCode: 500,
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Error during fetch:', error);
-
-      consoleSpy.mockRestore();
     });
   });
 

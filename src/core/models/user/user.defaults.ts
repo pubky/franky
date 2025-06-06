@@ -14,12 +14,11 @@ export const DEFAULT_USER_COUNTS: NexusUserCounts = {
   bookmarks: 0,
 };
 
-export const DEFAULT_USER_DETAILS: NexusUserDetails = {
+export const DEFAULT_USER_DETAILS: Omit<NexusUserDetails, 'id'> = {
   name: '',
   bio: '',
-  id: '',
   image: null,
-  indexed_at: 0,
+  indexed_at: Date.now(),
   links: null,
   status: null,
 };

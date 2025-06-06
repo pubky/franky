@@ -2,9 +2,9 @@ import { NexusUser, SyncStatus, Timestamp, UserModelPK } from '@/core';
 
 export interface UserModelSchema extends NexusUser {
   id: UserModelPK;
-  following: UserModelPK[]; // TODO: wrap in wot shared model
-  followers: UserModelPK[]; // TODO: wrap in wot shared model
-  muted: UserModelPK[]; // TODO: wrap in wot shared model
+  following: UserModelPK[];
+  followers: UserModelPK[];
+  muted: UserModelPK[];
   indexed_at: Timestamp | null;
   updated_at: Timestamp;
   sync_status: SyncStatus;
