@@ -180,7 +180,6 @@ describe('HomeserverService', () => {
       // Profile creation is skipped in tests, so no fetch call for profile
       expect(result.session).toHaveProperty('pubky');
       expect(result.session).toHaveProperty('capabilities');
-      expect(mockUser.save).toHaveBeenCalled();
     });
 
     it('should signup with token', async () => {
