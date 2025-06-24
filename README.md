@@ -2,7 +2,9 @@
 
 # Franky
 
-Franky is a social media app that uses Pubky Protocol.
+- _**WIP & Experimental**_
+- "Franky" is a social media app that uses Pubky Protocol. 
+- This application will replace https://github.com/pubky/pubky-app in production when complete.
 
 ---
 
