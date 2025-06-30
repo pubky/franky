@@ -7,6 +7,8 @@ export { Button } from './button';
 export { InfoCard } from './info-card';
 export { KeysGuard } from './keys-guard';
 export { PageHeader } from './page-header';
+export { Stepper } from './stepper';
+export { Logo } from './logo';
 export {
   Sheet,
   SheetTrigger,

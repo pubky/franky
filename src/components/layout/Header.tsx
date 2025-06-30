@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { LogIn, Twitter, Youtube, Github } from 'lucide-react';
+import { Logo } from '@/components/ui';
 import Link from 'next/link';
 
 export function Header() {
@@ -7,9 +8,7 @@ export function Header() {
     <header className="border-b">
       <div className="container mx-auto px-6 py-6 max-w-screen-xl">
         <div className="flex items-center justify-between">
-          <Link href="/" className="cursor-pointer font-bold text-2xl">
-            Franky
-          </Link>
+          <Logo className="cursor-pointer" />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">

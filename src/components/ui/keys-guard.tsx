@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useKeypairStore } from '@/core/stores';

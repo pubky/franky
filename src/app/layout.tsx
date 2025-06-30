@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter_Tight } from 'next/font/google';
 import { DatabaseProvider } from '@/providers';
-import { Header, Footer, MainLayout } from '@/components/layout';
 
 import './globals.css';
 
@@ -20,11 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <body className={`${interTight.variable} antialiased`}>
         <DatabaseProvider>
-          <div className="min-h-screen bg-background">
-            <Header />
-            <MainLayout>{children}</MainLayout>
-            <Footer />
-          </div>
+          <div className="min-h-screen bg-background">{children}</div>
         </DatabaseProvider>
       </body>
     </html>
