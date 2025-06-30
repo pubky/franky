@@ -143,10 +143,10 @@ describe('HomeserverService', () => {
 
       expect(result).toEqual({
         publicKey: 'test-public-key-z32',
-        secretKey: '1,2,3,4',
+        secretKey: new Uint8Array([1, 2, 3, 4]), // Hex representation of [1, 2, 3, 4]
       });
       expect(typeof result.publicKey).toBe('string');
-      expect(typeof result.secretKey).toBe('string');
+      expect(result.secretKey).toBeInstanceOf(Uint8Array);
     });
 
     it('should create keypair from secret key', () => {
@@ -400,7 +400,7 @@ describe('HomeserverService', () => {
       expect(keys).toHaveProperty('publicKey');
       expect(keys).toHaveProperty('secretKey');
       expect(typeof keys.publicKey).toBe('string');
-      expect(typeof keys.secretKey).toBe('string');
+      expect(keys.secretKey).toBeInstanceOf(Uint8Array);
     });
   });
 

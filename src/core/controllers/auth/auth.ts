@@ -1,4 +1,4 @@
-import { Keypair } from '@synonymdev/pubky';
+import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
 import {
   type UserControllerNewData,
   type UserModelSchema,
@@ -7,6 +7,7 @@ import {
   UserController,
   DEFAULT_NEW_USER,
   DEFAULT_USER_DETAILS,
+  KeyPair,
 } from '@/core';
 import { Env, CommonErrorType, createCommonError } from '@/libs';
 
@@ -100,5 +101,56 @@ export class AuthController {
     }
 
     return token;
+  }
+
+  static async createRecoveryFile(keypair: KeyPair, password: string): Promise<void> {
+    // Validate secret key format
+    if (!keypair.secretKey || !(keypair.secretKey instanceof Uint8Array)) {
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
+        'Invalid secret key format. Please regenerate your keys.',
+        400,
+        { secretKeyType: typeof keypair.secretKey },
+      );
+    }
+
+    if (keypair.secretKey.length !== 32) {
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
+        `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
+        400,
+        { secretKeyLength: keypair.secretKey.length },
+      );
+    }
+
+    try {
+      const keypairFromSecretKey = Keypair.fromSecretKey(keypair.secretKey);
+      const recoveryFile = createRecoveryFile(keypairFromSecretKey, password);
+      this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
+    } catch (error) {
+      throw createCommonError(
+        CommonErrorType.UNEXPECTED_ERROR,
+        'Failed to create recovery file. Please try regenerating your keys.',
+        500,
+        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+      );
+    }
+  }
+
+  static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
+    try {
+      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

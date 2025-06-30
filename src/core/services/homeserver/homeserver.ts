@@ -233,7 +233,7 @@ export class HomeserverService {
 
       return {
         publicKey: keypair.publicKey().z32(),
-        secretKey: keypair.secretKey().toString(),
+        secretKey: keypair.secretKey(),
       };
     } catch (error) {
       if (error instanceof AppError) {

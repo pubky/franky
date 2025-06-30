@@ -15,7 +15,10 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-label": "^2.1.7",
     "@synonymdev/pubky": "^0.5.0-rc.2",
+    "bip39": "^3.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dexie": "^4.0.11",
@@ -36,6 +39,7 @@
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
+    "@types/bip39": "^2.4.2",
     "@types/node": "^20.17.50",
     "@types/react": "^19",
     "@types/react-dom": "^19",

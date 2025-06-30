@@ -11,5 +11,5 @@ export type SignupResult = {
 
 export type KeyPair = {
   publicKey: string;
-  secretKey: string;
+  secretKey: Uint8Array;
 };
