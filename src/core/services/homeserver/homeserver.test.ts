@@ -41,7 +41,7 @@ let HomeserverService: typeof import('@/core/services/homeserver/homeserver').Ho
 let Keypair: typeof import('@synonymdev/pubky').Keypair;
 let PublicKey: typeof import('@synonymdev/pubky').PublicKey;
 import { HomeserverErrorType } from '@/libs';
-import { User } from '@/core';
+import { UserModel } from '@/core';
 import { Client } from '@synonymdev/pubky';
 
 // Define types for mock functions
@@ -52,7 +52,7 @@ type MockClient = {
 };
 
 describe('HomeserverService', () => {
-  let mockUser: User;
+  let mockUser: UserModel;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -104,7 +104,7 @@ describe('HomeserverService', () => {
       sync_status: 'local',
       sync_ttl: Date.now() + 300000,
       save: vi.fn().mockResolvedValue(undefined),
-    } as unknown as User;
+    } as unknown as UserModel;
   });
 
   afterEach(() => {
@@ -143,10 +143,10 @@ describe('HomeserverService', () => {
 
       expect(result).toEqual({
         publicKey: 'test-public-key-z32',
-        secretKey: '1,2,3,4',
+        secretKey: new Uint8Array([1, 2, 3, 4]), // Hex representation of [1, 2, 3, 4]
       });
       expect(typeof result.publicKey).toBe('string');
-      expect(typeof result.secretKey).toBe('string');
+      expect(result.secretKey).toBeInstanceOf(Uint8Array);
     });
 
     it('should create keypair from secret key', () => {
@@ -180,7 +180,6 @@ describe('HomeserverService', () => {
       // Profile creation is skipped in tests, so no fetch call for profile
       expect(result.session).toHaveProperty('pubky');
       expect(result.session).toHaveProperty('capabilities');
-      expect(mockUser.save).toHaveBeenCalled();
     });
 
     it('should signup with token', async () => {
@@ -210,15 +209,10 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(service.signup(mockUser, keypair, 'invalid-key')).rejects.toMatchObject({
         type: HomeserverErrorType.SIGNUP_FAILED,
         statusCode: 500,
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Error during signup:', error);
-
-      consoleSpy.mockRestore();
     });
 
     it('should logout successfully', async () => {
@@ -259,15 +253,10 @@ describe('HomeserverService', () => {
 
       await service.signup(mockUser, keypair, homeserverKey);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Error during logout:', error);
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -300,7 +289,7 @@ describe('HomeserverService', () => {
 
       const response = await service.fetch(url);
 
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, undefined);
+      expect(mockClient.fetch).toHaveBeenCalledWith(url, { credentials: 'include' });
       expect(response).toBeInstanceOf(Response);
     });
 
@@ -310,7 +299,6 @@ describe('HomeserverService', () => {
       const options = {
         method: 'PUT' as const,
         body: JSON.stringify({ message: 'Hello World' }),
-        credentials: 'include' as const,
       };
 
       const mockClient = service.getClient() as unknown as MockClient;
@@ -319,7 +307,7 @@ describe('HomeserverService', () => {
 
       await service.fetch(url, options);
 
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, options);
+      expect(mockClient.fetch).toHaveBeenCalledWith(url, { ...options, credentials: 'include' });
     });
 
     it('should delete data (DELETE)', async () => {
@@ -327,7 +315,6 @@ describe('HomeserverService', () => {
       const url = 'pubky://test-key/data';
       const options = {
         method: 'DELETE' as const,
-        credentials: 'include' as const,
       };
 
       const mockClient = service.getClient() as unknown as MockClient;
@@ -336,7 +323,7 @@ describe('HomeserverService', () => {
 
       await service.fetch(url, options);
 
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, options);
+      expect(mockClient.fetch).toHaveBeenCalledWith(url, { ...options, credentials: 'include' });
     });
 
     it('should handle fetch errors', async () => {
@@ -346,15 +333,10 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       await expect(service.fetch('invalid-url')).rejects.toMatchObject({
         type: HomeserverErrorType.FETCH_FAILED,
         statusCode: 500,
       });
-      expect(consoleSpy).toHaveBeenCalledWith('Error during fetch:', error);
-
-      consoleSpy.mockRestore();
     });
   });
 
@@ -400,11 +382,9 @@ describe('HomeserverService', () => {
 
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      await service.fetch('pubky://test-key/data', { credentials: 'omit' });
+      await service.fetch('pubky://test-key/data');
 
-      expect(mockClient.fetch).toHaveBeenCalledWith('pubky://test-key/data', {
-        credentials: 'omit',
-      });
+      expect(mockClient.fetch).toHaveBeenCalledWith('pubky://test-key/data', { credentials: 'include' });
     });
   });
 
@@ -420,7 +400,7 @@ describe('HomeserverService', () => {
       expect(keys).toHaveProperty('publicKey');
       expect(keys).toHaveProperty('secretKey');
       expect(typeof keys.publicKey).toBe('string');
-      expect(typeof keys.secretKey).toBe('string');
+      expect(keys.secretKey).toBeInstanceOf(Uint8Array);
     });
   });
 

@@ -1,10 +1,10 @@
-import { db, UserPK, UserDetails, User } from '@/core';
+import { db, UserModelPK, NexusUserDetails, UserModel } from '@/core';
 
-export function generateTestUserId(index: number = 0): UserPK {
+export function generateTestUserId(index: number = 0): UserModelPK {
   return `operrr8wsbpr3ue9d4qj41ge1kcc6r7fdiy6o3ugjrrhi4y77rd${index}`;
 }
 
-export function createTestUserDetails(overrides: Partial<UserDetails> = {}): UserDetails {
+export function createTestUserDetails(overrides: Partial<NexusUserDetails> = {}): NexusUserDetails {
   return {
     id: generateTestUserId(0),
     indexed_at: Date.now(),
@@ -17,12 +17,12 @@ export function createTestUserDetails(overrides: Partial<UserDetails> = {}): Use
   };
 }
 
-export async function createTestUsers(count: number): Promise<UserPK[]> {
-  const userIds: UserPK[] = [];
+export async function createTestUsers(count: number): Promise<UserModelPK[]> {
+  const userIds: UserModelPK[] = [];
   for (let i = 0; i < count; i++) {
     const userId = generateTestUserId(i);
     await db.users.add(
-      new User({
+      new UserModel({
         id: userId,
         details: createTestUserDetails({ name: `Test User ${i}` }),
         counts: {

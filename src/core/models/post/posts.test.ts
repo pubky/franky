@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  Post,
+  type PostModelSchema,
+  PostModel,
   NexusPost,
   DEFAULT_POST_COUNTS,
   DEFAULT_POST_RELATIONSHIPS,
-  Tag,
+  TagModel,
   resetDatabase,
-  PostSchema,
   generateTestPostId,
   createTestPostDetails,
   generateTestUserId,
@@ -29,7 +29,7 @@ describe('Post Model', () => {
     counts: DEFAULT_POST_COUNTS,
     relationships: DEFAULT_POST_RELATIONSHIPS,
     tags: [
-      new Tag({
+      new TagModel({
         label: 'test-tag',
         taggers: [generateTestUserId(2)],
         taggers_count: 1,
@@ -41,44 +41,44 @@ describe('Post Model', () => {
 
   describe('Constructor and Properties', () => {
     it('should create a Post instance with all properties', () => {
-      const post = new Post({
+      const post = new PostModel({
         ...mockNexusPost,
         id: mockNexusPost.details.id,
         indexed_at: null,
         created_at: Date.now(),
         sync_status: 'local',
         sync_ttl: Date.now() + 3600000,
-      } as PostSchema);
+      } as PostModelSchema);
 
-      expect(post).toBeInstanceOf(Post);
+      expect(post).toBeInstanceOf(PostModel);
       expect(post.details.id).toBe(testPostId);
       expect(post.details.content).toBe('This is a test post');
       expect(post.tags).toHaveLength(1);
-      expect(post.tags[0]).toBeInstanceOf(Tag);
+      expect(post.tags[0]).toBeInstanceOf(TagModel);
     });
   });
 
   describe('Static Methods', () => {
     it('should insert and find post by id', async () => {
-      const post = await Post.insert(mockNexusPost);
-      expect(post).toBeInstanceOf(Post);
+      const post = await PostModel.insert(mockNexusPost);
+      expect(post).toBeInstanceOf(PostModel);
       expect(post.details.id).toBe(testPostId);
 
-      const foundPost = await Post.findById(testPostId);
-      expect(foundPost).toBeInstanceOf(Post);
+      const foundPost = await PostModel.findById(testPostId);
+      expect(foundPost).toBeInstanceOf(PostModel);
       expect(foundPost.details.id).toBe(testPostId);
       expect(foundPost.details.content).toBe('This is a test post');
     });
 
     it('should throw error for non-existent post', async () => {
       const nonExistentId = generateTestPostId('non-existent', 999);
-      await expect(Post.findById(nonExistentId)).rejects.toThrow(`Post not found: ${nonExistentId}`);
+      await expect(PostModel.findById(nonExistentId)).rejects.toThrow(`Post not found: ${nonExistentId}`);
     });
 
     it('should find posts by ids', async () => {
       const secondPostId = generateTestPostId(testUserId, 2);
-      await Post.insert(mockNexusPost);
-      await Post.insert({
+      await PostModel.insert(mockNexusPost);
+      await PostModel.insert({
         ...mockNexusPost,
         details: createTestPostDetails({
           id: secondPostId,
@@ -87,10 +87,10 @@ describe('Post Model', () => {
         }),
       });
 
-      const posts = await Post.find([testPostId, secondPostId]);
+      const posts = await PostModel.find([testPostId, secondPostId]);
       expect(posts).toHaveLength(2);
-      expect(posts[0]).toBeInstanceOf(Post);
-      expect(posts[1]).toBeInstanceOf(Post);
+      expect(posts[0]).toBeInstanceOf(PostModel);
+      expect(posts[1]).toBeInstanceOf(PostModel);
     });
 
     it('should bulk save posts', async () => {
@@ -107,17 +107,17 @@ describe('Post Model', () => {
         },
       ];
 
-      const results = await Post.bulkSave(postsData);
+      const results = await PostModel.bulkSave(postsData);
       expect(results).toHaveLength(2);
       results.forEach((post) => {
-        expect(post).toBeInstanceOf(Post);
+        expect(post).toBeInstanceOf(PostModel);
       });
     });
 
     it('should bulk delete posts', async () => {
       const secondPostId = generateTestPostId(testUserId, 2);
-      await Post.insert(mockNexusPost);
-      await Post.insert({
+      await PostModel.insert(mockNexusPost);
+      await PostModel.insert({
         ...mockNexusPost,
         details: createTestPostDetails({
           id: secondPostId,
@@ -126,28 +126,28 @@ describe('Post Model', () => {
         }),
       });
 
-      await Post.bulkDelete([testPostId, secondPostId]);
+      await PostModel.bulkDelete([testPostId, secondPostId]);
 
       // Posts with relationships are marked as deleted, not removed
-      const post1 = await Post.findById(testPostId);
-      const post2 = await Post.findById(secondPostId);
+      const post1 = await PostModel.findById(testPostId);
+      const post2 = await PostModel.findById(secondPostId);
       expect(post1.details.content).toBe('[DELETED]');
       expect(post2.details.content).toBe('[DELETED]');
     });
   });
 
   describe('Instance Methods', () => {
-    let post: Post;
+    let post: PostModel;
 
     beforeEach(async () => {
-      post = await Post.insert(mockNexusPost);
+      post = await PostModel.insert(mockNexusPost);
     });
 
     it('should save post to database', async () => {
       post.details.content = 'Updated content';
       await post.save();
 
-      const foundPost = await Post.findById(testPostId);
+      const foundPost = await PostModel.findById(testPostId);
       expect(foundPost.details.content).toBe('Updated content');
     });
 
@@ -158,14 +158,14 @@ describe('Post Model', () => {
 
       expect(post.details.content).toBe('Edited content');
 
-      const foundPost = await Post.findById(testPostId);
+      const foundPost = await PostModel.findById(testPostId);
       expect(foundPost.details.content).toBe('Edited content');
     });
 
     it('should delete post completely when no relationships', async () => {
       // Create a post without relationships using helper
       const simplePostId = generateTestPostId(testUserId, 999);
-      const simplePost = await Post.insert({
+      const simplePost = await PostModel.insert({
         details: createTestPostDetails({
           id: simplePostId,
           author: testUserId,
@@ -179,13 +179,13 @@ describe('Post Model', () => {
 
       await simplePost.delete();
 
-      await expect(Post.findById(simplePostId)).rejects.toThrow(`Post not found: ${simplePostId}`);
+      await expect(PostModel.findById(simplePostId)).rejects.toThrow(`Post not found: ${simplePostId}`);
     });
 
     it('should mark post as deleted when has relationships', async () => {
       await post.delete();
 
-      const foundPost = await Post.findById(testPostId);
+      const foundPost = await PostModel.findById(testPostId);
       expect(foundPost.details.content).toBe('[DELETED]');
     });
   });

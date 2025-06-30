@@ -1,16 +1,12 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter_Tight } from 'next/font/google';
 import { DatabaseProvider } from '@/providers';
+import { Header, Footer, MainLayout } from '@/components/layout';
 
 import './globals.css';
 
-const geistSans = Geist({
+const interTight = Inter_Tight({
   variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
   subsets: ['latin'],
 });
 
@@ -21,9 +17,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <DatabaseProvider>{children}</DatabaseProvider>
+    <html lang="en" className="dark">
+      <body className={`${interTight.variable} antialiased`}>
+        <DatabaseProvider>
+          <div className="min-h-screen bg-background">
+            <Header />
+            <MainLayout>{children}</MainLayout>
+            <Footer />
+          </div>
+        </DatabaseProvider>
       </body>
     </html>
   );

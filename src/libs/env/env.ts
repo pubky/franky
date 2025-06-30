@@ -54,14 +54,11 @@ const envSchema = z.object({
   VITEST: z.string().optional(),
 });
 
-// Type for validated environment
-export type Env = z.infer<typeof envSchema>;
-
 /**
  * Parse and validate environment variables
  * Throws an error if validation fails
  */
-function parseEnv(): Env {
+function parseEnv(): z.infer<typeof envSchema> {
   try {
     const parsed = envSchema.parse({
       NODE_ENV: process.env.NODE_ENV,
@@ -106,4 +103,4 @@ function parseEnv(): Env {
  * Validated environment variables with defaults applied
  * Use this instead of process.env directly
  */
-export const env = parseEnv();
+export const Env = parseEnv();

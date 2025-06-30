@@ -1,8 +1,8 @@
 import { SYNC_TTL } from '@/config';
-import { SyncStatus, UserCounts, UserDetails, UserRelationship } from '@/core';
+import { SyncStatus, NexusUserCounts, NexusUserDetails, NexusUserRelationship } from '@/core';
 
 // User defaults
-export const DEFAULT_USER_COUNTS: UserCounts = {
+export const DEFAULT_USER_COUNTS: NexusUserCounts = {
   tagged: 0,
   tags: 0,
   unique_tags: 0,
@@ -14,17 +14,16 @@ export const DEFAULT_USER_COUNTS: UserCounts = {
   bookmarks: 0,
 };
 
-export const DEFAULT_USER_DETAILS: UserDetails = {
+export const DEFAULT_USER_DETAILS: Omit<NexusUserDetails, 'id'> = {
   name: '',
   bio: '',
-  id: '',
   image: null,
-  indexed_at: 0,
+  indexed_at: Date.now(),
   links: null,
   status: null,
 };
 
-export const DEFAULT_USER_RELATIONSHIP: UserRelationship = {
+export const DEFAULT_USER_RELATIONSHIP: NexusUserRelationship = {
   followed_by: false,
   following: false,
   muted: false,

@@ -1,24 +1,24 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-import { FetchOptions, SignupResult, KeyPair, User } from '@/core';
+import init, { PostResult, PubkyAppPostKind, PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
+import { type UserModel, type KeyPair, type FetchOptions, type SignupResult, type PostModelSchema } from '@/core';
 import {
   AppError,
+  HomeserverErrorType,
   createCommonError,
   CommonErrorType,
-  HomeserverErrorType,
   createHomeserverError,
-  env,
+  Env,
   Logger,
 } from '@/libs';
-import init, { PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
 
 export class HomeserverService {
   private static instance: HomeserverService;
   private client: Client;
   private currentKeypair: Keypair | null = null;
   private currentSession: SignupResult['session'] | null = null;
-  private testnet = env.NEXT_PUBLIC_TESTNET.toString() === 'true';
-  private pkarrRelays = env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
-  private homeserverPublicKey = PublicKey.from(env.NEXT_PUBLIC_HOMESERVER);
+  private testnet = Env.NEXT_PUBLIC_TESTNET.toString() === 'true';
+  private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
+  private homeserverPublicKey = PublicKey.from(Env.NEXT_PUBLIC_HOMESERVER);
 
   // Flag to skip profile creation during tests
   private skipProfileCreation = process.env.VITEST === 'true';
@@ -42,7 +42,46 @@ export class HomeserverService {
     return HomeserverService.instance;
   }
 
-  async signup(user: User, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
+  async createPost(post: PostModelSchema): Promise<PostResult> {
+    try {
+      if (!this.currentKeypair) {
+        throw createHomeserverError(
+          HomeserverErrorType.NOT_AUTHENTICATED,
+          'Not authenticated. Please signup first.',
+          401,
+        );
+      }
+
+      Logger.debug('Creating post on homeserver', { post });
+
+      const builder = new PubkySpecsBuilder(this.currentKeypair.publicKey().z32());
+      const kind = post.details.kind === 'short' ? PubkyAppPostKind.Short : PubkyAppPostKind.Long;
+      const result = builder.createPost(post.details.content, kind, null, null, post.details.attachments);
+
+      const response = await this.fetch(result.meta.url, {
+        method: 'PUT',
+        body: JSON.stringify(result.post.toJson()),
+      });
+
+      if (!response.ok) {
+        throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
+          originalError: response.statusText,
+        });
+      }
+      Logger.debug('Post created on homeserver', { post });
+      return result;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      throw createHomeserverError(HomeserverErrorType.CREATE_POST_FAILED, 'Failed to create post', 500, {
+        originalError: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+
+  async signup(user: UserModel, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
     try {
       const session = await this.client.signup(keypair, this.homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
@@ -68,13 +107,10 @@ export class HomeserverService {
         await this.fetch(result.meta.url, {
           method: 'PUT',
           body: JSON.stringify(pubkyUser),
-          credentials: 'include',
         });
       }
 
-      //  update user sync_status = 'homeserver'
-      user.sync_status = 'homeserver';
-      await user.save();
+      Logger.debug('Signup successful', { session });
 
       return { session };
     } catch (error) {
@@ -83,7 +119,6 @@ export class HomeserverService {
       }
 
       if (error instanceof Error) {
-        console.error('Error during signup:', error);
         if (error.message.includes('invalid public key')) {
           throw createHomeserverError(
             HomeserverErrorType.INVALID_HOMESERVER_KEY,
@@ -115,10 +150,10 @@ export class HomeserverService {
         );
       }
 
-      Logger.debug('Fetching data from homeserver:', { url, options });
+      const response = await this.client.fetch(url, { ...options, credentials: 'include' });
 
-      const response = await this.client.fetch(url, options);
-      Logger.debug('Response from homeserver:', { response });
+      Logger.debug('Response from homeserver', { response });
+
       return response;
     } catch (error) {
       if (error instanceof AppError) {
@@ -126,7 +161,6 @@ export class HomeserverService {
       }
 
       if (error instanceof Error) {
-        console.error('Error during fetch:', error);
         throw createHomeserverError(HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
           originalError: error.message,
           url,
@@ -155,6 +189,7 @@ export class HomeserverService {
 
       this.currentKeypair = null;
       this.currentSession = null;
+
       Logger.debug('Logged out from homeserver');
     } catch (error) {
       if (error instanceof AppError) {
@@ -162,7 +197,6 @@ export class HomeserverService {
       }
 
       if (error instanceof Error) {
-        console.error('Error during logout:', error);
         if (error.message.includes('invalid public key')) {
           throw createHomeserverError(HomeserverErrorType.INVALID_PUBLIC_KEY, 'Invalid public key for logout', 400, {
             publicKey,
@@ -183,9 +217,12 @@ export class HomeserverService {
     try {
       const keypair = Keypair.random();
       this.currentKeypair = keypair;
-      Logger.debug('Generated random keypair:', { keypair });
+      Logger.debug('Generated random keypair', { keypair });
       return keypair;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw createCommonError(CommonErrorType.NETWORK_ERROR, 'Failed to generate random keypair', 500, { error });
     }
   }
@@ -193,10 +230,10 @@ export class HomeserverService {
   generateRandomKeys(): KeyPair {
     try {
       const keypair = this.generateRandomKeypair();
-      Logger.debug('Generated random keys:', { keypair });
+
       return {
         publicKey: keypair.publicKey().z32(),
-        secretKey: keypair.secretKey().toString(),
+        secretKey: keypair.secretKey(),
       };
     } catch (error) {
       if (error instanceof AppError) {
@@ -213,35 +250,45 @@ export class HomeserverService {
       }
       const keypair = Keypair.fromSecretKey(secretKey);
       this.currentKeypair = keypair;
-      Logger.debug('Keypair from secret key:', { keypair });
+
+      Logger.debug('Keypair from secret key', { keypair });
+
       return keypair;
     } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw createHomeserverError(HomeserverErrorType.INVALID_SECRET_KEY, 'Invalid secret key format', 400, { error });
     }
   }
 
   getClient(): Client {
-    Logger.debug('Getting client:', { client: this.client });
-    return this.client;
+    const client = this.client;
+    Logger.debug('Getting client', { client });
+    return client;
   }
 
   getCurrentKeypair(): Keypair | null {
-    Logger.debug('Getting current keypair:', { keypair: this.currentKeypair });
-    return this.currentKeypair;
+    const keypair = this.currentKeypair;
+    Logger.debug('Getting current keypair', { keypair });
+    return keypair;
   }
 
   getCurrentSession(): SignupResult['session'] | null {
-    Logger.debug('Getting current session:', { session: this.currentSession });
-    return this.currentSession;
+    const session = this.currentSession;
+    Logger.debug('Getting current session', { session });
+    return session;
   }
 
   isAuthenticated(): boolean {
-    Logger.debug('Checking if authenticated:', { authenticated: this.currentSession !== null });
-    return this.currentSession !== null;
+    const isAuthenticated = this.currentSession !== null;
+    Logger.debug('Checking if authenticated', { isAuthenticated });
+    return isAuthenticated;
   }
 
   getCurrentPublicKey(): string | null {
-    Logger.debug('Getting current public key:', { publicKey: this.currentKeypair?.publicKey().z32() });
-    return this.currentKeypair?.publicKey().z32() ?? null;
+    const publicKey = this.currentKeypair?.publicKey().z32();
+    Logger.debug('Getting current public key', { publicKey });
+    return publicKey ?? null;
   }
 }

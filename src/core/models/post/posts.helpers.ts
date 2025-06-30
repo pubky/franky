@@ -1,19 +1,20 @@
 import {
+  type NexusPostDetails,
+  type PostModelSchema,
   PostController,
-  PostSchema,
-  PostDetails,
-  PostPK,
+  PostModelPK,
   DEFAULT_POST_COUNTS,
   DEFAULT_POST_RELATIONSHIPS,
   generateTestUserId,
+  PostModel,
 } from '@/core';
 import { SYNC_TTL } from '@/config';
 
-export function generateTestPostId(userId: string, index: number): PostPK {
-  return `${userId}:post${index}` as PostPK;
+export function generateTestPostId(userId: string, index: number): PostModelPK {
+  return `${userId}:post${index}` as PostModelPK;
 }
 
-export function createTestPostDetails(overrides: Partial<PostDetails> = {}): PostDetails {
+export function createTestPostDetails(overrides: Partial<NexusPostDetails> = {}): NexusPostDetails {
   return {
     id: generateTestPostId(generateTestUserId(0), 0),
     attachments: [],
@@ -29,11 +30,11 @@ export function createTestPostDetails(overrides: Partial<PostDetails> = {}): Pos
 export async function createTestPost(
   userId: string,
   index: number,
-  details: Partial<PostDetails> = {},
-): Promise<PostSchema> {
+  details: Partial<NexusPostDetails> = {},
+): Promise<PostModel> {
   const id = generateTestPostId(userId, index);
   const fullDetails = createTestPostDetails({ ...details, author: userId });
-  const post: PostSchema = {
+  const post: PostModelSchema = {
     created_at: Date.now(),
     id,
     details: fullDetails,
@@ -48,8 +49,8 @@ export async function createTestPost(
   return await PostController.save(post);
 }
 
-export async function createTestPosts(userId: string, count: number): Promise<PostSchema[]> {
-  const posts: PostSchema[] = [];
+export async function createTestPosts(userId: string, count: number): Promise<PostModel[]> {
+  const posts: PostModel[] = [];
   for (let i = 0; i < count; i++) {
     posts.push(await createTestPost(userId, i));
   }

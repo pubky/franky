@@ -1,12 +1,21 @@
-import { HomeserverService, SignupResult, UserController, UserSchema, UserDetails, DEFAULT_NEW_USER } from '@/core';
-import { env, CommonErrorType, createCommonError, Logger } from '@/libs';
-import { Keypair } from '@synonymdev/pubky';
+import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
+import {
+  type UserControllerNewData,
+  type UserModelSchema,
+  type SignupResult,
+  HomeserverService,
+  UserController,
+  DEFAULT_NEW_USER,
+  DEFAULT_USER_DETAILS,
+  KeyPair,
+} from '@/core';
+import { Env, CommonErrorType, createCommonError } from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
   static async signUp(
-    userDetails: UserDetails,
+    newUser: UserControllerNewData,
     // signupToken?: string TODO: remove this once we have a proper signup token endpoint
   ): Promise<SignupResult> {
     const homeserverService = HomeserverService.getInstance();
@@ -18,28 +27,29 @@ export class AuthController {
     // TODO: remove this once we have a proper signup token endpoint
     const signupToken = await this.generateSignupToken();
 
-    // Save user to database
-    const publicKey = keypair.publicKey().z32();
-    const now = Date.now();
-    const userData: UserSchema = {
-      id: publicKey,
+    // Save user to database and update sync_status = 'local'
+    const id = keypair.publicKey().z32();
+    const userData: UserModelSchema = {
+      id,
       details: {
-        id: publicKey,
-        name: userDetails.name,
-        bio: userDetails.bio || '',
-        links: null,
-        status: null,
-        image: userDetails.image || null,
-        indexed_at: now,
+        id,
+        ...DEFAULT_USER_DETAILS,
+        ...newUser,
       },
       ...DEFAULT_NEW_USER,
     };
 
     // save user to database
-    const user = await UserController.save(userData);
+    const user = await UserController.insert(userData);
 
     // Sign up
-    return await homeserverService.signup(user, keypair, signupToken);
+    const signupResult = await homeserverService.signup(user, keypair, signupToken);
+
+    // update user sync_status = 'homeserver'
+    user.sync_status = 'homeserver';
+    await user.save();
+
+    return signupResult;
   }
 
   static async getKeypair(): Promise<Keypair | null> {
@@ -58,12 +68,14 @@ export class AuthController {
 
   // TODO: remove this once we have a proper signup token endpoint
   private static async generateSignupToken(): Promise<string> {
-    const endpoint = env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
-    const password = env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
+    const endpoint = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
+    const password = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 
     if (!endpoint || !password) {
-      throw new Error(
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
         'Missing required environment variables: NEXT_PUBLIC_HOMESERVER_ADMIN_URL or NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD',
+        400,
       );
     }
 
@@ -76,7 +88,6 @@ export class AuthController {
 
     if (!response.ok) {
       const errorText = await response.text();
-      Logger.error('Failed to generate signup token:', { status: response.status, error: errorText });
       throw createCommonError(
         CommonErrorType.NETWORK_ERROR,
         `Failed to generate signup token: ${response.status} ${errorText}`,
@@ -86,10 +97,60 @@ export class AuthController {
 
     const token = (await response.text()).trim();
     if (!token) {
-      Logger.error('No token in response');
       throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
     }
 
     return token;
+  }
+
+  static async createRecoveryFile(keypair: KeyPair, password: string): Promise<void> {
+    // Validate secret key format
+    if (!keypair.secretKey || !(keypair.secretKey instanceof Uint8Array)) {
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
+        'Invalid secret key format. Please regenerate your keys.',
+        400,
+        { secretKeyType: typeof keypair.secretKey },
+      );
+    }
+
+    if (keypair.secretKey.length !== 32) {
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
+        `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
+        400,
+        { secretKeyLength: keypair.secretKey.length },
+      );
+    }
+
+    try {
+      const keypairFromSecretKey = Keypair.fromSecretKey(keypair.secretKey);
+      const recoveryFile = createRecoveryFile(keypairFromSecretKey, password);
+      this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
+    } catch (error) {
+      throw createCommonError(
+        CommonErrorType.UNEXPECTED_ERROR,
+        'Failed to create recovery file. Please try regenerating your keys.',
+        500,
+        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+      );
+    }
+  }
+
+  static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
+    try {
+      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

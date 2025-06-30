@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { indexedDB } from 'fake-indexeddb';
 import Dexie from 'dexie';
-import { DB_NAME, DB_VERSION } from '@/config/database';
+import { DB_NAME, DB_VERSION } from '@/config';
 import { db } from '@/core';
 
 describe('Database Initialization', () => {

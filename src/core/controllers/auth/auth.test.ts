@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
-import { HomeserverService, User, NexusUserDetails } from '@/core';
+import { HomeserverService, UserModel, NexusUserDetails } from '@/core';
 
 // Mock fetch globalmente
 const fetchMock = vi.fn();
@@ -74,8 +74,8 @@ describe('AuthController', () => {
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
         session: {} as unknown as import('@synonymdev/pubky').Session,
       });
-      const insertSpy = vi.spyOn(User, 'insert').mockImplementation(async (user) => {
-        return new User({
+      const insertSpy = vi.spyOn(UserModel, 'insert').mockImplementation(async (user) => {
+        return new UserModel({
           id: 'mock-public-key',
           details: user.details,
           counts: user.counts,

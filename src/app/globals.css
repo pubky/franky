@@ -1,6 +1,14 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+body {
+  font-family: 'Inter Tight', sans-serif;
+  min-width: 375px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

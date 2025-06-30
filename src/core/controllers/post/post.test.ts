@@ -1,15 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   PostController,
-  Post,
-  NexusPost,
+  PostModel,
   DEFAULT_POST_COUNTS,
   DEFAULT_POST_RELATIONSHIPS,
   resetDatabase,
   generateTestUserId,
   generateTestPostId,
   createTestPostDetails,
+  type PostModelSchema,
 } from '@/core';
+import { SYNC_TTL } from '@/config';
 
 describe('PostController', () => {
   beforeEach(async () => {
@@ -20,7 +21,12 @@ describe('PostController', () => {
   const testPostId1 = generateTestPostId(testUserId, 1);
   const testPostId2 = generateTestPostId(testUserId, 2);
 
-  const mockNexusPost: NexusPost = {
+  const mockNexusPost: PostModelSchema = {
+    id: testPostId1,
+    indexed_at: null,
+    created_at: Date.now(),
+    sync_status: 'local',
+    sync_ttl: Date.now() + SYNC_TTL,
     details: createTestPostDetails({
       id: testPostId1,
       author: testUserId,
@@ -32,7 +38,12 @@ describe('PostController', () => {
     bookmark: null,
   };
 
-  const mockPost2: NexusPost = {
+  const mockPost2: PostModelSchema = {
+    id: testPostId2,
+    indexed_at: null,
+    created_at: Date.now(),
+    sync_status: 'local',
+    sync_ttl: Date.now() + SYNC_TTL,
     details: createTestPostDetails({
       id: testPostId2,
       author: testUserId,
@@ -47,11 +58,11 @@ describe('PostController', () => {
   describe('Basic CRUD Operations', () => {
     it('should save and get post by id', async () => {
       const savedPost = await PostController.save(mockNexusPost);
-      expect(savedPost).toBeInstanceOf(Post);
+      expect(savedPost).toBeInstanceOf(PostModel);
       expect(savedPost.details.id).toBe(testPostId1);
 
       const retrievedPost = await PostController.get(testPostId1);
-      expect(retrievedPost).toBeInstanceOf(Post);
+      expect(retrievedPost).toBeInstanceOf(PostModel);
       expect(retrievedPost.details.id).toBe(testPostId1);
       expect(retrievedPost.details.content).toBe('This is a test post');
     });
@@ -68,8 +79,8 @@ describe('PostController', () => {
       const posts = await PostController.getByIds([testPostId1, testPostId2]);
 
       expect(posts).toHaveLength(2);
-      expect(posts[0]).toBeInstanceOf(Post);
-      expect(posts[1]).toBeInstanceOf(Post);
+      expect(posts[0]).toBeInstanceOf(PostModel);
+      expect(posts[1]).toBeInstanceOf(PostModel);
       expect(posts.map((p) => p.details.id)).toContain(testPostId1);
       expect(posts.map((p) => p.details.id)).toContain(testPostId2);
     });
@@ -107,7 +118,7 @@ describe('PostController', () => {
 
       expect(results).toHaveLength(2);
       results.forEach((post) => {
-        expect(post).toBeInstanceOf(Post);
+        expect(post).toBeInstanceOf(PostModel);
       });
 
       // Verify posts are saved

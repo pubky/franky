@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   UserController,
-  User,
+  UserModel,
   NexusUser,
   DEFAULT_USER_COUNTS,
   DEFAULT_USER_RELATIONSHIP,
@@ -41,11 +41,11 @@ describe('UserController', () => {
   describe('Basic CRUD Operations', () => {
     it('should save and get user by id', async () => {
       const savedUser = await UserController.save(mockNexusUser);
-      expect(savedUser).toBeInstanceOf(User);
+      expect(savedUser).toBeInstanceOf(UserModel);
       expect(savedUser.details.id).toBe(testUserId1);
 
       const retrievedUser = await UserController.get(testUserId1);
-      expect(retrievedUser).toBeInstanceOf(User);
+      expect(retrievedUser).toBeInstanceOf(UserModel);
       expect(retrievedUser.details.id).toBe(testUserId1);
       expect(retrievedUser.details.name).toBe('Test User 1');
     });
@@ -62,8 +62,8 @@ describe('UserController', () => {
       const users = await UserController.getByIds([testUserId1, testUserId2]);
 
       expect(users).toHaveLength(2);
-      expect(users[0]).toBeInstanceOf(User);
-      expect(users[1]).toBeInstanceOf(User);
+      expect(users[0]).toBeInstanceOf(UserModel);
+      expect(users[1]).toBeInstanceOf(UserModel);
       expect(users.map((u) => u.details.id)).toContain(testUserId1);
       expect(users.map((u) => u.details.id)).toContain(testUserId2);
     });
@@ -100,7 +100,7 @@ describe('UserController', () => {
 
       expect(results).toHaveLength(2);
       results.forEach((user) => {
-        expect(user).toBeInstanceOf(User);
+        expect(user).toBeInstanceOf(UserModel);
       });
 
       // Verify users are saved
