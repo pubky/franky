@@ -5,6 +5,7 @@ export { PasswordConfirm } from './password-confirm';
 export { Card } from './card';
 export { Button } from './button';
 export { KeysGuard } from './keys-guard';
+export { PageHeader } from './page-header';
 export {
   Sheet,
   SheetTrigger,

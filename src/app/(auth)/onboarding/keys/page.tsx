@@ -3,7 +3,7 @@
 import { ArrowLeft, FileKey, Globe, KeyRound, Lock, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useMemo } from 'react';
-import { Button, Card, CopyButton, KeyDisplay } from '@/components/ui';
+import { Button, Card, CopyButton, KeyDisplay, PageHeader } from '@/components/ui';
 import { useKeypairStore } from '@/core/stores';
 
 export default function CreateAccountReady() {
@@ -117,11 +117,14 @@ export default function CreateAccountReady() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h1 className="text-6xl font-bold text-foreground">
+      <PageHeader
+        title={
+          <>
             Your keys, <span className="text-green-500">your identity</span>.
-          </h1>
+          </>
+        }
+        subtitle="We've generated a unique key pair just for you. Keep them safe!"
+        action={
           <Button
             variant="outline"
             size="sm"
@@ -132,11 +135,8 @@ export default function CreateAccountReady() {
             <RefreshCw className={`mr-2 h-4 w-4 ${buttonStates.regenerateIcon}`} />
             Generate new keys
           </Button>
-        </div>
-        <h2 className="text-2xl text-muted-foreground">
-          We&apos;ve generated a unique key pair just for you. Keep them safe!
-        </h2>
-      </div>
+        }
+      />
 
       <div className="gap-4 flex flex-col">
         <Card className="flex-1 p-8">

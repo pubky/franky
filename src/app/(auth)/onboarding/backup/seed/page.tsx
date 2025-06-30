@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, CopyButton } from '@/components/ui';
+import { Button, Card, CopyButton, PageHeader } from '@/components/ui';
 import { ArrowLeft, Eye, EyeOff, Shield, CheckCircle2, ArrowRight, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -150,14 +150,14 @@ export default function SeedBackup() {
         <GeneratingSeed />
       ) : (
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground">
-              Backup with <span className="text-green-500">seed phrase</span>.
-            </h1>
-            <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground">
-              Write down these 12 words in order to secure your account and keys.
-            </p>
-          </div>
+          <PageHeader
+            title={
+              <>
+                Backup with <span className="text-green-500">seed phrase</span>.
+              </>
+            }
+            subtitle="Write down these 12 words in order to secure your account and keys."
+          />
 
           <div className="flex flex-col gap-4">
             <Card className="p-4 sm:p-6 lg:p-8">
@@ -312,14 +312,14 @@ export default function SeedBackup() {
 const GeneratingSeed = () => {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground">
-          Backup with <span className="text-green-500">seed phrase</span>.
-        </h1>
-        <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground">
-          Generating your seed phrase from your secret key...
-        </p>
-      </div>
+      <PageHeader
+        title={
+          <>
+            Backup with <span className="text-green-500">seed phrase</span>.
+          </>
+        }
+        subtitle="Generating your seed phrase from your secret key..."
+      />
 
       <Card className="p-4 sm:p-6 lg:p-8">
         <div className="flex flex-col items-center gap-4 text-center">

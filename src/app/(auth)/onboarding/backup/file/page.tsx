@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, PasswordInput, PasswordConfirm } from '@/components/ui';
+import { Button, Card, PasswordInput, PasswordConfirm, PageHeader } from '@/components/ui';
 import { ArrowLeft, Download, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
@@ -50,14 +50,14 @@ export default function RestoreAccount() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground">
-          Backup with <span className="text-green-500">encrypted file</span>.
-        </h1>
-        <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground">
-          Create an encrypted backup file to secure your account and keys.
-        </p>
-      </div>
+      <PageHeader
+        title={
+          <>
+            Backup with <span className="text-green-500">encrypted file</span>.
+          </>
+        }
+        subtitle="Create an encrypted backup file to secure your account and keys."
+      />
 
       <div className="flex flex-col gap-4">
         <Card className="p-4 sm:p-6 lg:p-8">

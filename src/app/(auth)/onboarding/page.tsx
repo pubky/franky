@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card } from '@/components/ui';
+import { Button, Card, PageHeader } from '@/components/ui';
 import { AppWindow, Check, AlertTriangle, CheckCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,14 +8,16 @@ import Link from 'next/link';
 export default function Starter() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-4xl md:text-6xl font-bold text-foreground">
-          Let&apos;s get <span className="text-green-500">started</span>.
-        </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground">
-          Let&apos;s get you onboarded and connected with your friends!
-        </p>
-      </div>
+      <PageHeader
+        title={
+          <>
+            Let&apos;s get <span className="text-green-500">started</span>.
+          </>
+        }
+        subtitle="Let's get you onboarded and connected with your friends!"
+        titleClassName="text-4xl md:text-6xl font-bold text-foreground"
+        subtitleClassName="text-xl md:text-2xl text-muted-foreground"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Pubky Ring Card */}
