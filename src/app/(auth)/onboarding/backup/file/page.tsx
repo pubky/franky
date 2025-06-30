@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, PasswordInput, PasswordConfirm, PageHeader } from '@/components/ui';
+import { Button, Card, InfoCard, PasswordInput, PasswordConfirm, PageHeader } from '@/components/ui';
 import { ArrowLeft, Download, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
@@ -72,20 +72,14 @@ export default function RestoreAccount() {
               </p>
             </div>
 
-            <div className="bg-muted/50 border-l-4 border-l-green-500/30 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start gap-3">
-              <div className="text-green-600 mt-0.5 flex-shrink-0">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground mb-1">Why use encrypted backups?</p>
-                <ul className="text-xs sm:text-sm text-muted-foreground space-y-1">
-                  <li>• Protects your keys with military-grade encryption</li>
-                  <li>• Works across all devices and platforms</li>
-                  <li>• Only you can decrypt it with your password</li>
-                  <li>• Safe to store in cloud services or email to yourself</li>
-                </ul>
-              </div>
-            </div>
+            <InfoCard title="Why use encrypted backups?" icon={Shield} variant="success">
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Protects your keys with military-grade encryption</li>
+                <li>Works across all devices and platforms</li>
+                <li>Only you can decrypt it with your password</li>
+                <li>Safe to store in cloud services or email to yourself</li>
+              </ul>
+            </InfoCard>
 
             <div className="flex flex-col gap-4">
               <PasswordInput

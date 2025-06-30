@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, CopyButton, PageHeader } from '@/components/ui';
+import { Button, Card, CopyButton, InfoCard, PageHeader } from '@/components/ui';
 import { ArrowLeft, Eye, EyeOff, Shield, CheckCircle2, ArrowRight, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo, useRef } from 'react';
@@ -172,20 +172,14 @@ export default function SeedBackup() {
                   </p>
                 </div>
 
-                <div className="bg-muted/50 border-l-4 border-l-amber-500/30 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start gap-3">
-                  <div className="text-amber-600 mt-0.5 flex-shrink-0">
-                    <Shield className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground mb-1">Important Security Notes</p>
-                    <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                      <li>Write these words down on paper - never store digitally</li>
-                      <li>Keep them in the exact order shown</li>
-                      <li>Store in a safe, private location</li>
-                      <li>Anyone with these words can access your account</li>
-                    </ul>
-                  </div>
-                </div>
+                <InfoCard title="Important Security Notes" icon={Shield} variant="amber">
+                  <ul className="space-y-1 list-disc list-inside">
+                    <li>Write these words down on paper - never store digitally</li>
+                    <li>Keep them in the exact order shown</li>
+                    <li>Store in a safe, private location</li>
+                    <li>Anyone with these words can access your account</li>
+                  </ul>
+                </InfoCard>
 
                 {/* Seed Words Display */}
                 <div className="space-y-4">

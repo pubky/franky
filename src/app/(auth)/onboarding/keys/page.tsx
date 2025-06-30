@@ -3,7 +3,7 @@
 import { ArrowLeft, FileKey, Globe, KeyRound, Lock, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useMemo } from 'react';
-import { Button, Card, CopyButton, KeyDisplay, PageHeader } from '@/components/ui';
+import { Button, Card, CopyButton, InfoCard, KeyDisplay, PageHeader } from '@/components/ui';
 import { useKeypairStore } from '@/core/stores';
 
 export default function CreateAccountReady() {
@@ -166,18 +166,12 @@ export default function CreateAccountReady() {
                 <p className="text-base text-secondary-foreground opacity-80">
                   Use this key to sign in and authenticate your account. Keep it private and secure.
                 </p>
-                <div className="bg-muted border-l-4 border-l-amber-500/30 rounded-lg p-4 flex items-start gap-3 mt-2">
-                  <div className="text-amber-600 mt-0.5">
-                    <Lock className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground mb-1">Why is this important?</p>
-                    <p className="text-sm text-muted-foreground">
-                      Your secret key is like a master password. Anyone with access to it can control your account
-                      completely.
-                    </p>
-                  </div>
-                </div>
+                <InfoCard title="Why is this important?" icon={Lock} variant="amber" className="mt-2">
+                  <p>
+                    Your secret key is like a master password. Anyone with access to it can control your account
+                    completely.
+                  </p>
+                </InfoCard>
               </div>
               <KeyDisplay text={displayTexts.secretKey} isSecret={true} />
               <CopyButton text={secretKeyHex} />
