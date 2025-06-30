@@ -24,12 +24,14 @@ export interface KeypairState {
   secretKey: Uint8Array;
   isGenerating: boolean;
   hasGenerated: boolean;
+  hasHydrated: boolean;
 }
 
 export interface KeypairActions {
   generateKeys: (force?: boolean) => void;
   clearKeys: () => void;
   setGenerating: (isGenerating: boolean) => void;
+  setHydrated: (hasHydrated: boolean) => void;
 }
 
 export type KeypairStore = KeypairState & KeypairActions;
@@ -39,6 +41,7 @@ const initialState: KeypairState = {
   secretKey: new Uint8Array(),
   isGenerating: false,
   hasGenerated: false,
+  hasHydrated: false,
 };
 
 export const useKeypairStore = create<KeypairStore>()(
@@ -109,13 +112,18 @@ export const useKeypairStore = create<KeypairStore>()(
 
         clearKeys: () => {
           Logger.info('KeypairStore: Clearing all keys and resetting state');
-          set(initialState);
+          set({ ...initialState, hasHydrated: true });
           Logger.debug('KeypairStore: State reset to initial values');
         },
 
         setGenerating: (isGenerating: boolean) => {
           Logger.debug('KeypairStore: Setting generating state', { isGenerating });
           set({ isGenerating });
+        },
+
+        setHydrated: (hasHydrated: boolean) => {
+          Logger.debug('KeypairStore: Setting hydrated state', { hasHydrated });
+          set({ hasHydrated });
         },
       }),
       {
@@ -127,38 +135,66 @@ export const useKeypairStore = create<KeypairStore>()(
           secretKey: state.secretKey,
           hasGenerated: state.hasGenerated,
         }),
+
+        // Custom storage to handle Uint8Array serialization
+        storage: {
+          getItem: (name) => {
+            try {
+              const str = localStorage.getItem(name);
+              if (!str) return null;
+
+              const parsed = JSON.parse(str);
+
+              // Convert secretKey back to Uint8Array if it exists
+              if (parsed.state && parsed.state.secretKey) {
+                if (Array.isArray(parsed.state.secretKey)) {
+                  parsed.state.secretKey = new Uint8Array(parsed.state.secretKey);
+                } else {
+                  // If it's not an array, it's corrupted
+                  Logger.warn('KeypairStore: Corrupted secretKey detected in storage, clearing');
+                  localStorage.removeItem(name);
+                  return null;
+                }
+              }
+
+              return parsed;
+            } catch (error) {
+              Logger.error('KeypairStore: Failed to parse stored data', error);
+              localStorage.removeItem(name);
+              return null;
+            }
+          },
+          setItem: (name, value) => {
+            try {
+              // Convert Uint8Array to regular array for JSON serialization
+              const toStore = { ...value };
+              if (toStore.state && toStore.state.secretKey instanceof Uint8Array) {
+                const stateWithSerializedKey = {
+                  ...toStore.state,
+                  secretKey: Array.from(toStore.state.secretKey),
+                };
+                toStore.state = stateWithSerializedKey as unknown as typeof toStore.state;
+              }
+              localStorage.setItem(name, JSON.stringify(toStore));
+            } catch (error) {
+              Logger.error('KeypairStore: Failed to store data', error);
+            }
+          },
+          removeItem: (name) => {
+            localStorage.removeItem(name);
+          },
+        },
+
         onRehydrateStorage: () => {
           Logger.info('KeypairStore: Starting rehydration from storage');
           return (state, error) => {
             if (error) {
-              Logger.error('KeypairStore: Failed to rehydrate from storage', error);
+              Logger.warn('KeypairStore: Failed to rehydrate from storage', error);
+              // Set hydrated to true even on error so the UI knows rehydration is complete
+              useKeypairStore.getState().setHydrated(true);
             } else if (state) {
               // Validate that secretKey is a proper Uint8Array
               const isValidSecretKey = state.secretKey instanceof Uint8Array && state.secretKey.length === 32;
-
-              if (!isValidSecretKey && state.secretKey) {
-                Logger.warn('KeypairStore: Detected corrupted secretKey in storage, clearing storage', {
-                  secretKeyType: state.secretKey?.constructor?.name,
-                  secretKeyLength: state.secretKey?.length,
-                  isUint8Array: state.secretKey instanceof Uint8Array,
-                });
-
-                // Clear corrupted storage
-                try {
-                  localStorage.removeItem('keypair-storage');
-                  Logger.info('KeypairStore: Cleared corrupted storage');
-                } catch (clearError) {
-                  Logger.error('KeypairStore: Failed to clear corrupted storage', clearError);
-                }
-
-                // Reset state to initial values but don't trigger immediate regeneration
-                useKeypairStore.setState({
-                  ...initialState,
-                  // Mark as not generated so the UI knows to regenerate
-                  hasGenerated: false,
-                });
-                return;
-              }
 
               Logger.info('KeypairStore: Successfully rehydrated from storage', {
                 hasKeys: !!(state?.publicKey && state?.secretKey),
@@ -167,6 +203,13 @@ export const useKeypairStore = create<KeypairStore>()(
                 secretKeyLength: state?.secretKey?.length,
                 isValidSecretKey,
               });
+
+              // Mark as hydrated
+              useKeypairStore.getState().setHydrated(true);
+            } else {
+              // No stored state, mark as hydrated
+              Logger.info('KeypairStore: No stored state found, starting fresh');
+              useKeypairStore.getState().setHydrated(true);
             }
           };
         },

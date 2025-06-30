@@ -7,13 +7,19 @@ import { Button, Card, CopyButton, KeyDisplay } from '@/components/ui';
 import { useKeypairStore } from '@/core/stores';
 
 export default function CreateAccountReady() {
-  const { publicKey, secretKey, isGenerating, generateKeys } = useKeypairStore();
+  const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys } = useKeypairStore();
   const hasTriedGeneration = useRef(false);
 
   useEffect(() => {
-    // Always generate keys if we don't have valid ones and we're not already generating
+    // Wait for hydration to complete before checking for keys
+    if (!hasHydrated) {
+      return;
+    }
+
+    // Check if we have valid keys after hydration
     const hasValidSecretKey = secretKey && secretKey instanceof Uint8Array && secretKey.length === 32;
 
+    // Only generate keys if we don't have valid ones, we're not already generating, and we haven't tried yet
     if (!hasValidSecretKey && !isGenerating && !hasTriedGeneration.current) {
       hasTriedGeneration.current = true;
       generateKeys();
@@ -23,7 +29,7 @@ export default function CreateAccountReady() {
     if (hasValidSecretKey) {
       hasTriedGeneration.current = false;
     }
-  }, [secretKey, isGenerating, generateKeys]);
+  }, [secretKey, isGenerating, hasHydrated, generateKeys]);
 
   return (
     <div className="flex flex-col gap-6">
