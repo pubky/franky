@@ -1,5 +1,5 @@
-import { BootstrapTest } from '@/components/BootstrapTest';
-import { ClientTest } from '@/components/ClientTest';
+import { BootstrapTest } from '@/components/playground/BootstrapTest';
+import { ClientTest } from '@/components/playground/ClientTest';
 
 export default function Page() {
   return (

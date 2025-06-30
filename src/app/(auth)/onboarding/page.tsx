@@ -13,19 +13,7 @@ export default function Starter() {
           Let&apos;s get <span className="text-green-500">started</span>.
         </h1>
         <p className="text-xl md:text-2xl text-muted-foreground">
-          By creating an account, you agree to the{' '}
-          <Link href="#" className="text-green-500 underline">
-            Terms of Service
-          </Link>
-          ,{' '}
-          <Link href="#" className="text-green-500 underline">
-            Privacy Policy
-          </Link>
-          , and you confirm you are{' '}
-          <Link href="#" className="text-green-500 underline">
-            over 18 years old
-          </Link>
-          .
+          Let&apos;s get you onboarded and connected with your friends!
         </p>
       </div>
 
