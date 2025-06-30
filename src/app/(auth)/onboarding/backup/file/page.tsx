@@ -51,34 +51,34 @@ export default function RestoreAccount() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <h1 className="text-6xl font-bold text-foreground">
+        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground">
           Backup with <span className="text-green-500">encrypted file</span>.
         </h1>
-        <p className="text-2xl text-muted-foreground">
+        <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground">
           Create an encrypted backup file to secure your account and keys.
         </p>
       </div>
 
-      <div className="flex gap-4">
-        <Card className="flex-1 p-8">
+      <div className="flex flex-col gap-4">
+        <Card className="p-4 sm:p-6 lg:p-8">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
-              <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
                 <Shield className="text-green-500 h-5 w-5" />
                 Encrypted Backup
               </h3>
-              <p className="text-base text-secondary-foreground opacity-80">
+              <p className="text-sm sm:text-base text-secondary-foreground opacity-80">
                 Set a strong password to encrypt and download your backup file.
               </p>
             </div>
 
-            <div className="bg-muted/50 border-l-4 border-l-green-500/30 rounded-lg p-4 flex items-start gap-3">
-              <div className="text-green-600 mt-0.5">
+            <div className="bg-muted/50 border-l-4 border-l-green-500/30 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start gap-3">
+              <div className="text-green-600 mt-0.5 flex-shrink-0">
                 <Shield className="h-5 w-5" />
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground mb-1">Why use encrypted backups?</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
+                <ul className="text-xs sm:text-sm text-muted-foreground space-y-1">
                   <li>• Protects your keys with military-grade encryption</li>
                   <li>• Works across all devices and platforms</li>
                   <li>• Only you can decrypt it with your password</li>
@@ -102,16 +102,22 @@ export default function RestoreAccount() {
         </Card>
       </div>
 
-      <div className="flex items-center justify-between">
-        <Button variant="secondary" size="lg" className="rounded-full" asChild>
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
+        <Button variant="secondary" size="lg" className="rounded-full w-full sm:w-auto" asChild>
           <Link href="/onboarding/keys">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Link>
         </Button>
-        <Button size="lg" className="rounded-full" onClick={handleDownload} disabled={buttonStates.downloadDisabled}>
+        <Button
+          size="lg"
+          className="rounded-full w-full sm:w-auto"
+          onClick={handleDownload}
+          disabled={buttonStates.downloadDisabled}
+        >
           <Download className="mr-2 h-4 w-4" />
-          {displayTexts.downloadButtonText}
+          <span className="hidden sm:inline">{displayTexts.downloadButtonText}</span>
+          <span className="sm:hidden">{isCreatingFile ? 'Creating file...' : 'Download & continue'}</span>
         </Button>
       </div>
     </div>
