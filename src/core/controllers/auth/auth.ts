@@ -1,4 +1,6 @@
 import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
+import * as bip39 from 'bip39';
+import crypto from 'crypto';
 import {
   type UserControllerNewData,
   type UserModelSchema,
@@ -9,7 +11,7 @@ import {
   DEFAULT_USER_DETAILS,
   KeyPair,
 } from '@/core';
-import { Env, CommonErrorType, createCommonError } from '@/libs';
+import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
@@ -151,6 +153,73 @@ export class AuthController {
       URL.revokeObjectURL(link.href);
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  static generateSeedWords(secretKey: Uint8Array | unknown): string[] {
+    if (!secretKey || !(secretKey instanceof Uint8Array)) {
+      Logger.warn('AuthController: No secret key available for seed generation', {
+        hasSecretKey: !!secretKey,
+        isValidSecretKey: secretKey instanceof Uint8Array,
+      });
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
+        'Invalid secret key format. Please regenerate your keys.',
+        400,
+        { secretKeyType: typeof secretKey },
+      );
+    }
+
+    try {
+      Logger.info('AuthController: Generating BIP39 seed words from secret key');
+
+      // Convert secret key to buffer (secretKey is already a Uint8Array)
+      const secretBuffer = Buffer.from(secretKey);
+
+      // Validate minimum length (should be at least 32 bytes for good entropy)
+      if (secretBuffer.length < 32) {
+        Logger.warn('AuthController: Secret key is shorter than recommended 32 bytes', {
+          actualLength: secretBuffer.length,
+        });
+      }
+
+      // Create a hash of the secret key to use as entropy
+      // This ensures we get consistent seed words from the same secret key
+      const entropy = crypto.createHash('sha256').update(secretBuffer).digest();
+
+      // Take first 128 bits (16 bytes) for 12-word mnemonic
+      const entropy128 = entropy.slice(0, 16);
+
+      // Generate mnemonic from entropy
+      const mnemonic = bip39.entropyToMnemonic(entropy128);
+
+      // Validate the generated mnemonic
+      if (!bip39.validateMnemonic(mnemonic)) {
+        throw new Error('Generated mnemonic failed validation');
+      }
+
+      const words = mnemonic.split(' ');
+
+      // Ensure we have exactly 12 words
+      if (words.length !== 12) {
+        throw new Error(`Expected 12 words, got ${words.length}`);
+      }
+
+      Logger.info('AuthController: Successfully generated BIP39 seed words', {
+        wordCount: words.length,
+        secretKeyLength: secretKey.length,
+        isValidMnemonic: bip39.validateMnemonic(mnemonic),
+      });
+
+      return words;
+    } catch (error) {
+      Logger.error('AuthController: Failed to generate BIP39 seed words', error);
+      throw createCommonError(
+        CommonErrorType.UNEXPECTED_ERROR,
+        'Failed to generate BIP39 seed words. Please try regenerating your keys.',
+        500,
+        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+      );
     }
   }
 }
