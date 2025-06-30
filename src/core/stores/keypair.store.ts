@@ -136,9 +136,14 @@ export const useKeypairStore = create<KeypairStore>()(
           hasGenerated: state.hasGenerated,
         }),
 
-        // Custom storage to handle Uint8Array serialization
+        // Custom storage to handle Uint8Array serialization with SSR safety
         storage: {
           getItem: (name) => {
+            // Check if we're in a browser environment
+            if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+              return null;
+            }
+
             try {
               const str = localStorage.getItem(name);
               if (!str) return null;
@@ -160,11 +165,18 @@ export const useKeypairStore = create<KeypairStore>()(
               return parsed;
             } catch (error) {
               Logger.error('KeypairStore: Failed to parse stored data', error);
-              localStorage.removeItem(name);
+              if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem(name);
+              }
               return null;
             }
           },
           setItem: (name, value) => {
+            // Check if we're in a browser environment
+            if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+              return;
+            }
+
             try {
               // Convert Uint8Array to regular array for JSON serialization
               const toStore = { ...value };
@@ -181,6 +193,10 @@ export const useKeypairStore = create<KeypairStore>()(
             }
           },
           removeItem: (name) => {
+            // Check if we're in a browser environment
+            if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+              return;
+            }
             localStorage.removeItem(name);
           },
         },

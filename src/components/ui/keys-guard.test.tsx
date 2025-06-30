@@ -29,12 +29,19 @@ Object.defineProperty(global, 'localStorage', {
 
 describe('KeysGuard', () => {
   const mockPush = vi.fn();
-  const mockUseRouter = useRouter as vi.MockedFunction<typeof useRouter>;
-  const mockUseKeypairStore = useKeypairStore as vi.MockedFunction<typeof useKeypairStore>;
+  const mockUseRouter = vi.mocked(useRouter);
+  const mockUseKeypairStore = vi.mocked(useKeypairStore);
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseRouter.mockReturnValue({ push: mockPush } as any);
+    mockUseRouter.mockReturnValue({
+      push: mockPush,
+      back: vi.fn(),
+      forward: vi.fn(),
+      refresh: vi.fn(),
+      replace: vi.fn(),
+      prefetch: vi.fn(),
+    });
     localStorageMock.getItem.mockReturnValue(null);
   });
 

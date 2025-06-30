@@ -52,6 +52,10 @@ export class Logger {
 
   static shouldLog(level: LogLevel): boolean {
     if (IS_TEST) return false; // Don't log during tests unless explicitly enabled
+
+    // Don't log during build process (SSR/SSG)
+    if (typeof window === 'undefined') return false;
+
     if (level === 'error') return true; // Always log errors in non-test environments
     if (level === 'warn') return true; // Always log warnings in non-test environments
     return IS_DEBUG; // Only log debug and info in debug mode
@@ -76,6 +80,7 @@ export class Logger {
     fallbackFn: (...args: unknown[]) => void,
   ): void {
     if (args.length === 0) return;
+    if (!this.shouldLog(level as LogLevel)) return;
     if (level === 'debug' && !this.isDebugMode) return;
     if (level === 'error') this.initialize();
 

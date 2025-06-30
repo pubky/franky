@@ -14,6 +14,11 @@ export function KeysGuard({ children, requireKeys = true, fallbackRoute = '/onbo
 
   // Helper function to check if keys are persisted in localStorage
   const areKeysPersisted = () => {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return false;
+    }
+
     try {
       const stored = localStorage.getItem('keypair-storage');
       if (!stored) return false;

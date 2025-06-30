@@ -37,6 +37,11 @@ export default function CreateAccountReady() {
 
   // Helper function to check if keys are persisted in localStorage
   const areKeysPersisted = () => {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return false;
+    }
+
     try {
       const stored = localStorage.getItem('keypair-storage');
       if (!stored) return false;
@@ -60,28 +65,31 @@ export default function CreateAccountReady() {
 
     // Case 1: Keys exist in memory but NOT in localStorage (manual deletion scenario)
     if (hasValidInMemoryKeys && !hasPersistedKeys) {
-      // Manually trigger localStorage persistence
-      // Since Zustand might not persist if values haven't changed, we'll do it manually
-      try {
-        const dataToStore = {
-          state: {
-            publicKey,
-            secretKey: Array.from(secretKey), // Convert Uint8Array to array for JSON
-            hasGenerated,
-          },
-          version: 0,
-        };
+      // Check if we're in a browser environment before accessing localStorage
+      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+        // Manually trigger localStorage persistence
+        // Since Zustand might not persist if values haven't changed, we'll do it manually
+        try {
+          const dataToStore = {
+            state: {
+              publicKey,
+              secretKey: Array.from(secretKey), // Convert Uint8Array to array for JSON
+              hasGenerated,
+            },
+            version: 0,
+          };
 
-        localStorage.setItem('keypair-storage', JSON.stringify(dataToStore));
-      } catch {
-        // Fallback: try the setState approach
-        useKeypairStore.setState({
-          publicKey,
-          secretKey,
-          hasGenerated,
-          isGenerating,
-          hasHydrated,
-        });
+          localStorage.setItem('keypair-storage', JSON.stringify(dataToStore));
+        } catch {
+          // Fallback: try the setState approach
+          useKeypairStore.setState({
+            publicKey,
+            secretKey,
+            hasGenerated,
+            isGenerating,
+            hasHydrated,
+          });
+        }
       }
 
       return;
