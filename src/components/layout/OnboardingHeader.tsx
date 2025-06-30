@@ -50,8 +50,8 @@ export function OnboardingHeader() {
   const currentStep = getCurrentStep(pathname);
 
   return (
-    <header className="border-b min-h-[85px] flex items-center">
-      <div className="container mx-auto px-6 py-6 max-w-screen-xl">
+    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 min-h-[65px] flex items-center">
+      <div className="container mx-auto px-6 py-4 max-w-screen-xl">
         <div className="flex items-center">
           {/* Logo - Link to homepage */}
           <div className="flex-shrink-0 mr-16">
