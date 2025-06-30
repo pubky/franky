@@ -14,6 +14,17 @@ export default function RestoreAccount() {
   const { publicKey, secretKey } = useKeypairStore();
   const router = useRouter();
 
+  const handleDownload = () => {
+    AuthController.createRecoveryFile(
+      {
+        publicKey,
+        secretKey,
+      },
+      password,
+    );
+    router.push('/onboarding/homeserver');
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
@@ -75,21 +86,7 @@ export default function RestoreAccount() {
             Back
           </Link>
         </Button>
-        <Button
-          size="lg"
-          className="rounded-full"
-          onClick={() => {
-            AuthController.createRecoveryFile(
-              {
-                publicKey,
-                secretKey,
-              },
-              password,
-            );
-            router.push('/onboarding/homeserver');
-          }}
-          disabled={!password || !confirmPassword}
-        >
+        <Button size="lg" className="rounded-full" onClick={handleDownload} disabled={!password || !confirmPassword}>
           <Download className="mr-2 h-4 w-4" />
           Download backup file & continue
         </Button>

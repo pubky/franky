@@ -39,11 +39,11 @@ export default function Starter() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground mb-1">Why choose Pubky Ring?</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Your keys never leave your device</li>
-                  <li>• Works across all your devices and apps</li>
-                  <li>• Industry-standard security protocols</li>
-                  <li>• Easy backup and recovery options</li>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Your keys never leave your device</li>
+                  <li>Works across all your devices and apps</li>
+                  <li>Industry-standard security protocols</li>
+                  <li>Easy backup and recovery options</li>
                 </ul>
               </div>
             </div>
@@ -146,11 +146,11 @@ export default function Starter() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground mb-1">Browser method benefits</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Quick setup - no app download required</li>
-                  <li>• Works on any device with a web browser</li>
-                  <li>• Instant account creation</li>
-                  <li>• Built-in backup options (file & seed phrase)</li>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>No app download needed</li>
+                  <li>Works on any browser</li>
+                  <li>Instant account creation</li>
+                  <li>Multiple backup options</li>
                 </ul>
               </div>
             </div>
@@ -162,10 +162,10 @@ export default function Starter() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground mb-1">Security considerations</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Keys are generated in your browser</li>
-                  <li>• Requires manual backup for security</li>
-                  <li>• Less protection against device compromise</li>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Browser-based key generation</li>
+                  <li>Manual backup required</li>
+                  <li>Less secure than app</li>
                 </ul>
               </div>
             </div>

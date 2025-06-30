@@ -139,58 +139,13 @@ export default function SeedBackup() {
 
   const seedPhrase = seedWords.join(' ');
 
-  // Show error state if no valid keys are available
-  const hasValidSecretKey = secretKey && secretKey instanceof Uint8Array && secretKey.length === 32;
-  if (!hasGenerated || !hasValidSecretKey) {
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-6xl font-bold text-foreground">
-            Backup with <span className="text-green-500">seed phrase</span>.
-          </h1>
-          <p className="text-2xl text-muted-foreground">
-            Write down these 12 words in order to secure your account and keys.
-          </p>
-        </div>
-
-        <Card className="p-8">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <AlertCircle className="h-12 w-12 text-amber-500" />
-            <h3 className="text-xl font-semibold">No Keys Available</h3>
-            <p className="text-muted-foreground max-w-md">
-              You need to generate your keys first before creating a seed phrase backup.
-            </p>
-            <Button asChild className="rounded-full">
-              <Link href="/onboarding/keys">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Generate Keys First
-              </Link>
-            </Button>
-          </div>
-        </Card>
-      </div>
-    );
+  if (!hasGenerated || !secretKey || !(secretKey instanceof Uint8Array)) {
+    return <NoSeed />;
   }
 
   // Show loading state while generating seed words
   if (seedWords.length === 0) {
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <h1 className="text-6xl font-bold text-foreground">
-            Backup with <span className="text-green-500">seed phrase</span>.
-          </h1>
-          <p className="text-2xl text-muted-foreground">Generating your seed phrase from your secret key...</p>
-        </div>
-
-        <Card className="p-8">
-          <div className="flex flex-col items-center gap-4 text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
-            <p className="text-muted-foreground">Generating BIP39 seed words...</p>
-          </div>
-        </Card>
-      </div>
-    );
+    return <GeneratingSeed />;
   }
 
   return (
@@ -223,11 +178,11 @@ export default function SeedBackup() {
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-foreground mb-1">Important Security Notes</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Write these words down on paper - never store digitally</li>
-                  <li>• Keep them in the exact order shown</li>
-                  <li>• Store in a safe, private location</li>
-                  <li>• Anyone with these words can access your account</li>
+                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Write these words down on paper - never store digitally</li>
+                  <li>Keep them in the exact order shown</li>
+                  <li>Store in a safe, private location</li>
+                  <li>Anyone with these words can access your account</li>
                 </ul>
               </div>
             </div>
@@ -346,3 +301,54 @@ export default function SeedBackup() {
     </div>
   );
 }
+
+const NoSeed = () => {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-6xl font-bold text-foreground">
+          Backup with <span className="text-green-500">seed phrase</span>.
+        </h1>
+        <p className="text-2xl text-muted-foreground">
+          Write down these 12 words in order to secure your account and keys.
+        </p>
+      </div>
+
+      <Card className="p-8">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <AlertCircle className="h-12 w-12 text-amber-500" />
+          <h3 className="text-xl font-semibold">No Keys Available</h3>
+          <p className="text-muted-foreground max-w-md">
+            You need to generate your keys first before creating a seed phrase backup.
+          </p>
+          <Button asChild className="rounded-full">
+            <Link href="/onboarding/keys">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Generate Keys First
+            </Link>
+          </Button>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+const GeneratingSeed = () => {
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <h1 className="text-6xl font-bold text-foreground">
+          Backup with <span className="text-green-500">seed phrase</span>.
+        </h1>
+        <p className="text-2xl text-muted-foreground">Generating your seed phrase from your secret key...</p>
+      </div>
+
+      <Card className="p-8">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+          <p className="text-muted-foreground">Generating BIP39 seed words...</p>
+        </div>
+      </Card>
+    </div>
+  );
+};
