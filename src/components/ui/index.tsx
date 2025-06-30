@@ -4,6 +4,7 @@ export { PasswordInput } from './password-input';
 export { PasswordConfirm } from './password-confirm';
 export { Card } from './card';
 export { Button } from './button';
+export { KeysGuard } from './keys-guard';
 export {
   Sheet,
   SheetTrigger,

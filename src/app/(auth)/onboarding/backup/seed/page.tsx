@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Card, CopyButton } from '@/components/ui';
-import { ArrowLeft, Eye, EyeOff, Shield, CheckCircle2, ArrowRight, Lock, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Shield, CheckCircle2, ArrowRight, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useKeypairStore } from '@/core/stores';
@@ -40,10 +40,6 @@ export default function SeedBackup() {
       return [];
     }
   }, [secretKey, hasGenerated]);
-
-  const isValidState = useMemo(() => {
-    return hasGenerated && secretKey && secretKey instanceof Uint8Array;
-  }, [hasGenerated, secretKey]);
 
   const hasSeedWords = useMemo(() => {
     return seedWords.length > 0;
@@ -148,179 +144,145 @@ export default function SeedBackup() {
     }
   }, [verificationWords, seedWords]);
 
-  // Render conditions
-  if (!isValidState) {
-    return <NoSeed />;
-  }
-
-  if (!hasSeedWords) {
-    return <GeneratingSeed />;
-  }
-
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-6xl font-bold text-foreground">
-          Backup with <span className="text-green-500">seed phrase</span>.
-        </h1>
-        <p className="text-2xl text-muted-foreground">
-          Write down these 12 words in order to secure your account and keys.
-        </p>
-      </div>
+    <>
+      {!hasSeedWords ? (
+        <GeneratingSeed />
+      ) : (
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <h1 className="text-6xl font-bold text-foreground">
+              Backup with <span className="text-green-500">seed phrase</span>.
+            </h1>
+            <p className="text-2xl text-muted-foreground">
+              Write down these 12 words in order to secure your account and keys.
+            </p>
+          </div>
 
-      <div className="flex gap-4">
-        <Card className="flex-1 p-8">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
-              <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Shield className="text-green-500 h-5 w-5" />
-                Seed Phrase Backup
-              </h3>
-              <p className="text-base text-secondary-foreground opacity-80">
-                Your seed phrase is generated from your secret key and provides a human-readable backup.
-              </p>
-            </div>
-
-            <div className="bg-muted/50 border-l-4 border-l-amber-500/30 rounded-lg p-4 flex items-start gap-3">
-              <div className="text-amber-600 mt-0.5">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground mb-1">Important Security Notes</p>
-                <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                  <li>Write these words down on paper - never store digitally</li>
-                  <li>Keep them in the exact order shown</li>
-                  <li>Store in a safe, private location</li>
-                  <li>Anyone with these words can access your account</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Seed Words Display */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h4 className="text-lg font-semibold text-foreground">Your Seed Phrase</h4>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleToggleSeeds} className="rounded-full">
-                    <buttonStates.showSeedsIcon className="mr-2 h-4 w-4" />
-                    {buttonStates.showSeedsText}
-                  </Button>
-                  <CopyButton text={seedPhrase} className="rounded-full" />
+          <div className="flex gap-4">
+            <Card className="flex-1 p-8">
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                    <Shield className="text-green-500 h-5 w-5" />
+                    Seed Phrase Backup
+                  </h3>
+                  <p className="text-base text-secondary-foreground opacity-80">
+                    Your seed phrase is generated from your secret key and provides a human-readable backup.
+                  </p>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                {seedWords.map((word, index) => (
-                  <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-                    <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
-                    <span className="font-mono text-sm text-foreground">{showSeeds ? word : '•••••••'}</span>
+                <div className="bg-muted/50 border-l-4 border-l-amber-500/30 rounded-lg p-4 flex items-start gap-3">
+                  <div className="text-amber-600 mt-0.5">
+                    <Shield className="h-5 w-5" />
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Verification Section */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <h4 className="text-lg font-semibold text-foreground">Verify Your Backup</h4>
-                {isVerified && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Type each word in the correct order to verify you&apos;ve written them down correctly. Once verified,
-                you&apos;ll proceed to sign up for a homeserver to complete your account setup.
-              </p>
-
-              <div className="grid grid-cols-3 gap-3">
-                {verificationWords.map((word, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
-                    <input
-                      type="text"
-                      placeholder="word"
-                      value={word}
-                      onChange={(e) => handleVerificationChange(index, e.target.value)}
-                      onPaste={(e) => handlePaste(e, index)}
-                      className={getInputClassName(word, index)}
-                    />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground mb-1">Important Security Notes</p>
+                    <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                      <li>Write these words down on paper - never store digitally</li>
+                      <li>Keep them in the exact order shown</li>
+                      <li>Store in a safe, private location</li>
+                      <li>Anyone with these words can access your account</li>
+                    </ul>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              {verificationProgress.hasAnyInput && (
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/30">
-                  {isVerified ? (
-                    <>
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      <span className="text-sm font-medium text-green-600">{displayTexts.verificationStatus}</span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/30" />
-                      <span className="text-sm text-muted-foreground">{displayTexts.verificationStatus}</span>
-                    </>
+                {/* Seed Words Display */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-lg font-semibold text-foreground">Your Seed Phrase</h4>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={handleToggleSeeds} className="rounded-full">
+                        <buttonStates.showSeedsIcon className="mr-2 h-4 w-4" />
+                        {buttonStates.showSeedsText}
+                      </Button>
+                      <CopyButton text={seedPhrase} className="rounded-full" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    {seedWords.map((word, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
+                        <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
+                        <span className="font-mono text-sm text-foreground">{showSeeds ? word : '•••••••'}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Verification Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-lg font-semibold text-foreground">Verify Your Backup</h4>
+                    {isVerified && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Type each word in the correct order to verify you&apos;ve written them down correctly. Once
+                    verified, you&apos;ll proceed to sign up for a homeserver to complete your account setup.
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    {verificationWords.map((word, index) => (
+                      <div key={index} className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
+                        <input
+                          type="text"
+                          placeholder="word"
+                          value={word}
+                          onChange={(e) => handleVerificationChange(index, e.target.value)}
+                          onPaste={(e) => handlePaste(e, index)}
+                          className={getInputClassName(word, index)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {verificationProgress.hasAnyInput && (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/30">
+                      {isVerified ? (
+                        <>
+                          <CheckCircle2 className="h-5 w-5 text-green-500" />
+                          <span className="text-sm font-medium text-green-600">{displayTexts.verificationStatus}</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/30" />
+                          <span className="text-sm text-muted-foreground">{displayTexts.verificationStatus}</span>
+                        </>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
+              </div>
+            </Card>
           </div>
-        </Card>
-      </div>
 
-      <div className="flex items-center justify-between">
-        <Button variant="secondary" size="lg" className="rounded-full" asChild>
-          <Link href="/onboarding/keys">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Link>
-        </Button>
-        <Button size="lg" className="rounded-full" disabled={buttonStates.continueDisabled} asChild={isVerified}>
-          {isVerified ? (
-            <Link href="/onboarding/homeserver">
-              {displayTexts.continueButtonText}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          ) : (
-            <div className="flex items-center">
-              <Lock className="mr-2 h-4 w-4" />
-              {displayTexts.continueButtonText}
-            </div>
-          )}
-        </Button>
-      </div>
-    </div>
+          <div className="flex items-center justify-between">
+            <Button variant="secondary" size="lg" className="rounded-full" asChild>
+              <Link href="/onboarding/keys">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+              </Link>
+            </Button>
+            <Button size="lg" className="rounded-full" disabled={buttonStates.continueDisabled} asChild={isVerified}>
+              {isVerified ? (
+                <Link href="/onboarding/homeserver">
+                  {displayTexts.continueButtonText}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              ) : (
+                <div className="flex items-center">
+                  <Lock className="mr-2 h-4 w-4" />
+                  {displayTexts.continueButtonText}
+                </div>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
-
-const NoSeed = () => {
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-6xl font-bold text-foreground">
-          Backup with <span className="text-green-500">seed phrase</span>.
-        </h1>
-        <p className="text-2xl text-muted-foreground">
-          Write down these 12 words in order to secure your account and keys.
-        </p>
-      </div>
-
-      <Card className="p-8">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <AlertCircle className="h-12 w-12 text-amber-500" />
-          <h3 className="text-xl font-semibold">No Keys Available</h3>
-          <p className="text-muted-foreground max-w-md">
-            You need to generate your keys first before creating a seed phrase backup.
-          </p>
-          <Button asChild className="rounded-full">
-            <Link href="/onboarding/keys">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Generate Keys First
-            </Link>
-          </Button>
-        </div>
-      </Card>
-    </div>
-  );
-};
 
 const GeneratingSeed = () => {
   return (
