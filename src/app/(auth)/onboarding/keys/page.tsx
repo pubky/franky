@@ -7,7 +7,7 @@ import { Button, Card, CopyButton, KeyDisplay } from '@/components/ui';
 import { useKeypairStore } from '@/core/stores';
 
 export default function CreateAccountReady() {
-  const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys } = useKeypairStore();
+  const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys, hasGenerated } = useKeypairStore();
   const hasTriedGeneration = useRef(false);
 
   // Computed values - move all logic here
@@ -35,6 +35,19 @@ export default function CreateAccountReady() {
     [isGenerating],
   );
 
+  // Helper function to check if keys are persisted in localStorage
+  const areKeysPersisted = () => {
+    try {
+      const stored = localStorage.getItem('keypair-storage');
+      if (!stored) return false;
+
+      const parsed = JSON.parse(stored);
+      return !!(parsed.state?.secretKey && parsed.state?.hasGenerated);
+    } catch {
+      return false;
+    }
+  };
+
   // Effects
   useEffect(() => {
     // Wait for hydration to complete before checking for keys
@@ -42,17 +55,52 @@ export default function CreateAccountReady() {
       return;
     }
 
-    // Only generate keys if we don't have valid ones, we're not already generating, and we haven't tried yet
-    if (!isValidSecretKey && !isGenerating && !hasTriedGeneration.current) {
+    const hasValidInMemoryKeys = isValidSecretKey && hasGenerated;
+    const hasPersistedKeys = areKeysPersisted();
+
+    // Case 1: Keys exist in memory but NOT in localStorage (manual deletion scenario)
+    if (hasValidInMemoryKeys && !hasPersistedKeys) {
+      // Manually trigger localStorage persistence
+      // Since Zustand might not persist if values haven't changed, we'll do it manually
+      try {
+        const dataToStore = {
+          state: {
+            publicKey,
+            secretKey: Array.from(secretKey), // Convert Uint8Array to array for JSON
+            hasGenerated,
+          },
+          version: 0,
+        };
+
+        localStorage.setItem('keypair-storage', JSON.stringify(dataToStore));
+      } catch {
+        // Fallback: try the setState approach
+        useKeypairStore.setState({
+          publicKey,
+          secretKey,
+          hasGenerated,
+          isGenerating,
+          hasHydrated,
+        });
+      }
+
+      return;
+    }
+
+    // Case 2: No valid keys - need to generate them
+    const needsKeyGeneration = !hasValidInMemoryKeys;
+
+    // Only generate keys if we need them, we're not already generating, and we haven't tried yet
+    if (needsKeyGeneration && !isGenerating && !hasTriedGeneration.current) {
       hasTriedGeneration.current = true;
       generateKeys();
     }
 
     // Reset the flag if we have valid keys
-    if (isValidSecretKey) {
+    if (hasValidInMemoryKeys) {
       hasTriedGeneration.current = false;
     }
-  }, [isValidSecretKey, isGenerating, hasHydrated, generateKeys]);
+  }, [isValidSecretKey, hasGenerated, isGenerating, hasHydrated, generateKeys, publicKey, secretKey]);
 
   // Event handlers
   const handleRegenerateKeys = () => {

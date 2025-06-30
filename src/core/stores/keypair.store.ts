@@ -187,11 +187,14 @@ export const useKeypairStore = create<KeypairStore>()(
 
         onRehydrateStorage: () => {
           Logger.info('KeypairStore: Starting rehydration from storage');
+
           return (state, error) => {
             if (error) {
               Logger.warn('KeypairStore: Failed to rehydrate from storage', error);
-              // Set hydrated to true even on error so the UI knows rehydration is complete
-              useKeypairStore.getState().setHydrated(true);
+              // Use setTimeout to avoid circular reference
+              setTimeout(() => {
+                useKeypairStore.getState().setHydrated(true);
+              }, 0);
             } else if (state) {
               // Validate that secretKey is a proper Uint8Array
               const isValidSecretKey = state.secretKey instanceof Uint8Array && state.secretKey.length === 32;
@@ -204,12 +207,23 @@ export const useKeypairStore = create<KeypairStore>()(
                 isValidSecretKey,
               });
 
-              // Mark as hydrated
-              useKeypairStore.getState().setHydrated(true);
+              // Use setTimeout to avoid circular reference
+              setTimeout(() => {
+                useKeypairStore.getState().setHydrated(true);
+              }, 0);
             } else {
-              // No stored state, mark as hydrated
-              Logger.info('KeypairStore: No stored state found, starting fresh');
-              useKeypairStore.getState().setHydrated(true);
+              // No stored state, ensure clean initial state and mark as hydrated
+              Logger.warn('KeypairStore: No stored state found, ensuring clean initial state');
+              const cleanState = {
+                ...initialState,
+                hasHydrated: true,
+              };
+              Logger.info('KeypairStore: Setting clean state', cleanState);
+
+              // Use setTimeout to avoid circular reference
+              setTimeout(() => {
+                useKeypairStore.setState(cleanState);
+              }, 0);
             }
           };
         },
