@@ -41,6 +41,51 @@ export default function SeedBackup() {
     }
   }, [secretKey, hasGenerated]);
 
+  const isValidState = useMemo(() => {
+    return hasGenerated && secretKey && secretKey instanceof Uint8Array;
+  }, [hasGenerated, secretKey]);
+
+  const hasSeedWords = useMemo(() => {
+    return seedWords.length > 0;
+  }, [seedWords]);
+
+  const seedPhrase = useMemo(() => {
+    return seedWords.join(' ');
+  }, [seedWords]);
+
+  const verificationProgress = useMemo(() => {
+    const correctWords = verificationWords.filter((word, i) => seedWords[i] && word === seedWords[i]).length;
+    return {
+      correctCount: correctWords,
+      total: 12,
+      hasAnyInput: verificationWords.some((word) => word.length > 0),
+    };
+  }, [verificationWords, seedWords]);
+
+  const buttonStates = useMemo(
+    () => ({
+      showSeedsText: showSeeds ? 'Hide' : 'Reveal',
+      showSeedsIcon: showSeeds ? EyeOff : Eye,
+      continueDisabled: !isVerified,
+    }),
+    [showSeeds, isVerified],
+  );
+
+  const displayTexts = useMemo(
+    () => ({
+      verificationStatus: isVerified
+        ? 'Perfect! All words match your seed phrase. Now you can proceed to homeserver signup.'
+        : `${verificationProgress.correctCount} of 12 words correct`,
+      continueButtonText: isVerified ? 'Continue to homeserver signup' : 'Verify seed phrase to continue',
+    }),
+    [isVerified, verificationProgress.correctCount],
+  );
+
+  // Event handlers
+  const handleToggleSeeds = () => {
+    setShowSeeds(!showSeeds);
+  };
+
   const handleVerificationChange = (index: number, value: string) => {
     const newWords = [...verificationWords];
     newWords[index] = value.toLowerCase().trim();
@@ -73,6 +118,21 @@ export default function SeedBackup() {
     setVerificationWords(newWords);
   };
 
+  const getInputClassName = (word: string, index: number) => {
+    const baseClass = 'flex-1 px-3 py-2 text-sm border rounded-md bg-background';
+
+    if (!word || !seedWords[index]) {
+      return `${baseClass} border-input`;
+    }
+
+    if (word === seedWords[index]) {
+      return `${baseClass} border-green-500 text-green-600`;
+    }
+
+    return `${baseClass} border-red-500 text-red-600`;
+  };
+
+  // Effects
   useEffect(() => {
     if (seedWords.length === 0) {
       setIsVerified(false);
@@ -88,14 +148,12 @@ export default function SeedBackup() {
     }
   }, [verificationWords, seedWords]);
 
-  const seedPhrase = seedWords.join(' ');
-
-  if (!hasGenerated || !secretKey || !(secretKey instanceof Uint8Array)) {
+  // Render conditions
+  if (!isValidState) {
     return <NoSeed />;
   }
 
-  // Show loading state while generating seed words
-  if (seedWords.length === 0) {
+  if (!hasSeedWords) {
     return <GeneratingSeed />;
   }
 
@@ -143,18 +201,9 @@ export default function SeedBackup() {
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-semibold text-foreground">Your Seed Phrase</h4>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setShowSeeds(!showSeeds)} className="rounded-full">
-                    {showSeeds ? (
-                      <>
-                        <EyeOff className="mr-2 h-4 w-4" />
-                        Hide
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="mr-2 h-4 w-4" />
-                        Reveal
-                      </>
-                    )}
+                  <Button variant="outline" size="sm" onClick={handleToggleSeeds} className="rounded-full">
+                    <buttonStates.showSeedsIcon className="mr-2 h-4 w-4" />
+                    {buttonStates.showSeedsText}
                   </Button>
                   <CopyButton text={seedPhrase} className="rounded-full" />
                 </div>
@@ -191,34 +240,23 @@ export default function SeedBackup() {
                       value={word}
                       onChange={(e) => handleVerificationChange(index, e.target.value)}
                       onPaste={(e) => handlePaste(e, index)}
-                      className={`flex-1 px-3 py-2 text-sm border rounded-md bg-background ${
-                        word && seedWords[index] && word === seedWords[index]
-                          ? 'border-green-500 text-green-600'
-                          : word && seedWords[index] && word !== seedWords[index]
-                            ? 'border-red-500 text-red-600'
-                            : 'border-input'
-                      }`}
+                      className={getInputClassName(word, index)}
                     />
                   </div>
                 ))}
               </div>
 
-              {verificationWords.some((word) => word.length > 0) && (
+              {verificationProgress.hasAnyInput && (
                 <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/30">
                   {isVerified ? (
                     <>
                       <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      <span className="text-sm font-medium text-green-600">
-                        Perfect! All words match your seed phrase. Now you can proceed to homeserver signup.
-                      </span>
+                      <span className="text-sm font-medium text-green-600">{displayTexts.verificationStatus}</span>
                     </>
                   ) : (
                     <>
                       <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/30" />
-                      <span className="text-sm text-muted-foreground">
-                        {verificationWords.filter((word, i) => seedWords[i] && word === seedWords[i]).length} of 12
-                        words correct
-                      </span>
+                      <span className="text-sm text-muted-foreground">{displayTexts.verificationStatus}</span>
                     </>
                   )}
                 </div>
@@ -235,16 +273,16 @@ export default function SeedBackup() {
             Back
           </Link>
         </Button>
-        <Button size="lg" className="rounded-full" disabled={!isVerified} asChild={isVerified}>
+        <Button size="lg" className="rounded-full" disabled={buttonStates.continueDisabled} asChild={isVerified}>
           {isVerified ? (
             <Link href="/onboarding/homeserver">
-              Continue to homeserver signup
+              {displayTexts.continueButtonText}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           ) : (
             <div className="flex items-center">
               <Lock className="mr-2 h-4 w-4" />
-              Verify seed phrase to continue
+              {displayTexts.continueButtonText}
             </div>
           )}
         </Button>

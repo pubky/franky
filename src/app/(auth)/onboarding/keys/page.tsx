@@ -2,7 +2,7 @@
 
 import { ArrowLeft, FileKey, Globe, KeyRound, Lock, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { Button, Card, CopyButton, KeyDisplay } from '@/components/ui';
 import { useKeypairStore } from '@/core/stores';
 
@@ -10,26 +10,54 @@ export default function CreateAccountReady() {
   const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys } = useKeypairStore();
   const hasTriedGeneration = useRef(false);
 
+  // Computed values - move all logic here
+  const isValidSecretKey = useMemo(() => {
+    return secretKey && secretKey instanceof Uint8Array && secretKey.length === 32;
+  }, [secretKey]);
+
+  const secretKeyHex = useMemo(() => {
+    return isValidSecretKey ? Buffer.from(secretKey).toString('hex') : '';
+  }, [secretKey, isValidSecretKey]);
+
+  const displayTexts = useMemo(
+    () => ({
+      publicKey: publicKey || 'Generating...',
+      secretKey: isValidSecretKey ? secretKeyHex : 'Generating...',
+    }),
+    [publicKey, isValidSecretKey, secretKeyHex],
+  );
+
+  const buttonStates = useMemo(
+    () => ({
+      regenerateDisabled: isGenerating,
+      regenerateIcon: isGenerating ? 'animate-spin' : '',
+    }),
+    [isGenerating],
+  );
+
+  // Effects
   useEffect(() => {
     // Wait for hydration to complete before checking for keys
     if (!hasHydrated) {
       return;
     }
 
-    // Check if we have valid keys after hydration
-    const hasValidSecretKey = secretKey && secretKey instanceof Uint8Array && secretKey.length === 32;
-
     // Only generate keys if we don't have valid ones, we're not already generating, and we haven't tried yet
-    if (!hasValidSecretKey && !isGenerating && !hasTriedGeneration.current) {
+    if (!isValidSecretKey && !isGenerating && !hasTriedGeneration.current) {
       hasTriedGeneration.current = true;
       generateKeys();
     }
 
     // Reset the flag if we have valid keys
-    if (hasValidSecretKey) {
+    if (isValidSecretKey) {
       hasTriedGeneration.current = false;
     }
-  }, [secretKey, isGenerating, hasHydrated, generateKeys]);
+  }, [isValidSecretKey, isGenerating, hasHydrated, generateKeys]);
+
+  // Event handlers
+  const handleRegenerateKeys = () => {
+    generateKeys(true);
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -42,11 +70,11 @@ export default function CreateAccountReady() {
             variant="outline"
             size="sm"
             className="rounded-full p-6 w-50 cursor-pointer"
-            onClick={() => generateKeys(true)}
-            disabled={isGenerating}
+            onClick={handleRegenerateKeys}
+            disabled={buttonStates.regenerateDisabled}
           >
-            <RefreshCw className={`mr-2 h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
-            {'Generate new keys'}
+            <RefreshCw className={`mr-2 h-4 w-4 ${buttonStates.regenerateIcon}`} />
+            Generate new keys
           </Button>
         </div>
         <h2 className="text-2xl text-muted-foreground">
@@ -67,7 +95,7 @@ export default function CreateAccountReady() {
                   Share your pubky with your friends so they can follow you.
                 </p>
               </div>
-              <KeyDisplay text={publicKey || 'Generating...'} />
+              <KeyDisplay text={displayTexts.publicKey} />
               <CopyButton text={publicKey} />
             </div>
           </div>
@@ -95,18 +123,8 @@ export default function CreateAccountReady() {
                   </div>
                 </div>
               </div>
-              <KeyDisplay
-                text={
-                  secretKey && secretKey instanceof Uint8Array
-                    ? Buffer.from(secretKey).toString('hex')
-                    : 'Generating...'
-                }
-                isSecret={true}
-              />
-
-              <CopyButton
-                text={secretKey && secretKey instanceof Uint8Array ? Buffer.from(secretKey).toString('hex') : ''}
-              />
+              <KeyDisplay text={displayTexts.secretKey} isSecret={true} />
+              <CopyButton text={secretKeyHex} />
             </div>
           </div>
         </Card>

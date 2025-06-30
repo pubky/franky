@@ -3,7 +3,7 @@
 import { Button, Card, PasswordInput, PasswordConfirm } from '@/components/ui';
 import { ArrowLeft, Download, Shield } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AuthController } from '@/core/controllers/auth';
 import { useKeypairStore } from '@/core/stores';
 import { useRouter } from 'next/navigation';
@@ -11,18 +11,41 @@ import { useRouter } from 'next/navigation';
 export default function RestoreAccount() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isCreatingFile, setIsCreatingFile] = useState(false);
   const { publicKey, secretKey } = useKeypairStore();
   const router = useRouter();
 
-  const handleDownload = () => {
-    AuthController.createRecoveryFile(
-      {
-        publicKey,
-        secretKey,
-      },
-      password,
-    );
-    router.push('/onboarding/homeserver');
+  // Computed values
+  const buttonStates = useMemo(
+    () => ({
+      downloadDisabled: !password || !confirmPassword || isCreatingFile,
+    }),
+    [password, confirmPassword, isCreatingFile],
+  );
+
+  const displayTexts = useMemo(
+    () => ({
+      downloadButtonText: isCreatingFile ? 'Creating backup file...' : 'Download backup file & continue',
+    }),
+    [isCreatingFile],
+  );
+
+  // Event handlers
+  const handleDownload = async () => {
+    setIsCreatingFile(true);
+    try {
+      await AuthController.createRecoveryFile(
+        {
+          publicKey,
+          secretKey,
+        },
+        password,
+      );
+      // Only navigate if the recovery file was created successfully
+      router.push('/onboarding/homeserver');
+    } finally {
+      setIsCreatingFile(false);
+    }
   };
 
   return (
@@ -86,9 +109,9 @@ export default function RestoreAccount() {
             Back
           </Link>
         </Button>
-        <Button size="lg" className="rounded-full" onClick={handleDownload} disabled={!password || !confirmPassword}>
+        <Button size="lg" className="rounded-full" onClick={handleDownload} disabled={buttonStates.downloadDisabled}>
           <Download className="mr-2 h-4 w-4" />
-          Download backup file & continue
+          {displayTexts.downloadButtonText}
         </Button>
       </div>
     </div>
