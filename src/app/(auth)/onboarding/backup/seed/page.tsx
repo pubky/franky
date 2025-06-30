@@ -115,7 +115,7 @@ export default function SeedBackup() {
   };
 
   const getInputClassName = (word: string, index: number) => {
-    const baseClass = 'flex-1 px-3 py-2 text-sm border rounded-md bg-background';
+    const baseClass = 'flex-1 px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm border rounded-md bg-background';
 
     if (!word || !seedWords[index]) {
       return `${baseClass} border-input`;
@@ -151,34 +151,34 @@ export default function SeedBackup() {
       ) : (
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <h1 className="text-6xl font-bold text-foreground">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground">
               Backup with <span className="text-green-500">seed phrase</span>.
             </h1>
-            <p className="text-2xl text-muted-foreground">
+            <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground">
               Write down these 12 words in order to secure your account and keys.
             </p>
           </div>
 
-          <div className="flex gap-4">
-            <Card className="flex-1 p-8">
+          <div className="flex flex-col gap-4">
+            <Card className="p-4 sm:p-6 lg:p-8">
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-3">
-                  <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <h3 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
                     <Shield className="text-green-500 h-5 w-5" />
                     Seed Phrase Backup
                   </h3>
-                  <p className="text-base text-secondary-foreground opacity-80">
+                  <p className="text-sm sm:text-base text-secondary-foreground opacity-80">
                     Your seed phrase is generated from your secret key and provides a human-readable backup.
                   </p>
                 </div>
 
-                <div className="bg-muted/50 border-l-4 border-l-amber-500/30 rounded-lg p-4 flex items-start gap-3">
-                  <div className="text-amber-600 mt-0.5">
+                <div className="bg-muted/50 border-l-4 border-l-amber-500/30 rounded-lg p-3 sm:p-4 flex flex-col sm:flex-row items-start gap-3">
+                  <div className="text-amber-600 mt-0.5 flex-shrink-0">
                     <Shield className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-medium text-foreground mb-1">Important Security Notes</p>
-                    <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                    <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 list-disc list-inside">
                       <li>Write these words down on paper - never store digitally</li>
                       <li>Keep them in the exact order shown</li>
                       <li>Store in a safe, private location</li>
@@ -189,10 +189,15 @@ export default function SeedBackup() {
 
                 {/* Seed Words Display */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <h4 className="text-lg font-semibold text-foreground">Your Seed Phrase</h4>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={handleToggleSeeds} className="rounded-full">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleToggleSeeds}
+                        className="rounded-full text-xs sm:text-sm"
+                      >
                         <buttonStates.showSeedsIcon className="mr-2 h-4 w-4" />
                         {buttonStates.showSeedsText}
                       </Button>
@@ -200,11 +205,18 @@ export default function SeedBackup() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                     {seedWords.map((word, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 border rounded-lg bg-muted/30">
-                        <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
-                        <span className="font-mono text-sm text-foreground">{showSeeds ? word : '•••••••'}</span>
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 border rounded-lg bg-muted/30"
+                      >
+                        <span className="text-xs sm:text-sm font-medium text-muted-foreground w-4 sm:w-6">
+                          {index + 1}.
+                        </span>
+                        <span className="font-mono text-xs sm:text-sm text-foreground flex-1">
+                          {showSeeds ? word : '•••••••'}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -216,15 +228,17 @@ export default function SeedBackup() {
                     <h4 className="text-lg font-semibold text-foreground">Verify Your Backup</h4>
                     {isVerified && <CheckCircle2 className="h-5 w-5 text-green-500" />}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Type each word in the correct order to verify you&apos;ve written them down correctly. Once
                     verified, you&apos;ll proceed to sign up for a homeserver to complete your account setup.
                   </p>
 
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                     {verificationWords.map((word, index) => (
-                      <div key={index} className="flex items-center gap-3">
-                        <span className="text-sm font-medium text-muted-foreground w-6">{index + 1}.</span>
+                      <div key={index} className="flex items-center gap-2 sm:gap-3">
+                        <span className="text-xs sm:text-sm font-medium text-muted-foreground w-4 sm:w-6">
+                          {index + 1}.
+                        </span>
                         <input
                           type="text"
                           placeholder="word"
@@ -238,16 +252,20 @@ export default function SeedBackup() {
                   </div>
 
                   {verificationProgress.hasAnyInput && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/30">
+                    <div className="flex items-start sm:items-center gap-2 p-3 rounded-lg bg-muted/30">
                       {isVerified ? (
                         <>
-                          <CheckCircle2 className="h-5 w-5 text-green-500" />
-                          <span className="text-sm font-medium text-green-600">{displayTexts.verificationStatus}</span>
+                          <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5 sm:mt-0" />
+                          <span className="text-xs sm:text-sm font-medium text-green-600">
+                            {displayTexts.verificationStatus}
+                          </span>
                         </>
                       ) : (
                         <>
-                          <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/30" />
-                          <span className="text-sm text-muted-foreground">{displayTexts.verificationStatus}</span>
+                          <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/30 flex-shrink-0 mt-0.5 sm:mt-0" />
+                          <span className="text-xs sm:text-sm text-muted-foreground">
+                            {displayTexts.verificationStatus}
+                          </span>
                         </>
                       )}
                     </div>
@@ -257,23 +275,30 @@ export default function SeedBackup() {
             </Card>
           </div>
 
-          <div className="flex items-center justify-between">
-            <Button variant="secondary" size="lg" className="rounded-full" asChild>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
+            <Button variant="secondary" size="lg" className="rounded-full w-full sm:w-auto" asChild>
               <Link href="/onboarding/keys">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Link>
             </Button>
-            <Button size="lg" className="rounded-full" disabled={buttonStates.continueDisabled} asChild={isVerified}>
+            <Button
+              size="lg"
+              className="rounded-full w-full sm:w-auto"
+              disabled={buttonStates.continueDisabled}
+              asChild={isVerified}
+            >
               {isVerified ? (
                 <Link href="/onboarding/homeserver">
-                  {displayTexts.continueButtonText}
+                  <span className="hidden sm:inline">{displayTexts.continueButtonText}</span>
+                  <span className="sm:hidden">Continue to homeserver</span>
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               ) : (
                 <div className="flex items-center">
                   <Lock className="mr-2 h-4 w-4" />
-                  {displayTexts.continueButtonText}
+                  <span className="hidden sm:inline">{displayTexts.continueButtonText}</span>
+                  <span className="sm:hidden">Verify seed phrase</span>
                 </div>
               )}
             </Button>
@@ -288,16 +313,18 @@ const GeneratingSeed = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <h1 className="text-6xl font-bold text-foreground">
+        <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-foreground">
           Backup with <span className="text-green-500">seed phrase</span>.
         </h1>
-        <p className="text-2xl text-muted-foreground">Generating your seed phrase from your secret key...</p>
+        <p className="text-lg sm:text-xl lg:text-2xl text-muted-foreground">
+          Generating your seed phrase from your secret key...
+        </p>
       </div>
 
-      <Card className="p-8">
+      <Card className="p-4 sm:p-6 lg:p-8">
         <div className="flex flex-col items-center gap-4 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
-          <p className="text-muted-foreground">Generating BIP39 seed words...</p>
+          <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-green-500"></div>
+          <p className="text-sm sm:text-base text-muted-foreground">Generating BIP39 seed words...</p>
         </div>
       </Card>
     </div>
