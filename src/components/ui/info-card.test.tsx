@@ -124,21 +124,21 @@ describe('InfoCard', () => {
       </InfoCard>,
     );
 
-    // Check for chevron icon
-    const chevronElement = container.querySelector('svg');
-    expect(chevronElement).toBeInTheDocument();
+    // Should find both the main icon and the chevron
+    const svgElements = container.querySelectorAll('svg');
+    expect(svgElements).toHaveLength(2); // Main icon + chevron
   });
 
   it('should not render chevron when collapsible is false', () => {
-    render(
+    const { container } = render(
       <InfoCard title="Non-collapsible Test" icon={Info} collapsible={false}>
         <p>Content</p>
       </InfoCard>,
     );
 
-    // Should not find a chevron (only the main icon should be present)
-    const chevronElements = screen.queryAllByRole('img', { hidden: true });
-    expect(chevronElements).toHaveLength(1); // Only the main icon
+    // Should only find the main icon, not a chevron
+    const svgElements = container.querySelectorAll('svg');
+    expect(svgElements).toHaveLength(1); // Only the main icon
   });
 
   it('should toggle content visibility when clicked and collapsible', () => {
