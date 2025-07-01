@@ -164,7 +164,9 @@ export default function SeedBackup() {
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-3">
                   <h3 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
-                    <Shield className="text-green-500 h-5 w-5" />
+                    <div className="p-3 bg-green-500/10 rounded-xl">
+                      <Shield className="text-green-500 h-5 w-5" />
+                    </div>
                     Seed Phrase Backup
                   </h3>
                   <p className="text-sm sm:text-base text-secondary-foreground opacity-80">

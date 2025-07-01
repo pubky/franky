@@ -144,7 +144,9 @@ export default function CreateAccountReady() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <Globe className="text-green-500 h-5 w-5" />
+                  <div className="p-3 bg-green-500/10 rounded-xl">
+                    <Globe className="text-green-500 h-5 w-5" />
+                  </div>
                   Public Key
                 </h3>
                 <p className="text-base text-secondary-foreground opacity-80">
@@ -160,7 +162,9 @@ export default function CreateAccountReady() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                  <Lock className="text-green-500 h-5 w-5" />
+                  <div className="p-3 bg-green-500/10 rounded-xl">
+                    <Lock className="text-green-500 h-5 w-5" />
+                  </div>
                   Secret Key
                 </h3>
                 <p className="text-base text-secondary-foreground opacity-80">
