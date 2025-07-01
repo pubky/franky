@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Shield, AlertTriangle, Check, Info } from 'lucide-react';
 import { InfoCard } from './info-card';
 
@@ -115,5 +115,90 @@ describe('InfoCard', () => {
     // Check for responsive text sizing
     const textElement = container.querySelector('.text-xs.sm\\:text-sm');
     expect(textElement).toBeInTheDocument();
+  });
+
+  it('should render collapsible chevron when collapsible is true', () => {
+    const { container } = render(
+      <InfoCard title="Collapsible Test" icon={Info} collapsible>
+        <p>Content</p>
+      </InfoCard>,
+    );
+
+    // Check for chevron icon
+    const chevronElement = container.querySelector('svg');
+    expect(chevronElement).toBeInTheDocument();
+  });
+
+  it('should not render chevron when collapsible is false', () => {
+    render(
+      <InfoCard title="Non-collapsible Test" icon={Info} collapsible={false}>
+        <p>Content</p>
+      </InfoCard>,
+    );
+
+    // Should not find a chevron (only the main icon should be present)
+    const chevronElements = screen.queryAllByRole('img', { hidden: true });
+    expect(chevronElements).toHaveLength(1); // Only the main icon
+  });
+
+  it('should toggle content visibility when clicked and collapsible', () => {
+    render(
+      <InfoCard title="Toggle Test" icon={Info} collapsible>
+        <p>Toggle content</p>
+      </InfoCard>,
+    );
+
+    const titleElement = screen.getByText('Toggle Test');
+    const contentElement = screen.getByText('Toggle content');
+
+    // Content should be visible initially
+    expect(contentElement).toBeVisible();
+
+    // Click to collapse
+    fireEvent.click(titleElement);
+
+    // Content should be hidden (opacity-0 class applied)
+    expect(contentElement.closest('.max-h-0')).toBeInTheDocument();
+
+    // Click to expand
+    fireEvent.click(titleElement);
+
+    // Content should be visible again
+    expect(contentElement.closest('.max-h-96')).toBeInTheDocument();
+  });
+
+  it('should start collapsed when defaultCollapsed is true', () => {
+    render(
+      <InfoCard title="Default Collapsed Test" icon={Info} collapsible defaultCollapsed>
+        <p>Collapsed content</p>
+      </InfoCard>,
+    );
+
+    const contentElement = screen.getByText('Collapsed content');
+
+    // Content should start collapsed
+    expect(contentElement.closest('.max-h-0')).toBeInTheDocument();
+  });
+
+  it('should have cursor pointer when collapsible', () => {
+    const { container } = render(
+      <InfoCard title="Cursor Test" icon={Info} collapsible>
+        <p>Content</p>
+      </InfoCard>,
+    );
+
+    const titleContainer = container.querySelector('.cursor-pointer');
+    expect(titleContainer).toBeInTheDocument();
+  });
+
+  it('should not have cursor pointer when not collapsible', () => {
+    const { container } = render(
+      <InfoCard title="No Cursor Test" icon={Info} collapsible={false}>
+        <p>Content</p>
+      </InfoCard>,
+    );
+
+    const titleContainer = container.querySelector('.cursor-pointer');
+    expect(titleContainer).not.toBeInTheDocument();
   });
 });

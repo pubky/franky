@@ -74,7 +74,7 @@ export default function RestoreAccount() {
               </p>
             </div>
 
-            <InfoCard title="Why use encrypted backups?" icon={Shield} variant="success">
+            <InfoCard title="Why use encrypted backups?" icon={Shield} variant="success" collapsible defaultCollapsed>
               <ul className="space-y-1 list-disc list-inside">
                 <li>Protects your keys with military-grade encryption</li>
                 <li>Works across all devices and platforms</li>

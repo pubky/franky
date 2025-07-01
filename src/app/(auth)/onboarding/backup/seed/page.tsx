@@ -174,7 +174,7 @@ export default function SeedBackup() {
                   </p>
                 </div>
 
-                <InfoCard title="Important Security Notes" icon={Shield} variant="amber">
+                <InfoCard title="Important Security Notes" icon={Shield} variant="amber" collapsible defaultCollapsed>
                   <ul className="space-y-1 list-disc list-inside">
                     <li>Write these words down on paper - never store digitally</li>
                     <li>Keep them in the exact order shown</li>

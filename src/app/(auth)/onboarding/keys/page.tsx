@@ -170,7 +170,14 @@ export default function CreateAccountReady() {
                 <p className="text-base text-secondary-foreground opacity-80">
                   Use this key to sign in and authenticate your account. Keep it private and secure.
                 </p>
-                <InfoCard title="Why is this important?" icon={Lock} variant="amber" className="mt-2">
+                <InfoCard
+                  title="Why is this important?"
+                  icon={Lock}
+                  variant="amber"
+                  className="mt-2"
+                  collapsible
+                  defaultCollapsed
+                >
                   <p>
                     Your secret key is like a master password. Anyone with access to it can control your account
                     completely.
