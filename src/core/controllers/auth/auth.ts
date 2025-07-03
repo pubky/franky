@@ -1,57 +1,15 @@
 import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 import crypto from 'crypto';
-import {
-  type UserControllerNewData,
-  type UserModelSchema,
-  type SignupResult,
-  HomeserverService,
-  UserController,
-  DEFAULT_NEW_USER,
-  DEFAULT_USER_DETAILS,
-  KeyPair,
-} from '@/core';
-import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
+import { type SignupResult, HomeserverService, KeyPair } from '@/core';
+import { Env, CommonErrorType, createCommonError } from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
-  static async signUp(
-    newUser: UserControllerNewData,
-    // signupToken?: string TODO: remove this once we have a proper signup token endpoint
-  ): Promise<SignupResult> {
+  static async signUp(keypair: Keypair, signupToken: string): Promise<SignupResult> {
     const homeserverService = HomeserverService.getInstance();
-
-    // Generate keypair
-    const keypair = homeserverService.generateRandomKeypair();
-
-    // Generate signup token
-    // TODO: remove this once we have a proper signup token endpoint
-    const signupToken = await this.generateSignupToken();
-
-    // Save user to database and update sync_status = 'local'
-    const id = keypair.publicKey().z32();
-    const userData: UserModelSchema = {
-      id,
-      details: {
-        id,
-        ...DEFAULT_USER_DETAILS,
-        ...newUser,
-      },
-      ...DEFAULT_NEW_USER,
-    };
-
-    // save user to database
-    const user = await UserController.insert(userData);
-
-    // Sign up
-    const signupResult = await homeserverService.signup(user, keypair, signupToken);
-
-    // update user sync_status = 'homeserver'
-    user.sync_status = 'homeserver';
-    await user.save();
-
-    return signupResult;
+    return await homeserverService.signup(keypair, signupToken);
   }
 
   static async getKeypair(): Promise<Keypair | null> {
@@ -69,7 +27,7 @@ export class AuthController {
   }
 
   // TODO: remove this once we have a proper signup token endpoint
-  private static async generateSignupToken(): Promise<string> {
+  static async generateSignupToken(): Promise<string> {
     const endpoint = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
     const password = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 
@@ -158,10 +116,6 @@ export class AuthController {
 
   static generateSeedWords(secretKey: Uint8Array | unknown): string[] {
     if (!secretKey || !(secretKey instanceof Uint8Array)) {
-      Logger.warn('AuthController: No secret key available for seed generation', {
-        hasSecretKey: !!secretKey,
-        isValidSecretKey: secretKey instanceof Uint8Array,
-      });
       throw createCommonError(
         CommonErrorType.INVALID_INPUT,
         'Invalid secret key format. Please regenerate your keys.',
@@ -171,14 +125,12 @@ export class AuthController {
     }
 
     try {
-      Logger.info('AuthController: Generating BIP39 seed words from secret key');
-
       // Convert secret key to buffer (secretKey is already a Uint8Array)
       const secretBuffer = Buffer.from(secretKey);
 
       // Validate minimum length (should be at least 32 bytes for good entropy)
       if (secretBuffer.length < 32) {
-        Logger.warn('AuthController: Secret key is shorter than recommended 32 bytes', {
+        throw createCommonError(CommonErrorType.INVALID_INPUT, 'Secret key is shorter than recommended 32 bytes', 400, {
           actualLength: secretBuffer.length,
         });
       }
@@ -205,15 +157,8 @@ export class AuthController {
         throw new Error(`Expected 12 words, got ${words.length}`);
       }
 
-      Logger.info('AuthController: Successfully generated BIP39 seed words', {
-        wordCount: words.length,
-        secretKeyLength: secretKey.length,
-        isValidMnemonic: bip39.validateMnemonic(mnemonic),
-      });
-
       return words;
     } catch (error) {
-      Logger.error('AuthController: Failed to generate BIP39 seed words', error);
       throw createCommonError(
         CommonErrorType.UNEXPECTED_ERROR,
         'Failed to generate BIP39 seed words. Please try regenerating your keys.',

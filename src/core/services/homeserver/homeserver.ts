@@ -1,6 +1,6 @@
 import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-import init, { PostResult, PubkyAppPostKind, PubkyAppUser, PubkySpecsBuilder } from 'pubky-app-specs';
-import { type UserModel, type KeyPair, type FetchOptions, type SignupResult, type PostModelSchema } from '@/core';
+import init, { PostResult, PubkyAppPostKind, PubkySpecsBuilder } from 'pubky-app-specs';
+import { type KeyPair, type FetchOptions, type SignupResult, type PostModelSchema } from '@/core';
 import {
   AppError,
   HomeserverErrorType,
@@ -81,61 +81,41 @@ export class HomeserverService {
     }
   }
 
-  async signup(user: UserModel, keypair: Keypair, signupToken?: string): Promise<SignupResult> {
+  async signup(keypair: Keypair, signupToken: string): Promise<SignupResult> {
     try {
+      Logger.debug('Signing up', {
+        keypair,
+        signupToken,
+        homeserverPublicKey: this.homeserverPublicKey,
+        homeserverPublicKeyZ32: this.homeserverPublicKey.z32(),
+      });
       const session = await this.client.signup(keypair, this.homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
       this.currentSession = session;
-
-      // Skip profile creation during tests to avoid WASM/mocking issues
-      if (!this.skipProfileCreation) {
-        // PUT INTO HOMESERVER
-        const publicKey = keypair.publicKey().z32();
-        const builder = new PubkySpecsBuilder(publicKey);
-        const result = builder.createUser(
-          user.details.name,
-          user.details.bio,
-          user.details.image,
-          user.details.links,
-          user.details.status,
-        );
-
-        // Let's bring the full wasm object into JS and assign correct type.
-        const pubkyUser = result.user.toJson() as PubkyAppUser;
-
-        // Send the profile to the homeserver
-        await this.fetch(result.meta.url, {
-          method: 'PUT',
-          body: JSON.stringify(pubkyUser),
-        });
-      }
 
       Logger.debug('Signup successful', { session });
 
       return { session };
     } catch (error) {
+      Logger.error('Signup failed', {
+        error,
+        errorType: typeof error,
+        errorConstructor: error?.constructor?.name,
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorString: String(error),
+        isError: error instanceof Error,
+        hasMessage: error != null && typeof error === 'object' && 'message' in error,
+      });
+
       if (error instanceof AppError) {
         throw error;
       }
 
-      if (error instanceof Error) {
-        if (error.message.includes('invalid public key')) {
-          throw createHomeserverError(
-            HomeserverErrorType.INVALID_HOMESERVER_KEY,
-            'Invalid homeserver public key',
-            400,
-            {
-              homeserverPublicKey: this.homeserverPublicKey,
-            },
-          );
-        }
-        throw createHomeserverError(HomeserverErrorType.SIGNUP_FAILED, 'Failed to signup', 500, {
-          originalError: error.message,
-        });
-      }
+      // Simply pass through the error with original message preserved
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
-      throw createCommonError(CommonErrorType.NETWORK_ERROR, 'An unexpected error occurred during signup', 500, {
-        error,
+      throw createHomeserverError(HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {
+        originalError: errorMessage,
       });
     }
   }

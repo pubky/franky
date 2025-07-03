@@ -14,16 +14,31 @@ import {
   CheckCircle,
   Hash,
   Network,
+  AlertCircle,
 } from 'lucide-react';
 import { Button, Card, PageHeader } from '@/components/ui';
-import Link from 'next/link';
 import { useState } from 'react';
+import { AuthController } from '@/core/controllers/auth';
+import { useKeypairStore } from '@/core/stores';
+import { HomeserverService } from '@/core/services/homeserver';
+import { AppError, HomeserverErrorType, ErrorMessages } from '@/libs';
+import { useRouter } from 'next/navigation';
 
 export default function CreateAccount() {
   const [inviteCode, setInviteCode] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isSigningUp, setIsSigningUp] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { secretKey, hasGenerated } = useKeypairStore();
+  const router = useRouter();
 
   const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    // Clear error when user starts typing
+    if (errorMessage) {
+      setErrorMessage(null);
+    }
 
     // Remove all non-alphanumeric characters
     const cleanValue = value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
@@ -43,11 +58,92 @@ export default function CreateAccount() {
     setInviteCode(formattedValue);
   };
 
+  const generateDemoCode = async () => {
+    setIsGenerating(true);
+    setErrorMessage(null);
+    try {
+      // Generate a real signup token using the AuthController
+      const token = await AuthController.generateSignupToken();
+      setInviteCode(token);
+    } catch (error) {
+      console.error('Failed to generate demo signup token:', error);
+      // Fallback to random code if the API fails
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      for (let i = 0; i < 12; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      const formattedCode = `${result.slice(0, 4)}-${result.slice(4, 8)}-${result.slice(8, 12)}`;
+      setInviteCode(formattedCode);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof AppError) {
+      const originalError = (error.details?.originalError as string) || '';
+
+      // Check if the original error message matches any HomeserverErrorType enum values
+      const matchedErrorType = Object.values(HomeserverErrorType).find((errorType) =>
+        originalError.includes(errorType),
+      );
+
+      if (matchedErrorType) {
+        switch (matchedErrorType) {
+          case HomeserverErrorType.USER_ALREADY_EXISTS: // 'User already exists'
+            return ErrorMessages.USER_ALREADY_EXISTS;
+
+          case HomeserverErrorType.INVALID_SIGNUP_TOKEN: // 'Invalid token'
+            return ErrorMessages.INVALID_SIGNUP_TOKEN;
+
+          default:
+            // For other matched error types, fall through to default
+            break;
+        }
+      }
+      return ErrorMessages.GENERIC_ERROR;
+    }
+
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return ErrorMessages.GENERIC_ERROR;
+  };
+
+  const handleSignUp = async () => {
+    if (!hasGenerated || !secretKey || !isCodeComplete) {
+      console.error('Missing required data for signup:', { hasGenerated, hasSecretKey: !!secretKey, isCodeComplete });
+      return;
+    }
+
+    setIsSigningUp(true);
+    setErrorMessage(null);
+    try {
+      // Convert the store's secretKey to a Keypair object
+      const homeserverService = HomeserverService.getInstance();
+      const keypair = homeserverService.keypairFromSecretKey(secretKey);
+
+      // Call the signup method with the keypair and invite code
+      const result = await AuthController.signUp(keypair, inviteCode);
+
+      router.push('/onboarding/profile');
+    } catch (error) {
+      console.error('Signup failed:', error);
+      const errorMsg = getErrorMessage(error);
+      setErrorMessage(errorMsg);
+    } finally {
+      setIsSigningUp(false);
+    }
+  };
+
   // Computed values
   const isCodeComplete = inviteCode.length === 14;
-  const isButtonDisabled = !isCodeComplete;
-  const buttonText = isCodeComplete ? 'Validate & Continue' : 'Enter Invite Code';
-  const buttonTextMobile = isCodeComplete ? 'Continue' : 'Enter Code';
+  const hasValidKeys = hasGenerated && secretKey && secretKey.length === 32;
+  const isButtonDisabled = !isCodeComplete || !hasValidKeys || isSigningUp;
+  const buttonText = isSigningUp ? 'Signing Up...' : isCodeComplete ? 'Validate & Continue' : 'Enter Invite Code';
+  const buttonTextMobile = isSigningUp ? 'Signing Up...' : isCodeComplete ? 'Continue' : 'Enter Code';
 
   return (
     <div className="flex flex-col gap-4">
@@ -81,17 +177,40 @@ export default function CreateAccount() {
 
               {/* Invite Code Input */}
               <div className="space-y-4 mb-8">
-                <label className="text-sm font-medium text-muted-foreground">INVITE CODE</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-muted-foreground">INVITE CODE</label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={generateDemoCode}
+                    disabled={isGenerating}
+                    className="cursor-pointer text-xs px-3 py-1 h-7 rounded-lg border-green-500/30 text-green-600 hover:bg-green-500/10 hover:border-green-500/50 disabled:opacity-50"
+                  >
+                    {isGenerating ? 'Generating...' : 'Generate Demo Code'}
+                  </Button>
+                </div>
                 <div className="relative">
                   <input
                     type="text"
                     value={inviteCode}
                     onChange={handleInviteCodeChange}
                     placeholder="XXXX-XXXX-XXXX"
-                    className="w-full text-lg font-mono tracking-wider rounded-xl border-2 border-muted bg-background text-foreground p-4 transition-all focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/30"
+                    className={`w-full text-lg font-mono tracking-wider rounded-xl border-2 bg-background text-foreground p-4 transition-all focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500/30 ${
+                      errorMessage ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20' : 'border-muted'
+                    }`}
                     maxLength={14}
                   />
                 </div>
+
+                {/* Error Message */}
+                {errorMessage && (
+                  <div className="flex items-start gap-2 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-lg">
+                    <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-red-700 dark:text-red-300">{errorMessage}</p>
+                  </div>
+                )}
+
                 <p className="text-sm text-muted-foreground">
                   We&apos;ll validate your invite code when you proceed to create your account.
                 </p>
@@ -276,21 +395,11 @@ export default function CreateAccount() {
           size="lg"
           className="rounded-full w-full text-white sm:w-auto bg-green-500 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isButtonDisabled}
-          asChild={isCodeComplete}
+          onClick={isCodeComplete && hasValidKeys ? handleSignUp : undefined}
         >
-          {isCodeComplete ? (
-            <Link href="/onboarding/profile">
-              <span className="hidden sm:inline">{buttonText}</span>
-              <span className="sm:hidden">{buttonTextMobile}</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          ) : (
-            <>
-              <span className="hidden sm:inline">{buttonText}</span>
-              <span className="sm:hidden">{buttonTextMobile}</span>
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </>
-          )}
+          <span className="hidden sm:inline">{buttonText}</span>
+          <span className="sm:hidden">{buttonTextMobile}</span>
+          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
