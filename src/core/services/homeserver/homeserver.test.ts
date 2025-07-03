@@ -41,7 +41,6 @@ let HomeserverService: typeof import('@/core/services/homeserver/homeserver').Ho
 let Keypair: typeof import('@synonymdev/pubky').Keypair;
 let PublicKey: typeof import('@synonymdev/pubky').PublicKey;
 import { HomeserverErrorType } from '@/libs';
-import { UserModel } from '@/core';
 import { Client } from '@synonymdev/pubky';
 
 // Define types for mock functions
@@ -52,8 +51,6 @@ type MockClient = {
 };
 
 describe('HomeserverService', () => {
-  let mockUser: UserModel;
-
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.resetModules();
@@ -67,44 +64,6 @@ describe('HomeserverService', () => {
 
     // Reset singleton instance
     (HomeserverService as unknown as { instance: undefined }).instance = undefined;
-
-    // Create mock user
-    mockUser = {
-      details: {
-        id: 'test-user-id',
-        name: 'Test User',
-        bio: 'Test bio',
-        image: null,
-        links: null,
-        status: null,
-        indexed_at: Date.now(),
-      },
-      counts: {
-        tagged: 0,
-        tags: 0,
-        unique_tags: 0,
-        posts: 0,
-        replies: 0,
-        following: 0,
-        followers: 0,
-        friends: 0,
-        bookmarks: 0,
-      },
-      tags: [],
-      relationship: {
-        following: false,
-        followed_by: false,
-        muted: false,
-      },
-      following: [],
-      followers: [],
-      muted: [],
-      indexed_at: null,
-      updated_at: Date.now(),
-      sync_status: 'local',
-      sync_ttl: Date.now() + 300000,
-      save: vi.fn().mockResolvedValue(undefined),
-    } as unknown as UserModel;
   });
 
   afterEach(() => {
@@ -174,7 +133,7 @@ describe('HomeserverService', () => {
       });
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      const result = await service.signup(mockUser, keypair, homeserverKey);
+      const result = await service.signup(keypair, homeserverKey);
 
       expect(mockClient.signup).toHaveBeenCalled();
       // Profile creation is skipped in tests, so no fetch call for profile
@@ -195,7 +154,7 @@ describe('HomeserverService', () => {
       });
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      await service.signup(mockUser, keypair, token);
+      await service.signup(keypair, token);
 
       expect(mockClient.signup).toHaveBeenCalled();
       // Profile creation is skipped in tests, so no fetch call for profile
@@ -209,7 +168,7 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-      await expect(service.signup(mockUser, keypair, 'invalid-key')).rejects.toMatchObject({
+      await expect(service.signup(keypair, 'invalid-key')).rejects.toMatchObject({
         type: HomeserverErrorType.SIGNUP_FAILED,
         statusCode: 500,
       });
@@ -229,7 +188,7 @@ describe('HomeserverService', () => {
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
       (mockClient.signout as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
       await service.logout('test-key');
 
       expect(mockClient.signout).toHaveBeenCalled();
@@ -251,7 +210,7 @@ describe('HomeserverService', () => {
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
       (mockClient.signout as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
 
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
@@ -273,7 +232,7 @@ describe('HomeserverService', () => {
       });
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
     });
 
     it('should fetch data (GET)', async () => {
@@ -353,7 +312,7 @@ describe('HomeserverService', () => {
       });
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
     });
 
     it('should handle empty response data', async () => {
@@ -435,7 +394,7 @@ describe('HomeserverService', () => {
       (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue(mockSession);
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
 
       expect(service.getCurrentSession()).toBe(mockSession);
       expect(service.isAuthenticated()).toBe(true);
@@ -454,7 +413,7 @@ describe('HomeserverService', () => {
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
       (mockClient.signout as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
       expect(service.isAuthenticated()).toBe(true);
 
       await service.logout('test-key');
@@ -488,9 +447,9 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('invalid public key'));
 
-      await expect(service.signup(mockUser, keypair, invalidKey)).rejects.toMatchObject({
-        type: HomeserverErrorType.INVALID_HOMESERVER_KEY,
-        statusCode: 400,
+      await expect(service.signup(keypair, invalidKey)).rejects.toMatchObject({
+        type: HomeserverErrorType.SIGNUP_FAILED,
+        statusCode: 500,
       });
     });
 
@@ -523,7 +482,7 @@ describe('HomeserverService', () => {
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
       (mockClient.signout as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('invalid public key'));
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
       await expect(service.logout('invalid-key')).rejects.toMatchObject({
         type: HomeserverErrorType.INVALID_PUBLIC_KEY,
         statusCode: 400,
@@ -555,7 +514,7 @@ describe('HomeserverService', () => {
       // Since profile creation is skipped in tests, we only need to mock the expected fetch call to fail
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'));
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
       await expect(service.fetch('pubky://test-key/data')).rejects.toMatchObject({
         type: HomeserverErrorType.FETCH_FAILED,
         statusCode: 500,
@@ -575,7 +534,7 @@ describe('HomeserverService', () => {
       (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
       (mockClient.signout as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Server error'));
 
-      await service.signup(mockUser, keypair, homeserverKey);
+      await service.signup(keypair, homeserverKey);
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
@@ -590,7 +549,7 @@ describe('HomeserverService', () => {
       const mockClient = service.getClient() as unknown as MockClient;
       (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Server error'));
 
-      await expect(service.signup(mockUser, keypair, homeserverKey)).rejects.toMatchObject({
+      await expect(service.signup(keypair, homeserverKey)).rejects.toMatchObject({
         type: HomeserverErrorType.SIGNUP_FAILED,
         statusCode: 500,
       });

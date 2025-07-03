@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
-import { HomeserverService, UserModel, NexusUserDetails } from '@/core';
+import { HomeserverService } from '@/core';
 import * as bip39 from 'bip39';
 
 // Mock fetch globalmente
@@ -103,77 +103,35 @@ describe('AuthController', () => {
 
   describe('signUp', () => {
     it('should successfully sign up a user', async () => {
-      const mockUserDetails: NexusUserDetails = {
-        name: 'Test User',
-        bio: 'Test Bio',
-        id: 'test-id',
-        links: null,
-        status: null,
-        image: null,
-        indexed_at: Date.now(),
-      };
-
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('mock-token'),
-      });
-
       const homeserverService = HomeserverService.getInstance();
-      const generateKeypairSpy = vi.spyOn(homeserverService, 'generateRandomKeypair');
+      const keypair = homeserverService.generateRandomKeypair();
+      const signupToken = 'test-token';
+
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
         session: {} as unknown as import('@synonymdev/pubky').Session,
       });
-      const insertSpy = vi.spyOn(UserModel, 'insert').mockImplementation(async (user) => {
-        return new UserModel({
-          id: 'mock-public-key',
-          details: user.details,
-          counts: user.counts,
-          tags: user.tags,
-          relationship: user.relationship,
-          following: [],
-          followers: [],
-          muted: [],
-          indexed_at: null,
-          updated_at: Date.now(),
-          sync_status: 'local',
-          sync_ttl: Date.now() + 300000,
-        });
-      });
 
-      const result = await AuthController.signUp(mockUserDetails);
+      const result = await AuthController.signUp(keypair, signupToken);
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(generateKeypairSpy).toHaveBeenCalled();
-      expect(signupSpy).toHaveBeenCalled();
-      expect(insertSpy).toHaveBeenCalled();
+      expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
       expect(result).toEqual({
         session: {},
       });
 
-      generateKeypairSpy.mockRestore();
       signupSpy.mockRestore();
-      insertSpy.mockRestore();
     });
 
-    it('should throw error if token generation fails', async () => {
-      const mockUserDetails: NexusUserDetails = {
-        name: 'Test User',
-        bio: 'Test Bio',
-        id: 'test-id',
-        links: null,
-        status: null,
-        image: null,
-        indexed_at: Date.now(),
-      };
+    it('should throw error if signup fails', async () => {
+      const homeserverService = HomeserverService.getInstance();
+      const keypair = homeserverService.generateRandomKeypair();
+      const signupToken = 'invalid-token';
 
-      fetchMock.mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-        text: vi.fn().mockResolvedValue('Unauthorized'),
-      });
+      const signupSpy = vi.spyOn(homeserverService, 'signup').mockRejectedValue(new Error('Signup failed'));
 
-      await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to generate signup token');
-      expect(fetchMock).toHaveBeenCalled();
+      await expect(AuthController.signUp(keypair, signupToken)).rejects.toThrow('Signup failed');
+      expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
+
+      signupSpy.mockRestore();
     });
   });
 
@@ -250,16 +208,15 @@ describe('AuthController', () => {
       expect(() => AuthController.generateSeedWords({} as unknown as Uint8Array)).toThrow();
     });
 
-    it('should handle short secret keys with warning', () => {
+    it('should throw error for short secret keys', () => {
       // Create a short secret key (less than 32 bytes)
       const shortSecretKey = new Uint8Array(16);
       crypto.getRandomValues(shortSecretKey);
 
-      // Should still work but log a warning
-      const result = AuthController.generateSeedWords(shortSecretKey);
-
-      expect(result).toHaveLength(12);
-      expect(result.every((word) => typeof word === 'string' && word.length > 0)).toBe(true);
+      // Should throw an error for short keys
+      expect(() => AuthController.generateSeedWords(shortSecretKey)).toThrow(
+        'Secret key is shorter than recommended 32 bytes',
+      );
     });
   });
 

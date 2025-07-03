@@ -124,17 +124,17 @@ export class AuthController {
       );
     }
 
+    // Convert secret key to buffer (secretKey is already a Uint8Array)
+    const secretBuffer = Buffer.from(secretKey);
+
+    // Validate minimum length (should be at least 32 bytes for good entropy)
+    if (secretBuffer.length < 32) {
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Secret key is shorter than recommended 32 bytes', 400, {
+        actualLength: secretBuffer.length,
+      });
+    }
+
     try {
-      // Convert secret key to buffer (secretKey is already a Uint8Array)
-      const secretBuffer = Buffer.from(secretKey);
-
-      // Validate minimum length (should be at least 32 bytes for good entropy)
-      if (secretBuffer.length < 32) {
-        throw createCommonError(CommonErrorType.INVALID_INPUT, 'Secret key is shorter than recommended 32 bytes', 400, {
-          actualLength: secretBuffer.length,
-        });
-      }
-
       // Create a hash of the secret key to use as entropy
       // This ensures we get consistent seed words from the same secret key
       const entropy = crypto.createHash('sha256').update(secretBuffer).digest();

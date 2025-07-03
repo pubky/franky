@@ -126,7 +126,7 @@ export default function CreateAccount() {
       const keypair = homeserverService.keypairFromSecretKey(secretKey);
 
       // Call the signup method with the keypair and invite code
-      const result = await AuthController.signUp(keypair, inviteCode);
+      await AuthController.signUp(keypair, inviteCode);
 
       router.push('/onboarding/profile');
     } catch (error) {
