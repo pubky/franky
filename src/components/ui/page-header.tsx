@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 interface PageHeaderProps {
   title: string | ReactNode;
-  subtitle?: string;
+  subtitle?: string | ReactNode;
   action?: ReactNode;
   className?: string;
   titleClassName?: string;
@@ -23,7 +23,7 @@ export function PageHeader({
         <h1 className={titleClassName}>{title}</h1>
         {action && action}
       </div>
-      {subtitle && <p className={subtitleClassName}>{subtitle}</p>}
+      {subtitle && <div className={subtitleClassName}>{subtitle}</div>}
     </div>
   );
 }
