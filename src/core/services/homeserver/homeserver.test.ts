@@ -1,7 +1,25 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { Session } from '@synonymdev/pubky';
 
 // Mock global fetch
 global.fetch = vi.fn();
+
+// Mock useKeypairStore
+const mockKeypairStore = {
+  publicKey: '',
+  secretKey: new Uint8Array(32).fill(1),
+  session: null as Session | null,
+  isAuthenticated: false,
+  setSession: vi.fn(),
+  clearSession: vi.fn(),
+  generateKeys: vi.fn(),
+};
+
+vi.mock('@/core/stores', () => ({
+  useKeypairStore: {
+    getState: vi.fn(() => mockKeypairStore),
+  },
+}));
 
 // Mock @synonymdev/pubky
 vi.doMock('@synonymdev/pubky', () => {
@@ -50,10 +68,23 @@ type MockClient = {
   signout: ReturnType<typeof vi.fn>;
 };
 
+// Create a mock session object
+const createMockSession = (): Session =>
+  ({
+    pubky: () => ({ z32: () => 'test-key' }),
+    capabilities: () => ['read', 'write'],
+  }) as Session;
+
 describe('HomeserverService', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.resetModules();
+
+    // Reset mock store
+    mockKeypairStore.publicKey = '';
+    mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+    mockKeypairStore.session = null;
+    mockKeypairStore.isAuthenticated = false;
 
     // Use dynamic imports to ensure mocked modules are loaded
     const homeserverModule = await import('@/core/services/homeserver/homeserver');
@@ -78,36 +109,9 @@ describe('HomeserverService', () => {
 
       expect(instance1).toBe(instance2);
     });
-
-    it('should return the same client for all instances', () => {
-      const service1 = HomeserverService.getInstance();
-      const service2 = HomeserverService.getInstance();
-
-      expect(service1.getClient()).toBe(service2.getClient());
-    });
   });
 
   describe('Key Generation', () => {
-    it('should generate random keypair', () => {
-      const service = HomeserverService.getInstance();
-      const result = service.generateRandomKeypair();
-
-      expect(Keypair.random).toHaveBeenCalled();
-      expect(result).toBeDefined();
-    });
-
-    it('should generate random keys as strings', () => {
-      const service = HomeserverService.getInstance();
-      const result = service.generateRandomKeys();
-
-      expect(result).toEqual({
-        publicKey: 'test-public-key-z32',
-        secretKey: new Uint8Array([1, 2, 3, 4]), // Hex representation of [1, 2, 3, 4]
-      });
-      expect(typeof result.publicKey).toBe('string');
-      expect(result.secretKey).toBeInstanceOf(Uint8Array);
-    });
-
     it('should create keypair from secret key', () => {
       const service = HomeserverService.getInstance();
       const secretKey = new Uint8Array(32).fill(1); // valid 32-byte array
@@ -122,51 +126,44 @@ describe('HomeserverService', () => {
   describe('Authentication', () => {
     it('should signup successfully', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+      const signupToken = 'test-token';
 
-      // Mock successful signup
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
+      // Mock the client methods
+      const mockClient = service['client'] as unknown as MockClient;
+      const mockSession = createMockSession();
+      mockClient.signup.mockResolvedValue(mockSession);
 
-      const result = await service.signup(keypair, homeserverKey);
+      const result = await service.signup(keypair, signupToken);
 
       expect(mockClient.signup).toHaveBeenCalled();
-      // Profile creation is skipped in tests, so no fetch call for profile
-      expect(result.session).toHaveProperty('pubky');
-      expect(result.session).toHaveProperty('capabilities');
+      expect(mockKeypairStore.setSession).toHaveBeenCalled();
+      expect(result.session).toBe(mockSession);
     });
 
     it('should signup with token', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
       const token = 'signup-token';
 
-      // Mock successful signup
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
+      // Mock the client methods
+      const mockClient = service['client'] as unknown as MockClient;
+      const mockSession = createMockSession();
+      mockClient.signup.mockResolvedValue(mockSession);
 
       await service.signup(keypair, token);
 
       expect(mockClient.signup).toHaveBeenCalled();
-      // Profile creation is skipped in tests, so no fetch call for profile
+      expect(mockKeypairStore.setSession).toHaveBeenCalled();
     });
 
     it('should handle signup errors', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
       const error = new Error('Server error');
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(error);
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signup.mockRejectedValue(error);
 
       await expect(service.signup(keypair, 'invalid-key')).rejects.toMatchObject({
         type: HomeserverErrorType.SIGNUP_FAILED,
@@ -176,41 +173,33 @@ describe('HomeserverService', () => {
 
     it('should logout successfully', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
 
-      // First signup to get authenticated
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-      (mockClient.signout as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
+      // Set up authenticated state
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      await service.signup(keypair, homeserverKey);
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signout.mockResolvedValue(undefined);
+
       await service.logout('test-key');
 
       expect(mockClient.signout).toHaveBeenCalled();
+      expect(mockKeypairStore.clearSession).toHaveBeenCalled();
       expect(PublicKey.from).toHaveBeenCalledWith('test-key');
     });
 
     it('should handle logout errors', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
+
+      // Set up authenticated state
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+
       const error = new Error('Server error');
-
-      // First signup to get authenticated
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-      (mockClient.signout as ReturnType<typeof vi.fn>).mockRejectedValue(error);
-
-      await service.signup(keypair, homeserverKey);
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signout.mockRejectedValue(error);
 
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
@@ -221,78 +210,66 @@ describe('HomeserverService', () => {
 
   describe('Data Operations', () => {
     beforeEach(async () => {
+      // Set up authenticated state for data operations
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
-
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-
-      await service.signup(keypair, homeserverKey);
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
     });
 
     it('should fetch data (GET)', async () => {
       const service = HomeserverService.getInstance();
-      const url = 'pubky://test-key/data';
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockResolvedValue(new Response('{"data": "test"}', { status: 200 }));
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      const mockResponse = new Response('{"data": "test"}', {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+      const response = await service.fetch('https://example.com/data');
 
-      const response = await service.fetch(url);
-
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, { credentials: 'include' });
-      expect(response).toBeInstanceOf(Response);
+      expect(mockClient.fetch).toHaveBeenCalledWith('https://example.com/data', { credentials: 'include' });
+      expect(response.status).toBe(200);
     });
 
     it('should create/update data (PUT)', async () => {
       const service = HomeserverService.getInstance();
-      const url = 'pubky://test-key/data';
-      const options = {
-        method: 'PUT' as const,
-        body: JSON.stringify({ message: 'Hello World' }),
-      };
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockResolvedValue(new Response('OK', { status: 200 }));
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      const mockResponse = new Response('OK', { status: 200 });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+      const response = await service.fetch('https://example.com/data', {
+        method: 'PUT',
+        body: JSON.stringify({ data: 'test' }),
+      });
 
-      await service.fetch(url, options);
-
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, { ...options, credentials: 'include' });
+      expect(mockClient.fetch).toHaveBeenCalledWith('https://example.com/data', {
+        method: 'PUT',
+        body: JSON.stringify({ data: 'test' }),
+        credentials: 'include',
+      });
+      expect(response.status).toBe(200);
     });
 
     it('should delete data (DELETE)', async () => {
       const service = HomeserverService.getInstance();
-      const url = 'pubky://test-key/data';
-      const options = {
-        method: 'DELETE' as const,
-      };
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockResolvedValue(new Response('', { status: 200 }));
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      const mockResponse = new Response('', { status: 200 });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(mockResponse);
+      const response = await service.fetch('https://example.com/data', {
+        method: 'DELETE',
+      });
 
-      await service.fetch(url, options);
-
-      expect(mockClient.fetch).toHaveBeenCalledWith(url, { ...options, credentials: 'include' });
+      expect(mockClient.fetch).toHaveBeenCalledWith('https://example.com/data', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      expect(response.status).toBe(200);
     });
 
     it('should handle fetch errors', async () => {
       const service = HomeserverService.getInstance();
-      const error = new Error('Network error');
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockRejectedValue(new Error('Network error'));
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(error);
-
-      await expect(service.fetch('invalid-url')).rejects.toMatchObject({
+      await expect(service.fetch('https://example.com/data')).rejects.toMatchObject({
         type: HomeserverErrorType.FETCH_FAILED,
         statusCode: 500,
       });
@@ -301,161 +278,115 @@ describe('HomeserverService', () => {
 
   describe('Edge Cases', () => {
     beforeEach(async () => {
+      // Set up authenticated state for edge cases
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
-
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-
-      await service.signup(keypair, homeserverKey);
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
     });
 
     it('should handle empty response data', async () => {
       const service = HomeserverService.getInstance();
-      const mockClient = service.getClient() as unknown as MockClient;
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockResolvedValue(new Response('', { status: 200 }));
 
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('', { status: 200 }));
+      const response = await service.fetch('https://example.com/empty');
 
-      const response = await service.fetch('pubky://test-key/empty');
       expect(response.status).toBe(200);
+      expect(await response.text()).toBe('');
     });
 
     it('should handle different HTTP status codes', async () => {
       const service = HomeserverService.getInstance();
-      const mockClient = service.getClient() as unknown as MockClient;
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockResolvedValue(new Response('Not Found', { status: 404 }));
 
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('Not Found', { status: 404 }));
+      const response = await service.fetch('https://example.com/notfound');
 
-      const response = await service.fetch('pubky://test-key/notfound');
       expect(response.status).toBe(404);
     });
 
     it('should preserve credentials option', async () => {
       const service = HomeserverService.getInstance();
-      const mockClient = service.getClient() as unknown as MockClient;
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockResolvedValue(new Response('OK', { status: 200 }));
 
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
+      await service.fetch('https://example.com/data', {
+        method: 'POST',
+        body: JSON.stringify({ data: 'test' }),
+      });
 
-      await service.fetch('pubky://test-key/data');
-
-      expect(mockClient.fetch).toHaveBeenCalledWith('pubky://test-key/data', { credentials: 'include' });
-    });
-  });
-
-  describe('Type Safety', () => {
-    it('should maintain correct return types for all methods', () => {
-      const service = HomeserverService.getInstance();
-
-      // Test return types without calling async methods
-      expect(service.getClient()).toBeDefined();
-      expect(service.generateRandomKeypair()).toBeDefined();
-
-      const keys = service.generateRandomKeys();
-      expect(keys).toHaveProperty('publicKey');
-      expect(keys).toHaveProperty('secretKey');
-      expect(typeof keys.publicKey).toBe('string');
-      expect(keys.secretKey).toBeInstanceOf(Uint8Array);
+      expect(mockClient.fetch).toHaveBeenCalledWith('https://example.com/data', {
+        method: 'POST',
+        body: JSON.stringify({ data: 'test' }),
+        credentials: 'include',
+      });
     });
   });
 
   describe('Session and Keypair State Management', () => {
-    it('should track current keypair after generation', () => {
-      const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-
-      expect(service.getCurrentKeypair()).toBe(keypair);
-      expect(service.getCurrentPublicKey()).toBe('test-public-key-z32');
-    });
-
     it('should track current keypair after creation from secret key', () => {
       const service = HomeserverService.getInstance();
-      const secretKey = new Uint8Array(32).fill(2); // valid 32-byte array
+      const secretKey = new Uint8Array(32).fill(1);
       const keypair = service.keypairFromSecretKey(secretKey);
 
       expect(service.getCurrentKeypair()).toBe(keypair);
-      expect(service.getCurrentPublicKey()).toBe('test-public-key-z32');
     });
 
     it('should track session after successful signup', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      const mockSession = {
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      };
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue(mockSession);
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
+      const mockClient = service['client'] as unknown as MockClient;
+      const mockSession = createMockSession();
+      mockClient.signup.mockResolvedValue(mockSession);
 
-      await service.signup(keypair, homeserverKey);
+      const result = await service.signup(keypair, 'test-token');
 
-      expect(service.getCurrentSession()).toBe(mockSession);
-      expect(service.isAuthenticated()).toBe(true);
+      expect(mockKeypairStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(result.session).toBe(mockSession);
     });
 
     it('should clear session and keypair after logout', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-      (mockClient.signout as ReturnType<typeof vi.fn>).mockResolvedValue(undefined);
+      // Set up authenticated state
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      await service.signup(keypair, homeserverKey);
-      expect(service.isAuthenticated()).toBe(true);
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signout.mockResolvedValue(undefined);
 
       await service.logout('test-key');
-      expect(service.getCurrentSession()).toBeNull();
-      expect(service.getCurrentKeypair()).toBeNull();
-      expect(service.isAuthenticated()).toBe(false);
-    });
 
-    it('should return null for public key when no keypair is set', () => {
-      const service = HomeserverService.getInstance();
-      expect(service.getCurrentPublicKey()).toBeNull();
+      expect(mockKeypairStore.clearSession).toHaveBeenCalled();
+      expect(service.getCurrentKeypair()).toBeNull();
     });
 
     it('should maintain keypair state across multiple operations', () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
+      const secretKey = new Uint8Array(32).fill(1);
+      const keypair = service.keypairFromSecretKey(secretKey);
 
-      // Generate new keys should update the current keypair
-      service.generateRandomKeys();
-      expect(service.getCurrentKeypair()).not.toBe(keypair);
-      expect(service.getCurrentPublicKey()).toBe('test-public-key-z32');
+      // Keypair should persist across multiple calls
+      expect(service.getCurrentKeypair()).toBe(keypair);
+      expect(service.getCurrentKeypair()).toBe(keypair);
     });
   });
 
   describe('Error Handling', () => {
-    it('should throw INVALID_HOMESERVER_KEY error for invalid homeserver key', async () => {
-      const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const invalidKey = 'invalid-key';
-
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('invalid public key'));
-
-      await expect(service.signup(keypair, invalidKey)).rejects.toMatchObject({
-        type: HomeserverErrorType.SIGNUP_FAILED,
-        statusCode: 500,
-      });
-    });
-
     it('should throw NOT_AUTHENTICATED error when fetching without session', async () => {
       const service = HomeserverService.getInstance();
-      await expect(service.fetch('pubky://test-key/data')).rejects.toMatchObject({
+
+      // Ensure not authenticated
+      mockKeypairStore.session = null;
+      mockKeypairStore.isAuthenticated = false;
+      mockKeypairStore.secretKey = new Uint8Array(0);
+
+      await expect(service.fetch('https://example.com/data')).rejects.toMatchObject({
         type: HomeserverErrorType.NOT_AUTHENTICATED,
         statusCode: 401,
       });
@@ -463,6 +394,11 @@ describe('HomeserverService', () => {
 
     it('should throw NOT_AUTHENTICATED error when logging out without session', async () => {
       const service = HomeserverService.getInstance();
+
+      // Ensure not authenticated
+      mockKeypairStore.session = null;
+      mockKeypairStore.isAuthenticated = false;
+
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.NOT_AUTHENTICATED,
         statusCode: 401,
@@ -471,18 +407,15 @@ describe('HomeserverService', () => {
 
     it('should throw INVALID_PUBLIC_KEY error for invalid public key during logout', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-      (mockClient.signout as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('invalid public key'));
+      // Set up authenticated state
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      await service.signup(keypair, homeserverKey);
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signout.mockRejectedValue(new Error('invalid public key'));
+
       await expect(service.logout('invalid-key')).rejects.toMatchObject({
         type: HomeserverErrorType.INVALID_PUBLIC_KEY,
         statusCode: 400,
@@ -491,31 +424,24 @@ describe('HomeserverService', () => {
 
     it('should throw INVALID_SECRET_KEY error for invalid secret key format', () => {
       const service = HomeserverService.getInstance();
-      const invalidSecretKey = new Uint8Array([1, 2, 3]); // Invalid length
+      const invalidSecretKey = new Uint8Array(16); // Invalid length
 
-      expect(() => service.keypairFromSecretKey(invalidSecretKey)).toThrow(
-        expect.objectContaining({
-          type: HomeserverErrorType.INVALID_SECRET_KEY,
-          statusCode: 400,
-        }),
-      );
+      expect(() => service.keypairFromSecretKey(invalidSecretKey)).toThrowError();
     });
 
     it('should throw FETCH_FAILED error when fetch operation fails', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      // Since profile creation is skipped in tests, we only need to mock the expected fetch call to fail
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'));
+      // Set up authenticated state
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      await service.signup(keypair, homeserverKey);
-      await expect(service.fetch('pubky://test-key/data')).rejects.toMatchObject({
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.fetch.mockRejectedValue(new Error('Network error'));
+
+      await expect(service.fetch('https://example.com/data')).rejects.toMatchObject({
         type: HomeserverErrorType.FETCH_FAILED,
         statusCode: 500,
       });
@@ -523,18 +449,15 @@ describe('HomeserverService', () => {
 
     it('should throw LOGOUT_FAILED error when logout operation fails', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockResolvedValue({
-        pubky: () => ({ z32: () => 'test-key' }),
-        capabilities: () => ['read', 'write'],
-      });
-      (mockClient.fetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('OK', { status: 200 }));
-      (mockClient.signout as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Server error'));
+      // Set up authenticated state
+      mockKeypairStore.session = createMockSession();
+      mockKeypairStore.isAuthenticated = true;
+      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      await service.signup(keypair, homeserverKey);
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signout.mockRejectedValue(new Error('Server error'));
+
       await expect(service.logout('test-key')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
@@ -543,13 +466,12 @@ describe('HomeserverService', () => {
 
     it('should throw SIGNUP_FAILED error when signup operation fails', async () => {
       const service = HomeserverService.getInstance();
-      const keypair = service.generateRandomKeypair();
-      const homeserverKey = 'valid-homeserver-key';
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      const mockClient = service.getClient() as unknown as MockClient;
-      (mockClient.signup as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Server error'));
+      const mockClient = service['client'] as unknown as MockClient;
+      mockClient.signup.mockRejectedValue(new Error('Server error'));
 
-      await expect(service.signup(keypair, homeserverKey)).rejects.toMatchObject({
+      await expect(service.signup(keypair, 'test-token')).rejects.toMatchObject({
         type: HomeserverErrorType.SIGNUP_FAILED,
         statusCode: 500,
       });

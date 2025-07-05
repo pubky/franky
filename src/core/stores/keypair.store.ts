@@ -1,23 +1,25 @@
 /**
  * Keypair Store
  *
- * Global state management for cryptographic keypairs using Zustand.
- * Handles key generation, persistence, and loading states.
+ * Global state management for cryptographic keypairs and homeserver sessions using Zustand.
+ * Handles key generation, persistence, session management, and loading states.
  *
  * Features:
  * - Automatic key generation prevention (no double generation)
- * - Persistent storage (keys survive page refreshes)
+ * - Persistent storage (keys and sessions survive page refreshes)
  * - Loading states for better UX
  * - Error handling for key generation failures
  * - Comprehensive logging for debugging and monitoring
  * - Storage rehydration tracking
  * - Proper Uint8Array serialization/deserialization
+ * - Homeserver session management
  */
 
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { HomeserverService } from '@/core/services/homeserver';
+import { Keypair } from '@synonymdev/pubky';
 import { Logger } from '@/libs/logger';
+import { type SignupResult } from '@/core';
 
 export interface KeypairState {
   publicKey: string;
@@ -25,6 +27,9 @@ export interface KeypairState {
   isGenerating: boolean;
   hasGenerated: boolean;
   hasHydrated: boolean;
+  // Session management
+  session: SignupResult['session'] | null;
+  isAuthenticated: boolean;
 }
 
 export interface KeypairActions {
@@ -32,6 +37,10 @@ export interface KeypairActions {
   clearKeys: () => void;
   setGenerating: (isGenerating: boolean) => void;
   setHydrated: (hasHydrated: boolean) => void;
+  // Session management
+  setSession: (session: SignupResult['session'] | null) => void;
+  clearSession: () => void;
+  setAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 export type KeypairStore = KeypairState & KeypairActions;
@@ -42,6 +51,8 @@ const initialState: KeypairState = {
   isGenerating: false,
   hasGenerated: false,
   hasHydrated: false,
+  session: null,
+  isAuthenticated: false,
 };
 
 export const useKeypairStore = create<KeypairStore>()(
@@ -84,21 +95,23 @@ export const useKeypairStore = create<KeypairStore>()(
           set({ isGenerating: true });
 
           try {
-            const homeserverService = HomeserverService.getInstance();
-            Logger.debug('KeypairStore: HomeserverService instance obtained');
+            Logger.debug('KeypairStore: Generating new keypair');
 
-            const keypair = homeserverService.generateRandomKeys();
+            const keypair = Keypair.random();
+            const publicKey = keypair.publicKey().z32();
+            const secretKey = keypair.secretKey();
+
             Logger.info('KeypairStore: Keys generated successfully', {
-              publicKeyLength: keypair.publicKey.length,
-              secretKeyLength: keypair.secretKey.length,
-              secretKeyType: keypair.secretKey.constructor.name,
+              publicKeyLength: publicKey.length,
+              secretKeyLength: secretKey.length,
+              secretKeyType: secretKey.constructor.name,
             });
 
             // Small delay to show the loading state
             setTimeout(() => {
               set({
-                publicKey: keypair.publicKey,
-                secretKey: keypair.secretKey,
+                publicKey,
+                secretKey,
                 hasGenerated: true,
                 isGenerating: false,
               });
@@ -125,15 +138,38 @@ export const useKeypairStore = create<KeypairStore>()(
           Logger.debug('KeypairStore: Setting hydrated state', { hasHydrated });
           set({ hasHydrated });
         },
+
+        setSession: (session: SignupResult['session'] | null) => {
+          Logger.debug('KeypairStore: Setting session', { hasSession: !!session });
+          set({
+            session,
+            isAuthenticated: !!session,
+          });
+        },
+
+        clearSession: () => {
+          Logger.info('KeypairStore: Clearing session');
+          set({
+            session: null,
+            isAuthenticated: false,
+          });
+        },
+
+        setAuthenticated: (isAuthenticated: boolean) => {
+          Logger.debug('KeypairStore: Setting authenticated state', { isAuthenticated });
+          set({ isAuthenticated });
+        },
       }),
       {
         name: 'keypair-storage',
 
-        // Only persist the keys, not the loading states
+        // Persist keys and session data
         partialize: (state) => ({
           publicKey: state.publicKey,
           secretKey: state.secretKey,
           hasGenerated: state.hasGenerated,
+          session: state.session,
+          isAuthenticated: state.isAuthenticated,
         }),
 
         // Custom storage to handle Uint8Array serialization with SSR safety
@@ -218,6 +254,8 @@ export const useKeypairStore = create<KeypairStore>()(
               Logger.info('KeypairStore: Successfully rehydrated from storage', {
                 hasKeys: !!(state?.publicKey && state?.secretKey),
                 hasGenerated: state?.hasGenerated,
+                hasSession: !!state?.session,
+                isAuthenticated: state?.isAuthenticated,
                 secretKeyType: state?.secretKey?.constructor?.name,
                 secretKeyLength: state?.secretKey?.length,
                 isValidSecretKey,

@@ -11,6 +11,8 @@ import { CopyButton } from '@/components/ui/copy-button';
 import { InfoCard } from '@/components/ui/info-card';
 import { useKeypairStore } from '@/core/stores';
 import { Trash2, Plus, Link as LinkIcon, Upload, User, Camera, ArrowRight, Info } from 'lucide-react';
+import { PubkySpecsPipes } from '@/core/pipes';
+import { HomeserverService } from '@/core/services/homeserver';
 
 // Zod validation schemas
 const linkSchema = z.object({
@@ -21,8 +23,8 @@ const linkSchema = z.object({
 const profileSchema = z.object({
   name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
   bio: z.string().max(160, 'Bio must be 160 characters or less').optional(),
-  status: z.string().max(100, 'Status must be 100 characters or less').optional(),
   links: z.array(linkSchema).optional(),
+  image: z.string().optional(),
 });
 
 interface LinkItem {
@@ -45,7 +47,6 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     name: '',
     bio: '',
-    status: '',
   });
 
   const [links, setLinks] = useState<LinkItem[]>([]);
@@ -57,7 +58,7 @@ export default function ProfilePage() {
 
   // Validation error states
   const [linkErrors, setLinkErrors] = useState<Record<string, { title?: string; url?: string }>>({});
-  const [formErrors, setFormErrors] = useState<{ name?: string; bio?: string; status?: string }>({});
+  const [formErrors, setFormErrors] = useState<{ name?: string; bio?: string }>({});
 
   // Validation functions
   const validateFormField = (field: keyof typeof formData, value: string) => {
@@ -191,7 +192,7 @@ export default function ProfilePage() {
       const profileData = {
         name: formData.name,
         bio: formData.bio || undefined,
-        status: formData.status || undefined,
+        image: undefined,
         links: validLinks.map((link) => ({
           title: link.title,
           url: link.url,
@@ -201,14 +202,28 @@ export default function ProfilePage() {
       // Validate with Zod
       const validatedData = profileSchema.parse(profileData);
 
-      console.log('Profile data:', {
-        ...validatedData,
-        image: avatar ? 'pubky://user_id/pub/pubky.app/files/0000000000000' : undefined,
-        publicKey: publicKey,
+      // Create keypair object from store using HomeserverService
+      const homeserverService = HomeserverService.getInstance();
+      const resultCreateUser = await PubkySpecsPipes.normalizeUser(
+        {
+          name: validatedData.name,
+          bio: validatedData.bio || '',
+          links: validatedData.links || [],
+          image: validatedData.image || '',
+          status: '',
+        },
+        publicKey,
+      );
+      // Let's bring the full wasm object into JS and assign correct type.
+      const user = resultCreateUser.user.toJson();
+
+      // Send the profile to the homeserver
+      const response = await homeserverService.fetch(resultCreateUser.meta.url, {
+        method: 'PUT',
+        body: JSON.stringify(user),
       });
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log('Response:', response, user);
 
       // For now, just navigate to the main app
       //   router.push('/');
@@ -231,7 +246,6 @@ export default function ProfilePage() {
       formData.name.trim() !== '' &&
       !formErrors.name &&
       !formErrors.bio &&
-      !formErrors.status &&
       Object.values(linkErrors).every((error) => !error.title && !error.url);
 
     // Check that all links are either completely empty (both title and URL) or completely filled
@@ -244,7 +258,7 @@ export default function ProfilePage() {
     });
 
     return basicFormValid && linksValid;
-  }, [formData.name, formErrors.name, formErrors.bio, formErrors.status, linkErrors, links]);
+  }, [formData.name, formErrors.name, formErrors.bio, linkErrors, links]);
 
   // Memoized computed values for performance
   const nameFieldClassName = useMemo(
@@ -265,16 +279,6 @@ export default function ProfilePage() {
           : 'border-muted focus:ring-green-500/20 focus:border-green-500/30'
       }`,
     [formErrors.bio],
-  );
-
-  const statusFieldClassName = useMemo(
-    () =>
-      `text-base rounded-xl border-2 bg-background text-foreground p-4 h-12 transition-all focus:outline-none focus:ring-2 ${
-        formErrors.status
-          ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
-          : 'focus:ring-green-500/20 focus:border-green-500/30'
-      }`,
-    [formErrors.status],
   );
 
   const continueButtonClassName = useMemo(
@@ -448,25 +452,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
                   {formErrors.bio && <p className="text-sm text-red-400 mt-1">{formErrors.bio}</p>}
-                </div>
-
-                {/* Status Field - Optional */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-muted-foreground">STATUS</label>
-                    <span className="text-xs text-muted-foreground">Optional</span>
-                  </div>
-                  <Input
-                    type="text"
-                    value={formData.status}
-                    onChange={(e) => handleInputChange('status', e.target.value)}
-                    placeholder="What's your current status or mood?"
-                    className={statusFieldClassName}
-                  />
-                  {formErrors.status && <p className="text-sm text-red-400 mt-1">{formErrors.status}</p>}
-                  <p className="text-sm text-muted-foreground">
-                    Share what you&apos;re up to or how you&apos;re feeling.
-                  </p>
                 </div>
 
                 {/* Links Section - Optional */}

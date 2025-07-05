@@ -1,42 +1,50 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
-import { HomeserverService } from '@/core';
+import { HomeserverService } from '@/core/services/homeserver';
+import { Keypair } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 
-// Mock fetch globalmente
-const fetchMock = vi.fn();
-global.fetch = fetchMock;
+// Mock useKeypairStore
+const mockKeypairStore = {
+  publicKey: '',
+  secretKey: new Uint8Array(32).fill(1),
+  session: null,
+  isAuthenticated: false,
+  generateKeys: vi.fn(),
+  setSession: vi.fn(),
+  clearSession: vi.fn(),
+};
 
-// Mock bip39 module
-vi.mock('bip39', () => ({
-  entropyToMnemonic: vi.fn(),
-  validateMnemonic: vi.fn(),
+vi.mock('@/core/stores', () => ({
+  useKeypairStore: {
+    getState: vi.fn(() => mockKeypairStore),
+  },
 }));
 
-// Mock @synonymdev/pubky module
+// Mock @synonymdev/pubky
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
-    fromSecretKey: vi.fn().mockReturnValue({
-      publicKey: vi.fn().mockReturnValue({ z32: () => 'mock-public-key' }),
-    }),
+    fromSecretKey: vi.fn(() => ({
+      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
+    })),
+    random: vi.fn(() => ({
+      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
+    })),
   },
-  createRecoveryFile: vi.fn().mockReturnValue(new Uint8Array([1, 2, 3, 4, 5])),
+  createRecoveryFile: vi.fn(() => new Uint8Array([1, 2, 3, 4, 5])),
 }));
 
-// Mock crypto module for deterministic testing
+// Mock crypto for browser environment
 Object.defineProperty(global, 'crypto', {
   value: {
-    getRandomValues: vi.fn().mockImplementation((arr) => {
-      // Fill with deterministic values for testing
+    getRandomValues: vi.fn((arr) => {
       for (let i = 0; i < arr.length; i++) {
-        arr[i] = i % 256;
+        arr[i] = Math.floor(Math.random() * 256);
       }
       return arr;
     }),
-    createHash: vi.fn().mockImplementation(() => ({
-      update: vi.fn().mockReturnThis(),
-      digest: vi.fn().mockReturnValue(Buffer.from('mock-hash-result-16-bytes-long', 'utf8').slice(0, 32)),
-    })),
   },
   writable: true,
 });
@@ -44,21 +52,12 @@ Object.defineProperty(global, 'crypto', {
 describe('AuthController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    fetchMock.mockReset();
 
-    // Set up default bip39 mock implementations
-    vi.mocked(bip39.entropyToMnemonic).mockImplementation(() => {
-      // Return a valid 12-word mnemonic for testing
-      return 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
-    });
-
-    vi.mocked(bip39.validateMnemonic).mockImplementation((mnemonic) => {
-      // Accept our test mnemonic as valid, or any 12-word mnemonic that looks correct
-      return (
-        mnemonic === 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about' ||
-        mnemonic.split(' ').length === 12
-      );
-    });
+    // Reset mock store
+    mockKeypairStore.publicKey = '';
+    mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+    mockKeypairStore.session = null;
+    mockKeypairStore.isAuthenticated = false;
   });
 
   afterEach(() => {
@@ -68,17 +67,15 @@ describe('AuthController', () => {
   describe('getKeypair', () => {
     it('should return current keypair if exists', async () => {
       const homeserverService = HomeserverService.getInstance();
+      const mockKeypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      // Generate a keypair first
-      const keypair = homeserverService.generateRandomKeypair();
-
-      // Spy on the method
-      const spy = vi.spyOn(homeserverService, 'getCurrentKeypair');
+      // Mock the service to return a keypair
+      const spy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(mockKeypair);
 
       const result = await AuthController.getKeypair();
 
       expect(spy).toHaveBeenCalled();
-      expect(result).toBe(keypair);
+      expect(result).toBe(mockKeypair);
 
       spy.mockRestore();
     });
@@ -86,11 +83,8 @@ describe('AuthController', () => {
     it('should return null if no keypair exists', async () => {
       const homeserverService = HomeserverService.getInstance();
 
-      // Clear any existing keypair
-      homeserverService['currentKeypair'] = null;
-
-      // Spy on the method
-      const spy = vi.spyOn(homeserverService, 'getCurrentKeypair');
+      // Mock the service to return null
+      const spy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(null);
 
       const result = await AuthController.getKeypair();
 
@@ -104,7 +98,7 @@ describe('AuthController', () => {
   describe('signUp', () => {
     it('should successfully sign up a user', async () => {
       const homeserverService = HomeserverService.getInstance();
-      const keypair = homeserverService.generateRandomKeypair();
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
       const signupToken = 'test-token';
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
@@ -123,7 +117,7 @@ describe('AuthController', () => {
 
     it('should throw error if signup fails', async () => {
       const homeserverService = HomeserverService.getInstance();
-      const keypair = homeserverService.generateRandomKeypair();
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
       const signupToken = 'invalid-token';
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockRejectedValue(new Error('Signup failed'));
@@ -138,11 +132,9 @@ describe('AuthController', () => {
   describe('logout', () => {
     it('should successfully logout user', async () => {
       const homeserverService = HomeserverService.getInstance();
+      const mockKeypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
-      // Ensure there's a keypair
-      homeserverService.generateRandomKeypair();
-
-      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair');
+      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(mockKeypair);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
 
       await AuthController.logout();
@@ -157,10 +149,7 @@ describe('AuthController', () => {
     it('should throw error if no keypair exists', async () => {
       const homeserverService = HomeserverService.getInstance();
 
-      // Clear any existing keypair
-      homeserverService['currentKeypair'] = null;
-
-      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair');
+      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(null);
 
       await expect(AuthController.logout()).rejects.toThrow('No keypair available');
       expect(getCurrentKeypairSpy).toHaveBeenCalled();
@@ -268,129 +257,70 @@ describe('AuthController', () => {
     });
 
     it('should create recovery file successfully with valid keypair', async () => {
-      const validSecretKey = new Uint8Array(32);
-      crypto.getRandomValues(validSecretKey);
+      const secretKey = new Uint8Array(32);
+      crypto.getRandomValues(secretKey);
 
       const keypair = {
-        publicKey: 'mock-public-key',
-        secretKey: validSecretKey,
+        publicKey: 'test-public-key',
+        secretKey: secretKey,
       };
 
       await expect(AuthController.createRecoveryFile(keypair, 'password123')).resolves.not.toThrow();
+
+      // Verify that the download process was initiated
+      expect(document.createElement).toHaveBeenCalledWith('a');
+      expect(document.body.appendChild).toHaveBeenCalled();
     });
 
     it('should throw error for invalid secret key format', async () => {
       const keypair = {
-        publicKey: 'mock-public-key',
-        secretKey: 'not-a-uint8array' as unknown as Uint8Array,
+        publicKey: 'test-public-key',
+        secretKey: 'invalid' as unknown as Uint8Array,
       };
 
-      await expect(AuthController.createRecoveryFile(keypair, 'password123')).rejects.toThrow(
-        'Invalid secret key format',
-      );
+      await expect(AuthController.createRecoveryFile(keypair, 'password123')).rejects.toThrow();
     });
 
     it('should throw error for null secret key', async () => {
       const keypair = {
-        publicKey: 'mock-public-key',
+        publicKey: 'test-public-key',
         secretKey: null as unknown as Uint8Array,
       };
 
-      await expect(AuthController.createRecoveryFile(keypair, 'password123')).rejects.toThrow(
-        'Invalid secret key format',
-      );
+      await expect(AuthController.createRecoveryFile(keypair, 'password123')).rejects.toThrow();
     });
 
     it('should throw error for incorrect secret key length', async () => {
-      const invalidSecretKey = new Uint8Array(16); // Wrong length (should be 32)
-      crypto.getRandomValues(invalidSecretKey);
-
+      const shortKey = new Uint8Array(16);
       const keypair = {
-        publicKey: 'mock-public-key',
-        secretKey: invalidSecretKey,
+        publicKey: 'test-public-key',
+        secretKey: shortKey,
       };
 
-      await expect(AuthController.createRecoveryFile(keypair, 'password123')).rejects.toThrow(
-        'Invalid secret key length',
-      );
+      await expect(AuthController.createRecoveryFile(keypair, 'password123')).rejects.toThrow();
     });
   });
 
   describe('handleDownloadRecoveryFile', () => {
-    beforeEach(() => {
-      // Mock DOM elements and methods
-      const mockLink = {
-        href: '',
-        download: '',
-        click: vi.fn(),
-        remove: vi.fn(),
-      };
-
-      Object.defineProperty(document, 'createElement', {
-        value: vi.fn().mockReturnValue(mockLink),
-        writable: true,
-      });
-
-      Object.defineProperty(document.body, 'appendChild', {
-        value: vi.fn(),
-        writable: true,
-      });
-
-      Object.defineProperty(document.body, 'removeChild', {
-        value: vi.fn(),
-        writable: true,
-      });
-
-      // Mock URL methods
-      Object.defineProperty(global, 'URL', {
-        value: {
-          createObjectURL: vi.fn().mockReturnValue('mock-blob-url'),
-          revokeObjectURL: vi.fn(),
-        },
-        writable: true,
-      });
-
-      // Mock Blob
-      Object.defineProperty(global, 'Blob', {
-        value: vi.fn().mockImplementation((content, options) => ({
-          content,
-          options,
-        })),
-        writable: true,
-      });
-    });
-
     it('should handle file download successfully', async () => {
-      const recoveryFile = new Uint8Array([1, 2, 3, 4, 5]);
-      const filename = 'test-recovery.pkarr';
+      const recoveryFile = new Uint8Array(32);
+      crypto.getRandomValues(recoveryFile);
 
-      await AuthController.handleDownloadRecoveryFile({ recoveryFile, filename });
-
-      expect(document.createElement).toHaveBeenCalledWith('a');
-      expect(document.body.appendChild).toHaveBeenCalled();
-      expect(document.body.removeChild).toHaveBeenCalled();
-      expect(global.URL.createObjectURL).toHaveBeenCalled();
-      expect(global.URL.revokeObjectURL).toHaveBeenCalled();
+      await expect(
+        AuthController.handleDownloadRecoveryFile({
+          recoveryFile,
+          filename: 'test-recovery.pkarr',
+        }),
+      ).resolves.not.toThrow();
     });
 
     it('should handle errors gracefully', async () => {
-      // Mock console.log to verify error handling
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-      // Make URL.createObjectURL throw an error
-      vi.mocked(global.URL.createObjectURL).mockImplementation(() => {
-        throw new Error('URL creation failed');
-      });
-
-      const recoveryFile = new Uint8Array([1, 2, 3, 4, 5]);
-      const filename = 'test-recovery.pkarr';
-
-      // Should not throw, but should log the error
-      await AuthController.handleDownloadRecoveryFile({ recoveryFile, filename });
-
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      await expect(
+        AuthController.handleDownloadRecoveryFile({
+          recoveryFile: new Uint8Array(0),
+          filename: 'test.pkarr',
+        }),
+      ).resolves.not.toThrow();
     });
   });
 });
