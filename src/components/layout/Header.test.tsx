@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 // Mock the stores
 vi.mock('@/core/stores', () => ({
@@ -7,7 +7,7 @@ vi.mock('@/core/stores', () => ({
   useCurrentUser: vi.fn(),
 }));
 
-// Mock Next.js Link component
+// Mock Next.js components
 vi.mock('next/link', () => ({
   default: ({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) => (
     <a href={href} {...props}>
@@ -16,18 +16,40 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+const mockReplace = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    replace: mockReplace,
+  }),
+}));
+
+// Mock AuthController
+vi.mock('@/core/controllers', () => ({
+  AuthController: {
+    logoutUser: vi.fn(),
+  },
+}));
+
+// Mock Logger
+vi.mock('@/libs/logger', () => ({
+  Logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
 // Import after mocking
 import { Header } from './Header';
 import { useIsAuthenticated, useCurrentUser } from '@/core/stores';
+import { AuthController } from '@/core/controllers';
 
 const mockUseIsAuthenticated = useIsAuthenticated as ReturnType<typeof vi.fn>;
 const mockUseCurrentUser = useCurrentUser as ReturnType<typeof vi.fn>;
+const mockLogoutUser = AuthController.logoutUser as ReturnType<typeof vi.fn>;
 
 describe('Header', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock console.log to avoid noise in tests
-    vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -100,6 +122,7 @@ describe('Header', () => {
     beforeEach(() => {
       mockUseIsAuthenticated.mockReturnValue(true);
       mockUseCurrentUser.mockReturnValue(mockUser);
+      mockLogoutUser.mockResolvedValue(undefined);
     });
 
     it('should show user name and logout button when authenticated', () => {
@@ -116,14 +139,51 @@ describe('Header', () => {
       expect(screen.queryByText('Get started')).not.toBeInTheDocument();
     });
 
-    it('should handle logout button click', () => {
+    it('should handle successful logout', async () => {
       render(<Header />);
 
       const logoutButton = screen.getByText('Logout');
       fireEvent.click(logoutButton);
 
-      // Should log the message (mocked)
-      expect(console.log).toHaveBeenCalledWith('Logout clicked - functionality to be implemented');
+      // Should show loading state
+      expect(screen.getByText('Logging out...')).toBeInTheDocument();
+
+      // Wait for logout to complete
+      await waitFor(() => {
+        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockReplace).toHaveBeenCalledWith('/');
+      });
+    });
+
+    it('should handle logout error gracefully', async () => {
+      mockLogoutUser.mockRejectedValue(new Error('Logout failed'));
+
+      render(<Header />);
+
+      const logoutButton = screen.getByText('Logout');
+      fireEvent.click(logoutButton);
+
+      // Wait for logout to complete (should still redirect even on error)
+      await waitFor(() => {
+        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockReplace).toHaveBeenCalledWith('/');
+      });
+    });
+
+    it('should prevent double logout clicks', async () => {
+      render(<Header />);
+
+      const logoutButton = screen.getByText('Logout');
+
+      // Click multiple times quickly
+      fireEvent.click(logoutButton);
+      fireEvent.click(logoutButton);
+      fireEvent.click(logoutButton);
+
+      // Should only call logout once
+      await waitFor(() => {
+        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+      });
     });
 
     it('should show user info in mobile menu when authenticated', () => {
@@ -142,7 +202,7 @@ describe('Header', () => {
       expect(logoutButtons).toHaveLength(2); // Desktop + Mobile
     });
 
-    it('should handle mobile logout button click', () => {
+    it('should handle mobile logout button click', async () => {
       render(<Header />);
 
       // Open mobile menu
@@ -153,8 +213,11 @@ describe('Header', () => {
       const logoutButtons = screen.getAllByText('Logout');
       fireEvent.click(logoutButtons[1]); // Second one is mobile
 
-      // Should log the message (mocked)
-      expect(console.log).toHaveBeenCalledWith('Logout clicked - functionality to be implemented');
+      // Wait for logout to complete
+      await waitFor(() => {
+        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockReplace).toHaveBeenCalledWith('/');
+      });
     });
 
     it('should show fallback User name when user name is not available', () => {

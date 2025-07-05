@@ -2,7 +2,7 @@ import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 import crypto from 'crypto';
 import { type SignupResult, HomeserverService, KeyPair } from '@/core';
-import { Env, CommonErrorType, createCommonError } from '@/libs';
+import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
@@ -17,13 +17,54 @@ export class AuthController {
     return homeserverService.getCurrentKeypair();
   }
 
-  static async logout(): Promise<void> {
-    const homeserverService = HomeserverService.getInstance();
-    const keypair = homeserverService.getCurrentKeypair();
-    if (!keypair) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'No keypair available', 400);
+  /**
+   * Complete logout - clears homeserver session and local stores
+   * This is the method that should be used for user logout
+   */
+  static async logoutUser(): Promise<void> {
+    try {
+      Logger.info('Starting user logout process');
+
+      // First, try to logout from homeserver (if possible)
+      try {
+        const homeserverService = HomeserverService.getInstance();
+        const keypair = homeserverService.getCurrentKeypair();
+
+        if (keypair) {
+          Logger.info('Logging out from homeserver');
+          await homeserverService.logout(keypair.publicKey().z32());
+        } else {
+          Logger.warn('No keypair available for homeserver logout');
+        }
+      } catch (homeserverError) {
+        // Don't fail the entire logout if homeserver logout fails
+        Logger.warn('Homeserver logout failed, continuing with local cleanup', {
+          error: homeserverError instanceof Error ? homeserverError.message : 'Unknown error',
+        });
+      }
+
+      // Clear local stores - import dynamically to avoid circular dependencies
+      const { useUserStore, useKeypairStore } = await import('@/core/stores');
+
+      Logger.info('Clearing user store');
+      useUserStore.getState().clearCurrentUser();
+      useUserStore.getState().clearAllErrors();
+      useUserStore.getState().clearAllLoading();
+
+      Logger.info('Clearing keypair store');
+      useKeypairStore.getState().clearKeys();
+      useKeypairStore.getState().clearSession();
+      useKeypairStore.getState().setAuthenticated(false);
+
+      Logger.info('User logout completed successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      Logger.error('Failed to logout user', { error: errorMessage });
+
+      throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, 'Failed to logout user completely', 500, {
+        originalError: errorMessage,
+      });
     }
-    return homeserverService.logout(keypair.publicKey().z32());
   }
 
   // TODO: remove this once we have a proper signup token endpoint

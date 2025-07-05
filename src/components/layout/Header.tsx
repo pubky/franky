@@ -5,16 +5,39 @@ import { LogIn, Twitter, Youtube, Github, Menu, X, BookOpen, HelpCircle, UserPlu
 import { Logo } from '@/components/ui';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useIsAuthenticated, useCurrentUser } from '@/core/stores';
+import { AuthController } from '@/core/controllers';
+import { Logger } from '@/libs/logger';
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isAuthenticated = useIsAuthenticated();
   const currentUser = useCurrentUser();
+  const router = useRouter();
 
-  const handleLogout = () => {
-    // TODO: Implement logout functionality
-    console.log('Logout clicked - functionality to be implemented');
+  const handleLogout = async () => {
+    if (isLoggingOut) return; // Prevent double clicks
+
+    try {
+      setIsLoggingOut(true);
+      Logger.info('Header: Starting logout process');
+
+      await AuthController.logoutUser();
+
+      Logger.info('Header: Logout successful, redirecting to homepage');
+      router.replace('/');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      Logger.error('Header: Logout failed', { error: errorMessage });
+
+      // Still redirect to homepage even if logout fails
+      // This ensures the user can't get stuck in an authenticated state
+      router.replace('/');
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   return (
@@ -87,10 +110,11 @@ export function Header() {
                     variant="ghost"
                     size="sm"
                     onClick={handleLogout}
-                    className="text-muted-foreground hover:text-foreground"
+                    disabled={isLoggingOut}
+                    className="cursor-pointer text-muted-foreground hover:text-foreground"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    {isLoggingOut ? 'Logging out...' : 'Logout'}
                   </Button>
                 </div>
               ) : (
@@ -197,9 +221,10 @@ export function Header() {
                       setIsMobileMenuOpen(false);
                       handleLogout();
                     }}
+                    disabled={isLoggingOut}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    {isLoggingOut ? 'Logging out...' : 'Logout'}
                   </Button>
                 </div>
               ) : (

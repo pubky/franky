@@ -129,30 +129,125 @@ describe('AuthController', () => {
     });
   });
 
-  describe('logout', () => {
-    it('should successfully logout user', async () => {
+  describe('logoutUser', () => {
+    it('should successfully logout user and clear all stores', async () => {
       const homeserverService = HomeserverService.getInstance();
       const mockKeypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
+      // Mock homeserver service
       const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(mockKeypair);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
 
-      await AuthController.logout();
+      // Mock the stores that will be imported dynamically
+      const mockUserStore = {
+        clearCurrentUser: vi.fn(),
+        clearAllErrors: vi.fn(),
+        clearAllLoading: vi.fn(),
+      };
+      const mockKeypairStoreInstance = {
+        clearKeys: vi.fn(),
+        clearSession: vi.fn(),
+        setAuthenticated: vi.fn(),
+      };
 
+      // Mock dynamic import
+      vi.doMock('@/core/stores', () => ({
+        useUserStore: { getState: () => mockUserStore },
+        useKeypairStore: { getState: () => mockKeypairStoreInstance },
+      }));
+
+      await AuthController.logoutUser();
+
+      // Verify homeserver logout was called
       expect(getCurrentKeypairSpy).toHaveBeenCalled();
       expect(logoutSpy).toHaveBeenCalled();
+
+      // Verify stores were cleared
+      expect(mockUserStore.clearCurrentUser).toHaveBeenCalled();
+      expect(mockUserStore.clearAllErrors).toHaveBeenCalled();
+      expect(mockUserStore.clearAllLoading).toHaveBeenCalled();
+      expect(mockKeypairStoreInstance.clearKeys).toHaveBeenCalled();
+      expect(mockKeypairStoreInstance.clearSession).toHaveBeenCalled();
+      expect(mockKeypairStoreInstance.setAuthenticated).toHaveBeenCalledWith(false);
 
       getCurrentKeypairSpy.mockRestore();
       logoutSpy.mockRestore();
     });
 
-    it('should throw error if no keypair exists', async () => {
+    it('should continue with local cleanup even if homeserver logout fails', async () => {
+      const homeserverService = HomeserverService.getInstance();
+      const mockKeypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+
+      // Mock homeserver service to fail
+      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(mockKeypair);
+      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));
+
+      // Mock the stores
+      const mockUserStore = {
+        clearCurrentUser: vi.fn(),
+        clearAllErrors: vi.fn(),
+        clearAllLoading: vi.fn(),
+      };
+      const mockKeypairStoreInstance = {
+        clearKeys: vi.fn(),
+        clearSession: vi.fn(),
+        setAuthenticated: vi.fn(),
+      };
+
+      // Mock dynamic import
+      vi.doMock('@/core/stores', () => ({
+        useUserStore: { getState: () => mockUserStore },
+        useKeypairStore: { getState: () => mockKeypairStoreInstance },
+      }));
+
+      // Should not throw error even if homeserver logout fails
+      await expect(AuthController.logoutUser()).resolves.not.toThrow();
+
+      // Verify homeserver logout was attempted
+      expect(getCurrentKeypairSpy).toHaveBeenCalled();
+      expect(logoutSpy).toHaveBeenCalled();
+
+      // Verify stores were still cleared
+      expect(mockUserStore.clearCurrentUser).toHaveBeenCalled();
+      expect(mockKeypairStoreInstance.clearKeys).toHaveBeenCalled();
+
+      getCurrentKeypairSpy.mockRestore();
+      logoutSpy.mockRestore();
+    });
+
+    it('should handle case when no keypair exists', async () => {
       const homeserverService = HomeserverService.getInstance();
 
+      // Mock homeserver service to return no keypair
       const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair').mockReturnValue(null);
 
-      await expect(AuthController.logout()).rejects.toThrow('No keypair available');
+      // Mock the stores
+      const mockUserStore = {
+        clearCurrentUser: vi.fn(),
+        clearAllErrors: vi.fn(),
+        clearAllLoading: vi.fn(),
+      };
+      const mockKeypairStoreInstance = {
+        clearKeys: vi.fn(),
+        clearSession: vi.fn(),
+        setAuthenticated: vi.fn(),
+      };
+
+      // Mock dynamic import
+      vi.doMock('@/core/stores', () => ({
+        useUserStore: { getState: () => mockUserStore },
+        useKeypairStore: { getState: () => mockKeypairStoreInstance },
+      }));
+
+      // Should not throw error even if no keypair exists
+      await expect(AuthController.logoutUser()).resolves.not.toThrow();
+
+      // Verify homeserver logout was not attempted (no keypair)
       expect(getCurrentKeypairSpy).toHaveBeenCalled();
+
+      // Verify stores were still cleared
+      expect(mockUserStore.clearCurrentUser).toHaveBeenCalled();
+      expect(mockKeypairStoreInstance.clearKeys).toHaveBeenCalled();
 
       getCurrentKeypairSpy.mockRestore();
     });
