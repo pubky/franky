@@ -1,17 +1,14 @@
-import type { Metadata } from 'next';
-import { OnboardingHeader, Footer, MainLayout } from '@/components/layout';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Franky',
-  description: "I'm ALIVEEE!",
-};
+import { OnboardingHeader, Footer, MainLayout } from '@/components/layout';
+import { SessionGuard } from '@/components/ui';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <SessionGuard>
       <OnboardingHeader />
       <MainLayout>{children}</MainLayout>
       <Footer />
-    </>
+    </SessionGuard>
   );
 }

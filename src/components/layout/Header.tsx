@@ -1,13 +1,21 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { LogIn, Twitter, Youtube, Github, Menu, X, BookOpen, HelpCircle, UserPlus } from 'lucide-react';
+import { LogIn, Twitter, Youtube, Github, Menu, X, BookOpen, HelpCircle, UserPlus, LogOut, User } from 'lucide-react';
 import { Logo } from '@/components/ui';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useIsAuthenticated, useCurrentUser } from '@/core/stores';
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const isAuthenticated = useIsAuthenticated();
+  const currentUser = useCurrentUser();
+
+  const handleLogout = () => {
+    // TODO: Implement logout functionality
+    console.log('Logout clicked - functionality to be implemented');
+  };
 
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 ">
@@ -67,20 +75,41 @@ export function Header() {
 
               <div className="h-6 w-px bg-border" />
 
-              <div className="flex items-center gap-3">
-                <Button variant="ghost" size="sm" asChild>
-                  <Link href="#">
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Sign in
-                  </Link>
-                </Button>
-                <Button size="sm" className="rounded-full" asChild>
-                  <Link href="/onboarding">
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Get started
-                  </Link>
-                </Button>
-              </div>
+              {/* Authentication-based content */}
+              {isAuthenticated ? (
+                // Authenticated user content
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="font-medium">{currentUser?.details.name || 'User'}</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                // Unauthenticated user content
+                <div className="flex items-center gap-3">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="#">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sign in
+                    </Link>
+                  </Button>
+                  <Button size="sm" className="rounded-full" asChild>
+                    <Link href="/onboarding">
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Get started
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </nav>
 
@@ -152,20 +181,44 @@ export function Header() {
 
               <div className="h-px bg-border my-2" />
 
-              <div className="flex flex-col gap-3">
-                <Button variant="outline" size="sm" className="justify-start" asChild>
-                  <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Sign in
-                  </Link>
-                </Button>
-                <Button size="sm" className="justify-start" asChild>
-                  <Link href="/onboarding" onClick={() => setIsMobileMenuOpen(false)}>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Get started
-                  </Link>
-                </Button>
-              </div>
+              {/* Mobile Authentication-based content */}
+              {isAuthenticated ? (
+                // Authenticated user mobile content
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">{currentUser?.details.name || 'User'}</span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="justify-start"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                // Unauthenticated user mobile content
+                <div className="flex flex-col gap-3">
+                  <Button variant="outline" size="sm" className="justify-start" asChild>
+                    <Link href="#" onClick={() => setIsMobileMenuOpen(false)}>
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Sign in
+                    </Link>
+                  </Button>
+                  <Button size="sm" className="justify-start" asChild>
+                    <Link href="/onboarding" onClick={() => setIsMobileMenuOpen(false)}>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Get started
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </nav>
           </div>
         )}
