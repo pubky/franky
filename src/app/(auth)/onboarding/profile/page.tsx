@@ -1,31 +1,43 @@
 'use client';
 
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import Image from 'next/image';
-import { z } from 'zod';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
 import { PageHeader } from '@/components/ui/page-header';
+import { User, Upload, Plus, Trash2, Link as LinkIcon, Camera, Info, ArrowRight } from 'lucide-react';
 import { CopyButton } from '@/components/ui/copy-button';
 import { InfoCard } from '@/components/ui/info-card';
 import { useKeypairStore } from '@/core/stores';
-import { Trash2, Plus, Link as LinkIcon, Upload, User, Camera, ArrowRight, Info } from 'lucide-react';
-import { PubkySpecsPipes } from '@/core/pipes';
-import { HomeserverService } from '@/core/services/homeserver';
+import { useUserStore, ProfileCreationData } from '@/core/stores';
+import { HomeserverService, PubkySpecsPipes } from '@/core';
+import { z } from 'zod';
 
-// Zod validation schemas
-const linkSchema = z.object({
-  title: z.string().min(1, 'Link title is required').max(50, 'Link title must be 50 characters or less'),
-  url: z.string().url('Please enter a valid URL (e.g., https://example.com)'),
-});
-
+// Validation schemas
 const profileSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50, 'Name must be 50 characters or less'),
-  bio: z.string().max(160, 'Bio must be 160 characters or less').optional(),
-  links: z.array(linkSchema).optional(),
+  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
+  bio: z.string().max(160, 'Bio is too long').optional(),
   image: z.string().optional(),
+  links: z
+    .array(
+      z.object({
+        title: z.string().min(1, 'Link title is required'),
+        url: z.string().url('Please enter a valid URL'),
+      }),
+    )
+    .optional(),
 });
+
+interface FormData {
+  name: string;
+  bio: string;
+}
+
+interface FormErrors {
+  name: string;
+  bio: string;
+}
 
 interface LinkItem {
   id: string;
@@ -34,91 +46,72 @@ interface LinkItem {
 }
 
 export default function ProfilePage() {
-  const { publicKey, generateKeys, hasGenerated } = useKeypairStore();
+  // Store hooks
+  const { publicKey, hasGenerated } = useKeypairStore();
+  const { createProfile } = useUserStore();
+
+  // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Generate keys if they don't exist
-  useEffect(() => {
-    if (!publicKey && !hasGenerated) {
-      generateKeys();
-    }
-  }, [publicKey, hasGenerated, generateKeys]);
-
-  const [formData, setFormData] = useState({
-    name: '',
-    bio: '',
-  });
-
-  const [links, setLinks] = useState<LinkItem[]>([]);
-
+  // Local state
+  const [formData, setFormData] = useState<FormData>({ name: '', bio: '' });
+  const [formErrors, setFormErrors] = useState<FormErrors>({ name: '', bio: '' });
+  const [links, setLinks] = useState<LinkItem[]>([{ id: '1', title: '', url: '' }]);
+  const [linkErrors, setLinkErrors] = useState<Record<string, { title: string; url: string }>>({});
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-
-  // Validation error states
-  const [linkErrors, setLinkErrors] = useState<Record<string, { title?: string; url?: string }>>({});
-  const [formErrors, setFormErrors] = useState<{ name?: string; bio?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validation functions
   const validateFormField = (field: keyof typeof formData, value: string) => {
-    const fieldSchema = profileSchema.shape[field];
-    if (!fieldSchema) return;
-
-    try {
-      fieldSchema.parse(value);
-      setFormErrors((prev) => ({ ...prev, [field]: undefined }));
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setFormErrors((prev) => ({ ...prev, [field]: error.errors[0]?.message }));
-      }
+    switch (field) {
+      case 'name':
+        return value.trim() === '' ? 'Name is required' : value.length > 100 ? 'Name is too long' : '';
+      case 'bio':
+        return value.length > 160 ? 'Bio is too long' : '';
+      default:
+        return '';
     }
   };
 
   const validateLink = (id: string, field: 'title' | 'url', value: string) => {
-    const fieldSchema = linkSchema.shape[field];
-
-    try {
-      fieldSchema.parse(value);
-      setLinkErrors((prev) => ({
-        ...prev,
-        [id]: { ...prev[id], [field]: undefined },
-      }));
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setLinkErrors((prev) => ({
-          ...prev,
-          [id]: { ...prev[id], [field]: error.errors[0]?.message },
-        }));
+    if (field === 'title') {
+      return value.trim() !== '' && value.length > 50 ? 'Title is too long' : '';
+    }
+    if (field === 'url' && value.trim() !== '') {
+      try {
+        new URL(value);
+        return '';
+      } catch {
+        return 'Please enter a valid URL';
       }
     }
+    return '';
   };
 
+  // Event handlers
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    validateFormField(field, value);
+    setFormErrors((prev) => ({ ...prev, [field]: validateFormField(field, value) }));
   };
 
   const handleLinkChange = (id: string, field: 'title' | 'url', value: string) => {
     setLinks((prev) => prev.map((link) => (link.id === id ? { ...link, [field]: value } : link)));
-    validateLink(id, field, value);
+    setLinkErrors((prev) => ({ ...prev, [id]: { ...prev[id], [field]: validateLink(id, field, value) } }));
   };
 
   const addLink = () => {
-    const newLink: LinkItem = {
-      id: Date.now().toString(),
-      title: '',
-      url: '',
-    };
-    setLinks((prev) => [...prev, newLink]);
+    const newId = Date.now().toString();
+    setLinks((prev) => [...prev, { id: newId, title: '', url: '' }]);
   };
 
   const removeLink = (id: string) => {
     setLinks((prev) => prev.filter((link) => link.id !== id));
     setLinkErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors[id];
-      return newErrors;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [id]: _removed, ...rest } = prev;
+      return rest;
     });
   };
 
@@ -135,9 +128,7 @@ export default function ProfilePage() {
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      handleAvatarUpload(file);
-    }
+    if (file) handleAvatarUpload(file);
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -154,10 +145,8 @@ export default function ProfilePage() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleAvatarUpload(e.dataTransfer.files[0]);
-    }
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleAvatarUpload(file);
   };
 
   const removeAvatar = () => {
@@ -202,6 +191,17 @@ export default function ProfilePage() {
       // Validate with Zod
       const validatedData = profileSchema.parse(profileData);
 
+      // Create profile data for the user store
+      const profileCreationData: ProfileCreationData = {
+        name: validatedData.name,
+        bio: validatedData.bio,
+        image: validatedData.image,
+        links: validatedData.links,
+      };
+
+      // Create the profile in the user store
+      await createProfile(profileCreationData, publicKey);
+
       // Create keypair object from store using HomeserverService
       const homeserverService = HomeserverService.getInstance();
       const resultCreateUser = await PubkySpecsPipes.normalizeUser(
@@ -225,8 +225,17 @@ export default function ProfilePage() {
 
       console.log('Response:', response, user);
 
-      // For now, just navigate to the main app
-      //   router.push('/');
+      // Update the user store with the successfully saved profile
+      if (response.ok) {
+        // Profile was successfully saved to homeserver
+        console.log('Profile successfully saved to homeserver');
+
+        // For now, just navigate to the main app
+        // router.push('/');
+      } else {
+        console.warn('Profile saved locally but failed to sync to homeserver');
+        // Profile is still saved in local store, user can try syncing later
+      }
     } catch (error) {
       console.error('Profile validation/creation failed:', error);
       if (error instanceof z.ZodError) {
