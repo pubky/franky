@@ -1,7 +1,8 @@
 'use client';
 
 import { useCurrentUser } from '@/core/stores';
-import { PageHeader, AuthGuard } from '@/components/ui';
+import { PageHeader } from '@/components/ui';
+import { AuthGuard } from '@/components/guards';
 
 export default function FeedPage() {
   const currentUser = useCurrentUser();

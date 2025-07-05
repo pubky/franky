@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { KeysGuard } from '@/components/ui';
+import { KeysGuard } from '@/components/guards';
 
 interface BackupLayoutProps {
   children: ReactNode;

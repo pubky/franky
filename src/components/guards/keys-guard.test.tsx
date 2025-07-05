@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { KeysGuard } from './keys-guard';
+import { KeysGuard } from '@/components/guards/keys-guard';
 import { useKeypairStore } from '@/core/stores';
 
 // Mock Next.js router

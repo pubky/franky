@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { SessionGuard } from '@/components/ui';
+import { SessionGuard } from '@/components/guards';
 import { UserRoundPlus, LogIn, Shield, Key, Globe, ArrowRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
