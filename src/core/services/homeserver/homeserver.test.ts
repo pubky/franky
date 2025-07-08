@@ -13,11 +13,42 @@ const mockKeypairStore = {
   setSession: vi.fn(),
   clearSession: vi.fn(),
   generateKeys: vi.fn(),
+  clearKeys: vi.fn(),
+  setAuthenticated: vi.fn(),
+};
+
+// Mock useUserStore (now useProfileStore)
+const mockUserStore = {
+  publicKey: '',
+  session: null as Session | null,
+  isAuthenticated: false,
+  setSession: vi.fn(),
+  clearSession: vi.fn(),
+  setAuthenticated: vi.fn(),
+  clearCurrentUser: vi.fn(),
+  clearAllErrors: vi.fn(),
+  clearAllLoading: vi.fn(),
+};
+
+// Mock useOnboardingStore (this is what HomeserverService actually uses)
+const mockOnboardingStore = {
+  secretKey: new Uint8Array(32).fill(1),
+  generateKeys: vi.fn(),
+  clearKeys: vi.fn(),
 };
 
 vi.mock('@/core/stores', () => ({
   useKeypairStore: {
     getState: vi.fn(() => mockKeypairStore),
+  },
+  useUserStore: {
+    getState: vi.fn(() => mockUserStore),
+  },
+  useOnboardingStore: {
+    getState: vi.fn(() => mockOnboardingStore),
+  },
+  useProfileStore: {
+    getState: vi.fn(() => mockUserStore),
   },
 }));
 
@@ -58,7 +89,7 @@ vi.doMock('@synonymdev/pubky', () => {
 let HomeserverService: typeof import('@/core/services/homeserver/homeserver').HomeserverService;
 let Keypair: typeof import('@synonymdev/pubky').Keypair;
 let PublicKey: typeof import('@synonymdev/pubky').PublicKey;
-import { HomeserverErrorType } from '@/libs';
+let HomeserverErrorType: typeof import('@/libs').HomeserverErrorType;
 import { Client } from '@synonymdev/pubky';
 
 // Define types for mock functions
@@ -80,11 +111,17 @@ describe('HomeserverService', () => {
     vi.clearAllMocks();
     vi.resetModules();
 
-    // Reset mock store
+    // Reset mock stores
     mockKeypairStore.publicKey = '';
     mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
     mockKeypairStore.session = null;
     mockKeypairStore.isAuthenticated = false;
+
+    mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
+
+    mockUserStore.publicKey = '';
+    mockUserStore.session = null;
+    mockUserStore.isAuthenticated = false;
 
     // Use dynamic imports to ensure mocked modules are loaded
     const homeserverModule = await import('@/core/services/homeserver/homeserver');
@@ -92,6 +129,8 @@ describe('HomeserverService', () => {
     const pubkyModule = await import('@synonymdev/pubky');
     Keypair = pubkyModule.Keypair;
     PublicKey = pubkyModule.PublicKey;
+    const libsModule = await import('@/libs');
+    HomeserverErrorType = libsModule.HomeserverErrorType;
 
     // Reset singleton instance
     (HomeserverService as unknown as { instance: undefined }).instance = undefined;
@@ -111,18 +150,6 @@ describe('HomeserverService', () => {
     });
   });
 
-  describe('Key Generation', () => {
-    it('should create keypair from secret key', () => {
-      const service = HomeserverService.getInstance();
-      const secretKey = new Uint8Array(32).fill(1); // valid 32-byte array
-
-      const result = service.keypairFromSecretKey(secretKey);
-
-      expect(Keypair.fromSecretKey).toHaveBeenCalledWith(secretKey);
-      expect(result).toBeDefined();
-    });
-  });
-
   describe('Authentication', () => {
     it('should signup successfully', async () => {
       const service = HomeserverService.getInstance();
@@ -137,7 +164,7 @@ describe('HomeserverService', () => {
       const result = await service.signup(keypair, signupToken);
 
       expect(mockClient.signup).toHaveBeenCalled();
-      expect(mockKeypairStore.setSession).toHaveBeenCalled();
+      expect(mockUserStore.setSession).toHaveBeenCalled();
       expect(result.session).toBe(mockSession);
     });
 
@@ -154,7 +181,7 @@ describe('HomeserverService', () => {
       await service.signup(keypair, token);
 
       expect(mockClient.signup).toHaveBeenCalled();
-      expect(mockKeypairStore.setSession).toHaveBeenCalled();
+      expect(mockUserStore.setSession).toHaveBeenCalled();
     });
 
     it('should handle signup errors', async () => {
@@ -175,33 +202,33 @@ describe('HomeserverService', () => {
       const service = HomeserverService.getInstance();
 
       // Set up authenticated state
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockResolvedValue(undefined);
 
-      await service.logout('test-key');
+      await service.logout();
 
       expect(mockClient.signout).toHaveBeenCalled();
-      expect(mockKeypairStore.clearSession).toHaveBeenCalled();
-      expect(PublicKey.from).toHaveBeenCalledWith('test-key');
+      expect(mockUserStore.clearSession).toHaveBeenCalled();
+      expect(PublicKey.from).toHaveBeenCalledWith('test-public-key-z32');
     });
 
     it('should handle logout errors', async () => {
       const service = HomeserverService.getInstance();
 
       // Set up authenticated state
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
       const error = new Error('Server error');
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockRejectedValue(error);
 
-      await expect(service.logout('test-key')).rejects.toMatchObject({
+      await expect(service.logout()).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });
@@ -211,9 +238,9 @@ describe('HomeserverService', () => {
   describe('Data Operations', () => {
     beforeEach(async () => {
       // Set up authenticated state for data operations
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
-      mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
+      mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
       const service = HomeserverService.getInstance();
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
@@ -279,9 +306,9 @@ describe('HomeserverService', () => {
   describe('Edge Cases', () => {
     beforeEach(async () => {
       // Set up authenticated state for edge cases
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
-      mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
+      mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
       const service = HomeserverService.getInstance();
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
@@ -330,7 +357,10 @@ describe('HomeserverService', () => {
     it('should track current keypair after creation from secret key', () => {
       const service = HomeserverService.getInstance();
       const secretKey = new Uint8Array(32).fill(1);
-      const keypair = service.keypairFromSecretKey(secretKey);
+      const keypair = Keypair.fromSecretKey(secretKey);
+
+      // Since the method is now static, we need to set the keypair manually for testing
+      service['currentKeypair'] = keypair;
 
       expect(service.getCurrentKeypair()).toBe(keypair);
     });
@@ -345,7 +375,7 @@ describe('HomeserverService', () => {
 
       const result = await service.signup(keypair, 'test-token');
 
-      expect(mockKeypairStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(mockUserStore.setSession).toHaveBeenCalledWith(mockSession);
       expect(result.session).toBe(mockSession);
     });
 
@@ -353,23 +383,26 @@ describe('HomeserverService', () => {
       const service = HomeserverService.getInstance();
 
       // Set up authenticated state
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockResolvedValue(undefined);
 
-      await service.logout('test-key');
+      await service.logout();
 
-      expect(mockKeypairStore.clearSession).toHaveBeenCalled();
+      expect(mockUserStore.clearSession).toHaveBeenCalled();
       expect(service.getCurrentKeypair()).toBeNull();
     });
 
     it('should maintain keypair state across multiple operations', () => {
       const service = HomeserverService.getInstance();
       const secretKey = new Uint8Array(32).fill(1);
-      const keypair = service.keypairFromSecretKey(secretKey);
+      const keypair = Keypair.fromSecretKey(secretKey);
+
+      // Since the method is now static, we need to set the keypair manually for testing
+      service['currentKeypair'] = keypair;
 
       // Keypair should persist across multiple calls
       expect(service.getCurrentKeypair()).toBe(keypair);
@@ -382,9 +415,9 @@ describe('HomeserverService', () => {
       const service = HomeserverService.getInstance();
 
       // Ensure not authenticated
-      mockKeypairStore.session = null;
-      mockKeypairStore.isAuthenticated = false;
-      mockKeypairStore.secretKey = new Uint8Array(0);
+      mockUserStore.session = null;
+      mockUserStore.isAuthenticated = false;
+      mockOnboardingStore.secretKey = new Uint8Array(0);
 
       await expect(service.fetch('https://example.com/data')).rejects.toMatchObject({
         type: HomeserverErrorType.NOT_AUTHENTICATED,
@@ -396,46 +429,22 @@ describe('HomeserverService', () => {
       const service = HomeserverService.getInstance();
 
       // Ensure not authenticated
-      mockKeypairStore.session = null;
-      mockKeypairStore.isAuthenticated = false;
+      mockUserStore.session = null;
+      mockUserStore.isAuthenticated = false;
 
-      await expect(service.logout('test-key')).rejects.toMatchObject({
+      await expect(service.logout()).rejects.toMatchObject({
         type: HomeserverErrorType.NOT_AUTHENTICATED,
         statusCode: 401,
       });
-    });
-
-    it('should throw INVALID_PUBLIC_KEY error for invalid public key during logout', async () => {
-      const service = HomeserverService.getInstance();
-
-      // Set up authenticated state
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
-      service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
-
-      const mockClient = service['client'] as unknown as MockClient;
-      mockClient.signout.mockRejectedValue(new Error('invalid public key'));
-
-      await expect(service.logout('invalid-key')).rejects.toMatchObject({
-        type: HomeserverErrorType.INVALID_PUBLIC_KEY,
-        statusCode: 400,
-      });
-    });
-
-    it('should throw INVALID_SECRET_KEY error for invalid secret key format', () => {
-      const service = HomeserverService.getInstance();
-      const invalidSecretKey = new Uint8Array(16); // Invalid length
-
-      expect(() => service.keypairFromSecretKey(invalidSecretKey)).toThrowError();
     });
 
     it('should throw FETCH_FAILED error when fetch operation fails', async () => {
       const service = HomeserverService.getInstance();
 
       // Set up authenticated state
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
-      mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
+      mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
       const mockClient = service['client'] as unknown as MockClient;
@@ -451,14 +460,14 @@ describe('HomeserverService', () => {
       const service = HomeserverService.getInstance();
 
       // Set up authenticated state
-      mockKeypairStore.session = createMockSession();
-      mockKeypairStore.isAuthenticated = true;
+      mockUserStore.session = createMockSession();
+      mockUserStore.isAuthenticated = true;
       service['currentKeypair'] = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
 
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockRejectedValue(new Error('Server error'));
 
-      await expect(service.logout('test-key')).rejects.toMatchObject({
+      await expect(service.logout()).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });

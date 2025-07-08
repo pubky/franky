@@ -4,12 +4,11 @@ import { Button, Card, CopyButton, InfoCard, PageHeader } from '@/components/ui'
 import { ArrowLeft, Eye, EyeOff, Shield, CheckCircle2, ArrowRight, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { useKeypairStore } from '@/core/stores';
-import { AuthController } from '@/core/controllers/auth';
-import { Logger } from '@/libs/logger';
+import { useOnboardingStore } from '@/core/stores';
+import { Identity } from '@/libs';
 
 export default function SeedBackup() {
-  const { secretKey, hasGenerated } = useKeypairStore();
+  const { secretKey, hasGenerated } = useOnboardingStore();
   const [showSeeds, setShowSeeds] = useState(false);
   const [verificationWords, setVerificationWords] = useState<string[]>(new Array(12).fill(''));
   const [isVerified, setIsVerified] = useState(false);
@@ -23,22 +22,16 @@ export default function SeedBackup() {
 
     // Return cached words if already generated for this secret key
     if (cachedSeedWords.current.length > 0) {
-      Logger.debug('SeedBackup: Returning cached seed words to prevent duplicate generation');
       return cachedSeedWords.current;
     }
 
-    try {
-      // Use AuthController to generate seed words
-      const words = AuthController.generateSeedWords(secretKey);
+    // Use Identity lib to generate seed words
+    const words = Identity.generateSeedWords(secretKey);
 
-      // Cache the generated words to prevent double execution
-      cachedSeedWords.current = words;
+    // Cache the generated words to prevent double execution
+    cachedSeedWords.current = words;
 
-      return words;
-    } catch (error) {
-      Logger.error('SeedBackup: Failed to generate BIP39 seed words via AuthController', error);
-      return [];
-    }
+    return words;
   }, [secretKey, hasGenerated]);
 
   const hasSeedWords = useMemo(() => {

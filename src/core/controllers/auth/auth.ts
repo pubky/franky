@@ -1,70 +1,19 @@
-import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
-import * as bip39 from 'bip39';
-import crypto from 'crypto';
-import { type SignupResult, HomeserverService, KeyPair } from '@/core';
-import { Env, CommonErrorType, createCommonError, Logger } from '@/libs';
+import { Keypair } from '@synonymdev/pubky';
+import { type SignupResult, HomeserverService } from '@/core';
+import { Env, CommonErrorType, createCommonError } from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
   static async signUp(keypair: Keypair, signupToken: string): Promise<SignupResult> {
+    // todo: PR candidate to how to get rid of this homeserver service instance and call it directly as a static method
     const homeserverService = HomeserverService.getInstance();
     return await homeserverService.signup(keypair, signupToken);
   }
 
-  static async getKeypair(): Promise<Keypair | null> {
+  static async logout(): Promise<void> {
     const homeserverService = HomeserverService.getInstance();
-    return homeserverService.getCurrentKeypair();
-  }
-
-  /**
-   * Complete logout - clears homeserver session and local stores
-   * This is the method that should be used for user logout
-   */
-  static async logoutUser(): Promise<void> {
-    try {
-      Logger.info('Starting user logout process');
-
-      // First, try to logout from homeserver (if possible)
-      try {
-        const homeserverService = HomeserverService.getInstance();
-        const keypair = homeserverService.getCurrentKeypair();
-
-        if (keypair) {
-          Logger.info('Logging out from homeserver');
-          await homeserverService.logout(keypair.publicKey().z32());
-        } else {
-          Logger.warn('No keypair available for homeserver logout');
-        }
-      } catch (homeserverError) {
-        // Don't fail the entire logout if homeserver logout fails
-        Logger.warn('Homeserver logout failed, continuing with local cleanup', {
-          error: homeserverError instanceof Error ? homeserverError.message : 'Unknown error',
-        });
-      }
-
-      // Clear local stores - import dynamically to avoid circular dependencies
-      const { useUserStore, useKeypairStore } = await import('@/core/stores');
-
-      Logger.info('Clearing user store');
-      useUserStore.getState().clearCurrentUser();
-      useUserStore.getState().clearAllErrors();
-      useUserStore.getState().clearAllLoading();
-
-      Logger.info('Clearing keypair store');
-      useKeypairStore.getState().clearKeys();
-      useKeypairStore.getState().clearSession();
-      useKeypairStore.getState().setAuthenticated(false);
-
-      Logger.info('User logout completed successfully');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      Logger.error('Failed to logout user', { error: errorMessage });
-
-      throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, 'Failed to logout user completely', 500, {
-        originalError: errorMessage,
-      });
-    }
+    await homeserverService.logout();
   }
 
   // TODO: remove this once we have a proper signup token endpoint
@@ -104,108 +53,4 @@ export class AuthController {
     return token;
   }
 
-  static async createRecoveryFile(keypair: KeyPair, password: string): Promise<void> {
-    // Validate secret key format
-    if (!keypair.secretKey || !(keypair.secretKey instanceof Uint8Array)) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        'Invalid secret key format. Please regenerate your keys.',
-        400,
-        { secretKeyType: typeof keypair.secretKey },
-      );
-    }
-
-    if (keypair.secretKey.length !== 32) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
-        400,
-        { secretKeyLength: keypair.secretKey.length },
-      );
-    }
-
-    try {
-      const keypairFromSecretKey = Keypair.fromSecretKey(keypair.secretKey);
-      const recoveryFile = createRecoveryFile(keypairFromSecretKey, password);
-      this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
-    } catch (error) {
-      throw createCommonError(
-        CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to create recovery file. Please try regenerating your keys.',
-        500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
-      );
-    }
-  }
-
-  static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
-    try {
-      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
-
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      URL.revokeObjectURL(link.href);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  static generateSeedWords(secretKey: Uint8Array | unknown): string[] {
-    if (!secretKey || !(secretKey instanceof Uint8Array)) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        'Invalid secret key format. Please regenerate your keys.',
-        400,
-        { secretKeyType: typeof secretKey },
-      );
-    }
-
-    // Convert secret key to buffer (secretKey is already a Uint8Array)
-    const secretBuffer = Buffer.from(secretKey);
-
-    // Validate minimum length (should be at least 32 bytes for good entropy)
-    if (secretBuffer.length < 32) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Secret key is shorter than recommended 32 bytes', 400, {
-        actualLength: secretBuffer.length,
-      });
-    }
-
-    try {
-      // Create a hash of the secret key to use as entropy
-      // This ensures we get consistent seed words from the same secret key
-      const entropy = crypto.createHash('sha256').update(secretBuffer).digest();
-
-      // Take first 128 bits (16 bytes) for 12-word mnemonic
-      const entropy128 = entropy.slice(0, 16);
-
-      // Generate mnemonic from entropy
-      const mnemonic = bip39.entropyToMnemonic(entropy128);
-
-      // Validate the generated mnemonic
-      if (!bip39.validateMnemonic(mnemonic)) {
-        throw new Error('Generated mnemonic failed validation');
-      }
-
-      const words = mnemonic.split(' ');
-
-      // Ensure we have exactly 12 words
-      if (words.length !== 12) {
-        throw new Error(`Expected 12 words, got ${words.length}`);
-      }
-
-      return words;
-    } catch (error) {
-      throw createCommonError(
-        CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to generate BIP39 seed words. Please try regenerating your keys.',
-        500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
-      );
-    }
-  }
 }

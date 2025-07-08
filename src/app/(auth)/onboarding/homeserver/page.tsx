@@ -19,9 +19,8 @@ import {
 import { Button, Card, PageHeader } from '@/components/ui';
 import { useState } from 'react';
 import { AuthController } from '@/core/controllers/auth';
-import { useKeypairStore } from '@/core/stores';
-import { HomeserverService } from '@/core/services/homeserver';
-import { AppError, HomeserverErrorType, ErrorMessages } from '@/libs';
+import { useOnboardingStore } from '@/core/stores';
+import { AppError, HomeserverErrorType, ErrorMessages, Identity } from '@/libs';
 import { useRouter } from 'next/navigation';
 
 export default function CreateAccount() {
@@ -29,7 +28,7 @@ export default function CreateAccount() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { secretKey, hasGenerated } = useKeypairStore();
+  const { secretKey, hasGenerated, clearSecretKeys } = useOnboardingStore();
   const router = useRouter();
 
   const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,6 +57,7 @@ export default function CreateAccount() {
     setInviteCode(formattedValue);
   };
 
+  // TODO: Remove this once we have a real signup token
   const generateDemoCode = async () => {
     setIsGenerating(true);
     setErrorMessage(null);
@@ -122,11 +122,12 @@ export default function CreateAccount() {
     setErrorMessage(null);
     try {
       // Convert the store's secretKey to a Keypair object
-      const homeserverService = HomeserverService.getInstance();
-      const keypair = homeserverService.keypairFromSecretKey(secretKey);
+      const keypair = Identity.keypairFromSecretKey(secretKey);
 
       // Call the signup method with the keypair and invite code
       await AuthController.signUp(keypair, inviteCode);
+
+      clearSecretKeys();
 
       router.push('/onboarding/profile');
     } catch (error) {

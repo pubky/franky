@@ -6,7 +6,7 @@ import { Logo } from '@/components/ui';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useIsAuthenticated, useCurrentUser } from '@/core/stores';
+import { useIsAuthenticated } from '@/core/stores';
 import { AuthController } from '@/core/controllers';
 import { Logger } from '@/libs/logger';
 
@@ -14,7 +14,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isAuthenticated = useIsAuthenticated();
-  const currentUser = useCurrentUser();
+
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -24,7 +24,7 @@ export function Header() {
       setIsLoggingOut(true);
       Logger.info('Header: Starting logout process');
 
-      await AuthController.logoutUser();
+      await AuthController.logout();
 
       Logger.info('Header: Logout successful, redirecting to homepage');
       router.replace('/');
@@ -104,7 +104,7 @@ export function Header() {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">{currentUser?.details.name || 'User'}</span>
+                    <span className="font-medium">User</span>
                   </div>
                   <Button
                     variant="ghost"
@@ -211,7 +211,7 @@ export function Header() {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
                     <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{currentUser?.details.name || 'User'}</span>
+                    <span className="text-sm font-medium">User</span>
                   </div>
                   <Button
                     variant="outline"

@@ -4,7 +4,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 // Mock the stores
 vi.mock('@/core/stores', () => ({
   useIsAuthenticated: vi.fn(),
-  useCurrentUser: vi.fn(),
 }));
 
 // Mock Next.js components
@@ -26,7 +25,7 @@ vi.mock('next/navigation', () => ({
 // Mock AuthController
 vi.mock('@/core/controllers', () => ({
   AuthController: {
-    logoutUser: vi.fn(),
+    logout: vi.fn(),
   },
 }));
 
@@ -40,12 +39,12 @@ vi.mock('@/libs/logger', () => ({
 
 // Import after mocking
 import { Header } from './Header';
-import { useIsAuthenticated, useCurrentUser } from '@/core/stores';
+import { useIsAuthenticated } from '@/core/stores';
 import { AuthController } from '@/core/controllers';
 
 const mockUseIsAuthenticated = useIsAuthenticated as ReturnType<typeof vi.fn>;
-const mockUseCurrentUser = useCurrentUser as ReturnType<typeof vi.fn>;
-const mockLogoutUser = AuthController.logoutUser as ReturnType<typeof vi.fn>;
+
+const mockLogout = AuthController.logout as ReturnType<typeof vi.fn>;
 
 describe('Header', () => {
   beforeEach(() => {
@@ -59,7 +58,6 @@ describe('Header', () => {
   describe('Unauthenticated User', () => {
     beforeEach(() => {
       mockUseIsAuthenticated.mockReturnValue(false);
-      mockUseCurrentUser.mockReturnValue(null);
     });
 
     it('should show Sign in and Get started buttons when not authenticated', () => {
@@ -90,46 +88,16 @@ describe('Header', () => {
   });
 
   describe('Authenticated User', () => {
-    const mockUser = {
-      details: {
-        id: 'test-user-id',
-        name: 'John Doe',
-        bio: 'Test bio',
-        image: null,
-        links: null,
-        status: null,
-        indexed_at: Date.now(),
-      },
-      counts: {
-        tagged: 0,
-        tags: 0,
-        unique_tags: 0,
-        posts: 0,
-        replies: 0,
-        following: 0,
-        followers: 0,
-        friends: 0,
-        bookmarks: 0,
-      },
-      tags: [],
-      relationship: {
-        following: false,
-        followed_by: false,
-        muted: false,
-      },
-    };
-
     beforeEach(() => {
       mockUseIsAuthenticated.mockReturnValue(true);
-      mockUseCurrentUser.mockReturnValue(mockUser);
-      mockLogoutUser.mockResolvedValue(undefined);
+      mockLogout.mockResolvedValue(undefined);
     });
 
     it('should show user name and logout button when authenticated', () => {
       render(<Header />);
 
       // Should show user name
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('User')).toBeInTheDocument();
 
       // Should show logout button
       expect(screen.getByText('Logout')).toBeInTheDocument();
@@ -150,13 +118,13 @@ describe('Header', () => {
 
       // Wait for logout to complete
       await waitFor(() => {
-        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockLogout).toHaveBeenCalledTimes(1);
         expect(mockReplace).toHaveBeenCalledWith('/');
       });
     });
 
     it('should handle logout error gracefully', async () => {
-      mockLogoutUser.mockRejectedValue(new Error('Logout failed'));
+      mockLogout.mockRejectedValue(new Error('Logout failed'));
 
       render(<Header />);
 
@@ -165,7 +133,7 @@ describe('Header', () => {
 
       // Wait for logout to complete (should still redirect even on error)
       await waitFor(() => {
-        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockLogout).toHaveBeenCalledTimes(1);
         expect(mockReplace).toHaveBeenCalledWith('/');
       });
     });
@@ -182,7 +150,7 @@ describe('Header', () => {
 
       // Should only call logout once
       await waitFor(() => {
-        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockLogout).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -194,7 +162,7 @@ describe('Header', () => {
       fireEvent.click(mobileMenuButton);
 
       // Should show user name in mobile menu
-      const userNames = screen.getAllByText('John Doe');
+      const userNames = screen.getAllByText('User');
       expect(userNames).toHaveLength(2); // Desktop + Mobile
 
       // Should show logout in mobile menu
@@ -215,32 +183,14 @@ describe('Header', () => {
 
       // Wait for logout to complete
       await waitFor(() => {
-        expect(mockLogoutUser).toHaveBeenCalledTimes(1);
+        expect(mockLogout).toHaveBeenCalledTimes(1);
         expect(mockReplace).toHaveBeenCalledWith('/');
       });
     });
-
-    it('should show fallback User name when user name is not available', () => {
-      const userWithoutName = {
-        ...mockUser,
-        details: {
-          ...mockUser.details,
-          name: '',
-        },
-      };
-      mockUseCurrentUser.mockReturnValue(userWithoutName);
-
-      render(<Header />);
-
-      // Should show fallback "User" text
-      expect(screen.getByText('User')).toBeInTheDocument();
-    });
   });
-
   describe('Mobile Menu', () => {
     beforeEach(() => {
       mockUseIsAuthenticated.mockReturnValue(false);
-      mockUseCurrentUser.mockReturnValue(null);
     });
 
     it('should toggle mobile menu visibility', () => {

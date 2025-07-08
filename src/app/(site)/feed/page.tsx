@@ -1,12 +1,9 @@
 'use client';
 
-import { useCurrentUser } from '@/core/stores';
 import { PageHeader } from '@/components/ui';
 import { AuthGuard } from '@/components/guards';
 
 export default function FeedPage() {
-  const currentUser = useCurrentUser();
-
   return (
     <AuthGuard>
       <div className="container mx-auto px-4 py-8">
@@ -14,7 +11,7 @@ export default function FeedPage() {
 
         <div className="mt-8">
           <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h2 className="text-xl font-semibold mb-4">Welcome back, {currentUser?.details.name || 'User'}!</h2>
+            <h2 className="text-xl font-semibold mb-4">Welcome back!</h2>
 
             <p className="text-gray-600 mb-4">
               This is your feed page. Here you&apos;ll see posts and updates from people you follow.

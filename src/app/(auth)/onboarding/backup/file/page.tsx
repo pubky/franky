@@ -4,15 +4,15 @@ import { Button, Card, InfoCard, PasswordInput, PasswordConfirm, PageHeader } fr
 import { ArrowLeft, Download, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useMemo } from 'react';
-import { AuthController } from '@/core/controllers/auth';
-import { useKeypairStore } from '@/core/stores';
+import { useOnboardingStore } from '@/core/stores';
 import { useRouter } from 'next/navigation';
+import { Identity } from '@/libs';
 
 export default function RestoreAccount() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isCreatingFile, setIsCreatingFile] = useState(false);
-  const { publicKey, secretKey } = useKeypairStore();
+  const { publicKey, secretKey } = useOnboardingStore();
   const router = useRouter();
 
   // Computed values
@@ -34,10 +34,10 @@ export default function RestoreAccount() {
   const handleDownload = async () => {
     setIsCreatingFile(true);
     try {
-      await AuthController.createRecoveryFile(
+      await Identity.createRecoveryFile(
         {
           publicKey,
-          secretKey,
+          secretKey: secretKey || new Uint8Array(),
         },
         password,
       );

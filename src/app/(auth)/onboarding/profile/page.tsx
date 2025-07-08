@@ -9,8 +9,8 @@ import { PageHeader } from '@/components/ui/page-header';
 import { User, Upload, Plus, Trash2, Link as LinkIcon, Camera, Info, ArrowRight } from 'lucide-react';
 import { CopyButton } from '@/components/ui/copy-button';
 import { InfoCard } from '@/components/ui/info-card';
-import { useKeypairStore } from '@/core/stores';
-import { useUserStore, ProfileCreationData } from '@/core/stores';
+import { useOnboardingStore } from '@/core/stores';
+import { useProfileStore } from '@/core/stores';
 import { HomeserverService, PubkySpecsPipes } from '@/core';
 import { z } from 'zod';
 
@@ -47,8 +47,8 @@ interface LinkItem {
 
 export default function ProfilePage() {
   // Store hooks
-  const { publicKey, hasGenerated } = useKeypairStore();
-  const { createProfile } = useUserStore();
+  const { publicKey, hasGenerated } = useOnboardingStore();
+  const { setCurrentUserPubky } = useProfileStore();
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -191,16 +191,12 @@ export default function ProfilePage() {
       // Validate with Zod
       const validatedData = profileSchema.parse(profileData);
 
-      // Create profile data for the user store
-      const profileCreationData: ProfileCreationData = {
-        name: validatedData.name,
-        bio: validatedData.bio,
-        image: validatedData.image,
-        links: validatedData.links,
-      };
+      // Set the current user pubky and mark as authenticated (profile creation complete)
+      setCurrentUserPubky(publicKey);
 
-      // Create the profile in the user store
-      await createProfile(profileCreationData, publicKey);
+      // Import profile store to set authentication status
+      const { useProfileStore } = await import('@/core/stores');
+      useProfileStore.getState().setAuthenticated(true);
 
       // Create keypair object from store using HomeserverService
       const homeserverService = HomeserverService.getInstance();

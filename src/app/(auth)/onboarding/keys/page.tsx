@@ -4,10 +4,12 @@ import { ArrowLeft, FileKey, Globe, KeyRound, Lock, RefreshCw } from 'lucide-rea
 import Link from 'next/link';
 import { useEffect, useRef, useMemo } from 'react';
 import { Button, Card, CopyButton, InfoCard, KeyDisplay, PageHeader } from '@/components/ui';
-import { useKeypairStore } from '@/core/stores';
+import { useOnboardingStore } from '@/core/stores';
+import { Keypair } from '@synonymdev/pubky';
 
 export default function CreateAccountReady() {
-  const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys, hasGenerated } = useKeypairStore();
+  const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys, hasGenerated, setPublicKey } =
+    useOnboardingStore();
   const hasTriedGeneration = useRef(false);
 
   // Computed values - move all logic here
@@ -16,7 +18,7 @@ export default function CreateAccountReady() {
   }, [secretKey]);
 
   const secretKeyHex = useMemo(() => {
-    return isValidSecretKey ? Buffer.from(secretKey).toString('hex') : '';
+    return isValidSecretKey ? Buffer.from(secretKey || new Uint8Array()).toString('hex') : '';
   }, [secretKey, isValidSecretKey]);
 
   const displayTexts = useMemo(
@@ -43,7 +45,7 @@ export default function CreateAccountReady() {
     }
 
     try {
-      const stored = localStorage.getItem('keypair-storage');
+      const stored = localStorage.getItem('onboarding-storage');
       if (!stored) return false;
 
       const parsed = JSON.parse(stored);
@@ -65,37 +67,28 @@ export default function CreateAccountReady() {
 
     // Case 1: Keys exist in memory but NOT in localStorage (manual deletion scenario)
     if (hasValidInMemoryKeys && !hasPersistedKeys) {
-      // Check if we're in a browser environment before accessing localStorage
-      if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-        // Manually trigger localStorage persistence
-        // Since Zustand might not persist if values haven't changed, we'll do it manually
-        try {
-          const dataToStore = {
-            state: {
-              publicKey,
-              secretKey: Array.from(secretKey), // Convert Uint8Array to array for JSON
-              hasGenerated,
-            },
-            version: 0,
-          };
-
-          localStorage.setItem('keypair-storage', JSON.stringify(dataToStore));
-        } catch {
-          // Fallback: try the setState approach
-          useKeypairStore.setState({
-            publicKey,
-            secretKey,
-            hasGenerated,
-            isGenerating,
-            hasHydrated,
-          });
-        }
-      }
-
+      // The stores should handle persistence automatically
+      // Just trigger a state update to ensure persistence
+      useOnboardingStore.setState({
+        secretKey,
+        hasGenerated,
+      });
       return;
     }
 
-    // Case 2: No valid keys - need to generate them
+    // Case 2: If we have a valid secretKey but no publicKey, derive it
+    if (isValidSecretKey && !publicKey) {
+      try {
+        const keypair = Keypair.fromSecretKey(secretKey || new Uint8Array());
+        const derivedPublicKey = keypair.publicKey();
+        setPublicKey(derivedPublicKey.z32());
+      } catch (error) {
+        console.error('Failed to derive publicKey from secretKey:', error);
+      }
+      return;
+    }
+
+    // Case 3: No valid keys - need to generate them
     const needsKeyGeneration = !hasValidInMemoryKeys;
 
     // Only generate keys if we need them, we're not already generating, and we haven't tried yet
@@ -108,7 +101,7 @@ export default function CreateAccountReady() {
     if (hasValidInMemoryKeys) {
       hasTriedGeneration.current = false;
     }
-  }, [isValidSecretKey, hasGenerated, isGenerating, hasHydrated, generateKeys, publicKey, secretKey]);
+  }, [isValidSecretKey, hasGenerated, isGenerating, hasHydrated, generateKeys, publicKey, secretKey, setPublicKey]);
 
   // Event handlers
   const handleRegenerateKeys = () => {
