@@ -3,7 +3,7 @@ import {
   type NexusPost,
   PostModelPK,
   PostModel,
-  HomeserverService,
+  // HomeserverService,
   PostModelSchema,
   DEFAULT_NEW_POST,
   DEFAULT_POST_DETAILS,
@@ -13,7 +13,7 @@ export class PostController {
   private constructor() {} // Prevent instantiation
 
   static async create(newPost: PostControllerNewData): Promise<PostModel> {
-    const homeserver = HomeserverService.getInstance();
+    // const homeserver = HomeserverService.getInstance();
 
     // create post sync_status = 'local'
     const postData: PostModelSchema = {
@@ -30,13 +30,14 @@ export class PostController {
     const post = await PostModel.insert(postData);
 
     // create post on homeserver
-    const result = await homeserver.createPost(postData);
+    // TODO: add createPost method to homeserver service
+    // const result = await homeserver.createPost(postData);
 
-    // update post sync_status = 'homeserver'
-    post.details.uri = result.meta.url;
-    post.details.id = result.meta.id;
-    post.id = result.meta.id;
-    post.sync_status = 'homeserver';
+    // // update post sync_status = 'homeserver'
+    // post.details.uri = result.meta.url;
+    // post.details.id = result.meta.id;
+    // post.id = result.meta.id;
+    // post.sync_status = 'homeserver';
     await post.save();
 
     return post;

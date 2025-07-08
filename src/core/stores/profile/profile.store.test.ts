@@ -42,7 +42,7 @@ const defaultState: ProfileState = {
 const createTestStore = () =>
   create<ProfileStore>()(
     devtools(
-      (set, get) => ({
+      (set) => ({
         ...defaultState,
 
         setCurrentUserPubky: (pubky: string | null) => {
