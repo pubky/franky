@@ -52,5 +52,4 @@ export class AuthController {
 
     return token;
   }
-
 }
