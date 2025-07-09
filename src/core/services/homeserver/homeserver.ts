@@ -77,7 +77,6 @@ export class HomeserverService {
 
       return { session };
     } catch (error) {
-
       if (error instanceof AppError) {
         throw error;
       }
