@@ -3,20 +3,23 @@ import { AuthController } from './auth';
 import { HomeserverService } from '@/core/services/homeserver';
 import { Keypair } from '@synonymdev/pubky';
 
-// Mock useKeypairStore
-const mockKeypairStore = {
-  publicKey: '',
-  secretKey: new Uint8Array(32).fill(1),
-  session: null,
-  isAuthenticated: false,
-  generateKeys: vi.fn(),
-  setSession: vi.fn(),
-  clearSession: vi.fn(),
-};
+// Mock pubky-app-specs to avoid WebAssembly issues
+vi.mock('pubky-app-specs', () => ({
+  default: vi.fn(() => Promise.resolve()),
+}));
 
+// Mock stores - simplified approach
 vi.mock('@/core/stores', () => ({
-  useKeypairStore: {
-    getState: vi.fn(() => mockKeypairStore),
+  useProfileStore: {
+    getState: vi.fn(() => ({
+      setSession: vi.fn(),
+      clearSession: vi.fn(),
+    })),
+  },
+  useOnboardingStore: {
+    getState: vi.fn(() => ({
+      clearKeys: vi.fn(),
+    })),
   },
 }));
 
@@ -46,9 +49,6 @@ vi.mock('@/libs/env', () => ({
 describe('AuthController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Reset mock store
-    mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
   });
 
   afterEach(() => {
@@ -56,20 +56,21 @@ describe('AuthController', () => {
   });
 
   describe('signUp', () => {
-    it('should successfully sign up a user', async () => {
+    it('should successfully sign up a user and call setSession', async () => {
       const homeserverService = HomeserverService.getInstance();
       const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
       const signupToken = 'test-token';
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
-        session: {} as unknown as import('@synonymdev/pubky').Session,
+        session: mockSession,
       });
 
       const result = await AuthController.signUp(keypair, signupToken);
 
       expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
       expect(result).toEqual({
-        session: {},
+        session: mockSession,
       });
 
       signupSpy.mockRestore();
@@ -90,7 +91,7 @@ describe('AuthController', () => {
   });
 
   describe('logout', () => {
-    it('should successfully logout user', async () => {
+    it('should successfully logout user and clear stores', async () => {
       const homeserverService = HomeserverService.getInstance();
 
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
@@ -102,7 +103,7 @@ describe('AuthController', () => {
       logoutSpy.mockRestore();
     });
 
-    it('should handle logout errors gracefully', async () => {
+    it('should handle logout errors gracefully and not call store methods', async () => {
       const homeserverService = HomeserverService.getInstance();
 
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));

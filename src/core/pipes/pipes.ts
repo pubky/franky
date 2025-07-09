@@ -1,6 +1,5 @@
 import init, { PostResult, PubkyAppPostKind, PubkySpecsBuilder, UserResult } from 'pubky-app-specs';
 import { PostValidatorData, UserValidatorData } from '@/core';
-import { Keypair } from '@synonymdev/pubky';
 import { Logger } from '@/libs';
 
 // Pipes have two typical use cases:
@@ -8,7 +7,6 @@ import { Logger } from '@/libs';
 // 2. transformation: transform input data to the desired PubkyAppSpecs format
 
 export class PubkySpecsPipes {
-  private static keypair: Keypair;
   private static initialized = false;
 
   private constructor() {}
@@ -18,10 +16,6 @@ export class PubkySpecsPipes {
       await init();
       this.initialized = true;
     }
-  }
-
-  static setKeypair(keypair: Keypair) {
-    this.keypair = keypair;
   }
 
   private static getBuilder(pubkey: string): PubkySpecsBuilder {

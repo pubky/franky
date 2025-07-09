@@ -19,15 +19,10 @@ export class HomeserverService {
   private currentKeypair: Keypair | null = null;
   private testnet = Env.NEXT_PUBLIC_TESTNET.toString() === 'true';
   private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
-  // todo: this variable should be inside the function or in the global state store file
-
-  // Flag to skip profile creation during tests
-  private skipProfileCreation = process.env.VITEST === 'true';
 
   private constructor() {
-    if (!this.skipProfileCreation) {
-      init();
-    }
+    init();
+
     this.client = this.testnet
       ? Client.testnet()
       : new Client({
@@ -46,7 +41,6 @@ export class HomeserverService {
     return HomeserverService.instance;
   }
 
-  // todo: move this into to global state store file
   private initializeFromStore(): void {
     try {
       const onboardingStore = useOnboardingStore.getState();
@@ -79,23 +73,10 @@ export class HomeserverService {
       const session = await this.client.signup(keypair, homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
 
-      // todo: move this to auth controller in signUp method
-      // Store session in Zustand store
-      useProfileStore.getState().setSession(session);
-
       Logger.debug('Signup successful', { session });
 
       return { session };
     } catch (error) {
-      Logger.error('Signup failed', {
-        error,
-        errorType: typeof error,
-        errorConstructor: error?.constructor?.name,
-        errorMessage: error instanceof Error ? error.message : String(error),
-        errorString: String(error),
-        isError: error instanceof Error,
-        hasMessage: error != null && typeof error === 'object' && 'message' in error,
-      });
 
       if (error instanceof AppError) {
         throw error;
@@ -154,11 +135,7 @@ export class HomeserverService {
 
       this.currentKeypair = null;
 
-      // Clear local stores - import dynamically to avoid circular dependencies
-      const { useProfileStore, useOnboardingStore } = await import('@/core/stores');
-
-      useProfileStore.getState().clearSession();
-      useOnboardingStore.getState().clearKeys();
+      Logger.debug('Logout successful');
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
@@ -176,7 +153,6 @@ export class HomeserverService {
     }
   }
 
-  // todo: move this into to global state store file
   async ensureAuthenticated(secretKey?: Uint8Array): Promise<void> {
     // If already authenticated, nothing to do
     if (this.isAuthenticated()) {
@@ -215,30 +191,8 @@ export class HomeserverService {
     }
   }
 
-  // todo: move this into to global state store file
-  getCurrentKeypair(): Keypair | null {
-    const keypair = this.currentKeypair;
-    Logger.debug('Getting current keypair', { keypair });
-    return keypair;
-  }
-
-  // todo: move this into to global state store file
-  getCurrentSession(): SignupResult['session'] | null {
-    const profileStore = useProfileStore.getState();
-    const session = profileStore.session;
-    Logger.debug('Getting current session from store', { session });
-    return session;
-  }
-
-  // todo: move this into to global state store file
   isAuthenticated(): boolean {
     const profileStore = useProfileStore.getState();
-    const isAuthenticated = profileStore.isAuthenticated && !!this.currentKeypair;
-    Logger.debug('Checking if authenticated', {
-      isAuthenticated,
-      hasSession: !!profileStore.session,
-      hasKeypair: !!this.currentKeypair,
-    });
-    return isAuthenticated;
+    return profileStore.isAuthenticated && !!this.currentKeypair;
   }
 }

@@ -12,5 +12,25 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
     },
+    // Suppress specific warnings
+    onConsoleLog(log) {
+      // Suppress WebAssembly warnings
+      if (
+        log.includes('WebAssembly.instantiateStreaming') ||
+        log.includes('application/wasm') ||
+        log.includes('MIME type')
+      ) {
+        return false;
+      }
+      // Suppress JSDOM navigation warnings
+      if (log.includes('Not implemented: navigation')) {
+        return false;
+      }
+      return true;
+    },
+    // Configure to better handle unhandled rejections
+    dangerouslyIgnoreUnhandledErrors: false,
+    // Silence some types of warnings in stderr
+    silent: false,
   },
 });

@@ -4,6 +4,11 @@ import type { Session } from '@synonymdev/pubky';
 // Mock global fetch
 global.fetch = vi.fn();
 
+// Mock pubky-app-specs to avoid WebAssembly issues
+vi.mock('pubky-app-specs', () => ({
+  default: vi.fn(() => Promise.resolve()),
+}));
+
 // Mock useKeypairStore
 const mockKeypairStore = {
   publicKey: '',
@@ -164,7 +169,6 @@ describe('HomeserverService', () => {
       const result = await service.signup(keypair, signupToken);
 
       expect(mockClient.signup).toHaveBeenCalled();
-      expect(mockUserStore.setSession).toHaveBeenCalled();
       expect(result.session).toBe(mockSession);
     });
 
@@ -181,7 +185,6 @@ describe('HomeserverService', () => {
       await service.signup(keypair, token);
 
       expect(mockClient.signup).toHaveBeenCalled();
-      expect(mockUserStore.setSession).toHaveBeenCalled();
     });
 
     it('should handle signup errors', async () => {
@@ -212,7 +215,6 @@ describe('HomeserverService', () => {
       await service.logout();
 
       expect(mockClient.signout).toHaveBeenCalled();
-      expect(mockUserStore.clearSession).toHaveBeenCalled();
       expect(PublicKey.from).toHaveBeenCalledWith('test-public-key-z32');
     });
 
@@ -354,17 +356,6 @@ describe('HomeserverService', () => {
   });
 
   describe('Session and Keypair State Management', () => {
-    it('should track current keypair after creation from secret key', () => {
-      const service = HomeserverService.getInstance();
-      const secretKey = new Uint8Array(32).fill(1);
-      const keypair = Keypair.fromSecretKey(secretKey);
-
-      // Since the method is now static, we need to set the keypair manually for testing
-      service['currentKeypair'] = keypair;
-
-      expect(service.getCurrentKeypair()).toBe(keypair);
-    });
-
     it('should track session after successful signup', async () => {
       const service = HomeserverService.getInstance();
       const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
@@ -375,11 +366,10 @@ describe('HomeserverService', () => {
 
       const result = await service.signup(keypair, 'test-token');
 
-      expect(mockUserStore.setSession).toHaveBeenCalledWith(mockSession);
       expect(result.session).toBe(mockSession);
     });
 
-    it('should clear session and keypair after logout', async () => {
+    it('should clear keypair after logout', async () => {
       const service = HomeserverService.getInstance();
 
       // Set up authenticated state
@@ -392,21 +382,7 @@ describe('HomeserverService', () => {
 
       await service.logout();
 
-      expect(mockUserStore.clearSession).toHaveBeenCalled();
-      expect(service.getCurrentKeypair()).toBeNull();
-    });
-
-    it('should maintain keypair state across multiple operations', () => {
-      const service = HomeserverService.getInstance();
-      const secretKey = new Uint8Array(32).fill(1);
-      const keypair = Keypair.fromSecretKey(secretKey);
-
-      // Since the method is now static, we need to set the keypair manually for testing
-      service['currentKeypair'] = keypair;
-
-      // Keypair should persist across multiple calls
-      expect(service.getCurrentKeypair()).toBe(keypair);
-      expect(service.getCurrentKeypair()).toBe(keypair);
+      expect(service['currentKeypair']).toBeNull();
     });
   });
 

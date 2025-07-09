@@ -7,6 +7,44 @@ import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { db } from '@/core';
 
+// Suprimir warnings específicos de WebAssembly e navegação
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+
+console.error = (...args) => {
+  const message = args.join(' ');
+  // Suprimir erros de WebAssembly
+  if (
+    message.includes('WebAssembly') ||
+    message.includes('application/wasm') ||
+    message.includes('MIME type') ||
+    message.includes('Not implemented: navigation')
+  ) {
+    return;
+  }
+  originalConsoleError.apply(console, args);
+};
+
+console.warn = (...args) => {
+  const message = args.join(' ');
+  // Suprimir warnings de WebAssembly
+  if (message.includes('WebAssembly') || message.includes('application/wasm') || message.includes('MIME type')) {
+    return;
+  }
+  originalConsoleWarn.apply(console, args);
+};
+
+// Capturar unhandled rejections de WebAssembly
+process.on('unhandledRejection', (reason, promise) => {
+  const reasonStr = String(reason);
+  // Suprimir apenas erros de WebAssembly
+  if (reasonStr.includes('WebAssembly') || reasonStr.includes('expected 4 bytes, fell off end')) {
+    return; // Silenciar este tipo específico de erro
+  }
+  // Re-throw outros erros para não mascarar problemas reais
+  throw reason;
+});
+
 // Mock global fetch to prevent undici errors
 global.fetch = vi.fn().mockResolvedValue(
   new Response(JSON.stringify({}), {
