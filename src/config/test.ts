@@ -7,13 +7,13 @@ import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { db } from '@/core';
 
-// Suprimir warnings específicos de WebAssembly e navegação
+// Suppress specific WebAssembly and navigation warnings
 const originalConsoleError = console.error;
 const originalConsoleWarn = console.warn;
 
 console.error = (...args) => {
   const message = args.join(' ');
-  // Suprimir erros de WebAssembly
+  // Suppress WebAssembly errors
   if (
     message.includes('WebAssembly') ||
     message.includes('application/wasm') ||
@@ -27,21 +27,21 @@ console.error = (...args) => {
 
 console.warn = (...args) => {
   const message = args.join(' ');
-  // Suprimir warnings de WebAssembly
+  // Suppress WebAssembly warnings
   if (message.includes('WebAssembly') || message.includes('application/wasm') || message.includes('MIME type')) {
     return;
   }
   originalConsoleWarn.apply(console, args);
 };
 
-// Capturar unhandled rejections de WebAssembly
-process.on('unhandledRejection', (reason, promise) => {
+// Capture unhandled rejections of WebAssembly
+process.on('unhandledRejection', (reason) => {
   const reasonStr = String(reason);
-  // Suprimir apenas erros de WebAssembly
+  // Suppress only WebAssembly errors
   if (reasonStr.includes('WebAssembly') || reasonStr.includes('expected 4 bytes, fell off end')) {
-    return; // Silenciar este tipo específico de erro
+    return; // Suppress this specific type of error
   }
-  // Re-throw outros erros para não mascarar problemas reais
+  // Re-throw other errors to not mask real problems
   throw reason;
 });
 
