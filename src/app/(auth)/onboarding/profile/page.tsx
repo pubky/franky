@@ -16,7 +16,7 @@ import { z } from 'zod';
 
 // Validation schemas
 const profileSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name is too long'),
+  name: z.string().min(3, 'Name is required').max(100, 'Name is too long'),
   bio: z.string().max(160, 'Bio is too long').optional(),
   image: z.string().optional(),
   links: z
@@ -67,7 +67,13 @@ export default function ProfilePage() {
   const validateFormField = (field: keyof typeof formData, value: string) => {
     switch (field) {
       case 'name':
-        return value.trim() === '' ? 'Name is required' : value.length > 100 ? 'Name is too long' : '';
+        return value.trim() === ''
+          ? 'Name is required'
+          : value.length < 3
+            ? 'Name is too short'
+            : value.length > 100
+              ? 'Name is too long'
+              : '';
       case 'bio':
         return value.length > 160 ? 'Bio is too long' : '';
       default:
@@ -75,7 +81,7 @@ export default function ProfilePage() {
     }
   };
 
-  const validateLink = (id: string, field: 'title' | 'url', value: string) => {
+  const validateLink = (field: 'title' | 'url', value: string) => {
     if (field === 'title') {
       return value.trim() !== '' && value.length > 50 ? 'Title is too long' : '';
     }
@@ -98,7 +104,7 @@ export default function ProfilePage() {
 
   const handleLinkChange = (id: string, field: 'title' | 'url', value: string) => {
     setLinks((prev) => prev.map((link) => (link.id === id ? { ...link, [field]: value } : link)));
-    setLinkErrors((prev) => ({ ...prev, [id]: { ...prev[id], [field]: validateLink(id, field, value) } }));
+    setLinkErrors((prev) => ({ ...prev, [id]: { ...prev[id], [field]: validateLink(field, value) } }));
   };
 
   const addLink = () => {
