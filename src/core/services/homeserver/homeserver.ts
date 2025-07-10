@@ -51,7 +51,7 @@ export class HomeserverService {
       const { session } = useProfileStore.getState();
 
       // If we have a session and valid keys, restore the keypair
-      if (session && secretKey && secretKey.length === 32) {
+      if (session && secretKey && secretKey.length === 64) {
         this.currentKeypair = Identity.keypairFromSecretKey(secretKey);
         Logger.debug('HomeserverService: Initialized from store', {
           hasSession: !!session,
