@@ -1,33 +1,14 @@
-import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
+import { Keypair as PubkyKeypair, createRecoveryFile } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 import crypto from 'crypto';
 import { CommonErrorType, createCommonError } from '@/libs';
-import { KeyPair } from '@/core';
+import { TKeyPair } from '@/core';
 
 export class Identity {
-  static async createRecoveryFile(keypair: KeyPair, password: string): Promise<void> {
-    // Validate secret key format
-    if (!keypair.secretKey || !(keypair.secretKey instanceof Uint8Array)) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        'Invalid secret key format. Please regenerate your keys.',
-        400,
-        { secretKeyType: typeof keypair.secretKey },
-      );
-    }
-
-    if (keypair.secretKey.length !== 32) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
-        400,
-        { secretKeyLength: keypair.secretKey.length },
-      );
-    }
-
+  static async createRecoveryFile(keypair: TKeyPair, password: string): Promise<void> {
     try {
-      const keypairFromSecretKey = Keypair.fromSecretKey(keypair.secretKey);
-      const recoveryFile = createRecoveryFile(keypairFromSecretKey, password);
+      const pubkyKeypair = this.pubkyKeypairFromSecretKey(keypair.secretKey);
+      const recoveryFile = createRecoveryFile(pubkyKeypair, password);
       this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
     } catch (error) {
       throw createCommonError(
@@ -56,18 +37,9 @@ export class Identity {
     }
   }
 
-  static generateSeedWords(secretKey: Uint8Array | unknown): string[] {
-    if (!secretKey || !(secretKey instanceof Uint8Array)) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        'Invalid secret key format. Please regenerate your keys.',
-        400,
-        { secretKeyType: typeof secretKey },
-      );
-    }
-
+  static generateSeedWords(secretKey: string): string[] {
     // Convert secret key to buffer (secretKey is already a Uint8Array)
-    const secretBuffer = Buffer.from(secretKey);
+    const secretBuffer = this.secretKeyFromHex(secretKey);
 
     // Validate minimum length (should be at least 32 bytes for good entropy)
     if (secretBuffer.length < 32) {
@@ -110,14 +82,50 @@ export class Identity {
     }
   }
 
-  static keypairFromSecretKey(secretKey: Uint8Array): Keypair {
+  static keypairFromSecretKey(secretKey: string): TKeyPair {
     try {
-      if (secretKey.length !== 32) {
-        throw new Error('Invalid secret key length');
-      }
-      const keypair = Keypair.fromSecretKey(secretKey);
+      const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
+      const keypair = PubkyKeypair.fromSecretKey(secretKeyUint8Array);
+
+      return {
+        secretKey: this.secretKeyToHex(keypair.secretKey()),
+        publicKey: keypair.publicKey().z32(),
+      };
+    } catch (error) {
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+    }
+  }
+
+  static pubkyKeypairFromSecretKey(secretKey: string): PubkyKeypair {
+    try {
+      const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
+      const keypair = PubkyKeypair.fromSecretKey(secretKeyUint8Array);
 
       return keypair;
+    } catch (error) {
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+    }
+  }
+
+  static generateKeypair(): TKeyPair {
+    const keypair = PubkyKeypair.random();
+    const secretKey = this.secretKeyToHex(keypair.secretKey());
+    const publicKey = keypair.publicKey().z32();
+
+    return { secretKey, publicKey };
+  }
+
+  static secretKeyFromHex(secretKey: string): Uint8Array {
+    try {
+      return new Uint8Array(Buffer.from(secretKey, 'hex'));
+    } catch (error) {
+      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+    }
+  }
+
+  static secretKeyToHex(secretKey: Uint8Array): string {
+    try {
+      return Buffer.from(secretKey).toString('hex');
     } catch (error) {
       throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }

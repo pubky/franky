@@ -1,6 +1,6 @@
-import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
+import { Client, PublicKey } from '@synonymdev/pubky';
 import init from 'pubky-app-specs';
-import { type FetchOptions, type SignupResult } from '@/core';
+import { type FetchOptions, type SignupResult, type TKeyPair } from '@/core';
 import {
   AppError,
   HomeserverErrorType,
@@ -14,9 +14,13 @@ import {
 import { useOnboardingStore, useProfileStore } from '@/core/stores';
 
 export class HomeserverService {
+  private defaultKeypair = {
+    publicKey: '',
+    secretKey: '',
+  };
   private static instance: HomeserverService;
   private client: Client;
-  private currentKeypair: Keypair | null = null;
+  private currentKeypair: TKeyPair = this.defaultKeypair;
   private testnet = Env.NEXT_PUBLIC_TESTNET.toString() === 'true';
   private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
 
@@ -43,25 +47,25 @@ export class HomeserverService {
 
   private initializeFromStore(): void {
     try {
-      const onboardingStore = useOnboardingStore.getState();
-      const profileStore = useProfileStore.getState();
+      const { secretKey } = useOnboardingStore.getState();
+      const { session } = useProfileStore.getState();
 
       // If we have a session and valid keys, restore the keypair
-      if (profileStore.session && onboardingStore.secretKey && onboardingStore.secretKey.length === 32) {
-        this.currentKeypair = Identity.keypairFromSecretKey(onboardingStore.secretKey);
+      if (session && secretKey && secretKey.length === 32) {
+        this.currentKeypair = Identity.keypairFromSecretKey(secretKey);
         Logger.debug('HomeserverService: Initialized from store', {
-          hasSession: !!profileStore.session,
+          hasSession: !!session,
           hasKeypair: !!this.currentKeypair,
         });
       }
     } catch (error) {
       Logger.error('HomeserverService: Failed to initialize from store', error);
       // Clear potentially corrupted session
-      useProfileStore.getState().clearSession();
+      useProfileStore.getState().reset();
     }
   }
 
-  async signup(keypair: Keypair, signupToken: string): Promise<SignupResult> {
+  async signup(keypair: TKeyPair, signupToken: string): Promise<SignupResult> {
     try {
       const homeserverPublicKey = PublicKey.from(Env.NEXT_PUBLIC_HOMESERVER);
       Logger.debug('Signing up', {
@@ -70,7 +74,8 @@ export class HomeserverService {
         homeserverPublicKey: homeserverPublicKey,
         homeserverPublicKeyZ32: homeserverPublicKey.z32(),
       });
-      const session = await this.client.signup(keypair, homeserverPublicKey, signupToken);
+      const pubkyKeypair = Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
+      const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
       this.currentKeypair = keypair;
 
       Logger.debug('Signup successful', { session });
@@ -129,10 +134,10 @@ export class HomeserverService {
         );
       }
 
-      const pubKey = PublicKey.from(this.currentKeypair?.publicKey().z32() || '');
+      const pubKey = PublicKey.from(this.currentKeypair?.publicKey);
       await this.client.signout(pubKey);
 
-      this.currentKeypair = null;
+      this.currentKeypair = this.defaultKeypair;
 
       Logger.debug('Logout successful');
     } catch (error) {
@@ -152,7 +157,7 @@ export class HomeserverService {
     }
   }
 
-  async ensureAuthenticated(secretKey?: Uint8Array): Promise<void> {
+  async ensureAuthenticated(secretKey?: string): Promise<void> {
     // If already authenticated, nothing to do
     if (this.isAuthenticated()) {
       return;
@@ -161,9 +166,9 @@ export class HomeserverService {
     // Try to get keypair from the store if no secret key provided
     let keyToUse = secretKey;
     if (!keyToUse) {
-      const keypairStore = useOnboardingStore.getState();
-      if (keypairStore.secretKey && keypairStore.secretKey.length === 32) {
-        keyToUse = keypairStore.secretKey;
+      const { secretKey } = useOnboardingStore.getState();
+      if (secretKey && secretKey.length === 64) {
+        keyToUse = secretKey;
         Logger.debug('Using keypair from store for authentication');
       }
     }
@@ -173,10 +178,10 @@ export class HomeserverService {
       this.currentKeypair = Identity.keypairFromSecretKey(keyToUse);
 
       // Check if we have a valid session in the store
-      const profileStore = useProfileStore.getState();
-      if (!profileStore.session && this.currentKeypair) {
+      const { session } = useProfileStore.getState();
+      if (!session) {
         Logger.warn('Keypair exists but no session - user might need to sign up');
-        this.currentKeypair = null;
+        this.currentKeypair = this.defaultKeypair;
       }
     }
 

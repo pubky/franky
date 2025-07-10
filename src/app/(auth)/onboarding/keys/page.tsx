@@ -4,29 +4,26 @@ import { ArrowLeft, FileKey, Globe, KeyRound, Lock, RefreshCw } from 'lucide-rea
 import Link from 'next/link';
 import { useEffect, useRef, useMemo } from 'react';
 import { Button, Card, CopyButton, InfoCard, KeyDisplay, PageHeader } from '@/components/ui';
-import { useOnboardingStore } from '@/core/stores';
-import { Keypair } from '@synonymdev/pubky';
+import { useOnboardingStore, useProfileStore } from '@/core/stores';
+import { Identity } from '@/libs';
 
 export default function CreateAccountReady() {
-  const { publicKey, secretKey, isGenerating, hasHydrated, generateKeys, hasGenerated, setPublicKey } =
+  const { publicKey, secretKey, isGenerating, hasHydrated, hasGenerated, setPublicKey, setSecretKey } =
     useOnboardingStore();
+  const { setCurrentUserPubky } = useProfileStore();
   const hasTriedGeneration = useRef(false);
 
   // Computed values - move all logic here
   const isValidSecretKey = useMemo(() => {
-    return secretKey && secretKey instanceof Uint8Array && secretKey.length === 32;
+    return secretKey && secretKey.length === 64;
   }, [secretKey]);
-
-  const secretKeyHex = useMemo(() => {
-    return isValidSecretKey ? Buffer.from(secretKey || new Uint8Array()).toString('hex') : '';
-  }, [secretKey, isValidSecretKey]);
 
   const displayTexts = useMemo(
     () => ({
       publicKey: publicKey || 'Generating...',
-      secretKey: isValidSecretKey ? secretKeyHex : 'Generating...',
+      secretKey: isValidSecretKey ? secretKey : 'Generating...',
     }),
-    [publicKey, isValidSecretKey, secretKeyHex],
+    [publicKey, isValidSecretKey, secretKey],
   );
 
   const buttonStates = useMemo(
@@ -79,9 +76,8 @@ export default function CreateAccountReady() {
     // Case 2: If we have a valid secretKey but no publicKey, derive it
     if (isValidSecretKey && !publicKey) {
       try {
-        const keypair = Keypair.fromSecretKey(secretKey || new Uint8Array());
-        const derivedPublicKey = keypair.publicKey();
-        setPublicKey(derivedPublicKey.z32());
+        const keypair = Identity.keypairFromSecretKey(secretKey);
+        setPublicKey(keypair.publicKey);
       } catch (error) {
         console.error('Failed to derive publicKey from secretKey:', error);
       }
@@ -94,18 +90,34 @@ export default function CreateAccountReady() {
     // Only generate keys if we need them, we're not already generating, and we haven't tried yet
     if (needsKeyGeneration && !isGenerating && !hasTriedGeneration.current) {
       hasTriedGeneration.current = true;
-      generateKeys();
+      const { secretKey, publicKey } = Identity.generateKeypair();
+      setPublicKey(publicKey);
+      setSecretKey(secretKey);
+      setCurrentUserPubky(publicKey);
     }
 
     // Reset the flag if we have valid keys
     if (hasValidInMemoryKeys) {
       hasTriedGeneration.current = false;
     }
-  }, [isValidSecretKey, hasGenerated, isGenerating, hasHydrated, generateKeys, publicKey, secretKey, setPublicKey]);
+  }, [
+    isValidSecretKey,
+    hasGenerated,
+    isGenerating,
+    hasHydrated,
+    publicKey,
+    secretKey,
+    setPublicKey,
+    setSecretKey,
+    setCurrentUserPubky,
+  ]);
 
   // Event handlers
   const handleRegenerateKeys = () => {
-    generateKeys(true);
+    const { secretKey, publicKey } = Identity.generateKeypair();
+    setPublicKey(publicKey);
+    setSecretKey(secretKey);
+    setCurrentUserPubky(publicKey);
   };
 
   return (
@@ -178,7 +190,7 @@ export default function CreateAccountReady() {
                 </InfoCard>
               </div>
               <KeyDisplay text={displayTexts.secretKey} isSecret={true} />
-              <CopyButton text={secretKeyHex} />
+              <CopyButton text={secretKey} />
             </div>
           </div>
         </Card>

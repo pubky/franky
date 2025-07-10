@@ -1,12 +1,11 @@
-import { Keypair } from '@synonymdev/pubky';
-import { type SignupResult, HomeserverService } from '@/core';
+import { type SignupResult, HomeserverService, type TKeyPair } from '@/core';
 import { Env, CommonErrorType, createCommonError } from '@/libs';
 import { useProfileStore, useOnboardingStore } from '@/core/stores';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
-  static async signUp(keypair: Keypair, signupToken: string): Promise<SignupResult> {
+  static async signUp(keypair: TKeyPair, signupToken: string): Promise<SignupResult> {
     // todo: PR candidate to how to get rid of this homeserver service instance and call it directly as a static method
     const homeserverService = HomeserverService.getInstance();
     const session = await homeserverService.signup(keypair, signupToken);
@@ -21,8 +20,8 @@ export class AuthController {
     await homeserverService.logout();
 
     // clear stores
-    useProfileStore.getState().clearSession();
-    useOnboardingStore.getState().clearKeys();
+    useProfileStore.getState().reset();
+    useOnboardingStore.getState().reset();
   }
 
   // TODO: remove this once we have a proper signup token endpoint

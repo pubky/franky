@@ -56,7 +56,7 @@ describe('OnboardingStore', () => {
       });
 
       // Clear keys
-      useOnboardingStore.getState().clearKeys();
+      useOnboardingStore.getState().reset();
 
       const state = useOnboardingStore.getState();
       expect(state.secretKey).toEqual(new Uint8Array());

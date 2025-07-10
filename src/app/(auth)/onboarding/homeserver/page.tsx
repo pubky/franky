@@ -28,7 +28,7 @@ export default function CreateAccount() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { secretKey, hasGenerated, clearSecretKeys } = useOnboardingStore();
+  const { secretKey, hasGenerated, clearSecretKey: clearSecretKeys } = useOnboardingStore();
   const router = useRouter();
 
   const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
