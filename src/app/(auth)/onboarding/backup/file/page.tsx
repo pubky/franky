@@ -37,7 +37,7 @@ export default function RestoreAccount() {
       await Identity.createRecoveryFile(
         {
           publicKey,
-          secretKey: secretKey || new Uint8Array(),
+          secretKey,
         },
         password,
       );

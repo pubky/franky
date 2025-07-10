@@ -28,7 +28,7 @@ export default function CreateAccount() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { secretKey, hasGenerated, clearSecretKey: clearSecretKeys } = useOnboardingStore();
+  const { secretKey, hasGenerated, reset } = useOnboardingStore();
   const router = useRouter();
 
   const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +127,7 @@ export default function CreateAccount() {
       // Call the signup method with the keypair and invite code
       await AuthController.signUp(keypair, inviteCode);
 
-      clearSecretKeys();
+      reset();
 
       router.push('/onboarding/profile');
     } catch (error) {

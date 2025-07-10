@@ -16,7 +16,7 @@ export default function SeedBackup() {
 
   // Generate BIP39 seed words from secret key
   const seedWords = useMemo(() => {
-    if (!secretKey || !hasGenerated || !(secretKey instanceof Uint8Array)) {
+    if (!secretKey || !hasGenerated || secretKey.length !== 64) {
       return [];
     }
 
