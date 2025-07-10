@@ -19,10 +19,6 @@ export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): Onboa
     set({ publicKey }, false, OnboardingActionTypes.SET_PUBLIC_KEY);
   },
 
-  setGenerating: (isGenerating: boolean) => {
-    set({ isGenerating }, false, OnboardingActionTypes.SET_GENERATING);
-  },
-
   setHydrated: (hasHydrated: boolean) => {
     set({ hasHydrated }, false, OnboardingActionTypes.SET_HYDRATED);
   },

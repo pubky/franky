@@ -7,8 +7,6 @@ import type { OnboardingStore } from '@/core';
 // Or it might be useful for the actions, but I think actions already has the access to the store
 export const getPublicKey = (state: OnboardingStore) => state.publicKey;
 export const getSecretKey = (state: OnboardingStore) => state.secretKey;
-export const getIsGenerating = (state: OnboardingStore) => state.isGenerating;
-export const getHasGenerated = (state: OnboardingStore) => state.hasGenerated;
 export const getHasHydrated = (state: OnboardingStore) => state.hasHydrated;
 export const getIsBackedUp = (state: OnboardingStore) => state.isBackedUp;
 
@@ -19,22 +17,15 @@ export const getHasValidKeys = (state: OnboardingStore) => {
 };
 
 export const getIsReady = (state: OnboardingStore) => {
-  return state.hasHydrated && !state.isGenerating;
-};
-
-export const getCanGenerateKeys = (state: OnboardingStore) => {
-  return !state.isGenerating;
+  return state.hasHydrated;
 };
 
 // Legacy object export for backward compatibility (can be removed later)
 export const onboardingSelectors = {
   getPublicKey,
   getSecretKey,
-  getIsGenerating,
-  getHasGenerated,
   getHasHydrated,
   getHasValidKeys,
   getIsReady,
-  getCanGenerateKeys,
   getIsBackedUp,
 };

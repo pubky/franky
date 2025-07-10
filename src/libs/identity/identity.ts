@@ -5,12 +5,51 @@ import { CommonErrorType, createCommonError } from '@/libs';
 import { TKeyPair } from '@/core';
 
 export class Identity {
-  static async createRecoveryFile(keypair: TKeyPair, password: string): Promise<void> {
+    static async createRecoveryFile(keypair: TKeyPair | { publicKey: string; secretKey: Uint8Array }, password: string): Promise<void> {
+    // Handle both string and Uint8Array secret keys for backward compatibility
+    let secretKeyHex: string;
+    
+    if (keypair.secretKey instanceof Uint8Array) {
+      // Convert Uint8Array to hex string
+      if (keypair.secretKey.length !== 32) {
+        throw createCommonError(
+          CommonErrorType.INVALID_INPUT,
+          `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
+          400,
+          { secretKeyLength: keypair.secretKey.length },
+        );
+      }
+      secretKeyHex = this.secretKeyToHex(keypair.secretKey);
+    } else if (typeof keypair.secretKey === 'string') {
+      // Validate hex string format
+      if (keypair.secretKey.length !== 64) {
+        throw createCommonError(
+          CommonErrorType.INVALID_INPUT,
+          `Invalid secret key length. Expected 64 hex characters, got ${keypair.secretKey.length}. Please regenerate your keys.`,
+          400,
+          { secretKeyLength: keypair.secretKey.length },
+        );
+      }
+      secretKeyHex = keypair.secretKey;
+    } else {
+      throw createCommonError(
+        CommonErrorType.INVALID_INPUT,
+        'Invalid secret key format. Please regenerate your keys.',
+        400,
+        { secretKeyType: typeof keypair.secretKey },
+      );
+    }
+
     try {
-      const pubkyKeypair = this.pubkyKeypairFromSecretKey(keypair.secretKey);
+      const pubkyKeypair = this.pubkyKeypairFromSecretKey(secretKeyHex);
       const recoveryFile = createRecoveryFile(pubkyKeypair, password);
       this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
     } catch (error) {
+      // Re-throw validation errors
+      if (error instanceof Error && error.message.includes('Invalid secret key')) {
+        throw error;
+      }
+      
       throw createCommonError(
         CommonErrorType.UNEXPECTED_ERROR,
         'Failed to create recovery file. Please try regenerating your keys.',

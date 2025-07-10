@@ -47,7 +47,7 @@ interface LinkItem {
 
 export default function ProfilePage() {
   // Store hooks
-  const { publicKey, hasGenerated } = useOnboardingStore();
+  const { publicKey } = useOnboardingStore();
   const { setCurrentUserPubky } = useProfileStore();
 
   // Refs
@@ -369,7 +369,7 @@ export default function ProfilePage() {
           <div className="space-y-6">
             {/* PUBKY Field - Same structure as other fields */}
             <div className="space-y-4">
-              {!publicKey && !hasGenerated ? (
+              {!publicKey ? (
                 <div className="flex items-center gap-3 p-4 bg-amber-50/50 border border-amber-200 rounded-xl">
                   <div className="w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
                   <div>
@@ -379,7 +379,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {!publicKey && !hasGenerated ? (
+                  {!publicKey ? (
                     <div className="w-full font-mono text-sm bg-background border-2 border-muted rounded-xl p-4 break-all leading-relaxed">
                       <span className="text-green-600 animate-pulse">Generating your unique identity...</span>
                     </div>
