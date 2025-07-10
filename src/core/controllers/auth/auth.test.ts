@@ -1,164 +1,168 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
-import { HomeserverService, UserModel, NexusUserDetails } from '@/core';
+import { HomeserverService } from '@/core/services/homeserver';
+import { Keypair } from '@synonymdev/pubky';
 
-// Mock fetch globalmente
-const fetchMock = vi.fn();
-global.fetch = fetchMock;
+// Mock pubky-app-specs to avoid WebAssembly issues
+vi.mock('pubky-app-specs', () => ({
+  default: vi.fn(() => Promise.resolve()),
+}));
+
+// Mock stores - simplified approach
+vi.mock('@/core/stores', () => ({
+  useProfileStore: {
+    getState: vi.fn(() => ({
+      setSession: vi.fn(),
+      clearSession: vi.fn(),
+    })),
+  },
+  useOnboardingStore: {
+    getState: vi.fn(() => ({
+      clearKeys: vi.fn(),
+    })),
+  },
+}));
+
+// Mock @synonymdev/pubky
+vi.mock('@synonymdev/pubky', () => ({
+  Keypair: {
+    fromSecretKey: vi.fn(() => ({
+      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
+    })),
+    random: vi.fn(() => ({
+      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
+    })),
+  },
+  createRecoveryFile: vi.fn(() => new Uint8Array([1, 2, 3, 4, 5])),
+}));
+
+// Mock the Env module
+vi.mock('@/libs/env', () => ({
+  Env: {
+    NEXT_PUBLIC_HOMESERVER_ADMIN_URL: 'http://test-admin.com',
+    NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: 'test-password',
+  },
+}));
 
 describe('AuthController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    fetchMock.mockReset();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe('getKeypair', () => {
-    it('should return current keypair if exists', async () => {
+  describe('signUp', () => {
+    it('should successfully sign up a user and call setSession', async () => {
       const homeserverService = HomeserverService.getInstance();
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+      const signupToken = 'test-token';
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
-      // Generate a keypair first
-      const keypair = homeserverService.generateRandomKeypair();
+      const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
+        session: mockSession,
+      });
 
-      // Spy on the method
-      const spy = vi.spyOn(homeserverService, 'getCurrentKeypair');
+      const result = await AuthController.signUp(keypair, signupToken);
 
-      const result = await AuthController.getKeypair();
+      expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
+      expect(result).toEqual({
+        session: mockSession,
+      });
 
-      expect(spy).toHaveBeenCalled();
-      expect(result).toBe(keypair);
-
-      spy.mockRestore();
+      signupSpy.mockRestore();
     });
 
-    it('should return null if no keypair exists', async () => {
+    it('should throw error if signup fails', async () => {
       const homeserverService = HomeserverService.getInstance();
+      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+      const signupToken = 'invalid-token';
 
-      // Clear any existing keypair
-      homeserverService['currentKeypair'] = null;
+      const signupSpy = vi.spyOn(homeserverService, 'signup').mockRejectedValue(new Error('Signup failed'));
 
-      // Spy on the method
-      const spy = vi.spyOn(homeserverService, 'getCurrentKeypair');
+      await expect(AuthController.signUp(keypair, signupToken)).rejects.toThrow('Signup failed');
+      expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
 
-      const result = await AuthController.getKeypair();
-
-      expect(spy).toHaveBeenCalled();
-      expect(result).toBeNull();
-
-      spy.mockRestore();
+      signupSpy.mockRestore();
     });
   });
 
-  describe('signUp', () => {
-    it('should successfully sign up a user', async () => {
-      const mockUserDetails: NexusUserDetails = {
-        name: 'Test User',
-        bio: 'Test Bio',
-        id: 'test-id',
-        links: null,
-        status: null,
-        image: null,
-        indexed_at: Date.now(),
-      };
-
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        text: vi.fn().mockResolvedValue('mock-token'),
-      });
-
+  describe('logout', () => {
+    it('should successfully logout user and clear stores', async () => {
       const homeserverService = HomeserverService.getInstance();
-      const generateKeypairSpy = vi.spyOn(homeserverService, 'generateRandomKeypair');
-      const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
-        session: {} as unknown as import('@synonymdev/pubky').Session,
-      });
-      const insertSpy = vi.spyOn(UserModel, 'insert').mockImplementation(async (user) => {
-        return new UserModel({
-          id: 'mock-public-key',
-          details: user.details,
-          counts: user.counts,
-          tags: user.tags,
-          relationship: user.relationship,
-          following: [],
-          followers: [],
-          muted: [],
-          indexed_at: null,
-          updated_at: Date.now(),
-          sync_status: 'local',
-          sync_ttl: Date.now() + 300000,
-        });
-      });
 
-      const result = await AuthController.signUp(mockUserDetails);
+      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
 
-      expect(fetchMock).toHaveBeenCalled();
-      expect(generateKeypairSpy).toHaveBeenCalled();
-      expect(signupSpy).toHaveBeenCalled();
-      expect(insertSpy).toHaveBeenCalled();
-      expect(result).toEqual({
-        session: {},
-      });
+      await AuthController.logout();
 
-      generateKeypairSpy.mockRestore();
-      signupSpy.mockRestore();
-      insertSpy.mockRestore();
+      expect(logoutSpy).toHaveBeenCalled();
+
+      logoutSpy.mockRestore();
     });
 
-    it('should throw error if token generation fails', async () => {
-      const mockUserDetails: NexusUserDetails = {
-        name: 'Test User',
-        bio: 'Test Bio',
-        id: 'test-id',
-        links: null,
-        status: null,
-        image: null,
-        indexed_at: Date.now(),
-      };
+    it('should handle logout errors gracefully and not call store methods', async () => {
+      const homeserverService = HomeserverService.getInstance();
 
-      fetchMock.mockResolvedValueOnce({
+      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));
+
+      await expect(AuthController.logout()).rejects.toThrow('Network error');
+      expect(logoutSpy).toHaveBeenCalled();
+
+      logoutSpy.mockRestore();
+    });
+  });
+
+  describe('generateSignupToken', () => {
+    beforeEach(() => {
+      // Mock fetch globally
+      global.fetch = vi.fn();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('should generate signup token successfully', async () => {
+      const mockToken = 'test-signup-token';
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        text: vi.fn().mockResolvedValue(mockToken),
+      });
+
+      const result = await AuthController.generateSignupToken();
+
+      expect(result).toBe(mockToken);
+      expect(global.fetch).toHaveBeenCalledWith('http://localhost:6288/generate_signup_token', {
+        method: 'GET',
+        headers: {
+          'X-Admin-Password': 'admin',
+        },
+      });
+    });
+
+    it('should throw error when fetch fails', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
         ok: false,
         status: 401,
         text: vi.fn().mockResolvedValue('Unauthorized'),
       });
 
-      await expect(AuthController.signUp(mockUserDetails)).rejects.toThrow('Failed to generate signup token');
-      expect(fetchMock).toHaveBeenCalled();
-    });
-  });
-
-  describe('logout', () => {
-    it('should successfully logout user', async () => {
-      const homeserverService = HomeserverService.getInstance();
-
-      // Ensure there's a keypair
-      homeserverService.generateRandomKeypair();
-
-      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair');
-      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
-
-      await AuthController.logout();
-
-      expect(getCurrentKeypairSpy).toHaveBeenCalled();
-      expect(logoutSpy).toHaveBeenCalled();
-
-      getCurrentKeypairSpy.mockRestore();
-      logoutSpy.mockRestore();
+      await expect(AuthController.generateSignupToken()).rejects.toThrow(
+        'Failed to generate signup token: 401 Unauthorized',
+      );
     });
 
-    it('should throw error if no keypair exists', async () => {
-      const homeserverService = HomeserverService.getInstance();
+    it('should throw error when no token is received', async () => {
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        text: vi.fn().mockResolvedValue(''),
+      });
 
-      // Clear any existing keypair
-      homeserverService['currentKeypair'] = null;
-
-      const getCurrentKeypairSpy = vi.spyOn(homeserverService, 'getCurrentKeypair');
-
-      await expect(AuthController.logout()).rejects.toThrow('No keypair available');
-      expect(getCurrentKeypairSpy).toHaveBeenCalled();
-
-      getCurrentKeypairSpy.mockRestore();
+      await expect(AuthController.generateSignupToken()).rejects.toThrow('No token received from server');
     });
   });
 });

@@ -9,7 +9,7 @@ export type SignupResult = {
   session: Session;
 };
 
-export type KeyPair = {
+export type TKeyPair = {
   publicKey: string;
-  secretKey: Uint8Array;
+  secretKey: string;
 };

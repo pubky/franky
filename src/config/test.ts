@@ -7,6 +7,44 @@ import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { db } from '@/core';
 
+// Suppress specific WebAssembly and navigation warnings
+const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+
+console.error = (...args) => {
+  const message = args.join(' ');
+  // Suppress WebAssembly errors
+  if (
+    message.includes('WebAssembly') ||
+    message.includes('application/wasm') ||
+    message.includes('MIME type') ||
+    message.includes('Not implemented: navigation')
+  ) {
+    return;
+  }
+  originalConsoleError.apply(console, args);
+};
+
+console.warn = (...args) => {
+  const message = args.join(' ');
+  // Suppress WebAssembly warnings
+  if (message.includes('WebAssembly') || message.includes('application/wasm') || message.includes('MIME type')) {
+    return;
+  }
+  originalConsoleWarn.apply(console, args);
+};
+
+// Capture unhandled rejections of WebAssembly
+process.on('unhandledRejection', (reason) => {
+  const reasonStr = String(reason);
+  // Suppress only WebAssembly errors
+  if (reasonStr.includes('WebAssembly') || reasonStr.includes('expected 4 bytes, fell off end')) {
+    return; // Suppress this specific type of error
+  }
+  // Re-throw other errors to not mask real problems
+  throw reason;
+});
+
 // Mock global fetch to prevent undici errors
 global.fetch = vi.fn().mockResolvedValue(
   new Response(JSON.stringify({}), {

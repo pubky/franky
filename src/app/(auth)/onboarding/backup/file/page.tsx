@@ -1,68 +1,87 @@
 'use client';
 
-import { Button, Card, PasswordInput, PasswordConfirm } from '@/components/ui';
+import { Button, Card, InfoCard, PasswordInput, PasswordConfirm, PageHeader } from '@/components/ui';
 import { ArrowLeft, Download, Shield } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { AuthController } from '@/core/controllers/auth';
-import { useKeypairStore } from '@/core/stores';
+import { useState, useMemo } from 'react';
+import { useOnboardingStore } from '@/core/stores';
 import { useRouter } from 'next/navigation';
+import { Identity } from '@/libs';
 
 export default function RestoreAccount() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { publicKey, secretKey } = useKeypairStore();
+  const [isCreatingFile, setIsCreatingFile] = useState(false);
+  const { publicKey, secretKey } = useOnboardingStore();
   const router = useRouter();
 
-  const handleDownload = () => {
-    AuthController.createRecoveryFile(
-      {
-        publicKey,
-        secretKey,
-      },
-      password,
-    );
-    router.push('/onboarding/homeserver');
+  // Computed values
+  const buttonStates = useMemo(
+    () => ({
+      downloadDisabled: !password || !confirmPassword || isCreatingFile,
+    }),
+    [password, confirmPassword, isCreatingFile],
+  );
+
+  const displayTexts = useMemo(
+    () => ({
+      downloadButtonText: isCreatingFile ? 'Creating backup file...' : 'Download backup file & continue',
+    }),
+    [isCreatingFile],
+  );
+
+  // Event handlers
+  const handleDownload = async () => {
+    setIsCreatingFile(true);
+    try {
+      await Identity.createRecoveryFile(
+        {
+          publicKey,
+          secretKey,
+        },
+        password,
+      );
+      // Only navigate if the recovery file was created successfully
+      router.push('/onboarding/homeserver');
+    } finally {
+      setIsCreatingFile(false);
+    }
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <h1 className="text-6xl font-bold text-foreground">
-          Backup with <span className="text-green-500">encrypted file</span>.
-        </h1>
-        <p className="text-2xl text-muted-foreground">
-          Create an encrypted backup file to secure your account and keys.
-        </p>
-      </div>
+      <PageHeader
+        title={
+          <>
+            Backup with <span className="text-green-500">encrypted file</span>.
+          </>
+        }
+        subtitle="Create an encrypted backup file to secure your account and keys."
+      />
 
-      <div className="flex gap-4">
-        <Card className="flex-1 p-8">
+      <div className="flex flex-col gap-4">
+        <Card className="p-4 sm:p-6 lg:p-8">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-3">
-              <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Shield className="text-green-500 h-5 w-5" />
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-2">
+                <div className="p-3 bg-green-500/10 rounded-xl">
+                  <Shield className="text-green-500 h-5 w-5" />
+                </div>
                 Encrypted Backup
               </h3>
-              <p className="text-base text-secondary-foreground opacity-80">
+              <p className="text-sm sm:text-base text-secondary-foreground opacity-80">
                 Set a strong password to encrypt and download your backup file.
               </p>
             </div>
 
-            <div className="bg-muted/50 border-l-4 border-l-green-500/30 rounded-lg p-4 flex items-start gap-3">
-              <div className="text-green-600 mt-0.5">
-                <Shield className="h-5 w-5" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground mb-1">Why use encrypted backups?</p>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• Protects your keys with military-grade encryption</li>
-                  <li>• Works across all devices and platforms</li>
-                  <li>• Only you can decrypt it with your password</li>
-                  <li>• Safe to store in cloud services or email to yourself</li>
-                </ul>
-              </div>
-            </div>
+            <InfoCard title="Why use encrypted backups?" icon={Shield} variant="success" collapsible defaultCollapsed>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Protects your keys with military-grade encryption</li>
+                <li>Works across all devices and platforms</li>
+                <li>Only you can decrypt it with your password</li>
+                <li>Safe to store in cloud services or email to yourself</li>
+              </ul>
+            </InfoCard>
 
             <div className="flex flex-col gap-4">
               <PasswordInput
@@ -79,16 +98,22 @@ export default function RestoreAccount() {
         </Card>
       </div>
 
-      <div className="flex items-center justify-between">
-        <Button variant="secondary" size="lg" className="rounded-full" asChild>
+      <div className="flex flex-col sm:flex-row items-center gap-4 sm:justify-between">
+        <Button variant="secondary" size="lg" className="rounded-full w-full sm:w-auto" asChild>
           <Link href="/onboarding/keys">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Link>
         </Button>
-        <Button size="lg" className="rounded-full" onClick={handleDownload} disabled={!password || !confirmPassword}>
+        <Button
+          size="lg"
+          className="rounded-full w-full sm:w-auto"
+          onClick={handleDownload}
+          disabled={buttonStates.downloadDisabled}
+        >
           <Download className="mr-2 h-4 w-4" />
-          Download backup file & continue
+          <span className="hidden sm:inline">{displayTexts.downloadButtonText}</span>
+          <span className="sm:hidden">{isCreatingFile ? 'Creating file...' : 'Download & continue'}</span>
         </Button>
       </div>
     </div>

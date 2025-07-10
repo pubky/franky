@@ -4,6 +4,10 @@ export { PasswordInput } from './password-input';
 export { PasswordConfirm } from './password-confirm';
 export { Card } from './card';
 export { Button } from './button';
+export { InfoCard } from './info-card';
+export { PageHeader } from './page-header';
+export { Stepper } from './stepper';
+export { Logo } from './logo';
 export {
   Sheet,
   SheetTrigger,

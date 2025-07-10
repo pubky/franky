@@ -1,83 +1,33 @@
-import { Keypair, createRecoveryFile } from '@synonymdev/pubky';
-import {
-  type UserControllerNewData,
-  type UserModelSchema,
-  type SignupResult,
-  HomeserverService,
-  UserController,
-  DEFAULT_NEW_USER,
-  DEFAULT_USER_DETAILS,
-  KeyPair,
-} from '@/core';
+import { type SignupResult, HomeserverService, type TKeyPair } from '@/core';
 import { Env, CommonErrorType, createCommonError } from '@/libs';
+import { useProfileStore, useOnboardingStore } from '@/core/stores';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
-  static async signUp(
-    newUser: UserControllerNewData,
-    // signupToken?: string TODO: remove this once we have a proper signup token endpoint
-  ): Promise<SignupResult> {
+  static async signUp(keypair: TKeyPair, signupToken: string): Promise<SignupResult> {
+    // todo: PR candidate to how to get rid of this homeserver service instance and call it directly as a static method
     const homeserverService = HomeserverService.getInstance();
+    const session = await homeserverService.signup(keypair, signupToken);
 
-    // Generate keypair
-    const keypair = homeserverService.generateRandomKeypair();
-
-    // Generate signup token
-    // TODO: remove this once we have a proper signup token endpoint
-    const signupToken = await this.generateSignupToken();
-
-    // Save user to database and update sync_status = 'local'
-    const id = keypair.publicKey().z32();
-    const userData: UserModelSchema = {
-      id,
-      details: {
-        id,
-        ...DEFAULT_USER_DETAILS,
-        ...newUser,
-      },
-      ...DEFAULT_NEW_USER,
-    };
-
-    // save user to database
-    const user = await UserController.insert(userData);
-
-    // Sign up
-    const signupResult = await homeserverService.signup(user, keypair, signupToken);
-
-    // update user sync_status = 'homeserver'
-    user.sync_status = 'homeserver';
-    await user.save();
-
-    return signupResult;
-  }
-
-  static async getKeypair(): Promise<Keypair | null> {
-    const homeserverService = HomeserverService.getInstance();
-    return homeserverService.getCurrentKeypair();
+    // store session in store
+    useProfileStore.getState().setSession(session.session);
+    return session;
   }
 
   static async logout(): Promise<void> {
     const homeserverService = HomeserverService.getInstance();
-    const keypair = homeserverService.getCurrentKeypair();
-    if (!keypair) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'No keypair available', 400);
-    }
-    return homeserverService.logout(keypair.publicKey().z32());
+    await homeserverService.logout();
+
+    // clear stores
+    useProfileStore.getState().reset();
+    useOnboardingStore.getState().reset();
   }
 
   // TODO: remove this once we have a proper signup token endpoint
-  private static async generateSignupToken(): Promise<string> {
+  static async generateSignupToken(): Promise<string> {
     const endpoint = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
     const password = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
-
-    if (!endpoint || !password) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        'Missing required environment variables: NEXT_PUBLIC_HOMESERVER_ADMIN_URL or NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD',
-        400,
-      );
-    }
 
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -101,56 +51,5 @@ export class AuthController {
     }
 
     return token;
-  }
-
-  static async createRecoveryFile(keypair: KeyPair, password: string): Promise<void> {
-    // Validate secret key format
-    if (!keypair.secretKey || !(keypair.secretKey instanceof Uint8Array)) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        'Invalid secret key format. Please regenerate your keys.',
-        400,
-        { secretKeyType: typeof keypair.secretKey },
-      );
-    }
-
-    if (keypair.secretKey.length !== 32) {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
-        `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
-        400,
-        { secretKeyLength: keypair.secretKey.length },
-      );
-    }
-
-    try {
-      const keypairFromSecretKey = Keypair.fromSecretKey(keypair.secretKey);
-      const recoveryFile = createRecoveryFile(keypairFromSecretKey, password);
-      this.handleDownloadRecoveryFile({ recoveryFile, filename: 'recovery.pkarr' });
-    } catch (error) {
-      throw createCommonError(
-        CommonErrorType.UNEXPECTED_ERROR,
-        'Failed to create recovery file. Please try regenerating your keys.',
-        500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
-      );
-    }
-  }
-
-  static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
-    try {
-      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
-
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      URL.revokeObjectURL(link.href);
-    } catch (error) {
-      console.log(error);
-    }
   }
 }
