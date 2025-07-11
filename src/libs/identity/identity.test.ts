@@ -43,7 +43,7 @@ describe('Identity', () => {
       const secretKey = new Uint8Array(32);
       crypto.getRandomValues(secretKey);
 
-      const result = Identity.generateSeedWords(secretKey);
+      const result = Identity.generateSeedWords(Buffer.from(secretKey).toString('hex'));
 
       expect(result).toHaveLength(12);
       expect(result.every((word) => typeof word === 'string' && word.length > 0)).toBe(true);
@@ -58,22 +58,22 @@ describe('Identity', () => {
       const secretKey = new Uint8Array(32);
       secretKey.fill(42); // Fill with a specific value for deterministic results
 
-      const result1 = Identity.generateSeedWords(secretKey);
-      const result2 = Identity.generateSeedWords(secretKey);
+      const result1 = Identity.generateSeedWords(Buffer.from(secretKey).toString('hex'));
+      const result2 = Identity.generateSeedWords(Buffer.from(secretKey).toString('hex'));
 
       expect(result1).toEqual(result2);
       expect(result1.join(' ')).toBe(result2.join(' '));
     });
 
     it('should throw error for null or undefined secret key', () => {
-      expect(() => Identity.generateSeedWords(null)).toThrow();
-      expect(() => Identity.generateSeedWords(undefined)).toThrow();
+      expect(() => Identity.generateSeedWords(null as unknown as string)).toThrow();
+      expect(() => Identity.generateSeedWords(undefined as unknown as string)).toThrow();
     });
 
     it('should throw error for non-Uint8Array input', () => {
-      expect(() => Identity.generateSeedWords('not-a-uint8array' as unknown as Uint8Array)).toThrow();
-      expect(() => Identity.generateSeedWords(123 as unknown as Uint8Array)).toThrow();
-      expect(() => Identity.generateSeedWords({} as unknown as Uint8Array)).toThrow();
+      expect(() => Identity.generateSeedWords('not-a-uint8array' as unknown as string)).toThrow();
+      expect(() => Identity.generateSeedWords(123 as unknown as string)).toThrow();
+      expect(() => Identity.generateSeedWords({} as unknown as string)).toThrow();
     });
 
     it('should throw error for short secret keys', () => {
@@ -82,14 +82,14 @@ describe('Identity', () => {
       crypto.getRandomValues(shortSecretKey);
 
       // Should throw an error for short keys
-      expect(() => Identity.generateSeedWords(shortSecretKey)).toThrow(
+      expect(() => Identity.generateSeedWords(Buffer.from(shortSecretKey).toString('hex'))).toThrow(
         'Secret key is shorter than recommended 32 bytes',
       );
     });
 
     it('should throw CommonError with proper error type for invalid input', () => {
       try {
-        Identity.generateSeedWords(null);
+        Identity.generateSeedWords(null as unknown as string);
       } catch (error) {
         expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
         expect(error).toHaveProperty('statusCode', 400);
@@ -100,7 +100,7 @@ describe('Identity', () => {
       const shortSecretKey = new Uint8Array(16);
 
       try {
-        Identity.generateSeedWords(shortSecretKey);
+        Identity.generateSeedWords(Buffer.from(shortSecretKey).toString('hex'));
       } catch (error) {
         expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
         expect(error).toHaveProperty('statusCode', 400);
@@ -372,7 +372,7 @@ describe('Identity', () => {
     it('should create keypair from valid secret key', () => {
       const secretKey = new Uint8Array(32).fill(1); // valid 32-byte array
 
-      const result = Identity.keypairFromSecretKey(secretKey);
+      const result = Identity.keypairFromSecretKey(Buffer.from(secretKey).toString('hex'));
 
       expect(result).toBeDefined();
       expect(result.publicKey).toBeDefined();
@@ -382,14 +382,14 @@ describe('Identity', () => {
     it('should throw error for invalid secret key length', () => {
       const invalidSecretKey = new Uint8Array(16); // Invalid length
 
-      expect(() => Identity.keypairFromSecretKey(invalidSecretKey)).toThrow();
+      expect(() => Identity.keypairFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'))).toThrow();
     });
 
     it('should throw CommonError with proper error type for invalid secret key', () => {
       const invalidSecretKey = new Uint8Array(16); // Invalid length
 
       try {
-        Identity.keypairFromSecretKey(invalidSecretKey);
+        Identity.keypairFromSecretKey(Buffer.from(invalidSecretKey).toString('hex'));
       } catch (error) {
         expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
         expect(error).toHaveProperty('statusCode', 400);

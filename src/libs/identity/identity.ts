@@ -5,10 +5,13 @@ import { CommonErrorType, createCommonError } from '@/libs';
 import { TKeyPair } from '@/core';
 
 export class Identity {
-    static async createRecoveryFile(keypair: TKeyPair | { publicKey: string; secretKey: Uint8Array }, password: string): Promise<void> {
+  static async createRecoveryFile(
+    keypair: TKeyPair | { publicKey: string; secretKey: Uint8Array },
+    password: string,
+  ): Promise<void> {
     // Handle both string and Uint8Array secret keys for backward compatibility
     let secretKeyHex: string;
-    
+
     if (keypair.secretKey instanceof Uint8Array) {
       // Convert Uint8Array to hex string
       if (keypair.secretKey.length !== 32) {
@@ -49,7 +52,7 @@ export class Identity {
       if (error instanceof Error && error.message.includes('Invalid secret key')) {
         throw error;
       }
-      
+
       throw createCommonError(
         CommonErrorType.UNEXPECTED_ERROR,
         'Failed to create recovery file. Please try regenerating your keys.',
