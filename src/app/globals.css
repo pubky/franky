@@ -11,7 +11,7 @@ body {
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: Inter Tight, sans-serif;
@@ -66,6 +66,7 @@ body {
   --shadow-lg: 0 10px 15px -3px oklch(0.118 0.014 284.115 / 0.1), 0 4px 6px -4px oklch(0.118 0.014 284.115 / 0.1);
   --shadow-xl: 0 20px 25px -5px oklch(0.118 0.014 284.115 / 0.1), 0 8px 10px -6px oklch(0.118 0.014 284.115 / 0.1);
 }
+
 
 :root {
   --radius: 0.625rem;
@@ -150,5 +151,20 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .bg-brand {
+    background-color: var(--brand);
+  }
+  .border-brand {
+    border-color: var(--brand);
+  }
+  .text-brand {
+    color: var(--brand);
+  }
+  .hover\:bg-brand\/90:hover {
+    background-color: oklch(from var(--brand) calc(l * 0.9) c h);
   }
 }

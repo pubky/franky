@@ -17,6 +17,8 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-slot": "^1.2.3",
     "@synonymdev/pubky": "^0.5.0-rc.2",
     "bip39": "^3.1.0",
     "class-variance-authority": "^0.7.1",
