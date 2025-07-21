@@ -19,7 +19,6 @@ export const useOnboardingStore = create<OnboardingStore>()(
           isBackedUp: state.isBackedUp,
           publicKey: state.publicKey,
           secretKey: state.secretKey,
-          hasGenerated: state.hasGenerated,
           isGenerating: false, // Reset on rehydration
           hasHydrated: false, // Will be set by rehydration handler
         }),

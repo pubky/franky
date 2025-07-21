@@ -8,7 +8,7 @@ import { useOnboardingStore } from '@/core/stores';
 import { Identity } from '@/libs';
 
 export default function SeedBackup() {
-  const { secretKey, hasGenerated } = useOnboardingStore();
+  const { secretKey } = useOnboardingStore();
   const [showSeeds, setShowSeeds] = useState(false);
   const [verificationWords, setVerificationWords] = useState<string[]>(new Array(12).fill(''));
   const [isVerified, setIsVerified] = useState(false);
@@ -16,7 +16,7 @@ export default function SeedBackup() {
 
   // Generate BIP39 seed words from secret key
   const seedWords = useMemo(() => {
-    if (!secretKey || !hasGenerated || secretKey.length !== 64) {
+    if (!secretKey || secretKey.length !== 64) {
       return [];
     }
 
@@ -32,7 +32,7 @@ export default function SeedBackup() {
     cachedSeedWords.current = words;
 
     return words;
-  }, [secretKey, hasGenerated]);
+  }, [secretKey]);
 
   const hasSeedWords = useMemo(() => {
     return seedWords.length > 0;

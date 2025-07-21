@@ -28,7 +28,7 @@ export default function CreateAccount() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { secretKey, hasGenerated, reset } = useOnboardingStore();
+  const { secretKey, reset } = useOnboardingStore();
   const router = useRouter();
 
   const handleInviteCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,8 +113,8 @@ export default function CreateAccount() {
   };
 
   const handleSignUp = async () => {
-    if (!hasGenerated || !secretKey || !isCodeComplete) {
-      console.error('Missing required data for signup:', { hasGenerated, hasSecretKey: !!secretKey, isCodeComplete });
+    if (!secretKey || !isCodeComplete) {
+      console.error('Missing required data for signup:', { hasSecretKey: !!secretKey, isCodeComplete });
       return;
     }
 
@@ -141,7 +141,7 @@ export default function CreateAccount() {
 
   // Computed values
   const isCodeComplete = inviteCode.length === 14;
-  const hasValidKeys = hasGenerated && secretKey && secretKey.length === 32;
+  const hasValidKeys = secretKey && secretKey.length === 64;
   const isButtonDisabled = !isCodeComplete || !hasValidKeys || isSigningUp;
   const buttonText = isSigningUp ? 'Signing Up...' : isCodeComplete ? 'Validate & Continue' : 'Enter Invite Code';
   const buttonTextMobile = isSigningUp ? 'Signing Up...' : isCodeComplete ? 'Continue' : 'Enter Code';

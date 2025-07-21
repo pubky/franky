@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
 import { HomeserverService } from '@/core/services/homeserver';
-import { Keypair } from '@synonymdev/pubky';
+import { Identity } from '@/libs';
 
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
@@ -58,7 +58,7 @@ describe('AuthController', () => {
   describe('signUp', () => {
     it('should successfully sign up a user and call setSession', async () => {
       const homeserverService = HomeserverService.getInstance();
-      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+      const keypair = Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
       const signupToken = 'test-token';
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
@@ -78,7 +78,7 @@ describe('AuthController', () => {
 
     it('should throw error if signup fails', async () => {
       const homeserverService = HomeserverService.getInstance();
-      const keypair = Keypair.fromSecretKey(new Uint8Array(32).fill(1));
+      const keypair = Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
       const signupToken = 'invalid-token';
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockRejectedValue(new Error('Signup failed'));

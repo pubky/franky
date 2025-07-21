@@ -8,8 +8,7 @@ import { useOnboardingStore, useProfileStore } from '@/core/stores';
 import { Identity } from '@/libs';
 
 export default function CreateAccountReady() {
-  const { publicKey, secretKey, isGenerating, hasHydrated, hasGenerated, setPublicKey, setSecretKey } =
-    useOnboardingStore();
+  const { publicKey, secretKey, hasHydrated, setPublicKey, setSecretKey } = useOnboardingStore();
   const { setCurrentUserPubky } = useProfileStore();
   const hasTriedGeneration = useRef(false);
 
@@ -25,15 +24,6 @@ export default function CreateAccountReady() {
     }),
     [publicKey, isValidSecretKey, secretKey],
   );
-
-  const buttonStates = useMemo(
-    () => ({
-      regenerateDisabled: isGenerating,
-      regenerateIcon: isGenerating ? 'animate-spin' : '',
-    }),
-    [isGenerating],
-  );
-
   // Helper function to check if keys are persisted in localStorage
   const areKeysPersisted = () => {
     // Check if we're in a browser environment
@@ -59,7 +49,7 @@ export default function CreateAccountReady() {
       return;
     }
 
-    const hasValidInMemoryKeys = isValidSecretKey && hasGenerated;
+    const hasValidInMemoryKeys = isValidSecretKey;
     const hasPersistedKeys = areKeysPersisted();
 
     // Case 1: Keys exist in memory but NOT in localStorage (manual deletion scenario)
@@ -68,7 +58,6 @@ export default function CreateAccountReady() {
       // Just trigger a state update to ensure persistence
       useOnboardingStore.setState({
         secretKey,
-        hasGenerated,
       });
       return;
     }
@@ -88,7 +77,7 @@ export default function CreateAccountReady() {
     const needsKeyGeneration = !hasValidInMemoryKeys;
 
     // Only generate keys if we need them, we're not already generating, and we haven't tried yet
-    if (needsKeyGeneration && !isGenerating && !hasTriedGeneration.current) {
+    if (needsKeyGeneration && !hasTriedGeneration.current) {
       hasTriedGeneration.current = true;
       const { secretKey, publicKey } = Identity.generateKeypair();
       setPublicKey(publicKey);
@@ -100,17 +89,7 @@ export default function CreateAccountReady() {
     if (hasValidInMemoryKeys) {
       hasTriedGeneration.current = false;
     }
-  }, [
-    isValidSecretKey,
-    hasGenerated,
-    isGenerating,
-    hasHydrated,
-    publicKey,
-    secretKey,
-    setPublicKey,
-    setSecretKey,
-    setCurrentUserPubky,
-  ]);
+  }, [isValidSecretKey, hasHydrated, publicKey, secretKey, setPublicKey, setSecretKey, setCurrentUserPubky]);
 
   // Event handlers
   const handleRegenerateKeys = () => {
@@ -135,9 +114,8 @@ export default function CreateAccountReady() {
             size="sm"
             className="rounded-full p-6 w-50 cursor-pointer"
             onClick={handleRegenerateKeys}
-            disabled={buttonStates.regenerateDisabled}
           >
-            <RefreshCw className={`mr-2 h-4 w-4 ${buttonStates.regenerateIcon}`} />
+            <RefreshCw className="mr-2 h-4 w-4" />
             Generate new keys
           </Button>
         }
