@@ -14,6 +14,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 
   // Next.js public environment variables
+  NEXT_PUBLIC_DB_NAME: z.string().default('franky'),
   NEXT_PUBLIC_DB_VERSION: z
     .string()
     .transform((val) => parseInt(val, 10))

@@ -1,3 +1,5 @@
-export const TESTNET = false;
-export const PKARR_RELAYS = 'https://pkarr.pubky.app';
-export const HOMESERVER = 'ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy';
+import { Env } from '@/libs';
+
+export const TESTNET = Env.NEXT_PUBLIC_TESTNET;
+export const PKARR_RELAYS = Env.NEXT_PUBLIC_PKARR_RELAYS;
+export const HOMESERVER = Env.NEXT_PUBLIC_HOMESERVER;
