@@ -67,7 +67,6 @@ body {
   --shadow-xl: 0 20px 25px -5px oklch(0.118 0.014 284.115 / 0.1), 0 8px 10px -6px oklch(0.118 0.014 284.115 / 0.1);
 }
 
-
 :root {
   --radius: 0.625rem;
   --background: oklch(0.951 0.011 286.195);
