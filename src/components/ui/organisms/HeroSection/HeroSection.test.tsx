@@ -4,7 +4,17 @@ import { HeroSection } from './HeroSection';
 
 describe('HeroSection', () => {
   it('renders with default props', () => {
-    render(<HeroSection />);
+    render(
+      <HeroSection 
+        title={
+          <>
+            <span className="text-brand">Unlock</span>
+            <br />
+            the web.
+          </>
+        }
+      />
+    );
 
     const heading = screen.getByRole('heading', { level: 1 });
     const subtitle = screen.getByText('Pubky requires an invite code');
