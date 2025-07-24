@@ -1,6 +1,6 @@
 'use client';
 
-import { Heading, InvitePopover, ActionButtons } from '@/components/ui';
+import { Heading, InvitePopover, ActionButtons, DialogPrivacy, DialogTerms, DialogAge } from '@/components/ui';
 
 interface HeroSectionProps {
   className?: string;
@@ -42,11 +42,13 @@ export function HeroSection({
 
         <footer className="mt-6">
           <p className="text-sm text-muted-foreground opacity-80 md:pr-13">
-            By creating a Pubky account, you agree to the <span className="text-brand">Terms of Service</span>,{' '}
-            <span className="text-brand">Privacy Policy</span>, and confirm you are{' '}
-            <span className="text-brand">over 18 years old.</span> Pubky is powered by{' '}
-            <span className="text-brand">Pubky Core</span> and was built with love and dedication by Synonym Software
-            Ltd. ©2025.
+            By creating a Pubky account, you agree to the <DialogTerms linkText="Terms of Service" />,{' '}
+            <DialogPrivacy linkText="Privacy Policy" />, and confirm you are <DialogAge linkText="over 18 years old." />{' '}
+            Pubky is powered by{' '}
+            <a className="cursor-pointer text-brand" target="_blank" href="https://pubky.org/">
+              Pubky Core
+            </a>{' '}
+            and was built with love and dedication by Synonym Software Ltd. ©2025.
           </p>
         </footer>
       </div>

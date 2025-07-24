@@ -1,6 +1,5 @@
 import { IS_DEBUG, IS_TEST } from '@/config';
-import { LogLevel } from '@/libs';
-import { Env } from '@/libs';
+import { Env, LogLevel } from '@/libs';
 
 export class Logger {
   private constructor() {}
