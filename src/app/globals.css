@@ -167,3 +167,66 @@ body {
     background-color: oklch(from var(--brand) calc(l * 0.9) c h);
   }
 }
+
+/* Minimalist animations for background */
+@keyframes gentle-drift {
+  0%,
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+  25% {
+    transform: translateX(2px) translateY(-1px);
+  }
+  50% {
+    transform: translateX(0px) translateY(-2px);
+  }
+  75% {
+    transform: translateX(-1px) translateY(-1px);
+  }
+}
+
+@keyframes soft-scale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+}
+
+@keyframes rainbow-cycle {
+  0% {
+    filter: brightness(1) saturate(1.5) hue-rotate(0deg);
+  }
+  16.66% {
+    filter: brightness(1.1) saturate(1.6) hue-rotate(60deg);
+  }
+  33.33% {
+    filter: brightness(1) saturate(1.7) hue-rotate(120deg);
+  }
+  50% {
+    filter: brightness(1.1) saturate(1.8) hue-rotate(180deg);
+  }
+  66.66% {
+    filter: brightness(1) saturate(1.7) hue-rotate(240deg);
+  }
+  83.33% {
+    filter: brightness(1.1) saturate(1.6) hue-rotate(300deg);
+  }
+  100% {
+    filter: brightness(1) saturate(1.5) hue-rotate(360deg);
+  }
+}
+
+.animate-gentle-drift {
+  animation: gentle-drift 15s ease-in-out infinite;
+}
+
+.animate-soft-scale {
+  animation: soft-scale 12s ease-in-out infinite;
+}
+
+.animate-rainbow-cycle {
+  animation: rainbow-cycle 1s ease-in-out infinite;
+}

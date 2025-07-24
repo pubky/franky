@@ -12,18 +12,33 @@ export default function Home() {
   };
 
   return (
-    <div className="dark min-h-screen bg-background">
-      <Header onSignIn={handleSignIn} githubUrl="#" twitterUrl="#" telegramUrl="#" />
+    <>
+      {/* Full viewport background */}
+      <div
+        className={`opacity-10 lg:opacity-100 fixed inset-0 bg-cover bg-center bg-no-repeat -z-10`}
+        style={{
+          backgroundImage: 'url(/images/bg-home.svg)',
+        }}
+      />
 
-      <main className="relative">
-        <HeroSection
-          title="Unlock
-the web."
-          subtitle="Pubky requires an invite code"
-          onSignIn={handleSignIn}
-          onCreateAccount={handleCreateAccount}
-        />
-      </main>
-    </div>
+      <div className="dark min-h-screen bg-transparent z-10">
+        <Header onSignIn={handleSignIn} githubUrl="#" twitterUrl="#" telegramUrl="#" />
+
+        <main className="relative">
+          <HeroSection
+            title={
+              <>
+                <span className="text-brand">Unlock</span>
+                <br />
+                the web.
+              </>
+            }
+            subtitle="Pubky requires an invite code"
+            onSignIn={handleSignIn}
+            onCreateAccount={handleCreateAccount}
+          />
+        </main>
+      </div>
+    </>
   );
 }

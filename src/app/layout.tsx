@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark">
       <body className={`${interTight.variable} antialiased`}>
         <DatabaseProvider>
-          <div className="min-h-screen bg-background">{children}</div>
+          <div className="max-w-screen-xl mx-auto min-h-screen">{children}</div>
         </DatabaseProvider>
       </body>
     </html>

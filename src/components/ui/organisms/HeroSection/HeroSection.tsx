@@ -4,7 +4,7 @@ import { Heading, InvitePopover, ActionButtons, DialogPrivacy, DialogTerms, Dial
 
 interface HeroSectionProps {
   className?: string;
-  title?: string;
+  title?: React.ReactNode;
   subtitle?: string;
   onSignIn?: () => void;
   onCreateAccount?: () => void;
@@ -13,24 +13,17 @@ interface HeroSectionProps {
 
 export function HeroSection({
   className = 'container mx-auto px-6 lg:px-10 pt-24 lg:pt-36',
-  title = 'Unlock\nthe web.',
+  title,
   subtitle = 'Pubky requires an invite code',
   onSignIn,
   onCreateAccount,
   showInvitePopover = true,
 }: HeroSectionProps) {
-  const titleParts = title.split('\n');
-
   return (
     <div className={className}>
       <div className="flex flex-col gap-6 max-w-[588px]">
         <Heading level={1} size="hero">
-          {titleParts.map((part, index) => (
-            <span key={index}>
-              {part}
-              {index < titleParts.length - 1 && <br />}
-            </span>
-          ))}
+          {title}
         </Heading>
 
         <div className="flex items-center gap-2">
