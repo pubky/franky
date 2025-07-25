@@ -3,19 +3,19 @@
 import { Gift, Mail, Twitter, Send } from 'lucide-react';
 import { Button, SocialLink, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
 
-interface InvitePopoverProps {
+interface PopoverInviteProps {
   className?: string;
   emailUrl?: string;
   twitterUrl?: string;
   telegramUrl?: string;
 }
 
-export function InvitePopover({
+export function PopoverInvite({
   className = 'hover:bg-brand/10',
   emailUrl = 'mailto:hello@pubky.com',
   twitterUrl = 'https://x.com/pubky',
   telegramUrl = 'https://t.me/pubky',
-}: InvitePopoverProps) {
+}: PopoverInviteProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>

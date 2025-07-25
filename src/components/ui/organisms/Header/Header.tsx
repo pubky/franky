@@ -13,7 +13,7 @@ interface HeaderProps {
 }
 
 export function Header({
-  className = 'border-b border-border/50',
+  className = '',
   onSignIn,
   showSocialLinks = true,
   githubUrl = '#',
@@ -22,8 +22,8 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className={className}>
-      <div className="container mx-auto px-6 lg:px-10 py-6">
-        <nav className="flex justify-between items-center">
+      <div className="container mx-auto px-6 lg:px-10 py-6 ">
+        <nav className="flex justify-between items-center h-16 mt-1">
           <div className="flex items-center">
             <Logo />
           </div>

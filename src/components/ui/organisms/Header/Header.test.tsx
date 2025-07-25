@@ -53,7 +53,6 @@ describe('Header', () => {
     const signInButton = screen.getByRole('button', { name: /sign in/i });
 
     expect(header).toBeInTheDocument();
-    expect(header).toHaveClass('border-b', 'border-border/50');
     expect(logo).toBeInTheDocument();
     expect(signInButton).toBeInTheDocument();
   });

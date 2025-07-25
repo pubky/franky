@@ -1,6 +1,6 @@
 'use client';
 
-import { Heading, InvitePopover, ActionButtons, DialogPrivacy, DialogTerms, DialogAge } from '@/components/ui';
+import { Heading, ActionButtons, DialogPrivacy, DialogTerms, DialogAge, PopoverInvite } from '@/components/ui';
 
 interface HeroSectionProps {
   className?: string;
@@ -28,7 +28,7 @@ export function HeroSection({
 
         <div className="flex items-center gap-2">
           <p className="text-xl lg:text-2xl font-light text-brand">{subtitle}</p>
-          {showInvitePopover && <InvitePopover />}
+          {showInvitePopover && <PopoverInvite />}
         </div>
 
         <ActionButtons onSignIn={onSignIn} onCreateAccount={onCreateAccount} />

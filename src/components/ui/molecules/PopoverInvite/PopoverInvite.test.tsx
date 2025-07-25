@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { InvitePopover } from './InvitePopover';
+import { PopoverInvite } from './PopoverInvite';
 
 // Mock Lucide icons
 vi.mock('lucide-react', () => ({
@@ -28,7 +28,7 @@ vi.mock('lucide-react', () => ({
 
 describe('InvitePopover', () => {
   it('renders trigger button with gift icon', () => {
-    render(<InvitePopover />);
+    render(<PopoverInvite />);
 
     const button = screen.getByRole('button');
     const giftIcon = screen.getByTestId('gift-icon');
@@ -39,7 +39,7 @@ describe('InvitePopover', () => {
   });
 
   it('shows popover content when clicked', () => {
-    render(<InvitePopover />);
+    render(<PopoverInvite />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);
@@ -49,7 +49,7 @@ describe('InvitePopover', () => {
   });
 
   it('renders social contact links in popover', () => {
-    render(<InvitePopover />);
+    render(<PopoverInvite />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);
@@ -69,7 +69,7 @@ describe('InvitePopover', () => {
   });
 
   it('uses default URLs when no custom URLs provided', () => {
-    render(<InvitePopover />);
+    render(<PopoverInvite />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);
@@ -85,7 +85,7 @@ describe('InvitePopover', () => {
 
   it('uses custom URLs when provided', () => {
     render(
-      <InvitePopover
+      <PopoverInvite
         emailUrl="mailto:custom@example.com"
         twitterUrl="https://twitter.com/custom"
         telegramUrl="https://t.me/custom"
@@ -105,14 +105,14 @@ describe('InvitePopover', () => {
   });
 
   it('applies custom className to trigger button', () => {
-    render(<InvitePopover className="custom-invite-class" />);
+    render(<PopoverInvite className="custom-invite-class" />);
 
     const button = screen.getByRole('button');
     expect(button).toHaveClass('custom-invite-class');
   });
 
   it('has proper popover content structure', () => {
-    render(<InvitePopover />);
+    render(<PopoverInvite />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);

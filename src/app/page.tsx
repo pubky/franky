@@ -1,14 +1,17 @@
 'use client';
 
 import { Header, HeroSection } from '@/components/ui';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+
   const handleSignIn = () => {
     console.log('Sign in clicked');
   };
 
   const handleCreateAccount = () => {
-    console.log('Create account clicked');
+    router.push('/onboarding/install');
   };
 
   return (
@@ -21,7 +24,7 @@ export default function Home() {
         }}
       />
 
-      <div className="dark min-h-screen bg-transparent z-10">
+      <div className="z-10">
         <Header onSignIn={handleSignIn} githubUrl="#" twitterUrl="#" telegramUrl="#" />
 
         <main className="relative">

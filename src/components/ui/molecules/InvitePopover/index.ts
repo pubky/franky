@@ -1,1 +1,0 @@
-export { InvitePopover } from './InvitePopover';
