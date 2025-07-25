@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
@@ -51,6 +52,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "fake-indexeddb": "^6.0.1",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "prettier": "^3.2.5",
     "tailwindcss": "^4",

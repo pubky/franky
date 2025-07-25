@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+echo "🔍 Running pre-commit checks..."
+
+echo "✨ Formatting code..."
+npm run format
+
+echo "🧪 Running tests..."
+npm run test
+
+echo "🏗️  Building project..."
+npm run build
+
+echo "✅ All pre-commit checks passed!"
