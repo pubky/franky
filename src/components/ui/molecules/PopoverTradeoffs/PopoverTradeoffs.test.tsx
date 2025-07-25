@@ -108,9 +108,9 @@ describe('PopoverTradeoffs', () => {
     expect(screen.getByText(/Browser-based key generation/)).toBeInTheDocument();
   });
 
-    it('icon has correct accessibility attributes', () => {
+  it('icon has correct accessibility attributes', () => {
     render(<PopoverTradeoffs />);
-    
+
     const alertIcon = screen.getByTestId('alert-triangle-icon');
     expect(alertIcon).toBeInTheDocument();
   });

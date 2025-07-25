@@ -5,7 +5,7 @@ import { HeroSection } from './HeroSection';
 describe('HeroSection', () => {
   it('renders with default props', () => {
     render(
-      <HeroSection 
+      <HeroSection
         title={
           <>
             <span className="text-brand">Unlock</span>
@@ -13,7 +13,7 @@ describe('HeroSection', () => {
             the web.
           </>
         }
-      />
+      />,
     );
 
     const heading = screen.getByRole('heading', { level: 1 });

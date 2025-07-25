@@ -40,11 +40,11 @@ describe('DialogTerms', () => {
     expect(title).toBeInTheDocument();
   });
 
-    it('displays default link text', () => {
+  it('displays default link text', () => {
     render(<DialogTerms />);
-    
+
     const links = screen.getAllByText('Terms of Service');
-    const triggerLink = links.find(link => link.tagName === 'A');
+    const triggerLink = links.find((link) => link.tagName === 'A');
     expect(triggerLink).toBeInTheDocument();
     expect(triggerLink?.tagName).toBe('A');
   });
@@ -57,11 +57,11 @@ describe('DialogTerms', () => {
     expect(link.tagName).toBe('A');
   });
 
-    it('applies correct styling to trigger link', () => {
+  it('applies correct styling to trigger link', () => {
     render(<DialogTerms />);
-    
+
     const links = screen.getAllByText('Terms of Service');
-    const triggerLink = links.find(link => link.tagName === 'A');
+    const triggerLink = links.find((link) => link.tagName === 'A');
     expect(triggerLink).toHaveClass('cursor-pointer', 'text-brand');
   });
 
@@ -87,9 +87,9 @@ describe('DialogTerms', () => {
     expect(header).toHaveClass('pr-6');
   });
 
-    it('renders effective date', () => {
+  it('renders effective date', () => {
     render(<DialogTerms />);
-    
+
     expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
   });
 
@@ -101,9 +101,9 @@ describe('DialogTerms', () => {
     expect(scrollableArea).toHaveClass('h-[320px]', 'pr-4', 'overflow-y-auto');
   });
 
-    it('renders terms of service content', () => {
+  it('renders terms of service content', () => {
     render(<DialogTerms />);
-    
+
     // Check for some key terms content
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
     expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();

@@ -11,4 +11,5 @@ export * from './Card';
 export * from './DialogDownloadPubkyRing';
 export * from './ProgressSteps';
 export * from './StoreButtons';
+export * from './ButtonsNavigation';
 export * from './InstallNavigation';
