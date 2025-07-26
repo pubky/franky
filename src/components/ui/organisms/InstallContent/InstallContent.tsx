@@ -10,7 +10,7 @@ interface InstallContentProps {
 }
 
 export function InstallContent({
-  className = 'container mx-auto px-6 lg:px-6 pt-12',
+  className = 'container mx-auto px-6 lg:px-10 lg:pt-8',
   onCreateKeysInBrowser,
   onContinueWithPubkyRing,
 }: InstallContentProps) {

@@ -12,7 +12,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({
-  className = 'container mx-auto px-6 lg:px-10 pt-24 lg:pt-36',
+  className = 'container mx-auto px-6 lg:px-10 lg:pt-8',
   title,
   subtitle = 'Pubky requires an invite code',
   onSignIn,

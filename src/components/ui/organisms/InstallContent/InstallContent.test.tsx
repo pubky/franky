@@ -149,7 +149,7 @@ describe('InstallContent', () => {
     const { container } = render(<InstallContent />);
 
     const mainElement = container.querySelector('main');
-    expect(mainElement).toHaveClass('container', 'mx-auto', 'px-6', 'lg:px-6', 'pt-12');
+    expect(mainElement).toHaveClass('container', 'mx-auto', 'px-6', 'lg:px-10', 'lg:pt-8');
   });
 
   it('applies custom className', () => {

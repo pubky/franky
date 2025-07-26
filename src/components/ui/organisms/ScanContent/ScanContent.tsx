@@ -10,7 +10,7 @@ interface ScanContentProps {
 }
 
 export function ScanContent({
-  className = 'container mx-auto px-6 lg:px-6 pt-12',
+  className = 'container mx-auto px-6 lg:px-10 lg:pt-8',
   onHandleBackButton,
 }: ScanContentProps) {
   return (

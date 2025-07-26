@@ -110,7 +110,7 @@ describe('HeroSection', () => {
     const contentContainer = heading.parentElement;
     const mainContainer = contentContainer?.parentElement;
 
-    expect(mainContainer).toHaveClass('container', 'mx-auto', 'px-6', 'lg:px-10', 'pt-24', 'lg:pt-36');
+    expect(mainContainer).toHaveClass('container', 'mx-auto', 'px-6', 'lg:px-10', 'lg:pt-8');
     expect(contentContainer).toHaveClass('flex', 'flex-col', 'gap-6', 'max-w-[588px]');
   });
 
