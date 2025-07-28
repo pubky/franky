@@ -78,6 +78,7 @@ export function ScanContent({
           continueText="Continue"
           backButtonDisabled={false}
           continueButtonDisabled={true}
+          hiddenContinueButton={true}
         />
       </div>
     </main>

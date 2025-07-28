@@ -11,6 +11,7 @@ interface ButtonsNavigationProps {
   continueText?: string;
   backButtonDisabled?: boolean;
   continueButtonDisabled?: boolean;
+  hiddenContinueButton?: boolean;
 }
 
 export function ButtonsNavigation({
@@ -21,6 +22,7 @@ export function ButtonsNavigation({
   continueText = 'Continue',
   backButtonDisabled = false,
   continueButtonDisabled = false,
+  hiddenContinueButton = false,
 }: ButtonsNavigationProps) {
   return (
     <div className={className}>
@@ -35,10 +37,12 @@ export function ButtonsNavigation({
         {backText}
       </Button>
       <div className="flex items-center gap-1 w-full" />
-      <Button size="lg" className="rounded-full" onClick={onHandleContinueButton} disabled={continueButtonDisabled}>
-        <ArrowRight className="mr-2 h-4 w-4" />
-        {continueText}
-      </Button>
+      {!hiddenContinueButton && (
+        <Button size="lg" className="rounded-full" onClick={onHandleContinueButton} disabled={continueButtonDisabled}>
+          <ArrowRight className="mr-2 h-4 w-4" />
+          {continueText}
+        </Button>
+      )}
     </div>
   );
 }
