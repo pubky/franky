@@ -1,6 +1,6 @@
 'use client';
 
-import { OnboardingHeader, InstallContent } from '@/components/ui';
+import { InstallContent } from '@/components/ui';
 import { useRouter } from 'next/navigation';
 
 export default function InstallPage() {
@@ -16,13 +16,9 @@ export default function InstallPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <OnboardingHeader title="Identity keys" currentStep={1} totalSteps={5} />
-
-      <InstallContent
-        onCreateKeysInBrowser={handleCreateKeysInBrowser}
-        onContinueWithPubkyRing={handleContinueWithPubkyRing}
-      />
-    </div>
+    <InstallContent
+      onCreateKeysInBrowser={handleCreateKeysInBrowser}
+      onContinueWithPubkyRing={handleContinueWithPubkyRing}
+    />
   );
 }
