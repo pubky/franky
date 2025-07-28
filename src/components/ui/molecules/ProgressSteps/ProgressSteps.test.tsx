@@ -31,7 +31,7 @@ describe('ProgressSteps', () => {
     // For completed steps, we should look for the check mark icon instead of numbers
     const checkIcons = document.querySelectorAll('svg');
     expect(checkIcons.length).toBeGreaterThan(0);
-    
+
     // Check that completed step container has the right classes
     const completedStepContainer = checkIcons[0]?.parentElement?.parentElement;
     expect(completedStepContainer).toHaveClass('bg-transparent', 'text-white', 'border-white');
@@ -73,7 +73,7 @@ describe('ProgressSteps', () => {
     // Each bar should have bg-border background and a fill bar inside
     progressBars.forEach((bar, index) => {
       expect(bar).toHaveClass('bg-border');
-      
+
       // Check the fill bar inside each container
       const fillBar = bar.querySelector('div');
       if (index < 3) {
@@ -101,7 +101,7 @@ describe('ProgressSteps', () => {
 
     const stepNumber = screen.getByText('1');
     const stepContainer = stepNumber?.parentElement;
-    
+
     expect(stepNumber).toBeInTheDocument();
     expect(stepContainer).toHaveClass('bg-foreground', 'text-background');
   });
@@ -112,7 +112,7 @@ describe('ProgressSteps', () => {
     // When currentStep is 5, steps 1-4 are completed (have check marks) and step 5 is active
     const checkIcons = document.querySelectorAll('svg');
     expect(checkIcons.length).toBe(4); // Steps 1-4 should have check marks
-    
+
     // Step 5 should still show the number
     const stepFive = screen.getByText('5');
     const stepFiveContainer = stepFive?.parentElement;
