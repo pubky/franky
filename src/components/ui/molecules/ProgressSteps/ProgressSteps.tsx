@@ -24,9 +24,9 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
               <div key={stepNumber} className="flex items-center">
                 <div
                   className={cn(
-                    'flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform mr-[3px]',
+                    'flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform',
                     isActive ? 'bg-foreground text-background' : 'border text-muted-foreground',
-                    isCompleted && 'bg-transparent text-white border-white !mr-0',
+                    isCompleted && 'bg-transparent text-white border-white',
                   )}
                 >
                   <div
@@ -39,7 +39,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                   </div>
                 </div>
                 {stepNumber < totalSteps && (
-                  <div className="relative w-24 xl:w-64 h-px overflow-hidden">
+                  <div className="relative w-24 xl:w-42 h-px overflow-hidden">
                     {/* Base line (gray) */}
                     <div className="absolute inset-0 bg-border opacity-50" />
 
