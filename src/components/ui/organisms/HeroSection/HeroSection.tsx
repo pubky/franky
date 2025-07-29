@@ -1,6 +1,17 @@
 'use client';
 
-import { Heading, ActionButtons, DialogPrivacy, DialogTerms, DialogAge, PopoverInvite } from '@/components/ui';
+import {
+  Heading,
+  ActionButtons,
+  DialogPrivacy,
+  DialogTerms,
+  DialogAge,
+  PopoverInvite,
+  PageContainer,
+  ContentContainer,
+  BrandLink,
+  FooterLinks,
+} from '@/components/ui';
 
 interface HeroSectionProps {
   className?: string;
@@ -12,7 +23,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({
-  className = 'container mx-auto px-6 lg:px-10 lg:pt-8',
+  className,
   title,
   subtitle = 'Pubky requires an invite code',
   onSignIn,
@@ -20,8 +31,8 @@ export function HeroSection({
   showInvitePopover = true,
 }: HeroSectionProps) {
   return (
-    <div className={className}>
-      <div className="flex flex-col gap-6 max-w-[588px]">
+    <PageContainer className={className}>
+      <ContentContainer maxWidth="xl">
         <Heading level={1} size="hero">
           {title}
         </Heading>
@@ -33,18 +44,16 @@ export function HeroSection({
 
         <ActionButtons onSignIn={onSignIn} onCreateAccount={onCreateAccount} />
 
-        <footer className="mt-6">
-          <p className="text-sm text-muted-foreground opacity-80 md:pr-13">
-            By creating a Pubky account, you agree to the <DialogTerms linkText="Terms of Service" />,{' '}
-            <DialogPrivacy linkText="Privacy Policy" />, and confirm you are <DialogAge linkText="over 18 years old." />{' '}
-            Pubky is powered by{' '}
-            <a className="cursor-pointer text-brand" target="_blank" href="https://pubky.org/">
-              Pubky Core
-            </a>{' '}
-            and was built with love and dedication by Synonym Software Ltd. ©2025.
-          </p>
-        </footer>
-      </div>
-    </div>
+        <FooterLinks className="mt-6 max-w-[588px]">
+          By creating a Pubky account, you agree to the <DialogTerms linkText="Terms of Service" />,{' '}
+          <DialogPrivacy linkText="Privacy Policy" />, and confirm you are <DialogAge linkText="over 18 years old." />{' '}
+          Pubky is powered by{' '}
+          <BrandLink href="https://pubky.org/" external>
+            Pubky Core
+          </BrandLink>{' '}
+          and was built with love and dedication by Synonym Software Ltd. ©2025.
+        </FooterLinks>
+      </ContentContainer>
+    </PageContainer>
   );
 }

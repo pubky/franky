@@ -26,7 +26,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                   className={cn(
                     'flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform',
                     isActive ? 'bg-foreground text-background' : 'border text-muted-foreground',
-                    isCompleted && 'bg-transparent text-white border-white',
+                    isCompleted && 'bg-brand text-black border-brand',
                   )}
                 >
                   <div
@@ -46,7 +46,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                     {/* Animated line (white) */}
                     <div
                       className={cn(
-                        'absolute inset-0 bg-white transform transition-all duration-500 ease-out',
+                        'absolute inset-0 bg-brand transform transition-all duration-500 ease-out',
                         stepNumber < currentStep ? 'translate-x-0' : '-translate-x-full',
                       )}
                     />

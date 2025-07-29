@@ -67,6 +67,24 @@ describe('OnboardingStore', () => {
       state.setHydrated(false);
       expect(useOnboardingStore.getState().hasHydrated).toBe(false);
     });
+
+    it('should set both keys with setKeypair action', () => {
+      const testPublicKey = 'test-public-key-123';
+      const testSecretKey = 'test-secret-key-456';
+
+      const state = useOnboardingStore.getState();
+
+      // Initially keys should be empty
+      expect(state.publicKey).toEqual('');
+      expect(state.secretKey).toEqual('');
+
+      // Set both keys at once
+      state.setKeypair(testPublicKey, testSecretKey);
+
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.publicKey).toEqual(testPublicKey);
+      expect(updatedState.secretKey).toEqual(testSecretKey);
+    });
   });
 
   describe('Key Validation Logic', () => {

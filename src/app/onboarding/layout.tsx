@@ -9,6 +9,7 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/onboarding/install': { step: 1, title: 'Identity keys' },
   '/onboarding/scan': { step: 2, title: 'Use Pubky Ring' },
   '/onboarding/pubky': { step: 2, title: 'Your pubky' },
+  '/onboarding/backup': { step: 3, title: 'Backup' },
 };
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,12 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
     setCurrentStep(config.step);
     setCurrentTitle(config.title);
   }, [pathname]);
+
+  // TODO: add a guard to check if the user is already onboarded
+  // idea: add to zustand store if user is onboarded
+  // if (isOnboarded) {
+  //   router.push('/');
+  // }
 
   return (
     <div className="min-h-screen bg-background">

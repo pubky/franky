@@ -34,42 +34,125 @@ vi.mock('@/components/ui', () => ({
   Button: ({
     children,
     className,
-    onClick,
+    ...rest
   }: {
     children: React.ReactNode;
     className?: string;
-    onClick?: () => void;
+    [key: string]: unknown;
   }) => (
-    <button data-testid="authorize-button" className={className} onClick={onClick}>
+    <button className={className} {...rest}>
       {children}
     </button>
   ),
-  ButtonsNavigation: ({
-    onHandleBackButton,
-    backText,
-    continueText,
-    backButtonDisabled,
-    continueButtonDisabled,
-  }: {
-    onHandleBackButton?: () => void;
-    backText?: string;
-    continueText?: string;
-    backButtonDisabled?: boolean;
-    continueButtonDisabled?: boolean;
-  }) => (
+  ButtonsNavigation: ({ onHandleBackButton }: { onHandleBackButton?: () => void }) => (
     <div data-testid="buttons-navigation">
-      <button onClick={onHandleBackButton} data-testid="back-btn" disabled={backButtonDisabled}>
-        {backText}
-      </button>
-      <button data-testid="continue-btn" disabled={continueButtonDisabled}>
-        {continueText}
+      <button onClick={onHandleBackButton} data-testid="back-button">
+        Back
       </button>
     </div>
   ),
   Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>
+    <div data-slot="card" data-testid="card" className={className}>
       {children}
     </div>
+  ),
+  PageHeader: ({
+    title,
+    subtitle,
+    className,
+    titleSize,
+  }: {
+    title: React.ReactNode;
+    subtitle?: React.ReactNode;
+    className?: string;
+    titleSize?: string;
+  }) => (
+    <div data-testid="page-header" className={className}>
+      <h1 data-title-size={titleSize}>{title}</h1>
+      {subtitle && <h2>{subtitle}</h2>}
+    </div>
+  ),
+  ContentCard: ({
+    children,
+    className,
+    layout,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    layout?: string;
+  }) => (
+    <div data-testid="content-card" data-slot="card" data-layout={layout} className={className}>
+      {children}
+    </div>
+  ),
+  FooterLinks: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <p data-testid="footer-links" className={className}>
+      {children}
+    </p>
+  ),
+  BrandText: ({ children, className, inline }: { children: React.ReactNode; className?: string; inline?: boolean }) => (
+    <span data-testid="brand-text" data-inline={inline} className={className}>
+      {children}
+    </span>
+  ),
+  PageContainer: ({
+    children,
+    className,
+    as = 'div',
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    as?: 'div' | 'main' | 'section';
+  }) => {
+    const props = { 'data-testid': 'page-container', className };
+    if (as === 'main') {
+      return <main {...props}>{children}</main>;
+    } else if (as === 'section') {
+      return <section {...props}>{children}</section>;
+    }
+    return <div {...props}>{children}</div>;
+  },
+  ContentContainer: ({
+    children,
+    className,
+    maxWidth,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    maxWidth?: string;
+  }) => (
+    <div data-testid="content-container" data-max-width={maxWidth} className={className}>
+      {children}
+    </div>
+  ),
+  ResponsiveSection: ({
+    desktop,
+    mobile,
+    className,
+  }: {
+    desktop?: React.ReactNode;
+    mobile?: React.ReactNode;
+    className?: string;
+  }) => (
+    <div data-testid="responsive-section" className={className}>
+      {desktop && <div data-testid="desktop-section">{desktop}</div>}
+      {mobile && <div data-testid="mobile-section">{mobile}</div>}
+    </div>
+  ),
+  BrandLink: ({
+    children,
+    href,
+    external,
+    className,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    external?: boolean;
+    className?: string;
+  }) => (
+    <a data-testid="brand-link" href={href} target={external ? '_blank' : undefined} className={className}>
+      {children}
+    </a>
   ),
 }));
 
@@ -108,14 +191,14 @@ describe('ScanContent', () => {
   it('renders mobile version with logo and authorize button', () => {
     render(<ScanContent />);
 
+    // Check for both images with alt text "Pubky Ring"
     const images = screen.getAllByAltText('Pubky Ring');
     const logoImage = images.find((img) => img.getAttribute('src') === '/images/logo-pubky-ring.svg');
-    const authorizeButton = screen.getByTestId('authorize-button');
+    const authorizeButton = screen.getByText('Authorize with Pubky Ring').closest('button');
     const keyIcon = screen.getByTestId('key-icon');
 
     expect(logoImage).toBeInTheDocument();
     expect(authorizeButton).toBeInTheDocument();
-    expect(authorizeButton).toHaveTextContent('Authorize with Pubky Ring');
     expect(keyIcon).toBeInTheDocument();
   });
 
@@ -134,25 +217,33 @@ describe('ScanContent', () => {
     expect(pubkyCoreLink).toHaveAttribute('target', '_blank');
   });
 
-  it('renders ButtonsNavigation with correct props', () => {
+  it('renders authorize button with proper styling and content', () => {
     render(<ScanContent />);
 
+    // The button is no longer directly wrapped with data-testid, so we find it by content
+    const authorizeButton = screen.getByText('Authorize with Pubky Ring').closest('button');
+    expect(authorizeButton).toHaveClass('w-full', 'h-[60px]', 'rounded-full');
+    expect(authorizeButton).toHaveTextContent('Authorize with Pubky Ring');
+  });
+
+  it('renders ButtonsNavigation with correct props', () => {
+    render(<ScanContent onHandleBackButton={vi.fn()} />);
+
     const buttonsNavigation = screen.getByTestId('buttons-navigation');
-    const backButton = screen.getByTestId('back-btn');
-    const continueButton = screen.getByTestId('continue-btn');
+    const backButton = screen.getByTestId('back-button'); // Updated to match mock
+    // No continue button should be rendered since hiddenContinueButton is true
+    const continueButton = screen.queryByTestId('continue-btn');
 
     expect(buttonsNavigation).toBeInTheDocument();
-    expect(backButton).toHaveTextContent('Back');
-    expect(backButton).not.toBeDisabled();
-    expect(continueButton).toHaveTextContent('Continue');
-    expect(continueButton).toBeDisabled();
+    expect(backButton).toBeInTheDocument();
+    expect(continueButton).not.toBeInTheDocument();
   });
 
   it('handles back button click through ButtonsNavigation', () => {
     const handleBackButton = vi.fn();
     render(<ScanContent onHandleBackButton={handleBackButton} />);
 
-    const backButton = screen.getByTestId('back-btn');
+    const backButton = screen.getByTestId('back-button'); // Updated to match mock
     fireEvent.click(backButton);
 
     expect(handleBackButton).toHaveBeenCalledTimes(1);
@@ -161,32 +252,28 @@ describe('ScanContent', () => {
   it('renders cards with proper styling', () => {
     render(<ScanContent />);
 
-    const cards = screen.getAllByTestId('card');
+    // Update to use content-card since we're now using ContentCard component
+    const cards = screen.getAllByTestId('content-card');
     expect(cards).toHaveLength(2); // One for desktop, one for mobile
 
     cards.forEach((card) => {
-      expect(card).toHaveClass('p-6', 'lg:p-12');
+      expect(card).toHaveAttribute('data-layout', 'column');
+      expect(card).toHaveAttribute('data-slot', 'card');
     });
   });
 
   it('maintains proper responsive structure', () => {
     render(<ScanContent />);
 
-    // Desktop section should be hidden on mobile
-    const desktopSection = screen.getByText(/Scan/).closest('.hidden.md\\:flex');
+    // Update to match ResponsiveSection structure
+    const responsiveSection = screen.getByTestId('responsive-section');
+    expect(responsiveSection).toBeInTheDocument();
+
+    const desktopSection = screen.getByTestId('desktop-section');
+    const mobileSection = screen.getByTestId('mobile-section');
+
     expect(desktopSection).toBeInTheDocument();
-
-    // Mobile section should be hidden on desktop
-    const mobileSection = screen.getByText(/Tap to/).closest('.flex.md\\:hidden');
     expect(mobileSection).toBeInTheDocument();
-  });
-
-  it('renders authorize button with proper styling and content', () => {
-    render(<ScanContent />);
-
-    const authorizeButton = screen.getByTestId('authorize-button');
-    expect(authorizeButton).toHaveClass('w-full', 'h-[60px]', 'rounded-full');
-    expect(authorizeButton).toHaveTextContent('Authorize with Pubky Ring');
   });
 
   it('displays proper footer text about keychain compatibility', () => {
@@ -194,6 +281,6 @@ describe('ScanContent', () => {
 
     const footerText = screen.getByText(/Use.*or any other.*–powered keychain\./);
     expect(footerText).toBeInTheDocument();
-    expect(footerText).toHaveClass('text-sm', 'text-muted-foreground', 'opacity-80');
+    expect(footerText).toHaveAttribute('data-testid', 'footer-links');
   });
 });

@@ -26,15 +26,15 @@ describe('ProgressSteps', () => {
   });
 
   it('shows completed steps correctly in desktop version', () => {
-    render(<ProgressSteps currentStep={3} totalSteps={5} />);
+    render(<ProgressSteps currentStep={3} totalSteps={4} />);
 
-    // For completed steps, we should look for the check mark icon instead of numbers
-    const checkIcons = document.querySelectorAll('svg');
-    expect(checkIcons.length).toBeGreaterThan(0);
+    // Find check icons by actual SVG selector instead of data-testid
+    const checkIcons = document.querySelectorAll('svg.lucide-check');
+    expect(checkIcons).toHaveLength(2); // Steps 1 and 2 should be completed
 
-    // Check that completed step container has the right classes
+    // Check that completed step container has the right classes (brand styling for completed)
     const completedStepContainer = checkIcons[0]?.parentElement?.parentElement;
-    expect(completedStepContainer).toHaveClass('bg-transparent', 'text-white', 'border-white');
+    expect(completedStepContainer).toHaveClass('bg-brand', 'text-black', 'border-brand');
   });
 
   it('shows pending steps correctly in desktop version', () => {

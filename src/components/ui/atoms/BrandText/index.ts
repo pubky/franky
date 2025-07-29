@@ -1,0 +1,1 @@
+export { BrandText } from './BrandText';

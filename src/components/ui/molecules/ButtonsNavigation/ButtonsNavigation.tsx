@@ -2,6 +2,7 @@
 
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { cn } from '@/libs';
 
 interface ButtonsNavigationProps {
   className?: string;
@@ -15,7 +16,7 @@ interface ButtonsNavigationProps {
 }
 
 export function ButtonsNavigation({
-  className = 'flex flex-col-reverse lg:flex-row gap-3 lg:gap-6 justify-between',
+  className = '',
   onHandleBackButton,
   onHandleContinueButton,
   backText = 'Back',
@@ -25,7 +26,7 @@ export function ButtonsNavigation({
   hiddenContinueButton = false,
 }: ButtonsNavigationProps) {
   return (
-    <div className={className}>
+    <div className={cn('flex flex-row lg:flex-row gap-3 lg:gap-6 justify-between', className)}>
       <Button
         size="lg"
         className="rounded-full"
