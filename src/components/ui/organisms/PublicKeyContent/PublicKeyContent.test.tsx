@@ -63,15 +63,20 @@ vi.mock('@/components/ui', async () => {
         {children}
       </div>
     ),
-    Input: ({ value, onClick, className, ...props }: {
+    Input: ({
+      value,
+      onClick,
+      className,
+      ...props
+    }: {
       value?: string;
       onClick?: () => void;
       className?: string;
       [key: string]: unknown;
-    }) => (
-      <input data-testid="input" value={value} onClick={onClick} className={className} {...props} />
+    }) => <input data-testid="input" value={value} onClick={onClick} className={className} {...props} />,
+    PopoverPublicKey: ({ className }: { className?: string }) => (
+      <div data-testid="popover-public-key" className={className} />
     ),
-    PopoverPublicKey: ({ className }: { className?: string }) => <div data-testid="popover-public-key" className={className} />,
   };
 });
 
