@@ -7,8 +7,7 @@ export default function InstallPage() {
   const router = useRouter();
 
   const handleCreateKeysInBrowser = () => {
-    // TODO: Implement create keys in browser functionality
-    console.log('Create keys in browser clicked');
+    router.push('/onboarding/pubky');
   };
 
   const handleContinueWithPubkyRing = () => {

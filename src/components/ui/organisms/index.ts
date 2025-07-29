@@ -3,3 +3,4 @@ export * from './HeroSection';
 export * from './OnboardingHeader';
 export * from './InstallContent';
 export * from './ScanContent';
+export * from './PublicKeyContent';

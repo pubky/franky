@@ -7,7 +7,16 @@ describe('Card', () => {
     render(<Card data-testid="card">Card content</Card>);
     const card = screen.getByTestId('card');
     expect(card).toBeInTheDocument();
-    expect(card).toHaveClass('bg-card', 'text-card-foreground', 'rounded-xl', 'border');
+    expect(card).toHaveClass(
+      'bg-card',
+      'text-card-foreground',
+      'flex',
+      'flex-col',
+      'gap-6',
+      'rounded-xl',
+      'py-6',
+      'shadow-sm',
+    );
   });
 
   it('applies custom className', () => {

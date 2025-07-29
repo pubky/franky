@@ -3,6 +3,7 @@ import { Inter_Tight } from 'next/font/google';
 import { DatabaseProvider } from '@/providers';
 
 import './globals.css';
+import { Toaster } from '@/components/ui';
 
 const interTight = Inter_Tight({
   variable: '--font-geist-sans',
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${interTight.variable} antialiased`}>
         <DatabaseProvider>
           <div className="max-w-screen-xl mx-auto min-h-screen">{children}</div>
+          <Toaster />
         </DatabaseProvider>
       </body>
     </html>

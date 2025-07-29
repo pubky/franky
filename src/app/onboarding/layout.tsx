@@ -8,6 +8,7 @@ import { OnboardingHeader } from '@/components/ui';
 const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/onboarding/install': { step: 1, title: 'Identity keys' },
   '/onboarding/scan': { step: 2, title: 'Use Pubky Ring' },
+  '/onboarding/pubky': { step: 2, title: 'Your pubky' },
 };
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
