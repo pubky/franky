@@ -1,1 +1,1 @@
-export { FooterLinks } from './FooterLinks';
+export * from './FooterLinks';

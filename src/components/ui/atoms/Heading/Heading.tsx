@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
+import { cn } from '@/libs';
 
 interface HeadingProps {
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   children: ReactNode;
   className?: string;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'hero';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 export function Heading({ level = 1, children, className, size = 'md' }: HeadingProps) {
@@ -15,10 +16,8 @@ export function Heading({ level = 1, children, className, size = 'md' }: Heading
     md: 'text-xl font-semibold',
     lg: 'text-2xl font-bold',
     xl: 'text-4xl font-bold',
-    hero: 'text-6xl lg:text-[128px] font-bold leading-none lg:leading-[128px]',
+    '2xl': 'text-6xl sm:text-9xl font-bold',
   };
 
-  const combinedClassName = `${sizeClasses[size]} text-foreground ${className || ''}`.trim();
-
-  return <Tag className={combinedClassName}>{children}</Tag>;
+  return <Tag className={cn(sizeClasses[size], 'text-foreground', className)}>{children}</Tag>;
 }

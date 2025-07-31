@@ -108,7 +108,7 @@ describe('PopoverPublicKey', () => {
 
     const title = screen.getByText('Why not a normal user @handle?');
     expect(title).toBeInTheDocument();
-    expect(title).toHaveClass('text-base', 'font-bold', 'text-popover-foreground');
+    expect(title).toHaveClass('text-lg', 'font-semibold', 'text-popover-foreground');
   });
 
   it('renders correct description text', () => {
@@ -118,7 +118,7 @@ describe('PopoverPublicKey', () => {
       /This user handle is a cryptographic public key, making it unique and platform-independent/,
     );
     expect(description).toBeInTheDocument();
-    expect(description).toHaveClass('text-sm', 'font-medium', 'text-muted-foreground');
+    expect(description).toHaveClass('text-lg', 'font-semibold', 'text-muted-foreground');
   });
 
   it('renders complete description text', () => {

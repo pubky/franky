@@ -83,14 +83,8 @@ describe('InvitePopover', () => {
     expect(telegramLink).toHaveAttribute('href', 'https://t.me/pubky');
   });
 
-  it('uses custom URLs when provided', () => {
-    render(
-      <PopoverInvite
-        emailUrl="mailto:custom@example.com"
-        twitterUrl="https://twitter.com/custom"
-        telegramUrl="https://t.me/custom"
-      />,
-    );
+  it('uses default URLs', () => {
+    render(<PopoverInvite />);
 
     const button = screen.getByRole('button');
     fireEvent.click(button);
@@ -99,9 +93,9 @@ describe('InvitePopover', () => {
     const twitterLink = screen.getByTestId('twitter-icon').parentElement;
     const telegramLink = screen.getByTestId('send-icon').parentElement;
 
-    expect(mailLink).toHaveAttribute('href', 'mailto:custom@example.com');
-    expect(twitterLink).toHaveAttribute('href', 'https://twitter.com/custom');
-    expect(telegramLink).toHaveAttribute('href', 'https://t.me/custom');
+    expect(mailLink).toHaveAttribute('href', 'mailto:hello@pubky.com');
+    expect(twitterLink).toHaveAttribute('href', 'https://x.com/pubky');
+    expect(telegramLink).toHaveAttribute('href', 'https://t.me/pubky');
   });
 
   it('applies custom className to trigger button', () => {
@@ -121,7 +115,7 @@ describe('InvitePopover', () => {
     const heading = screen.getByText("Don't have an invite yet?");
     const description = screen.getByText('Ask the Pubky team!');
 
-    expect(heading).toHaveClass('text-base', 'font-bold', 'text-popover-foreground');
-    expect(description).toHaveClass('text-sm', 'font-medium', 'text-muted-foreground');
+    expect(heading).toHaveClass('text-lg', 'font-semibold', 'text-popover-foreground');
+    expect(description).toHaveClass('text-lg', 'font-semibold', 'text-muted-foreground');
   });
 });

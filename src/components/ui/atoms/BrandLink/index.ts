@@ -1,1 +1,0 @@
-export { BrandLink } from './BrandLink';

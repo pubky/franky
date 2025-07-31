@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogDownloadPubkyRing } from './DialogDownloadPubkyRing';
 
 // Mock Next.js Image component
@@ -41,6 +41,26 @@ vi.mock('@/components/ui', () => ({
   ),
   DialogTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
     <div data-testid="dialog-trigger" data-as-child={asChild}>
+      {children}
+    </div>
+  ),
+  Link: ({
+    children,
+    href,
+    className,
+    target,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    className?: string;
+    target?: string;
+  }) => (
+    <a data-testid="link" href={href} className={className} target={target}>
+      {children}
+    </a>
+  ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
       {children}
     </div>
   ),
@@ -158,9 +178,12 @@ describe('DialogDownloadPubkyRing', () => {
   it('maintains proper content structure', () => {
     render(<DialogDownloadPubkyRing store="apple" />);
 
-    const contentDiv = document.querySelector('.flex.gap-8.items-center');
-    expect(contentDiv).toBeInTheDocument();
-    expect(contentDiv).toHaveClass('flex', 'gap-8', 'items-center');
+    const links = screen.getAllByRole('link');
+    expect(links.length).toBeGreaterThan(0);
+    fireEvent.click(links[0]);
+
+    // Check that dialog content is rendered
+    expect(screen.getByText('Download Pubky Ring')).toBeInTheDocument();
   });
 
   it('renders QR code section', () => {

@@ -1,15 +1,17 @@
 import { ReactNode } from 'react';
 import { cn } from '@/libs';
 
-interface PageSubtitleProps {
+interface PageSubtitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
   children: ReactNode;
-  className?: string;
   as?: 'h2' | 'h5' | 'p';
 }
 
-export function PageSubtitle({ children, className, as: Component = 'h2' }: PageSubtitleProps) {
+export function PageSubtitle({ as: Component = 'h2', className, children, ...props }: PageSubtitleProps) {
   return (
-    <Component className={cn('text-xl lg:text-2xl text-muted-foreground font-light leading-normal', className)}>
+    <Component
+      className={cn('text-xl lg:text-2xl text-muted-foreground font-light leading-normal', className)}
+      {...props}
+    >
       {children}
     </Component>
   );

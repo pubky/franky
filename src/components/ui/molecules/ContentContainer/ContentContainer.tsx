@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Container } from '@/components/ui';
 import { cn } from '@/libs';
 
 interface ContentContainerProps {
@@ -23,6 +24,8 @@ export function ContentContainer({ children, className, maxWidth = 'lg', gap = '
   };
 
   return (
-    <div className={cn('flex flex-col mx-auto', maxWidthClasses[maxWidth], gapClasses[gap], className)}>{children}</div>
+    <Container className={cn('flex flex-col mx-auto', maxWidthClasses[maxWidth], gapClasses[gap], className)}>
+      {children}
+    </Container>
   );
 }

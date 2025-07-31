@@ -2,20 +2,26 @@ import * as React from 'react';
 
 import { cn } from '@/libs';
 
-function Input({ className, type, onClick, ...props }: React.ComponentProps<'input'>) {
-  return (
-    <input
-      type={type}
-      data-slot="input"
-      className={cn(
-        'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
-        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
-        className,
-      )}
-      onClick={onClick}
-      {...props}
-    />
-  );
-}
+type InputTheme = 'default' | 'outline';
 
-export { Input };
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: React.HTMLAttributes<HTMLInputElement>['className'];
+  theme?: InputTheme;
+}
+const defaultProps = {
+  type: 'text',
+  theme: 'default',
+};
+
+export function Input({ ...props }: InputProps) {
+  const { theme } = { ...defaultProps, ...props };
+
+  const inputClassName = cn(
+    'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+    'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+    theme === 'outline' && 'border-input',
+    props.className,
+  );
+
+  return <input className={inputClassName} {...props} />;
+}

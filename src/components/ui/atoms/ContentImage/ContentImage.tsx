@@ -23,7 +23,7 @@ export function ContentImage({
 
   return (
     <div className={cn(sizeClasses[size], hiddenOnMobile ? 'hidden lg:flex' : 'flex', containerClassName)}>
-      <Image className={cn('w-full h-auto', className)} {...imageProps} />
+      <Image className={cn('w-full h-auto', className)} {...imageProps} alt={imageProps.alt || 'Image'} />
     </div>
   );
 }

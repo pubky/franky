@@ -1,27 +1,13 @@
-import { ReactNode } from 'react';
 import { cn } from '@/libs';
+import { Typography } from '@/components/ui';
 
-interface LinkItem {
-  text: string;
-  href: string;
-  target?: string;
-}
-
-interface FooterLinksProps {
-  children: ReactNode;
-  links?: LinkItem[];
-  className?: string;
-}
-
-export function FooterLinks({ children, links = [], className }: FooterLinksProps) {
+export function FooterLinks({ children, className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
-    <p className={cn('text-sm text-muted-foreground opacity-80', className)}>
+    <Typography
+      className={cn('text-muted-foreground opacity-80 font-normal text-sm leading-none', className)}
+      {...props}
+    >
       {children}
-      {links.map((link, index) => (
-        <a key={index} href={link.href} className="text-brand" target={link.target}>
-          {link.text}
-        </a>
-      ))}
-    </p>
+    </Typography>
   );
 }

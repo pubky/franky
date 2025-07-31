@@ -29,6 +29,29 @@ vi.mock('@/components/ui', () => ({
       {children}
     </button>
   ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
+  Heading: ({
+    children,
+    level,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    level?: number;
+    size?: string;
+    className?: string;
+  }) => {
+    const Tag = `h${level || 1}` as keyof JSX.IntrinsicElements;
+    return (
+      <Tag data-testid={`heading-${level || 1}`} data-size={size} className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 describe('PopoverTradeoffs', () => {
@@ -67,7 +90,7 @@ describe('PopoverTradeoffs', () => {
     const title = screen.getByText('Be aware of these tradeoffs:');
     expect(title).toBeInTheDocument();
     expect(title.tagName).toBe('H4');
-    expect(title).toHaveClass('text-base', 'font-bold', 'text-popover-foreground');
+    expect(title).toHaveClass('text-popover-foreground');
   });
 
   it('renders tradeoffs content', () => {
@@ -95,9 +118,9 @@ describe('PopoverTradeoffs', () => {
   it('maintains proper content structure', () => {
     render(<PopoverTradeoffs />);
 
-    const contentDiv = document.querySelector('.flex.flex-col.gap-2');
-    expect(contentDiv).toBeInTheDocument();
-    expect(contentDiv).toHaveClass('flex', 'flex-col', 'gap-2');
+    const list = screen.getByRole('list');
+    expect(list).toBeInTheDocument();
+    expect(list).toHaveClass('list-disc', 'list-inside', 'text-muted-foreground', 'text-sm');
   });
 
   it('renders security comparison information', () => {

@@ -1,7 +1,5 @@
-'use client';
-
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui';
+import { Button, Container } from '@/components/ui';
 import { cn } from '@/libs';
 
 interface ButtonsNavigationProps {
@@ -26,7 +24,7 @@ export function ButtonsNavigation({
   hiddenContinueButton = false,
 }: ButtonsNavigationProps) {
   return (
-    <div className={cn('flex flex-row lg:flex-row gap-3 lg:gap-6 justify-between', className)}>
+    <Container className={cn('flex-row gap-3 lg:gap-6 justify-between', className)}>
       <Button
         size="lg"
         className="rounded-full"
@@ -37,13 +35,13 @@ export function ButtonsNavigation({
         <ArrowLeft className="mr-2 h-4 w-4" />
         {backText}
       </Button>
-      <div className="flex items-center gap-1 w-full" />
+      <Container className="flex items-center gap-1 w-full" />
       {!hiddenContinueButton && (
         <Button size="lg" className="rounded-full" onClick={onHandleContinueButton} disabled={continueButtonDisabled}>
           <ArrowRight className="mr-2 h-4 w-4" />
           {continueText}
         </Button>
       )}
-    </div>
+    </Container>
   );
 }

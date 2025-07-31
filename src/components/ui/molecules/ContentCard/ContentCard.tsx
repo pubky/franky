@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
-import { Card, ContentImage } from '@/components/ui';
+import { Card, Container, ContentImage } from '@/components/ui';
 import { cn } from '@/libs';
 
 interface ContentCardProps {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   image?: {
     src: string;
@@ -23,12 +23,12 @@ export function ContentCard({ children, className, image, layout = 'row' }: Cont
 
   return (
     <Card className={cn('p-6 lg:p-12', className)}>
-      <div className={cn('flex gap-12', layoutClasses[layout])}>
+      <Container className={cn('gap-12', layoutClasses[layout])}>
         {image && (
           <ContentImage src={image.src} alt={image.alt} width={image.width} height={image.height} size={image.size} />
         )}
-        <div className="flex flex-col gap-6 justify-center w-full">{children}</div>
-      </div>
+        <Container className=" gap-6 justify-center w-full">{children}</Container>
+      </Container>
     </Card>
   );
 }

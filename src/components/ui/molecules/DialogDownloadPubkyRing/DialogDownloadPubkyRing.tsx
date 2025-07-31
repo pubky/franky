@@ -1,4 +1,13 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui';
+import {
+  Container,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Link,
+} from '@/components/ui';
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -23,13 +32,13 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' |
   return (
     <Dialog>
       {store === 'apple' ? (
-        <a href={imageBadge.href} target="_blank" className="cursor-pointer block sm:hidden">
+        <Link href={imageBadge.href} target="_blank" className="block sm:hidden">
           <Image src={imageBadge.src} alt={imageBadge.alt} width={192} height={40} />
-        </a>
+        </Link>
       ) : (
-        <a href={imageBadge.href} target="_blank" className="cursor-pointer block sm:hidden">
+        <Link href={imageBadge.href} target="_blank" className="block sm:hidden">
           <Image src={imageBadge.src} alt={imageBadge.alt} width={210} height={40} />
-        </a>
+        </Link>
       )}
       <DialogTrigger asChild className="cursor-pointer hidden sm:block">
         {store === 'apple' ? (
@@ -45,26 +54,26 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' |
             Scan the QR with your mobile camera to download Pubky Ring from the App Store.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex flex-colmt-6">
-          <div className="flex gap-8 items-center">
+        <Container className="mt-6">
+          <Container className="flex-row gap-8 items-center">
             <Image src="/images/pubky-ring-phone.png" alt="App preview" width={96} height={256} />
-            <div className="flex flex-col space-y-6">
-              <div className="bg-foreground rounded-lg p-4 w-[192px] h-[192px] flex items-center justify-center">
+            <Container className="space-y-6">
+              <Container className="bg-foreground rounded-lg p-4 w-[192px] h-[192px] flex items-center justify-center">
                 <QRCodeSVG value={imageBadge.href} size={160} />
-              </div>
-              <div className="flex justify-between items-center w-full">
-                <a className="h-10 w-full" href={imageBadge.href} target="_blank">
+              </Container>
+              <Container className="justify-between items-center">
+                <Link className="h-10 w-full" href={imageBadge.href} target="_blank">
                   <Image
                     src={imageBadge.src}
                     alt={imageBadge.alt}
                     width={imageBadge.width}
                     height={imageBadge.height}
                   />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
+                </Link>
+              </Container>
+            </Container>
+          </Container>
+        </Container>
       </DialogContent>
     </Dialog>
   );

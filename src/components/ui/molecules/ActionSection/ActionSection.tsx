@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Button } from '@/components/ui';
+import { Button, Container } from '@/components/ui';
 import { cn } from '@/libs';
 
 interface ActionSectionProps {
@@ -15,10 +15,10 @@ interface ActionSectionProps {
 
 export function ActionSection({ children, className, actions = [] }: ActionSectionProps) {
   return (
-    <div className={cn('flex flex-col gap-6', className)}>
+    <Container className={cn('gap-6', className)}>
       {children}
       {actions.length > 0 && (
-        <div className="flex gap-3">
+        <Container className="flex-row gap-3">
           {actions.map((action, index) => (
             <Button
               key={index}
@@ -30,8 +30,8 @@ export function ActionSection({ children, className, actions = [] }: ActionSecti
               {action.label}
             </Button>
           ))}
-        </div>
+        </Container>
       )}
-    </div>
+    </Container>
   );
 }

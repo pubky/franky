@@ -1,5 +1,5 @@
 import { AlertTriangle } from 'lucide-react';
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
+import { Button, Container, Heading, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
 
 export function PopoverTradeoffs() {
   return (
@@ -10,18 +10,20 @@ export function PopoverTradeoffs() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full">
-        <div className="flex flex-col gap-2 px-3 py-2">
-          <div className="flex flex-col gap-2">
-            <h4 className="text-base font-bold text-popover-foreground">Be aware of these tradeoffs:</h4>
-          </div>
-          <div className="flex gap-4">
+        <Container className="gap-2 px-3 py-2">
+          <Container className="gap-2">
+            <Heading level={4} size="sm" className="text-popover-foreground">
+              Be aware of these tradeoffs:
+            </Heading>
+          </Container>
+          <Container className="flex gap-4">
             <ul className="list-disc list-inside text-muted-foreground text-sm">
               <li>Less secure than mobile keychain</li>
               <li>Browser-based key generation</li>
               <li>Suboptimal sign-in experience</li>
             </ul>
-          </div>
-        </div>
+          </Container>
+        </Container>
       </PopoverContent>
     </Popover>
   );

@@ -1,1 +1,1 @@
-export { PopoverPublicKey } from './PopoverPublicKey';
+export * from './PopoverPublicKey';

@@ -40,21 +40,21 @@ describe('Heading', () => {
     heading = screen.getByRole('heading');
     expect(heading).toHaveClass('text-4xl', 'font-bold');
 
-    rerender(<Heading size="hero">Hero Heading</Heading>);
+    rerender(<Heading size="2xl">2XL Heading</Heading>);
     heading = screen.getByRole('heading');
-    expect(heading).toHaveClass('text-6xl', 'lg:text-[128px]', 'font-bold', 'leading-none', 'lg:leading-[128px]');
+    expect(heading).toHaveClass('text-6xl', 'sm:text-9xl', 'font-bold');
   });
 
   it('combines level and size props correctly', () => {
     render(
-      <Heading level={3} size="hero">
-        H3 Hero
+      <Heading level={3} size="2xl">
+        H3 2XL
       </Heading>,
     );
 
     const heading = screen.getByRole('heading', { level: 3 });
     expect(heading.tagName).toBe('H3');
-    expect(heading).toHaveClass('text-6xl', 'lg:text-[128px]', 'font-bold');
+    expect(heading).toHaveClass('text-6xl', 'sm:text-9xl', 'font-bold');
   });
 
   it('applies custom className', () => {

@@ -1,1 +1,1 @@
-export { PageSubtitle } from './PageSubtitle';
+export * from './PageSubtitle';

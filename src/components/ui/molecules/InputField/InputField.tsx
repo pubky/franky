@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Input } from '@/components/ui';
+import { Container, Input } from '@/components/ui';
 import { cn } from '@/libs';
 
 interface InputFieldProps {
@@ -40,11 +40,12 @@ export function InputField({
       : 'w-full';
 
   return (
-    <div className={cn('w-full flex sm:max-w-[576px]', className)}>
-      <div className={containerClasses}>
+    <Container className={cn('sm:max-w-[576px]', className)}>
+      <Container className={containerClasses}>
         {loading && loadingIcon}
         {!loading && icon}
         <Input
+          type="text"
           className={inputClasses}
           value={loading ? loadingText : value}
           placeholder={placeholder}
@@ -52,7 +53,7 @@ export function InputField({
           readOnly={readOnly}
           onClick={onClick}
         />
-      </div>
-    </div>
+      </Container>
+    </Container>
   );
 }

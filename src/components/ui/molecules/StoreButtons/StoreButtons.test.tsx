@@ -7,6 +7,11 @@ vi.mock('@/components/ui', () => ({
   DialogDownloadPubkyRing: ({ store }: { store: string }) => (
     <button data-testid={`download-${store}`}>Download for {store}</button>
   ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 describe('StoreButtons', () => {

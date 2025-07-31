@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogTerms } from './DialogTerms';
 
 // Mock UI components
@@ -21,6 +21,24 @@ vi.mock('@/components/ui', () => ({
       {children}
     </div>
   ),
+  Link: ({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) => (
+    <a data-testid="link" href={href} className={className}>
+      {children}
+    </a>
+  ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
+  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
+    const Tag = as || 'p';
+    return (
+      <Tag data-testid="typography" className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 describe('DialogTerms', () => {
@@ -62,7 +80,7 @@ describe('DialogTerms', () => {
 
     const links = screen.getAllByText('Terms of Service');
     const triggerLink = links.find((link) => link.tagName === 'A');
-    expect(triggerLink).toHaveClass('cursor-pointer', 'text-brand');
+    expect(triggerLink).toHaveClass('text-brand');
   });
 
   it('renders dialog title correctly', () => {
@@ -120,9 +138,11 @@ describe('DialogTerms', () => {
   it('maintains proper content structure', () => {
     render(<DialogTerms />);
 
-    const contentDiv = document.querySelector('.flex.flex-col.gap-4');
-    expect(contentDiv).toBeInTheDocument();
-    expect(contentDiv).toHaveClass('flex', 'flex-col', 'gap-4');
+    const link = screen.getByRole('link');
+    fireEvent.click(link);
+
+    // Check that dialog content is rendered
+    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Terms of Service');
   });
 
   it('handles different link text props', () => {

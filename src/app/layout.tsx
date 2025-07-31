@@ -3,7 +3,7 @@ import { Inter_Tight } from 'next/font/google';
 import { DatabaseProvider } from '@/providers';
 
 import './globals.css';
-import { Toaster } from '@/components/ui';
+import { Container, Toaster } from '@/components/ui';
 
 const interTight = Inter_Tight({
   variable: '--font-geist-sans',
@@ -11,19 +11,21 @@ const interTight = Inter_Tight({
 });
 
 export const metadata: Metadata = {
-  title: 'Franky',
-  description: "I'm ALIVEEE!",
+  title: 'Pubky App',
+  description: 'Pubky App',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${interTight.variable} antialiased`}>
+    <Container as="html" lang="en" className="dark">
+      <Container as="body" className={`${interTight.variable} antialiased`}>
         <DatabaseProvider>
-          <div className="max-w-screen-xl mx-auto min-h-screen">{children}</div>
+          <Container size="xl" className="min-h-screen">
+            {children}
+          </Container>
           <Toaster />
         </DatabaseProvider>
-      </body>
-    </html>
+      </Container>
+    </Container>
   );
 }

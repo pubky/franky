@@ -26,7 +26,7 @@ describe('SocialLinks', () => {
     render(<SocialLinks />);
 
     const container = screen.getByTestId('github-icon').parentElement?.parentElement;
-    expect(container).toHaveClass('hidden', 'md:flex', 'items-center', 'gap-6');
+    expect(container).toHaveClass('hidden', 'md:flex', 'flex-row', 'justify-end', 'gap-6', 'mr-8');
 
     // Check all three default links are rendered
     expect(screen.getByTestId('github-icon')).toBeInTheDocument();
@@ -34,30 +34,24 @@ describe('SocialLinks', () => {
     expect(screen.getByTestId('send-icon')).toBeInTheDocument();
   });
 
-  it('renders with custom URLs', () => {
-    render(
-      <SocialLinks
-        githubUrl="https://github.com/custom"
-        twitterUrl="https://twitter.com/custom"
-        telegramUrl="https://t.me/custom"
-      />,
-    );
+  it('renders with default URLs', () => {
+    render(<SocialLinks />);
 
     const githubLink = screen.getByTestId('github-icon').parentElement;
     const twitterLink = screen.getByTestId('twitter-icon').parentElement;
     const telegramLink = screen.getByTestId('send-icon').parentElement;
 
-    expect(githubLink).toHaveAttribute('href', 'https://github.com/custom');
-    expect(twitterLink).toHaveAttribute('href', 'https://twitter.com/custom');
-    expect(telegramLink).toHaveAttribute('href', 'https://t.me/custom');
+    expect(githubLink).toHaveAttribute('href', 'https://github.com/pubky');
+    expect(twitterLink).toHaveAttribute('href', 'https://twitter.com/getpubky');
+    expect(telegramLink).toHaveAttribute('href', 'https://t.me/pubky');
   });
 
-  it('can hide individual social links', () => {
-    render(<SocialLinks showGithub={false} showTwitter={true} showTelegram={false} />);
+  it('renders all social links by default', () => {
+    render(<SocialLinks />);
 
-    expect(screen.queryByTestId('github-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('github-icon')).toBeInTheDocument();
     expect(screen.getByTestId('twitter-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('send-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('send-icon')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {

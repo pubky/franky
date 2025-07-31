@@ -1,42 +1,19 @@
 import { Github, Twitter, Send } from 'lucide-react';
-import { SocialLink } from '@/components/ui';
+import { Link, Container } from '@/components/ui';
+import { cn } from '@/libs';
 
-interface SocialLinksProps {
-  className?: string;
-  showGithub?: boolean;
-  showTwitter?: boolean;
-  showTelegram?: boolean;
-  githubUrl?: string;
-  twitterUrl?: string;
-  telegramUrl?: string;
-}
-
-export function SocialLinks({
-  className = 'hidden md:flex items-center gap-6',
-  showGithub = true,
-  showTwitter = true,
-  showTelegram = true,
-  githubUrl = '#',
-  twitterUrl = '#',
-  telegramUrl = '#',
-}: SocialLinksProps) {
+export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={className}>
-      {showGithub && (
-        <SocialLink href={githubUrl}>
-          <Github className="w-6 h-6" />
-        </SocialLink>
-      )}
-      {showTwitter && (
-        <SocialLink href={twitterUrl}>
-          <Twitter className="w-6 h-6" />
-        </SocialLink>
-      )}
-      {showTelegram && (
-        <SocialLink href={telegramUrl}>
-          <Send className="w-6 h-6" />
-        </SocialLink>
-      )}
-    </div>
+    <Container className={cn('hidden md:flex flex-row justify-end gap-6 mr-8', props.className)}>
+      <Link href="https://github.com/pubky" variant="muted" size="default">
+        <Github className="w-6 h-6" />
+      </Link>
+      <Link href="https://twitter.com/getpubky" variant="muted" size="default">
+        <Twitter className="w-6 h-6" />
+      </Link>
+      <Link href="https://t.me/pubky" variant="muted" size="default">
+        <Send className="w-6 h-6" />
+      </Link>
+    </Container>
   );
 }

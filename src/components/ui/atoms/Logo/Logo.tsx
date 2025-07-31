@@ -1,15 +1,22 @@
 import Image from 'next/image';
+import { Link } from '@/components/ui';
+import { cn } from '@/libs';
 
 interface LogoProps {
-  className?: string;
   width?: number;
   height?: number;
 }
 
-export function Logo({ className = 'w-auto h-auto', width = 78, height = 24 }: LogoProps) {
+export function Logo({ width = 109, height = 36, ...props }: LogoProps & React.HTMLAttributes<HTMLAnchorElement>) {
   return (
-    <div className="h-9 flex items-center">
-      <Image src="/pubky-logo.svg" alt="Pubky" width={width} height={height} className={className} />
-    </div>
+    <Link href="/" className={cn(`flex items-center min-w-[${width}px] min-h-[${height}px]`, props.className)}>
+      <Image
+        src="/pubky-logo.svg"
+        alt="Pubky"
+        className={`w-[${width}px] h-[${height}px]`}
+        width={width}
+        height={height}
+      />
+    </Link>
   );
 }

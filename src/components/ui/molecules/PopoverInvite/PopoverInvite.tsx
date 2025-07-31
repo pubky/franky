@@ -1,21 +1,16 @@
-'use client';
-
 import { Gift, Mail, Twitter, Send } from 'lucide-react';
-import { Button, SocialLink, Popover, PopoverContent, PopoverTrigger } from '@/components/ui';
+import { Button, Link, Popover, PopoverContent, PopoverTrigger, Heading, Container, Typography } from '@/components/ui';
 
 interface PopoverInviteProps {
   className?: string;
-  emailUrl?: string;
-  twitterUrl?: string;
-  telegramUrl?: string;
 }
 
-export function PopoverInvite({
-  className = 'hover:bg-brand/10',
-  emailUrl = 'mailto:hello@pubky.com',
-  twitterUrl = 'https://x.com/pubky',
-  telegramUrl = 'https://t.me/pubky',
-}: PopoverInviteProps) {
+// TODO: extract to env
+const EMAIL_URL = 'mailto:hello@pubky.com';
+const TWITTER_URL = 'https://x.com/pubky';
+const TELEGRAM_URL = 'https://t.me/pubky';
+
+export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInviteProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -24,23 +19,27 @@ export function PopoverInvite({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[327px]">
-        <div className="flex flex-col gap-6 px-3 py-2">
-          <div className="flex flex-col gap-2">
-            <h4 className="text-base font-bold text-popover-foreground">Don&apos;t have an invite yet?</h4>
-            <p className="text-sm font-medium text-muted-foreground">Ask the Pubky team!</p>
-          </div>
-          <div className="flex gap-4">
-            <SocialLink href={emailUrl} className="text-muted-foreground hover:text-foreground transition-colors">
+        <Container className="flex-col gap-6 px-3 py-2">
+          <Container className="flex-col gap-2">
+            <Heading level={4} size="sm" className="text-popover-foreground">
+              Don&apos;t have an invite yet?
+            </Heading>
+            <Typography size="sm" className="text-muted-foreground">
+              Ask the Pubky team!
+            </Typography>
+          </Container>
+          <Container className="flex-row gap-4">
+            <Link href={EMAIL_URL}>
               <Mail className="h-6 w-6" />
-            </SocialLink>
-            <SocialLink href={twitterUrl} className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link href={TWITTER_URL}>
               <Twitter className="h-6 w-6" />
-            </SocialLink>
-            <SocialLink href={telegramUrl} className="text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link href={TELEGRAM_URL}>
               <Send className="h-6 w-6" />
-            </SocialLink>
-          </div>
-        </div>
+            </Link>
+          </Container>
+        </Container>
       </PopoverContent>
     </Popover>
   );

@@ -1,1 +1,1 @@
-export { ResponsiveSection } from './ResponsiveSection';
+export * from './ResponsiveSection';

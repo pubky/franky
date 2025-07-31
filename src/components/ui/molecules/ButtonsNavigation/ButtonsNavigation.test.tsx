@@ -35,6 +35,11 @@ vi.mock('@/components/ui', () => ({
       {children}
     </button>
   ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 describe('ButtonsNavigation', () => {

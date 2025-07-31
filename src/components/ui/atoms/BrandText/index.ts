@@ -1,1 +1,0 @@
-export { BrandText } from './BrandText';

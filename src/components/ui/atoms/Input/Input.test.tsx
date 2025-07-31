@@ -8,7 +8,7 @@ describe('Input', () => {
     const input = screen.getByTestId('input');
 
     expect(input).toBeInTheDocument();
-    expect(input).toHaveAttribute('data-slot', 'input');
+
     expect(input).toHaveClass(
       'file:text-foreground',
       'placeholder:text-muted-foreground',
