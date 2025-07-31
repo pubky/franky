@@ -38,10 +38,10 @@ export const MainInstallOrganism = () => {
         alt: 'Keyring',
         width: 192,
         height: 192,
-        size: 'medium',
+        size: 'large',
       }}
     >
-      <Container className="gap-3">
+      <Container className="">
         <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={220} height={48} />
         <Typography className="text-secondary-foreground opacity-80 font-normal">
           Download and install the mobile app to start creating your account.

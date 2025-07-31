@@ -36,7 +36,7 @@ describe('StoreButtons', () => {
     const { container } = render(<StoreButtons />);
 
     const buttonsContainer = container.firstChild as HTMLElement;
-    expect(buttonsContainer).toHaveClass('flex', 'gap-4', 'justify-around', 'sm:justify-start');
+    expect(buttonsContainer).toHaveClass('flex-row', 'gap-4', 'justify-around', 'sm:justify-start');
   });
 
   it('applies custom className', () => {

@@ -13,6 +13,8 @@ import {
   useToast,
   PageContainer,
   ContentContainer,
+  Heading,
+  Container,
 } from '@/components/ui';
 import { useOnboardingStore } from '@/core';
 import { Identity } from '@/libs';
@@ -72,11 +74,12 @@ export const MainPublicKeyOrganism = () => {
         size: 'large',
       }}
     >
-      <div className="flex items-center gap-1">
-        <h3 className="text-2xl font-bold">Your pubky</h3>
+      <Container className="items-center gap-1 flex-row">
+        <Heading level={3} size="lg">
+          Your pubky
+        </Heading>
         <PopoverPublicKey />
-      </div>
-
+      </Container>
       <ActionSection
         actions={[
           {
@@ -86,6 +89,7 @@ export const MainPublicKeyOrganism = () => {
             variant: 'secondary',
           },
         ]}
+        className="flex-col items-start gap-3 justify-start w-full mt-6"
       >
         <InputField
           value={publicKey}

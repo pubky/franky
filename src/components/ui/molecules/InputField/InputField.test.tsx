@@ -91,13 +91,15 @@ describe('InputField', () => {
 
     const container = screen.getByTestId('input').parentElement;
     expect(container).toHaveClass(
-      'flex',
+      'flex-row',
       'items-center',
-      'gap-1',
+      'gap-3',
       'rounded-md',
       'border',
       'border-dashed',
       'border-brand',
+      'bg-transparent',
+      'pl-4.5',
     );
   });
 
@@ -116,7 +118,7 @@ describe('InputField', () => {
   it('applies custom className', () => {
     render(<InputField value="test" className="custom-input-field" />);
 
-    const wrapper = screen.getByTestId('input').parentElement?.parentElement;
+    const wrapper = screen.getByTestId('input').parentElement;
     expect(wrapper).toHaveClass('custom-input-field');
   });
 

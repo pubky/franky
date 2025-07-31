@@ -31,29 +31,27 @@ export function InputField({
 }: InputFieldProps) {
   const containerClasses =
     variant === 'dashed'
-      ? 'flex items-center gap-1 rounded-md border border-dashed border-brand bg-transparent pl-4.5 w-full'
-      : 'flex items-center gap-1 w-full';
+      ? 'flex-row items-center gap-3 rounded-md border border-dashed border-brand bg-transparent pl-4.5'
+      : 'items-center gap-1';
 
   const inputClasses =
     variant === 'dashed'
-      ? 'cursor-pointer text-base font-medium text-brand !bg-transparent w-full h-12 border-none'
+      ? 'cursor-pointer text-base font-medium text-brand !bg-transparent h-12 border-none text-left'
       : 'w-full';
 
   return (
-    <Container className={cn('sm:max-w-[576px]', className)}>
-      <Container className={containerClasses}>
-        {loading && loadingIcon}
-        {!loading && icon}
-        <Input
-          type="text"
-          className={inputClasses}
-          value={loading ? loadingText : value}
-          placeholder={placeholder}
-          disabled={disabled || loading}
-          readOnly={readOnly}
-          onClick={onClick}
-        />
-      </Container>
+    <Container className={cn('w-full max-w-[576px] mx-0 mb-2 items-center', containerClasses, className)}>
+      {loading && loadingIcon}
+      {!loading && icon}
+      <Input
+        type="text"
+        className={cn('w-full', inputClasses)}
+        value={loading ? loadingText : value}
+        placeholder={placeholder}
+        disabled={disabled || loading}
+        readOnly={readOnly}
+        onClick={onClick}
+      />
     </Container>
   );
 }

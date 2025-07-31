@@ -30,9 +30,10 @@ describe('ActionSection', () => {
   it('renders with default props', () => {
     render(<ActionSection />);
 
-    const container = screen.getByTestId('container');
-    expect(container).toBeInTheDocument();
-    expect(container).toHaveClass('gap-6');
+    const containers = screen.getAllByTestId('container');
+    const mainContainer = containers[0]; // The outer container
+    expect(mainContainer).toBeInTheDocument();
+    expect(mainContainer).toHaveClass('gap-6');
   });
 
   it('renders with actions', () => {
@@ -67,8 +68,9 @@ describe('ActionSection', () => {
   it('applies custom className', () => {
     render(<ActionSection className="custom-actions" />);
 
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('custom-actions');
+    const containers = screen.getAllByTestId('container');
+    const mainContainer = containers[0]; // The outer container
+    expect(mainContainer).toHaveClass('custom-actions');
   });
 
   it('renders with custom children', () => {
