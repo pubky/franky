@@ -42,8 +42,8 @@ export function InputField({
 
   return (
     <Atoms.Container className={Libs.cn('w-full max-w-[576px] mx-0 mb-2 items-center', containerClasses, className)}>
-      {loading && loadingIcon}
-      {!loading && icon}
+      {loading && loadingIcon && <div className="flex items-center justify-center">{loadingIcon}</div>}
+      {!loading && icon && <div className="flex items-center justify-center">{icon}</div>}
       <Atoms.Input
         type="text"
         className={Libs.cn('w-full', inputClasses)}

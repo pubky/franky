@@ -39,7 +39,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                   </Atoms.Container>
                 </Atoms.Container>
                 {stepNumber < totalSteps && (
-                  <Atoms.Container className="relative w-24 xl:w-42 h-px overflow-hidden">
+                  <Atoms.Container className="relative w-24 xl:w-44 h-px overflow-hidden">
                     {/* Base line (gray) */}
                     <Atoms.Container className="absolute inset-0 bg-border opacity-50" />
 

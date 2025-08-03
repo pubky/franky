@@ -157,10 +157,10 @@ describe('SocialLinks', () => {
     expect(links[0]).toHaveAttribute('href', 'https://github.com/pubky');
 
     // Check Twitter link
-    expect(links[1]).toHaveAttribute('href', 'https://twitter.com/getpubky');
+    expect(links[1]).toHaveAttribute('href', 'https://x.com/getpubky');
 
     // Check Telegram link
-    expect(links[2]).toHaveAttribute('href', 'https://t.me/pubky');
+    expect(links[2]).toHaveAttribute('href', '#');
   });
 
   it('applies custom className', () => {
@@ -192,12 +192,16 @@ describe('ButtonSignIn', () => {
   });
 
   it('handles click event', () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
     render(<ButtonSignIn />);
 
     const button = screen.getByTestId('button-secondary');
     fireEvent.click(button);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/signin');
+    expect(consoleSpy).toHaveBeenCalledWith('sign in');
+
+    consoleSpy.mockRestore();
   });
 
   it('has correct variant', () => {

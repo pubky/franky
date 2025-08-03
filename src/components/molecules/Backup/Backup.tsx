@@ -58,7 +58,7 @@ export const BackupPageHeader = () => {
   return (
     <Atoms.PageHeader>
       <Molecules.PageTitle size="medium">
-        <span className="text-brand">Backup</span> your pubky.
+        Back up your <span className="text-brand">pubky.</span>
       </Molecules.PageTitle>
       <Atoms.PageSubtitle>You need a backup to restore access to your account later.</Atoms.PageSubtitle>
     </Atoms.PageHeader>

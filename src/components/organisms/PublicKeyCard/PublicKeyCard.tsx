@@ -65,7 +65,7 @@ export function PublicKeyCard() {
             variant: 'secondary',
           },
         ]}
-        className="flex-col items-start gap-3 justify-start w-full mt-6"
+        className="flex-col items-start gap-3 justify-start w-full"
       >
         <Molecules.InputField
           value={publicKey}
@@ -74,7 +74,7 @@ export function PublicKeyCard() {
           onClick={handleCopyToClipboard}
           loading={publicKey === ''}
           loadingText="Generating pubky..."
-          loadingIcon={<Loader2 className="h-9 w-9 text-brand animate-spin linear infinite" />}
+          loadingIcon={<Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" />}
           icon={<Key className="h-4 w-4 text-brand" />}
         />
       </Molecules.ActionSection>
