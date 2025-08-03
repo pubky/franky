@@ -225,7 +225,7 @@ describe('ScanNavigation', () => {
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/pubky');
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
   });
 
   it('hides continue button and disables it', () => {

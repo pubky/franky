@@ -15,13 +15,18 @@ vi.mock('@/molecules', () => ({
 // Mock atoms
 vi.mock('@/atoms', () => ({
   PageSubtitle: ({ title }: { title: string }) => <div data-testid="page-subtitle">{title}</div>,
+  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
+    <div data-testid="container" className={`container ${size || ''}`}>
+      {children}
+    </div>
+  ),
 }));
 
 describe('Backup', () => {
   it('renders all main components', () => {
     render(<Backup />);
 
-    expect(screen.getByTestId('page-container')).toBeInTheDocument();
+    expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('backup-page-header')).toBeInTheDocument();
     expect(screen.getByTestId('backup-method-card')).toBeInTheDocument();
     expect(screen.getByTestId('backup-navigation')).toBeInTheDocument();
@@ -36,7 +41,7 @@ describe('Backup', () => {
   it('renders components in correct order within page wrapper', () => {
     render(<Backup />);
 
-    const pageWrapper = screen.getByTestId('page-container');
+    const pageWrapper = screen.getByTestId('container');
     const children = Array.from(pageWrapper.children);
 
     expect(children).toHaveLength(3);
@@ -48,7 +53,7 @@ describe('Backup', () => {
   it('wraps all content in page wrapper', () => {
     render(<Backup />);
 
-    const pageWrapper = screen.getByTestId('page-container');
+    const pageWrapper = screen.getByTestId('container');
 
     // All main components should be children of PageWrapper
     expect(pageWrapper).toContainElement(screen.getByTestId('backup-page-header'));
@@ -65,7 +70,7 @@ describe('Backup', () => {
     render(<Backup />);
 
     // Verify the main wrapper exists
-    const pageWrapper = screen.getByTestId('page-container');
+    const pageWrapper = screen.getByTestId('container');
     expect(pageWrapper).toBeInTheDocument();
 
     // Verify all expected child components exist
@@ -79,7 +84,7 @@ describe('Backup', () => {
   it('renders components in correct order', () => {
     render(<Backup />);
 
-    const pageWrapper = screen.getByTestId('page-container');
+    const pageWrapper = screen.getByTestId('container');
     const header = screen.getByTestId('backup-page-header');
     const methodCard = screen.getByTestId('backup-method-card');
     const navigation = screen.getByTestId('backup-navigation');

@@ -105,7 +105,7 @@ describe('HeaderContainer', () => {
     );
 
     expect(screen.getByTestId('child')).toBeInTheDocument();
-    expect(screen.getAllByTestId('container')).toHaveLength(3);
+    expect(screen.getAllByTestId('container')).toHaveLength(2);
   });
 
   it('renders as header element', () => {
@@ -131,7 +131,7 @@ describe('HeaderTitle', () => {
     render(<HeaderTitle currentTitle="Test" />);
 
     const heading = screen.getByTestId('heading-2');
-    expect(heading).toHaveAttribute('data-size', 'sm');
+    expect(heading).toHaveAttribute('data-size', 'lg');
   });
 });
 

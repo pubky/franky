@@ -19,9 +19,9 @@ export const HomeActions = () => {
   return <Molecules.ActionButtons onSignIn={handleSignIn} onCreateAccount={handleCreateAccount} />;
 };
 
-export const HomeFooter = () => {
+export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Atoms.FooterLinks>
+    <Atoms.FooterLinks {...props}>
       By creating a Pubky account, you agree to the <Molecules.DialogTerms linkText="Terms of Service" />,{' '}
       <Molecules.DialogPrivacy linkText="Privacy Policy" />, and confirm you are{' '}
       <Molecules.DialogAge linkText="over 18 years old." /> Pubky is powered by{' '}
@@ -35,8 +35,8 @@ export const HomeFooter = () => {
 
 export const HomeSectionTitle = () => {
   return (
-    <Atoms.Container className="flex-row items-start gap-2 pt-6">
-      <Atoms.Typography size="lg" className="text-brand font-normal">
+    <Atoms.Container className="flex-row items-start gap-2">
+      <Atoms.Typography size="lg" className="text-brand font-light">
         Pubky requires an invite code
       </Atoms.Typography>
       <Molecules.PopoverInvite />

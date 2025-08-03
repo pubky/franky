@@ -62,7 +62,7 @@ describe('ActionButtons', () => {
     render(<ActionButtons />);
 
     const container = screen.getByRole('button', { name: /sign in/i }).parentElement;
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-3', 'sm:flex-row', 'sm:items-center', 'pt-6');
+    expect(container).toHaveClass('mx-auto', 'w-full', 'flex', 'flex-col', 'gap-3', 'sm:flex-row', 'sm:items-center');
   });
 
   it('applies custom className', () => {

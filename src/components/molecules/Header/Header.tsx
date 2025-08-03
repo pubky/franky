@@ -9,11 +9,9 @@ import * as Libs from '@/libs';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Atoms.Container as="header" size="container">
-      <Atoms.Container className="px-6 lg:px-10 py-6">
-        <Atoms.Container as="nav" className="flex-row items-center gap-6 w-full h-16">
-          {children}
-        </Atoms.Container>
+    <Atoms.Container as="header" size="container" className="py-6 h-36 items-center">
+      <Atoms.Container as="nav" className="flex-row items-center py-6 gap-6 w-full h-full">
+        {children}
       </Atoms.Container>
     </Atoms.Container>
   );
@@ -21,8 +19,8 @@ export const HeaderContainer = ({ children }: { children: React.ReactNode }) => 
 
 export const HeaderTitle = ({ currentTitle }: { currentTitle: string }) => {
   return (
-    <Atoms.Container className="flex-1">
-      <Atoms.Heading level={2} size="sm" className="text-muted-foreground font-normal">
+    <Atoms.Container className="flex-1 hidden md:flex">
+      <Atoms.Heading level={2} size="lg" className="text-muted-foreground font-normal">
         {currentTitle}
       </Atoms.Heading>
     </Atoms.Container>

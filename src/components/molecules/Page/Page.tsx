@@ -7,7 +7,7 @@ interface PageContainerProps {
   children: ReactNode;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
   as?: 'div' | 'main' | 'section';
-  size?: 'default' | 'narrow' | 'wide';
+  size?: 'default' | 'narrow';
 }
 
 interface PageTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
@@ -17,9 +17,8 @@ interface PageTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
 
 export function PageContainer({ as: Component = 'div', size = 'default', ...props }: PageContainerProps) {
   const sizeClasses = {
-    default: 'container mx-auto px-6 lg:px-10 lg:pt-8',
-    narrow: 'container mx-auto px-6 lg:px-10 lg:pt-8 max-w-[588px]',
-    wide: 'container mx-auto px-6 lg:px-10 lg:pt-8 max-w-[1200px]',
+    default: 'container mx-auto max-w-[1200px]',
+    narrow: 'container mx-auto max-w-[588px]',
   };
 
   return (

@@ -1,11 +1,12 @@
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 
 export function Backup() {
   return (
-    <Molecules.PageContainer>
+    <Atoms.Container size="container">
       <Molecules.BackupPageHeader />
       <Molecules.BackupMethodCard />
       <Molecules.BackupNavigation />
-    </Molecules.PageContainer>
+    </Atoms.Container>
   );
 }

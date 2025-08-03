@@ -1,12 +1,13 @@
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 
 export function PublicKey() {
   return (
-    <Molecules.PageContainer>
+    <Atoms.Container size="container">
       <Molecules.PublicKeyHeader />
       <Organisms.PublicKeyCard />
       <Molecules.PublicKeyNavigation />
-    </Molecules.PageContainer>
+    </Atoms.Container>
   );
 }

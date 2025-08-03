@@ -26,7 +26,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                   className={Libs.cn(
                     'items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform',
                     isActive ? 'bg-foreground text-background' : 'border text-muted-foreground',
-                    isCompleted && 'bg-brand text-black border-brand',
+                    isCompleted && 'bg-transparent text-brand border-brand',
                   )}
                 >
                   <Atoms.Container
@@ -59,7 +59,9 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
       </Atoms.Container>
 
       {/* Progress Steps - Mobile */}
-      <Atoms.Container className={Libs.cn('lg:hidden items-center gap-0 mt-2.5 flex-1 flex-row', className)}>
+      <Atoms.Container
+        className={Libs.cn('lg:hidden items-center gap-0 mt-2.5 max-w-xs mr-0 flex-1 flex-row', className)}
+      >
         {Array.from({ length: totalSteps }, (_, index) => {
           const stepNumber = index + 1;
           const isActive = stepNumber === currentStep;

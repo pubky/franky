@@ -20,7 +20,7 @@ export function ActionButtons({
   ...props
 }: ActionButtonsProps) {
   return (
-    <Atoms.Container className={Libs.cn('flex-col gap-3 sm:flex-row sm:items-center pt-6', className)} {...props}>
+    <Atoms.Container className={Libs.cn('flex-col gap-3 sm:flex-row sm:items-center', className)} {...props}>
       <Atoms.Button variant="secondary" className="w-full sm:w-auto order-2 sm:order-1" size="lg" onClick={onSignIn}>
         <LogIn className="mr-2 h-4 w-4" />
         {signInText}

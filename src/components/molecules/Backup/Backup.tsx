@@ -45,6 +45,7 @@ export const BackupNavigation = () => {
 
   return (
     <Molecules.ButtonsNavigation
+      className="py-6"
       onHandleBackButton={onHandleBackButton}
       onHandleContinueButton={onHandleContinueButton}
       backText="Back"
@@ -55,11 +56,11 @@ export const BackupNavigation = () => {
 
 export const BackupPageHeader = () => {
   return (
-    <>
-      <Atoms.Heading level={1} size="2xl">
+    <Atoms.PageHeader>
+      <Molecules.PageTitle size="medium">
         <span className="text-brand">Backup</span> your pubky.
-      </Atoms.Heading>
-      <Atoms.PageSubtitle title="You need a backup to restore access to your account later." />
-    </>
+      </Molecules.PageTitle>
+      <Atoms.PageSubtitle>You need a backup to restore access to your account later.</Atoms.PageSubtitle>
+    </Atoms.PageHeader>
   );
 };

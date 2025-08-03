@@ -179,7 +179,7 @@ describe('InstallFooter', () => {
     render(<InstallFooter />);
 
     const footer = screen.getByTestId('footer-links');
-    expect(footer.className).toContain('mt-6');
+    expect(footer.className).toContain('py-6');
   });
 });
 
@@ -196,7 +196,7 @@ describe('InstallHeader', () => {
     render(<InstallHeader />);
 
     const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'large');
+    expect(title).toHaveAttribute('data-size', 'medium');
     expect(title).toHaveTextContent('Install Pubky Ring.');
   });
 

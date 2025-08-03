@@ -43,7 +43,7 @@ export function ContentCard({ children, className, image, layout = 'row' }: Cont
         {image && (
           <ContentImage src={image.src} alt={image.alt} width={image.width} height={image.height} size={image.size} />
         )}
-        <Atoms.Container className=" gap-6 justify-center w-full">{children}</Atoms.Container>
+        <Atoms.Container className="gap-6 justify-start w-full">{children}</Atoms.Container>
       </Atoms.Container>
     </Atoms.Card>
   );

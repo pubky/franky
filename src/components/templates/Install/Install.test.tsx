@@ -2,6 +2,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Install } from './Install';
 
+// Mock atoms
+vi.mock('@/atoms', () => ({
+  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
+    <div data-testid="container" className={`container ${size || ''}`}>
+      {children}
+    </div>
+  ),
+}));
+
 // Mock molecules
 vi.mock('@/molecules', () => ({
   PageContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="page-container">{children}</div>,
@@ -15,7 +24,7 @@ describe('Install', () => {
   it('renders all main components', () => {
     render(<Install />);
 
-    expect(screen.getByTestId('page-container')).toBeInTheDocument();
+    expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('install-header')).toBeInTheDocument();
     expect(screen.getByTestId('install-card')).toBeInTheDocument();
     expect(screen.getByTestId('install-footer')).toBeInTheDocument();
@@ -25,7 +34,7 @@ describe('Install', () => {
   it('renders components in correct order within page container', () => {
     render(<Install />);
 
-    const pageContainer = screen.getByTestId('page-container');
+    const pageContainer = screen.getByTestId('container');
     const children = Array.from(pageContainer.children);
 
     expect(children).toHaveLength(4);
@@ -38,7 +47,7 @@ describe('Install', () => {
   it('wraps all content in page container', () => {
     render(<Install />);
 
-    const pageContainer = screen.getByTestId('page-container');
+    const pageContainer = screen.getByTestId('container');
 
     // All main components should be children of PageContainer
     expect(pageContainer).toContainElement(screen.getByTestId('install-header'));
@@ -56,7 +65,7 @@ describe('Install', () => {
     render(<Install />);
 
     // Verify the main container exists
-    const pageContainer = screen.getByTestId('page-container');
+    const pageContainer = screen.getByTestId('container');
     expect(pageContainer).toBeInTheDocument();
 
     // Verify all expected child components exist

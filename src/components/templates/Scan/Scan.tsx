@@ -1,10 +1,12 @@
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 
 export function Scan() {
   return (
-    <Molecules.PageContainer>
+    <Atoms.Container size="container">
       <Molecules.ScanContent />
+      <Molecules.ScanFooter />
       <Molecules.ScanNavigation />
-    </Molecules.PageContainer>
+    </Atoms.Container>
   );
 }

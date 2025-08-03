@@ -7,7 +7,6 @@ import { AppWindow, ArrowRight } from 'lucide-react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import { Button } from '@/atoms';
 
 export const InstallCard = () => {
   return (
@@ -33,7 +32,7 @@ export const InstallCard = () => {
 
 export const InstallFooter = () => {
   return (
-    <Atoms.FooterLinks className="mt-6">
+    <Atoms.FooterLinks className="py-6">
       Use{' '}
       <Atoms.Link href="https://www.pubkyring.to/" target="_blank">
         Pubky Ring
@@ -50,7 +49,7 @@ export const InstallFooter = () => {
 export const InstallHeader = () => {
   return (
     <Atoms.PageHeader>
-      <Molecules.PageTitle size="large">
+      <Molecules.PageTitle size="medium">
         Install <span className="text-brand">Pubky Ring.</span>
       </Molecules.PageTitle>
       <Atoms.PageSubtitle>Pubky Ring is a keychain for your identity keys in the Pubky ecosystem.</Atoms.PageSubtitle>
@@ -78,10 +77,10 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
         </Atoms.Button>
         <Molecules.PopoverTradeoffs />
       </Atoms.Container>
-      <Button size="lg" className="rounded-full" onClick={handleContinue}>
+      <Atoms.Button size="lg" className="rounded-full" onClick={handleContinue}>
         <ArrowRight className="mr-2 h-4 w-4" />
         Continue with Pubky Ring
-      </Button>
+      </Atoms.Button>
     </Atoms.Container>
   );
 };

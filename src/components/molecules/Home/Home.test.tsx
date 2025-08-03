@@ -143,14 +143,14 @@ describe('HomeSectionTitle', () => {
 
     const typography = screen.getByTestId('typography');
     expect(typography).toHaveAttribute('data-size', 'lg');
-    expect(typography.className).toContain('text-brand font-normal');
+    expect(typography.className).toContain('text-brand font-light');
   });
 
   it('has correct container layout', () => {
     render(<HomeSectionTitle />);
 
     const container = screen.getByTestId('container');
-    expect(container.className).toContain('flex-row items-start gap-2 pt-6');
+    expect(container.className).toContain('flex-row items-start gap-2');
   });
 });
 

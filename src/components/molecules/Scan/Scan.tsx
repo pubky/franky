@@ -10,7 +10,7 @@ import * as Molecules from '@/molecules';
 export const ScanContent = () => {
   return (
     <>
-      <Atoms.Container className="hidden md:flex gap-6">
+      <Atoms.Container size="container" className="hidden md:flex">
         <ScanHeader isMobile={false} />
         <Molecules.ContentCard layout="column">
           {/* TODO: change to real qr code url */}
@@ -19,7 +19,7 @@ export const ScanContent = () => {
           </Atoms.Container>
         </Molecules.ContentCard>
       </Atoms.Container>
-      <Atoms.Container className="md:hidden gap-6">
+      <Atoms.Container size="container" className="md:hidden">
         <ScanHeader isMobile={true} />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
@@ -37,7 +37,7 @@ export const ScanContent = () => {
 
 export const ScanFooter = () => {
   return (
-    <Atoms.FooterLinks>
+    <Atoms.FooterLinks className="py-6">
       Use{' '}
       <Atoms.Link href="https://www.pubkyring.to/" target="_blank">
         Pubky Ring
@@ -74,7 +74,7 @@ export const ScanNavigation = () => {
   const router = useRouter();
 
   const onHandleBackButton = () => {
-    router.push('/onboarding/pubky');
+    router.push('/onboarding/install');
   };
 
   return (

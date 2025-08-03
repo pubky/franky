@@ -34,7 +34,7 @@ describe('ProgressSteps', () => {
 
     // Check that completed step container has the right classes (brand styling for completed)
     const completedStepContainer = checkIcons[0]?.parentElement?.parentElement;
-    expect(completedStepContainer).toHaveClass('bg-brand', 'text-black', 'border-brand');
+    expect(completedStepContainer).toHaveClass('bg-transparent', 'text-brand', 'border-brand');
   });
 
   it('shows pending steps correctly in desktop version', () => {

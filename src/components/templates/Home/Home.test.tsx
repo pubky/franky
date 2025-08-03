@@ -9,6 +9,11 @@ vi.mock('@/atoms', () => ({
       Image Background
     </div>
   ),
+  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
+    <div data-testid="container" className={`container ${size || ''}`}>
+      {children}
+    </div>
+  ),
 }));
 
 // Mock molecules
@@ -26,7 +31,7 @@ describe('Home', () => {
     render(<Home />);
 
     expect(screen.getByTestId('image-background')).toBeInTheDocument();
-    expect(screen.getByTestId('page-container')).toBeInTheDocument();
+    expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('home-page-heading')).toBeInTheDocument();
     expect(screen.getByTestId('home-section-title')).toBeInTheDocument();
     expect(screen.getByTestId('home-actions')).toBeInTheDocument();
@@ -50,8 +55,8 @@ describe('Home', () => {
   it('renders components in correct order within page wrapper', () => {
     render(<Home />);
 
-    const pageWrapper = screen.getByTestId('page-container');
-    const children = Array.from(pageWrapper.children);
+    const pageContainer = screen.getByTestId('page-container');
+    const children = Array.from(pageContainer.children);
 
     expect(children).toHaveLength(4);
     expect(children[0]).toHaveAttribute('data-testid', 'home-page-heading');
@@ -65,12 +70,12 @@ describe('Home', () => {
 
     // Check that image background is a direct child of the fragment (container)
     const imageBackground = screen.getByTestId('image-background');
-    const pageWrapper = screen.getByTestId('page-container');
+    const pageContainer = screen.getByTestId('page-container');
 
     expect(imageBackground).toBeInTheDocument();
-    expect(pageWrapper).toBeInTheDocument();
+    expect(pageContainer).toBeInTheDocument();
 
     // They should be siblings, not parent-child
-    expect(pageWrapper).not.toContainElement(imageBackground);
+    expect(pageContainer).not.toContainElement(imageBackground);
   });
 });
