@@ -12,7 +12,7 @@ export function Logo({ width = 109, height = 36, ...props }: LogoProps & React.H
   return (
     <Atoms.Link
       href="/"
-      className={Libs.cn(`flex items-center min-w-[${width}px] min-h-[${height}px]`, props.className)}
+      className={Libs.cn(`flex items-center min-w-[${width}px] min-h-[${height}px] -mt-1`, props.className)}
     >
       <Image
         src="/pubky-logo.svg"
