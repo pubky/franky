@@ -1,0 +1,1 @@
+export { BackupMethodCard } from './BackupMethodCard';

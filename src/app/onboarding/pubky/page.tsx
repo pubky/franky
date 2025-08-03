@@ -1,5 +1,5 @@
-import { PublicKeyTemplate } from '@/components/ui';
+import * as Templates from '@/templates';
 
 export default function PubkyPage() {
-  return <PublicKeyTemplate />;
+  return <Templates.PublicKey />;
 }

@@ -1,5 +1,5 @@
-import { HomeTemplate } from '@/components/ui';
+import * as Templates from '@/templates';
 
 export default function Home() {
-  return <HomeTemplate />;
+  return <Templates.Home />;
 }

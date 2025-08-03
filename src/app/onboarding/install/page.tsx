@@ -1,5 +1,5 @@
-import { InstallTemplate } from '@/components/ui';
+import * as Templates from '@/templates';
 
 export default function InstallPage() {
-  return <InstallTemplate />;
+  return <Templates.Install />;
 }

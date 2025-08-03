@@ -1,5 +1,5 @@
-import { ScanTemplate } from '@/components/ui';
+import * as Templates from '@/templates';
 
 export default function ScanPage() {
-  return <ScanTemplate />;
+  return <Templates.Scan />;
 }

@@ -1,5 +1,5 @@
-import { BackupTemplate } from '@/components/ui';
+import * as Templates from '@/templates';
 
 export default function BackupPage() {
-  return <BackupTemplate />;
+  return <Templates.Backup />;
 }
