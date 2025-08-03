@@ -67,12 +67,13 @@ describe('DialogPrivacy', () => {
     expect(triggerLink?.tagName).toBe('A');
   });
 
-  it('displays custom link text', () => {
-    render(<DialogPrivacy linkText="Custom Privacy Link" />);
+  it('displays static link text', () => {
+    render(<DialogPrivacy />);
 
-    const link = screen.getByText('Custom Privacy Link');
+    const link = screen.getByTestId('link');
     expect(link).toBeInTheDocument();
     expect(link.tagName).toBe('A');
+    expect(link).toHaveTextContent('Privacy Policy');
   });
 
   it('applies correct styling to trigger link', () => {
@@ -147,13 +148,10 @@ describe('DialogPrivacy', () => {
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Privacy Policy');
   });
 
-  it('handles different link text props', () => {
-    const { rerender } = render(<DialogPrivacy linkText="Privacy" />);
-    expect(screen.getByText('Privacy')).toBeInTheDocument();
-
-    rerender(<DialogPrivacy linkText="Privacy Terms" />);
-    expect(screen.getByText('Privacy Terms')).toBeInTheDocument();
-    expect(screen.queryByText('Privacy')).not.toBeInTheDocument();
+  it('always displays the same static link text', () => {
+    render(<DialogPrivacy />);
+    const link = screen.getByTestId('link');
+    expect(link).toHaveTextContent('Privacy Policy');
   });
 
   it('renders complete privacy policy sections', () => {

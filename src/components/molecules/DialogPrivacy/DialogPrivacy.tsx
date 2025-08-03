@@ -1,11 +1,11 @@
 import * as Atoms from '@/atoms';
 
-export function DialogPrivacy({ linkText = 'Privacy Policy' }: { linkText?: string }) {
+export function DialogPrivacy() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Link href="#" className="text-brand">
-          {linkText}
+          Privacy Policy
         </Atoms.Link>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="sm:max-w-xl">

@@ -33,7 +33,7 @@ export const OnboardingHeader = ({ currentStep }: { currentStep: number }) => {
 
 export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-8', props.className)}>
+    <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
       <Atoms.Link href="https://github.com/pubky" variant="muted" size="default">
         <Github className="w-6 h-6" />
       </Atoms.Link>
@@ -63,7 +63,7 @@ export function ButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElemen
 
 export const HomeHeader = () => {
   return (
-    <Atoms.Container className="flex-1 flex-row items-center justify-end gap-6">
+    <Atoms.Container className="flex-1 flex-row items-center justify-end">
       <Molecules.SocialLinks />
       <Molecules.ButtonSignIn />
     </Atoms.Container>

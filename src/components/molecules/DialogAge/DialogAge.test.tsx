@@ -61,15 +61,7 @@ describe('DialogAge', () => {
   it('displays default link text', () => {
     render(<DialogAge />);
 
-    const link = screen.getByText('Privacy Policy');
-    expect(link).toBeInTheDocument();
-    expect(link.tagName).toBe('A');
-  });
-
-  it('displays custom link text', () => {
-    render(<DialogAge linkText="18+" />);
-
-    const link = screen.getByText('18+');
+    const link = screen.getByText('over 18 years old.');
     expect(link).toBeInTheDocument();
     expect(link.tagName).toBe('A');
   });
@@ -77,7 +69,7 @@ describe('DialogAge', () => {
   it('applies correct styling to trigger link', () => {
     render(<DialogAge />);
 
-    const link = screen.getByText('Privacy Policy');
+    const link = screen.getByText('over 18 years old.');
     expect(link).toHaveClass('text-brand');
   });
 
@@ -127,19 +119,15 @@ describe('DialogAge', () => {
     expect(screen.getByText('You can only use Pubky if you are over 18 years old.')).toBeInTheDocument();
   });
 
-  it('handles different link text props', () => {
-    const { rerender } = render(<DialogAge linkText="16+" />);
-    expect(screen.getByText('16+')).toBeInTheDocument();
-
-    rerender(<DialogAge linkText="21+" />);
-    expect(screen.getByText('21+')).toBeInTheDocument();
-    expect(screen.queryByText('16+')).not.toBeInTheDocument();
+  it('always displays the same static link text', () => {
+    render(<DialogAge />);
+    expect(screen.getByText('over 18 years old.')).toBeInTheDocument();
   });
 
   it('renders age-related content sections', () => {
     render(<DialogAge />);
 
-    // Check for content related to age requirements
-    expect(screen.getByText(/over 18 years old/)).toBeInTheDocument();
+    // Check for content related to age requirements - there are multiple elements with this text
+    expect(screen.getAllByText(/over 18 years old/)).toHaveLength(2);
   });
 });

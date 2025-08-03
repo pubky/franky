@@ -67,12 +67,13 @@ describe('DialogTerms', () => {
     expect(triggerLink?.tagName).toBe('A');
   });
 
-  it('displays custom link text', () => {
-    render(<DialogTerms linkText="Custom Terms Link" />);
+  it('displays static link text', () => {
+    render(<DialogTerms />);
 
-    const link = screen.getByText('Custom Terms Link');
+    const link = screen.getByTestId('link');
     expect(link).toBeInTheDocument();
     expect(link.tagName).toBe('A');
+    expect(link).toHaveTextContent('Terms of Service');
   });
 
   it('applies correct styling to trigger link', () => {
@@ -145,13 +146,10 @@ describe('DialogTerms', () => {
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Terms of Service');
   });
 
-  it('handles different link text props', () => {
-    const { rerender } = render(<DialogTerms linkText="Terms" />);
-    expect(screen.getByText('Terms')).toBeInTheDocument();
-
-    rerender(<DialogTerms linkText="Service Terms" />);
-    expect(screen.getByText('Service Terms')).toBeInTheDocument();
-    expect(screen.queryByText('Terms')).not.toBeInTheDocument();
+  it('always displays the same static link text', () => {
+    render(<DialogTerms />);
+    const link = screen.getByTestId('link');
+    expect(link).toHaveTextContent('Terms of Service');
   });
 
   it('renders complete terms sections', () => {

@@ -3,7 +3,11 @@ import { QRCodeSVG } from 'qrcode.react';
 
 import * as Atoms from '@/atoms';
 
-export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' | 'android' }) {
+interface DialogDownloadPubkyRingProps {
+  store?: 'apple' | 'android';
+}
+
+export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubkyRingProps) {
   const imageBadge =
     store === 'apple'
       ? {

@@ -22,9 +22,8 @@ export const HomeActions = () => {
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <Atoms.FooterLinks {...props}>
-      By creating a Pubky account, you agree to the <Molecules.DialogTerms linkText="Terms of Service" />,{' '}
-      <Molecules.DialogPrivacy linkText="Privacy Policy" />, and confirm you are{' '}
-      <Molecules.DialogAge linkText="over 18 years old." /> Pubky is powered by{' '}
+      By creating a Pubky account, you agree to the <Molecules.DialogTerms />, <Molecules.DialogPrivacy />, and confirm
+      you are <Molecules.DialogAge /> Pubky is powered by{' '}
       <Atoms.Link href="https://pubky.org/" target="_blank">
         Pubky Core
       </Atoms.Link>{' '}

@@ -174,7 +174,7 @@ describe('SocialLinks', () => {
     render(<SocialLinks />);
 
     const container = screen.getByTestId('container');
-    expect(container.className).toContain('hidden md:flex flex-row justify-end gap-6 mr-8');
+    expect(container.className).toContain('hidden md:flex flex-row justify-end gap-6 mr-6');
   });
 });
 
@@ -227,6 +227,6 @@ describe('HomeHeader', () => {
     render(<HomeHeader />);
 
     const container = screen.getByTestId('container');
-    expect(container.className).toContain('flex-1 flex-row items-center justify-end gap-6');
+    expect(container.className).toContain('flex-1 flex-row items-center justify-end');
   });
 });

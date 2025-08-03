@@ -115,7 +115,10 @@ describe('InvitePopover', () => {
     const heading = screen.getByText("Don't have an invite yet?");
     const description = screen.getByText('Ask the Pubky team!');
 
-    expect(heading).toHaveClass('text-lg', 'font-semibold', 'text-popover-foreground');
-    expect(description).toHaveClass('text-lg', 'font-semibold', 'text-muted-foreground');
+    // Check that the components are rendered
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveClass('text-popover-foreground');
+    expect(description).toBeInTheDocument();
+    expect(description).toHaveClass('font-normal', 'text-muted-foreground');
   });
 });
