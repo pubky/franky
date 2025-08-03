@@ -1,7 +1,6 @@
 import { Gift, Mail, Twitter, Send } from 'lucide-react';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 
 interface PopoverInviteProps {
   className?: string;
@@ -14,13 +13,13 @@ const TELEGRAM_URL = 'https://t.me/pubky';
 
 export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInviteProps) {
   return (
-    <Molecules.Popover>
-      <Molecules.PopoverTrigger asChild>
+    <Atoms.Popover>
+      <Atoms.PopoverTrigger asChild>
         <Atoms.Button variant="ghost" size="icon" className={className}>
           <Gift className="h-4 w-4 text-brand" />
         </Atoms.Button>
-      </Molecules.PopoverTrigger>
-      <Molecules.PopoverContent className="w-[327px]">
+      </Atoms.PopoverTrigger>
+      <Atoms.PopoverContent className="w-[327px]">
         <Atoms.Container className="flex-col gap-6 px-3 py-2">
           <Atoms.Container className="flex-col gap-2">
             <Atoms.Heading level={4} size="sm" className="text-popover-foreground">
@@ -42,7 +41,7 @@ export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInvite
             </Atoms.Link>
           </Atoms.Container>
         </Atoms.Container>
-      </Molecules.PopoverContent>
-    </Molecules.Popover>
+      </Atoms.PopoverContent>
+    </Atoms.Popover>
   );
 }

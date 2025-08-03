@@ -26,7 +26,7 @@ export const InstallCard = () => {
           Download and install the mobile app to start creating your account.
         </Atoms.Typography>
       </Atoms.Container>
-      <Molecules.StoreButtons />
+      <StoreButtons />
     </Molecules.ContentCard>
   );
 };
@@ -85,3 +85,12 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
     </Atoms.Container>
   );
 };
+
+export function StoreButtons({ className }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <Atoms.Container className={Libs.cn('flex-row gap-4 justify-around sm:justify-start', className)}>
+      <Molecules.DialogDownloadPubkyRing store="apple" />
+      <Molecules.DialogDownloadPubkyRing store="android" />
+    </Atoms.Container>
+  );
+}

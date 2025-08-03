@@ -12,7 +12,7 @@ vi.mock('lucide-react', () => ({
 }));
 
 // Mock atoms and molecules
-vi.mock('@/components/atoms', () => ({
+vi.mock('@/atoms', () => ({
   Button: ({ children, variant, className }: { children: React.ReactNode; variant?: string; className?: string }) => (
     <button data-testid={`button-${variant || 'default'}`} className={className}>
       {children}
@@ -41,6 +41,17 @@ vi.mock('@/components/atoms', () => ({
       </Tag>
     );
   },
+  Popover: ({ children }: { children: React.ReactNode }) => <div data-testid="popover">{children}</div>,
+  PopoverTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+    <div data-testid="popover-trigger" data-as-child={asChild}>
+      {children}
+    </div>
+  ),
+  PopoverContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="popover-content" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock('@/components/molecules', () => ({

@@ -8,6 +8,8 @@ vi.mock('@/molecules', () => ({
   HomePageHeading: ({ title }: { title: string }) => <div data-testid="home-page-heading">{title}</div>,
   BackupMethodCard: () => <div data-testid="backup-method-card">Backup Method Card</div>,
   BackupNavigation: () => <div data-testid="backup-navigation">Backup Navigation</div>,
+  BackupPageHeader: () => <div data-testid="backup-page-header">Backup Page Header</div>,
+  PageContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="page-container">{children}</div>,
 }));
 
 // Mock atoms
@@ -19,9 +21,8 @@ describe('Backup', () => {
   it('renders all main components', () => {
     render(<Backup />);
 
-    expect(screen.getByTestId('page-wrapper')).toBeInTheDocument();
-    expect(screen.getByTestId('home-page-heading')).toBeInTheDocument();
-    expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
+    expect(screen.getByTestId('page-container')).toBeInTheDocument();
+    expect(screen.getByTestId('backup-page-header')).toBeInTheDocument();
     expect(screen.getByTestId('backup-method-card')).toBeInTheDocument();
     expect(screen.getByTestId('backup-navigation')).toBeInTheDocument();
   });
@@ -29,36 +30,28 @@ describe('Backup', () => {
   it('renders heading with correct title', () => {
     render(<Backup />);
 
-    expect(screen.getByText('Back up your pubky.')).toBeInTheDocument();
-  });
-
-  it('renders subtitle with correct text', () => {
-    render(<Backup />);
-
-    expect(screen.getByText('You need a backup to restore access to your account later.')).toBeInTheDocument();
+    expect(screen.getByTestId('backup-page-header')).toBeInTheDocument();
   });
 
   it('renders components in correct order within page wrapper', () => {
     render(<Backup />);
 
-    const pageWrapper = screen.getByTestId('page-wrapper');
+    const pageWrapper = screen.getByTestId('page-container');
     const children = Array.from(pageWrapper.children);
 
-    expect(children).toHaveLength(4);
-    expect(children[0]).toHaveAttribute('data-testid', 'home-page-heading');
-    expect(children[1]).toHaveAttribute('data-testid', 'page-subtitle');
-    expect(children[2]).toHaveAttribute('data-testid', 'backup-method-card');
-    expect(children[3]).toHaveAttribute('data-testid', 'backup-navigation');
+    expect(children).toHaveLength(3);
+    expect(children[0]).toHaveAttribute('data-testid', 'backup-page-header');
+    expect(children[1]).toHaveAttribute('data-testid', 'backup-method-card');
+    expect(children[2]).toHaveAttribute('data-testid', 'backup-navigation');
   });
 
   it('wraps all content in page wrapper', () => {
     render(<Backup />);
 
-    const pageWrapper = screen.getByTestId('page-wrapper');
+    const pageWrapper = screen.getByTestId('page-container');
 
     // All main components should be children of PageWrapper
-    expect(pageWrapper).toContainElement(screen.getByTestId('home-page-heading'));
-    expect(pageWrapper).toContainElement(screen.getByTestId('page-subtitle'));
+    expect(pageWrapper).toContainElement(screen.getByTestId('backup-page-header'));
     expect(pageWrapper).toContainElement(screen.getByTestId('backup-method-card'));
     expect(pageWrapper).toContainElement(screen.getByTestId('backup-navigation'));
   });
@@ -72,34 +65,31 @@ describe('Backup', () => {
     render(<Backup />);
 
     // Verify the main wrapper exists
-    const pageWrapper = screen.getByTestId('page-wrapper');
+    const pageWrapper = screen.getByTestId('page-container');
     expect(pageWrapper).toBeInTheDocument();
 
     // Verify all expected child components exist
-    const expectedComponents = ['home-page-heading', 'page-subtitle', 'backup-method-card', 'backup-navigation'];
+    const expectedComponents = ['backup-page-header', 'backup-method-card', 'backup-navigation'];
 
     expectedComponents.forEach((componentTestId) => {
       expect(screen.getByTestId(componentTestId)).toBeInTheDocument();
     });
   });
 
-  it('renders heading and subtitle before other components', () => {
+  it('renders components in correct order', () => {
     render(<Backup />);
 
-    const pageWrapper = screen.getByTestId('page-wrapper');
-    const heading = screen.getByTestId('home-page-heading');
-    const subtitle = screen.getByTestId('page-subtitle');
+    const pageWrapper = screen.getByTestId('page-container');
+    const header = screen.getByTestId('backup-page-header');
     const methodCard = screen.getByTestId('backup-method-card');
     const navigation = screen.getByTestId('backup-navigation');
 
     const children = Array.from(pageWrapper.children);
-    const headingIndex = children.indexOf(heading);
-    const subtitleIndex = children.indexOf(subtitle);
+    const headerIndex = children.indexOf(header);
     const methodCardIndex = children.indexOf(methodCard);
     const navigationIndex = children.indexOf(navigation);
 
-    expect(headingIndex).toBeLessThan(subtitleIndex);
-    expect(subtitleIndex).toBeLessThan(methodCardIndex);
+    expect(headerIndex).toBeLessThan(methodCardIndex);
     expect(methodCardIndex).toBeLessThan(navigationIndex);
   });
 });

@@ -44,10 +44,10 @@ export const HomeSectionTitle = () => {
   );
 };
 
-export const HomePageHeading = ({ title }: { title: string }) => {
+export const HomePageHeading = () => {
   return (
     <Atoms.Heading level={1} size="2xl">
-      {title}
+      <span className="text-brand">Unlock</span> the web.
     </Atoms.Heading>
   );
 };

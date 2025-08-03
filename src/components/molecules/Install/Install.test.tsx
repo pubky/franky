@@ -34,13 +34,22 @@ vi.mock('@/molecules', () => ({
       {children}
     </div>
   ),
-  StoreButtons: () => <div data-testid="store-buttons">Store Buttons</div>,
+  StoreButtons: ({ className }: { className?: string }) => (
+    <div data-testid="store-buttons" className={className}>
+      Store Buttons
+    </div>
+  ),
   PageTitle: ({ children, size }: { children: React.ReactNode; size?: string }) => (
     <div data-testid="page-title" data-size={size}>
       {children}
     </div>
   ),
   PopoverTradeoffs: () => <div data-testid="popover-tradeoffs">Tradeoffs Popover</div>,
+  DialogDownloadPubkyRing: ({ store }: { store?: string }) => (
+    <div data-testid="dialog-download-pubky-ring" data-store={store}>
+      Download Dialog
+    </div>
+  ),
 }));
 
 // Mock atoms
@@ -128,7 +137,7 @@ describe('InstallCard', () => {
   it('renders store buttons', () => {
     render(<InstallCard />);
 
-    expect(screen.getByTestId('store-buttons')).toBeInTheDocument();
+    expect(screen.getAllByTestId('dialog-download-pubky-ring')).toHaveLength(2);
   });
 });
 

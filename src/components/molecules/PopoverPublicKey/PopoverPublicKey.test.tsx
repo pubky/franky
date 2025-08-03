@@ -71,6 +71,17 @@ vi.mock('@/atoms', () => ({
       </p>
     );
   },
+  Popover: ({ children }: { children: React.ReactNode }) => <div data-testid="popover">{children}</div>,
+  PopoverTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+    <div data-testid="popover-trigger" data-as-child={asChild}>
+      {children}
+    </div>
+  ),
+  PopoverContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="popover-content" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock('@/molecules', () => ({

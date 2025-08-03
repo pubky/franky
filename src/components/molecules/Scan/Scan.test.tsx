@@ -82,12 +82,19 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('ScanContent', () => {
-  it('renders responsive section with desktop and mobile content', () => {
+  it('renders desktop and mobile content containers', () => {
     render(<ScanContent />);
 
-    expect(screen.getByTestId('responsive-section')).toBeInTheDocument();
-    expect(screen.getByTestId('desktop-content')).toBeInTheDocument();
-    expect(screen.getByTestId('mobile-content')).toBeInTheDocument();
+    const containers = screen.getAllByTestId('container');
+    expect(containers.length).toBeGreaterThan(0);
+
+    // Check for desktop container (hidden md:flex)
+    const desktopContainer = containers.find((container) => container.className.includes('hidden md:flex'));
+    expect(desktopContainer).toBeInTheDocument();
+
+    // Check for mobile container (md:hidden)
+    const mobileContainer = containers.find((container) => container.className.includes('md:hidden'));
+    expect(mobileContainer).toBeInTheDocument();
   });
 
   it('renders QR code image in desktop version', () => {

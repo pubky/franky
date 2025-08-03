@@ -1,6 +1,6 @@
 'use client';
 
-import { Toast, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from './Toast';
+import { Toast, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from '@/atoms';
 import { useToast } from './use-toast';
 
 export function Toaster() {
@@ -12,7 +12,7 @@ export function Toaster() {
         return (
           <Toast
             key={id}
-            className="flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border border-brand/20 text-white"
+            className="flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
             {...props}
           >
             <div className="flex items-center justify-between gap-4 w-full">

@@ -1,3 +1,7 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 
@@ -25,5 +29,37 @@ export const BackupMethodCard = () => {
         </Atoms.Typography>
       </Atoms.Container>
     </Molecules.ContentCard>
+  );
+};
+
+export const BackupNavigation = () => {
+  const router = useRouter();
+
+  const onHandleContinueButton = () => {
+    console.log('handleContinue');
+  };
+
+  const onHandleBackButton = () => {
+    router.push('/onboarding/pubky');
+  };
+
+  return (
+    <Molecules.ButtonsNavigation
+      onHandleBackButton={onHandleBackButton}
+      onHandleContinueButton={onHandleContinueButton}
+      backText="Back"
+      continueText="Continue"
+    />
+  );
+};
+
+export const BackupPageHeader = () => {
+  return (
+    <>
+      <Atoms.Heading level={1} size="2xl">
+        <span className="text-brand">Backup</span> your pubky.
+      </Atoms.Heading>
+      <Atoms.PageSubtitle title="You need a backup to restore access to your account later." />
+    </>
   );
 };

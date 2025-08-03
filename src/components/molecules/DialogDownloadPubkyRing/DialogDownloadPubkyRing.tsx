@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 
 export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' | 'android' }) {
   const imageBadge =
@@ -23,7 +22,7 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' |
         };
 
   return (
-    <Molecules.Dialog>
+    <Atoms.Dialog>
       {store === 'apple' ? (
         <Atoms.Link href={imageBadge.href} target="_blank" className="block sm:hidden">
           <Image src={imageBadge.src} alt={imageBadge.alt} width={192} height={40} />
@@ -33,20 +32,20 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' |
           <Image src={imageBadge.src} alt={imageBadge.alt} width={210} height={40} />
         </Atoms.Link>
       )}
-      <Molecules.DialogTrigger asChild className="cursor-pointer hidden sm:block">
+      <Atoms.DialogTrigger asChild className="cursor-pointer hidden sm:block">
         {store === 'apple' ? (
           <Image src="/images/badge-apple.png" alt="App Store" width={120} height={40} />
         ) : (
           <Image src="/images/badge-android.png" alt="Google Play" width={120} height={40} />
         )}
-      </Molecules.DialogTrigger>
-      <Molecules.DialogContent className="sm:max-w-[384px]">
-        <Molecules.DialogHeader className="pr-6">
-          <Molecules.DialogTitle>Download Pubky Ring</Molecules.DialogTitle>
-          <Molecules.DialogDescription className="text-sm font-medium">
+      </Atoms.DialogTrigger>
+      <Atoms.DialogContent className="sm:max-w-[384px]">
+        <Atoms.DialogHeader className="pr-6">
+          <Atoms.DialogTitle>Download Pubky Ring</Atoms.DialogTitle>
+          <Atoms.DialogDescription className="text-sm font-medium">
             Scan the QR with your mobile camera to download Pubky Ring from the App Store.
-          </Molecules.DialogDescription>
-        </Molecules.DialogHeader>
+          </Atoms.DialogDescription>
+        </Atoms.DialogHeader>
         <Atoms.Container className="mt-6">
           <Atoms.Container className="flex-row gap-8 items-center">
             <Image src="/images/pubky-ring-phone.png" alt="App preview" width={96} height={256} />
@@ -67,7 +66,7 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: { store?: 'apple' |
             </Atoms.Container>
           </Atoms.Container>
         </Atoms.Container>
-      </Molecules.DialogContent>
-    </Molecules.Dialog>
+      </Atoms.DialogContent>
+    </Atoms.Dialog>
   );
 }

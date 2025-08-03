@@ -9,34 +9,29 @@ import * as Molecules from '@/molecules';
 
 export const ScanContent = () => {
   return (
-    <Molecules.ResponsiveSection
-      desktop={
-        <>
-          <ScanHeader isMobile={false} />
-          <Molecules.ContentCard layout="column">
-            {/* TODO: change to real qr code url */}
-            <Atoms.Container className="items-center justify-center">
-              <Image src="/images/pubky-ring-qr-example.png" alt="Pubky Ring" width={220} height={220} />
-            </Atoms.Container>
-          </Molecules.ContentCard>
-        </>
-      }
-      mobile={
-        <>
-          <ScanHeader isMobile={true} />
-
-          <Molecules.ContentCard layout="column">
-            <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
-              <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
-              <Atoms.Button className="w-full h-[60px] rounded-full" size="lg">
-                <Key className="mr-2 h-4 w-4" />
-                Authorize with Pubky Ring
-              </Atoms.Button>
-            </Atoms.Container>
-          </Molecules.ContentCard>
-        </>
-      }
-    />
+    <>
+      <Atoms.Container className="hidden md:flex gap-6">
+        <ScanHeader isMobile={false} />
+        <Molecules.ContentCard layout="column">
+          {/* TODO: change to real qr code url */}
+          <Atoms.Container className="items-center justify-center">
+            <Image src="/images/pubky-ring-qr-example.png" alt="Pubky Ring" width={220} height={220} />
+          </Atoms.Container>
+        </Molecules.ContentCard>
+      </Atoms.Container>
+      <Atoms.Container className="md:hidden gap-6">
+        <ScanHeader isMobile={true} />
+        <Molecules.ContentCard layout="column">
+          <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
+            <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
+            <Atoms.Button className="w-full h-[60px] rounded-full" size="lg">
+              <Key className="mr-2 h-4 w-4" />
+              Authorize with Pubky Ring
+            </Atoms.Button>
+          </Atoms.Container>
+        </Molecules.ContentCard>
+      </Atoms.Container>
+    </>
   );
 };
 

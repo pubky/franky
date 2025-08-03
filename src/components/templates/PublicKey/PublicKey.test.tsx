@@ -7,6 +7,7 @@ vi.mock('@/molecules', () => ({
   PageWrapper: ({ children }: { children: React.ReactNode }) => <div data-testid="page-wrapper">{children}</div>,
   PublicKeyHeader: () => <div data-testid="public-key-header">Public Key Header</div>,
   PublicKeyNavigation: () => <div data-testid="public-key-navigation">Public Key Navigation</div>,
+  PageContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="page-container">{children}</div>,
 }));
 
 // Mock organisms
@@ -18,7 +19,7 @@ describe('PublicKey', () => {
   it('renders all main components', () => {
     render(<PublicKey />);
 
-    expect(screen.getByTestId('page-wrapper')).toBeInTheDocument();
+    expect(screen.getByTestId('page-container')).toBeInTheDocument();
     expect(screen.getByTestId('public-key-header')).toBeInTheDocument();
     expect(screen.getByTestId('public-key-card')).toBeInTheDocument();
     expect(screen.getByTestId('public-key-navigation')).toBeInTheDocument();
@@ -27,7 +28,7 @@ describe('PublicKey', () => {
   it('renders components in correct order within page wrapper', () => {
     render(<PublicKey />);
 
-    const pageWrapper = screen.getByTestId('page-wrapper');
+    const pageWrapper = screen.getByTestId('page-container');
     const children = Array.from(pageWrapper.children);
 
     expect(children).toHaveLength(3);
@@ -39,7 +40,7 @@ describe('PublicKey', () => {
   it('wraps all content in page wrapper', () => {
     render(<PublicKey />);
 
-    const pageWrapper = screen.getByTestId('page-wrapper');
+    const pageWrapper = screen.getByTestId('page-container');
 
     // All main components should be children of PageWrapper
     expect(pageWrapper).toContainElement(screen.getByTestId('public-key-header'));

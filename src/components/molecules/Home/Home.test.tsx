@@ -155,27 +155,25 @@ describe('HomeSectionTitle', () => {
 });
 
 describe('HomePageHeading', () => {
-  it('renders heading with provided title', () => {
-    const title = 'Welcome to Pubky';
-    render(<HomePageHeading title={title} />);
+  it('renders heading with correct text', () => {
+    render(<HomePageHeading />);
 
     expect(screen.getByTestId('heading-1')).toBeInTheDocument();
-    expect(screen.getByText(title)).toBeInTheDocument();
+    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
   });
 
   it('has correct heading level and size', () => {
-    render(<HomePageHeading title="Test Title" />);
+    render(<HomePageHeading />);
 
     const heading = screen.getByTestId('heading-1');
     expect(heading).toHaveAttribute('data-size', '2xl');
   });
 
-  it('renders with different titles', () => {
-    const { rerender } = render(<HomePageHeading title="First Title" />);
-    expect(screen.getByText('First Title')).toBeInTheDocument();
+  it('renders consistently', () => {
+    const { rerender } = render(<HomePageHeading />);
+    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
 
-    rerender(<HomePageHeading title="Second Title" />);
-    expect(screen.getByText('Second Title')).toBeInTheDocument();
-    expect(screen.queryByText('First Title')).not.toBeInTheDocument();
+    rerender(<HomePageHeading />);
+    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
   });
 });

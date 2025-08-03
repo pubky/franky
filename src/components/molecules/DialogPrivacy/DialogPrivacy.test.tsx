@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogPrivacy } from './DialogPrivacy';
 
-// Mock molecules and atoms
-vi.mock('@/molecules', () => ({
+// Mock atoms
+vi.mock('@/atoms', () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
   DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="dialog-content" className={className}>
@@ -21,9 +21,6 @@ vi.mock('@/molecules', () => ({
       {children}
     </div>
   ),
-}));
-
-vi.mock('@/atoms', () => ({
   Link: ({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) => (
     <a data-testid="link" href={href} className={className}>
       {children}
