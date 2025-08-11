@@ -183,4 +183,8 @@ body {
     background-color: var(--muted-foreground);
     border-radius: 4px;
   }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
