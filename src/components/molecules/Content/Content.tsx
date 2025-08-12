@@ -79,7 +79,7 @@ export function ContentImage({
 }: ContentImageProps) {
   const sizeClasses = {
     small: 'w-full lg:w-[137px]',
-    medium: 'w-full lg:w-[192px]',
+    medium: 'w-full lg:w-[228px]',
     large: 'w-full lg:w-[265px]',
   };
 

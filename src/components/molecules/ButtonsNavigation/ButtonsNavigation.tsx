@@ -29,7 +29,7 @@ export function ButtonsNavigation({
       <Atoms.Button
         size="lg"
         className="rounded-full"
-        variant={'outline'}
+        variant={'secondary'}
         onClick={onHandleBackButton}
         disabled={backButtonDisabled}
       >

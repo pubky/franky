@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 
 export const HomeActions = () => {
   const router = useRouter();
@@ -21,7 +22,10 @@ export const HomeActions = () => {
 
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Atoms.FooterLinks {...props}>
+    <Atoms.FooterLinks
+      className={Libs.cn('h-26 sm:pr-16 justify-end flex-row content-end', props.className)}
+      {...props}
+    >
       By creating a Pubky account, you agree to the <Molecules.DialogTerms />, <Molecules.DialogPrivacy />, and confirm
       you are <Molecules.DialogAge /> Pubky is powered by{' '}
       <Atoms.Link href="https://pubky.org/" target="_blank">
@@ -35,7 +39,7 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
 export const HomeSectionTitle = () => {
   return (
     <Atoms.Container className="flex-row items-start gap-2">
-      <Atoms.Typography size="lg" className="text-brand font-light">
+      <Atoms.Typography size="md" className="text-brand font-light sm:text-2xl self-center">
         Pubky requires an invite code
       </Atoms.Typography>
       <Molecules.PopoverInvite />
@@ -46,7 +50,8 @@ export const HomeSectionTitle = () => {
 export const HomePageHeading = () => {
   return (
     <Atoms.Heading level={1} size="2xl">
-      <span className="text-brand">Unlock</span> the web.
+      <span className="text-brand">Unlock</span> <br className="block sm:hidden" />
+      the web.
     </Atoms.Heading>
   );
 };
