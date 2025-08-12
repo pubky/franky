@@ -39,6 +39,15 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
+  List: ({ elements, className }: { elements: React.ReactNode[]; className?: string }) => (
+    <ul data-testid="list" className={className}>
+      {elements.map((element, index) => (
+        <li key={index} data-testid={`list-item-${index}`}>
+          {element}
+        </li>
+      ))}
+    </ul>
+  ),
 }));
 
 describe('DialogPrivacy', () => {
@@ -70,10 +79,11 @@ describe('DialogPrivacy', () => {
   it('displays static link text', () => {
     render(<DialogPrivacy />);
 
-    const link = screen.getByTestId('link');
-    expect(link).toBeInTheDocument();
-    expect(link.tagName).toBe('A');
-    expect(link).toHaveTextContent('Privacy Policy');
+    const links = screen.getAllByTestId('link');
+    const triggerLink = links.find((link) => link.textContent === 'Privacy Policy');
+    expect(triggerLink).toBeInTheDocument();
+    expect(triggerLink?.tagName).toBe('A');
+    expect(triggerLink).toHaveTextContent('Privacy Policy');
   });
 
   it('applies correct styling to trigger link', () => {
@@ -141,8 +151,9 @@ describe('DialogPrivacy', () => {
   it('maintains proper content structure', () => {
     render(<DialogPrivacy />);
 
-    const link = screen.getByRole('link');
-    fireEvent.click(link);
+    const links = screen.getAllByRole('link');
+    const triggerLink = links.find((link) => link.textContent === 'Privacy Policy');
+    fireEvent.click(triggerLink!);
 
     // Check that dialog content is rendered
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Privacy Policy');
@@ -150,8 +161,9 @@ describe('DialogPrivacy', () => {
 
   it('always displays the same static link text', () => {
     render(<DialogPrivacy />);
-    const link = screen.getByTestId('link');
-    expect(link).toHaveTextContent('Privacy Policy');
+    const links = screen.getAllByTestId('link');
+    const triggerLink = links.find((link) => link.textContent === 'Privacy Policy');
+    expect(triggerLink).toHaveTextContent('Privacy Policy');
   });
 
   it('renders complete privacy policy sections', () => {

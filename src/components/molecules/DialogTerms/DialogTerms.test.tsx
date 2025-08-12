@@ -39,6 +39,15 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
+  List: ({ elements, className }: { elements: React.ReactNode[]; className?: string }) => (
+    <ul data-testid="list" className={className}>
+      {elements.map((element, index) => (
+        <li key={index} data-testid={`list-item-${index}`}>
+          {element}
+        </li>
+      ))}
+    </ul>
+  ),
 }));
 
 describe('DialogTerms', () => {
@@ -70,10 +79,11 @@ describe('DialogTerms', () => {
   it('displays static link text', () => {
     render(<DialogTerms />);
 
-    const link = screen.getByTestId('link');
-    expect(link).toBeInTheDocument();
-    expect(link.tagName).toBe('A');
-    expect(link).toHaveTextContent('Terms of Service');
+    const links = screen.getAllByTestId('link');
+    const triggerLink = links.find((link) => link.textContent === 'Terms of Service');
+    expect(triggerLink).toBeInTheDocument();
+    expect(triggerLink?.tagName).toBe('A');
+    expect(triggerLink).toHaveTextContent('Terms of Service');
   });
 
   it('applies correct styling to trigger link', () => {
@@ -125,7 +135,7 @@ describe('DialogTerms', () => {
 
     // Check for some key terms content
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
-    expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();
+    expect(screen.getAllByText(/TERMS AND CONDITIONS/).length).toBeGreaterThan(0);
     expect(screen.getByText(/PLEASE REVIEW THE ARBITRATION PROVISION/)).toBeInTheDocument();
   });
 
@@ -139,8 +149,9 @@ describe('DialogTerms', () => {
   it('maintains proper content structure', () => {
     render(<DialogTerms />);
 
-    const link = screen.getByRole('link');
-    fireEvent.click(link);
+    const links = screen.getAllByRole('link');
+    const triggerLink = links.find((link) => link.textContent === 'Terms of Service');
+    fireEvent.click(triggerLink!);
 
     // Check that dialog content is rendered
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Terms of Service');
@@ -148,15 +159,16 @@ describe('DialogTerms', () => {
 
   it('always displays the same static link text', () => {
     render(<DialogTerms />);
-    const link = screen.getByTestId('link');
-    expect(link).toHaveTextContent('Terms of Service');
+    const links = screen.getAllByTestId('link');
+    const triggerLink = links.find((link) => link.textContent === 'Terms of Service');
+    expect(triggerLink).toHaveTextContent('Terms of Service');
   });
 
   it('renders complete terms sections', () => {
     render(<DialogTerms />);
 
     // Check for main sections that should be present
-    expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();
+    expect(screen.getAllByText(/TERMS AND CONDITIONS/).length).toBeGreaterThan(0);
     expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
   });

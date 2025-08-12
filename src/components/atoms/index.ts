@@ -7,6 +7,7 @@ export * from './Heading';
 export * from './ImageBackground';
 export * from './Input';
 export * from './Link';
+export * from './List';
 export * from './PageHeader';
 export * from './PageSubtitle';
 export * from './Popover';
