@@ -4,6 +4,7 @@ export * from './Backup';
 export * from './ButtonsNavigation';
 export * from './Content';
 export * from './DialogAge';
+export * from './DialogBackupEncrypted';
 export * from './DialogBackupPhrase';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogExport';

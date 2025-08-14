@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import { FileDown } from 'lucide-react';
 
 export const BackupMethodCard = () => {
   return (
@@ -30,10 +29,7 @@ export const BackupMethodCard = () => {
         </Atoms.Typography>
         <Atoms.Container className="flex-row mt-6 gap-3 flex-wrap">
           <Molecules.DialogBackupPhrase />
-          <Atoms.Button variant="secondary">
-            <FileDown className="h-4 w-4" />
-            <span>Encrypted file</span>
-          </Atoms.Button>
+          <Molecules.DialogBackupEncrypted />
           <Molecules.DialogExport />
         </Atoms.Container>
       </Atoms.Container>

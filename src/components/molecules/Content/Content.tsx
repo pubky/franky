@@ -7,6 +7,7 @@ import * as Libs from '@/libs';
 interface ContentCardProps {
   children?: ReactNode;
   className?: string;
+  classNameImage?: string;
   image?: {
     src: string;
     alt: string;
@@ -31,7 +32,7 @@ interface ContentImageProps extends Omit<ImageProps, 'className'> {
   hiddenOnMobile?: boolean;
 }
 
-export function ContentCard({ children, className, image, layout = 'row' }: ContentCardProps) {
+export function ContentCard({ children, className, classNameImage, image, layout = 'row' }: ContentCardProps) {
   const layoutClasses = {
     row: 'flex-col lg:flex-row',
     column: 'flex-col',
@@ -41,7 +42,14 @@ export function ContentCard({ children, className, image, layout = 'row' }: Cont
     <Atoms.Card className={Libs.cn('p-6 lg:p-12', className)}>
       <Atoms.Container className={Libs.cn('gap-12', layoutClasses[layout])}>
         {image && (
-          <ContentImage src={image.src} alt={image.alt} width={image.width} height={image.height} size={image.size} />
+          <ContentImage
+            src={image.src}
+            alt={image.alt}
+            width={image.width}
+            height={image.height}
+            size={image.size}
+            containerClassName={classNameImage}
+          />
         )}
         <Atoms.Container className="gap-6 justify-start w-full">{children}</Atoms.Container>
       </Atoms.Container>

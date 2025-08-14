@@ -54,7 +54,7 @@ describe('PublicKeyHeader', () => {
     render(<PublicKeyHeader />);
 
     const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'medium');
+    expect(title).toHaveAttribute('data-size', 'large');
     expect(title).toHaveTextContent('Your unique pubky.');
   });
 

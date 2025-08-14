@@ -54,7 +54,7 @@ export const ScanFooter = () => {
 export const ScanHeader = ({ isMobile }: { isMobile: boolean }) => {
   return (
     <Atoms.PageHeader>
-      <Molecules.PageTitle size="medium">
+      <Molecules.PageTitle size="large">
         {isMobile ? (
           <>
             Tap to <span className="text-brand">Authorize.</span>

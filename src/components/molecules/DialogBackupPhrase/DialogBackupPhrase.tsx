@@ -2,38 +2,39 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, FileText } from 'lucide-react';
+import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import Image from 'next/image';
+import * as Stores from '@/core';
 
 export function DialogBackupPhrase() {
   const [isHidden, setIsHidden] = useState(true);
   const [step, setStep] = useState(1);
-  const recoveryWords = [
-    'negative',
-    'inquiry',
-    'swamp',
-    'purity',
-    'carbon',
-    'actual',
-    'march',
-    'enemy',
-    'clinic',
-    'armed',
-    'exact',
-    'fog',
-  ];
+  const { secretKey } = Stores.useOnboardingStore();
+  const [recoveryWords, setRecoveryWords] = useState<string[]>([]);
+
+  const handleClose = () => {
+    setIsHidden(true);
+    setStep(1);
+  };
+
+  useEffect(() => {
+    if (secretKey) {
+      const words = Libs.Identity.generateSeedWords(secretKey);
+      setRecoveryWords(words);
+    }
+  }, [secretKey]);
 
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="secondary">
+        <Atoms.Button variant="secondary" className="gap-2">
           <FileText className="h-4 w-4" />
           <span>Recovery phrase</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8 sm:p-6">
+      <Atoms.DialogContent className="gap-6 p-8">
         {step === 1 && (
           <RecoveryStep1
             recoveryWords={recoveryWords}
@@ -43,13 +44,13 @@ export function DialogBackupPhrase() {
           />
         )}
         {step === 2 && <RecoveryStep2 recoveryWords={recoveryWords} setStep={setStep} />}
-        {step === 3 && <RecoveryStep3 setStep={setStep} />}
+        {step === 3 && <RecoveryStep3 handleClose={handleClose} />}
       </Atoms.DialogContent>
     </Atoms.Dialog>
   );
 }
 
-export function RecoveryStep1({
+function RecoveryStep1({
   recoveryWords,
   isHidden,
   setIsHidden,
@@ -129,17 +130,71 @@ export function RecoveryStep1({
   );
 }
 
-export default function RecoveryStep2({
-  recoveryWords,
-  setStep,
-}: {
-  recoveryWords: string[];
-  setStep: (step: number) => void;
-}) {
+function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; setStep: (step: number) => void }) {
   const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [availableWords] = useState<string[]>([...recoveryWords].sort());
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  type WordSlotProps = {
+    index: number;
+    word: string;
+    isCorrect: boolean;
+    isError: boolean;
+    onClear: (index: number) => void;
+  };
+
+  const WordSlot = ({ index, word, isCorrect, isError, onClear }: WordSlotProps) => {
+    const canClear = word !== '';
+
+    const containerClasses = Libs.cn(
+      'px-4 py-2 rounded-md border border-dashed overflow-hidden',
+      'inline-flex justify-start items-center gap-2 bg-transparent transition-colors',
+      canClear && 'cursor-pointer',
+      isCorrect && 'border-brand hover:bg-brand/10',
+      isError && 'border-red-500 hover:bg-red-500/20',
+      !isCorrect && !isError && canClear && 'hover:bg-secondary/80',
+    );
+
+    const badgeClasses = Libs.cn(
+      'z-10 h-6 rounded-full w-6',
+      isCorrect && 'bg-brand text-black absolute left-5 top-4',
+      isError && 'bg-red-500 text-white absolute left-5 top-4',
+    );
+
+    const inputPadding = isCorrect || isError ? '!pl-11' : '!pl-6';
+    const inputColor = Libs.cn(
+      '!border-none !bg-transparent flex-row',
+      isCorrect && '!text-brand',
+      isError && '!text-red-500',
+    );
+
+    const title = canClear ? 'Click to remove this word' : '';
+
+    const handleClick = () => {
+      if (canClear) onClear(index);
+    };
+
+    return (
+      <Atoms.Container className="relative">
+        <Atoms.Container className={containerClasses} onClick={handleClick} title={title}>
+          <Atoms.Badge variant="outline" className={badgeClasses}>
+            {index + 1}
+          </Atoms.Badge>
+          <Atoms.Input
+            value={word}
+            placeholder="word"
+            className={Libs.cn(inputPadding, inputColor)}
+            readOnly
+            onClick={(e) => {
+              e.stopPropagation();
+              if (canClear) onClear(index);
+            }}
+          />
+        </Atoms.Container>
+      </Atoms.Container>
+    );
+  };
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -158,13 +213,6 @@ export default function RecoveryStep2({
     const isError = word !== '' && word !== recoveryWords[wordIndex];
     newErrors[wordIndex] = isError;
     setErrors(newErrors);
-
-    // Debug log
-    console.log(`Word "${word}" at position ${wordIndex + 1}:`, {
-      expected: recoveryWords[wordIndex],
-      isError,
-      isEmpty: word === '',
-    });
   };
 
   const handleWordClick = (word: string) => {
@@ -172,7 +220,6 @@ export default function RecoveryStep2({
     const isWordAlreadyUsed = userWords.includes(word);
 
     if (isWordAlreadyUsed) {
-      console.log(`Word "${word}" is already used, ignoring click`);
       return;
     }
 
@@ -254,69 +301,8 @@ export default function RecoveryStep2({
           {userWords.map((word, i) => {
             const isCorrect = word !== '' && word === recoveryWords[i];
             const isError = errors[i];
-
-            if (isCorrect) {
-              // Use Figma design for correct words with fallback colors - clickable to clear if user wants to change
-              return (
-                <div
-                  key={i}
-                  className="self-stretch px-5 py-4 bg-transparent rounded-lg shadow-[0px_1px_2px_0px_rgba(5,5,10,0.20)] border-brand border-dashed border inline-flex justify-start items-center gap-3 overflow-hidden cursor-pointer hover:bg-brand/10 transition-colors"
-                  onClick={() => clearWord(i)}
-                  title="Click to remove this word if you want to change it"
-                >
-                  <div className="w-5 h-5 min-w-5 px-1 bg-brand text-black rounded-full shadow-[0px_1px_2px_0px_rgba(5,5,10,0.25)] flex justify-center items-center gap-1 overflow-hidden">
-                    <div className="justify-start text-xs font-semibold font-['Inter_Tight'] leading-none">{i + 1}</div>
-                  </div>
-                  <div className="flex-1 justify-start text-brand text-base font-medium font-['Inter_Tight'] leading-normal">
-                    {word}
-                  </div>
-                </div>
-              );
-            }
-
-            if (isError) {
-              // Use Figma design for error words with fallback colors - clickable to clear
-              return (
-                <div
-                  key={i}
-                  className="self-stretch px-5 py-4 bg-transparent rounded-lg shadow-[0px_1px_2px_0px_rgba(5,5,10,0.20)]  border-red-500 border-dashed border inline-flex justify-start items-center gap-3 overflow-hidden cursor-pointer hover:bg-red-500/20 transition-colors"
-                  onClick={() => clearWord(i)}
-                  title="Click to remove this incorrect word"
-                >
-                  <div className="h-5 min-w-5 px-1 bg-red-500 rounded-full shadow-[0px_1px_2px_0px_rgba(5,5,10,0.25)] flex justify-center items-center gap-1">
-                    <div className="justify-start text-xs font-semibold font-['Inter_Tight'] leading-none">{i + 1}</div>
-                  </div>
-                  <div className="flex-1 justify-start text-red-700 text-base font-medium font-['Inter_Tight'] leading-normal">
-                    {word}
-                  </div>
-                </div>
-              );
-            }
-
-            // Default state for empty or neutral words
             return (
-              <Atoms.Container
-                key={i}
-                className={`relative flex-row items-center gap-2 bg-transparent p-4 rounded-md border border-dashed ${
-                  word !== '' ? 'cursor-pointer hover:bg-secondary/80 transition-colors' : ''
-                }`}
-                onClick={() => word !== '' && clearWord(i)}
-                title={word !== '' ? 'Click to remove this word' : ''}
-              >
-                <Atoms.Badge variant="outline" className="absolute left-5 top-4 z-10 h-5 min-w-[20px]">
-                  {i + 1}
-                </Atoms.Badge>
-                <Atoms.Input
-                  value={word}
-                  placeholder="word"
-                  className="pl-12 cursor-pointer w-full"
-                  readOnly
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (word !== '') clearWord(i);
-                  }}
-                />
-              </Atoms.Container>
+              <WordSlot key={i} index={i} word={word} isCorrect={isCorrect} isError={isError} onClear={clearWord} />
             );
           })}
         </Atoms.Container>
@@ -346,7 +332,7 @@ export default function RecoveryStep2({
   );
 }
 
-export function RecoveryStep3({ setStep }: { setStep: (step: number) => void }) {
+function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
   return (
     <>
       <Atoms.DialogHeader className="pr-6 space-y-1.5">
@@ -366,16 +352,12 @@ export function RecoveryStep3({ setStep }: { setStep: (step: number) => void }) 
 
       <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 lg:gap-4 sm:justify-end">
         <Atoms.DialogClose asChild>
-          <Atoms.Button
-            variant="outline"
-            className="rounded-full lg:h-[60px] lg:px-8 flex-1"
-            onClick={() => setStep(1)}
-          >
+          <Atoms.Button variant="outline" className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
-          <Atoms.Button className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={() => setStep(1)}>
+          <Atoms.Button className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
             <ArrowRight className="mr-2 h-4 w-4" />
             Finish
           </Atoms.Button>

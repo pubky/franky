@@ -8,7 +8,7 @@ export function DialogExport() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button>
+        <Atoms.Button className="gap-2">
           <Scan className="h-4 w-4" />
           <span>Export to Pubky Ring</span>
         </Atoms.Button>
