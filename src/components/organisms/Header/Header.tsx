@@ -11,6 +11,7 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/onboarding/scan': { step: 2, title: 'Use Pubky Ring' },
   '/onboarding/pubky': { step: 2, title: 'Your pubky' },
   '/onboarding/backup': { step: 3, title: 'Backup' },
+  '/onboarding/homeserver': { step: 4, title: 'Homeserver' },
 };
 
 export function Header() {

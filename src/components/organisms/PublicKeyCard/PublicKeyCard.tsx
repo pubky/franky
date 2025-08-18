@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Copy, Loader2, Key } from 'lucide-react';
+import { Copy, Key } from 'lucide-react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -45,9 +45,8 @@ export function PublicKeyCard() {
       image={{
         src: '/images/key.png',
         alt: 'Key',
-        width: 265,
-        height: 265,
-        size: 'large',
+        width: 192,
+        height: 192,
       }}
     >
       <Atoms.Container className="items-center gap-1 flex-row">
@@ -74,8 +73,9 @@ export function PublicKeyCard() {
           onClick={handleCopyToClipboard}
           loading={publicKey === ''}
           loadingText="Generating pubky..."
-          loadingIcon={<Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" />}
           icon={<Key className="h-4 w-4 text-brand" />}
+          status={publicKey === '' ? 'default' : 'success'}
+          className="w-full max-w-[576px]"
         />
       </Molecules.ActionSection>
     </Molecules.ContentCard>

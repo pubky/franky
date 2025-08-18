@@ -1,6 +1,7 @@
 export * from './ActionButtons';
 export * from './ActionSection';
 export * from './Backup';
+export * from './Homeserver';
 export * from './ButtonsNavigation';
 export * from './Content';
 export * from './DialogAge';
@@ -16,7 +17,9 @@ export * from './InputField';
 export * from './Install';
 export * from './Logo';
 export * from './Page';
+export * from './PopoverBackup';
 export * from './PopoverInvite';
+export * from './PopoverInviteHomeserver';
 export * from './PopoverPublicKey';
 export * from './PopoverTradeoffs';
 export * from './ProgressSteps';

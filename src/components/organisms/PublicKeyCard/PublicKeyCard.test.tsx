@@ -165,7 +165,6 @@ describe('PublicKeyCard', () => {
     const image = screen.getByTestId('content-card-image');
     expect(image).toHaveAttribute('src', '/images/key.png');
     expect(image).toHaveAttribute('alt', 'Key');
-    expect(image).toHaveAttribute('data-size', 'large');
   });
 
   it('renders heading and popover', () => {

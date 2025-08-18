@@ -148,7 +148,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
     const canClear = word !== '';
 
     const containerClasses = Libs.cn(
-      'px-4 py-2 rounded-md border border-dashed overflow-hidden',
+      'flex-row px-4 py-2 rounded-md border border-dashed overflow-hidden',
       'inline-flex justify-start items-center gap-2 bg-transparent transition-colors',
       canClear && 'cursor-pointer',
       isCorrect && 'border-brand hover:bg-brand/10',

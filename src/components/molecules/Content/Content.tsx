@@ -18,20 +18,6 @@ interface ContentCardProps {
   layout?: 'row' | 'column';
 }
 
-interface ContentContainerProps {
-  children: ReactNode;
-  className?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
-  gap?: 'sm' | 'md' | 'lg';
-}
-
-interface ContentImageProps extends Omit<ImageProps, 'className'> {
-  className?: string;
-  containerClassName?: string;
-  size?: 'small' | 'medium' | 'large';
-  hiddenOnMobile?: boolean;
-}
-
 export function ContentCard({ children, className, classNameImage, image, layout = 'row' }: ContentCardProps) {
   const layoutClasses = {
     row: 'flex-col lg:flex-row',
@@ -39,7 +25,7 @@ export function ContentCard({ children, className, classNameImage, image, layout
   };
 
   return (
-    <Atoms.Card className={Libs.cn('p-6 lg:p-12', className)}>
+    <Atoms.Card className={Libs.cn('p-6 md:p-12', className)}>
       <Atoms.Container className={Libs.cn('gap-12', layoutClasses[layout])}>
         {image && (
           <ContentImage
@@ -47,14 +33,20 @@ export function ContentCard({ children, className, classNameImage, image, layout
             alt={image.alt}
             width={image.width}
             height={image.height}
-            size={image.size}
             containerClassName={classNameImage}
           />
         )}
-        <Atoms.Container className="gap-6 justify-start w-full">{children}</Atoms.Container>
+        <Atoms.Container className="gap-3 justify-start w-full">{children}</Atoms.Container>
       </Atoms.Container>
     </Atoms.Card>
   );
+}
+
+interface ContentContainerProps {
+  children: ReactNode;
+  className?: string;
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
+  gap?: 'sm' | 'md' | 'lg';
 }
 
 export function ContentContainer({ children, className, maxWidth = 'lg', gap = 'md' }: ContentContainerProps) {
@@ -78,26 +70,30 @@ export function ContentContainer({ children, className, maxWidth = 'lg', gap = '
   );
 }
 
+interface ContentImageProps extends Omit<ImageProps, 'className'> {
+  className?: string;
+  containerClassName?: string;
+  hiddenOnMobile?: boolean;
+}
+
 export function ContentImage({
   className,
   containerClassName,
-  size = 'medium',
   hiddenOnMobile = true,
   ...imageProps
 }: ContentImageProps) {
-  const sizeClasses = {
-    small: 'w-full lg:w-[137px]',
-    medium: 'w-full lg:w-[228px]',
-    large: 'w-full lg:w-[265px]',
-  };
-
   return (
-    <div className={Libs.cn(sizeClasses[size], hiddenOnMobile ? 'hidden lg:flex' : 'flex', containerClassName)}>
+    <div
+      className={Libs.cn(hiddenOnMobile ? 'hidden lg:flex' : 'flex', containerClassName)}
+      style={{ width: imageProps.width, height: imageProps.height }}
+    >
       <Image
         data-testid="content-image"
-        data-size={size}
-        className={Libs.cn('w-full h-auto', className)}
-        {...imageProps}
+        height={imageProps.height}
+        width={imageProps.width}
+        className={Libs.cn(className)}
+        style={{ width: imageProps.width, height: imageProps.height, objectFit: 'contain' }}
+        src={imageProps.src}
         alt={imageProps.alt || 'Image'}
       />
     </div>

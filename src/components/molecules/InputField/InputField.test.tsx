@@ -90,16 +90,18 @@ describe('InputField', () => {
     render(<InputField value="test" variant="dashed" />);
 
     const container = screen.getByTestId('input').parentElement;
+    // Updated container classes reflect current implementation
     expect(container).toHaveClass(
-      'flex-row',
+      'flex',
+      'cursor-pointer',
+      'w-full',
+      'h-12',
       'items-center',
-      'gap-3',
-      'rounded-md',
+      'flex-row',
       'border',
-      'border-dashed',
-      'border-brand',
       'bg-transparent',
-      'pl-4.5',
+      'rounded-md',
+      'border-dashed',
     );
   });
 

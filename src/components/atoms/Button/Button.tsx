@@ -63,8 +63,8 @@ function Button({
       data-testid={getTestId()}
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
+      className={cn(buttonVariants({ variant, size, className }))}
     />
   );
 }

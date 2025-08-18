@@ -3,7 +3,7 @@ import { CircleHelp } from 'lucide-react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export function PopoverPublicKey({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function PopoverBackup({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <Atoms.Popover>
       <Atoms.PopoverTrigger asChild>
@@ -14,11 +14,11 @@ export function PopoverPublicKey({ ...props }: React.HTMLAttributes<HTMLDivEleme
       <Atoms.PopoverContent className="w-[327px] p-6">
         <Atoms.Container className="gap-2">
           <Atoms.Heading level={4} size="sm" className="text-popover-foreground">
-            Why not a normal user @handle?
+            Why is this important?
           </Atoms.Heading>
           <Atoms.Typography size="sm" className="text-sm text-muted-foreground font-medium leading-light">
-            This user handle is a cryptographic public key, making it unique and platform-independent. No need for a
-            centralized username registry.
+            The secret seed for your pubky is like a master password. Anyone with access can take full control of your
+            account. You are responsible for keeping your keys safe.
           </Atoms.Typography>
         </Atoms.Container>
       </Atoms.PopoverContent>

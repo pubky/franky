@@ -11,19 +11,18 @@ export const BackupMethodCard = () => {
       image={{
         src: '/images/shield.png',
         alt: 'Shield',
-        width: 228,
-        height: 228,
-        size: 'medium',
+        width: 192,
+        height: 192,
       }}
     >
       <Atoms.Container className="items-center gap-1 flex-row">
         <Atoms.Heading level={2} size="lg">
           Choose backup method
         </Atoms.Heading>
-        <Molecules.PopoverPublicKey />
+        <Molecules.PopoverBackup />
       </Atoms.Container>
-      <Atoms.Container className="max-w-[686px] mx-0">
-        <Atoms.Typography className="text-secondary-foreground opacity-80 font-normal">
+      <Atoms.Container className="max-w-[576px] mx-0">
+        <Atoms.Typography size="sm" className="text-secondary-foreground opacity-80 font-medium text-base">
           Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can also
           choose to do this later.
         </Atoms.Typography>
@@ -41,7 +40,7 @@ export const BackupNavigation = () => {
   const router = useRouter();
 
   const onHandleContinueButton = () => {
-    console.log('handleContinue');
+    router.push('/onboarding/homeserver');
   };
 
   const onHandleBackButton = () => {

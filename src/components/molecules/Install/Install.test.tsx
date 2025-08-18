@@ -115,7 +115,6 @@ describe('InstallCard', () => {
     const image = screen.getByTestId('content-card-image');
     expect(image).toHaveAttribute('src', '/images/keyring.png');
     expect(image).toHaveAttribute('alt', 'Keyring');
-    expect(image).toHaveAttribute('data-size', 'large');
   });
 
   it('renders Pubky Ring logo', () => {

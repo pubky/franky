@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Loader2 } from 'lucide-react';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -15,6 +16,9 @@ interface InputFieldProps {
   loading?: boolean;
   loadingText?: string;
   loadingIcon?: ReactNode;
+  status?: 'default' | 'success' | 'error';
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  maxLength?: number;
 }
 
 export function InputField({
@@ -29,29 +33,51 @@ export function InputField({
   loading = false,
   loadingText = 'Loading...',
   loadingIcon,
+  status = 'default',
+  onChange,
+  maxLength,
 }: InputFieldProps) {
-  const containerClasses =
-    variant === 'dashed'
-      ? 'flex-row items-center gap-3 rounded-md border border-dashed border-brand bg-transparent pl-4.5'
-      : 'items-center gap-1';
+  const containerClasses = variant === 'dashed' && 'border-dashed';
 
-  const inputClasses =
-    variant === 'dashed'
-      ? 'cursor-pointer text-base font-medium text-brand !bg-transparent h-12 border-none text-left'
-      : 'w-full';
+  const statusClasses = {
+    default: '',
+    success: 'border-brand text-brand',
+    error: 'border-red-500 text-red-500',
+  };
 
   return (
-    <Atoms.Container className={Libs.cn('w-full max-w-[576px] mx-0 mb-2 items-center', containerClasses, className)}>
-      {loading && loadingIcon && <div className="flex items-center justify-center">{loadingIcon}</div>}
-      {!loading && icon && <div className="flex items-center justify-center">{icon}</div>}
+    <Atoms.Container
+      className={Libs.cn(
+        'cursor-pointer w-full h-12 mx-0 mb-2 items-center flex-row border bg-transparent gap-0 rounded-md',
+        icon ? 'pl-4.5' : 'pl-2',
+        containerClasses,
+        statusClasses[status],
+        loading && 'text-brand border-brand',
+        className,
+      )}
+    >
+      {loading && (
+        <Atoms.Container className="justify-center items-center w-auto">
+          {loadingIcon ?? (
+            <Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" data-testid="loading-icon" />
+          )}
+        </Atoms.Container>
+      )}
+      {!loading && icon && (
+        <Atoms.Container onClick={onClick} className="w-auto justify-center items-center">
+          {icon}
+        </Atoms.Container>
+      )}
       <Atoms.Input
         type="text"
-        className={Libs.cn('w-full', inputClasses)}
+        className={Libs.cn('w-full !bg-transparent border-none')}
         value={loading ? loadingText : value}
         placeholder={placeholder}
         disabled={disabled || loading}
         readOnly={readOnly}
         onClick={onClick}
+        onChange={onChange}
+        maxLength={maxLength}
       />
     </Atoms.Container>
   );

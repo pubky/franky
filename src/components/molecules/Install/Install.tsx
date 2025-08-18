@@ -16,7 +16,6 @@ export const InstallCard = () => {
         alt: 'Keyring',
         width: 192,
         height: 192,
-        size: 'large',
       }}
     >
       <Atoms.Container className="gap-3">
