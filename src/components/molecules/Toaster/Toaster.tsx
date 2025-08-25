@@ -8,11 +8,11 @@ export function Toaster() {
 
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
+      {toasts.map(function ({ id, title, description, action, variant, ...props }) {
         return (
           <Toast
             key={id}
-            className="flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+            variant={variant}
             {...props}
           >
             <div className="flex items-center justify-between gap-4 w-full">

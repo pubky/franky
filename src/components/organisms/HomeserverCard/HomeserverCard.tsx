@@ -46,6 +46,7 @@ export function HomeserverCard() {
     const toastInstance = toast({
       title: 'Error signing up',
       description: 'Invalid invite code or already used. Please try again.',
+      variant: 'error',
       action: (
         <Atoms.Button
           variant="outline"
