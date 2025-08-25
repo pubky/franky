@@ -19,7 +19,11 @@ describe('Label', () => {
   });
 
   it('forwards additional props', () => {
-    render(<Label htmlFor="test-input" data-testid="label">Form Label</Label>);
+    render(
+      <Label htmlFor="test-input" data-testid="label">
+        Form Label
+      </Label>,
+    );
     const label = screen.getByTestId('label');
     expect(label).toHaveAttribute('for', 'test-input');
   });
@@ -46,10 +50,10 @@ describe('Label', () => {
         <input id="username" type="text" />
       </div>,
     );
-    
+
     const label = screen.getByText('Username');
     const input = screen.getByRole('textbox');
-    
+
     expect(label).toHaveAttribute('for', 'username');
     expect(input).toHaveAttribute('id', 'username');
   });
@@ -57,8 +61,13 @@ describe('Label', () => {
   it('applies focus and disabled state classes correctly', () => {
     render(<Label data-testid="label">State Label</Label>);
     const label = screen.getByTestId('label');
-    
+
     // Check that the base classes include focus and disabled handling
-    expect(label).toHaveClass('peer-disabled:cursor-not-allowed', 'peer-disabled:opacity-50', 'group-data-[disabled=true]:pointer-events-none', 'group-data-[disabled=true]:opacity-50');
+    expect(label).toHaveClass(
+      'peer-disabled:cursor-not-allowed',
+      'peer-disabled:opacity-50',
+      'group-data-[disabled=true]:pointer-events-none',
+      'group-data-[disabled=true]:opacity-50',
+    );
   });
 });

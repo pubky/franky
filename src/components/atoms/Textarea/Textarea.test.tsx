@@ -20,7 +20,7 @@ describe('Textarea', () => {
       'px-3',
       'py-2',
       'text-base',
-      'shadow-xs'
+      'shadow-xs',
     );
     expect(textarea).toHaveAttribute('data-slot', 'textarea');
   });
@@ -40,10 +40,10 @@ describe('Textarea', () => {
   it('handles onChange events', () => {
     const handleChange = vi.fn();
     render(<Textarea onChange={handleChange} data-testid="textarea" />);
-    
+
     const textarea = screen.getByTestId('textarea');
     fireEvent.change(textarea, { target: { value: 'Hello World' } });
-    
+
     expect(handleChange).toHaveBeenCalledTimes(1);
   });
 
@@ -57,7 +57,7 @@ describe('Textarea', () => {
   it('shows focus styles', () => {
     render(<Textarea data-testid="textarea" />);
     const textarea = screen.getByTestId('textarea');
-    
+
     expect(textarea).toHaveClass('focus-visible:border-ring', 'focus-visible:ring-ring/50', 'outline-none');
   });
 
