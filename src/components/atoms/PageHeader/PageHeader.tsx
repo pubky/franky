@@ -15,7 +15,7 @@ export function PageHeader({
 }: PageHeaderProps & React.HTMLAttributes<HTMLDivElement>) {
   return (
     <Atoms.Container
-      className={Libs.cn('gap-3 pb-6', className)}
+      className={Libs.cn('gap-3 pb-6 pt-2', className)}
       data-testid={dataTestId || 'container'}
       {...(props as React.ComponentProps<typeof Atoms.Container>)}
     >

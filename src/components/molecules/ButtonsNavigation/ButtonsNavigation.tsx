@@ -15,7 +15,7 @@ interface ButtonsNavigationProps {
 }
 
 export function ButtonsNavigation({
-  className = '',
+  className,
   onHandleBackButton,
   onHandleContinueButton,
   backText = 'Back',
@@ -28,19 +28,18 @@ export function ButtonsNavigation({
     <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between', className)}>
       <Atoms.Button
         size="lg"
-        className="rounded-full"
-        variant={'outline'}
+        className="rounded-full flex-1 md:flex-0 w-full"
+        variant={'secondary'}
         onClick={onHandleBackButton}
         disabled={backButtonDisabled}
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
         {backText}
       </Atoms.Button>
-      <Atoms.Container className="flex items-center gap-1 w-full" />
       {!hiddenContinueButton && (
         <Atoms.Button
           size="lg"
-          className="rounded-full"
+          className="rounded-full flex-1 md:flex-0 w-full"
           onClick={onHandleContinueButton}
           disabled={continueButtonDisabled}
         >

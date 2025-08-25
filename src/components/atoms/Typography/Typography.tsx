@@ -36,7 +36,7 @@ export function Typography({
   ...props
 }: TypographyProps & React.HTMLAttributes<HTMLElement>) {
   const sizeClasses = {
-    sm: 'text-lg font-semibold',
+    sm: 'text-sm font-semibold',
     md: 'text-xl font-semibold',
     lg: 'text-2xl font-bold',
     xl: 'text-4xl font-bold',
@@ -45,8 +45,8 @@ export function Typography({
   return (
     <Tag
       data-testid={dataTestId || 'typography'}
-      className={cn(sizeClasses[size], 'text-foreground', className)}
       {...props}
+      className={cn(sizeClasses[size], 'text-foreground', className)}
     >
       {children}
     </Tag>

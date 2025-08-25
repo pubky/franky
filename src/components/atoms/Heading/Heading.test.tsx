@@ -34,7 +34,7 @@ describe('Heading', () => {
 
     rerender(<Heading size="lg">Large Heading</Heading>);
     heading = screen.getByRole('heading');
-    expect(heading).toHaveClass('text-2xl', 'font-bold');
+    expect(heading).toHaveClass('text-xl', 'xs:text-2xl', 'font-bold');
 
     rerender(<Heading size="xl">Extra Large Heading</Heading>);
     heading = screen.getByRole('heading');
@@ -42,7 +42,7 @@ describe('Heading', () => {
 
     rerender(<Heading size="2xl">2XL Heading</Heading>);
     heading = screen.getByRole('heading');
-    expect(heading).toHaveClass('text-6xl', 'sm:text-9xl', 'font-bold');
+    expect(heading).toHaveClass('text-7xl', 'sm:text-9xl', 'font-bold');
   });
 
   it('combines level and size props correctly', () => {
@@ -54,7 +54,7 @@ describe('Heading', () => {
 
     const heading = screen.getByRole('heading', { level: 3 });
     expect(heading.tagName).toBe('H3');
-    expect(heading).toHaveClass('text-6xl', 'sm:text-9xl', 'font-bold');
+    expect(heading).toHaveClass('text-7xl', 'sm:text-9xl', 'font-bold');
   });
 
   it('applies custom className', () => {

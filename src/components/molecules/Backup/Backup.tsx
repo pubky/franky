@@ -13,20 +13,24 @@ export const BackupMethodCard = () => {
         alt: 'Shield',
         width: 192,
         height: 192,
-        size: 'medium',
       }}
     >
       <Atoms.Container className="items-center gap-1 flex-row">
-        <Atoms.Heading level={3} size="md">
+        <Atoms.Heading level={2} size="lg">
           Choose backup method
         </Atoms.Heading>
-        <Molecules.PopoverPublicKey />
+        <Molecules.PopoverBackup />
       </Atoms.Container>
-      <Atoms.Container className="flex-col gap-3">
-        <Atoms.Typography className="text-secondary-foreground opacity-80 font-normal">
+      <Atoms.Container className="max-w-[576px] mx-0">
+        <Atoms.Typography size="sm" className="text-secondary-foreground opacity-80 font-medium text-base">
           Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can also
           choose to do this later.
         </Atoms.Typography>
+        <Atoms.Container className="flex-row mt-6 gap-3 flex-wrap">
+          <Molecules.DialogBackupPhrase />
+          <Molecules.DialogBackupEncrypted />
+          <Molecules.DialogExport />
+        </Atoms.Container>
       </Atoms.Container>
     </Molecules.ContentCard>
   );
@@ -36,7 +40,7 @@ export const BackupNavigation = () => {
   const router = useRouter();
 
   const onHandleContinueButton = () => {
-    console.log('handleContinue');
+    router.push('/onboarding/homeserver');
   };
 
   const onHandleBackButton = () => {
@@ -57,7 +61,7 @@ export const BackupNavigation = () => {
 export const BackupPageHeader = () => {
   return (
     <Atoms.PageHeader>
-      <Molecules.PageTitle size="medium">
+      <Molecules.PageTitle size="large">
         Back up your <span className="text-brand">pubky.</span>
       </Molecules.PageTitle>
       <Atoms.PageSubtitle>You need a backup to restore access to your account later.</Atoms.PageSubtitle>

@@ -176,7 +176,7 @@ describe('ScanHeader', () => {
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
 
     const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'medium');
+    expect(title).toHaveAttribute('data-size', 'large');
     expect(title).toHaveTextContent('Tap to Authorize.');
   });
 
@@ -188,7 +188,7 @@ describe('ScanHeader', () => {
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
 
     const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'medium');
+    expect(title).toHaveAttribute('data-size', 'large');
     expect(title).toHaveTextContent('Scan QR Code.');
   });
 

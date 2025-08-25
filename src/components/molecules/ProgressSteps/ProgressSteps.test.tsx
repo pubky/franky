@@ -34,7 +34,7 @@ describe('ProgressSteps', () => {
 
     // Check that completed step container has the right classes (brand styling for completed)
     const completedStepContainer = checkIcons[0]?.parentElement?.parentElement;
-    expect(completedStepContainer).toHaveClass('bg-transparent', 'text-brand', 'border-brand');
+    expect(completedStepContainer).toHaveClass('bg-transparent', 'text-white', 'border-white');
   });
 
   it('shows pending steps correctly in desktop version', () => {
@@ -78,10 +78,10 @@ describe('ProgressSteps', () => {
       const fillBar = bar.querySelector('div');
       if (index < 3) {
         // First 3 steps should have filled bars (completed + current)
-        expect(fillBar).toHaveClass('bg-foreground');
+        expect(fillBar).toHaveClass('bg-brand');
       } else {
         // Remaining steps should have empty bars
-        expect(fillBar).toHaveClass('bg-foreground'); // The class is there but scaled to 0
+        expect(fillBar).toHaveClass('bg-brand'); // The class is there but scaled to 0
       }
     });
   });

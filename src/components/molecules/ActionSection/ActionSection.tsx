@@ -11,6 +11,7 @@ interface ActionSectionProps {
     icon?: ReactNode;
     onClick: () => void;
     variant?: 'default' | 'secondary' | 'outline' | 'ghost' | 'brand';
+    disabled?: boolean;
   }>;
 }
 
@@ -26,6 +27,7 @@ export function ActionSection({ children, className, actions = [] }: ActionSecti
               variant={action.variant || 'secondary'}
               className="rounded-full"
               onClick={action.onClick}
+              disabled={action.disabled}
             >
               {action.icon}
               {action.label}

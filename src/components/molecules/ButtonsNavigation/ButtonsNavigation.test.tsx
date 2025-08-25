@@ -46,7 +46,7 @@ describe('ButtonsNavigation', () => {
   it('renders with default props', () => {
     render(<ButtonsNavigation />);
 
-    const backButton = screen.getByTestId('button-outline');
+    const backButton = screen.getByTestId('button-secondary');
     const continueButton = screen.getByTestId('button-default');
 
     expect(backButton).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe('ButtonsNavigation', () => {
   it('renders with custom text props', () => {
     render(<ButtonsNavigation backText="Go Back" continueText="Next Step" />);
 
-    const backButton = screen.getByTestId('button-outline');
+    const backButton = screen.getByTestId('button-secondary');
     const continueButton = screen.getByTestId('button-default');
 
     expect(backButton).toHaveTextContent('Go Back');
@@ -69,7 +69,7 @@ describe('ButtonsNavigation', () => {
     const handleBackButton = vi.fn();
     render(<ButtonsNavigation onHandleBackButton={handleBackButton} />);
 
-    const backButton = screen.getByTestId('button-outline');
+    const backButton = screen.getByTestId('button-secondary');
     fireEvent.click(backButton);
 
     expect(handleBackButton).toHaveBeenCalledTimes(1);
@@ -88,7 +88,7 @@ describe('ButtonsNavigation', () => {
   it('disables back button when backButtonDisabled is true', () => {
     render(<ButtonsNavigation backButtonDisabled={true} />);
 
-    const backButton = screen.getByTestId('button-outline');
+    const backButton = screen.getByTestId('button-secondary');
     expect(backButton).toBeDisabled();
   });
 
@@ -102,7 +102,7 @@ describe('ButtonsNavigation', () => {
   it('applies custom className', () => {
     render(<ButtonsNavigation className="custom-navigation-class" />);
 
-    const container = screen.getByTestId('button-outline').parentElement;
+    const container = screen.getByTestId('button-secondary').parentElement;
     expect(container).toHaveClass('custom-navigation-class');
   });
 
@@ -119,7 +119,7 @@ describe('ButtonsNavigation', () => {
   it('has proper button structure and styling', () => {
     render(<ButtonsNavigation />);
 
-    const backButton = screen.getByTestId('button-outline');
+    const backButton = screen.getByTestId('button-secondary');
     const continueButton = screen.getByTestId('button-default');
 
     expect(backButton).toHaveClass('rounded-full');
@@ -129,7 +129,7 @@ describe('ButtonsNavigation', () => {
   it('renders both buttons as enabled by default', () => {
     render(<ButtonsNavigation />);
 
-    const backButton = screen.getByTestId('button-outline');
+    const backButton = screen.getByTestId('button-secondary');
     const continueButton = screen.getByTestId('button-default');
 
     expect(backButton).not.toBeDisabled();

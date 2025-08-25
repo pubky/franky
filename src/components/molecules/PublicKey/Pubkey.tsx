@@ -8,7 +8,7 @@ import * as Atoms from '@/atoms';
 export const PublicKeyHeader = () => {
   return (
     <Atoms.PageHeader>
-      <Molecules.PageTitle size="medium">
+      <Molecules.PageTitle size="large">
         Your unique <span className="text-brand">pubky.</span>
       </Molecules.PageTitle>
       <Atoms.PageSubtitle>Share your pubky with your friends so they can follow you.</Atoms.PageSubtitle>
