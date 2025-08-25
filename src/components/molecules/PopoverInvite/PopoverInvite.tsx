@@ -1,4 +1,4 @@
-import { Gift, Mail, Twitter, Send } from 'lucide-react';
+import { Gift, Mail, XTwitter, Telegram } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 
@@ -34,10 +34,10 @@ export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInvite
               <Mail className="h-6 w-6" />
             </Atoms.Link>
             <Atoms.Link href={TWITTER_URL} className="text-muted-foreground hover:text-brand">
-              <Twitter className="h-6 w-6" />
+              <XTwitter className="h-6 w-6" />
             </Atoms.Link>
             <Atoms.Link href={TELEGRAM_URL} className="text-muted-foreground hover:text-brand">
-              <Send className="h-6 w-6" />
+              <Telegram className="h-6 w-6" />
             </Atoms.Link>
           </Atoms.Container>
         </Atoms.Container>

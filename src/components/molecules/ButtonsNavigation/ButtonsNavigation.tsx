@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';

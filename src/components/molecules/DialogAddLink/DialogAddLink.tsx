@@ -1,6 +1,6 @@
 'use client';
 
-import { Clipboard, Link } from 'lucide-react';
+import { Clipboard, Link } from '@/libs/icons';
 
 import * as Atoms from '@/components/atoms';
 import * as Molecules from '@/components/molecules';

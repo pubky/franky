@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, Loader2, Server } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Server } from '@/libs/icons';
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';

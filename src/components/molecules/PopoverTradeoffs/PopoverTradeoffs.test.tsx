@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PopoverTradeoffs } from './PopoverTradeoffs';
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   AlertTriangle: ({ className }: { className?: string }) => (
     <div data-testid="alert-triangle-icon" className={className}>
       AlertTriangle

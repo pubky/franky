@@ -1,4 +1,4 @@
-import { Scan, X } from 'lucide-react';
+import { Scan, X } from '@/libs/icons';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';

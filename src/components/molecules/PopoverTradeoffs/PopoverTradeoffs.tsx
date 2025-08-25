@@ -1,4 +1,4 @@
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from '@/libs/icons';
 
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';

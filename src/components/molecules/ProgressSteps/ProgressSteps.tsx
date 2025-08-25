@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check } from '@/libs/icons';
 
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';

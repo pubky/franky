@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Copy, Key } from 'lucide-react';
+import { Copy, Key } from '@/libs/icons';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';

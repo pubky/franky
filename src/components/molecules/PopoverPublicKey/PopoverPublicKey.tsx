@@ -1,4 +1,4 @@
-import { CircleHelp } from 'lucide-react';
+import { CircleHelp } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';

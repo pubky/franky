@@ -1,4 +1,4 @@
-import { LogIn, UserRoundPlus } from 'lucide-react';
+import { LogIn, UserRoundPlus } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';

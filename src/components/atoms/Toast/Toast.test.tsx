@@ -2,8 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Toast, ToastProvider, ToastViewport } from './Toast';
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   X: () => <svg data-testid="x-icon" />,
 }));
 

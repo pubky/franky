@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, FileText } from '@/libs/icons';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';

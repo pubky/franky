@@ -2,8 +2,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PopoverPublicKey } from './PopoverPublicKey';
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   CircleHelp: () => <svg data-testid="circle-help-icon" />,
 }));
 

@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ButtonsNavigation } from './ButtonsNavigation';
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   ArrowRight: ({ className }: { className?: string }) => (
     <div data-testid="arrow-right-icon" className={className}>
       ArrowRight

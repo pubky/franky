@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2 } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';

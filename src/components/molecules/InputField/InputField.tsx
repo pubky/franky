@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';

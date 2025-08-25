@@ -43,8 +43,8 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   X: ({ className }: { className?: string }) => (
     <div data-testid="x-icon" className={className}>
       X

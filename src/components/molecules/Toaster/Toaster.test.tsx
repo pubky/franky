@@ -8,8 +8,8 @@ vi.mock('./use-toast', () => ({
   useToast: () => mockUseToast(),
 }));
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   X: () => <svg data-testid="x-icon" />,
 }));
 

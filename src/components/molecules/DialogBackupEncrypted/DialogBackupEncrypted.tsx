@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Download, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, FileText } from '@/libs/icons';
 
 import * as Atoms from '@/components/atoms';
 import Image from 'next/image';

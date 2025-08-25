@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, File as FileIcon } from 'lucide-react';
+import { Trash2, File as FileIcon } from '@/libs/icons';
 import { z } from 'zod';
 import { PubkyAppUser } from 'pubky-app-specs';
 

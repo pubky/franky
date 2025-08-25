@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { AppWindow, ArrowRight } from 'lucide-react';
+import { AppWindow, ArrowRight } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';

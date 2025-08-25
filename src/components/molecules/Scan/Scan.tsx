@@ -1,6 +1,6 @@
 'use client';
 
-import { Key } from 'lucide-react';
+import { Key } from '@/libs/icons';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Key } from 'lucide-react';
+import { Key } from '@/libs/icons';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';

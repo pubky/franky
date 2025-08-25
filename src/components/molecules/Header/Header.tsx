@@ -1,6 +1,6 @@
 'use client';
 
-import { Github, LogIn, Send, Twitter } from 'lucide-react';
+import { Github2, LogIn, Telegram, XTwitter } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -38,13 +38,13 @@ export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) 
   return (
     <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
       <Atoms.Link href="https://github.com/pubky" target="_blank" variant="muted" size="default">
-        <Github className="w-6 h-6" />
+        <Github2 className="w-6 h-6" />
       </Atoms.Link>
       <Atoms.Link href="https://x.com/getpubky" target="_blank" variant="muted" size="default">
-        <Twitter className="w-6 h-6" />
+        <XTwitter className="w-6 h-6" />
       </Atoms.Link>
       <Atoms.Link href="#" target="_blank" variant="muted" size="default">
-        <Send className="w-6 h-6" />
+        <Telegram className="w-6 h-6" />
       </Atoms.Link>
     </Atoms.Container>
   );

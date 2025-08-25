@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as ToastPrimitives from '@radix-ui/react-toast';
-import { X } from 'lucide-react';
+import { X } from '@/libs/icons';
 import { cn } from '@/libs';
 
 const ToastProvider = ToastPrimitives.Provider;
