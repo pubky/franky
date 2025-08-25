@@ -25,7 +25,7 @@ describe('FooterLinks', () => {
 
     const typography = screen.getByTestId('typography');
     expect(typography).toBeInTheDocument();
-    expect(typography).toHaveClass('text-muted-foreground', 'opacity-80', 'font-normal', 'text-sm', 'leading-none');
+    expect(typography).toHaveClass('text-muted-foreground', 'opacity-80', 'font-medium', 'text-sm', 'leading-light');
     expect(screen.getByText('Footer text')).toBeInTheDocument();
   });
 

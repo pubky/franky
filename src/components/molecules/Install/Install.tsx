@@ -16,12 +16,19 @@ export const InstallCard = () => {
         alt: 'Keyring',
         width: 192,
         height: 192,
-        size: 'large',
       }}
     >
-      <Atoms.Container>
-        <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={220} height={48} />
-        <Atoms.Typography className="text-secondary-foreground opacity-80 font-normal">
+      <Atoms.Container className="gap-3">
+        <Atoms.Container className="flex-col items-center sm:items-start">
+          <Image
+            src="/images/logo-pubky-ring.svg"
+            alt="Pubky Ring"
+            className="w-[137px] sm:w-auto"
+            width={220}
+            height={48}
+          />
+        </Atoms.Container>
+        <Atoms.Typography className="text-secondary-foreground opacity-80 font-medium text-base">
           Download and install the mobile app to start creating your account.
         </Atoms.Typography>
       </Atoms.Container>
@@ -49,8 +56,8 @@ export const InstallFooter = () => {
 export const InstallHeader = () => {
   return (
     <Atoms.PageHeader>
-      <Molecules.PageTitle size="medium">
-        Install <span className="text-brand">Pubky Ring.</span>
+      <Molecules.PageTitle size="large">
+        Install <br className="block sm:hidden" /> <span className="text-brand">Pubky Ring.</span>
       </Molecules.PageTitle>
       <Atoms.PageSubtitle>Pubky Ring is a keychain for your identity keys in the Pubky ecosystem.</Atoms.PageSubtitle>
     </Atoms.PageHeader>
@@ -69,7 +76,7 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
   };
 
   return (
-    <Atoms.Container className={Libs.cn('flex-col-reverse lg:flex-row gap-3 lg:gap-6', props.className)}>
+    <Atoms.Container className={Libs.cn('flex-col-reverse md:flex-row gap-3 lg:gap-6', props.className)}>
       <Atoms.Container className="items-center gap-1 flex-row">
         <Atoms.Button variant="outline" className="rounded-full flex-1 md:flex-none" onClick={handleCreate}>
           <AppWindow className="mr-2 h-4 w-4" />

@@ -31,7 +31,7 @@ export function PageContainer({ as: Component = 'div', size = 'default', ...prop
 export function PageTitle({ children, className, size = 'large', ...props }: PageTitleProps) {
   const sizeClasses = {
     medium: 'text-4xl lg:text-[60px]',
-    large: 'text-5xl lg:text-7xl',
+    large: 'text-5xl lg:text-6xl',
   };
 
   return (

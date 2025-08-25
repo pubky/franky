@@ -31,7 +31,7 @@ describe('Typography', () => {
     const { rerender } = render(<Typography size="sm">Small text</Typography>);
 
     let text = screen.getByText('Small text');
-    expect(text).toHaveClass('text-lg', 'font-semibold');
+    expect(text).toHaveClass('text-sm', 'font-semibold');
 
     rerender(<Typography size="lg">Large text</Typography>);
     text = screen.getByText('Large text');

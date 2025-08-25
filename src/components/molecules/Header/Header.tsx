@@ -8,8 +8,12 @@ import * as Libs from '@/libs';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Atoms.Container as="header" size="container" className="py-6 h-36 items-center">
-      <Atoms.Container as="nav" className="flex-row items-center py-6 gap-6 w-full h-full">
+    <Atoms.Container
+      as="header"
+      size="container"
+      className="py-6 items-center px-6 sticky top-0 z-10 bg-background h-[96px] md:h-[144px]"
+    >
+      <Atoms.Container as="nav" className="flex-row items-center py-0 md:py-6 gap-6 w-full h-full">
         {children}
       </Atoms.Container>
     </Atoms.Container>

@@ -1,4 +1,11 @@
-import init, { PostResult, PubkyAppPostKind, PubkySpecsBuilder, UserResult } from 'pubky-app-specs';
+import init, {
+  BlobResult,
+  FileResult,
+  PostResult,
+  PubkyAppPostKind,
+  PubkySpecsBuilder,
+  UserResult,
+} from 'pubky-app-specs';
 import { PostValidatorData, UserValidatorData } from '@/core';
 import { Logger } from '@/libs';
 
@@ -43,6 +50,26 @@ export class PubkySpecsPipes {
     const result = builder.createUser(user.name, user.bio, user.image, user.links);
 
     Logger.debug('User validated', { result });
+
+    return result;
+  }
+
+  static async normalizeBlob(blob: Uint8Array, pubkey: string): Promise<BlobResult> {
+    await this.ensureInitialized();
+    const builder = this.getBuilder(pubkey);
+    const result = builder.createBlob(blob);
+
+    Logger.debug('Blob validated', { result });
+
+    return result;
+  }
+
+  static async normalizeFile(file: File, url: string, pubkey: string): Promise<FileResult> {
+    await this.ensureInitialized();
+    const builder = this.getBuilder(pubkey);
+    const result = builder.createFile(file.name, url, file.type, file.size);
+
+    Logger.debug('File validated', { result });
 
     return result;
   }

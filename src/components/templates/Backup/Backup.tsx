@@ -3,7 +3,7 @@ import * as Molecules from '@/molecules';
 
 export function Backup() {
   return (
-    <Atoms.Container size="container">
+    <Atoms.Container size="container" className="px-6">
       <Molecules.BackupPageHeader />
       <Molecules.BackupMethodCard />
       <Molecules.BackupNavigation />

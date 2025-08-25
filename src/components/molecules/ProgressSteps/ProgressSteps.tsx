@@ -13,7 +13,9 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
   return (
     <>
       {/* Progress Steps - Desktop */}
-      <Atoms.Container className={Libs.cn('hidden lg:flex items-center gap-4 mt-1 flex-1', className)}>
+      <Atoms.Container
+        className={Libs.cn('hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background', className)}
+      >
         <Atoms.Container className="items-center gap-0 flex-row">
           {Array.from({ length: totalSteps }, (_, index) => {
             const stepNumber = index + 1;
@@ -26,7 +28,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                   className={Libs.cn(
                     'items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform',
                     isActive ? 'bg-foreground text-background' : 'border text-muted-foreground',
-                    isCompleted && 'bg-transparent text-brand border-brand',
+                    isCompleted && 'bg-transparent text-white border-white',
                   )}
                 >
                   <Atoms.Container
@@ -39,14 +41,14 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                   </Atoms.Container>
                 </Atoms.Container>
                 {stepNumber < totalSteps && (
-                  <Atoms.Container className="relative w-24 xl:w-44 h-px overflow-hidden">
+                  <Atoms.Container className="relative w-28 xl:w-40 h-px overflow-hidden">
                     {/* Base line (gray) */}
                     <Atoms.Container className="absolute inset-0 bg-border opacity-50" />
 
                     {/* Animated line (white) */}
                     <Atoms.Container
                       className={Libs.cn(
-                        'absolute inset-0 bg-brand transform transition-all duration-500 ease-out',
+                        'absolute inset-0 bg-white transform transition-all duration-500 ease-out',
                         stepNumber < currentStep ? 'translate-x-0' : '-translate-x-full',
                       )}
                     />
@@ -60,7 +62,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
 
       {/* Progress Steps - Mobile */}
       <Atoms.Container
-        className={Libs.cn('lg:hidden items-center gap-0 mt-2.5 max-w-xs mr-0 flex-1 flex-row', className)}
+        className={Libs.cn('lg:hidden items-center gap-0 max-w-[200px] w-full mr-0 flex-1 flex-row', className)}
       >
         {Array.from({ length: totalSteps }, (_, index) => {
           const stepNumber = index + 1;
@@ -81,7 +83,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
               {/* Growing fill bar */}
               <Atoms.Container
                 className={Libs.cn(
-                  'absolute inset-0 bg-foreground transition-transform duration-800 ease-out origin-left',
+                  'absolute inset-0 bg-brand transition-transform duration-800 ease-out origin-left',
                   isActive || isCompleted ? 'scale-x-100' : 'scale-x-0',
                 )}
                 style={{

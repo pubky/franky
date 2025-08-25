@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Copy, Loader2, Key } from 'lucide-react';
+import { Copy, Key } from 'lucide-react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -23,21 +23,28 @@ export function PublicKeyCard() {
     }
   }, [publicKey, setKeypair]);
 
-  const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(publicKey);
-    const toastInstance = toast({
-      title: 'Pubky copied to clipboard',
-      description: publicKey,
-      action: (
-        <Atoms.Button
-          variant="outline"
-          className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
-          onClick={() => toastInstance.dismiss()}
-        >
-          OK
-        </Atoms.Button>
-      ),
-    });
+  const handleCopyToClipboard = async () => {
+    try {
+      await Libs.copyToClipboard(publicKey);
+      const toastInstance = toast({
+        title: 'Pubky copied to clipboard',
+        description: publicKey,
+        action: (
+          <Atoms.Button
+            variant="outline"
+            className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
+            onClick={() => toastInstance.dismiss()}
+          >
+            OK
+          </Atoms.Button>
+        ),
+      });
+    } catch {
+      toast({
+        title: 'Copy failed',
+        description: 'Unable to copy to clipboard',
+      });
+    }
   };
 
   return (
@@ -45,9 +52,8 @@ export function PublicKeyCard() {
       image={{
         src: '/images/key.png',
         alt: 'Key',
-        width: 265,
-        height: 265,
-        size: 'large',
+        width: 192,
+        height: 192,
       }}
     >
       <Atoms.Container className="items-center gap-1 flex-row">
@@ -74,8 +80,9 @@ export function PublicKeyCard() {
           onClick={handleCopyToClipboard}
           loading={publicKey === ''}
           loadingText="Generating pubky..."
-          loadingIcon={<Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" />}
           icon={<Key className="h-4 w-4 text-brand" />}
+          status={publicKey === '' ? 'default' : 'success'}
+          className="w-full max-w-[576px]"
         />
       </Molecules.ActionSection>
     </Molecules.ContentCard>
