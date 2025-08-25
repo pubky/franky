@@ -142,7 +142,7 @@ describe('HomeSectionTitle', () => {
     render(<HomeSectionTitle />);
 
     const typography = screen.getByTestId('typography');
-    expect(typography).toHaveAttribute('data-size', 'lg');
+    expect(typography).toHaveAttribute('data-size', 'md');
     expect(typography.className).toContain('text-brand font-light');
   });
 

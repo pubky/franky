@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 
-import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
@@ -64,11 +63,9 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogClose asChild>
-            <Atoms.Button variant={'secondary'} className="absolute right-8 top-8 w-8 h-8">
-              <X className="h-4 w-4 text-secondary-foreground opacity-70" />
-              <span className="sr-only">Close</span>
-            </Atoms.Button>
+          <DialogClose className="absolute right-8 top-8 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md">
+            <X className="h-4 w-4 text-secondary-foreground opacity-70" />
+            <span className="sr-only">Close</span>
           </DialogClose>
         )}
       </DialogPrimitive.Content>

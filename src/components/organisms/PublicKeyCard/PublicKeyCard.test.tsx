@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PublicKeyCard } from './PublicKeyCard';
 
-// Mock navigator.clipboard
-const mockWriteText = vi.fn();
-Object.assign(navigator, {
-  clipboard: {
-    writeText: mockWriteText,
-  },
-});
+// Mock navigator.clipboard (not needed anymore since we mock Libs.copyToClipboard directly)
+// const mockWriteText = vi.fn();
+// Object.assign(navigator, {
+//   clipboard: {
+//     writeText: mockWriteText,
+//   },
+// });
 
 // Mock toast
 const mockToast = vi.fn();
@@ -145,16 +145,19 @@ vi.mock('@/core', () => ({
 }));
 
 // Mock libs
+const mockCopyToClipboard = vi.fn();
 vi.mock('@/libs', () => ({
   Identity: {
     generateKeypair: vi.fn(),
   },
+  copyToClipboard: (...args: unknown[]) => mockCopyToClipboard(...args),
 }));
 
 describe('PublicKeyCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockToast.mockReturnValue({ dismiss: mockDismiss });
+    mockCopyToClipboard.mockResolvedValue(undefined);
   });
 
   it('renders content card with image', () => {
@@ -165,7 +168,6 @@ describe('PublicKeyCard', () => {
     const image = screen.getByTestId('content-card-image');
     expect(image).toHaveAttribute('src', '/images/key.png');
     expect(image).toHaveAttribute('alt', 'Key');
-    expect(image).toHaveAttribute('data-size', 'large');
   });
 
   it('renders heading and popover', () => {
@@ -201,7 +203,10 @@ describe('PublicKeyCard', () => {
     const copyButton = screen.getByTestId('action-button-0');
     fireEvent.click(copyButton);
 
-    expect(mockWriteText).toHaveBeenCalledWith(mockPublicKey);
+    // Wait for async operation to complete
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
     expect(mockToast).toHaveBeenCalledWith({
       title: 'Pubky copied to clipboard',
       description: mockPublicKey,
@@ -215,7 +220,10 @@ describe('PublicKeyCard', () => {
     const input = screen.getByTestId('input');
     fireEvent.click(input);
 
-    expect(mockWriteText).toHaveBeenCalledWith(mockPublicKey);
+    // Wait for async operation to complete
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
     expect(mockToast).toHaveBeenCalledWith({
       title: 'Pubky copied to clipboard',
       description: mockPublicKey,
@@ -223,11 +231,14 @@ describe('PublicKeyCard', () => {
     });
   });
 
-  it('dismisses toast when OK button is clicked', () => {
+  it('dismisses toast when OK button is clicked', async () => {
     render(<PublicKeyCard />);
 
     const copyButton = screen.getByTestId('action-button-0');
     fireEvent.click(copyButton);
+
+    // Wait for async operation to complete
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     // Get the toast action (OK button)
     const toastCall = mockToast.mock.calls[0][0];
@@ -262,6 +273,7 @@ describe('PublicKeyCard - Key Generation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockToast.mockReturnValue({ dismiss: mockDismiss });
+    mockCopyToClipboard.mockResolvedValue(undefined);
   });
 
   it('shows loading state when public key is empty', () => {

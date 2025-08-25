@@ -62,7 +62,7 @@ describe('ActionButtons', () => {
     render(<ActionButtons />);
 
     const container = screen.getByRole('button', { name: /sign in/i }).parentElement;
-    expect(container).toHaveClass('mx-auto', 'w-full', 'flex', 'flex-col', 'gap-3', 'sm:flex-row', 'sm:items-center');
+    expect(container).toHaveClass('mx-auto', 'w-full', 'flex', 'gap-3', 'flex-row', 'sm:items-center');
   });
 
   it('applies custom className', () => {
@@ -79,10 +79,14 @@ describe('ActionButtons', () => {
     const createAccountButton = screen.getByRole('button', { name: /create account/i });
 
     // Sign in button should be secondary variant
-    expect(signInButton).toHaveClass('order-2', 'sm:order-1');
+    expect(signInButton).toHaveAttribute('data-variant', 'secondary');
 
-    // Create account button should be primary (default) variant
-    expect(createAccountButton).toHaveClass('order-1', 'sm:order-2');
+    // Create account button should be primary (default) variant - no explicit variant means default
+    expect(createAccountButton).toHaveAttribute('data-testid', 'button-default');
+
+    // Both buttons should have proper size classes
+    expect(signInButton).toHaveClass('h-10');
+    expect(createAccountButton).toHaveClass('h-10');
   });
 
   it('renders icons with proper classes', () => {

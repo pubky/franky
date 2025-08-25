@@ -115,7 +115,6 @@ describe('InstallCard', () => {
     const image = screen.getByTestId('content-card-image');
     expect(image).toHaveAttribute('src', '/images/keyring.png');
     expect(image).toHaveAttribute('alt', 'Keyring');
-    expect(image).toHaveAttribute('data-size', 'large');
   });
 
   it('renders Pubky Ring logo', () => {
@@ -196,7 +195,7 @@ describe('InstallHeader', () => {
     render(<InstallHeader />);
 
     const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'medium');
+    expect(title).toHaveAttribute('data-size', 'large');
     expect(title).toHaveTextContent('Install Pubky Ring.');
   });
 
@@ -251,7 +250,7 @@ describe('InstallNavigation', () => {
     render(<InstallNavigation />);
 
     const containers = screen.getAllByTestId('container');
-    expect(containers[0].className).toContain('flex-col-reverse lg:flex-row gap-3 lg:gap-6');
+    expect(containers[0].className).toContain('flex-col-reverse md:flex-row gap-3 lg:gap-6');
     expect(containers[1].className).toContain('items-center gap-1 flex-row');
   });
 

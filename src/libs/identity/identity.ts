@@ -5,10 +5,7 @@ import { CommonErrorType, createCommonError } from '@/libs';
 import { TKeyPair } from '@/core';
 
 export class Identity {
-  static async createRecoveryFile(
-    keypair: TKeyPair | { publicKey: string; secretKey: Uint8Array },
-    password: string,
-  ): Promise<void> {
+  static async createRecoveryFile(keypair: TKeyPair | PubkyKeypair, password: string): Promise<void> {
     // Handle both string and Uint8Array secret keys for backward compatibility
     let secretKeyHex: string;
 
