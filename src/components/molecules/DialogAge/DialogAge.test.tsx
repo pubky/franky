@@ -58,12 +58,12 @@ describe('DialogAge', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('displays default link text', () => {
+  it('displays default trigger text', () => {
     render(<DialogAge />);
 
-    const link = screen.getByText('over 18 years old.');
-    expect(link).toBeInTheDocument();
-    expect(link.tagName).toBe('A');
+    const trigger = screen.getByText('over 18 years old.');
+    expect(trigger).toBeInTheDocument();
+    expect(trigger.tagName).toBe('SPAN');
   });
 
   it('applies correct styling to trigger link', () => {
@@ -111,8 +111,8 @@ describe('DialogAge', () => {
   it('maintains proper content structure', () => {
     render(<DialogAge />);
 
-    const link = screen.getByRole('link');
-    fireEvent.click(link);
+    const trigger = screen.getByText('over 18 years old.');
+    fireEvent.click(trigger);
 
     // Check that dialog content is rendered
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Age minimum: 18');
