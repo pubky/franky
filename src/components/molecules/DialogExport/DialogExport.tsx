@@ -2,6 +2,7 @@ import { Scan, X } from '@/libs/icons';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 import { QRCodeSVG } from 'qrcode.react';
 
 export function DialogExport() {
@@ -39,13 +40,10 @@ export function DialogExport() {
                 <QRCodeSVG value="https://pubky.com" size={192} />
               </Atoms.Container>
               <Atoms.Container className="gap-4">
-                <Atoms.Link href="https://apps.apple.com/app/pubky-ring/id6644244100" target="_blank">
+                <Atoms.Link href={Libs.SocialLinks.APPSTORE} target="_blank">
                   <Image src="/images/badge-apple.png" alt="App Store" width={120} height={40} />
                 </Atoms.Link>
-                <Atoms.Link
-                  href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
-                  target="_blank"
-                >
+                <Atoms.Link href={Libs.SocialLinks.GOOGLEPLAY} target="_blank">
                   <Image src="/images/badge-android.png" alt="Google Play" width={135} height={40} />
                 </Atoms.Link>
               </Atoms.Container>

@@ -6,6 +6,8 @@ export const SocialLinks = {
   GITHUB: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/pubky',
   TWITTER: process.env.NEXT_PUBLIC_TWITTER_URL || 'https://x.com/getpubky',
   TELEGRAM: process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/pubky',
+  APPSTORE: process.env.NEXT_PUBLIC_APPSTORE_URL || 'https://apps.apple.com/app/pubky-ring/id6739356756',
+  GOOGLEPLAY: process.env.NEXT_PUBLIC_GOOGLEPLAY_URL || 'https://play.google.com/store/apps/details?id=to.pubky.ring',
 };
 
 export function cn(...inputs: ClassValue[]) {

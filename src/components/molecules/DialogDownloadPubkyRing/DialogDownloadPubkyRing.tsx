@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 
 interface DialogDownloadPubkyRingProps {
   store?: 'apple' | 'android';
@@ -15,14 +16,14 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubky
           alt: 'App Store',
           width: 120,
           height: 40,
-          href: 'https://apps.apple.com/mx/app/pubky-ring/id6739356756',
+          href: Libs.SocialLinks.APPSTORE,
         }
       : {
           src: '/images/badge-android.png',
           alt: 'Google Play',
           width: 135,
           height: 40,
-          href: 'https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share',
+          href: Libs.SocialLinks.GOOGLEPLAY,
         };
 
   return (
