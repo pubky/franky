@@ -16,7 +16,7 @@ export function Toaster() {
                 {title && <ToastTitle>{title}</ToastTitle>}
                 {description && <ToastDescription>{description}</ToastDescription>}
               </div>
-              <div className="flex items-center justify-between gap-4">{action}</div>
+              <div className="hidden sm:flex items-center justify-between gap-4">{action}</div>
             </div>
           </Toast>
         );
