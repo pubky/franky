@@ -1,6 +1,13 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+export const SocialLinks = {
+  EMAIL: 'mailto:' + process.env.NEXT_PUBLIC_EMAIL_URL || 'hello@pubky.com',
+  GITHUB: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/pubky',
+  TWITTER: process.env.NEXT_PUBLIC_TWITTER_URL || 'https://x.com/getpubky',
+  TELEGRAM: process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/pubky',
+};
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

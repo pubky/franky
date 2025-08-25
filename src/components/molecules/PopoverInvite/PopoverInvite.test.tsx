@@ -2,6 +2,16 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PopoverInvite } from './PopoverInvite';
 
+// Mock libs
+vi.mock('@/libs', () => ({
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  SocialLinks: {
+    EMAIL: 'mailto:hello@pubky.com',
+    TWITTER: 'https://x.com/pubky',
+    TELEGRAM: 'https://t.me/pubky',
+  },
+}));
+
 // Mock icons from @/libs/icons
 vi.mock('@/libs/icons', () => ({
   Gift: ({ className }: { className?: string }) => (

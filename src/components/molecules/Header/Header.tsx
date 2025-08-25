@@ -37,13 +37,13 @@ export const OnboardingHeader = ({ currentStep }: { currentStep: number }) => {
 export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
-      <Atoms.Link href="https://github.com/pubky" target="_blank" variant="muted" size="default">
+      <Atoms.Link href={Libs.SocialLinks.GITHUB} target="_blank" variant="muted" size="default">
         <Github2 className="w-6 h-6" />
       </Atoms.Link>
-      <Atoms.Link href="https://x.com/getpubky" target="_blank" variant="muted" size="default">
+      <Atoms.Link href={Libs.SocialLinks.TWITTER} target="_blank" variant="muted" size="default">
         <XTwitter className="w-6 h-6" />
       </Atoms.Link>
-      <Atoms.Link href="#" target="_blank" variant="muted" size="default">
+      <Atoms.Link href={Libs.SocialLinks.TELEGRAM} target="_blank" variant="muted" size="default">
         <Telegram className="w-6 h-6" />
       </Atoms.Link>
     </Atoms.Container>

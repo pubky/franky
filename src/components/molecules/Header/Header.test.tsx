@@ -94,6 +94,35 @@ vi.mock('@/molecules', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  SocialLinks: {
+    GITHUB: 'https://github.com/pubky',
+    TWITTER: 'https://x.com/getpubky',
+    TELEGRAM: 'https://t.me/pubky',
+  },
+}));
+
+// Mock icons
+vi.mock('@/libs/icons', () => ({
+  Github2: ({ className }: { className?: string }) => (
+    <div data-testid="github-icon" className={className}>
+      Github
+    </div>
+  ),
+  XTwitter: ({ className }: { className?: string }) => (
+    <div data-testid="twitter-icon" className={className}>
+      Twitter
+    </div>
+  ),
+  Telegram: ({ className }: { className?: string }) => (
+    <div data-testid="telegram-icon" className={className}>
+      Telegram
+    </div>
+  ),
+  LogIn: ({ className }: { className?: string }) => (
+    <div data-testid="login-icon" className={className}>
+      Login
+    </div>
+  ),
 }));
 
 describe('HeaderContainer', () => {
@@ -155,12 +184,15 @@ describe('SocialLinks', () => {
 
     // Check GitHub link
     expect(links[0]).toHaveAttribute('href', 'https://github.com/pubky');
+    expect(screen.getByTestId('github-icon')).toBeInTheDocument();
 
     // Check Twitter link
     expect(links[1]).toHaveAttribute('href', 'https://x.com/getpubky');
+    expect(screen.getByTestId('twitter-icon')).toBeInTheDocument();
 
     // Check Telegram link
-    expect(links[2]).toHaveAttribute('href', '#');
+    expect(links[2]).toHaveAttribute('href', 'https://t.me/pubky');
+    expect(screen.getByTestId('telegram-icon')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
