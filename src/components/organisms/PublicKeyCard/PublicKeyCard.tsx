@@ -23,21 +23,28 @@ export function PublicKeyCard() {
     }
   }, [publicKey, setKeypair]);
 
-  const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(publicKey);
-    const toastInstance = toast({
-      title: 'Pubky copied to clipboard',
-      description: publicKey,
-      action: (
-        <Atoms.Button
-          variant="outline"
-          className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
-          onClick={() => toastInstance.dismiss()}
-        >
-          OK
-        </Atoms.Button>
-      ),
-    });
+  const handleCopyToClipboard = async () => {
+    try {
+      await Libs.copyToClipboard(publicKey);
+      const toastInstance = toast({
+        title: 'Pubky copied to clipboard',
+        description: publicKey,
+        action: (
+          <Atoms.Button
+            variant="outline"
+            className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
+            onClick={() => toastInstance.dismiss()}
+          >
+            OK
+          </Atoms.Button>
+        ),
+      });
+    } catch {
+      toast({
+        title: 'Copy failed',
+        description: 'Unable to copy to clipboard',
+      });
+    }
   };
 
   return (

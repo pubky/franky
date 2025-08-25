@@ -78,10 +78,10 @@ describe('ProgressSteps', () => {
       const fillBar = bar.querySelector('div');
       if (index < 3) {
         // First 3 steps should have filled bars (completed + current)
-        expect(fillBar).toHaveClass('bg-white');
+        expect(fillBar).toHaveClass('bg-brand');
       } else {
         // Remaining steps should have empty bars
-        expect(fillBar).toHaveClass('bg-white'); // The class is there but scaled to 0
+        expect(fillBar).toHaveClass('bg-brand'); // The class is there but scaled to 0
       }
     });
   });

@@ -92,7 +92,7 @@ export function ContentImage({
         height={imageProps.height}
         width={imageProps.width}
         className={Libs.cn(className)}
-        style={{ width: imageProps.width, height: imageProps.height, objectFit: 'contain' }}
+        style={{ objectFit: 'contain' }}
         src={imageProps.src}
         alt={imageProps.alt || 'Image'}
       />

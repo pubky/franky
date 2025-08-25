@@ -1,14 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Server } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, Server } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
-export function InviteCodeCard() {
+export function HomeserverCard() {
+  const router = useRouter();
+
   const { toast } = Molecules.useToast();
 
   const [inviteCode, setInviteCode] = useState('');
@@ -22,7 +25,7 @@ export function InviteCodeCard() {
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       Core.AuthController.generateSignupToken().then((token) => {
-        Libs.Logger.info('token', token);
+        Libs.Logger.info(token, token);
       });
     }
   }, []);
@@ -60,18 +63,18 @@ export function InviteCodeCard() {
       setContinueButtonDisabled(true);
       setStatus('default');
       setIsLoading(true);
-      setButtonContinueText('Validating...');
+      setButtonContinueText('Validating');
 
       await Core.AuthController.signUp({ publicKey, secretKey }, inviteCode);
-      setStatus('success');
-      // TODO: next step
-      // router.push('/onboarding/create-account');
+
+      setButtonContinueText('Signing up');
+
+      router.push('/onboarding/profile');
     } catch {
       showErrorToast();
       setContinueButtonDisabled(false);
       setStatus('error');
       setButtonContinueText('Try again');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -122,11 +125,35 @@ export function InviteCodeCard() {
         </Atoms.Container>
       </Molecules.ContentCard>
       <Molecules.HomeserverFooter />
-      <Molecules.HomeserverNavigation
-        continueText={buttonContinueText}
-        continueButtonDisabled={continueButtonDisabled}
-        onHandleContinueButton={onHandleContinueButton}
-      />
+      <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between py-6')}>
+        <Atoms.Button
+          size="lg"
+          className="rounded-full flex-1 md:flex-0 w-full"
+          variant={'secondary'}
+          onClick={() => router.push('/onboarding/backup')}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back
+        </Atoms.Button>
+        <Atoms.Button
+          size="lg"
+          className="rounded-full flex-1 md:flex-0 w-full"
+          onClick={onHandleContinueButton}
+          disabled={continueButtonDisabled}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {buttonContinueText}
+            </>
+          ) : (
+            <>
+              <ArrowRight className="mr-2 h-4 w-4" />
+              {buttonContinueText}
+            </>
+          )}
+        </Atoms.Button>
+      </Atoms.Container>
     </>
   );
 }

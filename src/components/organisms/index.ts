@@ -1,3 +1,5 @@
+export * from './CreateProfileHeader';
+export * from './CreateProfileForm';
 export * from './Header';
-export * from './InviteCodeCard';
+export * from './HomeserverCard';
 export * from './PublicKeyCard';

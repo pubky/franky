@@ -83,7 +83,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
               {/* Growing fill bar */}
               <Atoms.Container
                 className={Libs.cn(
-                  'absolute inset-0 bg-white transition-transform duration-800 ease-out origin-left',
+                  'absolute inset-0 bg-brand transition-transform duration-800 ease-out origin-left',
                   isActive || isCompleted ? 'scale-x-100' : 'scale-x-0',
                 )}
                 style={{

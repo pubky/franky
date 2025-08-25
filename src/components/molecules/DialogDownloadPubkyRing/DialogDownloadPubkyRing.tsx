@@ -20,7 +20,7 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubky
       : {
           src: '/images/badge-android.png',
           alt: 'Google Play',
-          width: 120,
+          width: 135,
           height: 40,
           href: 'https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share',
         };
@@ -40,7 +40,7 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubky
         {store === 'apple' ? (
           <Image src="/images/badge-apple.png" alt="App Store" width={120} height={40} />
         ) : (
-          <Image src="/images/badge-android.png" alt="Google Play" width={120} height={40} />
+          <Image src="/images/badge-android.png" alt="Google Play" width={135} height={40} />
         )}
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="sm:max-w-[384px]">

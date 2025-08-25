@@ -1,3 +1,4 @@
+export * from './Avatar';
 export * from './Badge';
 export * from './Button';
 export * from './Card';
@@ -12,5 +13,6 @@ export * from './Label';
 export * from './PageHeader';
 export * from './PageSubtitle';
 export * from './Popover';
+export * from './Textarea';
 export * from './Toast';
 export * from './Typography';

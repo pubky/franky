@@ -197,6 +197,6 @@ export class HomeserverService {
 
   isAuthenticated(): boolean {
     const profileStore = useProfileStore.getState();
-    return profileStore.isAuthenticated && !!this.currentKeypair;
+    return profileStore.session !== null;
   }
 }
