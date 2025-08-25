@@ -11,7 +11,7 @@ export const HeaderContainer = ({ children }: { children: React.ReactNode }) => 
     <Atoms.Container
       as="header"
       size="container"
-      className="py-6 items-center px-6 sticky top-0 z-10 bg-background h-[96px] md:h-[144px]"
+      className="py-6 items-center px-6 sticky top-0 z-10 bg-header h-[96px] md:h-[144px]"
     >
       <Atoms.Container as="nav" className="flex-row items-center py-0 md:py-6 gap-6 w-full h-full">
         {children}
