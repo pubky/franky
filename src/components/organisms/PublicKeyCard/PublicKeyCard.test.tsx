@@ -144,13 +144,24 @@ vi.mock('@/core', () => ({
   }),
 }));
 
-// Mock libs
+// Mock @/libs to intercept icons and utilities
 const mockCopyToClipboard = vi.fn();
 vi.mock('@/libs', () => ({
   Identity: {
     generateKeypair: vi.fn(),
   },
   copyToClipboard: (...args: unknown[]) => mockCopyToClipboard(...args),
+  Copy: ({ className }: { className?: string }) => (
+    <div data-testid="copy-icon" className={className}>
+      Copy
+    </div>
+  ),
+  Key: ({ className }: { className?: string }) => (
+    <div data-testid="key-icon" className={className}>
+      Key
+    </div>
+  ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 describe('PublicKeyCard', () => {

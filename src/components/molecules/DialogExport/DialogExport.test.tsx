@@ -29,18 +29,18 @@ vi.mock('qrcode.react', () => ({
   ),
 }));
 
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
+// Mock @/libs to intercept Libs.Scan
+vi.mock('@/libs', () => ({
   Scan: ({ className }: { className?: string }) => (
     <div data-testid="scan-icon" className={className}>
       Scan
     </div>
   ),
-  X: ({ className }: { className?: string }) => (
-    <div data-testid="x-icon" className={className}>
-      X
-    </div>
-  ),
+  SocialLinks: {
+    APPSTORE: 'https://apps.apple.com/app/pubky-ring/id6739356756',
+    GOOGLEPLAY: 'https://play.google.com/store/apps/details?id=to.pubky.ring',
+  },
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Mock atoms

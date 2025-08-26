@@ -1,5 +1,3 @@
-import { Check } from '@/libs/icons';
-
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 
@@ -37,7 +35,7 @@ export function ProgressSteps({ currentStep, totalSteps, className }: ProgressSt
                       isCompleted ? 'animate-in fade-in zoom-in duration-500' : '',
                     )}
                   >
-                    {isCompleted ? <Check size={16} /> : stepNumber}
+                    {isCompleted ? <Libs.Check size={16} /> : stepNumber}
                   </Atoms.Container>
                 </Atoms.Container>
                 {stepNumber < totalSteps && (

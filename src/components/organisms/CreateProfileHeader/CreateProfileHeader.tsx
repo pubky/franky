@@ -1,7 +1,5 @@
 'use client';
 
-import { Key } from '@/libs/icons';
-
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -45,7 +43,7 @@ export const CreateProfileHeader = () => {
         <Atoms.PageSubtitle>Add your name, bio, links, and avatar.</Atoms.PageSubtitle>
         <Atoms.Container className="flex-row items-center gap-2 w-auto mx-0">
           <Atoms.Button variant="secondary" className="rounded-full gap-2 w-fit h-8" onClick={handleCopyToClipboard}>
-            <Key className="w-4 h-4" />
+            <Libs.Key className="w-4 h-4" />
             {displayPublicKey || '...'}
           </Atoms.Button>
           <Molecules.PopoverPublicKey className="-ml-1" />

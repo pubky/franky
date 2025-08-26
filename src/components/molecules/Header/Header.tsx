@@ -1,7 +1,5 @@
 'use client';
 
-import { Github2, LogIn, Telegram, XTwitter } from '@/libs/icons';
-
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -38,13 +36,13 @@ export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) 
   return (
     <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
       <Atoms.Link href={Libs.SocialLinks.GITHUB} target="_blank" variant="muted" size="default">
-        <Github2 className="w-6 h-6" />
+        <Libs.Github2 className="w-6 h-6" />
       </Atoms.Link>
       <Atoms.Link href={Libs.SocialLinks.TWITTER} target="_blank" variant="muted" size="default">
-        <XTwitter className="w-6 h-6" />
+        <Libs.XTwitter className="w-6 h-6" />
       </Atoms.Link>
       <Atoms.Link href={Libs.SocialLinks.TELEGRAM} target="_blank" variant="muted" size="default">
-        <Telegram className="w-6 h-6" />
+        <Libs.Telegram className="w-6 h-6" />
       </Atoms.Link>
     </Atoms.Container>
   );
@@ -57,7 +55,7 @@ export function ButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElemen
 
   return (
     <Atoms.Button variant="secondary" onClick={handleSignIn} {...props}>
-      <LogIn className="mr-2 h-4 w-4" />
+      <Libs.LogIn className="mr-2 h-4 w-4" />
       Sign in
     </Atoms.Button>
   );

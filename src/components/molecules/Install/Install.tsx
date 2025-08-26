@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { AppWindow, ArrowRight } from '@/libs/icons';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -79,13 +78,13 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
     <Atoms.Container className={Libs.cn('flex-col-reverse md:flex-row gap-3 lg:gap-6', props.className)}>
       <Atoms.Container className="items-center gap-1 flex-row">
         <Atoms.Button variant="outline" className="rounded-full flex-1 md:flex-none" onClick={handleCreate}>
-          <AppWindow className="mr-2 h-4 w-4" />
+          <Libs.AppWindow className="mr-2 h-4 w-4" />
           Create keys in browser
         </Atoms.Button>
         <Molecules.PopoverTradeoffs />
       </Atoms.Container>
       <Atoms.Button size="lg" className="rounded-full" onClick={handleContinue}>
-        <ArrowRight className="mr-2 h-4 w-4" />
+        <Libs.ArrowRight className="mr-2 h-4 w-4" />
         Continue with Pubky Ring
       </Atoms.Button>
     </Atoms.Container>

@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ButtonsNavigation } from './ButtonsNavigation';
 
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
+// Mock @/libs to intercept Libs.ArrowLeft and Libs.ArrowRight
+vi.mock('@/libs', () => ({
   ArrowRight: ({ className }: { className?: string }) => (
     <div data-testid="arrow-right-icon" className={className}>
       ArrowRight
@@ -14,6 +14,7 @@ vi.mock('@/libs/icons', () => ({
       ArrowLeft
     </div>
   ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Mock UI components

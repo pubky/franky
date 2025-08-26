@@ -1,5 +1,3 @@
-import { ArrowRight, ArrowLeft } from '@/libs/icons';
-
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
@@ -33,7 +31,7 @@ export function ButtonsNavigation({
         onClick={onHandleBackButton}
         disabled={backButtonDisabled}
       >
-        <ArrowLeft className="mr-2 h-4 w-4" />
+        <Libs.ArrowLeft className="mr-2 h-4 w-4" />
         {backText}
       </Atoms.Button>
       {!hiddenContinueButton && (
@@ -43,7 +41,7 @@ export function ButtonsNavigation({
           onClick={onHandleContinueButton}
           disabled={continueButtonDisabled}
         >
-          <ArrowRight className="mr-2 h-4 w-4" />
+          <Libs.ArrowRight className="mr-2 h-4 w-4" />
           {continueText}
         </Atoms.Button>
       )}

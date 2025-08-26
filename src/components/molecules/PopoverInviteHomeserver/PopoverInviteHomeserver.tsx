@@ -1,5 +1,3 @@
-import { Mail, XTwitter, Telegram, CircleHelp } from '@/libs/icons';
-
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
@@ -12,7 +10,7 @@ export function PopoverInviteHomeserver({ className = 'hover:bg-brand/10' }: Pop
     <Atoms.Popover>
       <Atoms.PopoverTrigger asChild>
         <Atoms.Button variant="ghost" size="icon" className={className}>
-          <CircleHelp className="h-4 w-4 text-white" data-testid="circle-help-icon" />
+          <Libs.CircleHelp className="h-4 w-4 text-white" data-testid="circle-help-icon" />
         </Atoms.Button>
       </Atoms.PopoverTrigger>
       <Atoms.PopoverContent className="w-[327px]">
@@ -31,13 +29,13 @@ export function PopoverInviteHomeserver({ className = 'hover:bg-brand/10' }: Pop
           </Atoms.Container>
           <Atoms.Container className="flex-row gap-4">
             <Atoms.Link href={Libs.SocialLinks.EMAIL} className="text-muted-foreground hover:text-brand">
-              <Mail className="h-6 w-6" />
+              <Libs.Mail className="h-6 w-6" />
             </Atoms.Link>
             <Atoms.Link href={Libs.SocialLinks.TWITTER} className="text-muted-foreground hover:text-brand">
-              <XTwitter className="h-6 w-6" />
+              <Libs.XTwitter className="h-6 w-6" />
             </Atoms.Link>
             <Atoms.Link href={Libs.SocialLinks.TELEGRAM} className="text-muted-foreground hover:text-brand">
-              <Telegram className="h-6 w-6" />
+              <Libs.Telegram className="h-6 w-6" />
             </Atoms.Link>
           </Atoms.Container>
         </Atoms.Container>

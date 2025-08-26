@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PopoverInvite } from './PopoverInvite';
 
-// Mock libs
+// Mock @/libs to intercept all icons and utilities
 vi.mock('@/libs', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
   SocialLinks: {
@@ -10,10 +10,6 @@ vi.mock('@/libs', () => ({
     TWITTER: 'https://x.com/pubky',
     TELEGRAM: 'https://t.me/pubky',
   },
-}));
-
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
   Gift: ({ className }: { className?: string }) => (
     <div data-testid="gift-icon" className={className}>
       Gift

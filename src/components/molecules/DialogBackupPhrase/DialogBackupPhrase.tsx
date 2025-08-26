@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, FileText } from '@/libs/icons';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
@@ -30,7 +29,7 @@ export function DialogBackupPhrase() {
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button variant="secondary" className="gap-2">
-          <FileText className="h-4 w-4" />
+          <Libs.FileText className="h-4 w-4" />
           <span>Recovery phrase</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
@@ -102,7 +101,7 @@ function RecoveryStep1({
                 setStep(1);
               }}
             >
-              <Eye className="mr-2 h-4 w-4" />
+              <Libs.Eye className="mr-2 h-4 w-4" />
               Reveal recovery phrase
             </Atoms.Button>
           </>
@@ -116,11 +115,11 @@ function RecoveryStep1({
                 setStep(1);
               }}
             >
-              <EyeOff className="mr-2 h-4 w-4" />
+              <Libs.EyeOff className="mr-2 h-4 w-4" />
               Hide recovery phrase
             </Atoms.Button>
             <Atoms.Button className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6" onClick={() => setStep(2)}>
-              <ArrowRight className="mr-2 h-4 w-4" />
+              <Libs.ArrowRight className="mr-2 h-4 w-4" />
               Confirm recovery phrase
             </Atoms.Button>
           </>
@@ -315,7 +314,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           size={isLargeScreen ? 'lg' : 'default'}
           onClick={() => setStep(1)}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <Libs.ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Atoms.Button>
         <Atoms.Button
@@ -324,7 +323,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           onClick={validateWords}
           disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
         >
-          <Check className="mr-2 h-4 w-4" />
+          <Libs.Check className="mr-2 h-4 w-4" />
           Validate
         </Atoms.Button>
       </Atoms.Container>
@@ -358,7 +357,7 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
           <Atoms.Button className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
-            <ArrowRight className="mr-2 h-4 w-4" />
+            <Libs.ArrowRight className="mr-2 h-4 w-4" />
             Finish
           </Atoms.Button>
         </Atoms.DialogClose>

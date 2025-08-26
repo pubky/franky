@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ActionButtons } from './ActionButtons';
 
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
+// Mock @/libs to intercept Libs.LogIn and Libs.UserRoundPlus
+vi.mock('@/libs', () => ({
   LogIn: ({ className }: { className?: string }) => (
     <div data-testid="login-icon" className={className}>
       LogIn
@@ -14,6 +14,7 @@ vi.mock('@/libs/icons', () => ({
       UserRoundPlus
     </div>
   ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 describe('ActionButtons', () => {

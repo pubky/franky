@@ -8,9 +8,10 @@ vi.mock('./use-toast', () => ({
   useToast: () => mockUseToast(),
 }));
 
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
+// Mock @/libs to intercept any icons and utilities
+vi.mock('@/libs', () => ({
   X: () => <svg data-testid="x-icon" />,
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 describe('Toaster', () => {

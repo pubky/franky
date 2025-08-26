@@ -2,9 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PopoverPublicKey } from './PopoverPublicKey';
 
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
+// Mock @/libs to intercept Libs.CircleHelp and utilities
+vi.mock('@/libs', () => ({
   CircleHelp: () => <svg data-testid="circle-help-icon" />,
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Mock atoms and molecules

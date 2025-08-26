@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Download, FileText } from '@/libs/icons';
 
 import * as Atoms from '@/components/atoms';
+import * as Libs from '@/libs';
 import Image from 'next/image';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Identity } from '@/libs';
@@ -23,7 +23,7 @@ export function DialogBackupEncrypted() {
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button variant="secondary" className="gap-2">
-          <FileText className="h-4 w-4" />
+          <Libs.FileText className="h-4 w-4" />
           <span>Encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
@@ -182,7 +182,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
               setStep(1);
             }}
           >
-            <ArrowLeft className="mr-2 h-4 w-4 hidden" />
+            <Libs.ArrowLeft className="mr-2 h-4 w-4 hidden" />
             Cancel
           </Atoms.Button>
         </DialogClose>
@@ -191,7 +191,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
           onClick={handleDownload}
           disabled={!password || !passwordsMatch}
         >
-          <Download className="mr-2 h-4 w-4" />
+          <Libs.Download className="mr-2 h-4 w-4" />
           Download file
         </Atoms.Button>
       </Atoms.Container>
@@ -223,7 +223,7 @@ function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
           <Atoms.Button className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
-            <ArrowRight className="mr-2 h-4 w-4" />
+            <Libs.ArrowRight className="mr-2 h-4 w-4" />
             Finish
           </Atoms.Button>
         </Atoms.DialogClose>

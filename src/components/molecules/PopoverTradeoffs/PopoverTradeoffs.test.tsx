@@ -2,13 +2,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PopoverTradeoffs } from './PopoverTradeoffs';
 
-// Mock icons from @/libs/icons
-vi.mock('@/libs/icons', () => ({
+// Mock @/libs to intercept Libs.AlertTriangle and utilities
+vi.mock('@/libs', () => ({
   AlertTriangle: ({ className }: { className?: string }) => (
     <div data-testid="alert-triangle-icon" className={className}>
       AlertTriangle
     </div>
   ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Mock atoms and molecules

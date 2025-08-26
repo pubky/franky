@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowRight, Loader2, Server } from '@/libs/icons';
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
@@ -115,7 +114,7 @@ export function HomeserverCard() {
           </Atoms.Container>
           <Atoms.Container className="flex-col md:flex-row gap-3 items-start md:items-center mt-3">
             <Atoms.Button variant={'secondary'} className="rounded-full" onClick={() => {}} disabled={true}>
-              <Server className="mr-2 h-4 w-4" />
+              <Libs.Server className="mr-2 h-4 w-4" />
               Custom homeserver
             </Atoms.Button>
             <Atoms.Typography className="text-base-secondary-foreground text-base opacity-80 font-normal">
@@ -132,7 +131,7 @@ export function HomeserverCard() {
           variant={'secondary'}
           onClick={() => router.push('/onboarding/backup')}
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <Libs.ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Atoms.Button>
         <Atoms.Button
@@ -143,12 +142,12 @@ export function HomeserverCard() {
         >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {buttonContinueText}
             </>
           ) : (
             <>
-              <ArrowRight className="mr-2 h-4 w-4" />
+              <Libs.ArrowRight className="mr-2 h-4 w-4" />
               {buttonContinueText}
             </>
           )}

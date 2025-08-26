@@ -91,7 +91,7 @@ vi.mock('@/molecules', () => ({
   ButtonSignIn: () => <div data-testid="button-sign-in">Sign In Button</div>,
 }));
 
-// Mock libs
+// Mock @/libs to intercept all icons and utilities
 vi.mock('@/libs', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
   SocialLinks: {
@@ -99,10 +99,6 @@ vi.mock('@/libs', () => ({
     TWITTER: 'https://x.com/getpubky',
     TELEGRAM: 'https://t.me/pubky',
   },
-}));
-
-// Mock icons
-vi.mock('@/libs/icons', () => ({
   Github2: ({ className }: { className?: string }) => (
     <div data-testid="github-icon" className={className}>
       Github

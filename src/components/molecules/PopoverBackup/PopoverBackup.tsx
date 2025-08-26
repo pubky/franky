@@ -1,5 +1,3 @@
-import { CircleHelp } from '@/libs/icons';
-
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
@@ -8,7 +6,7 @@ export function PopoverBackup({ ...props }: React.HTMLAttributes<HTMLDivElement>
     <Atoms.Popover>
       <Atoms.PopoverTrigger asChild>
         <Atoms.Button variant="ghost" size="icon" className={Libs.cn('hover:bg-white/10', props.className)}>
-          <CircleHelp className="h-4 w-4 text-white" data-testid="circle-help-icon" />
+          <Libs.CircleHelp className="h-4 w-4 text-white" data-testid="circle-help-icon" />
         </Atoms.Button>
       </Atoms.PopoverTrigger>
       <Atoms.PopoverContent className="w-[327px] p-6">
