@@ -279,10 +279,7 @@ describe('DialogExport', () => {
     expect(appleLink).toHaveAttribute('target', '_blank');
 
     expect(googleLink).toBeInTheDocument();
-    expect(googleLink).toHaveAttribute(
-      'href',
-      'https://play.google.com/store/apps/details?id=to.pubky.ring',
-    );
+    expect(googleLink).toHaveAttribute('href', 'https://play.google.com/store/apps/details?id=to.pubky.ring');
     expect(googleLink).toHaveAttribute('target', '_blank');
   });
 
