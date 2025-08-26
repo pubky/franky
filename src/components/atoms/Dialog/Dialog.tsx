@@ -63,7 +63,7 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogClose className="absolute right-8 top-8 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md">
+          <DialogClose className="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer">
             <X className="h-4 w-4 text-secondary-foreground opacity-70" />
             <span className="sr-only">Close</span>
           </DialogClose>

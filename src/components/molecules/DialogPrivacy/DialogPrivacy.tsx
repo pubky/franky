@@ -4,9 +4,9 @@ export function DialogPrivacy() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Link href="#" className="text-brand">
+        <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
           Privacy Policy
-        </Atoms.Link>
+        </Atoms.Typography>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="sm:max-w-xl">
         <Atoms.DialogHeader className="pr-6">

@@ -138,7 +138,7 @@ describe('Dialog Components', () => {
       expect(content).toHaveClass('custom-class');
     });
 
-    it('renders close button', () => {
+    it('renders close button by default', () => {
       render(
         <DialogContent>
           <div>Content</div>
@@ -150,8 +150,59 @@ describe('Dialog Components', () => {
 
       expect(closeButton).toBeInTheDocument();
       expect(xIcon).toBeInTheDocument();
-      // The close button is nested inside another button, so just check it exists
+      expect(screen.getByText('Close')).toBeInTheDocument(); // sr-only text
+    });
+
+    it('renders close button when showCloseButton is true', () => {
+      render(
+        <DialogContent showCloseButton={true}>
+          <div>Content</div>
+        </DialogContent>,
+      );
+
+      const closeButton = screen.getByTestId('dialog-close');
+      const xIcon = screen.getByTestId('x-icon');
+
       expect(closeButton).toBeInTheDocument();
+      expect(xIcon).toBeInTheDocument();
+      expect(screen.getByText('Close')).toBeInTheDocument();
+    });
+
+    it('does not render close button when showCloseButton is false', () => {
+      render(
+        <DialogContent showCloseButton={false}>
+          <div>Content</div>
+        </DialogContent>,
+      );
+
+      const closeButton = screen.queryByTestId('dialog-close');
+      const xIcon = screen.queryByTestId('x-icon');
+
+      expect(closeButton).not.toBeInTheDocument();
+      expect(xIcon).not.toBeInTheDocument();
+      expect(screen.queryByText('Close')).not.toBeInTheDocument();
+    });
+
+    it('applies correct styling to close button', () => {
+      render(
+        <DialogContent>
+          <div>Content</div>
+        </DialogContent>,
+      );
+
+      const closeButton = screen.getByTestId('dialog-close');
+      expect(closeButton).toHaveClass(
+        'absolute',
+        'right-4',
+        'top-4',
+        'w-8',
+        'h-8',
+        'bg-secondary',
+        'text-secondary-foreground',
+        'hover:bg-secondary/80',
+        'rounded-full',
+        'cursor-pointer',
+      );
     });
   });
 

@@ -1,4 +1,4 @@
-import { Scan, X } from '@/libs/icons';
+import { Scan } from '@/libs/icons';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
@@ -15,10 +15,6 @@ export function DialogExport() {
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="p-8 rounded-xl flex flex-col w-[430px]">
-        <Atoms.Button variant="ghost" size="icon" className="absolute right-8 top-8 h-8 w-8 rounded-2xl opacity-70">
-          <X className="h-4 w-4 text-secondary-foreground" />
-        </Atoms.Button>
-
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
           <Atoms.DialogTitle className="text-2xl font-bold leading-8">Pubky Ring export</Atoms.DialogTitle>
           <Atoms.DialogDescription className="text-sm font-medium leading-5">
