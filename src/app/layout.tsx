@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import { Inter_Tight } from 'next/font/google';
 import { DatabaseProvider } from '@/providers';
 
@@ -13,25 +12,11 @@ const interTight = Inter_Tight({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: 'Pubky App',
-  description: 'Pubky App',
-  icons: {
-    icon: [
-      {
-        url: '/pubky-favicon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    shortcut: '/pubky-favicon.svg',
-    apple: '/pubky-favicon.svg',
-  },
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <RootContainer>
       <DatabaseProvider>
+        <Molecules.Metadata />
         <Organisms.Header />
         {children}
         <Molecules.Toaster />
