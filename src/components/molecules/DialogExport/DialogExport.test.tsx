@@ -29,8 +29,8 @@ vi.mock('qrcode.react', () => ({
   ),
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   Scan: ({ className }: { className?: string }) => (
     <div data-testid="scan-icon" className={className}>
       Scan
@@ -275,13 +275,13 @@ describe('DialogExport', () => {
     const googleLink = links.find((link) => link.getAttribute('href')?.includes('play.google.com'));
 
     expect(appleLink).toBeInTheDocument();
-    expect(appleLink).toHaveAttribute('href', 'https://apps.apple.com/app/pubky-ring/id6644244100');
+    expect(appleLink).toHaveAttribute('href', 'https://apps.apple.com/app/pubky-ring/id6739356756');
     expect(appleLink).toHaveAttribute('target', '_blank');
 
     expect(googleLink).toBeInTheDocument();
     expect(googleLink).toHaveAttribute(
       'href',
-      'https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share',
+      'https://play.google.com/store/apps/details?id=to.pubky.ring',
     );
     expect(googleLink).toHaveAttribute('target', '_blank');
   });

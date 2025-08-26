@@ -10,8 +10,8 @@ vi.mock('@/core', () => ({
   useOnboardingStore: () => mockUseOnboardingStore(),
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock icons from @/libs/icons
+vi.mock('@/libs/icons', () => ({
   Trash2: ({ className }: { className?: string }) => (
     <div data-testid="trash2-icon" className={className}>
       Trash2
