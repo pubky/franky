@@ -166,6 +166,9 @@ body {
   .hover\:bg-brand\/90:hover {
     background-color: oklch(from var(--brand) calc(l * 0.9) c h);
   }
+  .bg-header {
+    background: linear-gradient(180deg, var(--background) 50%, var(--transparent) 100%);
+  }
 }
 
 @layer utilities {
