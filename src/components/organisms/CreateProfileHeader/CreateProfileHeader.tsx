@@ -32,6 +32,7 @@ export const CreateProfileHeader = () => {
       Molecules.toast({
         title: 'Copy failed',
         description: 'Unable to copy to clipboard',
+        variant: 'error',
       });
     }
   };

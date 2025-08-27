@@ -43,6 +43,7 @@ export function PublicKeyCard() {
       toast({
         title: 'Copy failed',
         description: 'Unable to copy to clipboard',
+        variant: 'error',
       });
     }
   };
