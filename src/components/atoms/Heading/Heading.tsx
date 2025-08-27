@@ -14,7 +14,7 @@ export function Heading({ level = 1, children, className, size = 'md' }: Heading
   const sizeClasses = {
     sm: 'text-lg font-semibold',
     md: 'text-xl font-semibold',
-    lg: 'text-xl xs:text-2xl font-bold',
+    lg: 'text-2xl font-bold',
     xl: 'text-4xl font-bold',
     '2xl': 'text-7xl sm:text-9xl font-bold',
   };
