@@ -4,24 +4,38 @@ import { DatabaseProvider } from '@/providers';
 
 import './globals.css';
 
+import * as Organisms from '@/organisms';
+import * as Molecules from '@/molecules';
+import * as Atoms from '@/atoms';
+
 const interTight = Inter_Tight({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: 'Franky',
-  description: "I'm ALIVEEE!",
+  title: 'Pubky App',
+  description: 'Pubky App',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${interTight.variable} antialiased`}>
-        <DatabaseProvider>
-          <div className="min-h-screen bg-background">{children}</div>
-        </DatabaseProvider>
-      </body>
-    </html>
+    <RootContainer>
+      <DatabaseProvider>
+        <Organisms.Header />
+        {children}
+        <Molecules.Toaster />
+      </DatabaseProvider>
+    </RootContainer>
+  );
+}
+
+export function RootContainer({ children }: { children: React.ReactNode }) {
+  return (
+    <Atoms.Container as="html" lang="en" className="dark">
+      <Atoms.Container as="body" className={`${interTight.variable} antialiased`}>
+        <Molecules.PageContainer>{children}</Molecules.PageContainer>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

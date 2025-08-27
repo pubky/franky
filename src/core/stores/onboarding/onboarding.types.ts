@@ -9,6 +9,7 @@ export interface OnboardingActions {
   reset: () => void;
   setPublicKey: (publicKey: string) => void;
   setSecretKey: (secretKey: string) => void;
+  setKeypair: (publicKey: string, secretKey: string) => void;
   setHydrated: (hasHydrated: boolean) => void;
 }
 
@@ -26,5 +27,6 @@ export enum OnboardingActionTypes {
   CLEAR_SECRET_KEY = 'CLEAR_SECRET_KEY',
   SET_SECRET_KEY = 'SET_SECRET_KEY',
   SET_PUBLIC_KEY = 'SET_PUBLIC_KEY',
+  SET_KEYPAIR = 'SET_KEYPAIR',
   SET_HYDRATED = 'SET_HYDRATED',
 }
