@@ -1,7 +1,5 @@
 'use client';
 
-import { Clipboard, Link } from 'lucide-react';
-
 import * as Atoms from '@/components/atoms';
 import * as Molecules from '@/components/molecules';
 import * as Libs from '@/libs';
@@ -67,7 +65,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button variant="secondary" size="sm" className="w-fit rounded-full">
-          <Link className="h-4 w-4" />
+          <Libs.Link className="h-4 w-4" />
           <span>Add link</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
@@ -108,7 +106,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
                 validateUrl(value);
               }}
               size="lg"
-              icon={<Clipboard className="h-4 w-4" />}
+              icon={<Libs.Clipboard className="h-4 w-4" />}
               iconPosition="right"
               onClickIcon={async () => {
                 try {

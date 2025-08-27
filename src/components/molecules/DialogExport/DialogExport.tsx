@@ -1,7 +1,7 @@
-import { Scan } from 'lucide-react';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 import { QRCodeSVG } from 'qrcode.react';
 
 export function DialogExport() {
@@ -9,7 +9,7 @@ export function DialogExport() {
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button className="gap-2">
-          <Scan className="h-4 w-4" />
+          <Libs.Scan className="h-4 w-4" />
           <span>Export to Pubky Ring</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>

@@ -8,9 +8,10 @@ vi.mock('./use-toast', () => ({
   useToast: () => mockUseToast(),
 }));
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
+// Mock @/libs to intercept any icons and utilities
+vi.mock('@/libs', () => ({
   X: () => <svg data-testid="x-icon" />,
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 describe('Toaster', () => {

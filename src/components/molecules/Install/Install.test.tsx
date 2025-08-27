@@ -104,6 +104,16 @@ vi.mock('@/atoms', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  AppWindow: ({ className }: { className?: string }) => (
+    <div data-testid="app-window-icon" className={className}>
+      AppWindow
+    </div>
+  ),
+  ArrowRight: ({ className }: { className?: string }) => (
+    <div data-testid="arrow-right-icon" className={className}>
+      ArrowRight
+    </div>
+  ),
 }));
 
 describe('InstallCard', () => {

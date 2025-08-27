@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { Loader2 } from 'lucide-react';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -85,7 +84,7 @@ export function InputField({
         {loading && (
           <Atoms.Container className="justify-center items-center w-auto">
             {loadingIcon ?? (
-              <Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" data-testid="loading-icon" />
+              <Libs.Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" data-testid="loading-icon" />
             )}
           </Atoms.Container>
         )}

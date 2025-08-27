@@ -2,9 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Toast, ToastProvider, ToastViewport } from './Toast';
 
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
+// Mock @/libs to intercept Libs.X
+vi.mock('@/libs', () => ({
   X: () => <svg data-testid="x-icon" />,
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 describe('Toast Components', () => {

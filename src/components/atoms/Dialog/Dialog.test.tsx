@@ -43,13 +43,14 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock @/libs to intercept Libs.X
+vi.mock('@/libs', () => ({
   X: ({ className }: { className?: string }) => (
     <div data-testid="x-icon" className={className}>
       X
     </div>
   ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Import the actual Dialog components after mocking

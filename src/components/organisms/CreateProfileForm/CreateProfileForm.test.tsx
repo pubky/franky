@@ -10,8 +10,8 @@ vi.mock('@/core', () => ({
   useOnboardingStore: () => mockUseOnboardingStore(),
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock @/libs to intercept Libs.Trash2 and Libs.File
+vi.mock('@/libs', () => ({
   Trash2: ({ className }: { className?: string }) => (
     <div data-testid="trash2-icon" className={className}>
       Trash2
@@ -22,6 +22,7 @@ vi.mock('lucide-react', () => ({
       File
     </div>
   ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Mock atoms

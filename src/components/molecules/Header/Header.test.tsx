@@ -94,6 +94,26 @@ vi.mock('@/molecules', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
+  Github2: ({ className }: { className?: string }) => (
+    <div data-testid="github-icon" className={className}>
+      Github
+    </div>
+  ),
+  XTwitter: ({ className }: { className?: string }) => (
+    <div data-testid="xtwitter-icon" className={className}>
+      XTwitter
+    </div>
+  ),
+  Telegram: ({ className }: { className?: string }) => (
+    <div data-testid="telegram-icon" className={className}>
+      Telegram
+    </div>
+  ),
+  LogIn: ({ className }: { className?: string }) => (
+    <div data-testid="login-icon" className={className}>
+      LogIn
+    </div>
+  ),
 }));
 
 describe('HeaderContainer', () => {
