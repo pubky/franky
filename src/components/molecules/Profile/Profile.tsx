@@ -1,7 +1,5 @@
 'use client';
 
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
-
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
@@ -39,7 +37,7 @@ export const ProfileNavigation = ({
         onClick={onHandleBackButton}
         disabled={backButtonDisabled}
       >
-        <ArrowLeft className="mr-2 h-4 w-4" />
+        <Libs.ArrowLeft className="mr-2 h-4 w-4" />
         {backText}
       </Atoms.Button>
       {!hiddenContinueButton && (
@@ -51,12 +49,12 @@ export const ProfileNavigation = ({
         >
           {continueButtonLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {continueText}
             </>
           ) : (
             <>
-              <ArrowRight className="mr-2 h-4 w-4" />
+              <Libs.ArrowRight className="mr-2 h-4 w-4" />
               {continueText}
             </>
           )}

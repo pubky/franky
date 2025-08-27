@@ -2,8 +2,9 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PopoverInvite } from './PopoverInvite';
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock @/libs to intercept all icons and utilities
+vi.mock('@/libs', () => ({
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
   Gift: ({ className }: { className?: string }) => (
     <div data-testid="gift-icon" className={className}>
       Gift
@@ -14,14 +15,14 @@ vi.mock('lucide-react', () => ({
       Mail
     </div>
   ),
-  Twitter: ({ className }: { className?: string }) => (
-    <div data-testid="twitter-icon" className={className}>
-      Twitter
+  XTwitter: ({ className }: { className?: string }) => (
+    <div data-testid="xtwitter-icon" className={className}>
+      XTwitter
     </div>
   ),
-  Send: ({ className }: { className?: string }) => (
-    <div data-testid="send-icon" className={className}>
-      Send
+  Telegram: ({ className }: { className?: string }) => (
+    <div data-testid="telegram-icon" className={className}>
+      Telegram
     </div>
   ),
 }));
@@ -55,17 +56,17 @@ describe('InvitePopover', () => {
     fireEvent.click(button);
 
     const mailIcon = screen.getByTestId('mail-icon');
-    const twitterIcon = screen.getByTestId('twitter-icon');
-    const sendIcon = screen.getByTestId('send-icon');
+    const twitterIcon = screen.getByTestId('xtwitter-icon');
+    const telegramIcon = screen.getByTestId('telegram-icon');
 
     expect(mailIcon).toBeInTheDocument();
     expect(twitterIcon).toBeInTheDocument();
-    expect(sendIcon).toBeInTheDocument();
+    expect(telegramIcon).toBeInTheDocument();
 
     // Check icons have proper classes
     expect(mailIcon).toHaveClass('h-6', 'w-6');
     expect(twitterIcon).toHaveClass('h-6', 'w-6');
-    expect(sendIcon).toHaveClass('h-6', 'w-6');
+    expect(telegramIcon).toHaveClass('h-6', 'w-6');
   });
 
   it('uses default URLs when no custom URLs provided', () => {
@@ -75,8 +76,8 @@ describe('InvitePopover', () => {
     fireEvent.click(button);
 
     const mailLink = screen.getByTestId('mail-icon').parentElement;
-    const twitterLink = screen.getByTestId('twitter-icon').parentElement;
-    const telegramLink = screen.getByTestId('send-icon').parentElement;
+    const twitterLink = screen.getByTestId('xtwitter-icon').parentElement;
+    const telegramLink = screen.getByTestId('telegram-icon').parentElement;
 
     expect(mailLink).toHaveAttribute('href', 'mailto:hello@pubky.com');
     expect(twitterLink).toHaveAttribute('href', 'https://x.com/pubky');
@@ -90,8 +91,8 @@ describe('InvitePopover', () => {
     fireEvent.click(button);
 
     const mailLink = screen.getByTestId('mail-icon').parentElement;
-    const twitterLink = screen.getByTestId('twitter-icon').parentElement;
-    const telegramLink = screen.getByTestId('send-icon').parentElement;
+    const twitterLink = screen.getByTestId('xtwitter-icon').parentElement;
+    const telegramLink = screen.getByTestId('telegram-icon').parentElement;
 
     expect(mailLink).toHaveAttribute('href', 'mailto:hello@pubky.com');
     expect(twitterLink).toHaveAttribute('href', 'https://x.com/pubky');

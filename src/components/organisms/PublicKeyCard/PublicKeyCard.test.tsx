@@ -151,6 +151,16 @@ vi.mock('@/libs', () => ({
     generateKeypair: vi.fn(),
   },
   copyToClipboard: (...args: unknown[]) => mockCopyToClipboard(...args),
+  Copy: ({ className }: { className?: string }) => (
+    <div data-testid="copy-icon" className={className}>
+      Copy
+    </div>
+  ),
+  Key: ({ className }: { className?: string }) => (
+    <div data-testid="key-icon" className={className}>
+      Key
+    </div>
+  ),
 }));
 
 describe('PublicKeyCard', () => {

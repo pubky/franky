@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Copy, Key } from 'lucide-react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -66,7 +65,7 @@ export function PublicKeyCard() {
         actions={[
           {
             label: 'Copy to clipboard',
-            icon: <Copy className="mr-2 h-4 w-4" />,
+            icon: <Libs.Copy className="mr-2 h-4 w-4" />,
             onClick: handleCopyToClipboard,
             variant: 'secondary',
           },
@@ -80,7 +79,7 @@ export function PublicKeyCard() {
           onClick={handleCopyToClipboard}
           loading={publicKey === ''}
           loadingText="Generating pubky..."
-          icon={<Key className="h-4 w-4 text-brand" />}
+          icon={<Libs.Key className="h-4 w-4 text-brand" />}
           status={publicKey === '' ? 'default' : 'success'}
           className="w-full max-w-[576px]"
         />

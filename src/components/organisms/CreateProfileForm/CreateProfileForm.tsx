@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, File as FileIcon } from 'lucide-react';
 import { z } from 'zod';
 
 import * as Molecules from '@/molecules';
+import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 
@@ -204,7 +204,7 @@ export const CreateProfileForm = () => {
                       }));
                     }
                   }}
-                  icon={<Trash2 className="h-4 w-4" />}
+                  icon={<Libs.Trash2 className="h-4 w-4" />}
                   onClickIcon={() => handleDeleteLink(index)}
                   iconPosition="right"
                   status={linkUrlErrors[index] ? 'error' : 'default'}
@@ -259,12 +259,12 @@ export const CreateProfileForm = () => {
             >
               {avatarPreview ? (
                 <>
-                  <Trash2 className="h-4 w-4" />
+                  <Libs.Trash2 className="h-4 w-4" />
                   <span>Delete</span>
                 </>
               ) : (
                 <>
-                  <FileIcon className="h-4 w-4" />
+                  <Libs.File className="h-4 w-4" />
                   <span>Choose file</span>
                 </>
               )}

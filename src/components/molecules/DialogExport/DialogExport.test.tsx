@@ -29,18 +29,14 @@ vi.mock('qrcode.react', () => ({
   ),
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
+// Mock @/libs to intercept Libs.Scan
+vi.mock('@/libs', () => ({
   Scan: ({ className }: { className?: string }) => (
     <div data-testid="scan-icon" className={className}>
       Scan
     </div>
   ),
-  X: ({ className }: { className?: string }) => (
-    <div data-testid="x-icon" className={className}>
-      X
-    </div>
-  ),
+  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
 // Mock atoms

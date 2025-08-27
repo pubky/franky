@@ -1,10 +1,10 @@
 'use client';
 
-import { Key } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 
 export const ScanContent = () => {
@@ -25,7 +25,7 @@ export const ScanContent = () => {
           <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
             <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
             <Atoms.Button className="w-full h-[60px] rounded-full" size="lg">
-              <Key className="mr-2 h-4 w-4" />
+              <Libs.Key className="mr-2 h-4 w-4" />
               Authorize with Pubky Ring
             </Atoms.Button>
           </Atoms.Container>
