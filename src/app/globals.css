@@ -167,3 +167,24 @@ body {
     background-color: oklch(from var(--brand) calc(l * 0.9) c h);
   }
 }
+
+@layer utilities {
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: auto;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--muted);
+    border-radius: 4px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--muted-foreground);
+    border-radius: 4px;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}

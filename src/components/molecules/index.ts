@@ -17,7 +17,6 @@ export * from './Home';
 export * from './InputField';
 export * from './Install';
 export * from './Logo';
-export * from './Metadata';
 export * from './Page';
 export * from './PopoverBackup';
 export * from './PopoverInvite';
