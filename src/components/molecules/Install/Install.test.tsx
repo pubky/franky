@@ -168,7 +168,7 @@ describe('InstallFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyRingLink = links[0];
 
-    expect(pubkyRingLink).toHaveAttribute('href', 'https://www.pubkyring.to/');
+    expect(pubkyRingLink).toHaveAttribute('href', 'https://pubkyring.app/');
     expect(pubkyRingLink).toHaveAttribute('target', '_blank');
     expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
   });

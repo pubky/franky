@@ -39,7 +39,7 @@ export const ScanFooter = () => {
   return (
     <Atoms.FooterLinks className="py-6">
       Use{' '}
-      <Atoms.Link href="https://www.pubkyring.to/" target="_blank">
+      <Atoms.Link href="https://pubkyring.app/" target="_blank">
         Pubky Ring
       </Atoms.Link>{' '}
       or any other{' '}
