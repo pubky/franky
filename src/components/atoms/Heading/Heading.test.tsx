@@ -34,7 +34,7 @@ describe('Heading', () => {
 
     rerender(<Heading size="lg">Large Heading</Heading>);
     heading = screen.getByRole('heading');
-    expect(heading).toHaveClass('text-xl', 'xs:text-2xl', 'font-bold');
+    expect(heading).toHaveClass('text-xl', 'sm:text-2xl', 'font-bold');
 
     rerender(<Heading size="xl">Extra Large Heading</Heading>);
     heading = screen.getByRole('heading');
