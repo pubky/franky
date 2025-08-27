@@ -6,7 +6,7 @@ export class UserController {
   private constructor() {} // Prevent instantiation
 
   // Upload avatar to homeserver and return the url
-  static async uploadAvatar (avatarFile: File, publicKey: string): Promise<string> {
+  static async uploadAvatar(avatarFile: File, publicKey: string): Promise<string> {
     const homeserver = Core.HomeserverService.getInstance();
 
     // 1. Upload Blob
@@ -29,7 +29,7 @@ export class UserController {
       body: JSON.stringify(fileResult.file.toJson()),
     });
     return fileResult.meta.url;
-  };
+  }
 
   static async saveProfile(
     profile: z.infer<typeof Core.UiUserSchema>,
@@ -38,7 +38,7 @@ export class UserController {
   ): Promise<Response> {
     // validate user profile specs
     // Q: What does it happen if the profile is invalid?
-    const {user, meta} = await Core.UserNormalizer.to(
+    const { user, meta } = await Core.UserNormalizer.to(
       {
         name: profile.name,
         bio: profile.bio ?? '',
@@ -66,7 +66,7 @@ export class UserController {
       // TODO: Also user profile action creator to mutate user profile in the store
     }
     return response;
-  };
+  }
 
   static async insert(userData: Core.NexusUser | Core.UserModelSchema): Promise<Core.UserModel> {
     return await Core.UserModel.insert(userData);
@@ -81,7 +81,7 @@ export class UserController {
   }
 
   // userData can be NexusUser or UserModelSchema because it can come from the homeserver or the database
-    static async save(userData: Core.NexusUser | Core.UserModelSchema): Promise<Core.UserModel> {
+  static async save(userData: Core.NexusUser | Core.UserModelSchema): Promise<Core.UserModel> {
     try {
       const existingUser = await Core.UserModel.findById(userData.details.id);
       await existingUser.edit(userData);
@@ -97,7 +97,7 @@ export class UserController {
     return await user.delete();
   }
 
-    static async bulkSave(usersData: Core.NexusUser[]): Promise<Core.UserModel[]> {
+  static async bulkSave(usersData: Core.NexusUser[]): Promise<Core.UserModel[]> {
     return await Core.UserModel.bulkSave(usersData);
   }
 

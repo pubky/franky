@@ -107,7 +107,7 @@ export const CreateProfileForm = () => {
     const user = await validateUser();
 
     if (!user) return;
-    
+
     let image: string | null = null;
     if (avatarFile) {
       setContinueText('Uploading avatar...');

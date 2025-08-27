@@ -24,7 +24,6 @@ export class HomeserverService {
   private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
 
   private constructor() {
-
     this.client = this.testnet
       ? Client.testnet()
       : new Client({

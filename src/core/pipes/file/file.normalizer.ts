@@ -1,12 +1,8 @@
-import {
-  BlobResult,
-  FileResult,
-} from 'pubky-app-specs';
+import { BlobResult, FileResult } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class FileNormalizer {
-
   private constructor() {}
 
   static async toBlob(blob: Uint8Array, pubky: string): Promise<BlobResult> {

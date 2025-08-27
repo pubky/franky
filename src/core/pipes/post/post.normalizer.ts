@@ -1,12 +1,8 @@
-import {
-  PostResult,
-  PubkyAppPostKind,
-} from 'pubky-app-specs';
+import { PostResult, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostNormalizer {
-
   private constructor() {}
 
   static async to(post: Core.PostValidatorData, pubky: string): Promise<PostResult> {
