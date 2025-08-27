@@ -10,7 +10,6 @@ export * from './ImageBackground';
 export * from './Input';
 export * from './Link';
 export * from './Label';
-export * from './List';
 export * from './PageHeader';
 export * from './PageSubtitle';
 export * from './Popover';

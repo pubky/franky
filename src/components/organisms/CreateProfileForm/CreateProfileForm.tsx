@@ -78,6 +78,18 @@ export const CreateProfileForm = () => {
     setLinkUrlErrors({});
   };
 
+  const handleDeleteAvatar = () => {
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview);
+    }
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setAvatarError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const validateProfile = async () => {
     const nonEmptyLinks = validateLinks(links);
     const result = profileSchema.safeParse({
@@ -296,6 +308,7 @@ export const CreateProfileForm = () => {
 
           <Atoms.Container className="justify-center flex-row">
             <Atoms.Avatar
+              key={avatarPreview ? 'with-image' : 'without-image'}
               className="h-48 w-48 bg-muted cursor-pointer"
               onClick={handleChooseFileClick}
               role="button"
@@ -318,10 +331,19 @@ export const CreateProfileForm = () => {
               variant="secondary"
               size="sm"
               className="rounded-full mx-auto"
-              onClick={handleChooseFileClick}
+              onClick={avatarPreview ? handleDeleteAvatar : handleChooseFileClick}
             >
-              <FileIcon className="h-4 w-4" />
-              <span>Choose file</span>
+              {avatarPreview ? (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete</span>
+                </>
+              ) : (
+                <>
+                  <FileIcon className="h-4 w-4" />
+                  <span>Choose file</span>
+                </>
+              )}
             </Atoms.Button>
             {avatarError && (
               <Atoms.Typography as="small" size="sm" className="ml-1 text-red-500">

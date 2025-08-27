@@ -39,15 +39,6 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
-  List: ({ elements, className }: { elements: React.ReactNode[]; className?: string }) => (
-    <ul data-testid="list" className={className}>
-      {elements.map((element, index) => (
-        <li key={index} data-testid={`list-item-${index}`}>
-          {element}
-        </li>
-      ))}
-    </ul>
-  ),
 }));
 
 describe('DialogTerms', () => {
@@ -67,31 +58,31 @@ describe('DialogTerms', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('displays default link text', () => {
+  it('displays default trigger text', () => {
     render(<DialogTerms />);
 
-    const links = screen.getAllByText('Terms of Service');
-    const triggerLink = links.find((link) => link.tagName === 'A');
-    expect(triggerLink).toBeInTheDocument();
-    expect(triggerLink?.tagName).toBe('A');
+    const triggers = screen.getAllByText('Terms of Service');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toBeInTheDocument();
+    expect(trigger?.tagName).toBe('SPAN');
   });
 
-  it('displays static link text', () => {
+  it('displays static trigger text', () => {
     render(<DialogTerms />);
 
-    const links = screen.getAllByTestId('link');
-    const triggerLink = links.find((link) => link.textContent === 'Terms of Service');
-    expect(triggerLink).toBeInTheDocument();
-    expect(triggerLink?.tagName).toBe('A');
-    expect(triggerLink).toHaveTextContent('Terms of Service');
+    const triggers = screen.getAllByText('Terms of Service');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toBeInTheDocument();
+    expect(trigger?.tagName).toBe('SPAN');
+    expect(trigger).toHaveTextContent('Terms of Service');
   });
 
-  it('applies correct styling to trigger link', () => {
+  it('applies correct styling to trigger', () => {
     render(<DialogTerms />);
 
-    const links = screen.getAllByText('Terms of Service');
-    const triggerLink = links.find((link) => link.tagName === 'A');
-    expect(triggerLink).toHaveClass('text-brand');
+    const triggers = screen.getAllByText('Terms of Service');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toHaveClass('text-brand');
   });
 
   it('renders dialog title correctly', () => {
@@ -135,7 +126,7 @@ describe('DialogTerms', () => {
 
     // Check for some key terms content
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
-    expect(screen.getAllByText(/TERMS AND CONDITIONS/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();
     expect(screen.getByText(/PLEASE REVIEW THE ARBITRATION PROVISION/)).toBeInTheDocument();
   });
 
@@ -149,26 +140,26 @@ describe('DialogTerms', () => {
   it('maintains proper content structure', () => {
     render(<DialogTerms />);
 
-    const links = screen.getAllByRole('link');
-    const triggerLink = links.find((link) => link.textContent === 'Terms of Service');
-    fireEvent.click(triggerLink!);
+    const triggers = screen.getAllByText('Terms of Service');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    fireEvent.click(trigger!);
 
     // Check that dialog content is rendered
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Terms of Service');
   });
 
-  it('always displays the same static link text', () => {
+  it('always displays the same static trigger text', () => {
     render(<DialogTerms />);
-    const links = screen.getAllByTestId('link');
-    const triggerLink = links.find((link) => link.textContent === 'Terms of Service');
-    expect(triggerLink).toHaveTextContent('Terms of Service');
+    const triggers = screen.getAllByText('Terms of Service');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toHaveTextContent('Terms of Service');
   });
 
   it('renders complete terms sections', () => {
     render(<DialogTerms />);
 
     // Check for main sections that should be present
-    expect(screen.getAllByText(/TERMS AND CONDITIONS/).length).toBeGreaterThan(0);
+    expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();
     expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
   });

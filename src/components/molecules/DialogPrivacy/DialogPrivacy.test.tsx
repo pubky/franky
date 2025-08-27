@@ -39,15 +39,6 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
-  List: ({ elements, className }: { elements: React.ReactNode[]; className?: string }) => (
-    <ul data-testid="list" className={className}>
-      {elements.map((element, index) => (
-        <li key={index} data-testid={`list-item-${index}`}>
-          {element}
-        </li>
-      ))}
-    </ul>
-  ),
 }));
 
 describe('DialogPrivacy', () => {
@@ -67,31 +58,31 @@ describe('DialogPrivacy', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('displays default link text', () => {
+  it('displays default trigger text', () => {
     render(<DialogPrivacy />);
 
-    const links = screen.getAllByText('Privacy Policy');
-    const triggerLink = links.find((link) => link.tagName === 'A');
-    expect(triggerLink).toBeInTheDocument();
-    expect(triggerLink?.tagName).toBe('A');
+    const triggers = screen.getAllByText('Privacy Policy');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toBeInTheDocument();
+    expect(trigger?.tagName).toBe('SPAN');
   });
 
-  it('displays static link text', () => {
+  it('displays static trigger text', () => {
     render(<DialogPrivacy />);
 
-    const links = screen.getAllByTestId('link');
-    const triggerLink = links.find((link) => link.textContent === 'Privacy Policy');
-    expect(triggerLink).toBeInTheDocument();
-    expect(triggerLink?.tagName).toBe('A');
-    expect(triggerLink).toHaveTextContent('Privacy Policy');
+    const triggers = screen.getAllByText('Privacy Policy');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toBeInTheDocument();
+    expect(trigger?.tagName).toBe('SPAN');
+    expect(trigger).toHaveTextContent('Privacy Policy');
   });
 
-  it('applies correct styling to trigger link', () => {
+  it('applies correct styling to trigger', () => {
     render(<DialogPrivacy />);
 
-    const links = screen.getAllByText('Privacy Policy');
-    const triggerLink = links.find((link) => link.tagName === 'A');
-    expect(triggerLink).toHaveClass('text-brand');
+    const triggers = screen.getAllByText('Privacy Policy');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toHaveClass('text-brand');
   });
 
   it('renders dialog title correctly', () => {
@@ -151,19 +142,19 @@ describe('DialogPrivacy', () => {
   it('maintains proper content structure', () => {
     render(<DialogPrivacy />);
 
-    const links = screen.getAllByRole('link');
-    const triggerLink = links.find((link) => link.textContent === 'Privacy Policy');
-    fireEvent.click(triggerLink!);
+    const triggers = screen.getAllByText('Privacy Policy');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    fireEvent.click(trigger!);
 
     // Check that dialog content is rendered
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Privacy Policy');
   });
 
-  it('always displays the same static link text', () => {
+  it('always displays the same static trigger text', () => {
     render(<DialogPrivacy />);
-    const links = screen.getAllByTestId('link');
-    const triggerLink = links.find((link) => link.textContent === 'Privacy Policy');
-    expect(triggerLink).toHaveTextContent('Privacy Policy');
+    const triggers = screen.getAllByText('Privacy Policy');
+    const trigger = triggers.find((element) => element.tagName === 'SPAN');
+    expect(trigger).toHaveTextContent('Privacy Policy');
   });
 
   it('renders complete privacy policy sections', () => {
