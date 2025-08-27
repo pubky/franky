@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Trash2, File as FileIcon } from 'lucide-react';
 import { z } from 'zod';
-import { PubkyAppUser } from 'pubky-app-specs';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -24,24 +23,6 @@ export const CreateProfileForm = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   const urlSchema = z.string().trim().url('Invalid URL');
-  const profileSchema = z.object({
-    name: z.string().trim().min(3, 'Name must be at least 3 characters'),
-    bio: z.string().trim().optional(),
-    links: z
-      .array(
-        z.object({
-          label: z.string().min(1, 'Label is required'),
-          url: z.string().trim().url('Invalid URL'),
-        }),
-      )
-      .optional(),
-    avatar: z
-      .union([z.instanceof(File), z.null()])
-      .refine((file) => file == null || file.type.startsWith('image/'), {
-        message: 'Avatar must be an image file',
-      })
-      .optional(),
-  });
 
   const [nameError, setNameError] = useState<string | null>(null);
   const [linkUrlErrors, setLinkUrlErrors] = useState<Record<number, string | null>>({});
@@ -90,117 +71,60 @@ export const CreateProfileForm = () => {
     }
   };
 
-  const validateProfile = async () => {
-    const nonEmptyLinks = validateLinks(links);
-    const result = profileSchema.safeParse({
-      name,
-      bio,
-      links: nonEmptyLinks.length > 0 ? nonEmptyLinks : undefined,
-      avatar: avatarFile,
-    });
+  const validateUser = async () => {
+    const { data, error } = await Core.UserValidator.check(name, bio, links, avatarFile);
 
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const path0 = issue.path[0];
-        if (path0 === 'name') setNameError(issue.message);
-        if (path0 === 'links') {
-          const index = typeof issue.path[1] === 'number' ? (issue.path[1] as number) : undefined;
-          const field = issue.path[2];
-          if (typeof index === 'number' && field === 'url') {
-            setLinkUrlErrors((prev) => ({ ...prev, [index]: issue.message }));
-          }
+    if (error.length > 0) {
+      for (const issue of error) {
+        switch (issue.type) {
+          case 'name':
+            setNameError(issue.message);
+            break;
+          case 'avatar':
+            setAvatarError(issue.message);
+            break;
+          default:
+            // Handle URL errors with pattern 'url_0', 'url_1', etc.
+            if (issue.type.startsWith('link_')) {
+              const linkIndex = parseInt(issue.type.split('_')[1], 10);
+              if (!isNaN(linkIndex)) {
+                setLinkUrlErrors((prev) => ({ ...prev, [linkIndex]: issue.message }));
+              }
+            }
+            break;
         }
-        if (path0 === 'avatar') setAvatarError(issue.message);
       }
       return;
     }
 
-    return result.data;
-  };
-
-  const validateLinks = (links: { label: string; url: string }[]) => {
-    return links.map((l) => ({ ...l, url: l.url.trim() })).filter((l) => l.url.length > 0);
-  };
-
-  // TODO: extract to controller (AuthController?)
-  const uploadAvatar = async (homeserver: Core.HomeserverService) => {
-    if (!avatarFile) return null;
-
-    // 1. Upload Blob
-    const fileContent = await avatarFile.arrayBuffer();
-    const blobData = new Uint8Array(fileContent);
-    const blobResult = await Core.PubkySpecsPipes.normalizeBlob(blobData, publicKey);
-
-    // Push blob to homeserver
-    await homeserver.fetch(blobResult.meta.url, {
-      method: 'PUT',
-      body: blobResult.blob.data,
-    });
-
-    // 2. Create File Record
-    const fileResult = await Core.PubkySpecsPipes.normalizeFile(avatarFile, blobResult.meta.url, publicKey);
-
-    // Push file to homeserver
-    await homeserver.fetch(fileResult.meta.url, {
-      method: 'PUT',
-      body: JSON.stringify(fileResult.file.toJson()),
-    });
-    return fileResult.meta.url;
-  };
-
-  // TODO: extract to controller (AuthController?)
-  const saveProfile = async (
-    homeserver: Core.HomeserverService,
-    profile: z.infer<typeof profileSchema>,
-    image: string | null,
-  ) => {
-    // validate user profile specs
-    const user = await Core.PubkySpecsPipes.normalizeUser(
-      {
-        name: profile.name,
-        bio: profile.bio ?? '',
-        image: image ?? '',
-        links: (profile.links ?? []).map((link) => ({ title: link.label, url: link.url })),
-        status: '', // default is blank
-      },
-      publicKey,
-    );
-    const userJson = user.user.toJson() as PubkyAppUser;
-
-    // save user profile
-    Core.useProfileStore.getState().setCurrentUserPubky(publicKey);
-
-    const response = await homeserver.fetch(user.meta.url, {
-      method: 'PUT',
-      body: JSON.stringify(userJson),
-    });
-    return response;
+    return data;
   };
 
   const handleContinue = async () => {
+    // TODO: Maybe wrap in TRY/CATCH/FINALLY block?
     setIsSaving(true);
     setContinueText('Saving...');
-    const profile = await validateProfile();
+    const user = await validateUser();
 
-    if (!profile) return;
-
-    const homeserver = Core.HomeserverService.getInstance();
+    if (!user) return;
+    
     let image: string | null = null;
     if (avatarFile) {
       setContinueText('Uploading avatar...');
-      image = await uploadAvatar(homeserver);
+      if (!avatarFile) return null;
+      image = await Core.UserController.uploadAvatar(avatarFile, publicKey);
       if (!image) return;
     }
 
     setContinueText('Saving profile...');
-    const response = await saveProfile(homeserver, profile, image);
+    const response = await Core.UserController.saveProfile(user, image, publicKey);
 
     if (!response.ok) {
       console.error('Failed to save profile', response);
       return;
     }
 
-    // TODO: save user to store
+    // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
     // TODO: navigate to profile page
     setIsSaving(false);
     setContinueText('Finish');

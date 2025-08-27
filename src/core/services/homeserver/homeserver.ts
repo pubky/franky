@@ -1,5 +1,4 @@
 import { Client, PublicKey } from '@synonymdev/pubky';
-import init from 'pubky-app-specs';
 import { type FetchOptions, type SignupResult, type TKeyPair } from '@/core';
 import {
   AppError,
@@ -25,7 +24,6 @@ export class HomeserverService {
   private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
 
   private constructor() {
-    init();
 
     this.client = this.testnet
       ? Client.testnet()
