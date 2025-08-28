@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
+import { PUBKY_RING_URL, PUBKY_CORE_URL } from '@/config';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -150,7 +151,7 @@ describe('ScanFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyRingLink = links[0];
 
-    expect(pubkyRingLink).toHaveAttribute('href', 'https://pubkyring.app/');
+    expect(pubkyRingLink).toHaveAttribute('href', PUBKY_RING_URL);
     expect(pubkyRingLink).toHaveAttribute('target', '_blank');
     expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
   });
@@ -161,7 +162,7 @@ describe('ScanFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyCoreLink = links[1];
 
-    expect(pubkyCoreLink).toHaveAttribute('href', 'https://pubky.org');
+    expect(pubkyCoreLink).toHaveAttribute('href', PUBKY_CORE_URL);
     expect(pubkyCoreLink).toHaveAttribute('target', '_blank');
     expect(pubkyCoreLink).toHaveTextContent('Pubky Core');
   });

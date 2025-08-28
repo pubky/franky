@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import { GITHUB_URL, TWITTER_GETPUBKY_URL, TELEGRAM_URL } from '@/config';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -35,13 +36,13 @@ export const OnboardingHeader = ({ currentStep }: { currentStep: number }) => {
 export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
-      <Atoms.Link href="https://github.com/pubky" target="_blank" variant="muted" size="default">
+      <Atoms.Link href={GITHUB_URL} target="_blank" variant="muted" size="default">
         <Libs.Github2 className="w-6 h-6" />
       </Atoms.Link>
-      <Atoms.Link href="https://x.com/getpubky" target="_blank" variant="muted" size="default">
+      <Atoms.Link href={TWITTER_GETPUBKY_URL} target="_blank" variant="muted" size="default">
         <Libs.XTwitter className="w-6 h-6" />
       </Atoms.Link>
-      <Atoms.Link href="#" target="_blank" variant="muted" size="default">
+      <Atoms.Link href={TELEGRAM_URL} target="_blank" variant="muted" size="default">
         <Libs.Telegram className="w-6 h-6" />
       </Atoms.Link>
     </Atoms.Container>

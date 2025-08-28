@@ -216,7 +216,7 @@ describe('DialogExport', () => {
 
     const qrCode = screen.getByTestId('qr-code');
     expect(qrCode).toBeInTheDocument();
-    expect(qrCode).toHaveAttribute('data-value', 'https://pubky.com');
+    expect(qrCode).toHaveAttribute('data-value', 'https://pubky.org');
     expect(qrCode).toHaveAttribute('data-size', '192');
   });
 
@@ -271,7 +271,7 @@ describe('DialogExport', () => {
     const googleLink = links.find((link) => link.getAttribute('href')?.includes('play.google.com'));
 
     expect(appleLink).toBeInTheDocument();
-    expect(appleLink).toHaveAttribute('href', 'https://apps.apple.com/app/pubky-ring/id6644244100');
+    expect(appleLink).toHaveAttribute('href', 'https://apps.apple.com/app/pubky-ring/id6739356756');
     expect(appleLink).toHaveAttribute('target', '_blank');
 
     expect(googleLink).toBeInTheDocument();

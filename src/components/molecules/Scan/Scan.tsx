@@ -6,6 +6,7 @@ import Image from 'next/image';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
+import { PUBKY_RING_URL, PUBKY_CORE_URL } from '@/config';
 
 export const ScanContent = () => {
   return (
@@ -39,11 +40,11 @@ export const ScanFooter = () => {
   return (
     <Atoms.FooterLinks className="py-6">
       Use{' '}
-      <Atoms.Link href="https://pubkyring.app/" target="_blank">
+      <Atoms.Link href={PUBKY_RING_URL} target="_blank">
         Pubky Ring
       </Atoms.Link>{' '}
       or any other{' '}
-      <Atoms.Link href="https://pubky.org" target="_blank">
+      <Atoms.Link href={PUBKY_CORE_URL} target="_blank">
         Pubky Core
       </Atoms.Link>
       –powered keychain.

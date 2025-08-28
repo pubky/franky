@@ -1,14 +1,10 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import { EMAIL_URL, TWITTER_URL, TELEGRAM_URL } from '@/config';
 
 interface PopoverInviteHomeserverProps {
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
-
-// TODO: extract to env
-const EMAIL_URL = 'mailto:hello@pubky.com';
-const TWITTER_URL = 'https://x.com/pubky';
-const TELEGRAM_URL = 'https://t.me/pubky';
 
 export function PopoverInviteHomeserver({ className = 'hover:bg-brand/10' }: PopoverInviteHomeserverProps) {
   return (

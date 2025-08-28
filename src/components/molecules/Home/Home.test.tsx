@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HomeActions, HomeFooter, HomeSectionTitle, HomePageHeading } from './Home';
+import { PUBKY_CORE_URL } from '@/config';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -111,7 +112,7 @@ describe('HomeFooter', () => {
     render(<HomeFooter />);
 
     const link = screen.getByTestId('link');
-    expect(link).toHaveAttribute('href', 'https://pubky.org/');
+    expect(link).toHaveAttribute('href', PUBKY_CORE_URL);
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveTextContent('Pubky Core');
   });

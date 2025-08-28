@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import { PUBKY_CORE_URL } from '@/config';
 
 export const HomeActions = () => {
   const router = useRouter();
@@ -28,7 +29,7 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
     >
       By creating a Pubky account, you agree to the <Molecules.DialogTerms />, <Molecules.DialogPrivacy />, and confirm
       you are <Molecules.DialogAge /> Pubky is powered by{' '}
-      <Atoms.Link href="https://pubky.org/" target="_blank">
+      <Atoms.Link href={PUBKY_CORE_URL} target="_blank">
         Pubky Core
       </Atoms.Link>{' '}
       and was built with love and dedication by Synonym Software Ltd. ©2025.
