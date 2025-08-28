@@ -156,7 +156,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
     );
 
     const badgeClasses = Libs.cn(
-      'z-10 h-6 rounded-full w-6',
+      'z-10 h-6 bg-secondary rounded-full w-6',
       isCorrect && 'bg-brand text-black absolute left-5 top-4',
       isError && 'bg-red-500 text-white absolute left-5 top-4',
     );
@@ -285,7 +285,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
                 className={`rounded-full ${
                   isUsed
                     ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                    : 'dark:border-transparent bg-primary cursor-pointer'
+                    : 'dark:border-transparent bg-secondary cursor-pointer'
                 }`}
                 onClick={() => !isUsed && handleWordClick(word)}
                 disabled={isUsed}
