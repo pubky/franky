@@ -1,3 +1,11 @@
+import * as Molecules from '@/molecules';
+
+export const metadata = Molecules.Metadata({
+  title: 'Page Not Found - Pubky App',
+  description: 'The page you are looking for does not exist.',
+  robots: false,
+});
+
 export default function NotFound() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
