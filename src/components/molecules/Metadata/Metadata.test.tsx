@@ -170,7 +170,7 @@ describe('Metadata', () => {
       expect(result.title).toBe(longTitle);
       expect(result.description).toBe(longDescription);
       expect(result.openGraph.title).toBe(longTitle);
-             expect(result.openGraph.description).toBe(longDescription);
+      expect(result.openGraph.description).toBe(longDescription);
     });
 
     it('handles special characters in title and description', () => {
@@ -234,7 +234,7 @@ describe('Metadata', () => {
 
       testCases.forEach((testCase) => {
         const result = Metadata(testCase);
-        
+
         expect(result.icons).toBeDefined();
         expect(result.icons.icon).toBe('/pubky-favicon.svg');
         expect(result.icons.shortcut).toBe('/pubky-favicon.svg');
@@ -252,7 +252,7 @@ describe('Metadata', () => {
       expect(result.icons.icon).toBe(iconPath);
       expect(result.icons.shortcut).toBe(iconPath);
       expect(result.icons.apple).toBe(iconPath);
-      
+
       // Verify all icon paths are the same
       const allIconPaths = Object.values(result.icons);
       const uniquePaths = new Set(allIconPaths);
