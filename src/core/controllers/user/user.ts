@@ -36,36 +36,43 @@ export class UserController {
     image: string | null,
     publicKey: string,
   ): Promise<Response> {
-    // validate user profile specs
-    // Q: What does it happen if the profile is invalid?
-    const { user, meta } = await Core.UserNormalizer.to(
-      {
-        name: profile.name,
-        bio: profile.bio ?? '',
-        image: image ?? '',
-        links: (profile.links ?? []).map((link) => ({ title: link.label, url: link.url })),
-        status: '', // default is blank
-      },
-      publicKey,
-    );
-    const userJson = user.toJson() as PubkyAppUser;
+    try {
+      // validate user profile specs
+      // Q: What does it happen if the profile is invalid?
+      const { user, meta } = await Core.UserNormalizer.to(
+        {
+          name: profile.name,
+          bio: profile.bio ?? '',
+          image: image ?? '',
+          links: (profile.links ?? []).map((link) => ({ title: link.label, url: link.url })),
+          status: '', // default is blank
+        },
+        publicKey,
+      );
+      const userJson = user.toJson() as PubkyAppUser;
 
-    // save user profile in the global store
-    Core.useProfileStore.getState().setCurrentUserPubky(publicKey);
+      // save user profile in the global store
 
-    // Write the user profile to the homeserver
-    const homeserver = Core.HomeserverService.getInstance();
-    const response = await homeserver.fetch(meta.url, {
-      method: 'PUT',
-      body: JSON.stringify(userJson),
-    });
-    // if response is OK, save user to global store
-    // else, throw specific error for UI to handle
-    if (response.ok) {
-      Core.useProfileStore.getState().setCurrentUserPubky(publicKey);
-      // TODO: Also user profile action creator to mutate user profile in the store
+      // Write the user profile to the homeserver
+      const homeserver = Core.HomeserverService.getInstance();
+      const response = await homeserver.fetch(meta.url, {
+        method: 'PUT',
+        body: JSON.stringify(userJson),
+      });
+      // if response is OK, save user to global store
+      // else, throw specific error for UI to handle
+      if (response.ok) {
+        // TODO: Also user profile action creator to mutate user profile in the store
+        Core.useProfileStore.getState().setCurrentUserPubky(publicKey);
+        Core.useProfileStore.getState().setAuthenticated(true);
+      }
+      return response;
+    } catch (error) {
+      console.error('Failed to save profile', error);
+      Core.useProfileStore.getState().setAuthenticated(false);
+      Core.useProfileStore.getState().setCurrentUserPubky(null);
+      throw error;
     }
-    return response;
   }
 
   static async insert(userData: Core.NexusUser | Core.UserModelSchema): Promise<Core.UserModel> {
