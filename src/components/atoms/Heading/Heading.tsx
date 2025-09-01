@@ -4,7 +4,7 @@ import { cn } from '@/libs';
 interface HeadingProps {
   level?: 1 | 2 | 3 | 4 | 5 | 6;
   children: ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLElement>['className'];
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 

@@ -17,7 +17,7 @@ export const ProfileNavigation = ({
   continueButtonDisabled: boolean;
   continueText: string;
   onContinue: () => void;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   onHandleBackButton?: () => void;
   backText?: string;
   backButtonDisabled?: boolean;

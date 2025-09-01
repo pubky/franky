@@ -22,7 +22,7 @@ interface TypographyProps {
     | 'pre'
     | 'blockquote';
   children: ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLElement>['className'];
   size?: 'sm' | 'md' | 'lg' | 'xl';
   'data-testid'?: string;
 }

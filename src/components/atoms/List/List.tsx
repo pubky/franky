@@ -4,7 +4,7 @@ import { cn } from '@/libs';
 interface ListProps {
   as?: 'ul' | 'ol';
   children: ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLElement>['className'];
   variant?: 'default' | 'decimal' | 'none';
   'data-testid'?: string;
 }

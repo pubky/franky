@@ -3,7 +3,7 @@ import * as Atoms from '@/atoms';
 
 interface PageHeaderProps {
   children: React.ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   'data-testid'?: string;
 }
 
