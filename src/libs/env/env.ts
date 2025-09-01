@@ -53,6 +53,15 @@ const envSchema = z.object({
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
+
+  NEXT_PUBLIC_PREVIEW_IMAGE: z.string().optional().default('/preview.png'),
+  NEXT_PUBLIC_SITE_NAME: z.string().optional().default('Pubky App'),
+  NEXT_PUBLIC_LOCALE: z.string().optional().default('en_US'),
+  NEXT_PUBLIC_AUTHOR: z.string().optional().default('Pubky Team'),
+  NEXT_PUBLIC_KEYWORDS: z.string().optional().default('pubky, social media, decentralized, key, pkarr, pubky core'),
+  NEXT_PUBLIC_TYPE: z.string().optional().default('website'),
+  NEXT_PUBLIC_CREATOR: z.string().optional().default('@getpubky'),
+  NEXT_PUBLIC_DEFAULT_URL: z.string().optional().default('https://pubky.app'),
 });
 
 /**
@@ -73,6 +82,13 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_HOMESERVER_ADMIN_URL: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL,
       NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
       VITEST: process.env.VITEST,
+      NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
+      NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
+      NEXT_PUBLIC_LOCALE: process.env.NEXT_PUBLIC_LOCALE,
+      NEXT_PUBLIC_AUTHOR: process.env.NEXT_PUBLIC_AUTHOR,
+      NEXT_PUBLIC_KEYWORDS: process.env.NEXT_PUBLIC_KEYWORDS,
+      NEXT_PUBLIC_TYPE: process.env.NEXT_PUBLIC_TYPE,
+      NEXT_PUBLIC_CREATOR: process.env.NEXT_PUBLIC_CREATOR,
     });
 
     return parsed;

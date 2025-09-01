@@ -41,8 +41,8 @@ describe('Metadata', () => {
           title: 'Test Title',
           description: 'Test Description',
           images: ['/preview.png'],
-          creator: '@pubkyapp',
-          site: '@pubkyapp',
+          creator: '@getpubky',
+          site: 'https://pubky.app',
         },
         robots: {
           index: true,
@@ -198,8 +198,8 @@ describe('Metadata', () => {
       expect(result.creator).toBe('Pubky Team');
       expect(result.keywords).toBe('pubky, social media, decentralized, key, pkarr, pubky core');
       expect(result.openGraph.images[0].url).toBe('/preview.png');
-      expect(result.twitter.creator).toBe('@pubkyapp');
-      expect(result.twitter.site).toBe('@pubkyapp');
+      expect(result.twitter.creator).toBe('@getpubky');
+      expect(result.twitter.site).toBe('https://pubky.app');
       expect(result.alternates.canonical).toBe('https://pubky.app');
     });
 

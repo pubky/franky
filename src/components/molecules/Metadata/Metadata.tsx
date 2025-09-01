@@ -9,69 +9,68 @@ interface MetadataProps {
   author?: string;
   keywords?: string;
   robots?: boolean;
+  creator?: string;
+  site?: string;
+  favicon?: string;
 }
-
-const DEFAULT_PREVIEW_IMAGE = '/preview.png';
-const DEFAULT_SITE_NAME = 'Pubky App';
-const DEFAULT_LOCALE = 'en_US';
-const DEFAULT_AUTHOR = 'Pubky Team';
-const DEFAULT_KEYWORDS = 'pubky, social media, decentralized, key, pkarr, pubky core';
-const DEFAULT_TYPE = 'website';
-const DEFAULT_URL = 'https://pubky.app';
+import * as Config from '@/config';
 
 export function Metadata({
   title,
   description,
-  image,
-  type,
-  url,
-  siteName,
-  locale,
-  author,
-  keywords,
-  robots,
+  image = Config.DEFAULT_PREVIEW_IMAGE,
+  type = Config.DEFAULT_TYPE,
+  url = Config.DEFAULT_URL,
+  siteName = Config.DEFAULT_SITE_NAME,
+  locale = Config.DEFAULT_LOCALE,
+  author = Config.DEFAULT_AUTHOR,
+  keywords = Config.DEFAULT_KEYWORDS,
+  robots = true,
+  creator = Config.DEFAULT_CREATOR,
+  site = Config.DEFAULT_URL,
+  favicon = '/pubky-favicon.svg',
 }: MetadataProps) {
   return {
     title,
     description,
-    keywords: keywords || DEFAULT_KEYWORDS,
-    authors: [{ name: author || DEFAULT_AUTHOR }],
-    creator: author || DEFAULT_AUTHOR,
+    keywords,
+    authors: [{ name: author }],
+    creator: author,
     icons: {
-      icon: '/pubky-favicon.svg',
-      shortcut: '/pubky-favicon.svg',
-      apple: '/pubky-favicon.svg',
+      icon: favicon,
+      shortcut: favicon,
+      apple: favicon,
     },
     openGraph: {
       title,
       description,
-      url: url || DEFAULT_URL,
-      siteName: siteName || DEFAULT_SITE_NAME,
+      url,
+      siteName,
       images: [
         {
-          url: image || DEFAULT_PREVIEW_IMAGE,
+          url: image,
           width: 1200,
           height: 630,
           alt: title,
         },
       ],
-      locale: locale || DEFAULT_LOCALE,
-      type: type || DEFAULT_TYPE,
+      locale,
+      type,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [image || DEFAULT_PREVIEW_IMAGE],
-      creator: '@pubkyapp',
-      site: '@pubkyapp',
+      images: [image],
+      creator,
+      site,
     },
     robots: {
-      index: robots ?? true,
-      follow: robots ?? true,
+      index: robots,
+      follow: robots,
     },
     alternates: {
-      canonical: url || DEFAULT_URL,
+      canonical: url,
     },
   };
 }
