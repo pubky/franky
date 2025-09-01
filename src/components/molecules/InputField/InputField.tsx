@@ -10,7 +10,7 @@ interface InputFieldProps {
   readOnly?: boolean;
   onClick?: () => void;
   onClickIcon?: () => void;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   icon?: ReactNode;
   variant?: 'default' | 'dashed';
   loading?: boolean;

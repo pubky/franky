@@ -39,6 +39,14 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
+  List: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
+    const Tag = as || 'ul';
+    return (
+      <Tag data-testid="list" className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 describe('DialogTerms', () => {
@@ -124,9 +132,9 @@ describe('DialogTerms', () => {
   it('renders terms of service content', () => {
     render(<DialogTerms />);
 
-    // Check for some key terms content
+    // Check for some key terms content - use getAllByText for elements that appear multiple times
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
-    expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();
+    expect(screen.getAllByText(/TERMS AND CONDITIONS/)).toHaveLength(2); // Appears twice
     expect(screen.getByText(/PLEASE REVIEW THE ARBITRATION PROVISION/)).toBeInTheDocument();
   });
 
@@ -159,7 +167,7 @@ describe('DialogTerms', () => {
     render(<DialogTerms />);
 
     // Check for main sections that should be present
-    expect(screen.getByText(/TERMS AND CONDITIONS/)).toBeInTheDocument();
+    expect(screen.getAllByText(/TERMS AND CONDITIONS/)).toHaveLength(2); // Appears twice
     expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
   });

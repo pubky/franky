@@ -5,7 +5,7 @@ import * as Libs from '@/libs';
 
 interface ActionSectionProps {
   children?: ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   actions?: Array<{
     label: string;
     icon?: ReactNode;

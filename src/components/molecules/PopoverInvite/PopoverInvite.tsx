@@ -2,7 +2,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 interface PopoverInviteProps {
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 
 // TODO: extract to env

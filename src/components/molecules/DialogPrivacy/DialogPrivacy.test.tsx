@@ -39,6 +39,14 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
+  List: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
+    const Tag = as || 'ul';
+    return (
+      <Tag data-testid="list" className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 describe('DialogPrivacy', () => {

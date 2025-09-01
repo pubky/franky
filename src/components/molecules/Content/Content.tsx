@@ -6,7 +6,7 @@ import * as Libs from '@/libs';
 
 interface ContentCardProps {
   children?: ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   classNameImage?: string;
   image?: {
     src: string;
@@ -44,7 +44,7 @@ export function ContentCard({ children, className, classNameImage, image, layout
 
 interface ContentContainerProps {
   children: ReactNode;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl';
   gap?: 'sm' | 'md' | 'lg';
 }
@@ -71,7 +71,7 @@ export function ContentContainer({ children, className, maxWidth = 'lg', gap = '
 }
 
 interface ContentImageProps extends Omit<ImageProps, 'className'> {
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   containerClassName?: string;
   hiddenOnMobile?: boolean;
 }

@@ -7,7 +7,7 @@ interface TextareaFieldProps {
   disabled?: boolean;
   readOnly?: boolean;
   onClick?: () => void;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   variant?: 'default' | 'dashed';
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;

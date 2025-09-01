@@ -4,7 +4,7 @@ import * as Libs from '@/libs';
 interface ProgressStepsProps {
   currentStep: number;
   totalSteps: number;
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 
 export function ProgressSteps({ currentStep, totalSteps, className }: ProgressStepsProps) {

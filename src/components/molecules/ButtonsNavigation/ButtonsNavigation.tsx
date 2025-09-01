@@ -2,7 +2,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 interface ButtonsNavigationProps {
-  className?: string;
+  className?: React.HTMLAttributes<HTMLDivElement>['className'];
   onHandleBackButton?: () => void;
   onHandleContinueButton?: () => void;
   backText?: string;
