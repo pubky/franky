@@ -62,6 +62,20 @@ const envSchema = z.object({
   NEXT_PUBLIC_TYPE: z.string().optional().default('website'),
   NEXT_PUBLIC_CREATOR: z.string().optional().default('@getpubky'),
   NEXT_PUBLIC_DEFAULT_URL: z.string().optional().default('https://pubky.app'),
+
+  // external links
+  NEXT_PUBLIC_PUBKY_RING_URL: z.string().optional().default('https://pubkyring.app/'),
+  NEXT_PUBLIC_PUBKY_CORE_URL: z.string().optional().default('https://pubky.org'),
+  NEXT_PUBLIC_TWITTER_URL: z.string().optional().default('https://x.com/pubky'),
+  NEXT_PUBLIC_TWITTER_GETPUBKY_URL: z.string().optional().default('https://x.com/getpubky'),
+  NEXT_PUBLIC_TELEGRAM_URL: z.string().optional().default('https://t.me/pubky'),
+  NEXT_PUBLIC_GITHUB_URL: z.string().optional().default('https://github.com/pubky'),
+  NEXT_PUBLIC_EMAIL: z.string().optional().default('hello@pubky.com'),
+  NEXT_PUBLIC_APP_STORE_URL: z.string().optional().default('https://apps.apple.com/app/pubky-ring/id6739356756'),
+  NEXT_PUBLIC_PLAY_STORE_URL: z
+    .string()
+    .optional()
+    .default('https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share'),
 });
 
 /**
@@ -89,6 +103,15 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_KEYWORDS: process.env.NEXT_PUBLIC_KEYWORDS,
       NEXT_PUBLIC_TYPE: process.env.NEXT_PUBLIC_TYPE,
       NEXT_PUBLIC_CREATOR: process.env.NEXT_PUBLIC_CREATOR,
+      NEXT_PUBLIC_PUBKY_RING_URL: process.env.NEXT_PUBLIC_PUBKY_RING_URL,
+      NEXT_PUBLIC_PUBKY_CORE_URL: process.env.NEXT_PUBLIC_PUBKY_CORE_URL,
+      NEXT_PUBLIC_TWITTER_URL: process.env.NEXT_PUBLIC_TWITTER_URL,
+      NEXT_PUBLIC_TWITTER_GETPUBKY_URL: process.env.NEXT_PUBLIC_TWITTER_GETPUBKY_URL,
+      NEXT_PUBLIC_TELEGRAM_URL: process.env.NEXT_PUBLIC_TELEGRAM_URL,
+      NEXT_PUBLIC_GITHUB_URL: process.env.NEXT_PUBLIC_GITHUB_URL,
+      NEXT_PUBLIC_EMAIL_URL: process.env.NEXT_PUBLIC_EMAIL_URL,
+      NEXT_PUBLIC_APP_STORE_URL: process.env.NEXT_PUBLIC_APP_STORE_URL,
+      NEXT_PUBLIC_PLAY_STORE_URL: process.env.NEXT_PUBLIC_PLAY_STORE_URL,
     });
 
     return parsed;

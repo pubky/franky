@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 
 export const InstallCard = () => {
   return (
@@ -40,11 +41,11 @@ export const InstallFooter = () => {
   return (
     <Atoms.FooterLinks className="py-6">
       Use{' '}
-      <Atoms.Link href="https://www.pubkyring.to/" target="_blank">
+      <Atoms.Link href={Config.PUBKY_RING_URL} target="_blank">
         Pubky Ring
       </Atoms.Link>{' '}
       or any other{' '}
-      <Atoms.Link href="https://pubky.org" target="_blank">
+      <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
         Pubky Core
       </Atoms.Link>
       –powered keychain, or create your keys in the browser (less secure).

@@ -1,14 +1,10 @@
 import * as Atoms from '@/atoms';
+import * as Config from '@/config';
 import * as Libs from '@/libs';
 
 interface PopoverInviteProps {
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
-
-// TODO: extract to env
-const EMAIL_URL = 'mailto:hello@pubky.com';
-const TWITTER_URL = 'https://x.com/pubky';
-const TELEGRAM_URL = 'https://t.me/pubky';
 
 export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInviteProps) {
   return (
@@ -29,13 +25,13 @@ export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInvite
             </Atoms.Typography>
           </Atoms.Container>
           <Atoms.Container className="flex-row gap-4">
-            <Atoms.Link href={EMAIL_URL} className="text-muted-foreground hover:text-brand">
+            <Atoms.Link href={Config.EMAIL_URL} className="text-muted-foreground hover:text-brand">
               <Libs.Mail className="h-6 w-6" />
             </Atoms.Link>
-            <Atoms.Link href={TWITTER_URL} className="text-muted-foreground hover:text-brand">
+            <Atoms.Link href={Config.TWITTER_URL} className="text-muted-foreground hover:text-brand">
               <Libs.XTwitter className="h-6 w-6" />
             </Atoms.Link>
-            <Atoms.Link href={TELEGRAM_URL} className="text-muted-foreground hover:text-brand">
+            <Atoms.Link href={Config.TELEGRAM_URL} className="text-muted-foreground hover:text-brand">
               <Libs.Telegram className="h-6 w-6" />
             </Atoms.Link>
           </Atoms.Container>

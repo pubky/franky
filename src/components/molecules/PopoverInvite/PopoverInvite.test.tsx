@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PopoverInvite } from './PopoverInvite';
+import { EMAIL_URL, TWITTER_URL, TELEGRAM_URL } from '@/config';
 
 // Mock @/libs to intercept all icons and utilities
 vi.mock('@/libs', () => ({
@@ -79,9 +80,9 @@ describe('InvitePopover', () => {
     const twitterLink = screen.getByTestId('xtwitter-icon').parentElement;
     const telegramLink = screen.getByTestId('telegram-icon').parentElement;
 
-    expect(mailLink).toHaveAttribute('href', 'mailto:hello@pubky.com');
-    expect(twitterLink).toHaveAttribute('href', 'https://x.com/pubky');
-    expect(telegramLink).toHaveAttribute('href', 'https://t.me/pubky');
+    expect(mailLink).toHaveAttribute('href', EMAIL_URL);
+    expect(twitterLink).toHaveAttribute('href', TWITTER_URL);
+    expect(telegramLink).toHaveAttribute('href', TELEGRAM_URL);
   });
 
   it('uses default URLs', () => {
@@ -94,9 +95,9 @@ describe('InvitePopover', () => {
     const twitterLink = screen.getByTestId('xtwitter-icon').parentElement;
     const telegramLink = screen.getByTestId('telegram-icon').parentElement;
 
-    expect(mailLink).toHaveAttribute('href', 'mailto:hello@pubky.com');
-    expect(twitterLink).toHaveAttribute('href', 'https://x.com/pubky');
-    expect(telegramLink).toHaveAttribute('href', 'https://t.me/pubky');
+    expect(mailLink).toHaveAttribute('href', EMAIL_URL);
+    expect(twitterLink).toHaveAttribute('href', TWITTER_URL);
+    expect(telegramLink).toHaveAttribute('href', TELEGRAM_URL);
   });
 
   it('applies custom className to trigger button', () => {

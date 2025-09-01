@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HeaderContainer, HeaderTitle, OnboardingHeader, SocialLinks, ButtonSignIn, HomeHeader } from './Header';
+import { GITHUB_URL, TWITTER_GETPUBKY_URL, TELEGRAM_URL } from '@/config';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -174,13 +175,13 @@ describe('SocialLinks', () => {
     expect(links).toHaveLength(3);
 
     // Check GitHub link
-    expect(links[0]).toHaveAttribute('href', 'https://github.com/pubky');
+    expect(links[0]).toHaveAttribute('href', GITHUB_URL);
 
     // Check Twitter link
-    expect(links[1]).toHaveAttribute('href', 'https://x.com/getpubky');
+    expect(links[1]).toHaveAttribute('href', TWITTER_GETPUBKY_URL);
 
     // Check Telegram link
-    expect(links[2]).toHaveAttribute('href', '#');
+    expect(links[2]).toHaveAttribute('href', TELEGRAM_URL);
   });
 
   it('applies custom className', () => {
