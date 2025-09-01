@@ -18,7 +18,7 @@ export const TELEGRAM_URL = Env.NEXT_PUBLIC_TELEGRAM_URL;
 export const GITHUB_URL = Env.NEXT_PUBLIC_GITHUB_URL;
 
 // Contact links
-export const EMAIL_URL = Env.NEXT_PUBLIC_EMAIL_URL;
+export const EMAIL_URL = `mailto:${Env.NEXT_PUBLIC_EMAIL}`;
 
 // App store links
 export const APP_STORE_URL = Env.NEXT_PUBLIC_APP_STORE_URL;
