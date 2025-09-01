@@ -1,3 +1,5 @@
+import { Env } from '@/libs';
+
 /**
  * External Links Configuration
  *
@@ -6,42 +8,18 @@
  */
 
 // Pubky ecosystem links
-export const PUBKY_RING_URL = process.env.NEXT_PUBLIC_PUBKY_RING_URL || 'https://pubkyring.app/';
-export const PUBKY_CORE_URL = process.env.NEXT_PUBLIC_PUBKY_CORE_URL || 'https://pubky.org';
+export const PUBKY_RING_URL = Env.NEXT_PUBLIC_PUBKY_RING_URL;
+export const PUBKY_CORE_URL = Env.NEXT_PUBLIC_PUBKY_CORE_URL;
 
 // Social media links
-export const TWITTER_URL = process.env.NEXT_PUBLIC_TWITTER_URL || 'https://x.com/pubky';
-export const TWITTER_GETPUBKY_URL = process.env.NEXT_PUBLIC_TWITTER_GETPUBKY_URL || 'https://x.com/getpubky';
-export const TELEGRAM_URL = process.env.NEXT_PUBLIC_TELEGRAM_URL || 'https://t.me/pubky';
-export const GITHUB_URL = process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/pubky';
+export const TWITTER_URL = Env.NEXT_PUBLIC_TWITTER_URL;
+export const TWITTER_GETPUBKY_URL = Env.NEXT_PUBLIC_TWITTER_GETPUBKY_URL;
+export const TELEGRAM_URL = Env.NEXT_PUBLIC_TELEGRAM_URL;
+export const GITHUB_URL = Env.NEXT_PUBLIC_GITHUB_URL;
 
 // Contact links
-export const EMAIL_URL = process.env.NEXT_PUBLIC_EMAIL_URL || 'mailto:hello@pubky.com';
+export const EMAIL_URL = Env.NEXT_PUBLIC_EMAIL_URL;
 
 // App store links
-export const APP_STORE_URL =
-  process.env.NEXT_PUBLIC_APP_STORE_URL || 'https://apps.apple.com/app/pubky-ring/id6739356756';
-export const PLAY_STORE_URL =
-  process.env.NEXT_PUBLIC_PLAY_STORE_URL ||
-  'https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share';
-
-// Type-safe link object for easy access
-export const ExternalLinks = {
-  pubky: {
-    ring: PUBKY_RING_URL,
-    core: PUBKY_CORE_URL,
-  },
-  social: {
-    twitter: TWITTER_URL,
-    twitterGetPubky: TWITTER_GETPUBKY_URL,
-    telegram: TELEGRAM_URL,
-    github: GITHUB_URL,
-  },
-  contact: {
-    email: EMAIL_URL,
-  },
-  stores: {
-    appStore: APP_STORE_URL,
-    playStore: PLAY_STORE_URL,
-  },
-} as const;
+export const APP_STORE_URL = Env.NEXT_PUBLIC_APP_STORE_URL;
+export const PLAY_STORE_URL = Env.NEXT_PUBLIC_PLAY_STORE_URL;
