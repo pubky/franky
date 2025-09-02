@@ -70,3 +70,48 @@ export const HomeHeader = () => {
     </Atoms.Container>
   );
 };
+
+export function NavigationButtons({ image, counter }: { image?: string; counter?: number }) {
+  return (
+    <Atoms.Container className="flex flex-row justify-start items-center gap-3">
+      <Atoms.Link href="/feed">
+        <Atoms.Button className="w-12 h-12" variant="secondary" size="icon">
+          <Libs.Home className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
+      <Atoms.Link className="sm:hidden" href="/search">
+        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
+          <Libs.Search className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
+      <Atoms.Link href="/hot">
+        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
+          <Libs.Flame className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
+      <Atoms.Link href="/bookmarks">
+        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
+          <Libs.Bookmark className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
+      <Atoms.Link href="/settings">
+        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
+          <Libs.Settings className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
+      <Atoms.Link className="relative" href="/profile">
+        <Atoms.Avatar className="w-12 h-12">
+          <Atoms.AvatarImage src={image} />
+          <Atoms.AvatarFallback>SN</Atoms.AvatarFallback>
+        </Atoms.Avatar>
+        {counter && (
+          <Atoms.Badge className="absolute bottom-0 right-0 rounded-full bg-brand" variant="secondary">
+            <Atoms.Typography className="text-primary-foreground" size="sm">
+              {counter}
+            </Atoms.Typography>
+          </Atoms.Badge>
+        )}
+      </Atoms.Link>
+    </Atoms.Container>
+  );
+}
