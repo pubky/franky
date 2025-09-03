@@ -277,16 +277,12 @@ describe('ButtonSignIn', () => {
   });
 
   it('handles click event', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
     render(<ButtonSignIn />);
 
     const button = screen.getByTestId('button-secondary');
     fireEvent.click(button);
 
-    expect(consoleSpy).toHaveBeenCalledWith('sign in');
-
-    consoleSpy.mockRestore();
+    expect(mockPush).toHaveBeenCalledWith('/sign-in');
   });
 
   it('has correct variant', () => {

@@ -130,7 +130,7 @@ export const CreateProfileForm = () => {
 
     // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
     // TODO: navigate to profile page
-    setIsSaving(false);
+    // setIsSaving(false);
     router.push('/feed');
   };
 

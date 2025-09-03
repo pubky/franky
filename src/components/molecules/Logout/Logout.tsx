@@ -34,11 +34,11 @@ export const LogoutNavigation = () => {
   const router = useRouter();
 
   const onHandleBackButton = () => {
-    router.push('/onboarding/install');
+    router.push('/');
   };
 
   const onHandleContinueButton = () => {
-    router.push('/');
+    router.push('/sign-in');
   };
 
   return (

@@ -31,5 +31,6 @@ export * from './ProgressSteps';
 export * from './PublicKey';
 export * from './Scan';
 export * from './SearchInput';
+export * from './SignIn';
 export * from './TextareaField';
 export * from './Toaster';

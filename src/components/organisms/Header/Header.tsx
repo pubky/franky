@@ -13,6 +13,7 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/onboarding/backup': { step: 3, title: 'Backup' },
   '/onboarding/homeserver': { step: 4, title: 'Homeserver' },
   '/onboarding/profile': { step: 5, title: 'Profile' },
+  '/logout': { step: 1, title: 'Signed out' },
 };
 
 export function Header() {

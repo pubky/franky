@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import { useRouter } from 'next/navigation';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -50,8 +51,10 @@ export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) 
 }
 
 export function ButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElement>) {
+  const router = useRouter();
+
   const handleSignIn = () => {
-    console.log('sign in');
+    router.push('/sign-in');
   };
 
   return (

@@ -7,3 +7,4 @@ export * from './Logout';
 export * from './Profile';
 export * from './PublicKey';
 export * from './Scan';
+export * from './SignIn';

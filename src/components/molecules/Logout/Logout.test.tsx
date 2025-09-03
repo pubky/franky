@@ -102,13 +102,13 @@ describe('LogoutNavigation', () => {
     render(<LogoutNavigation />);
     const backButton = screen.getByText('Homepage');
     fireEvent.click(backButton);
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith('/');
   });
 
-  it('navigates to home page when continue button is clicked', () => {
+  it('navigates to sign-in page when continue button is clicked', () => {
     render(<LogoutNavigation />);
     const continueButton = screen.getByText('Sign back in');
     fireEvent.click(continueButton);
-    expect(mockPush).toHaveBeenCalledWith('/');
+    expect(mockPush).toHaveBeenCalledWith('/sign-in');
   });
 });
