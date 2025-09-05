@@ -367,4 +367,57 @@ describe('NavigationButtons', () => {
     expect(links[4]).toHaveAttribute('href', '/settings');
     expect(links[5]).toHaveAttribute('href', '/profile');
   });
+
+  it('renders counter badge with 21+ when counter exceeds 21', () => {
+    render(<NavigationButtons counter={25} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge).toBeInTheDocument();
+    expect(screen.getByTestId('typography')).toHaveTextContent('21+');
+  });
+
+  it('renders exact counter when counter is 21 or less', () => {
+    render(<NavigationButtons counter={21} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge).toBeInTheDocument();
+    expect(screen.getByTestId('typography')).toHaveTextContent('21');
+  });
+
+  it('does not render counter badge when counter is 0', () => {
+    render(<NavigationButtons counter={0} />);
+
+    expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
+  });
+
+  it('applies small screen hidden class to search link', () => {
+    render(<NavigationButtons />);
+
+    const links = screen.getAllByTestId('link');
+    const searchLink = links[1]; // Second link is the search link
+
+    expect(searchLink.className).toContain('sm:hidden');
+  });
+
+  it('applies correct styling classes to counter badge', () => {
+    render(<NavigationButtons counter={5} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge.className).toContain('absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5');
+    expect(badge).toHaveAttribute('data-variant', 'secondary');
+  });
+
+  it('applies smaller text when counter exceeds 21', () => {
+    render(<NavigationButtons counter={25} />);
+
+    const typography = screen.getByTestId('typography');
+    expect(typography.className).toContain('text-xs');
+  });
+
+  it('does not apply smaller text when counter is 21 or less', () => {
+    render(<NavigationButtons counter={15} />);
+
+    const typography = screen.getByTestId('typography');
+    expect(typography.className).not.toContain('text-xs');
+  });
 });

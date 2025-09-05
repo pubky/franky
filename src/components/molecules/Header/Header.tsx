@@ -71,9 +71,11 @@ export const HomeHeader = () => {
   );
 };
 
-export function NavigationButtons({ image, counter }: { image?: string; counter?: number }) {
+export function NavigationButtons({ image, counter = 0 }: { image?: string; counter?: number }) {
+  const counterString = counter > 21 ? '21+' : counter.toString();
+
   return (
-    <Atoms.Container className="flex flex-row justify-start items-center gap-3">
+    <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
       <Atoms.Link href="/feed">
         <Atoms.Button className="w-12 h-12" variant="secondary" size="icon">
           <Libs.Home className="size-6" />
@@ -104,10 +106,10 @@ export function NavigationButtons({ image, counter }: { image?: string; counter?
           <Atoms.AvatarImage src={image} />
           <Atoms.AvatarFallback>SN</Atoms.AvatarFallback>
         </Atoms.Avatar>
-        {counter && (
-          <Atoms.Badge className="absolute bottom-0 right-0 rounded-full bg-brand" variant="secondary">
-            <Atoms.Typography className="text-primary-foreground" size="sm">
-              {counter}
+        {counter > 0 && (
+          <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">
+            <Atoms.Typography className={`text-primary-foreground ${counter > 21 ? 'text-xs' : ''}`} size="sm">
+              {counterString}
             </Atoms.Typography>
           </Atoms.Badge>
         )}
