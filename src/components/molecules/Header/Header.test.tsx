@@ -1,7 +1,15 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { HeaderContainer, HeaderTitle, OnboardingHeader, SocialLinks, ButtonSignIn, HomeHeader } from './Header';
+import {
+  HeaderContainer,
+  HeaderTitle,
+  OnboardingHeader,
+  SocialLinks,
+  ButtonSignIn,
+  HomeHeader,
+  NavigationButtons,
+} from './Header';
 import { GITHUB_URL, TWITTER_GETPUBKY_URL, TELEGRAM_URL } from '@/config';
 
 // Mock Next.js router
@@ -54,13 +62,15 @@ vi.mock('@/atoms', () => ({
     href,
     variant,
     size,
+    className,
   }: {
     children: React.ReactNode;
     href: string;
     variant?: string;
     size?: string;
+    className?: string;
   }) => (
-    <a data-testid="link" href={href} data-variant={variant} data-size={size}>
+    <a data-testid="link" href={href} data-variant={variant} data-size={size} className={className}>
       {children}
     </a>
   ),
@@ -68,16 +78,44 @@ vi.mock('@/atoms', () => ({
     children,
     variant,
     onClick,
+    className,
+    size,
     ...props
   }: {
     children: React.ReactNode;
     variant?: string;
     onClick?: () => void;
+    className?: string;
+    size?: string;
     [key: string]: unknown;
   }) => (
-    <button data-testid={variant ? `button-${variant}` : 'button'} onClick={onClick} data-variant={variant} {...props}>
+    <button
+      data-testid={variant ? `button-${variant}` : 'button'}
+      onClick={onClick}
+      data-variant={variant}
+      data-size={size}
+      className={className}
+      {...props}
+    >
       {children}
     </button>
+  ),
+  Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="avatar" className={className}>
+      {children}
+    </div>
+  ),
+  AvatarImage: ({ src }: { src?: string }) => <img data-testid="avatar-image" src={src} alt="avatar" />,
+  AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
+  Badge: ({ children, className, variant }: { children: React.ReactNode; className?: string; variant?: string }) => (
+    <div data-testid="badge" className={className} data-variant={variant}>
+      {children}
+    </div>
+  ),
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <div data-testid="typography" data-size={size} className={className}>
+      {children}
+    </div>
   ),
 }));
 
@@ -113,6 +151,31 @@ vi.mock('@/libs', () => ({
   LogIn: ({ className }: { className?: string }) => (
     <div data-testid="login-icon" className={className}>
       LogIn
+    </div>
+  ),
+  Home: ({ className }: { className?: string }) => (
+    <div data-testid="home-icon" className={className}>
+      Home
+    </div>
+  ),
+  Search: ({ className }: { className?: string }) => (
+    <div data-testid="search-icon" className={className}>
+      Search
+    </div>
+  ),
+  Flame: ({ className }: { className?: string }) => (
+    <div data-testid="flame-icon" className={className}>
+      Flame
+    </div>
+  ),
+  Bookmark: ({ className }: { className?: string }) => (
+    <div data-testid="bookmark-icon" className={className}>
+      Bookmark
+    </div>
+  ),
+  Settings: ({ className }: { className?: string }) => (
+    <div data-testid="settings-icon" className={className}>
+      Settings
     </div>
   ),
 }));
@@ -253,5 +316,108 @@ describe('HomeHeader', () => {
 
     const container = screen.getByTestId('container');
     expect(container.className).toContain('flex-1 flex-row items-center justify-end');
+  });
+});
+
+describe('NavigationButtons', () => {
+  it('renders all navigation buttons', () => {
+    render(<NavigationButtons />);
+
+    expect(screen.getAllByTestId('button-secondary')).toHaveLength(5);
+    expect(screen.getAllByTestId('link')).toHaveLength(6);
+  });
+
+  it('renders with avatar when image is provided', () => {
+    render(<NavigationButtons image="/test-image.jpg" />);
+
+    const avatarImage = screen.getByTestId('avatar-image');
+    expect(avatarImage).toHaveAttribute('src', '/test-image.jpg');
+  });
+
+  it('renders avatar fallback when no image', () => {
+    render(<NavigationButtons />);
+
+    expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+    expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('SN');
+  });
+
+  it('renders counter badge when provided', () => {
+    render(<NavigationButtons counter={5} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge).toBeInTheDocument();
+    expect(screen.getByTestId('typography')).toHaveTextContent('5');
+  });
+
+  it('does not render counter badge when not provided', () => {
+    render(<NavigationButtons />);
+
+    expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
+  });
+
+  it('has correct navigation links', () => {
+    render(<NavigationButtons />);
+
+    const links = screen.getAllByTestId('link');
+
+    expect(links[0]).toHaveAttribute('href', '/feed');
+    expect(links[1]).toHaveAttribute('href', '/search');
+    expect(links[2]).toHaveAttribute('href', '/hot');
+    expect(links[3]).toHaveAttribute('href', '/bookmarks');
+    expect(links[4]).toHaveAttribute('href', '/settings');
+    expect(links[5]).toHaveAttribute('href', '/profile');
+  });
+
+  it('renders counter badge with 21+ when counter exceeds 21', () => {
+    render(<NavigationButtons counter={25} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge).toBeInTheDocument();
+    expect(screen.getByTestId('typography')).toHaveTextContent('21+');
+  });
+
+  it('renders exact counter when counter is 21 or less', () => {
+    render(<NavigationButtons counter={21} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge).toBeInTheDocument();
+    expect(screen.getByTestId('typography')).toHaveTextContent('21');
+  });
+
+  it('does not render counter badge when counter is 0', () => {
+    render(<NavigationButtons counter={0} />);
+
+    expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
+  });
+
+  it('applies small screen hidden class to search link', () => {
+    render(<NavigationButtons />);
+
+    const links = screen.getAllByTestId('link');
+    const searchLink = links[1]; // Second link is the search link
+
+    expect(searchLink.className).toContain('sm:hidden');
+  });
+
+  it('applies correct styling classes to counter badge', () => {
+    render(<NavigationButtons counter={5} />);
+
+    const badge = screen.getByTestId('badge');
+    expect(badge.className).toContain('absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5');
+    expect(badge).toHaveAttribute('data-variant', 'secondary');
+  });
+
+  it('applies smaller text when counter exceeds 21', () => {
+    render(<NavigationButtons counter={25} />);
+
+    const typography = screen.getByTestId('typography');
+    expect(typography.className).toContain('text-xs');
+  });
+
+  it('does not apply smaller text when counter is 21 or less', () => {
+    render(<NavigationButtons counter={15} />);
+
+    const typography = screen.getByTestId('typography');
+    expect(typography.className).not.toContain('text-xs');
   });
 });
