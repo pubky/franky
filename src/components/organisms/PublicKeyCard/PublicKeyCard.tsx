@@ -8,19 +8,20 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export function PublicKeyCard() {
+  const { setKeypair, setMnemonic, publicKey } = Core.useOnboardingStore();
   const { copyToClipboard } = Libs.useCopyToClipboard();
-  const { setKeypair, publicKey } = Core.useOnboardingStore();
 
   useEffect(() => {
     if (publicKey === '') {
       const generatePubky = () => {
         const keypair = Libs.Identity.generateKeypair();
         setKeypair(keypair.publicKey, keypair.secretKey);
+        setMnemonic(keypair.mnemonic);
       };
 
       generatePubky();
     }
-  }, [publicKey, setKeypair]);
+  }, [publicKey, setKeypair, setMnemonic]);
 
   const handleCopyToClipboard = () => {
     copyToClipboard(publicKey);

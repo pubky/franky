@@ -1,4 +1,4 @@
-import { Client, PublicKey } from '@synonymdev/pubky';
+import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
 import { type FetchOptions, type SignupResult, type TKeyPair } from '@/core';
 import {
   AppError,
@@ -195,5 +195,50 @@ export class HomeserverService {
   isAuthenticated(): boolean {
     const profileStore = useProfileStore.getState();
     return profileStore.session !== null;
+  }
+
+  async authenticateKeypair(keypair: Keypair) {
+    try {
+      const pubky = keypair.publicKey().z32();
+      Logger.debug(`${pubky}`, { pubky });
+
+      // get homeserver from pkarr records
+      const homeserver = await this.client.getHomeserver(PublicKey.from(pubky));
+      if (!homeserver) {
+        throw createHomeserverError(HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get homeserver. Try again.', 401);
+      }
+      Logger.debug('Homeserver successful', { homeserver });
+
+      // sign in with keypair
+      await this.client.signin(keypair);
+      Logger.debug('Signin successful', { keypair });
+
+      // Retrieve the session
+      const session = await this.client.session(keypair.publicKey());
+      if (!session) {
+        throw createHomeserverError(HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get session. Try again.', 401);
+      }
+      Logger.debug('Session successful', { session });
+
+      // save to store
+      useProfileStore.getState().setSession(session);
+      useProfileStore.getState().setCurrentUserPubky(pubky);
+      useProfileStore.getState().setAuthenticated(true);
+      Logger.debug('Authenticated successful', { pubky });
+
+      return pubky;
+    } catch {
+      try {
+        // try to republish homeserver
+        await this.client.republishHomeserver(keypair, PublicKey.from(Env.NEXT_PUBLIC_HOMESERVER));
+        Logger.debug('Republish homeserver successful', { keypair });
+      } catch {
+        throw createHomeserverError(
+          HomeserverErrorType.NOT_AUTHENTICATED,
+          'Not authenticated. Please sign up first.',
+          401,
+        );
+      }
+    }
   }
 }

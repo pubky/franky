@@ -11,6 +11,7 @@ export * from './DialogBackupPhrase';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogExport';
 export * from './DialogPrivacy';
+export * from './DialogRestoreRecoveryPhrase';
 export * from './DialogTerms';
 export * from './DialogWelcome';
 export * from './Header';

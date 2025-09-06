@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Env, CommonErrorType, createCommonError } from '@/libs';
+import * as Libs from '@/libs';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
@@ -22,6 +22,7 @@ export class AuthController {
     Core.useProfileStore.getState().reset();
     Core.useOnboardingStore.getState().reset();
 
+    // TODO: extract this to a utils function
     // clear all cookies
     document.cookie.split(';').forEach(function (c) {
       document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
@@ -31,10 +32,17 @@ export class AuthController {
     window.location.href = '/logout';
   }
 
+  static async loginWithMnemonic(mnemonic: string) {
+    const homeserverService = Core.HomeserverService.getInstance();
+
+    const keypair = Libs.Identity.pubkyKeypairFromMnemonic(mnemonic);
+    await homeserverService.authenticateKeypair(keypair);
+  }
+
   // TODO: remove this once we have a proper signup token endpoint
   static async generateSignupToken(): Promise<string> {
-    const endpoint = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
-    const password = Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
+    const endpoint = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
+    const password = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
 
     const response = await fetch(endpoint, {
       method: 'GET',
@@ -45,8 +53,8 @@ export class AuthController {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw createCommonError(
-        CommonErrorType.NETWORK_ERROR,
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.NETWORK_ERROR,
         `Failed to generate signup token: ${response.status} ${errorText}`,
         response.status,
       );
@@ -54,7 +62,7 @@ export class AuthController {
 
     const token = (await response.text()).trim();
     if (!token) {
-      throw createCommonError(CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
+      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
     }
 
     return token;

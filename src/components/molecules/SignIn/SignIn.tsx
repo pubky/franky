@@ -65,13 +65,14 @@ export const SignInNavigation = () => {
     router.push('/onboarding/pubky');
   };
 
+  const handleRestore = (recoveryPhrase: string[]) => {
+    console.log('recoveryPhrase', recoveryPhrase);
+  };
+
   return (
     <Atoms.Container className="flex-col-reverse md:flex-row gap-3 lg:gap-6 justify-start">
       <Atoms.Container className="flex-col gap-3 sm:flex-row w-auto sm:w-full justify-start items-start mx-0 sm:mx-auto">
-        <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none" onClick={handleCreate}>
-          <Libs.FileText className="mr-2 h-4 w-4" />
-          Use recovery phrase
-        </Atoms.Button>
+        <Molecules.DialogRestoreRecoveryPhrase onRestore={handleRestore} />
         <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none" onClick={handleCreate}>
           <Libs.FileUp className="mr-2 h-4 w-4" />
           Use encrypted file

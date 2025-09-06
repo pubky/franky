@@ -135,20 +135,27 @@ vi.mock('@/atoms', () => ({
 
 // Mock core
 const mockSetKeypair = vi.fn();
+const mockSetMnemonic = vi.fn();
 const mockPublicKey = 'pubky1234567890abcdef';
 
 vi.mock('@/core', () => ({
   useOnboardingStore: () => ({
     setKeypair: mockSetKeypair,
+    setMnemonic: mockSetMnemonic,
     publicKey: mockPublicKey,
   }),
 }));
 
 // Mock libs
 const mockCopyToClipboard = vi.fn();
+
 vi.mock('@/libs', () => ({
   Identity: {
-    generateKeypair: vi.fn(),
+    generateKeypair: vi.fn(() => ({
+      publicKey: 'test-public-key',
+      secretKey: 'test-secret-key-64-chars-long-hex-string-for-testing-purposes',
+      mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+    })),
   },
   useCopyToClipboard: vi.fn(() => ({
     copyToClipboard: mockCopyToClipboard,
@@ -268,9 +275,13 @@ describe('PublicKeyCard - Key Generation', () => {
     mockCopyToClipboard.mockResolvedValue(undefined);
   });
 
-  it('shows loading state when public key is empty', () => {
-    // We can't easily test the key generation logic due to mocking limitations,
-    // but we can test that the component handles empty public keys properly
-    expect(true).toBe(true); // Placeholder test
+  it('does not generate keypair when public key already exists', () => {
+    render(<PublicKeyCard />);
+
+    // Since mockPublicKey is not empty, the component should not call generateKeypair
+    // We can't easily access the mocked function here due to module hoisting,
+    // but we can verify that the store methods were not called
+    expect(mockSetKeypair).not.toHaveBeenCalled();
+    expect(mockSetMnemonic).not.toHaveBeenCalled();
   });
 });
