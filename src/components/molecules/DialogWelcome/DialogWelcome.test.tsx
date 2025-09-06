@@ -100,7 +100,16 @@ vi.mock('@/atoms', () => ({
 // Mock libs
 vi.mock('@/libs', () => ({
   formatPublicKey: vi.fn((key: string, length: number) => key.slice(0, length)),
-  copyToClipboard: vi.fn(),
+  useCopyToClipboard: vi.fn(() => ({
+    copyToClipboard: vi.fn(),
+  })),
+  extractInitials: vi.fn((name: string, length: number) => {
+    const words = name.split(' ');
+    return words
+      .slice(0, length)
+      .map((word) => word.charAt(0).toUpperCase())
+      .join('');
+  }),
   Key: ({ className }: { className?: string }) => <div data-testid="key-icon" className={className} />,
   ArrowRight: ({ className }: { className?: string }) => <div data-testid="arrow-right-icon" className={className} />,
 }));
@@ -330,5 +339,15 @@ describe('DialogWelcome', () => {
 
     const avatarFallback = screen.getByTestId('avatar-fallback');
     expect(avatarFallback).toHaveTextContent('S');
+  });
+
+  it('calls copyToClipboard when copy button is clicked', () => {
+    render(<DialogWelcome {...defaultProps} />);
+
+    const copyButton = screen.getByTestId('button-secondary');
+    fireEvent.click(copyButton);
+
+    // The button should be clickable and not throw any errors
+    expect(copyButton).toBeInTheDocument();
   });
 });

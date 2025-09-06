@@ -7,31 +7,12 @@ import * as Libs from '@/libs';
 
 export const CreateProfileHeader = () => {
   const { publicKey } = Core.useOnboardingStore();
+  const { copyToClipboard } = Libs.useCopyToClipboard();
 
   const displayPublicKey = Libs.formatPublicKey(publicKey, 10);
 
-  const handleCopyToClipboard = async () => {
-    try {
-      await Libs.copyToClipboard(publicKey);
-      const toastInstance = Molecules.toast({
-        title: 'Pubky copied to clipboard',
-        description: publicKey,
-        action: (
-          <Atoms.Button
-            variant="outline"
-            className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
-            onClick={() => toastInstance.dismiss()}
-          >
-            OK
-          </Atoms.Button>
-        ),
-      });
-    } catch {
-      Molecules.toast({
-        title: 'Copy failed',
-        description: 'Unable to copy to clipboard',
-      });
-    }
+  const handleCopyToClipboard = () => {
+    copyToClipboard(publicKey);
   };
 
   return (

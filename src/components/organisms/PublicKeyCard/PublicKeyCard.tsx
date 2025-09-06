@@ -8,7 +8,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export function PublicKeyCard() {
-  const { toast } = Molecules.useToast();
+  const { copyToClipboard } = Libs.useCopyToClipboard();
   const { setKeypair, publicKey } = Core.useOnboardingStore();
 
   useEffect(() => {
@@ -22,28 +22,8 @@ export function PublicKeyCard() {
     }
   }, [publicKey, setKeypair]);
 
-  const handleCopyToClipboard = async () => {
-    try {
-      await Libs.copyToClipboard(publicKey);
-      const toastInstance = toast({
-        title: 'Pubky copied to clipboard',
-        description: publicKey,
-        action: (
-          <Atoms.Button
-            variant="outline"
-            className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
-            onClick={() => toastInstance.dismiss()}
-          >
-            OK
-          </Atoms.Button>
-        ),
-      });
-    } catch {
-      toast({
-        title: 'Copy failed',
-        description: 'Unable to copy to clipboard',
-      });
-    }
+  const handleCopyToClipboard = () => {
+    copyToClipboard(publicKey);
   };
 
   return (

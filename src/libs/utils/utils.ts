@@ -31,3 +31,22 @@ export async function copyToClipboard(text: string): Promise<void> {
 
   await navigator.clipboard.writeText(text);
 }
+
+/**
+ * Extracts initials from a full name
+ * @param name - The full name to extract initials from
+ * @param maxLength - Maximum number of initials to return (default: 2)
+ * @returns Uppercase initials string
+ */
+export function extractInitials(name: string, maxLength: number = 2): string {
+  if (!name || typeof name !== 'string') return '';
+
+  return name
+    .trim()
+    .split(/\s+/)
+    .filter((word) => word.length > 0)
+    .map((word) => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, maxLength);
+}

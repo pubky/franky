@@ -1,6 +1,5 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import * as Molecules from '@/molecules';
 
 interface DialogWelcomeProps {
   isOpen: boolean;
@@ -13,37 +12,11 @@ interface DialogWelcomeProps {
 
 export function DialogWelcome({ isOpen, onOpenChange, name, image, publicKey, bio }: DialogWelcomeProps) {
   const displayPublicKey = Libs.formatPublicKey(publicKey, 10);
+  const { copyToClipboard } = Libs.useCopyToClipboard();
+  const initials = Libs.extractInitials(name, 2);
 
-  // Extract the first two initials of the name
-  const initials = name
-    .split(' ')
-    .map((word) => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-
-  const handleCopyToClipboard = async () => {
-    try {
-      await Libs.copyToClipboard(publicKey);
-      const toastInstance = Molecules.toast({
-        title: 'Pubky copied to clipboard',
-        description: publicKey,
-        action: (
-          <Atoms.Button
-            variant="outline"
-            className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
-            onClick={() => toastInstance.dismiss()}
-          >
-            OK
-          </Atoms.Button>
-        ),
-      });
-    } catch {
-      Molecules.toast({
-        title: 'Copy failed',
-        description: 'Unable to copy to clipboard',
-      });
-    }
+  const handleCopyToClipboard = () => {
+    copyToClipboard(publicKey);
   };
 
   const handleExplorePubky = () => {
