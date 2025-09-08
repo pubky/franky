@@ -5,23 +5,47 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 
-export function DialogExport() {
+interface DialogExportProps {
+  mnemonic?: string;
+}
+
+export function DialogExport({ mnemonic }: DialogExportProps) {
+  const generateDeeplink = (mnemonicPhrase: string) => {
+    // Encode the mnemonic for URL
+    const encodedMnemonic = encodeURIComponent(mnemonicPhrase);
+    return `pubkyring://${encodedMnemonic}`;
+  };
+
+  const qrValue = mnemonic ? generateDeeplink(mnemonic) : Config.PUBKY_CORE_URL;
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button className="gap-2">
           <Libs.Scan className="h-4 w-4" />
-          <span>Export to Pubky Ring</span>
+          <span>{mnemonic ? 'Export recovery phrase' : 'Export to Pubky Ring'}</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="p-8 rounded-xl flex flex-col w-[430px]">
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
-          <Atoms.DialogTitle className="text-2xl font-bold leading-8">Pubky Ring export</Atoms.DialogTitle>
+          <Atoms.DialogTitle className="text-2xl font-bold leading-8">
+            {mnemonic ? 'Import recovery phrase' : 'Pubky Ring export'}
+          </Atoms.DialogTitle>
           <Atoms.DialogDescription className="text-sm font-medium leading-5">
-            1. Open Pubky Ring, tap &apos;Add pubky&apos; <br />
-            2. Choose the &apos;Import pubky&apos; option
-            <br />
-            3. Scan this QR to import
+            {mnemonic ? (
+              <>
+                1. Open Pubky Ring, tap &apos;Add pubky&apos; <br />
+                2. Choose &apos;Import pubky&apos; option <br />
+                3. Tap &apos;Scan QR to import&apos; <br />
+                4. Scan this QR code to import your recovery phrase
+              </>
+            ) : (
+              <>
+                1. Open Pubky Ring, tap &apos;Add pubky&apos; <br />
+                2. Choose the &apos;Import pubky&apos; option
+                <br />
+                3. Scan this QR to import
+              </>
+            )}
           </Atoms.DialogDescription>
         </Atoms.DialogHeader>
 
@@ -33,7 +57,7 @@ export function DialogExport() {
 
             <Atoms.Container className="gap-8 w-full mt-4">
               <Atoms.Container className="mx-0 bg-foreground rounded-lg p-4 w-[192px] h-[192px] items-center">
-                <QRCodeSVG value={Config.PUBKY_CORE_URL} size={192} />
+                <QRCodeSVG value={qrValue} size={192} />
               </Atoms.Container>
               <Atoms.Container className="gap-4">
                 <Atoms.Link href={Config.APP_STORE_URL} target="_blank">

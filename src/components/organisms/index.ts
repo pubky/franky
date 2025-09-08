@@ -1,3 +1,4 @@
+export * from './BackupMethodCard';
 export * from './CreateProfileHeader';
 export * from './CreateProfileForm';
 export * from './Header';
