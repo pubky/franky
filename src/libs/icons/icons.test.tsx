@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { XTwitter, Github2, Telegram } from './icons';
+import { XTwitter, Github2, Telegram, UsersRound2 } from './icons';
 
 describe('Custom Icons', () => {
   describe('XTwitter', () => {
@@ -137,6 +137,52 @@ describe('Custom Icons', () => {
 
     it('should render the correct SVG content', () => {
       const { container } = render(<Github2 />);
+      const path = container.querySelector('path');
+
+      expect(path).toBeInTheDocument();
+      expect(path).toHaveAttribute('stroke', 'currentColor');
+      expect(path).toHaveAttribute('stroke-width', '1.5');
+      expect(path).toHaveAttribute('stroke-linecap', 'round');
+      expect(path).toHaveAttribute('stroke-linejoin', 'round');
+    });
+  });
+
+  describe('UsersRound2', () => {
+    it('should render correctly with default props', () => {
+      const { container } = render(<UsersRound2 />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('width', '24');
+      expect(svg).toHaveAttribute('height', '24');
+      expect(svg).toHaveAttribute('viewBox', '0 0 20 20');
+      expect(svg).toHaveAttribute('fill', 'none');
+    });
+
+    it('should apply custom size', () => {
+      const { container } = render(<UsersRound2 size={32} />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('width', '32');
+      expect(svg).toHaveAttribute('height', '32');
+    });
+
+    it('should apply custom className', () => {
+      const { container } = render(<UsersRound2 className="custom-class" />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveClass('custom-class');
+    });
+
+    it('should apply additional props', () => {
+      const { container } = render(<UsersRound2 data-testid="users-icon" />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('data-testid', 'users-icon');
+    });
+
+    it('should render the correct SVG content', () => {
+      const { container } = render(<UsersRound2 />);
       const path = container.querySelector('path');
 
       expect(path).toBeInTheDocument();
