@@ -8,24 +8,11 @@ import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 
 interface DialogRestoreRecoveryPhraseProps {
-  onRestore?: (recoveryPhrase: string[]) => void;
+  onRestore?: () => void;
 }
 
 export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecoveryPhraseProps) {
-  const [userWords, setUserWords] = useState<string[]>([
-    'allow',
-    'focus',
-    'side',
-    'tower',
-    'fluid',
-    'journey',
-    'license',
-    'fork',
-    'dish',
-    'piano',
-    'suffer',
-    'such',
-  ]);
+  const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
 
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [touched, setTouched] = useState<boolean[]>(Array(12).fill(false));
@@ -46,7 +33,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       const allFilled = userWords.every((word) => word !== '');
 
       if (!hasErrors && allFilled) {
-        onRestore?.(userWords);
+        onRestore?.();
       }
 
       const mnemonic = userWords.join(' ');

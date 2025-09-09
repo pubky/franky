@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
@@ -55,29 +54,5 @@ export const SignInHeader = () => {
       </Molecules.PageTitle>
       <Atoms.PageSubtitle>Authorize with Pubky Ring to sign in.</Atoms.PageSubtitle>
     </Atoms.PageHeader>
-  );
-};
-
-export const SignInNavigation = () => {
-  const router = useRouter();
-
-  const handleCreate = () => {
-    router.push('/onboarding/pubky');
-  };
-
-  const handleRestore = (recoveryPhrase: string[]) => {
-    console.log('recoveryPhrase', recoveryPhrase);
-  };
-
-  return (
-    <Atoms.Container className="flex-col-reverse md:flex-row gap-3 lg:gap-6 justify-start">
-      <Atoms.Container className="flex-col gap-3 sm:flex-row w-auto sm:w-full justify-start items-start mx-0 sm:mx-auto">
-        <Molecules.DialogRestoreRecoveryPhrase onRestore={handleRestore} />
-        <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none" onClick={handleCreate}>
-          <Libs.FileUp className="mr-2 h-4 w-4" />
-          Use encrypted file
-        </Atoms.Button>
-      </Atoms.Container>
-    </Atoms.Container>
   );
 };
