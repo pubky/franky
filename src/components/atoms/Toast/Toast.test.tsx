@@ -53,3 +53,110 @@ describe('Toast Components', () => {
     });
   });
 });
+
+describe('Toast - Snapshots', () => {
+  it('matches snapshot for ToastProvider', () => {
+    const { container } = render(
+      <ToastProvider>
+        <div>Test content</div>
+      </ToastProvider>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ToastViewport', () => {
+    const { container } = render(
+      <ToastProvider>
+        <ToastViewport />
+      </ToastProvider>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  // TODO: address null output
+  // it('matches snapshot for Toast with default props', () => {
+  //   const { container } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <div>Toast content</div>
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(container.firstChild).toMatchSnapshot();
+  // });
+
+  // TODO: address null output
+  // it('matches snapshots for Toast with different configurations', () => {
+  //   const { container: defaultContainer } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <div>Default toast</div>
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(defaultContainer.firstChild).toMatchSnapshot();
+
+  //   const { container: customClassContainer } = render(
+  //     <ToastProvider>
+  //       <Toast className="custom-toast">
+  //         <div>Custom toast</div>
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(customClassContainer.firstChild).toMatchSnapshot();
+  // });
+
+  // TODO: address null output
+  // it('matches snapshots for Toast subcomponents', () => {
+  //   const { container: titleContainer } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <ToastTitle>Toast Title</ToastTitle>
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(titleContainer.firstChild).toMatchSnapshot();
+
+  //   const { container: descriptionContainer } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <ToastDescription>Toast Description</ToastDescription>
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(descriptionContainer.firstChild).toMatchSnapshot();
+
+  //   const { container: actionContainer } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <ToastAction>Action</ToastAction>
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(actionContainer.firstChild).toMatchSnapshot();
+
+  //   const { container: closeContainer } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <ToastClose />
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(closeContainer.firstChild).toMatchSnapshot();
+  // });
+
+  // TODO: address null output
+  // it('matches snapshot for complete toast structure', () => {
+  //   const { container } = render(
+  //     <ToastProvider>
+  //       <Toast>
+  //         <ToastTitle>Complete Toast</ToastTitle>
+  //         <ToastDescription>This is a complete toast with all components</ToastDescription>
+  //         <ToastAction>Action</ToastAction>
+  //         <ToastClose />
+  //       </Toast>
+  //     </ToastProvider>,
+  //   );
+  //   expect(container.firstChild).toMatchSnapshot();
+  // });
+});

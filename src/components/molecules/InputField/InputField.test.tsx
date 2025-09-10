@@ -134,3 +134,53 @@ describe('InputField', () => {
     expect(screen.queryByTestId('loading-icon')).not.toBeInTheDocument();
   });
 });
+
+describe('InputField - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<InputField value="test value" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different configurations', () => {
+    const { container: defaultContainer } = render(<InputField value="test" />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+
+    const { container: placeholderContainer } = render(<InputField value="" placeholder="Enter text here" />);
+    expect(placeholderContainer.firstChild).toMatchSnapshot();
+
+    const { container: disabledContainer } = render(<InputField value="test" disabled={true} />);
+    expect(disabledContainer.firstChild).toMatchSnapshot();
+
+    const { container: readonlyContainer } = render(<InputField value="test" readOnly={true} />);
+    expect(readonlyContainer.firstChild).toMatchSnapshot();
+
+    const { container: customClassContainer } = render(<InputField value="test" className="custom-input-field" />);
+    expect(customClassContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different variants', () => {
+    const { container: defaultContainer } = render(<InputField value="test" />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+
+    const { container: dashedContainer } = render(<InputField value="test" variant="dashed" />);
+    expect(dashedContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different states', () => {
+    const icon = <div data-testid="custom-icon">Icon</div>;
+    const loadingIcon = <div data-testid="loading-icon">Loading</div>;
+
+    const { container: withIconContainer } = render(<InputField value="test" icon={icon} />);
+    expect(withIconContainer.firstChild).toMatchSnapshot();
+
+    const { container: loadingContainer } = render(
+      <InputField value="test" loading={true} loadingIcon={loadingIcon} loadingText="Loading..." />,
+    );
+    expect(loadingContainer.firstChild).toMatchSnapshot();
+
+    const { container: notLoadingContainer } = render(
+      <InputField value="test" icon={icon} loadingIcon={loadingIcon} loading={false} />,
+    );
+    expect(notLoadingContainer.firstChild).toMatchSnapshot();
+  });
+});

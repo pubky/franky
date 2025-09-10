@@ -6,7 +6,9 @@
 - The beta app that is currently live at https://pubky.app will be deprecated once Franky is complete.
 - **THIS VERSION IS A WORK IN PROGRESS**, including a rewrite with improved architecture, and Tailwind/ShadCN design system.
   
----
+## Prerequisites
+
+- Node.js 20 or higher
 
 ## Getting Started
 

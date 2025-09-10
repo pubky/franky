@@ -1,0 +1,98 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PageSubtitle - Snapshots > matches snapshot with default props 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  Test subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for additional props 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+  id="subtitle-id"
+>
+  Subtitle with ID
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for additional props 2`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+  data-testid="page-subtitle"
+>
+  Subtitle with test ID
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different HTML elements 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  H2 subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different HTML elements 2`] = `
+<h5
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  H5 subtitle
+</h5>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different HTML elements 3`] = `
+<p
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  P subtitle
+</p>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different children types 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  Simple subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different children types 2`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  <span>
+    Complex
+  </span>
+   
+  <strong>
+    subtitle
+  </strong>
+   content
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different configurations 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  Default subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different configurations 2`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal custom-subtitle"
+>
+  Custom subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshots for different configurations 3`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  Title prop subtitle
+</h2>
+`;

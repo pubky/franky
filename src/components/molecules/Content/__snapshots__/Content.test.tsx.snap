@@ -1,0 +1,232 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Content - Snapshots > matches snapshot for ContentCard with default props 1`] = `
+<div
+  class="p-6 md:p-12"
+  data-testid="card"
+>
+  <div
+    class="gap-12 flex-col lg:flex-row"
+    data-testid="container"
+  >
+    <div
+      class="gap-3 justify-start w-full"
+      data-testid="container"
+    >
+      <div>
+        Test content
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentCard with different configurations 1`] = `
+<div
+  class="p-6 md:p-12"
+  data-testid="card"
+>
+  <div
+    class="gap-12 flex-col lg:flex-row"
+    data-testid="container"
+  >
+    <div
+      class="gap-3 justify-start w-full"
+      data-testid="container"
+    >
+      <div>
+        Default content
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentCard with different configurations 2`] = `
+<div
+  class="p-6 md:p-12 custom-card"
+  data-testid="card"
+>
+  <div
+    class="gap-12 flex-col lg:flex-row"
+    data-testid="container"
+  >
+    <div
+      class="gap-3 justify-start w-full"
+      data-testid="container"
+    >
+      <div>
+        Custom content
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentCard with different configurations 3`] = `
+<div
+  class="p-6 md:p-12"
+  data-testid="card"
+>
+  <div
+    class="gap-12 flex-col"
+    data-testid="container"
+  >
+    <div
+      class="gap-3 justify-start w-full"
+      data-testid="container"
+    >
+      <div>
+        Column layout content
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentCard with different configurations 4`] = `
+<div
+  class="p-6 md:p-12"
+  data-testid="card"
+>
+  <div
+    class="gap-12 flex-col lg:flex-row"
+    data-testid="container"
+  >
+    <div
+      class="hidden lg:flex"
+      style="width: 200px; height: 200px;"
+    >
+      <img
+        alt="Test image"
+        class=""
+        data-testid="content-image"
+        height="200"
+        src="/test.jpg"
+        style="object-fit: contain;"
+        width="200"
+      />
+    </div>
+    <div
+      class="gap-3 justify-start w-full"
+      data-testid="container"
+    >
+      <div>
+        Content with image
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentContainer with different configurations 1`] = `
+<div
+  class="max-w-[1200px] gap-6"
+  data-testid="container"
+>
+  <div>
+    Default container
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentContainer with different configurations 2`] = `
+<div
+  class="max-w-[588px] gap-6"
+  data-testid="container"
+>
+  <div>
+    Small max width
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentContainer with different configurations 3`] = `
+<div
+  class="max-w-[1200px] gap-8"
+  data-testid="container"
+>
+  <div>
+    Large gap
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentContainer with different configurations 4`] = `
+<div
+  class="max-w-[1200px] gap-6 custom-container"
+  data-testid="container"
+>
+  <div>
+    Custom class
+  </div>
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentImage with different configurations 1`] = `
+<div
+  class="hidden lg:flex"
+  style="width: 100px; height: 100px;"
+>
+  <img
+    alt="Test"
+    class=""
+    data-testid="content-image"
+    height="100"
+    src="/test.jpg"
+    style="object-fit: contain;"
+    width="100"
+  />
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentImage with different configurations 2`] = `
+<div
+  class="flex"
+  style="width: 100px; height: 100px;"
+>
+  <img
+    alt="Test"
+    class=""
+    data-testid="content-image"
+    height="100"
+    src="/test.jpg"
+    style="object-fit: contain;"
+    width="100"
+  />
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentImage with different configurations 3`] = `
+<div
+  class="hidden lg:flex"
+  style="width: 100px; height: 100px;"
+>
+  <img
+    alt="Test"
+    class="custom-image"
+    data-testid="content-image"
+    height="100"
+    src="/test.jpg"
+    style="object-fit: contain;"
+    width="100"
+  />
+</div>
+`;
+
+exports[`Content - Snapshots > matches snapshots for ContentImage with different configurations 4`] = `
+<div
+  class="hidden lg:flex custom-container"
+  style="width: 100px; height: 100px;"
+>
+  <img
+    alt="Test"
+    class=""
+    data-testid="content-image"
+    height="100"
+    src="/test.jpg"
+    style="object-fit: contain;"
+    width="100"
+  />
+</div>
+`;

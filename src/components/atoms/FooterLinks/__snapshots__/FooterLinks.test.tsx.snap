@@ -1,0 +1,80 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FooterLinks - Snapshots > matches snapshot with default props 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+>
+  Footer text
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for additional props 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+  id="footer-id"
+>
+  Footer with ID
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for additional props 2`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="custom-footer-links"
+>
+  Footer with test ID
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for different children types 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+>
+  Simple text
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for different children types 2`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+>
+  <span>
+    Copyright 2024
+  </span>
+   | 
+  <a
+    href="/privacy"
+  >
+    Privacy
+  </a>
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for different children types 3`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+/>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for different configurations 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+>
+  Default footer
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshots for different configurations 2`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light custom-footer"
+  data-testid="typography"
+>
+  Custom footer
+</p>
+`;

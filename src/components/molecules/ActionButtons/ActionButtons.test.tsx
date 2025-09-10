@@ -116,3 +116,39 @@ describe('ActionButtons', () => {
     expect(mockOnCreateAccount).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('ActionButtons - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<ActionButtons />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different configurations', () => {
+    const { container: defaultContainer } = render(<ActionButtons />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+
+    const { container: customTextContainer } = render(
+      <ActionButtons signInText="Log In" createAccountText="Register" />,
+    );
+    expect(customTextContainer.firstChild).toMatchSnapshot();
+
+    const { container: customClassContainer } = render(<ActionButtons className="custom-action-buttons" />);
+    expect(customClassContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different callback configurations', () => {
+    const mockOnSignIn = vi.fn();
+    const mockOnCreateAccount = vi.fn();
+
+    const { container: withCallbacksContainer } = render(
+      <ActionButtons onSignIn={mockOnSignIn} onCreateAccount={mockOnCreateAccount} />,
+    );
+    expect(withCallbacksContainer.firstChild).toMatchSnapshot();
+
+    const { container: signInOnlyContainer } = render(<ActionButtons onSignIn={mockOnSignIn} />);
+    expect(signInOnlyContainer.firstChild).toMatchSnapshot();
+
+    const { container: createAccountOnlyContainer } = render(<ActionButtons onCreateAccount={mockOnCreateAccount} />);
+    expect(createAccountOnlyContainer.firstChild).toMatchSnapshot();
+  });
+});

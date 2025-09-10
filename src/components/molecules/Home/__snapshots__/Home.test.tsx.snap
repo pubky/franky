@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Home - Snapshots > matches snapshot for HomeActions with default props 1`] = `
+<div
+  data-testid="action-buttons"
+>
+  <button
+    data-testid="sign-in-button"
+  >
+    Sign In
+  </button>
+  <button
+    data-testid="create-account-button"
+  >
+    Create Account
+  </button>
+</div>
+`;
+
+exports[`Home - Snapshots > matches snapshot for HomeFooter with default props 1`] = `
+<div
+  data-testid="footer-links"
+>
+  By creating a Pubky account, you agree to the 
+  <button
+    data-testid="dialog-terms"
+  >
+    Terms of Service
+  </button>
+  , 
+  <button
+    data-testid="dialog-privacy"
+  >
+    Privacy Policy
+  </button>
+  , and confirm you are 
+  <button
+    data-testid="dialog-age"
+  >
+    over 18 years old.
+  </button>
+   Pubky is powered by
+   
+  <a
+    data-testid="link"
+    href="https://pubky.org"
+    target="_blank"
+  >
+    Pubky Core
+  </a>
+   
+  and was built with love and dedication by Synonym Software Ltd. ©2025.
+</div>
+`;
+
+exports[`Home - Snapshots > matches snapshot for HomePageHeading with default props 1`] = `
+<div
+  data-size="2xl"
+  data-testid="heading-1"
+>
+  <span
+    class="text-brand"
+  >
+    Unlock
+  </span>
+   
+  <br
+    class="block sm:hidden"
+  />
+  the web.
+</div>
+`;
+
+exports[`Home - Snapshots > matches snapshot for HomeSectionTitle with default props 1`] = `
+<div
+  class="flex-row items-start gap-2"
+  data-testid="container"
+>
+  <p
+    class="text-brand font-light sm:text-2xl self-center"
+    data-size="md"
+    data-testid="typography"
+  >
+    Pubky requires an invite code
+  </p>
+  <div
+    data-testid="popover-invite"
+  >
+    Invite Popover
+  </div>
+</div>
+`;

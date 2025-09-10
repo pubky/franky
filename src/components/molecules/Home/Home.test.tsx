@@ -176,3 +176,25 @@ describe('HomePageHeading', () => {
     expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
   });
 });
+
+describe('Home - Snapshots', () => {
+  it('matches snapshot for HomeActions with default props', () => {
+    const { container } = render(<HomeActions />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HomeFooter with default props', () => {
+    const { container } = render(<HomeFooter />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HomeSectionTitle with default props', () => {
+    const { container } = render(<HomeSectionTitle />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HomePageHeading with default props', () => {
+    const { container } = render(<HomePageHeading />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

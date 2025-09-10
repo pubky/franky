@@ -110,3 +110,37 @@ describe('ImageBackground', () => {
     expect(background).toBeInTheDocument();
   });
 });
+
+describe('ImageBackground - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<ImageBackground image="/bg-image.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different configurations', () => {
+    const { container: defaultContainer } = render(<ImageBackground image="/default-bg.jpg" />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+
+    const { container: customContainer } = render(<ImageBackground image="/custom-bg.jpg" className="custom-bg" />);
+    expect(customContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different image types', () => {
+    const { container: jpgContainer } = render(<ImageBackground image="/background.jpg" />);
+    expect(jpgContainer.firstChild).toMatchSnapshot();
+
+    const { container: pngContainer } = render(<ImageBackground image="/background.png" />);
+    expect(pngContainer.firstChild).toMatchSnapshot();
+
+    const { container: svgContainer } = render(<ImageBackground image="/background.svg" />);
+    expect(svgContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for additional props', () => {
+    const { container: withIdContainer } = render(<ImageBackground image="/bg.jpg" id="background-id" />);
+    expect(withIdContainer.firstChild).toMatchSnapshot();
+
+    const { container: withDataTestIdContainer } = render(<ImageBackground image="/bg.jpg" data-testid="custom-bg" />);
+    expect(withDataTestIdContainer.firstChild).toMatchSnapshot();
+  });
+});
