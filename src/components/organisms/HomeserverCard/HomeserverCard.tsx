@@ -63,11 +63,10 @@ export function HomeserverCard() {
       setStatus('default');
       setIsLoading(true);
       setButtonContinueText('Validating');
-
-      await Core.AuthController.signUp({ publicKey, secretKey }, inviteCode);
-
+      const keypair = { publicKey, secretKey };
+      const signupToken = inviteCode;
+      await Core.AuthController.signUp({ keypair, signupToken });
       setButtonContinueText('Signing up');
-
       router.push('/onboarding/profile');
     } catch {
       showErrorToast();

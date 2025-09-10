@@ -35,7 +35,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       const allFilled = userWords.every((word) => word !== '');
 
       const mnemonic = userWords.join(' ');
-      await Core.AuthController.loginWithMnemonic(mnemonic);
+      await Core.AuthController.loginWithMnemonic({ mnemonic });
 
       if (!hasErrors && allFilled) {
         onRestore?.();

@@ -66,7 +66,7 @@ describe('AuthController', () => {
         session: mockSession,
       });
 
-      const result = await AuthController.signUp(keypair, signupToken);
+      const result = await AuthController.signUp({ keypair, signupToken });
 
       expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
       // AuthController.signUp doesn't return anything, it just processes the signup
@@ -82,7 +82,7 @@ describe('AuthController', () => {
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockRejectedValue(new Error('Signup failed'));
 
-      await expect(AuthController.signUp(keypair, signupToken)).rejects.toThrow('Signup failed');
+      await expect(AuthController.signUp({ keypair, signupToken })).rejects.toThrow('Signup failed');
       expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
 
       signupSpy.mockRestore();

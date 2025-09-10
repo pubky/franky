@@ -359,7 +359,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       fireEvent.click(restoreButton!);
 
       await waitFor(() => {
-        expect(mockLoginWithMnemonic).toHaveBeenCalledWith(validWords.join(' '));
+        expect(mockLoginWithMnemonic).toHaveBeenCalledWith({ mnemonic: validWords.join(' ') });
       });
     });
 

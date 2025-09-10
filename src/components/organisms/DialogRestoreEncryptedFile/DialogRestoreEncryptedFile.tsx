@@ -41,7 +41,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     setError('');
 
     try {
-      await Core.AuthController.loginWithEncryptedFile(selectedFile, password);
+      await Core.AuthController.loginWithEncryptedFile({ encryptedFile: selectedFile, password });
       onRestore?.();
     } catch (error) {
       if (error instanceof Error) {

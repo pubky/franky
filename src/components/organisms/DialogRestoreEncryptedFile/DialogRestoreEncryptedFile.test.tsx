@@ -331,7 +331,7 @@ describe('DialogRestoreEncryptedFile', () => {
     fireEvent.click(restoreButton!);
 
     await waitFor(() => {
-      expect(mockLoginWithEncryptedFile).toHaveBeenCalledWith(testFile, 'testpassword');
+      expect(mockLoginWithEncryptedFile).toHaveBeenCalledWith({ encryptedFile: testFile, password: 'testpassword' });
     });
 
     await waitFor(() => {
