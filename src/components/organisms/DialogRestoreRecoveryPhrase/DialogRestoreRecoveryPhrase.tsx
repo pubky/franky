@@ -13,12 +13,14 @@ interface DialogRestoreRecoveryPhraseProps {
 
 export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecoveryPhraseProps) {
   const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
-
+  const [isRestoring, setIsRestoring] = useState(false);
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [touched, setTouched] = useState<boolean[]>(Array(12).fill(false));
   const { toast } = Molecules.useToast();
 
   const handleRestore = async () => {
+    setIsRestoring(true);
+
     try {
       // Mark all fields as touched when trying to restore
       setTouched(Array(12).fill(true));
@@ -32,12 +34,12 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       const hasErrors = newErrors.some((error) => error);
       const allFilled = userWords.every((word) => word !== '');
 
+      const mnemonic = userWords.join(' ');
+      await Core.AuthController.loginWithMnemonic(mnemonic);
+
       if (!hasErrors && allFilled) {
         onRestore?.();
       }
-
-      const mnemonic = userWords.join(' ');
-      await Core.AuthController.loginWithMnemonic(mnemonic);
     } catch (error) {
       console.error('Error logging in with mnemonic', error);
       // TODO: handle error based on the error type
@@ -46,6 +48,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
         title: 'Error logging in with mnemonic',
         description: 'Please try again.',
       });
+      setIsRestoring(false);
     }
   };
 
@@ -62,6 +65,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
           userWords={userWords}
           errors={errors}
           touched={touched}
+          isRestoring={isRestoring}
           onWordChange={setUserWords}
           onErrorsChange={setErrors}
           onTouchedChange={setTouched}
@@ -77,11 +81,12 @@ type WordSlotProps = {
   word: string;
   isError: boolean;
   showError: boolean;
+  isRestoring: boolean;
   onChange: (index: number, value: string) => void;
   onValidate: (index: number, word: string) => void;
 };
 
-const WordSlot = ({ index, word, isError, showError, onChange, onValidate }: WordSlotProps) => {
+const WordSlot = ({ index, word, isError, showError, isRestoring, onChange, onValidate }: WordSlotProps) => {
   const hasError = isError && showError;
 
   const containerClasses = Libs.cn(
@@ -111,6 +116,7 @@ const WordSlot = ({ index, word, isError, showError, onChange, onValidate }: Wor
           className={inputColor}
           onChange={(e) => onChange(index, e.target.value.toLowerCase().trim())}
           onBlur={() => onValidate(index, word)}
+          disabled={isRestoring}
         />
       </Atoms.Container>
     </Atoms.Container>
@@ -121,6 +127,7 @@ function RestoreForm({
   userWords,
   errors,
   touched,
+  isRestoring,
   onWordChange,
   onErrorsChange,
   onTouchedChange,
@@ -129,6 +136,7 @@ function RestoreForm({
   userWords: string[];
   errors: boolean[];
   touched: boolean[];
+  isRestoring: boolean;
   onWordChange: (words: string[]) => void;
   onErrorsChange: (errors: boolean[]) => void;
   onTouchedChange: (touched: boolean[]) => void;
@@ -197,6 +205,7 @@ function RestoreForm({
                 word={word}
                 isError={isError}
                 showError={showError}
+                isRestoring={isRestoring}
                 onChange={handleWordChange}
                 onValidate={handleWordValidate}
               />
@@ -227,10 +236,19 @@ function RestoreForm({
           size="lg"
           className="rounded-full flex-1"
           onClick={onRestore}
-          disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
+          disabled={userWords.some((word) => word === '') || errors.some((error) => error) || isRestoring}
         >
-          <Libs.RotateCcw className="mr-2 h-4 w-4" />
-          Restore
+          {isRestoring ? (
+            <>
+              <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Restoring...
+            </>
+          ) : (
+            <>
+              <Libs.RotateCcw className="mr-2 h-4 w-4" />
+              Restore
+            </>
+          )}
         </Atoms.Button>
       </Atoms.Container>
     </>

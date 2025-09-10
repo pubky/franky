@@ -2,15 +2,10 @@
 
 import { useState, useRef } from 'react';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { decryptRecoveryFile } from '@synonymdev/pubky';
 
-import * as Atoms from '@/components/atoms';
+import * as Atoms from '@/atoms';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
-
-interface RestoreResult {
-  publicKey: string;
-  secretKey: string;
-}
 
 export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -46,34 +41,9 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     setError('');
 
     try {
-      // Read file as array buffer
-      const arrayBuffer = await selectedFile.arrayBuffer();
-      const recoveryFile = new Uint8Array(arrayBuffer);
-
-      // Decrypt the recovery file (try await in case it's async)
-      const keypair = decryptRecoveryFile(recoveryFile, password);
-
-      // Convert keypair to the expected format
-      const result: RestoreResult = {
-        publicKey: keypair.publicKey().z32(),
-        secretKey: Libs.Identity.secretKeyToHex(keypair.secretKey()),
-      };
-
-      // TODO: Handle successful restore (maybe call onRestore callback or redirect)
-      // For now, just log success
-      console.log('Restore successful!', result);
+      await Core.AuthController.loginWithEncryptedFile(selectedFile, password);
       onRestore?.();
     } catch (error) {
-      console.error('Failed to restore from encrypted file:', {
-        error,
-        errorType: typeof error,
-        errorMessage: error instanceof Error ? error.message : String(error),
-        errorStack: error instanceof Error ? error.stack : undefined,
-        fileName: selectedFile?.name,
-        fileSize: selectedFile?.size,
-        passwordProvided: !!password,
-      });
-
       if (error instanceof Error) {
         const errorMessage = error.message.toLowerCase();
         if (
@@ -93,7 +63,6 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
       } else {
         setError('An unexpected error occurred');
       }
-    } finally {
       setIsRestoring(false);
     }
   };

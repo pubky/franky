@@ -8,6 +8,13 @@ vi.mock('@synonymdev/pubky', () => ({
   decryptRecoveryFile: vi.fn(),
 }));
 
+// Mock @/core
+vi.mock('@/core', () => ({
+  AuthController: {
+    loginWithEncryptedFile: vi.fn(),
+  },
+}));
+
 // Mock @radix-ui/react-dialog
 vi.mock('@radix-ui/react-dialog', () => ({
   DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
@@ -166,6 +173,8 @@ vi.mock('@/components/atoms', () => ({
 // Mock File API
 const mockFile = (name: string, content: string = 'mock file content') => {
   const file = new File([content], name, { type: 'application/octet-stream' });
+  // Ensure arrayBuffer is available and returns a proper ArrayBuffer
+  file.arrayBuffer = vi.fn().mockResolvedValue(new Uint8Array([1, 2, 3]).buffer);
   return file;
 };
 
@@ -175,35 +184,11 @@ File.prototype.arrayBuffer = vi.fn().mockImplementation(function (this: File) {
   return Promise.resolve(new ArrayBuffer(8));
 });
 
-// Get the mocked function
-const { decryptRecoveryFile } = await import('@synonymdev/pubky');
-const mockDecryptRecoveryFile = vi.mocked(decryptRecoveryFile);
+// Get the mocked functions
+const { AuthController } = await import('@/core');
+const mockLoginWithEncryptedFile = vi.mocked(AuthController.loginWithEncryptedFile);
 
 // Mock types for tests that match the actual library interfaces
-interface MockPublicKey {
-  free: () => void;
-  to_uint8array: () => Uint8Array;
-  toUint8Array: () => Uint8Array;
-  z32: () => string;
-}
-
-interface MockKeypair {
-  free: () => void;
-  publicKey: () => MockPublicKey;
-  secretKey: () => Uint8Array;
-}
-
-// Create a properly typed mock factory
-const createMockKeypair = (): MockKeypair => ({
-  free: vi.fn(),
-  publicKey: () => ({
-    free: vi.fn(),
-    to_uint8array: vi.fn().mockReturnValue(new Uint8Array([1, 2, 3])),
-    toUint8Array: vi.fn().mockReturnValue(new Uint8Array([1, 2, 3])),
-    z32: () => 'mock-public-key',
-  }),
-  secretKey: () => new Uint8Array([1, 2, 3]),
-});
 
 describe('DialogRestoreEncryptedFile', () => {
   const mockOnRestore = vi.fn();
@@ -211,6 +196,7 @@ describe('DialogRestoreEncryptedFile', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockOnRestore.mockClear();
+    mockLoginWithEncryptedFile.mockClear();
     // Reset console.log and console.error mocks
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -330,8 +316,7 @@ describe('DialogRestoreEncryptedFile', () => {
   });
 
   it('handles successful restore', async () => {
-    const mockKeypair = createMockKeypair();
-    mockDecryptRecoveryFile.mockResolvedValue(mockKeypair);
+    mockLoginWithEncryptedFile.mockResolvedValue();
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -346,14 +331,21 @@ describe('DialogRestoreEncryptedFile', () => {
     fireEvent.click(restoreButton!);
 
     await waitFor(() => {
-      expect(mockDecryptRecoveryFile).toHaveBeenCalledWith(expect.any(Uint8Array), 'testpassword');
+      expect(mockLoginWithEncryptedFile).toHaveBeenCalledWith(testFile, 'testpassword');
+    });
+
+    await waitFor(() => {
+      expect(mockOnRestore).toHaveBeenCalled();
     });
   });
 
   it('shows loading state during restore', async () => {
-    const mockKeypair = createMockKeypair();
-    mockDecryptRecoveryFile.mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve(mockKeypair), 100)),
+    let resolveRestore: () => void;
+    mockLoginWithEncryptedFile.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveRestore = resolve;
+        }),
     );
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
@@ -368,16 +360,18 @@ describe('DialogRestoreEncryptedFile', () => {
     const restoreButton = screen.getByText('Restore').closest('button');
     fireEvent.click(restoreButton!);
 
+    // Should show loading state
     expect(screen.getByText('Restoring...')).toBeInTheDocument();
     expect(screen.getByTestId('loader-icon')).toBeInTheDocument();
+    expect(restoreButton).toBeDisabled();
+    expect(passwordInput).toBeDisabled();
 
-    await waitFor(() => {
-      expect(screen.queryByText('Restoring...')).not.toBeInTheDocument();
-    });
+    // Resolve the promise to complete restore
+    resolveRestore!();
   });
 
   it('handles aead errors gracefully', async () => {
-    mockDecryptRecoveryFile.mockRejectedValue(new Error('aead error'));
+    mockLoginWithEncryptedFile.mockRejectedValue(new Error('aead error'));
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -393,13 +387,13 @@ describe('DialogRestoreEncryptedFile', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Failed to restore from file. Please check your file and try again.'),
+        screen.getByText('Invalid password or corrupted file. Please check your password and try again.'),
       ).toBeInTheDocument();
     });
   });
 
   it('handles restore errors gracefully', async () => {
-    mockDecryptRecoveryFile.mockRejectedValue(new Error('Restore failed'));
+    mockLoginWithEncryptedFile.mockRejectedValue(new Error('password failed'));
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -415,13 +409,13 @@ describe('DialogRestoreEncryptedFile', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Failed to restore from file. Please check your file and try again.'),
+        screen.getByText('Invalid password or corrupted file. Please check your password and try again.'),
       ).toBeInTheDocument();
     });
   });
 
   it('handles generic errors', async () => {
-    mockDecryptRecoveryFile.mockRejectedValue(new Error('Some other error'));
+    mockLoginWithEncryptedFile.mockRejectedValue(new Error('decrypt failed'));
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -437,7 +431,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Failed to restore from file. Please check your file and try again.'),
+        screen.getByText('Invalid password or corrupted file. Please check your password and try again.'),
       ).toBeInTheDocument();
     });
   });
@@ -487,8 +481,9 @@ describe('DialogRestoreEncryptedFile', () => {
   });
 
   it('disables inputs and buttons during restore process', async () => {
-    const mockKeypair = createMockKeypair();
-    mockDecryptRecoveryFile.mockImplementation(() => new Promise(() => mockKeypair)); // Never resolves
+    mockLoginWithEncryptedFile.mockImplementation(
+      () => new Promise(() => {}), // Never resolves to keep in loading state
+    );
 
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 

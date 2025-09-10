@@ -5,9 +5,14 @@ import { z } from 'zod';
 export class UserController {
   private constructor() {} // Prevent instantiation
 
+  private static getHomeserverService() {
+    const onboardingStore = Core.useOnboardingStore.getState();
+    return Core.HomeserverService.getInstance(onboardingStore.secretKey);
+  }
+
   // Upload avatar to homeserver and return the url
   static async uploadAvatar(avatarFile: File, publicKey: string): Promise<string> {
-    const homeserver = Core.HomeserverService.getInstance();
+    const homeserver = this.getHomeserverService();
 
     // 1. Upload Blob
     const fileContent = await avatarFile.arrayBuffer();
@@ -54,7 +59,7 @@ export class UserController {
       // save user profile in the global store
 
       // Write the user profile to the homeserver
-      const homeserver = Core.HomeserverService.getInstance();
+      const homeserver = this.getHomeserverService();
       const response = await homeserver.fetch(meta.url, {
         method: 'PUT',
         body: JSON.stringify(userJson),

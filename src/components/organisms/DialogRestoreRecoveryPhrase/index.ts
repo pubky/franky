@@ -1,1 +1,1 @@
-export * from './DialogRestoreRecoveryPhrase';
+export { DialogRestoreRecoveryPhrase } from './DialogRestoreRecoveryPhrase';

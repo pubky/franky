@@ -1,4 +1,4 @@
-import { Keypair, Keypair as PubkyKeypair, createRecoveryFile } from '@synonymdev/pubky';
+import { Keypair, Keypair as PubkyKeypair, createRecoveryFile, decryptRecoveryFile } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
 
 import * as Libs from '@/libs';
@@ -54,7 +54,7 @@ export class Identity {
         Libs.CommonErrorType.UNEXPECTED_ERROR,
         'Failed to create recovery file. Please try regenerating your keys.',
         500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
   }
@@ -72,7 +72,9 @@ export class Identity {
 
       URL.revokeObjectURL(link.href);
     } catch (error) {
-      console.log(error);
+      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to download recovery file', 500, {
+        error,
+      });
     }
   }
 
@@ -80,7 +82,6 @@ export class Identity {
     try {
       // Generate 12-word mnemonic using BIP39 standard (128 bits entropy)
       const mnemonic = bip39.generateMnemonic(128);
-      console.log('Generated mnemonic:', mnemonic);
 
       // Validate the generated mnemonic
       if (!bip39.validateMnemonic(mnemonic)) {
@@ -100,7 +101,7 @@ export class Identity {
         Libs.CommonErrorType.UNEXPECTED_ERROR,
         'Failed to generate BIP39 seed words. Please try regenerating your keys.',
         500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
   }
@@ -129,7 +130,7 @@ export class Identity {
         Libs.CommonErrorType.INVALID_INPUT,
         'Failed to generate keypair from mnemonic',
         400,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
   }
@@ -151,9 +152,7 @@ export class Identity {
   static pubkyKeypairFromSecretKey(secretKey: string): PubkyKeypair {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      const keypair = PubkyKeypair.fromSecretKey(secretKeyUint8Array);
-
-      return keypair;
+      return PubkyKeypair.fromSecretKey(secretKeyUint8Array);
     } catch (error) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
@@ -163,11 +162,11 @@ export class Identity {
     // Generate mnemonic first, then create keypair from it
     const words = this.generateSeedWords();
     const mnemonic = words.join(' ');
-    const keypair = this.generateKeypairFromMnemonic(mnemonic);
+    const { secretKey, publicKey } = this.generateKeypairFromMnemonic(mnemonic);
 
     return {
-      secretKey: keypair.secretKey,
-      publicKey: keypair.publicKey,
+      secretKey,
+      publicKey,
       mnemonic,
     };
   }
@@ -200,16 +199,26 @@ export class Identity {
       // Use first 32 bytes as secret key (same as signup process)
       const secretKey = seedMnemonic.slice(0, 32);
 
-      console.log('Restored secret key from mnemonic:', Buffer.from(secretKey).toString('hex'));
-
       return Keypair.fromSecretKey(secretKey);
     } catch (error) {
       throw Libs.createCommonError(
         Libs.CommonErrorType.INVALID_INPUT,
         'Failed to restore keypair from recovery phrase',
         400,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
+    }
+  }
+
+  static async decryptRecoveryFile(encryptedFile: File, password: string) {
+    const arrayBuffer = await encryptedFile.arrayBuffer();
+    const recoveryFile = new Uint8Array(arrayBuffer);
+    try {
+      return decryptRecoveryFile(recoveryFile, password);
+    } catch (error) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery file or password', 400, {
+        error,
+      });
     }
   }
 }

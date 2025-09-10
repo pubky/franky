@@ -298,7 +298,7 @@ describe('Identity', () => {
           recoveryFile: new Uint8Array(0),
           filename: 'test.pkarr',
         }),
-      ).resolves.not.toThrow();
+      ).rejects.toThrow('Failed to download recovery file');
     });
 
     it('should handle empty recovery file', async () => {

@@ -2,10 +2,14 @@
 
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
+import { useRouter } from 'next/navigation';
 
 export function Feed() {
+  const router = useRouter();
+
   const handleLogout = () => {
     Core.AuthController.logout();
+    router.push('/logout');
   };
 
   return (
