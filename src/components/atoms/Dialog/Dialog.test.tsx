@@ -333,3 +333,83 @@ describe('Dialog Components', () => {
     });
   });
 });
+
+describe('Dialog - Snapshots', () => {
+  it('matches snapshot for DialogTrigger with default props', () => {
+    const { container } = render(
+      <DialogTrigger>
+        <button>Open Dialog</button>
+      </DialogTrigger>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogTrigger with asChild', () => {
+    const { container } = render(
+      <DialogTrigger asChild>
+        <button>Open Dialog</button>
+      </DialogTrigger>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogContent with close button', () => {
+    const { container } = render(
+      <DialogContent showCloseButton={true}>
+        <div>Dialog Content</div>
+      </DialogContent>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogContent without close button', () => {
+    const { container } = render(
+      <DialogContent showCloseButton={false}>
+        <div>Dialog Content</div>
+      </DialogContent>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogHeader', () => {
+    const { container } = render(
+      <DialogHeader>
+        <DialogTitle>Dialog Title</DialogTitle>
+        <DialogDescription>Dialog Description</DialogDescription>
+      </DialogHeader>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogFooter', () => {
+    const { container } = render(
+      <DialogFooter>
+        <button>Cancel</button>
+        <button>OK</button>
+      </DialogFooter>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for complete dialog structure', () => {
+    const { container } = render(
+      <Dialog>
+        <DialogTrigger>
+          <button>Open Dialog</button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dialog Title</DialogTitle>
+            <DialogDescription>Dialog Description</DialogDescription>
+          </DialogHeader>
+          <div>Dialog body content</div>
+          <DialogFooter>
+            <button>Cancel</button>
+            <button>OK</button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

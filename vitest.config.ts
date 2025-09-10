@@ -13,6 +13,11 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
     },
+    // Snapshot testing configuration
+    snapshotFormat: {
+      escapeString: true,
+      printBasicPrototype: false,
+    },
     // Suppress specific warnings
     onConsoleLog(log) {
       // Suppress WebAssembly warnings

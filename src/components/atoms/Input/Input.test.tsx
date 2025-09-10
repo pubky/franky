@@ -169,3 +169,43 @@ describe('Input', () => {
     expect(input).toHaveAttribute('autoComplete', 'off');
   });
 });
+
+describe('Input - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<Input />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different configurations', () => {
+    const { container: defaultContainer } = render(<Input />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+
+    const { container: customContainer } = render(<Input className="custom-input" />);
+    expect(customContainer.firstChild).toMatchSnapshot();
+
+    const { container: placeholderContainer } = render(<Input placeholder="Enter text" />);
+    expect(placeholderContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different input types', () => {
+    const { container: textContainer } = render(<Input type="text" />);
+    expect(textContainer.firstChild).toMatchSnapshot();
+
+    const { container: emailContainer } = render(<Input type="email" />);
+    expect(emailContainer.firstChild).toMatchSnapshot();
+
+    const { container: passwordContainer } = render(<Input type="password" />);
+    expect(passwordContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for different states', () => {
+    const { container: disabledContainer } = render(<Input disabled />);
+    expect(disabledContainer.firstChild).toMatchSnapshot();
+
+    const { container: requiredContainer } = render(<Input required />);
+    expect(requiredContainer.firstChild).toMatchSnapshot();
+
+    const { container: readOnlyContainer } = render(<Input readOnly />);
+    expect(readOnlyContainer.firstChild).toMatchSnapshot();
+  });
+});
