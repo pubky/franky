@@ -24,7 +24,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
   const copyToClipboardHandler = useCallback(
     async (text: string) => {
       try {
-        await copyToClipboard(text);
+        await copyToClipboard({ text });
 
         const toastInstance = toast({
           title: successTitle,

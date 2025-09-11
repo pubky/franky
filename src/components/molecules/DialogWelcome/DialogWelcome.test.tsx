@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogWelcome } from './DialogWelcome';
@@ -99,14 +100,14 @@ vi.mock('@/atoms', () => ({
 
 // Mock libs
 vi.mock('@/libs', () => ({
-  formatPublicKey: vi.fn((key: string, length: number) => key.slice(0, length)),
+  formatPublicKey: vi.fn(({ key, length }: { key: string; length: number }) => key.slice(0, length)),
   useCopyToClipboard: vi.fn(() => ({
     copyToClipboard: vi.fn(),
   })),
-  extractInitials: vi.fn((name: string, length: number) => {
+  extractInitials: vi.fn(({ name, maxLength }: { name: string; maxLength: number }) => {
     const words = name.split(' ');
     return words
-      .slice(0, length)
+      .slice(0, maxLength)
       .map((word) => word.charAt(0).toUpperCase())
       .join('');
   }),

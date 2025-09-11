@@ -11,9 +11,9 @@ interface DialogWelcomeProps {
 }
 
 export function DialogWelcome({ isOpen, onOpenChange, name, image, publicKey, bio }: DialogWelcomeProps) {
-  const displayPublicKey = Libs.formatPublicKey(publicKey, 10);
+  const displayPublicKey = Libs.formatPublicKey({ key: publicKey, length: 10 });
   const { copyToClipboard } = Libs.useCopyToClipboard();
-  const initials = Libs.extractInitials(name, 2);
+  const initials = Libs.extractInitials({ name, maxLength: 2 });
 
   const handleCopyToClipboard = () => {
     copyToClipboard(publicKey);

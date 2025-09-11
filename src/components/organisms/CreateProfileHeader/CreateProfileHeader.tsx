@@ -9,7 +9,7 @@ export const CreateProfileHeader = () => {
   const { publicKey } = Core.useOnboardingStore();
   const { copyToClipboard } = Libs.useCopyToClipboard();
 
-  const displayPublicKey = Libs.formatPublicKey(publicKey, 10);
+  const displayPublicKey = Libs.formatPublicKey({ key: publicKey, length: 10 });
 
   const handleCopyToClipboard = () => {
     copyToClipboard(publicKey);
