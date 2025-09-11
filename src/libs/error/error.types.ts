@@ -25,6 +25,7 @@ export enum HomeserverErrorType {
   SESSION_EXPIRED = 'SESSION_EXPIRED',
   NETWORK_ERROR = 'NETWORK_ERROR',
   USER_ALREADY_EXISTS = 'User already exists',
+  AUTH_REQUEST_FAILED = 'AUTH_REQUEST_FAILED',
 }
 
 export enum DatabaseErrorType {

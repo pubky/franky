@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
-export function RootContainer({ children }: { children: React.ReactNode }) {
+function RootContainer({ children }: { children: React.ReactNode }) {
   return (
     <Atoms.Container as="html" lang="en" className="dark">
       <Atoms.Container as="body" className={`${interTight.variable} antialiased`}>

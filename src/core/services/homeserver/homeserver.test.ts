@@ -225,7 +225,7 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockResolvedValue(undefined);
 
-      await service.logout();
+      await service.logout('test-public-key-z32');
 
       expect(mockClient.signout).toHaveBeenCalled();
       expect(PublicKey.from).toHaveBeenCalledWith('test-public-key-z32');
@@ -243,7 +243,7 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockRejectedValue(error);
 
-      await expect(service.logout()).rejects.toMatchObject({
+      await expect(service.logout('test-public-key-z32')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });
@@ -393,7 +393,7 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockResolvedValue(undefined);
 
-      await service.logout();
+      await service.logout('test-public-key-z32');
 
       expect(service['currentKeypair']).toEqual({
         publicKey: '',
@@ -429,7 +429,7 @@ describe('HomeserverService', () => {
       vi.spyOn(service.client, 'signout').mockResolvedValue(undefined);
 
       // Should not throw an error, just process the logout
-      await expect(service.logout()).resolves.toBeUndefined();
+      await expect(service.logout('test-public-key-z32')).resolves.toBeUndefined();
     });
 
     it('should throw FETCH_FAILED error when fetch operation fails', async () => {
@@ -461,7 +461,7 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockRejectedValue(new Error('Server error'));
 
-      await expect(service.logout()).rejects.toMatchObject({
+      await expect(service.logout('test-public-key-z32')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });

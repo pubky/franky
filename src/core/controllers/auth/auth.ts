@@ -1,3 +1,5 @@
+import { PublicKey } from '@synonymdev/pubky';
+
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
@@ -5,6 +7,7 @@ type TAuthenticatedData = { pubky: string; session: Core.SignupResult['session']
 type TSignUpParams = { keypair: Core.TKeyPair; signupToken: string };
 type TLoginWithMnemonicParams = { mnemonic: string };
 type TLoginWithEncryptedFileParams = { encryptedFile: File; password: string };
+type TLoginWithAuthUrlParams = { keypair: PublicKey };
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
@@ -41,9 +44,29 @@ export class AuthController {
     if (data) this.saveAuthenticatedData(data);
   }
 
-  static async logout() {
+  static async loginWithAuthUrl({ keypair }: TLoginWithAuthUrlParams) {
+    if (keypair) {
+      const profileStore = Core.useProfileStore.getState();
+      const onboardingStore = Core.useOnboardingStore.getState();
+      onboardingStore.reset();
+      profileStore.setCurrentUserPubky(keypair.z32());
+      profileStore.setAuthenticated(true);
+    }
+  }
+
+  static async getAuthUrl() {
     const homeserverService = this.getHomeserverService();
-    await homeserverService.logout();
+    return await homeserverService.generateAuthUrl();
+  }
+
+  static async logout() {
+    const profileStore = Core.useProfileStore.getState();
+    const onboardingStore = Core.useOnboardingStore.getState();
+    const publicKey = profileStore.currentUserPubky || '';
+    onboardingStore.reset();
+    profileStore.reset();
+    const homeserverService = this.getHomeserverService();
+    await homeserverService.logout(publicKey);
     Core.useProfileStore.getState().reset();
     Core.useOnboardingStore.getState().reset();
     Libs.clearCookies();

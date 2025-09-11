@@ -167,9 +167,9 @@ export class HomeserverService {
     }
   }
 
-  async logout(): Promise<void> {
+  async logout(publicKey: string): Promise<void> {
     try {
-      const pubKey = PublicKey.from(this.currentKeypair.publicKey);
+      const pubKey = PublicKey.from(publicKey);
       await this.client.signout(pubKey);
 
       this.currentKeypair = this.defaultKeypair;
@@ -177,6 +177,24 @@ export class HomeserverService {
       Libs.Logger.debug('Logout successful');
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500);
+    }
+  }
+
+  async generateAuthUrl(caps?: string) {
+    const capabilities = caps || '/pub/pubky.app/:rw';
+
+    try {
+      const authRequest = this.client.authRequest(Config.DEFAULT_HTTP_RELAY, capabilities);
+
+      return {
+        url: String(authRequest.url()),
+        promise: authRequest.response(),
+      };
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
+        capabilities,
+        relay: Config.DEFAULT_HTTP_RELAY,
+      });
     }
   }
 
