@@ -150,7 +150,9 @@ vi.mock('@/libs', () => ({
   Identity: {
     generateKeypair: vi.fn(),
   },
-  copyToClipboard: (...args: unknown[]) => mockCopyToClipboard(...args),
+  useCopyToClipboard: vi.fn(() => ({
+    copyToClipboard: mockCopyToClipboard,
+  })),
   Copy: ({ className }: { className?: string }) => (
     <div data-testid="copy-icon" className={className}>
       Copy
@@ -217,11 +219,7 @@ describe('PublicKeyCard', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Pubky copied to clipboard',
-      description: mockPublicKey,
-      action: expect.any(Object),
-    });
+    // Note: The toast is now handled internally by useCopyToClipboard hook
   });
 
   it('handles input field click for copy', async () => {
@@ -234,34 +232,18 @@ describe('PublicKeyCard', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
-    expect(mockToast).toHaveBeenCalledWith({
-      title: 'Pubky copied to clipboard',
-      description: mockPublicKey,
-      action: expect.any(Object),
-    });
+    // Note: The toast is now handled internally by useCopyToClipboard hook
   });
 
-  it('dismisses toast when OK button is clicked', async () => {
+  it('calls copyToClipboard when copy button is clicked', () => {
     render(<PublicKeyCard />);
 
     const copyButton = screen.getByTestId('action-button-0');
     fireEvent.click(copyButton);
 
-    // Wait for async operation to complete
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    // Get the toast action (OK button)
-    const toastCall = mockToast.mock.calls[0][0];
-    const actionElement = toastCall.action;
-
-    // Render the action element to test it
-    const { container } = render(actionElement);
-    const okButton = container.querySelector('[data-testid="button-outline"]');
-
-    expect(okButton).toBeInTheDocument();
-    fireEvent.click(okButton!);
-
-    expect(mockDismiss).toHaveBeenCalled();
+    // The button should be clickable and not throw any errors
+    expect(copyButton).toBeInTheDocument();
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
   });
 
   it('has correct action section styling', () => {

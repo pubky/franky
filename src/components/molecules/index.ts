@@ -12,6 +12,7 @@ export * from './DialogDownloadPubkyRing';
 export * from './DialogExport';
 export * from './DialogPrivacy';
 export * from './DialogTerms';
+export * from './DialogWelcome';
 export * from './Header';
 export * from './Home';
 export * from './InputField';

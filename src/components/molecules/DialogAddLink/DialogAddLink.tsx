@@ -110,7 +110,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
               iconPosition="right"
               onClickIcon={async () => {
                 try {
-                  await Libs.copyToClipboard(url);
+                  await Libs.copyToClipboard({ text: url });
                 } catch {}
               }}
               status={urlError ? 'error' : 'default'}
