@@ -11,8 +11,10 @@ vi.mock('@/core', () => ({
 
 // Mock libs
 vi.mock('@/libs', () => ({
-  formatPublicKey: vi.fn((key: string, length: number) => `${key.substring(0, length)}...`),
-  copyToClipboard: vi.fn(),
+  formatPublicKey: vi.fn(({ key, length }: { key: string; length: number }) => `${key.substring(0, length)}...`),
+  useCopyToClipboard: () => ({
+    copyToClipboard: vi.fn(),
+  }),
   Key: ({ className }: { className?: string }) => (
     <div data-testid="key-icon" className={className}>
       Key
