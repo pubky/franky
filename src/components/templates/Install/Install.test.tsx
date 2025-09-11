@@ -76,3 +76,10 @@ describe('Install', () => {
     });
   });
 });
+
+describe('Install - Snapshots', () => {
+  it('matches snapshot for default Install', () => {
+    const { container } = render(<Install />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

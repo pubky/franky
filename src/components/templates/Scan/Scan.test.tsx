@@ -87,3 +87,10 @@ describe('Scan', () => {
     expect(contentIndex).toBeLessThan(navigationIndex);
   });
 });
+
+describe('Scan - Snapshots', () => {
+  it('matches snapshot for default Scan', () => {
+    const { container } = render(<Scan />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

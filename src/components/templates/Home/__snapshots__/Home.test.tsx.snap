@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Home - Snapshots > matches snapshot for default Home 1`] = `
+<div>
+  <div
+    class="opacity-10 lg:opacity-100"
+    data-image="/images/bg-home.svg"
+    data-testid="image-background"
+  >
+    Image Background
+  </div>
+  <div
+    class="container container"
+    data-testid="container"
+  >
+    <div
+      data-testid="page-container"
+    >
+      <div
+        data-testid="home-page-heading"
+      />
+      <div
+        data-testid="home-section-title"
+      >
+        Section Title
+      </div>
+      <div
+        data-testid="home-actions"
+      >
+        Actions
+      </div>
+      <div
+        data-testid="home-footer"
+      >
+        Footer
+      </div>
+    </div>
+  </div>
+</div>
+`;

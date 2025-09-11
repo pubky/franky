@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Profile - Snapshots > matches snapshot for default Profile 1`] = `
+<div
+  class="px-6"
+  data-size="container"
+  data-testid="container"
+>
+  <div
+    data-testid="create-profile-header"
+  >
+    Create Profile Header
+  </div>
+  <div
+    data-testid="create-profile-form"
+  >
+    Create Profile Form
+  </div>
+</div>
+`;

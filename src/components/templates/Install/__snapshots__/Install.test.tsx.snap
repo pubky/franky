@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Install - Snapshots > matches snapshot for default Install 1`] = `
+<div
+  class="container container"
+  data-testid="container"
+>
+  <div
+    data-testid="install-header"
+  >
+    Install Header
+  </div>
+  <div
+    data-testid="install-card"
+  >
+    Install Card
+  </div>
+  <div
+    data-testid="install-footer"
+  >
+    Install Footer
+  </div>
+  <div
+    data-testid="install-navigation"
+  >
+    Install Navigation
+  </div>
+</div>
+`;
