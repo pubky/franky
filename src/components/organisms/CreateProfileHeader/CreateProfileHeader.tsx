@@ -4,10 +4,11 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 export const CreateProfileHeader = () => {
   const { publicKey } = Core.useOnboardingStore();
-  const { copyToClipboard } = Libs.useCopyToClipboard();
+  const { copyToClipboard } = Hooks.useCopyToClipboard();
 
   const displayPublicKey = Libs.formatPublicKey({ key: publicKey, length: 10 });
 

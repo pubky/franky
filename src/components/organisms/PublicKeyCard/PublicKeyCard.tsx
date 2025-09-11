@@ -6,10 +6,11 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
   const { setKeypair, setMnemonic, publicKey } = Core.useOnboardingStore();
-  const { copyToClipboard } = Libs.useCopyToClipboard();
+  const { copyToClipboard } = Hooks.useCopyToClipboard();
 
   useEffect(() => {
     if (publicKey === '') {

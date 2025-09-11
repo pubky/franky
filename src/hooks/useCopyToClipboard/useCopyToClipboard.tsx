@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 
-import { copyToClipboard } from '../utils/utils';
-import { toast } from '@/molecules/Toaster/use-toast';
-import { Button } from '@/atoms/Button';
+import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
+import * as Atoms from '@/atoms';
 
 interface UseCopyToClipboardOptions {
   onSuccess?: (text: string) => void;
@@ -24,25 +24,25 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
   const copyToClipboardHandler = useCallback(
     async (text: string) => {
       try {
-        await copyToClipboard({ text });
+        await Libs.copyToClipboard({ text });
 
-        const toastInstance = toast({
+        const toastInstance = Molecules.toast({
           title: successTitle,
           description: text,
           action: (
-            <Button
+            <Atoms.Button
               variant="outline"
               className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
               onClick={() => toastInstance.dismiss()}
             >
               OK
-            </Button>
+            </Atoms.Button>
           ),
         });
 
         onSuccess?.(text);
       } catch (error) {
-        toast({
+        Molecules.toast({
           title: errorTitle,
           description: errorDescription,
         });

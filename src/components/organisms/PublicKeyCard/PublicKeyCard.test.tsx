@@ -146,9 +146,16 @@ vi.mock('@/core', () => ({
   }),
 }));
 
-// Mock libs
+// Mock hooks
 const mockCopyToClipboard = vi.fn();
 
+vi.mock('@/hooks', () => ({
+  useCopyToClipboard: vi.fn(() => ({
+    copyToClipboard: mockCopyToClipboard,
+  })),
+}));
+
+// Mock libs
 vi.mock('@/libs', () => ({
   Identity: {
     generateKeypair: vi.fn(() => ({
@@ -157,9 +164,6 @@ vi.mock('@/libs', () => ({
       mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
     })),
   },
-  useCopyToClipboard: vi.fn(() => ({
-    copyToClipboard: mockCopyToClipboard,
-  })),
   Copy: ({ className }: { className?: string }) => (
     <div data-testid="copy-icon" className={className}>
       Copy
