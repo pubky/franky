@@ -1,0 +1,64 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PublicKeyCard - Snapshots > matches snapshot for default PublicKeyCard 1`] = `
+<div
+  data-testid="content-card"
+>
+  <img
+    alt="Key"
+    data-testid="content-card-image"
+    src="/images/key.png"
+  />
+  <div
+    class="items-center gap-1 flex-row"
+    data-testid="container"
+  >
+    <div
+      data-size="lg"
+      data-testid="heading-3"
+    >
+      Your pubky
+    </div>
+    <div
+      data-testid="popover-public-key"
+    >
+      Popover
+    </div>
+  </div>
+  <div
+    class="flex-col items-start gap-3 justify-start w-full"
+    data-testid="action-section"
+  >
+    <button
+      data-testid="action-button-0"
+      data-variant="secondary"
+    >
+      <div
+        class="mr-2 h-4 w-4"
+        data-testid="copy-icon"
+      >
+        Copy
+      </div>
+      Copy to clipboard
+    </button>
+    <div
+      data-testid="input-field"
+    >
+      <div>
+        <div
+          class="h-4 w-4 text-brand"
+          data-testid="key-icon"
+        >
+          Key
+        </div>
+        <input
+          data-testid="input"
+          data-variant="dashed"
+          readonly=""
+          value="pubky1234567890abcdef"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

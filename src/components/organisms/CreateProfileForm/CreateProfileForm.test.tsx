@@ -674,3 +674,14 @@ describe('CreateProfileForm', () => {
     });
   });
 });
+
+describe('CreateProfileForm - Snapshots', () => {
+  it('matches snapshot for default CreateProfileForm', () => {
+    mockUseOnboardingStore.mockReturnValue({
+      publicKey: 'mock-public-key',
+      secretKey: 'mock-secret-key',
+    });
+    const { container } = render(<CreateProfileForm />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

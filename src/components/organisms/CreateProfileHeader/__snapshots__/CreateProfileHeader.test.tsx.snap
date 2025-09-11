@@ -1,0 +1,52 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CreateProfileHeader - Snapshots > matches snapshot for default CreateProfileHeader 1`] = `
+<div
+  data-testid="page-header"
+>
+  <div
+    data-size="large"
+    data-testid="page-title"
+  >
+    Create your 
+    <span
+      class="text-brand"
+    >
+      profile.
+    </span>
+  </div>
+  <div
+    class="flex-col md:flex-row md:items-center gap-4 w-auto m-0"
+    data-testid="container"
+  >
+    <div
+      data-testid="page-subtitle"
+    >
+      Add your name, bio, links, and avatar.
+    </div>
+    <div
+      class="flex-row items-center gap-2 w-auto mx-0"
+      data-testid="container"
+    >
+      <button
+        class="rounded-full gap-2 w-fit h-8"
+        data-testid="button-secondary"
+      >
+        <div
+          class="w-4 h-4"
+          data-testid="key-icon"
+        >
+          Key
+        </div>
+        mock-publi...
+      </button>
+      <div
+        class="-ml-1"
+        data-testid="popover-public-key"
+      >
+        Popover
+      </div>
+    </div>
+  </div>
+</div>
+`;

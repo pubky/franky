@@ -466,3 +466,17 @@ describe('Header', () => {
     });
   });
 });
+
+describe('Header - Snapshots', () => {
+  it('matches snapshot for default Header', () => {
+    mockUsePathname.mockReturnValue('/');
+    const { container } = render(<Header />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Header with onboarding path', () => {
+    mockUsePathname.mockReturnValue('/onboarding/install');
+    const { container } = render(<Header />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
