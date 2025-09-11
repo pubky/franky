@@ -212,3 +212,84 @@ describe('Toaster', () => {
     expect(handleActionClick).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('Toaster - Snapshots', () => {
+  it('matches snapshot for empty Toaster', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with single toast', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'Test Toast',
+          description: 'This is a test toast message',
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with title-only toast', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'Simple Toast',
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with toast action', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'Toast with Action',
+          description: 'This toast has an action button',
+          action: <button>Undo</button>,
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with multiple toasts', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'First Toast',
+          description: 'First description',
+          open: true,
+        },
+        {
+          id: '2',
+          title: 'Second Toast',
+          description: 'Second description',
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

@@ -436,3 +436,10 @@ describe('DialogExport', () => {
     });
   });
 });
+
+describe('DialogExport - Snapshots', () => {
+  it('matches snapshot for default DialogExport', () => {
+    const { container } = render(<DialogExport />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

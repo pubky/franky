@@ -153,3 +153,10 @@ describe('PopoverTradeoffs', () => {
     expect(alertIcon).toBeInTheDocument();
   });
 });
+
+describe('PopoverTradeoffs - Snapshots', () => {
+  it('matches snapshot for default PopoverTradeoffs', () => {
+    const { container } = render(<PopoverTradeoffs />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

@@ -57,3 +57,20 @@ describe('Logo', () => {
     expect(image).toBeInTheDocument();
   });
 });
+
+describe('Logo - Snapshots', () => {
+  it('matches snapshot for default Logo', () => {
+    const { container } = render(<Logo />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Logo with custom dimensions', () => {
+    const { container } = render(<Logo width={200} height={80} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Logo with custom className', () => {
+    const { container } = render(<Logo className="custom-logo-style" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

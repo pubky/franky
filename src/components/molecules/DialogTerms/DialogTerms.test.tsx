@@ -172,3 +172,10 @@ describe('DialogTerms', () => {
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
   });
 });
+
+describe('DialogTerms - Snapshots', () => {
+  it('matches snapshot for default DialogTerms', () => {
+    const { container } = render(<DialogTerms />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

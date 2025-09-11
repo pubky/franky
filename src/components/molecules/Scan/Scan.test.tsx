@@ -331,3 +331,38 @@ describe('ScanNavigation', () => {
     expect(screen.queryByTestId('continue-button')).not.toBeInTheDocument();
   });
 });
+
+describe('Scan Components - Snapshots', () => {
+  describe('ScanContent - Snapshots', () => {
+    it('matches snapshot for default ScanContent', () => {
+      const { container } = render(<ScanContent />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('ScanFooter - Snapshots', () => {
+    it('matches snapshot for default ScanFooter', () => {
+      const { container } = render(<ScanFooter />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('ScanHeader - Snapshots', () => {
+    it('matches snapshot for mobile ScanHeader', () => {
+      const { container } = render(<ScanHeader isMobile={true} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for desktop ScanHeader', () => {
+      const { container } = render(<ScanHeader isMobile={false} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('ScanNavigation - Snapshots', () => {
+    it('matches snapshot for default ScanNavigation', () => {
+      const { container } = render(<ScanNavigation />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+});

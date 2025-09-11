@@ -131,3 +131,10 @@ describe('DialogAge', () => {
     expect(screen.getAllByText(/over 18 years old/)).toHaveLength(2);
   });
 });
+
+describe('DialogAge - Snapshots', () => {
+  it('matches snapshot for default DialogAge', () => {
+    const { container } = render(<DialogAge />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

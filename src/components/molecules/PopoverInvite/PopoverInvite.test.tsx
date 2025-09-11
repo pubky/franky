@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PopoverInvite } from './PopoverInvite';
 import { EMAIL_URL, TWITTER_URL, TELEGRAM_URL } from '@/config';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock @/libs to intercept all icons and utilities
 vi.mock('@/libs', () => ({
@@ -122,5 +123,19 @@ describe('InvitePopover', () => {
     expect(heading).toHaveClass('text-popover-foreground');
     expect(description).toBeInTheDocument();
     expect(description).toHaveClass('font-normal', 'text-muted-foreground');
+  });
+});
+
+describe('PopoverInvite - Snapshots', () => {
+  it('matches snapshot for default PopoverInvite', () => {
+    const { container } = render(<PopoverInvite />);
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for PopoverInvite with custom className', () => {
+    const { container } = render(<PopoverInvite className="custom-invite-style" />);
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 });

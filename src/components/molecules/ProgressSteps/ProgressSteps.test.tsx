@@ -119,3 +119,30 @@ describe('ProgressSteps', () => {
     expect(stepFiveContainer).toHaveClass('bg-foreground', 'text-background');
   });
 });
+
+describe('ProgressSteps - Snapshots', () => {
+  it('matches snapshot for ProgressSteps with initial step', () => {
+    const { container } = render(<ProgressSteps currentStep={1} totalSteps={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ProgressSteps with middle step', () => {
+    const { container } = render(<ProgressSteps currentStep={3} totalSteps={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ProgressSteps with final step', () => {
+    const { container } = render(<ProgressSteps currentStep={5} totalSteps={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ProgressSteps with single step', () => {
+    const { container } = render(<ProgressSteps currentStep={1} totalSteps={1} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ProgressSteps with custom className', () => {
+    const { container } = render(<ProgressSteps currentStep={2} totalSteps={4} className="custom-progress" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

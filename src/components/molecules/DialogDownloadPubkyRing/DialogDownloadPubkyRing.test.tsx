@@ -218,3 +218,15 @@ describe('DialogDownloadPubkyRing', () => {
     }
   });
 });
+
+describe('DialogDownloadPubkyRing - Snapshots', () => {
+  it('matches snapshot for apple store DialogDownloadPubkyRing', () => {
+    const { container } = render(<DialogDownloadPubkyRing store="apple" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for android store DialogDownloadPubkyRing', () => {
+    const { container } = render(<DialogDownloadPubkyRing store="android" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

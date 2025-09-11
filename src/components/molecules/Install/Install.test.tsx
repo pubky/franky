@@ -273,3 +273,38 @@ describe('InstallNavigation', () => {
     expect(mainContainer.className).toContain('custom-class');
   });
 });
+
+describe('Install Components - Snapshots', () => {
+  describe('InstallCard - Snapshots', () => {
+    it('matches snapshot for default InstallCard', () => {
+      const { container } = render(<InstallCard />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('InstallFooter - Snapshots', () => {
+    it('matches snapshot for default InstallFooter', () => {
+      const { container } = render(<InstallFooter />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('InstallHeader - Snapshots', () => {
+    it('matches snapshot for default InstallHeader', () => {
+      const { container } = render(<InstallHeader />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('InstallNavigation - Snapshots', () => {
+    it('matches snapshot for default InstallNavigation', () => {
+      const { container } = render(<InstallNavigation />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for InstallNavigation with custom className', () => {
+      const { container } = render(<InstallNavigation className="custom-navigation" />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+});

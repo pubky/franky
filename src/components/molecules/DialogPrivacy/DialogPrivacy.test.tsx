@@ -174,3 +174,10 @@ describe('DialogPrivacy', () => {
     expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
   });
 });
+
+describe('DialogPrivacy - Snapshots', () => {
+  it('matches snapshot for default DialogPrivacy', () => {
+    const { container } = render(<DialogPrivacy />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

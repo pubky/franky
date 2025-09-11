@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Popover, PopoverTrigger, PopoverContent } from './Popover';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 describe('Popover', () => {
   it('renders popover trigger and content', () => {
@@ -78,19 +79,6 @@ describe('Popover', () => {
     expect(content).toHaveAttribute('data-slot', 'popover-content');
   });
 });
-
-// Helper function to normalize Radix UI IDs in container HTML
-const normaliseRadixIds = (container: HTMLElement) => {
-  const clonedContainer = container.cloneNode(true) as HTMLElement;
-  const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
-  elementsWithAriaControls.forEach((el) => {
-    const ariaControls = el.getAttribute('aria-controls');
-    if (ariaControls && ariaControls.includes('radix-«r')) {
-      el.setAttribute('aria-controls', 'radix-«r0»');
-    }
-  });
-  return clonedContainer;
-};
 
 // Note: Radix UI generates incremental IDs (radix-«r0», radix-«r1», etc.) for aria-controls attributes.
 // These IDs are deterministic within an identical test suite run but may change when a subset of tests are run or are run in a different order.

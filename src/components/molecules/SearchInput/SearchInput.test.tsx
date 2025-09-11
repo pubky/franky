@@ -339,3 +339,35 @@ describe('SearchInput', () => {
     expect(screen.getByTestId('dropdown-card')).toBeInTheDocument();
   });
 });
+
+describe('SearchInput - Snapshots', () => {
+  it('matches snapshot for default SearchInput', () => {
+    const { container } = render(<SearchInput />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with custom placeholder', () => {
+    const { container } = render(<SearchInput placeholder="Search users..." />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with initial value', () => {
+    const { container } = render(<SearchInput value="test query" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with custom className', () => {
+    const { container } = render(<SearchInput className="custom-search" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with dropdown children', () => {
+    const { container } = render(
+      <SearchInput>
+        <div>Suggested results</div>
+        <div>Recent searches</div>
+      </SearchInput>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

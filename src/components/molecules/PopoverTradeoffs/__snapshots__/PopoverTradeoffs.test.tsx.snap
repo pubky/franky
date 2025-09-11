@@ -1,0 +1,64 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PopoverTradeoffs - Snapshots > matches snapshot for default PopoverTradeoffs 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="rounded-full"
+      data-testid="button-ghost"
+    >
+      <div
+        class="h-4 w-4"
+        data-testid="alert-triangle-icon"
+      >
+        AlertTriangle
+      </div>
+    </button>
+  </div>
+  <div
+    class="w-full"
+    data-testid="popover-content"
+  >
+    <div
+      class="gap-2 px-3 py-2"
+      data-testid="container"
+    >
+      <div
+        class="gap-2"
+        data-testid="container"
+      >
+        <h4
+          class="text-popover-foreground"
+          data-size="sm"
+          data-testid="heading-4"
+        >
+          Be aware of these tradeoffs:
+        </h4>
+      </div>
+      <div
+        class="flex gap-4"
+        data-testid="container"
+      >
+        <ul
+          class="list-disc list-inside text-muted-foreground text-sm"
+        >
+          <li>
+            Less secure than mobile keychain
+          </li>
+          <li>
+            Browser-based key generation
+          </li>
+          <li>
+            Suboptimal sign-in experience
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+`;
