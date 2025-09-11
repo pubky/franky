@@ -111,7 +111,7 @@ describe('DialogConfirmBackup', () => {
   it('renders warning alert with correct content', () => {
     render(<DialogConfirmBackup />);
 
-    expect(screen.getByText('Back up now to avoid losing your account!')).toBeInTheDocument();
+    expect(screen.getByText('After confirming, your seed will be deleted from the browser (!)')).toBeInTheDocument();
     expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
   });
 
@@ -119,11 +119,10 @@ describe('DialogConfirmBackup', () => {
     render(<DialogConfirmBackup />);
 
     const warningContainer = screen
-      .getByText('Back up now to avoid losing your account!')
+      .getByText('After confirming, your seed will be deleted from the browser (!)')
       .closest('[data-testid="container"]');
     expect(warningContainer).toHaveClass(
-      'bg-destructive',
-      'dark:bg-destructive\\60/60',
+      'bg-destructive/60',
       'px-6',
       'py-3',
       'rounded-lg',
@@ -182,7 +181,7 @@ describe('DialogConfirmBackup', () => {
   it('applies correct styling to warning text', () => {
     render(<DialogConfirmBackup />);
 
-    const warningText = screen.getByText('Back up now to avoid losing your account!');
+    const warningText = screen.getByText('After confirming, your seed will be deleted from the browser (!)');
     expect(warningText).toHaveClass('font-bold');
   });
 
@@ -212,7 +211,7 @@ describe('DialogConfirmBackup', () => {
     expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-title')).toBeInTheDocument();
     expect(screen.getByText('Done')).toBeInTheDocument();
-    expect(screen.getByText('Back up now to avoid losing your account!')).toBeInTheDocument();
+    expect(screen.getByText('After confirming, your seed will be deleted from the browser (!)')).toBeInTheDocument();
     expect(screen.getByText('Backup methods')).toBeInTheDocument();
     expect(screen.getByText('Confirm (delete seed)')).toBeInTheDocument();
     expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();

@@ -52,7 +52,8 @@ describe('AlertBackup', () => {
     render(<AlertBackup />);
 
     expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
-    expect(screen.getByText('Back up now to avoid losing your account!')).toBeInTheDocument();
+    expect(screen.getByText('Back up now')).toBeInTheDocument();
+    expect(screen.getByText('to avoid losing your account!')).toBeInTheDocument();
   });
 
   it('renders dialog components', () => {
@@ -65,7 +66,7 @@ describe('AlertBackup', () => {
   it('applies correct styling to warning message', () => {
     render(<AlertBackup />);
 
-    const warningText = screen.getByText('Back up now to avoid losing your account!');
+    const warningText = screen.getByText('Back up now');
     expect(warningText).toHaveClass('font-bold', 'text-primary-foreground');
   });
 
@@ -80,7 +81,8 @@ describe('AlertBackup', () => {
     render(<AlertBackup />);
 
     expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
-    expect(screen.getByText('Back up now to avoid losing your account!')).toBeInTheDocument();
+    expect(screen.getByText('Back up now')).toBeInTheDocument();
+    expect(screen.getByText('to avoid losing your account!')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-backup')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-confirm-backup')).toBeInTheDocument();
   });

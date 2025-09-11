@@ -20,13 +20,13 @@ export function DialogConfirmBackup() {
               will be be deleted from your browser. You can restore access to your account using your recovery phrase or
               encrypted file.
             </Atoms.Typography>
-            <Atoms.Container className="bg-destructive dark:bg-destructive\60/60 px-6 py-3 rounded-lg flex flex-row items-center gap-3">
+            <Atoms.Container className="bg-destructive/60 px-6 py-3 rounded-lg flex flex-row items-center gap-3">
               <Libs.TriangleAlert className="h-4 w-4 font-bold" />
               <Atoms.Typography size="sm" className="font-bold">
-                Back up now to avoid losing your account!
+                After confirming, your seed will be deleted from the browser (!)
               </Atoms.Typography>
             </Atoms.Container>
-            <Atoms.Container className="flex flex-row gap-4">
+            <Atoms.Container className="flex md:flex-row flex-col gap-4">
               <Atoms.Button size="lg" variant="outline">
                 <Libs.ShieldCheck className="h-4 w-4" />
                 Backup methods

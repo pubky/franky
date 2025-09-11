@@ -57,7 +57,18 @@ vi.mock('next/image', () => ({
     width: number;
     height: number;
     className?: string;
-  }) => <img data-testid="image" src={src} alt={alt} width={width} height={height} className={className} />,
+  }) => (
+    <div
+      data-testid="image"
+      data-src={src}
+      data-alt={alt}
+      data-width={width}
+      data-height={height}
+      className={className}
+    >
+      Next.js Image: {alt}
+    </div>
+  ),
 }));
 
 describe('DialogBackup', () => {
@@ -114,8 +125,9 @@ describe('DialogBackup', () => {
     expect(screen.getByText('Recovery phrase')).toBeInTheDocument();
     expect(screen.getAllByText('Continue')).toHaveLength(3);
 
-    const noteImage = screen.getByAltText('Note');
-    expect(noteImage).toHaveAttribute('src', '/images/note.png');
+    const images = screen.getAllByTestId('image');
+    const noteImage = images.find((img) => img.getAttribute('data-alt') === 'Note');
+    expect(noteImage).toHaveAttribute('data-src', '/images/note.png');
   });
 
   it('renders download encrypted file card with correct content', () => {
@@ -123,8 +135,9 @@ describe('DialogBackup', () => {
 
     expect(screen.getByText('Download encrypted file')).toBeInTheDocument();
 
-    const folderImage = screen.getByAltText('Folder');
-    expect(folderImage).toHaveAttribute('src', '/images/folder.png');
+    const images = screen.getAllByTestId('image');
+    const folderImage = images.find((img) => img.getAttribute('data-alt') === 'Folder');
+    expect(folderImage).toHaveAttribute('data-src', '/images/folder.png');
   });
 
   it('renders export to Pubky Ring card with correct content', () => {
@@ -132,8 +145,9 @@ describe('DialogBackup', () => {
 
     expect(screen.getByText('Export to Pubky Ring')).toBeInTheDocument();
 
-    const keyringImage = screen.getByAltText('Keys');
-    expect(keyringImage).toHaveAttribute('src', '/images/keyring.png');
+    const images = screen.getAllByTestId('image');
+    const keyringImage = images.find((img) => img.getAttribute('data-alt') === 'Keys');
+    expect(keyringImage).toHaveAttribute('data-src', '/images/keyring.png');
   });
 
   it('applies correct styling to dialog content', () => {
