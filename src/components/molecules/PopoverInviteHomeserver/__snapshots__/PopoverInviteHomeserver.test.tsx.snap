@@ -1,0 +1,203 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for PopoverInviteHomeserver with custom className 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="custom-homeserver-style"
+      data-size="icon"
+      data-testid="button-ghost"
+    >
+      <div
+        class="h-4 w-4 text-white"
+        data-testid="circle-help-icon"
+      >
+        CircleHelp
+      </div>
+    </button>
+  </div>
+  <div
+    class="w-[327px]"
+    data-testid="popover-content"
+  >
+    <div
+      class="flex-col gap-6 px-3 py-2"
+      data-testid="container"
+    >
+      <div
+        class="flex-col gap-2"
+        data-testid="container"
+      >
+        <h4
+          class="text-popover-foreground"
+          data-size="sm"
+          data-testid="heading-4"
+        >
+          Don't have an invite yet?
+        </h4>
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Ask the Pubky team for your invite code to access the Pubky homeserver.
+        </p>
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          A homeserver is a storage provider that hosts your pubky-app-related data. Prefer to use another provider or host yourself? Support for custom homeservers is coming soon.
+        </p>
+      </div>
+      <div
+        class="flex-row gap-4"
+        data-testid="container"
+      >
+        <a
+          class="text-muted-foreground hover:text-brand"
+          data-testid="link"
+          href="mailto:hello@pubky.com"
+        >
+          <div
+            class="h-6 w-6"
+            data-testid="mail-icon"
+          >
+            Mail
+          </div>
+        </a>
+        <a
+          class="text-muted-foreground hover:text-brand"
+          data-testid="link"
+          href="https://x.com/pubky"
+        >
+          <div
+            class="h-6 w-6"
+            data-testid="xtwitter-icon"
+          >
+            XTwitter
+          </div>
+        </a>
+        <a
+          class="text-muted-foreground hover:text-brand"
+          data-testid="link"
+          href="https://t.me/pubky"
+        >
+          <div
+            class="h-6 w-6"
+            data-testid="telegram-icon"
+          >
+            Telegram
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for default PopoverInviteHomeserver 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="hover:bg-brand/10"
+      data-size="icon"
+      data-testid="button-ghost"
+    >
+      <div
+        class="h-4 w-4 text-white"
+        data-testid="circle-help-icon"
+      >
+        CircleHelp
+      </div>
+    </button>
+  </div>
+  <div
+    class="w-[327px]"
+    data-testid="popover-content"
+  >
+    <div
+      class="flex-col gap-6 px-3 py-2"
+      data-testid="container"
+    >
+      <div
+        class="flex-col gap-2"
+        data-testid="container"
+      >
+        <h4
+          class="text-popover-foreground"
+          data-size="sm"
+          data-testid="heading-4"
+        >
+          Don't have an invite yet?
+        </h4>
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Ask the Pubky team for your invite code to access the Pubky homeserver.
+        </p>
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          A homeserver is a storage provider that hosts your pubky-app-related data. Prefer to use another provider or host yourself? Support for custom homeservers is coming soon.
+        </p>
+      </div>
+      <div
+        class="flex-row gap-4"
+        data-testid="container"
+      >
+        <a
+          class="text-muted-foreground hover:text-brand"
+          data-testid="link"
+          href="mailto:hello@pubky.com"
+        >
+          <div
+            class="h-6 w-6"
+            data-testid="mail-icon"
+          >
+            Mail
+          </div>
+        </a>
+        <a
+          class="text-muted-foreground hover:text-brand"
+          data-testid="link"
+          href="https://x.com/pubky"
+        >
+          <div
+            class="h-6 w-6"
+            data-testid="xtwitter-icon"
+          >
+            XTwitter
+          </div>
+        </a>
+        <a
+          class="text-muted-foreground hover:text-brand"
+          data-testid="link"
+          href="https://t.me/pubky"
+        >
+          <div
+            class="h-6 w-6"
+            data-testid="telegram-icon"
+          >
+            Telegram
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -261,3 +261,37 @@ describe('Metadata', () => {
     });
   });
 });
+
+describe('Metadata - Snapshots', () => {
+  it('matches snapshot for default metadata configuration', () => {
+    const result = Metadata({
+      title: 'Test Title',
+      description: 'Test Description',
+    });
+    expect(result).toMatchSnapshot();
+  });
+
+  it('matches snapshot for metadata with custom parameters', () => {
+    const result = Metadata({
+      title: 'Custom Title',
+      description: 'Custom Description',
+      image: '/custom-image.jpg',
+      type: 'article',
+      url: 'https://custom-url.com',
+      siteName: 'Custom Site',
+      locale: 'it_IT',
+      author: 'Custom Author',
+      keywords: 'custom, keywords',
+      robots: false,
+    });
+    expect(result).toMatchSnapshot();
+  });
+
+  it('matches snapshot for metadata with minimal configuration', () => {
+    const result = Metadata({
+      title: 'Minimal',
+      description: 'Minimal description',
+    });
+    expect(result).toMatchSnapshot();
+  });
+});

@@ -1,0 +1,297 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBackupPhrase 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="gap-2"
+      data-testid="button-secondary"
+    >
+      <div
+        class="h-4 w-4"
+        data-testid="file-text-icon"
+      >
+        FileText
+      </div>
+      <span>
+        Recovery phrase
+      </span>
+    </button>
+  </div>
+  <div
+    class="gap-6 p-8"
+    data-testid="dialog-content"
+  >
+    <div
+      class="space-y-1.5 pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 sm:text-xl sm:leading-7"
+        data-testid="dialog-title"
+      >
+        Backup recovery phrase
+      </h2>
+      <p
+        class="text-sm leading-5 max-w-[530px]"
+        data-testid="dialog-description"
+      >
+        Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the correct order and store them in a safe place.
+         
+        <span
+          class="text-brand font-bold"
+        >
+          Never share this recovery phrase with anyone.
+        </span>
+      </p>
+    </div>
+    <div
+      class="blur-xs"
+      data-testid="container"
+    >
+      <div
+        class="grid-cols-2 md:grid-cols-3 gap-3"
+        data-testid="container"
+      >
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            1
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word1
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            2
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word2
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            3
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word3
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            4
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word4
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            5
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word5
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            6
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word6
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            7
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word7
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            8
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word8
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            9
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word9
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            10
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word10
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            11
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word11
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            12
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            word12
+          </span>
+        </div>
+      </div>
+    </div>
+    <div
+      class="gap-4 sm:gap-3 flex-row justify-between"
+      data-testid="container"
+    >
+      <div
+        data-as-child="true"
+        data-testid="dialog-close"
+      >
+        <button
+          class="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+          data-testid="button-outline"
+        >
+          Cancel
+        </button>
+      </div>
+      <button
+        class="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+        data-testid="button-default"
+      >
+        <div
+          class="mr-2 h-4 w-4"
+          data-testid="eye-icon"
+        >
+          Eye
+        </div>
+        Reveal recovery phrase
+      </button>
+    </div>
+  </div>
+</div>
+`;

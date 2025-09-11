@@ -1,0 +1,167 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default DialogBackupEncrypted 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="gap-2"
+      data-testid="button-secondary"
+    >
+      <div
+        class="h-4 w-4"
+        data-testid="file-text-icon"
+      >
+        FileText
+      </div>
+      <span>
+        Encrypted file
+      </span>
+    </button>
+  </div>
+  <div
+    class="gap-6 p-8 !max-w-[576px]"
+    data-testid="dialog-content"
+  >
+    <div
+      class="space-y-1.5 pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 sm:text-xl sm:leading-7"
+        data-testid="dialog-title"
+      >
+        Backup as encrypted file
+      </h2>
+      <p
+        class="text-sm leading-5"
+        data-testid="dialog-description"
+      >
+        Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud provider. 
+        <span
+          class="text-brand font-bold"
+        >
+          Never share this file with anyone.
+        </span>
+      </p>
+    </div>
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        class="space-y-6"
+        data-testid="container"
+      >
+        <div
+          class="space-y-2"
+          data-testid="container"
+        >
+          <label
+            class="text-xs font-medium tracking-widest text-muted-foreground"
+            data-testid="label"
+            for="password"
+          >
+            PASSWORD
+          </label>
+          <div
+            class="space-y-3"
+            data-testid="container"
+          >
+            <div
+              class="relative"
+              data-testid="container"
+            >
+              <input
+                autocomplete="new-password"
+                class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+                data-testid="input"
+                id="password"
+                placeholder="Enter a strong password"
+                type="password"
+                value=""
+              />
+            </div>
+            <p
+              class="text-muted-foreground text-xs font-medium leading-3"
+              data-size="sm"
+              data-testid="typography"
+            >
+              We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
+            </p>
+          </div>
+        </div>
+        <div
+          class="items-start"
+          data-testid="container"
+        />
+        <div
+          class="space-y-2"
+          data-testid="container"
+        >
+          <label
+            class="text-xs font-medium tracking-widest text-muted-foreground"
+            data-testid="label"
+            for="confirmPassword"
+          >
+            REPEAT PASSWORD
+          </label>
+          <div
+            class="space-y-3"
+            data-testid="container"
+          >
+            <input
+              autocomplete="new-password"
+              class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 "
+              data-testid="input"
+              id="confirmPassword"
+              placeholder="Repeat your password"
+              type="password"
+              value=""
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="gap-4 sm:gap-3 flex-row justify-between"
+      data-testid="container"
+    >
+      <div
+        data-as-child="true"
+        data-testid="radix-dialog-close"
+      >
+        <button
+          class="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+          data-testid="button-outline"
+        >
+          <div
+            class="mr-2 h-4 w-4 hidden"
+            data-testid="arrow-left-icon"
+          >
+            ArrowLeft
+          </div>
+          Cancel
+        </button>
+      </div>
+      <button
+        class="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+        data-testid="button-default"
+        disabled=""
+      >
+        <div
+          class="mr-2 h-4 w-4"
+          data-testid="download-icon"
+        >
+          Download
+        </div>
+        Download file
+      </button>
+    </div>
+  </div>
+</div>
+`;
