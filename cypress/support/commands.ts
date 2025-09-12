@@ -1,4 +1,8 @@
-/// <reference types="cypress" />
+// <reference types="cypress" />
+
+import { goToProfilePageFromHeader } from './header';
+//import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
+import { HasBackedUp, SkipOnboardingSlides } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -8,30 +12,359 @@
 // commands please read more here:
 // https://on.cypress.io/custom-commands
 // ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+
+Cypress.Commands.add(
+  'onboardAsNewUser',
+  (
+    profileName: string,
+    profileBio: string = '',
+    skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
+    pubkyAlias?: string
+  ) => {
+    cy.visit('/');
+    cy.location('pathname').should('eq', '/');
+
+
+
+    // cy.get('#onboarding-create-account-btn').click();
+    // cy.location('pathname').should('eq', '/onboarding/intro');
+
+    // if (skipOnboardingSlides === SkipOnboardingSlides.Yes) {
+    //   // click 'Skip Intro' button
+    //   cy.get('#onboarding-skip-intro-btn').click();
+    // } else {
+    //   // click 'Continue' button 6 times to skip onboarding slides
+    //   for (let i = 0; i < 6; i++) {
+    //     cy.get('#onboarding-continue-btn').click();
+    //     if (i < 5) cy.location('pathname').should('eq', '/onboarding/intro');
+    //   }
+    // }
+
+    // cy.get('#onboarding-sign-up-link').click();
+    // cy.location('pathname').should('eq', '/onboarding/sign-up');
+
+    // cy.get('#onboarding-name-input').type(profileName);
+
+    // // request invite code from homeserver and input it
+    // cy.request({
+    //   method: 'GET',
+    //   url: 'http://localhost:6288/generate_signup_token',
+    //   headers: {
+    //     'X-Admin-Password': 'admin'
+    //   }
+    // }).then((response) => {
+    //   const inviteCode = response.body;
+    //   cy.wrap(inviteCode).as('inviteCode');
+    //   cy.get('#onboarding-token-input').type(inviteCode);
+    // });
+
+    // profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
+
+    // cy.get('#onboarding-submit-button').click();
+
+    // cy.location('pathname').should('eq', '/onboarding/pubky');
+
+    // // store pubky as an alias for future use
+    // // will only work if called from before or beforeEach
+    // if (pubkyAlias) {
+    //   cy.get('#onboarding-copy-pubky-btn').click();
+    //   cy.saveCopiedPubkyToAlias(pubkyAlias);
+    // }
+
+    // cy.get('#onboarding-confirm-link').click();
+
+    // cy.location('pathname').should('eq', '/onboarding/confirm');
+
+    // cy.get('#onboarding-start-exploring-btn').click();
+
+    // cy.location('pathname').should('eq', '/home');
+  }
+);
+
+Cypress.Commands.add('signOut', (hasBackedUp: HasBackedUp) => {
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/profile') {
+      goToProfilePageFromHeader();
+    }
+  });
+
+  cy.location('pathname').should('eq', '/profile');
+
+  cy.get('#profile-sign-out-btn').click();
+
+  // sign out model only shows if user has not backed up recovery file
+  if (hasBackedUp === HasBackedUp.No) cy.get('#logout-modal-sign-out-btn').click();
+
+  cy.location('pathname').should('eq', '/logout');
+
+  cy.get('#sign-back-in-btn').click();
+  cy.location('pathname').should('eq', '/sign-in');
+});
+
+Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => {
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath !== '/sign-in') {
+      cy.visit('/sign-in');
+    }
+  });
+
+  cy.location('pathname').then((currentPath) => {
+    if (currentPath === '/onboarding/sign-in') {
+      cy.visit('/sign-in');
+    }
+  });
+
+  cy.location('pathname').should('eq', '/sign-in');
+
+  cy.get('#fileInput').selectFile(
+    backupFilepath,
+    { force: true } // force to bypass visibility check of hidden input field
+  );
+  cy.get('#sign-in-password-input').type(passcode);
+  cy.get('#sign-in-recovery-file-btn').click();
+
+  cy.location('pathname').should('eq', '/home');
+});
+
+Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
+  // backup recovery file
+  cy.get('#remind-backup-now-btn').click();
+  cy.get('#backup-recovery-file-btn').click();
+  cy.get('#backup-recovery-file-password-input').type(passcode);
+  cy.get('#backup-download-recovery-file-btn').click();
+  cy.get('#backup-successful-ok-btn').click();
+});
+
+Cypress.Commands.add('deleteDownloadsFolder', () => {
+  const downloadsFolder = Cypress.config('downloadsFolder');
+  cy.task('deleteFolder', downloadsFolder);
+});
+
+Cypress.Commands.add('waitForFileExistsWithSuffix', (folder: string, suffix: string) => {
+  let attempts = 0;
+  const maxAttempts = 5;
+  const checkFile = () => {
+    cy.task('checkFileExistsWithSuffix', { folder, suffix }).then((exists) => {
+      if (exists) {
+        return;
+      }
+      attempts++;
+      if (attempts >= maxAttempts) {
+        throw new Error(`File with suffix ${suffix} not found after ${maxAttempts} attempts`);
+      }
+      cy.wait(1000);
+      checkFile();
+    });
+  };
+});
+
+Cypress.Commands.add('deleteFile', (filePath: string) => {
+  cy.task('deleteFile', filePath).then(() => {
+    cy.log(`${filePath} has been deleted`);
+  });
+});
+
+Cypress.Commands.add('renameFile', (fromPath: string, toPath: string) => {
+  cy.task('renameFile', { fromPath, toPath }).then(() => {
+    cy.log(`File has been renamed from ${fromPath} to ${toPath}`);
+  });
+});
+
+// Useful when 'should.be' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldEq', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.eq(text);
+  });
+});
+
+// Useful when 'should.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextContains', { prevSubject: 'element' }, (subject, text) => {
+  return cy.wrap(subject).then(($elem) => {
+    return $elem.get(0).innerText.includes(text);
+  });
+});
+
+// Useful when 'should.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldContain', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.contain(text);
+  });
+});
+
+// Useful when 'should.not.contain' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldNotContain', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.not.contain(text);
+  });
+});
+
+// Useful when 'should.not.be' doesn't work due to additional space inserted before final word.
+Cypress.Commands.add('innerTextShouldNotEq', { prevSubject: 'element' }, (subject, text) => {
+  cy.wrap(subject).should(($elem) => {
+    expect($elem.get(0).innerText).to.not.eq(text);
+  });
+});
+
+// Stores the clipboard contents to an alias for later use
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
+  cy.window()
+    .then((win) => {
+      // ensure focus is on the window before attempting to read clipboard
+      win.focus();
+      // requires browser to be in focus
+      return win.navigator.clipboard.readText().then((text) => {
+        // assert that pubky was copied to clipboard in correct format
+        expect(text).to.match(/^pk:/);
+        return text;
+      });
+      // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+      // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+    })
+    .then((text) => {
+      // store pubky as alias
+      cy.wrap(text).as(alias);
+      // also store pubky in Cypress env to be used in beforeEach to re-create aliases because they are cleared at end of each test
+      // e.g. cy.wrap(Cypress.env(profile1.pubkyAlias)).as(profile1.pubkyAlias);
+      Cypress.env(alias, text);
+    });
+});
+
+// Stores the clipboard contents to an alias for later use
+// see https://docs.cypress.io/guides/core-concepts/variables-and-aliases#Sharing-Context
+// note: aliases work in the context of as test and only the first test after before
+Cypress.Commands.add('saveCopiedTextToAlias', (alias: string) => {
+  cy.window()
+    .then((win) => {
+      // ensure focus is on the window before attempting to read clipboard
+      win.focus();
+      // requires browser to be in focus
+      return win.navigator.clipboard.readText();
+      // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
+      // so an additional 'then' is needed to guarantee the alias is stored before the next test step
+    })
+    .then((text) => {
+      // store pubky as alias
+      cy.wrap(text).as(alias);
+    });
+});
+
+Cypress.Commands.add('assertElementDoesNotExist', (selector) => {
+  cy.get('body').then(($body) => {
+    assert($body.find(selector).length === 0, `${selector} exists. It should not.`);
+  });
+});
+
+Cypress.Commands.add('waitReload', (time = 2000) => {
+  cy.wait(time).reload();
+});
+
+// wait for element to appear by default
+Cypress.Commands.add('waitReloadWhileElementDoesNotExist', (selector, attempts = 30) => {
+  const go = (attempts: number) => {
+    if (attempts <= 0) assert(false, `waitReloadWhileElementDoesNotExist: ${selector} not found`);
+
+    cy.get('body').then(($body) => {
+      if ($body.find(selector).length === 0) {
+        cy.log(`waitReloadWhileElementDoesNotExist: ${selector} not found; waiting and reloading.`);
+        cy.wait(1_000);
+        cy.reload();
+        // wait for page to load before checking again
+        // TODO: improve wait by detecting presence of key element on page (e.g. profile picture)
+        cy.wait(Cypress.env('ci') ? 3_000 : 1_000);
+        go(attempts - 1);
+      } else {
+        cy.log(`waitReloadWhileElementDoesNotExist: ${selector} found; continuing.`);
+        return;
+      }
+    });
+  };
+  cy.log(`waitReloadWhileElementDoesNotExist: starting with selector: ${selector} and attempts: ${attempts}.`);
+  go(attempts);
+});
+
+Cypress.Commands.add('countPostsInBookmarks', (expectedCount: number) => {
+  cy.get('#bookmarked-posts').find('[id="post-container"]').should('have.length', expectedCount);
+});
+
+Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
+  return cy.get('#bookmarked-posts').find('[id="post-container"]').eq(postIdx);
+});
+
+// const findPostInFeed = (postIdx = 0, filterText?: string, checkIndexed = CheckIndexed.Yes) => {
+//   waitForFeedToLoad(filterText);
+
+//   // if 'checkIndexed' then wait for the post to have two green ticks, indicating it is indexed
+//   // this is needed because the container element is rerendered when the post is indexed
+//   cy.wrap(checkIndexed).then(($checkIndexed) => {
+//     if ($checkIndexed === CheckIndexed.Yes) checkPostIsIndexed(postIdx);
+//   });
+
+//   // find the post in the timeline
+//   cy.get('#posts-feed')
+//     .find('#timeline')
+//     .children()
+//     .should('have.length.gte', 1)
+//     .then(($posts) => {
+//       // optionally filter posts by contained text
+//       return filterText
+//         ? // cannot use :contains due to additional space inserted between each word in the post content
+//           $posts.filter((_idx, element) => element.innerText.includes(filterText))
+//         : $posts;
+//     })
+//     .eq(postIdx);
+
+  // TODO: this implementation is more robust when "Show n new posts" appears unexpectedly, see https://github.com/pubky/pubky-app/issues/1033
+  // cy.get('#posts-feed')
+  //   .find('#timeline')
+  //   .should('have.descendants', '*')
+  //   .children()
+  //   .then(($posts) => {
+  //     // Filter out "Show new posts" element
+  //     const actualPosts = $posts.filter((_, el) => {
+  //       const text = Cypress.$(el).text();
+  //       // Match "Show n new posts" pattern where n is a number
+  //       return !/Show\s+\d+\s+new posts/i.test(text);
+  //     });
+
+  //     // optionally filter posts by contained text
+  //     return filterText
+  //       ? // cannot use :contains due to additional space inserted between each word in the post content
+  //         actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
+  //       : actualPosts;
+  //   })
+  //   .eq(postIdx);
+// };
+
+// useful to find your latest new post
+// Cypress.Commands.add('findFirstPostInFeed', (checkIndexed = CheckIndexed.Yes) => {
+//   findPostInFeed(0, '', checkIndexed);
+// });
+
+// // useful for finding a specific post by text
+// Cypress.Commands.add('findFirstPostInFeedFiltered', (filterText, checkIndexed = CheckIndexed.Yes) => {
+//   findPostInFeed(0, filterText, checkIndexed);
+// });
+
+// // useful for finding a specific post by index with optional filter text
+// Cypress.Commands.add('findPostInFeed', (postIdx = 0, filterText?, checkIndexed = CheckIndexed.Yes) => {
+//   findPostInFeed(postIdx, filterText, checkIndexed);
+// });
+
+// useful for finding a specific post by text in search results
+Cypress.Commands.add('findPostInSearchResults', (filterText?: string, postIdx = 0) => {
+  cy.get('#post-search-results')
+    .children()
+    .then(($posts) => {
+      return filterText ? $posts.filter((_idx, element) => element.innerText.includes(filterText)) : $posts;
+    })
+    .eq(postIdx);
+});
+
+// To prevent Cypress from failing the test when running pubky-app with dev build:
+// `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
+// `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
+Cypress.on('uncaught:exception', (_err, _runnable) => {
+  return false;
+});
