@@ -6,6 +6,16 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/libs';
 
+export enum ButtonVariant {
+  DEFAULT = 'default',
+  DESTRUCTIVE = 'destructive',
+  OUTLINE = 'outline',
+  SECONDARY = 'secondary',
+  GHOST = 'ghost',
+  BRAND = 'brand',
+  LINK = 'link',
+}
+
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs',
   {
@@ -32,7 +42,7 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: ButtonVariant.DEFAULT,
       size: 'default',
     },
   },

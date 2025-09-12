@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { User, type UserData } from './User';
+import { ButtonVariant } from '@/atoms';
 
 const mockUser: UserData = {
   id: '1',
@@ -66,10 +67,12 @@ describe('User', () => {
   });
 
   it('renders with different action button variants', () => {
-    const { rerender } = render(<User user={mockUser} onAction={() => {}} actionVariant="default" showAction={true} />);
+    const { rerender } = render(
+      <User user={mockUser} onAction={() => {}} actionVariant={ButtonVariant.DEFAULT} showAction={true} />,
+    );
     expect(screen.getByTestId('user-action-1')).toHaveAttribute('data-variant', 'default');
 
-    rerender(<User user={mockUser} onAction={() => {}} actionVariant="ghost" showAction={true} />);
+    rerender(<User user={mockUser} onAction={() => {}} actionVariant={ButtonVariant.GHOST} showAction={true} />);
     expect(screen.getByTestId('user-action-1')).toHaveAttribute('data-variant', 'ghost');
   });
 
