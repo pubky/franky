@@ -30,14 +30,14 @@ exports[`Popover - Snapshots > matches snapshot for PopoverTrigger with default 
 </button>
 `;
 
-exports[`Popover - Snapshots > matches snapshot for complete popover structure 1`] = `
+exports[`Popover - Snapshots > matches snapshot for popover trigger in open state 1`] = `
 <button
   aria-controls="radix-«r0»"
-  aria-expanded="false"
+  aria-expanded="true"
   aria-haspopup="dialog"
   data-as-child="true"
   data-slot="popover-trigger"
-  data-state="closed"
+  data-state="open"
   data-testid="popover-trigger"
   type="button"
 >

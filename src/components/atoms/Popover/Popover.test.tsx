@@ -106,77 +106,9 @@ describe('Popover - Snapshots', () => {
     expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
-  // TODO: address null output
-  // it('matches snapshot for PopoverContent with default props', () => {
-  //   const { container } = render(
-  //     <Popover>
-  //       <PopoverContent>
-  //         <div>Popover Content</div>
-  //       </PopoverContent>
-  //     </Popover>,
-  //   );
-  //   const normalizedContainer = normalizeRadixIds(container);
-  //   expect(normalizedContainer).toMatchSnapshot();
-  // });
-
-  // TODO: address null output
-  // it('matches snapshots for PopoverContent with different configurations', () => {
-  //   const { container: defaultContainer } = render(
-  //     <Popover>
-  //       <PopoverContent>
-  //         <div>Default content</div>
-  //       </PopoverContent>
-  //     </Popover>,
-  //   );
-  //   expect(defaultContainer.firstChild).toMatchSnapshot();
-
-  //   const { container: customClassContainer } = render(
-  //     <Popover>
-  //       <PopoverContent className="custom-popover-class">
-  //         <div>Custom content</div>
-  //       </PopoverContent>
-  //     </Popover>,
-  //   );
-  //   expect(customClassContainer.firstChild).toMatchSnapshot();
-
-  //   const { container: customAlignContainer } = render(
-  //     <Popover>
-  //       <PopoverContent align="start">
-  //         <div>Start aligned content</div>
-  //       </PopoverContent>
-  //     </Popover>,
-  //   );
-  //   expect(customAlignContainer.firstChild).toMatchSnapshot();
-  // });
-
-  // TODO: address null output
-  // it('matches snapshots for different content types', () => {
-  //   const { container: simpleContainer } = render(
-  //     <Popover>
-  //       <PopoverContent>
-  //         <div>Simple content</div>
-  //       </PopoverContent>
-  //     </Popover>,
-  //   );
-  //   expect(simpleContainer.firstChild).toMatchSnapshot();
-
-  //   const { container: complexContainer } = render(
-  //     <Popover>
-  //       <PopoverContent>
-  //         <div>
-  //           <h3>Complex Content</h3>
-  //           <p>With multiple elements</p>
-  //           <button>Action</button>
-  //         </div>
-  //       </PopoverContent>
-  //     </Popover>,
-  //   );
-  //   expect(complexContainer.firstChild).toMatchSnapshot();
-  // });
-
-  it('matches snapshot for complete popover structure', () => {
+  it('matches snapshot for popover trigger in open state', () => {
     const { container } = render(
-      <Popover>
+      <Popover defaultOpen>
         <PopoverTrigger asChild>
           <button>Open Popover</button>
         </PopoverTrigger>
