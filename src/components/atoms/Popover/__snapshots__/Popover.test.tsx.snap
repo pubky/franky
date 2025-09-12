@@ -26,9 +26,7 @@ exports[`Popover - Snapshots > matches snapshot for PopoverTrigger with default 
   data-testid="popover-trigger"
   type="button"
 >
-  <button>
-    Open Popover
-  </button>
+  Open Popover
 </button>
 `;
 

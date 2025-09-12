@@ -87,9 +87,7 @@ describe('Popover - Snapshots', () => {
   it('matches snapshot for PopoverTrigger with default props', () => {
     const { container } = render(
       <Popover>
-        <PopoverTrigger>
-          <button>Open Popover</button>
-        </PopoverTrigger>
+        <PopoverTrigger>Open Popover</PopoverTrigger>
       </Popover>,
     );
     const normalizedContainer = normaliseRadixIds(container);
