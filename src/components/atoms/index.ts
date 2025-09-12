@@ -17,4 +17,3 @@ export * from './Popover';
 export * from './Textarea';
 export * from './Toast';
 export * from './Typography';
-export * from './User';

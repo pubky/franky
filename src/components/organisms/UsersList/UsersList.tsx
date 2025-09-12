@@ -3,9 +3,10 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
 
 interface UsersListProps {
-  users: Atoms.UserData[];
+  users: Molecules.UserData[];
   onFollow?: (userId: string) => void;
   onSeeAll?: () => void;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
@@ -35,10 +36,10 @@ export function UsersList({ users, onFollow, onSeeAll, className, title, maxUser
       {/* Users List */}
       <Atoms.Container className="flex flex-col gap-2 justify-center items-center">
         {displayUsers.map((user) => (
-          <Atoms.User
+          <Molecules.User
             key={user.id}
             user={user}
-            onAction={onFollow ? handleFollow : undefined}
+            onAction={handleFollow}
             showAction={!!onFollow}
             data-testid={`user-${user.id}`}
           />

@@ -18,7 +18,7 @@ interface UserProps {
   onAction?: (userId: string) => void;
   actionIcon?: React.ReactNode;
   showAction?: boolean;
-  actionVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'brand' | 'link';
+  actionVariant?: Atoms.ButtonVariant;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
   'data-testid'?: string;
 }
@@ -28,17 +28,11 @@ export function User({
   onAction,
   actionIcon = <Libs.UserRoundPlus className="w-4 h-4" />,
   showAction = true,
-  actionVariant = 'secondary',
+  actionVariant = Atoms.ButtonVariant.SECONDARY,
   className,
   'data-testid': dataTestId,
   ...props
 }: UserProps) {
-  const handleAction = () => {
-    if (onAction) {
-      onAction(user.id);
-    }
-  };
-
   return (
     <Atoms.Container
       className={Libs.cn('flex flex-row gap-2 items-center', className)}
@@ -86,7 +80,7 @@ export function User({
 
       {showAction && (
         <Atoms.Button
-          onClick={handleAction}
+          onClick={() => onAction?.(user.id)}
           variant={actionVariant}
           size="sm"
           className="w-8 h-8"
