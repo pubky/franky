@@ -62,3 +62,11 @@ exports[`Avatar - Snapshots > matches snapshots for different configurations 2`]
   data-slot="avatar"
 />
 `;
+
+exports[`Avatar - Snapshots > matches snapshots for different configurations 3`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  data-custom="custom-avatar"
+  data-slot="avatar"
+/>
+`;

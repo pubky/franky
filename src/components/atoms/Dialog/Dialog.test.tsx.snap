@@ -1,5 +1,50 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Dialog - Snapshots > matched snapshot for DialogContent with default props 1`] = `
+<div
+  data-testid="dialog-portal"
+>
+  <div
+    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+    data-testid="dialog-overlay"
+  />
+  <div
+    class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
+    data-testid="dialog-content"
+  >
+    <div>
+      Dialog Content
+    </div>
+    <button
+      class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer"
+      data-testid="dialog-close"
+    >
+      <div
+        class="h-4 w-4 text-secondary-foreground opacity-70"
+        data-testid="x-icon"
+      >
+        X
+      </div>
+      <span
+        class="sr-only"
+      >
+        Close
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Dialog - Snapshots > matches snapshot for Dialog with default props 1`] = `
+<div
+  data-testid="dialog-root"
+>
+  <div>
+    Dialog Content
+  </div>
+</div>
+`;
+
 exports[`Dialog - Snapshots > matches snapshot for DialogContent with close button 1`] = `
 <div
   data-testid="dialog-portal"
