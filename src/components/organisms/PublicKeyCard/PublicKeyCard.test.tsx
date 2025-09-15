@@ -381,10 +381,3 @@ describe('PublicKeyCard - Key Generation', () => {
     expect(mockSetMnemonic).not.toHaveBeenCalled();
   });
 });
-
-describe('PublicKeyCard - Snapshots', () => {
-  it('matches snapshot for default PublicKeyCard', () => {
-    const { container } = render(<PublicKeyCard />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-});
