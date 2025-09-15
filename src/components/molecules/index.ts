@@ -1,6 +1,7 @@
 export * from './ActionButtons';
 export * from './ActionSection';
 export * from './Backup';
+export * from './ContainerRoot';
 export * from './Homeserver';
 export * from './ButtonsNavigation';
 export * from './Content';
@@ -34,3 +35,4 @@ export * from './SearchInput';
 export * from './SignIn';
 export * from './TextareaField';
 export * from './Toaster';
+export * from './WordSlot';

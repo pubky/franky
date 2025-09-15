@@ -76,53 +76,6 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
   );
 }
 
-type WordSlotProps = {
-  index: number;
-  word: string;
-  isError: boolean;
-  showError: boolean;
-  isRestoring: boolean;
-  onChange: (index: number, value: string) => void;
-  onValidate: (index: number, word: string) => void;
-};
-
-const WordSlot = ({ index, word, isError, showError, isRestoring, onChange, onValidate }: WordSlotProps) => {
-  const hasError = isError && showError;
-
-  const containerClasses = Libs.cn(
-    'flex-row px-4 py-2 rounded-md border overflow-hidden',
-    'inline-flex justify-start items-center gap-2 bg-transparent transition-colors',
-    hasError && 'border-red-500 bg-red-500/10',
-    !hasError && 'border-border hover:bg-secondary/50',
-  );
-
-  const badgeClasses = Libs.cn(
-    'z-10 h-6 rounded-full w-6',
-    hasError && 'bg-red-500 text-white',
-    !hasError && 'bg-muted text-muted-foreground',
-  );
-
-  const inputColor = Libs.cn('!border-none !bg-transparent flex-row', hasError && '!text-red-500');
-
-  return (
-    <Atoms.Container className="relative">
-      <Atoms.Container className={containerClasses}>
-        <Atoms.Badge variant="outline" className={badgeClasses}>
-          {index + 1}
-        </Atoms.Badge>
-        <Atoms.Input
-          value={word}
-          placeholder="word"
-          className={inputColor}
-          onChange={(e) => onChange(index, e.target.value.toLowerCase().trim())}
-          onBlur={() => onValidate(index, word)}
-          disabled={isRestoring}
-        />
-      </Atoms.Container>
-    </Atoms.Container>
-  );
-};
-
 function RestoreForm({
   userWords,
   errors,
@@ -199,8 +152,9 @@ function RestoreForm({
             const isError = errors[i];
             const showError = touched[i];
             return (
-              <WordSlot
+              <Molecules.WordSlot
                 key={i}
+                mode="editable"
                 index={i}
                 word={word}
                 isError={isError}

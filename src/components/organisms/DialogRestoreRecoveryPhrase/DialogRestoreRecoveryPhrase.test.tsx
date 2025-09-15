@@ -93,6 +93,29 @@ vi.mock('@/molecules', () => ({
   useToast: vi.fn(() => ({
     toast: mockToast,
   })),
+  WordSlot: vi.fn(({ index, word, isError, showError, isRestoring, onChange, onValidate, mode, ...props }) => (
+    <div
+      data-testid="word-slot"
+      data-index={index}
+      data-mode={mode}
+      data-error={isError}
+      data-show-error={showError}
+      data-restoring={isRestoring}
+    >
+      <span data-testid="badge" data-variant="outline">
+        {index + 1}
+      </span>
+      <input
+        data-testid="word-input"
+        value={word}
+        placeholder="word"
+        onChange={(e) => onChange?.(index, e.target.value.toLowerCase().trim())}
+        onBlur={() => onValidate?.(index, word)}
+        disabled={isRestoring}
+        {...props}
+      />
+    </div>
+  )),
 }));
 
 describe('DialogRestoreRecoveryPhrase', () => {
@@ -135,7 +158,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('renders 12 word input slots', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       expect(inputs).toHaveLength(12);
 
       inputs.forEach((input) => {
@@ -181,7 +204,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('allows typing in word inputs', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       fireEvent.change(firstInput, { target: { value: 'abandon' } });
@@ -192,7 +215,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('converts input to lowercase and trims spaces', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       fireEvent.change(firstInput, { target: { value: ' ABANDON ' } });
@@ -203,7 +226,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('marks fields as touched when typed in', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       fireEvent.change(firstInput, { target: { value: 'abandon' } });
@@ -215,7 +238,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('marks fields as touched when blurred', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       fireEvent.focus(firstInput);
@@ -230,7 +253,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('validates word format on blur', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       // Enter invalid word with numbers
@@ -244,7 +267,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('shows error message when invalid words are detected', async () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       // Enter invalid word and blur
@@ -264,7 +287,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('clears errors when user starts typing valid words', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       // First enter invalid word
@@ -282,7 +305,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('enables restore button only when all words are filled and valid', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Initially disabled
@@ -315,7 +338,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('keeps restore button disabled when some words are empty', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill only first 11 inputs
@@ -333,7 +356,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       mockLoginWithMnemonic.mockResolvedValue({});
       render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill all inputs
@@ -367,7 +390,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       mockLoginWithMnemonic.mockResolvedValue({});
       render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill all inputs with valid words
@@ -389,7 +412,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       mockLoginWithMnemonic.mockRejectedValue(error);
       render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill all inputs
@@ -415,7 +438,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       mockLoginWithMnemonic.mockResolvedValue({});
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill only some inputs
@@ -435,7 +458,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
       mockLoginWithMnemonic.mockResolvedValue({});
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill all inputs
@@ -484,7 +507,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('applies error styling when validation fails', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       // Enter invalid word and blur to trigger validation
@@ -500,7 +523,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('provides proper placeholder text for inputs', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       inputs.forEach((input) => {
         expect(input).toHaveAttribute('placeholder', 'word');
       });
@@ -526,7 +549,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('handles empty string inputs correctly', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       // Type and then clear
@@ -539,7 +562,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('handles special characters in input', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const firstInput = inputs[0];
 
       fireEvent.change(firstInput, { target: { value: 'test@#$' } });
@@ -560,7 +583,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
 
       render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill all inputs
@@ -597,7 +620,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
 
       render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Fill all inputs
@@ -633,7 +656,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
 
       render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
 
-      const inputs = screen.getAllByTestId('input');
+      const inputs = screen.getAllByTestId('word-input');
       const restoreButton = screen.getByText('Restore').closest('button');
 
       // Initially inputs should be enabled

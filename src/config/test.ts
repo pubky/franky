@@ -53,6 +53,14 @@ global.fetch = vi.fn().mockResolvedValue(
   }),
 );
 
+// Mock Next.js font imports
+vi.mock('next/font/google', () => ({
+  Inter_Tight: vi.fn(() => ({
+    variable: '--font-geist-sans',
+    className: 'inter-tight',
+  })),
+}));
+
 process.env.NEXT_PUBLIC_DB_VERSION = '1';
 process.env.NEXT_PUBLIC_DEBUG_MODE = 'false';
 process.env.NEXT_PUBLIC_NEXUS_URL = 'https://nexus.staging.pubky.app/v0';

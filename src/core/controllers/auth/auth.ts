@@ -1,18 +1,11 @@
-import { PublicKey } from '@synonymdev/pubky';
-
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-
-type TAuthenticatedData = { pubky: string; session: Core.SignupResult['session'] };
-type TSignUpParams = { keypair: Core.TKeyPair; signupToken: string };
-type TLoginWithMnemonicParams = { mnemonic: string };
-type TLoginWithEncryptedFileParams = { encryptedFile: File; password: string };
-type TLoginWithAuthUrlParams = { keypair: PublicKey };
+import * as AuthTypes from './auth.types';
 
 export class AuthController {
   private constructor() {} // Prevent instantiation
 
-  private static saveAuthenticatedData(authenticatedData: TAuthenticatedData) {
+  private static saveAuthenticatedData(authenticatedData: AuthTypes.TAuthenticatedData) {
     const profileStore = Core.useProfileStore.getState();
     profileStore.setSession(authenticatedData.session);
     profileStore.setCurrentUserPubky(authenticatedData.pubky);
@@ -24,27 +17,27 @@ export class AuthController {
     return Core.HomeserverService.getInstance(onboardingStore.secretKey);
   }
 
-  static async signUp({ keypair, signupToken }: TSignUpParams) {
+  static async signUp({ keypair, signupToken }: AuthTypes.TSignUpParams) {
     const homeserverService = this.getHomeserverService();
     const data = await homeserverService.signup(keypair, signupToken);
     if (data) this.saveAuthenticatedData(data);
   }
 
-  static async loginWithMnemonic({ mnemonic }: TLoginWithMnemonicParams) {
+  static async loginWithMnemonic({ mnemonic }: AuthTypes.TLoginWithMnemonicParams) {
     const homeserverService = this.getHomeserverService();
     const keypair = Libs.Identity.pubkyKeypairFromMnemonic(mnemonic);
     const data = await homeserverService.authenticateKeypair(keypair);
     if (data) this.saveAuthenticatedData(data);
   }
 
-  static async loginWithEncryptedFile({ encryptedFile, password }: TLoginWithEncryptedFileParams) {
+  static async loginWithEncryptedFile({ encryptedFile, password }: AuthTypes.TLoginWithEncryptedFileParams) {
     const homeserverService = this.getHomeserverService();
     const keypair = await Libs.Identity.decryptRecoveryFile(encryptedFile, password);
     const data = await homeserverService.authenticateKeypair(keypair);
     if (data) this.saveAuthenticatedData(data);
   }
 
-  static async loginWithAuthUrl({ keypair }: TLoginWithAuthUrlParams) {
+  static async loginWithAuthUrl({ keypair }: AuthTypes.TLoginWithAuthUrlParams) {
     if (keypair) {
       const profileStore = Core.useProfileStore.getState();
       const onboardingStore = Core.useOnboardingStore.getState();
