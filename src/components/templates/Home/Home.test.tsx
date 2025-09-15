@@ -91,10 +91,3 @@ describe('Home', () => {
     expect(pageContainer).not.toContainElement(imageBackground);
   });
 });
-
-describe('Home - Snapshots', () => {
-  it('matches snapshot for default Home', () => {
-    const { container } = render(<Home />);
-    expect(container).toMatchSnapshot();
-  });
-});

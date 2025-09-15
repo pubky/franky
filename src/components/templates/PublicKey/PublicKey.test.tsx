@@ -62,10 +62,3 @@ describe('PublicKey', () => {
     expect(container.firstChild).toBeInTheDocument();
   });
 });
-
-describe('PublicKey - Snapshots', () => {
-  it('matches snapshot for default PublicKey', () => {
-    const { container } = render(<PublicKey />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-});

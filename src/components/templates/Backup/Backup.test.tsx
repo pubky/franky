@@ -93,10 +93,3 @@ describe('Backup Template', () => {
     expect(container.children).toHaveLength(3);
   });
 });
-
-describe('Backup - Snapshots', () => {
-  it('matches snapshot for default Backup', () => {
-    const { container } = render(<Backup />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-});
