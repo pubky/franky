@@ -16,29 +16,28 @@ describe('PageHeader - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<PageHeader>Default header</PageHeader>);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(
-      <PageHeader className="custom-header">Custom header</PageHeader>,
-    );
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<PageHeader className="custom-header">Custom header</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different children types', () => {
-    const { container: simpleContainer } = render(<PageHeader>Simple content</PageHeader>);
-    expect(simpleContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with simple content', () => {
+    const { container } = render(<PageHeader>Simple content</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: complexContainer } = render(
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
       <PageHeader>
         <h1>Page Title</h1>
         <p>Page Subtitle</p>
       </PageHeader>,
     );
-    expect(complexContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: nestedContainer } = render(
+  it('matches snapshot with nested children', () => {
+    const { container } = render(
       <PageHeader>
         <div>
           <span>
@@ -50,16 +49,16 @@ describe('PageHeader - Snapshots', () => {
         </div>
       </PageHeader>,
     );
-    expect(nestedContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for additional props', () => {
-    const { container: withIdContainer } = render(<PageHeader id="header-id">Header with ID</PageHeader>);
-    expect(withIdContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<PageHeader id="header-id">Header with ID</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withDataTestIdContainer } = render(
-      <PageHeader data-testid="page-header">Header with test ID</PageHeader>,
-    );
-    expect(withDataTestIdContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<PageHeader data-testid="page-header">Header with test ID</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

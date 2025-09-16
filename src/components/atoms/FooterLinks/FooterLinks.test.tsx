@@ -33,36 +33,37 @@ describe('FooterLinks - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<FooterLinks>Default footer</FooterLinks>);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customContainer } = render(<FooterLinks className="custom-footer">Custom footer</FooterLinks>);
-    expect(customContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<FooterLinks className="custom-footer">Custom footer</FooterLinks>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different children types', () => {
-    const { container: textContainer } = render(<FooterLinks>Simple text</FooterLinks>);
-    expect(textContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with simple text', () => {
+    const { container } = render(<FooterLinks>Simple text</FooterLinks>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: complexContainer } = render(
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
       <FooterLinks>
         <span>Copyright 2024</span> | <a href="/privacy">Privacy</a>
       </FooterLinks>,
     );
-    expect(complexContainer.firstChild).toMatchSnapshot();
-
-    const { container: emptyContainer } = render(<FooterLinks />);
-    expect(emptyContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for additional props', () => {
-    const { container: withIdContainer } = render(<FooterLinks id="footer-id">Footer with ID</FooterLinks>);
-    expect(withIdContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with empty children', () => {
+    const { container } = render(<FooterLinks />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withDataTestIdContainer } = render(
-      <FooterLinks data-testid="custom-footer-links">Footer with test ID</FooterLinks>,
-    );
-    expect(withDataTestIdContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<FooterLinks id="footer-id">Footer with ID</FooterLinks>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<FooterLinks data-testid="custom-footer-links">Footer with test ID</FooterLinks>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

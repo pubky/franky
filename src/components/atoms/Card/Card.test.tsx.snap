@@ -1,61 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Card - Snapshots > matches snapshot with default props 1`] = `
-<div
-  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
-  data-slot="card"
-  data-testid="card"
->
-  Card content
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for card subcomponents 1`] = `
-<div
-  class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
-  data-slot="card-header"
->
-  Header Content
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for card subcomponents 2`] = `
-<div
-  class="leading-none font-semibold"
-  data-slot="card-title"
->
-  Card Title
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for card subcomponents 3`] = `
-<div
-  class="text-muted-foreground text-sm"
-  data-slot="card-description"
->
-  Card Description
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for card subcomponents 4`] = `
-<div
-  class="px-6"
-  data-slot="card-content"
->
-  Card Content
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for card subcomponents 5`] = `
-<div
-  class="flex items-center px-6 [.border-t]:pt-6"
-  data-slot="card-footer"
->
-  Card Footer
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for card subcomponents 6`] = `
+exports[`Card - Snapshots > matches snapshot for CardAction 1`] = `
 <div
   class="col-start-2 row-span-2 row-start-1 self-start justify-self-end"
   data-slot="card-action"
@@ -64,7 +9,52 @@ exports[`Card - Snapshots > matches snapshots for card subcomponents 6`] = `
 </div>
 `;
 
-exports[`Card - Snapshots > matches snapshots for complete card structure 1`] = `
+exports[`Card - Snapshots > matches snapshot for CardContent 1`] = `
+<div
+  class="px-6"
+  data-slot="card-content"
+>
+  Card Content
+</div>
+`;
+
+exports[`Card - Snapshots > matches snapshot for CardDescription 1`] = `
+<div
+  class="text-muted-foreground text-sm"
+  data-slot="card-description"
+>
+  Card Description
+</div>
+`;
+
+exports[`Card - Snapshots > matches snapshot for CardFooter 1`] = `
+<div
+  class="flex items-center px-6 [.border-t]:pt-6"
+  data-slot="card-footer"
+>
+  Card Footer
+</div>
+`;
+
+exports[`Card - Snapshots > matches snapshot for CardHeader 1`] = `
+<div
+  class="@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6"
+  data-slot="card-header"
+>
+  Header Content
+</div>
+`;
+
+exports[`Card - Snapshots > matches snapshot for CardTitle 1`] = `
+<div
+  class="leading-none font-semibold"
+  data-slot="card-title"
+>
+  Card Title
+</div>
+`;
+
+exports[`Card - Snapshots > matches snapshot for complete card structure 1`] = `
 <div
   class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
   data-slot="card"
@@ -108,7 +98,7 @@ exports[`Card - Snapshots > matches snapshots for complete card structure 1`] = 
 </div>
 `;
 
-exports[`Card - Snapshots > matches snapshots for complete card structure 2`] = `
+exports[`Card - Snapshots > matches snapshot for minimal card structure 1`] = `
 <div
   class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
   data-slot="card"
@@ -123,22 +113,22 @@ exports[`Card - Snapshots > matches snapshots for complete card structure 2`] = 
 </div>
 `;
 
-exports[`Card - Snapshots > matches snapshots for different configurations 1`] = `
-<div
-  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
-  data-slot="card"
-  data-testid="card"
->
-  Default Card
-</div>
-`;
-
-exports[`Card - Snapshots > matches snapshots for different configurations 2`] = `
+exports[`Card - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm custom-card"
   data-slot="card"
   data-testid="card"
 >
   Custom Card
+</div>
+`;
+
+exports[`Card - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
+  data-slot="card"
+  data-testid="card"
+>
+  Card content
 </div>
 `;

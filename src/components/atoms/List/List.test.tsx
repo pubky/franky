@@ -21,92 +21,104 @@ describe('List - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different HTML elements', () => {
-    const { container: ulContainer } = render(
+  it('matches snapshot for ul element', () => {
+    const { container } = render(
       <List as="ul">
         <li>Unordered item</li>
       </List>,
     );
-    expect(ulContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: olContainer } = render(
+  it('matches snapshot for ol element', () => {
+    const { container } = render(
       <List as="ol">
         <li>Ordered item</li>
       </List>,
     );
-    expect(olContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different variants', () => {
-    const { container: defaultContainer } = render(
+  it('matches snapshot for default variant', () => {
+    const { container } = render(
       <List variant="default">
         <li>Default item</li>
       </List>,
     );
-    expect(defaultContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: decimalContainer } = render(
+  it('matches snapshot for decimal variant', () => {
+    const { container } = render(
       <List variant="decimal">
         <li>Decimal item</li>
       </List>,
     );
-    expect(decimalContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: noneContainer } = render(
+  it('matches snapshot for none variant', () => {
+    const { container } = render(
       <List variant="none">
         <li>None item</li>
       </List>,
     );
-    expect(noneContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: customClassContainer } = render(
+  it('matches snapshot with custom className', () => {
+    const { container } = render(
       <List className="custom-list-class">
         <li>Custom class item</li>
       </List>,
     );
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: customTestIdContainer } = render(
+  it('matches snapshot with custom data-testid', () => {
+    const { container } = render(
       <List data-testid="custom-list">
         <li>Custom test ID item</li>
       </List>,
     );
-    expect(customTestIdContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different children configurations', () => {
-    const { container: singleItemContainer } = render(
+  it('matches snapshot with single item', () => {
+    const { container } = render(
       <List>
         <li>Single item</li>
       </List>,
     );
-    expect(singleItemContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: multipleItemsContainer } = render(
+  it('matches snapshot with multiple items', () => {
+    const { container } = render(
       <List>
         <li>First item</li>
         <li>Second item</li>
         <li>Third item</li>
       </List>,
     );
-    expect(multipleItemsContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for additional props', () => {
-    const { container: withIdContainer } = render(
+  it('matches snapshot with id prop', () => {
+    const { container } = render(
       <List id="test-list">
         <li>Item with ID</li>
       </List>,
     );
-    expect(withIdContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withAriaLabelContainer } = render(
+  it('matches snapshot with aria-label prop', () => {
+    const { container } = render(
       <List aria-label="Test list">
         <li>Item with aria-label</li>
       </List>,
     );
-    expect(withAriaLabelContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -16,30 +16,38 @@ describe('Badge - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for all variants', () => {
-    const { container: defaultContainer } = render(<Badge variant="default">Default</Badge>);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: secondaryContainer } = render(<Badge variant="secondary">Secondary</Badge>);
-    expect(secondaryContainer.firstChild).toMatchSnapshot();
-
-    const { container: destructiveContainer } = render(<Badge variant="destructive">Destructive</Badge>);
-    expect(destructiveContainer.firstChild).toMatchSnapshot();
-
-    const { container: outlineContainer } = render(<Badge variant="outline">Outline</Badge>);
-    expect(outlineContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for default variant', () => {
+    const { container } = render(<Badge variant="default">Default</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: customContainer } = render(<Badge className="custom-badge">Custom</Badge>);
-    expect(customContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for secondary variant', () => {
+    const { container } = render(<Badge variant="secondary">Secondary</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: complexContainer } = render(
+  it('matches snapshot for destructive variant', () => {
+    const { container } = render(<Badge variant="destructive">Destructive</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for outline variant', () => {
+    const { container } = render(<Badge variant="outline">Outline</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Badge className="custom-badge">Custom</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
       <Badge>
         <span>Complex Content</span>
       </Badge>,
     );
-    expect(complexContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for asChild prop', () => {

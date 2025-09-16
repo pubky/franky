@@ -31,36 +31,43 @@ describe('Card - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<Card>Default Card</Card>);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customContainer } = render(<Card className="custom-card">Custom Card</Card>);
-    expect(customContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Card className="custom-card">Custom Card</Card>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for card subcomponents', () => {
-    const { container: headerContainer } = render(<CardHeader>Header Content</CardHeader>);
-    expect(headerContainer.firstChild).toMatchSnapshot();
-
-    const { container: titleContainer } = render(<CardTitle>Card Title</CardTitle>);
-    expect(titleContainer.firstChild).toMatchSnapshot();
-
-    const { container: descriptionContainer } = render(<CardDescription>Card Description</CardDescription>);
-    expect(descriptionContainer.firstChild).toMatchSnapshot();
-
-    const { container: contentContainer } = render(<CardContent>Card Content</CardContent>);
-    expect(contentContainer.firstChild).toMatchSnapshot();
-
-    const { container: footerContainer } = render(<CardFooter>Card Footer</CardFooter>);
-    expect(footerContainer.firstChild).toMatchSnapshot();
-
-    const { container: actionContainer } = render(<CardAction>Action</CardAction>);
-    expect(actionContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for CardHeader', () => {
+    const { container } = render(<CardHeader>Header Content</CardHeader>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for complete card structure', () => {
-    const { container: completeContainer } = render(
+  it('matches snapshot for CardTitle', () => {
+    const { container } = render(<CardTitle>Card Title</CardTitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for CardDescription', () => {
+    const { container } = render(<CardDescription>Card Description</CardDescription>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for CardContent', () => {
+    const { container } = render(<CardContent>Card Content</CardContent>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for CardFooter', () => {
+    const { container } = render(<CardFooter>Card Footer</CardFooter>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for CardAction', () => {
+    const { container } = render(<CardAction>Action</CardAction>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for complete card structure', () => {
+    const { container } = render(
       <Card>
         <CardHeader>
           <CardTitle>Card Title</CardTitle>
@@ -71,13 +78,15 @@ describe('Card - Snapshots', () => {
         <CardFooter>Card Footer</CardFooter>
       </Card>,
     );
-    expect(completeContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: minimalContainer } = render(
+  it('matches snapshot for minimal card structure', () => {
+    const { container } = render(
       <Card>
         <CardContent>Minimal Content</CardContent>
       </Card>,
     );
-    expect(minimalContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

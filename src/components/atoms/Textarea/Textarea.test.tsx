@@ -41,50 +41,63 @@ describe('Textarea - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<Textarea />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(<Textarea className="custom-textarea" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
-
-    const { container: placeholderContainer } = render(<Textarea placeholder="Enter text" />);
-    expect(placeholderContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Textarea className="custom-textarea" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different states', () => {
-    const { container: disabledContainer } = render(<Textarea disabled />);
-    expect(disabledContainer.firstChild).toMatchSnapshot();
-
-    const { container: invalidContainer } = render(<Textarea aria-invalid />);
-    expect(invalidContainer.firstChild).toMatchSnapshot();
-
-    const { container: readonlyContainer } = render(<Textarea readOnly />);
-    expect(readonlyContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with placeholder', () => {
+    const { container } = render(<Textarea placeholder="Enter text" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different props', () => {
-    const { container: withValueContainer } = render(<Textarea value="Initial value" onChange={() => {}} />);
-    expect(withValueContainer.firstChild).toMatchSnapshot();
-
-    const { container: withDefaultValueContainer } = render(<Textarea defaultValue="Default text" />);
-    expect(withDefaultValueContainer.firstChild).toMatchSnapshot();
-
-    const { container: withRowsContainer } = render(<Textarea rows={5} />);
-    expect(withRowsContainer.firstChild).toMatchSnapshot();
-
-    const { container: withResizeContainer } = render(<Textarea className="resize-none" />);
-    expect(withResizeContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for disabled state', () => {
+    const { container } = render(<Textarea disabled />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for additional props', () => {
-    const { container: withIdContainer } = render(<Textarea id="textarea-id" />);
-    expect(withIdContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for invalid state', () => {
+    const { container } = render(<Textarea aria-invalid />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withDataTestIdContainer } = render(<Textarea data-testid="custom-textarea" />);
-    expect(withDataTestIdContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for readOnly state', () => {
+    const { container } = render(<Textarea readOnly />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withNameContainer } = render(<Textarea name="textarea-name" />);
-    expect(withNameContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with value prop', () => {
+    const { container } = render(<Textarea value="Initial value" onChange={() => {}} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with defaultValue prop', () => {
+    const { container } = render(<Textarea defaultValue="Default text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom rows', () => {
+    const { container } = render(<Textarea rows={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with resize-none className', () => {
+    const { container } = render(<Textarea className="resize-none" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<Textarea id="textarea-id" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<Textarea data-testid="custom-textarea" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with name prop', () => {
+    const { container } = render(<Textarea name="textarea-name" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

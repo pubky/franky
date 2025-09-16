@@ -62,37 +62,44 @@ describe('Input - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<Input />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customContainer } = render(<Input className="custom-input" />);
-    expect(customContainer.firstChild).toMatchSnapshot();
-
-    const { container: placeholderContainer } = render(<Input placeholder="Enter text" />);
-    expect(placeholderContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Input className="custom-input" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different input types', () => {
-    const { container: textContainer } = render(<Input type="text" />);
-    expect(textContainer.firstChild).toMatchSnapshot();
-
-    const { container: emailContainer } = render(<Input type="email" />);
-    expect(emailContainer.firstChild).toMatchSnapshot();
-
-    const { container: passwordContainer } = render(<Input type="password" />);
-    expect(passwordContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with placeholder', () => {
+    const { container } = render(<Input placeholder="Enter text" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different states', () => {
-    const { container: disabledContainer } = render(<Input disabled />);
-    expect(disabledContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for text type', () => {
+    const { container } = render(<Input type="text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: requiredContainer } = render(<Input required />);
-    expect(requiredContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for email type', () => {
+    const { container } = render(<Input type="email" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: readOnlyContainer } = render(<Input readOnly />);
-    expect(readOnlyContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for password type', () => {
+    const { container } = render(<Input type="password" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for disabled state', () => {
+    const { container } = render(<Input disabled />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for required state', () => {
+    const { container } = render(<Input required />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for readOnly state', () => {
+    const { container } = render(<Input readOnly />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshots for standard input attributes', () => {

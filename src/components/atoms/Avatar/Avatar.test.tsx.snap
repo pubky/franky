@@ -1,13 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Avatar - Snapshots > matches snapshot with default props 1`] = `
-<span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
-  data-slot="avatar"
-/>
-`;
-
-exports[`Avatar - Snapshots > matches snapshots for different children configurations 1`] = `
+exports[`Avatar - Snapshots > matches snapshot with AvatarFallback only 1`] = `
 <span
   class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
   data-slot="avatar"
@@ -21,7 +14,7 @@ exports[`Avatar - Snapshots > matches snapshots for different children configura
 </span>
 `;
 
-exports[`Avatar - Snapshots > matches snapshots for different children configurations 2`] = `
+exports[`Avatar - Snapshots > matches snapshot with AvatarImage and AvatarFallback 1`] = `
 <span
   class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
   data-slot="avatar"
@@ -35,7 +28,7 @@ exports[`Avatar - Snapshots > matches snapshots for different children configura
 </span>
 `;
 
-exports[`Avatar - Snapshots > matches snapshots for different children configurations 3`] = `
+exports[`Avatar - Snapshots > matches snapshot with custom AvatarFallback className 1`] = `
 <span
   class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
   data-slot="avatar"
@@ -49,24 +42,24 @@ exports[`Avatar - Snapshots > matches snapshots for different children configura
 </span>
 `;
 
-exports[`Avatar - Snapshots > matches snapshots for different configurations 1`] = `
-<span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
-  data-slot="avatar"
-/>
-`;
-
-exports[`Avatar - Snapshots > matches snapshots for different configurations 2`] = `
+exports[`Avatar - Snapshots > matches snapshot with custom className 1`] = `
 <span
   class="relative flex size-8 shrink-0 overflow-hidden rounded-full custom-avatar"
   data-slot="avatar"
 />
 `;
 
-exports[`Avatar - Snapshots > matches snapshots for different configurations 3`] = `
+exports[`Avatar - Snapshots > matches snapshot with custom data attribute 1`] = `
 <span
   class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
   data-custom="custom-avatar"
+  data-slot="avatar"
+/>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with default props 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
   data-slot="avatar"
 />
 `;

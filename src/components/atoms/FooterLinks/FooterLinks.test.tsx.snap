@@ -1,43 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FooterLinks - Snapshots > matches snapshot with default props 1`] = `
-<p
-  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
-  data-testid="typography"
->
-  Footer text
-</p>
-`;
-
-exports[`FooterLinks - Snapshots > matches snapshots for additional props 1`] = `
-<p
-  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
-  data-testid="typography"
-  id="footer-id"
->
-  Footer with ID
-</p>
-`;
-
-exports[`FooterLinks - Snapshots > matches snapshots for additional props 2`] = `
-<p
-  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
-  data-testid="custom-footer-links"
->
-  Footer with test ID
-</p>
-`;
-
-exports[`FooterLinks - Snapshots > matches snapshots for different children types 1`] = `
-<p
-  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
-  data-testid="typography"
->
-  Simple text
-</p>
-`;
-
-exports[`FooterLinks - Snapshots > matches snapshots for different children types 2`] = `
+exports[`FooterLinks - Snapshots > matches snapshot with complex children 1`] = `
 <p
   class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
   data-testid="typography"
@@ -54,27 +17,55 @@ exports[`FooterLinks - Snapshots > matches snapshots for different children type
 </p>
 `;
 
-exports[`FooterLinks - Snapshots > matches snapshots for different children types 3`] = `
+exports[`FooterLinks - Snapshots > matches snapshot with custom className 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light custom-footer"
+  data-testid="typography"
+>
+  Custom footer
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshot with data-testid prop 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="custom-footer-links"
+>
+  Footer with test ID
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshot with default props 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+>
+  Footer text
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshot with empty children 1`] = `
 <p
   class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
   data-testid="typography"
 />
 `;
 
-exports[`FooterLinks - Snapshots > matches snapshots for different configurations 1`] = `
+exports[`FooterLinks - Snapshots > matches snapshot with id prop 1`] = `
+<p
+  class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
+  data-testid="typography"
+  id="footer-id"
+>
+  Footer with ID
+</p>
+`;
+
+exports[`FooterLinks - Snapshots > matches snapshot with simple text 1`] = `
 <p
   class="text-muted-foreground opacity-80 font-medium text-sm leading-light"
   data-testid="typography"
 >
-  Default footer
-</p>
-`;
-
-exports[`FooterLinks - Snapshots > matches snapshots for different configurations 2`] = `
-<p
-  class="text-muted-foreground opacity-80 font-medium text-sm leading-light custom-footer"
-  data-testid="typography"
->
-  Custom footer
+  Simple text
 </p>
 `;

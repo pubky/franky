@@ -16,19 +16,23 @@ describe('Label - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: customContainer } = render(<Label className="custom-label">Custom Label</Label>);
-    expect(customContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Label className="custom-label">Custom Label</Label>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: formContainer } = render(<Label htmlFor="test-input">Form Label</Label>);
-    expect(formContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with htmlFor prop', () => {
+    const { container } = render(<Label htmlFor="test-input">Form Label</Label>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: complexContainer } = render(
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
       <Label>
         <span>Complex Label</span>
       </Label>,
     );
-    expect(complexContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for form association', () => {

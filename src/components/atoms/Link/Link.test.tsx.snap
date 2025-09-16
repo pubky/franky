@@ -1,39 +1,94 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Link - Snapshots > matches snapshot with default props 1`] = `
+exports[`Link - Snapshots > matches snapshot for HTTP link 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
 >
   <span>
-    Default Link
+    HTTP Link
   </span>
 </a>
 `;
 
-exports[`Link - Snapshots > matches snapshots for combined props 1`] = `
-<a
-  class="custom-class"
-  href="https://example.com"
->
-  <span>
-    Combined Props Link
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different children types 1`] = `
+exports[`Link - Snapshots > matches snapshot for default size 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
 >
   <span>
-    Text Link
+    Default Size
   </span>
 </a>
 `;
 
-exports[`Link - Snapshots > matches snapshots for different children types 2`] = `
+exports[`Link - Snapshots > matches snapshot for default variant 1`] = `
+<a
+  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+  href="https://example.com"
+>
+  <span>
+    Default Variant
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot for email link 1`] = `
+<a
+  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+  href="mailto:test@example.com"
+>
+  <span>
+    Email Link
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot for extra large size 1`] = `
+<a
+  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-xl"
+  href="https://example.com"
+>
+  <span>
+    Extra Large Size
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot for large size 1`] = `
+<a
+  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-lg"
+  href="https://example.com"
+>
+  <span>
+    Large Size
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot for muted variant 1`] = `
+<a
+  class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
+  href="https://example.com"
+>
+  <span>
+    Muted Variant
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot for phone link 1`] = `
+<a
+  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+  href="tel:+1234567890"
+>
+  <span>
+    Phone Link
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot with SVG children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
@@ -50,7 +105,29 @@ exports[`Link - Snapshots > matches snapshots for different children types 2`] =
 </a>
 `;
 
-exports[`Link - Snapshots > matches snapshots for different children types 3`] = `
+exports[`Link - Snapshots > matches snapshot with combined props 1`] = `
+<a
+  class="custom-class"
+  href="https://example.com"
+>
+  <span>
+    Combined Props Link
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot with default props 1`] = `
+<a
+  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+  href="https://example.com"
+>
+  <span>
+    Default Link
+  </span>
+</a>
+`;
+
+exports[`Link - Snapshots > matches snapshot with image children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
@@ -62,90 +139,13 @@ exports[`Link - Snapshots > matches snapshots for different children types 3`] =
 </a>
 `;
 
-exports[`Link - Snapshots > matches snapshots for different href types 1`] = `
+exports[`Link - Snapshots > matches snapshot with text children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
 >
   <span>
-    HTTP Link
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different href types 2`] = `
-<a
-  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-  href="mailto:test@example.com"
->
-  <span>
-    Email Link
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different href types 3`] = `
-<a
-  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-  href="tel:+1234567890"
->
-  <span>
-    Phone Link
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different sizes 1`] = `
-<a
-  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-  href="https://example.com"
->
-  <span>
-    Default Size
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different sizes 2`] = `
-<a
-  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-lg"
-  href="https://example.com"
->
-  <span>
-    Large Size
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different sizes 3`] = `
-<a
-  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-xl"
-  href="https://example.com"
->
-  <span>
-    Extra Large Size
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different variants 1`] = `
-<a
-  class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-  href="https://example.com"
->
-  <span>
-    Default Variant
-  </span>
-</a>
-`;
-
-exports[`Link - Snapshots > matches snapshots for different variants 2`] = `
-<a
-  class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
-  href="https://example.com"
->
-  <span>
-    Muted Variant
+    Text Link
   </span>
 </a>
 `;

@@ -22,38 +22,41 @@ describe('Avatar - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<Avatar />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customContainer } = render(<Avatar className="custom-avatar" />);
-    expect(customContainer.firstChild).toMatchSnapshot();
-
-    const { container: customFallbackContainer } = render(<Avatar data-custom="custom-avatar"></Avatar>);
-    expect(customFallbackContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Avatar className="custom-avatar" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different children configurations', () => {
-    const { container: fallbackContainer } = render(
+  it('matches snapshot with custom data attribute', () => {
+    const { container } = render(<Avatar data-custom="custom-avatar"></Avatar>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with AvatarFallback only', () => {
+    const { container } = render(
       <Avatar>
         <AvatarFallback>JD</AvatarFallback>
       </Avatar>,
     );
-    expect(fallbackContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: imageFallbackContainer } = render(
+  it('matches snapshot with AvatarImage and AvatarFallback', () => {
+    const { container } = render(
       <Avatar>
         <AvatarImage src="/test.jpg" alt="Test avatar" />
         <AvatarFallback>JD</AvatarFallback>
       </Avatar>,
     );
-    expect(imageFallbackContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: customFallbackContainer } = render(
+  it('matches snapshot with custom AvatarFallback className', () => {
+    const { container } = render(
       <Avatar>
         <AvatarFallback className="custom-fallback">AB</AvatarFallback>
       </Avatar>,
     );
-    expect(customFallbackContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

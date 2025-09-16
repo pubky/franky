@@ -1,5 +1,140 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Container - Snapshots > matches snapshot for article element 1`] = `
+<article
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Article Container
+</article>
+`;
+
+exports[`Container - Snapshots > matches snapshot for block display 1`] = `
+<div
+  class="mx-auto w-full flex-col block"
+  data-testid="container"
+>
+  Block Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for container size 1`] = `
+<div
+  class="mx-auto w-full flex-col flex container"
+  data-testid="container"
+>
+  Container Size
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for default size 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Default Size
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for div element 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Div Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for extra large size 1`] = `
+<div
+  class="mx-auto w-full flex-col flex max-w-screen-xl"
+  data-testid="container"
+>
+  Extra Large Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for flex display 1`] = `
+<div
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Flex Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for footer element 1`] = `
+<footer
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Footer Container
+</footer>
+`;
+
+exports[`Container - Snapshots > matches snapshot for grid display 1`] = `
+<div
+  class="mx-auto w-full flex-col grid"
+  data-testid="container"
+>
+  Grid Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for header element 1`] = `
+<header
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Header Container
+</header>
+`;
+
+exports[`Container - Snapshots > matches snapshot for large size 1`] = `
+<div
+  class="mx-auto w-full flex-col flex max-w-screen-lg"
+  data-testid="container"
+>
+  Large Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for main element 1`] = `
+<main
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Main Container
+</main>
+`;
+
+exports[`Container - Snapshots > matches snapshot for medium size 1`] = `
+<div
+  class="mx-auto w-full flex-col flex max-w-screen-md"
+  data-testid="container"
+>
+  Medium Container
+</div>
+`;
+
+exports[`Container - Snapshots > matches snapshot for section element 1`] = `
+<section
+  class="mx-auto w-full flex-col flex"
+  data-testid="container"
+>
+  Section Container
+</section>
+`;
+
+exports[`Container - Snapshots > matches snapshot for small size 1`] = `
+<div
+  class="mx-auto w-full flex-col flex max-w-screen-sm"
+  data-testid="container"
+>
+  Small Container
+</div>
+`;
+
 exports[`Container - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="mx-auto w-full flex-col flex"
@@ -16,139 +151,4 @@ exports[`Container - Snapshots > matches snapshots for combined props 1`] = `
 >
   Combined Props Container
 </article>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different HTML elements 1`] = `
-<div
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Div Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different HTML elements 2`] = `
-<section
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Section Container
-</section>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different HTML elements 3`] = `
-<main
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Main Container
-</main>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different HTML elements 4`] = `
-<article
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Article Container
-</article>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different HTML elements 5`] = `
-<header
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Header Container
-</header>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different HTML elements 6`] = `
-<footer
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Footer Container
-</footer>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different display modes 1`] = `
-<div
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Flex Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different display modes 2`] = `
-<div
-  class="mx-auto w-full flex-col grid"
-  data-testid="container"
->
-  Grid Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different display modes 3`] = `
-<div
-  class="mx-auto w-full flex-col block"
-  data-testid="container"
->
-  Block Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different sizes 1`] = `
-<div
-  class="mx-auto w-full flex-col flex"
-  data-testid="container"
->
-  Default Size
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different sizes 2`] = `
-<div
-  class="mx-auto w-full flex-col flex max-w-screen-sm"
-  data-testid="container"
->
-  Small Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different sizes 3`] = `
-<div
-  class="mx-auto w-full flex-col flex max-w-screen-md"
-  data-testid="container"
->
-  Medium Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different sizes 4`] = `
-<div
-  class="mx-auto w-full flex-col flex max-w-screen-lg"
-  data-testid="container"
->
-  Large Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different sizes 5`] = `
-<div
-  class="mx-auto w-full flex-col flex max-w-screen-xl"
-  data-testid="container"
->
-  Extra Large Container
-</div>
-`;
-
-exports[`Container - Snapshots > matches snapshots for different sizes 6`] = `
-<div
-  class="mx-auto w-full flex-col flex container"
-  data-testid="container"
->
-  Container Size
-</div>
 `;

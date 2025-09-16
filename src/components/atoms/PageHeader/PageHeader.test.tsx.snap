@@ -1,43 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PageHeader - Snapshots > matches snapshot with default props 1`] = `
-<div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
-  data-testid="container"
->
-  Header content
-</div>
-`;
-
-exports[`PageHeader - Snapshots > matches snapshots for additional props 1`] = `
-<div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
-  data-testid="container"
-  id="header-id"
->
-  Header with ID
-</div>
-`;
-
-exports[`PageHeader - Snapshots > matches snapshots for additional props 2`] = `
-<div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
-  data-testid="page-header"
->
-  Header with test ID
-</div>
-`;
-
-exports[`PageHeader - Snapshots > matches snapshots for different children types 1`] = `
-<div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
-  data-testid="container"
->
-  Simple content
-</div>
-`;
-
-exports[`PageHeader - Snapshots > matches snapshots for different children types 2`] = `
+exports[`PageHeader - Snapshots > matches snapshot with complex children 1`] = `
 <div
   class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
   data-testid="container"
@@ -51,7 +14,44 @@ exports[`PageHeader - Snapshots > matches snapshots for different children types
 </div>
 `;
 
-exports[`PageHeader - Snapshots > matches snapshots for different children types 3`] = `
+exports[`PageHeader - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2 custom-header"
+  data-testid="container"
+>
+  Custom header
+</div>
+`;
+
+exports[`PageHeader - Snapshots > matches snapshot with data-testid prop 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  data-testid="page-header"
+>
+  Header with test ID
+</div>
+`;
+
+exports[`PageHeader - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  data-testid="container"
+>
+  Header content
+</div>
+`;
+
+exports[`PageHeader - Snapshots > matches snapshot with id prop 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  data-testid="container"
+  id="header-id"
+>
+  Header with ID
+</div>
+`;
+
+exports[`PageHeader - Snapshots > matches snapshot with nested children 1`] = `
 <div
   class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
   data-testid="container"
@@ -73,20 +73,11 @@ exports[`PageHeader - Snapshots > matches snapshots for different children types
 </div>
 `;
 
-exports[`PageHeader - Snapshots > matches snapshots for different configurations 1`] = `
+exports[`PageHeader - Snapshots > matches snapshot with simple content 1`] = `
 <div
   class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
   data-testid="container"
 >
-  Default header
-</div>
-`;
-
-exports[`PageHeader - Snapshots > matches snapshots for different configurations 2`] = `
-<div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2 custom-header"
-  data-testid="container"
->
-  Custom header
+  Simple content
 </div>
 `;

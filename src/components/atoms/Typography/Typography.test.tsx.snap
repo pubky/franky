@@ -1,70 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Typography - Snapshots > matches snapshot with default props 1`] = `
-<p
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
->
-  Default text
-</p>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for additional props 1`] = `
-<p
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
-  id="typography-id"
->
-  Typography with ID
-</p>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for additional props 2`] = `
-<p
-  class="text-xl font-semibold text-foreground"
-  data-testid="custom-typography"
->
-  Typography with test ID
-</p>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different HTML elements 1`] = `
-<h1
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
->
-  H1 heading
-</h1>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different HTML elements 2`] = `
-<h2
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
->
-  H2 heading
-</h2>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different HTML elements 3`] = `
-<span
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
->
-  Span text
-</span>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different HTML elements 4`] = `
-<strong
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
->
-  Strong text
-</strong>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different HTML elements 5`] = `
+exports[`Typography - Snapshots > matches snapshot for em element 1`] = `
 <em
   class="text-xl font-semibold text-foreground"
   data-testid="typography"
@@ -73,16 +9,88 @@ exports[`Typography - Snapshots > matches snapshots for different HTML elements 
 </em>
 `;
 
-exports[`Typography - Snapshots > matches snapshots for different children types 1`] = `
+exports[`Typography - Snapshots > matches snapshot for extra large size 1`] = `
+<p
+  class="text-4xl font-bold text-foreground"
+  data-testid="typography"
+>
+  Extra large text
+</p>
+`;
+
+exports[`Typography - Snapshots > matches snapshot for h1 element 1`] = `
+<h1
+  class="text-xl font-semibold text-foreground"
+  data-testid="typography"
+>
+  H1 heading
+</h1>
+`;
+
+exports[`Typography - Snapshots > matches snapshot for h2 element 1`] = `
+<h2
+  class="text-xl font-semibold text-foreground"
+  data-testid="typography"
+>
+  H2 heading
+</h2>
+`;
+
+exports[`Typography - Snapshots > matches snapshot for large size 1`] = `
+<p
+  class="text-2xl font-bold text-foreground"
+  data-testid="typography"
+>
+  Large text
+</p>
+`;
+
+exports[`Typography - Snapshots > matches snapshot for medium size 1`] = `
 <p
   class="text-xl font-semibold text-foreground"
   data-testid="typography"
 >
-  Simple text
+  Medium text
 </p>
 `;
 
-exports[`Typography - Snapshots > matches snapshots for different children types 2`] = `
+exports[`Typography - Snapshots > matches snapshot for small size 1`] = `
+<p
+  class="text-sm font-semibold text-foreground"
+  data-testid="typography"
+>
+  Small text
+</p>
+`;
+
+exports[`Typography - Snapshots > matches snapshot for span element 1`] = `
+<span
+  class="text-xl font-semibold text-foreground"
+  data-testid="typography"
+>
+  Span text
+</span>
+`;
+
+exports[`Typography - Snapshots > matches snapshot for strong element 1`] = `
+<strong
+  class="text-xl font-semibold text-foreground"
+  data-testid="typography"
+>
+  Strong text
+</strong>
+`;
+
+exports[`Typography - Snapshots > matches snapshot with combined props 1`] = `
+<h2
+  class="text-2xl font-bold text-foreground"
+  data-testid="typography"
+>
+  Large heading
+</h2>
+`;
+
+exports[`Typography - Snapshots > matches snapshot with complex children 1`] = `
 <p
   class="text-xl font-semibold text-foreground"
   data-testid="typography"
@@ -98,16 +106,7 @@ exports[`Typography - Snapshots > matches snapshots for different children types
 </p>
 `;
 
-exports[`Typography - Snapshots > matches snapshots for different configurations 1`] = `
-<p
-  class="text-xl font-semibold text-foreground"
-  data-testid="typography"
->
-  Default typography
-</p>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different configurations 2`] = `
+exports[`Typography - Snapshots > matches snapshot with custom className 1`] = `
 <p
   class="text-xl font-semibold text-foreground custom-typography"
   data-testid="typography"
@@ -116,47 +115,30 @@ exports[`Typography - Snapshots > matches snapshots for different configurations
 </p>
 `;
 
-exports[`Typography - Snapshots > matches snapshots for different configurations 3`] = `
-<h2
-  class="text-2xl font-bold text-foreground"
-  data-testid="typography"
->
-  Large heading
-</h2>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different sizes 1`] = `
+exports[`Typography - Snapshots > matches snapshot with data-testid prop 1`] = `
 <p
-  class="text-sm font-semibold text-foreground"
-  data-testid="typography"
+  class="text-xl font-semibold text-foreground"
+  data-testid="custom-typography"
 >
-  Small text
+  Typography with test ID
 </p>
 `;
 
-exports[`Typography - Snapshots > matches snapshots for different sizes 2`] = `
+exports[`Typography - Snapshots > matches snapshot with default props 1`] = `
 <p
   class="text-xl font-semibold text-foreground"
   data-testid="typography"
 >
-  Medium text
+  Default text
 </p>
 `;
 
-exports[`Typography - Snapshots > matches snapshots for different sizes 3`] = `
+exports[`Typography - Snapshots > matches snapshot with id prop 1`] = `
 <p
-  class="text-2xl font-bold text-foreground"
+  class="text-xl font-semibold text-foreground"
   data-testid="typography"
+  id="typography-id"
 >
-  Large text
-</p>
-`;
-
-exports[`Typography - Snapshots > matches snapshots for different sizes 4`] = `
-<p
-  class="text-4xl font-bold text-foreground"
-  data-testid="typography"
->
-  Extra large text
+  Typography with ID
 </p>
 `;

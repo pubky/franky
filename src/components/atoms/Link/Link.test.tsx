@@ -21,99 +21,113 @@ describe('Link - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different variants', () => {
-    const { container: defaultContainer } = render(
+  it('matches snapshot for default variant', () => {
+    const { container } = render(
       <Link href="https://example.com" variant="default">
         <span>Default Variant</span>
       </Link>,
     );
-    expect(defaultContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: mutedContainer } = render(
+  it('matches snapshot for muted variant', () => {
+    const { container } = render(
       <Link href="https://example.com" variant="muted">
         <span>Muted Variant</span>
       </Link>,
     );
-    expect(mutedContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different sizes', () => {
-    const { container: defaultContainer } = render(
+  it('matches snapshot for default size', () => {
+    const { container } = render(
       <Link href="https://example.com" size="default">
         <span>Default Size</span>
       </Link>,
     );
-    expect(defaultContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: lgContainer } = render(
+  it('matches snapshot for large size', () => {
+    const { container } = render(
       <Link href="https://example.com" size="lg">
         <span>Large Size</span>
       </Link>,
     );
-    expect(lgContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: xlContainer } = render(
+  it('matches snapshot for extra large size', () => {
+    const { container } = render(
       <Link href="https://example.com" size="xl">
         <span>Extra Large Size</span>
       </Link>,
     );
-    expect(xlContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different href types', () => {
-    const { container: httpContainer } = render(
+  it('matches snapshot for HTTP link', () => {
+    const { container } = render(
       <Link href="https://example.com">
         <span>HTTP Link</span>
       </Link>,
     );
-    expect(httpContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: mailtoContainer } = render(
+  it('matches snapshot for email link', () => {
+    const { container } = render(
       <Link href="mailto:test@example.com">
         <span>Email Link</span>
       </Link>,
     );
-    expect(mailtoContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: telContainer } = render(
+  it('matches snapshot for phone link', () => {
+    const { container } = render(
       <Link href="tel:+1234567890">
         <span>Phone Link</span>
       </Link>,
     );
-    expect(telContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different children types', () => {
-    const { container: textContainer } = render(
+  it('matches snapshot with text children', () => {
+    const { container } = render(
       <Link href="https://example.com">
         <span>Text Link</span>
       </Link>,
     );
-    expect(textContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: svgContainer } = render(
+  it('matches snapshot with SVG children', () => {
+    const { container } = render(
       <Link href="https://example.com">
         <svg data-testid="svg-icon">
           <circle cx="50" cy="50" r="40" />
         </svg>
       </Link>,
     );
-    expect(svgContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: imgContainer } = render(
+  it('matches snapshot with image children', () => {
+    const { container } = render(
       <Link href="https://example.com">
         <img src="/icon.png" alt="Icon" />
       </Link>,
     );
-    expect(imgContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for combined props', () => {
-    const { container: combinedContainer } = render(
+  it('matches snapshot with combined props', () => {
+    const { container } = render(
       <Link href="https://example.com" variant="muted" size="lg" className="custom-class">
         <span>Combined Props Link</span>
       </Link>,
     );
-    expect(combinedContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

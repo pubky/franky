@@ -1,5 +1,94 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`List - Snapshots > matches snapshot for decimal variant 1`] = `
+<ul
+  class="ml-6 text-muted-foreground text-base font-normal list-decimal"
+  data-testid="list"
+>
+  <li>
+    Decimal item
+  </li>
+</ul>
+`;
+
+exports[`List - Snapshots > matches snapshot for default variant 1`] = `
+<ul
+  class="ml-6 text-muted-foreground text-base font-normal list-disc"
+  data-testid="list"
+>
+  <li>
+    Default item
+  </li>
+</ul>
+`;
+
+exports[`List - Snapshots > matches snapshot for none variant 1`] = `
+<ul
+  class="ml-6 text-muted-foreground text-base font-normal list-none"
+  data-testid="list"
+>
+  <li>
+    None item
+  </li>
+</ul>
+`;
+
+exports[`List - Snapshots > matches snapshot for ol element 1`] = `
+<ol
+  class="ml-6 text-muted-foreground text-base font-normal list-disc"
+  data-testid="list"
+>
+  <li>
+    Ordered item
+  </li>
+</ol>
+`;
+
+exports[`List - Snapshots > matches snapshot for ul element 1`] = `
+<ul
+  class="ml-6 text-muted-foreground text-base font-normal list-disc"
+  data-testid="list"
+>
+  <li>
+    Unordered item
+  </li>
+</ul>
+`;
+
+exports[`List - Snapshots > matches snapshot with aria-label prop 1`] = `
+<ul
+  aria-label="Test list"
+  class="ml-6 text-muted-foreground text-base font-normal list-disc"
+  data-testid="list"
+>
+  <li>
+    Item with aria-label
+  </li>
+</ul>
+`;
+
+exports[`List - Snapshots > matches snapshot with custom className 1`] = `
+<ul
+  class="ml-6 text-muted-foreground text-base font-normal list-disc custom-list-class"
+  data-testid="list"
+>
+  <li>
+    Custom class item
+  </li>
+</ul>
+`;
+
+exports[`List - Snapshots > matches snapshot with custom data-testid 1`] = `
+<ul
+  class="ml-6 text-muted-foreground text-base font-normal list-disc"
+  data-testid="custom-list"
+>
+  <li>
+    Custom test ID item
+  </li>
+</ul>
+`;
+
 exports[`List - Snapshots > matches snapshot with default props 1`] = `
 <ul
   class="ml-6 text-muted-foreground text-base font-normal list-disc"
@@ -14,7 +103,7 @@ exports[`List - Snapshots > matches snapshot with default props 1`] = `
 </ul>
 `;
 
-exports[`List - Snapshots > matches snapshots for additional props 1`] = `
+exports[`List - Snapshots > matches snapshot with id prop 1`] = `
 <ul
   class="ml-6 text-muted-foreground text-base font-normal list-disc"
   data-testid="list"
@@ -26,52 +115,7 @@ exports[`List - Snapshots > matches snapshots for additional props 1`] = `
 </ul>
 `;
 
-exports[`List - Snapshots > matches snapshots for additional props 2`] = `
-<ul
-  aria-label="Test list"
-  class="ml-6 text-muted-foreground text-base font-normal list-disc"
-  data-testid="list"
->
-  <li>
-    Item with aria-label
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different HTML elements 1`] = `
-<ul
-  class="ml-6 text-muted-foreground text-base font-normal list-disc"
-  data-testid="list"
->
-  <li>
-    Unordered item
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different HTML elements 2`] = `
-<ol
-  class="ml-6 text-muted-foreground text-base font-normal list-disc"
-  data-testid="list"
->
-  <li>
-    Ordered item
-  </li>
-</ol>
-`;
-
-exports[`List - Snapshots > matches snapshots for different children configurations 1`] = `
-<ul
-  class="ml-6 text-muted-foreground text-base font-normal list-disc"
-  data-testid="list"
->
-  <li>
-    Single item
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different children configurations 2`] = `
+exports[`List - Snapshots > matches snapshot with multiple items 1`] = `
 <ul
   class="ml-6 text-muted-foreground text-base font-normal list-disc"
   data-testid="list"
@@ -88,57 +132,13 @@ exports[`List - Snapshots > matches snapshots for different children configurati
 </ul>
 `;
 
-exports[`List - Snapshots > matches snapshots for different configurations 1`] = `
-<ul
-  class="ml-6 text-muted-foreground text-base font-normal list-disc custom-list-class"
-  data-testid="list"
->
-  <li>
-    Custom class item
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different configurations 2`] = `
-<ul
-  class="ml-6 text-muted-foreground text-base font-normal list-disc"
-  data-testid="custom-list"
->
-  <li>
-    Custom test ID item
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different variants 1`] = `
+exports[`List - Snapshots > matches snapshot with single item 1`] = `
 <ul
   class="ml-6 text-muted-foreground text-base font-normal list-disc"
   data-testid="list"
 >
   <li>
-    Default item
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different variants 2`] = `
-<ul
-  class="ml-6 text-muted-foreground text-base font-normal list-decimal"
-  data-testid="list"
->
-  <li>
-    Decimal item
-  </li>
-</ul>
-`;
-
-exports[`List - Snapshots > matches snapshots for different variants 3`] = `
-<ul
-  class="ml-6 text-muted-foreground text-base font-normal list-none"
-  data-testid="list"
->
-  <li>
-    None item
+    Single item
   </li>
 </ul>
 `;

@@ -1,32 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PageSubtitle - Snapshots > matches snapshot with default props 1`] = `
-<h2
-  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
->
-  Test subtitle
-</h2>
-`;
-
-exports[`PageSubtitle - Snapshots > matches snapshots for additional props 1`] = `
-<h2
-  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
-  id="subtitle-id"
->
-  Subtitle with ID
-</h2>
-`;
-
-exports[`PageSubtitle - Snapshots > matches snapshots for additional props 2`] = `
-<h2
-  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
-  data-testid="page-subtitle"
->
-  Subtitle with test ID
-</h2>
-`;
-
-exports[`PageSubtitle - Snapshots > matches snapshots for different HTML elements 1`] = `
+exports[`PageSubtitle - Snapshots > matches snapshot for h2 element 1`] = `
 <h2
   class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
 >
@@ -34,7 +8,7 @@ exports[`PageSubtitle - Snapshots > matches snapshots for different HTML element
 </h2>
 `;
 
-exports[`PageSubtitle - Snapshots > matches snapshots for different HTML elements 2`] = `
+exports[`PageSubtitle - Snapshots > matches snapshot for h5 element 1`] = `
 <h5
   class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
 >
@@ -42,7 +16,7 @@ exports[`PageSubtitle - Snapshots > matches snapshots for different HTML element
 </h5>
 `;
 
-exports[`PageSubtitle - Snapshots > matches snapshots for different HTML elements 3`] = `
+exports[`PageSubtitle - Snapshots > matches snapshot for p element 1`] = `
 <p
   class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
 >
@@ -50,15 +24,7 @@ exports[`PageSubtitle - Snapshots > matches snapshots for different HTML element
 </p>
 `;
 
-exports[`PageSubtitle - Snapshots > matches snapshots for different children types 1`] = `
-<h2
-  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
->
-  Simple subtitle
-</h2>
-`;
-
-exports[`PageSubtitle - Snapshots > matches snapshots for different children types 2`] = `
+exports[`PageSubtitle - Snapshots > matches snapshot with complex children 1`] = `
 <h2
   class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
 >
@@ -73,15 +39,7 @@ exports[`PageSubtitle - Snapshots > matches snapshots for different children typ
 </h2>
 `;
 
-exports[`PageSubtitle - Snapshots > matches snapshots for different configurations 1`] = `
-<h2
-  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
->
-  Default subtitle
-</h2>
-`;
-
-exports[`PageSubtitle - Snapshots > matches snapshots for different configurations 2`] = `
+exports[`PageSubtitle - Snapshots > matches snapshot with custom className 1`] = `
 <h2
   class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal custom-subtitle"
 >
@@ -89,7 +47,41 @@ exports[`PageSubtitle - Snapshots > matches snapshots for different configuratio
 </h2>
 `;
 
-exports[`PageSubtitle - Snapshots > matches snapshots for different configurations 3`] = `
+exports[`PageSubtitle - Snapshots > matches snapshot with data-testid prop 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+  data-testid="page-subtitle"
+>
+  Subtitle with test ID
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshot with default props 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  Test subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshot with id prop 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+  id="subtitle-id"
+>
+  Subtitle with ID
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshot with simple content 1`] = `
+<h2
+  class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
+>
+  Simple subtitle
+</h2>
+`;
+
+exports[`PageSubtitle - Snapshots > matches snapshot with title prop 1`] = `
 <h2
   class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
 >
