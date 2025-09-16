@@ -9,7 +9,14 @@ import * as Libs from '@/libs';
 
 export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): OnboardingActions => ({
   reset: () => {
-    set(onboardingInitialState, false, OnboardingActionTypes.RESET);
+    set(
+      (state) => ({
+        ...onboardingInitialState,
+        hasHydrated: state.hasHydrated, // Preserve hydration state during reset
+      }),
+      false,
+      OnboardingActionTypes.RESET,
+    );
   },
 
   setSecretKey: (secretKey: string) => {

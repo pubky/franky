@@ -50,13 +50,14 @@ describe('OnboardingStore', () => {
   });
 
   describe('State Management', () => {
-    it('should clear keys correctly', () => {
+    it('should clear keys correctly while preserving hydration state', () => {
       // Set some state
       useOnboardingStore.setState({
         secretKey: localStorageMock.secretKey,
         publicKey: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
         isBackedUp: true,
+        hasHydrated: true,
       });
 
       // Clear keys
@@ -67,7 +68,28 @@ describe('OnboardingStore', () => {
       expect(state.publicKey).toEqual('');
       expect(state.mnemonic).toEqual('');
       expect(state.isBackedUp).toBe(false);
-      expect(state.hasHydrated).toBe(false);
+      expect(state.hasHydrated).toBe(true); // Should preserve hydration state
+    });
+
+    it('should preserve false hydration state during reset', () => {
+      // Set some state with hasHydrated false
+      useOnboardingStore.setState({
+        secretKey: localStorageMock.secretKey,
+        publicKey: 'test-public-key',
+        mnemonic: 'test mnemonic phrase',
+        isBackedUp: true,
+        hasHydrated: false,
+      });
+
+      // Clear keys
+      useOnboardingStore.getState().reset();
+
+      const state = useOnboardingStore.getState();
+      expect(state.secretKey).toEqual('');
+      expect(state.publicKey).toEqual('');
+      expect(state.mnemonic).toEqual('');
+      expect(state.isBackedUp).toBe(false);
+      expect(state.hasHydrated).toBe(false); // Should preserve hydration state even when false
     });
 
     it('should set hydrated state', () => {

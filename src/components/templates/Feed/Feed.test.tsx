@@ -92,11 +92,17 @@ describe('Feed', () => {
     expect(logoutButton).toHaveAttribute('data-size', 'lg');
   });
 
-  it('calls AuthController.logout when logout button is clicked', () => {
+  it('navigates to logout page when logout button is clicked', async () => {
+    const { useRouter } = await import('next/navigation');
+    const mockPush = vi.fn();
+    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
+
     render(<Feed />);
     const logoutButton = screen.getByText('Logout');
     fireEvent.click(logoutButton);
-    expect(mockLogout).toHaveBeenCalledTimes(1);
+
+    expect(mockPush).toHaveBeenCalledWith('/logout');
+    expect(mockLogout).not.toHaveBeenCalled(); // Should not logout immediately
   });
 
   it('renders container structure correctly', () => {

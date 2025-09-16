@@ -53,15 +53,17 @@ export class AuthController {
 
   static async logout() {
     const profileStore = Core.useProfileStore.getState();
-    const onboardingStore = Core.useOnboardingStore.getState();
     const publicKey = profileStore.currentUserPubky || '';
-    onboardingStore.reset();
-    profileStore.reset();
-    const homeserverService = this.getHomeserverService();
-    await homeserverService.logout(publicKey);
-    Core.useProfileStore.getState().reset();
-    Core.useOnboardingStore.getState().reset();
-    Libs.clearCookies();
+
+    try {
+      const homeserverService = this.getHomeserverService();
+      await homeserverService.logout(publicKey);
+    } finally {
+      // Always clear local state, even if homeserver logout fails
+      Core.useOnboardingStore.getState().reset();
+      Core.useProfileStore.getState().reset();
+      Libs.clearCookies();
+    }
   }
 
   // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file

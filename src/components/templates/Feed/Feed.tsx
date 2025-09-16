@@ -1,14 +1,14 @@
 'use client';
 
-import * as Atoms from '@/atoms';
-import * as Core from '@/core';
 import { useRouter } from 'next/navigation';
+
+import * as Atoms from '@/atoms';
 
 export function Feed() {
   const router = useRouter();
 
   const handleLogout = () => {
-    Core.AuthController.logout();
+    // Just navigate to logout page - logout logic will happen there
     router.push('/logout');
   };
 

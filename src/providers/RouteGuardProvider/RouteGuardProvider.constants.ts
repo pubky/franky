@@ -12,11 +12,12 @@ export const ROUTE_ACCESS_MAP: Hooks.RouteAccessMap = {
       '/onboarding/homeserver',
       '/onboarding/pubky',
       '/onboarding/scan',
+      '/logout',
     ],
     redirectTo: '/',
   },
   [Hooks.AuthStatus.AUTHENTICATED]: {
-    allowedRoutes: ['/feed', '/logout'],
+    allowedRoutes: ['/feed', '/onboarding/profile', '/logout'],
     redirectTo: '/feed',
   },
 };

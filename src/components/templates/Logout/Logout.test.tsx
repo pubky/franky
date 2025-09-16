@@ -1,6 +1,13 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Logout } from './Logout';
+
+// Mock the Core module
+vi.mock('@/core', () => ({
+  AuthController: {
+    logout: vi.fn(),
+  },
+}));
 
 // Mock the atoms and molecules
 vi.mock('@/atoms', () => ({
@@ -17,6 +24,14 @@ vi.mock('@/molecules', () => ({
 }));
 
 describe('Logout', () => {
+  let mockLogout: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    const Core = await import('@/core');
+    mockLogout = Core.AuthController.logout as ReturnType<typeof vi.fn>;
+  });
+
   it('renders without errors', () => {
     render(<Logout />);
     expect(screen.getByTestId('logout-content')).toBeInTheDocument();
@@ -52,5 +67,13 @@ describe('Logout', () => {
     render(<Logout />);
     expect(screen.getByTestId('logout-content')).toBeInTheDocument();
     expect(screen.getByTestId('logout-navigation')).toBeInTheDocument();
+  });
+
+  it('calls AuthController.logout when component mounts', async () => {
+    render(<Logout />);
+
+    await waitFor(() => {
+      expect(mockLogout).toHaveBeenCalledTimes(1);
+    });
   });
 });
