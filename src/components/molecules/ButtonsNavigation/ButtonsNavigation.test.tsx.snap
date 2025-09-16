@@ -1,6 +1,44 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ButtonsNavigation - Snapshots > matches snapshot with default props 1`] = `
+exports[`ButtonsNavigation - Snapshots > matches snapshot with back button disabled 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
+  data-testid="container"
+>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-slot="button"
+    data-testid="button-secondary"
+    data-variant="secondary"
+    disabled=""
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-slot="button"
+    data-testid="button-default"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Continue
+  </button>
+</div>
+`;
+
+exports[`ButtonsNavigation - Snapshots > matches snapshot with back callback only 1`] = `
 <div
   class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
   data-testid="container"
@@ -37,7 +75,46 @@ exports[`ButtonsNavigation - Snapshots > matches snapshot with default props 1`]
 </div>
 `;
 
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different callback configurations 1`] = `
+exports[`ButtonsNavigation - Snapshots > matches snapshot with both buttons disabled 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
+  data-testid="container"
+>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-slot="button"
+    data-testid="button-secondary"
+    data-variant="secondary"
+    disabled=""
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-slot="button"
+    data-testid="button-default"
+    disabled=""
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Continue
+  </button>
+</div>
+`;
+
+exports[`ButtonsNavigation - Snapshots > matches snapshot with both callbacks 1`] = `
 <div
   class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
   data-testid="container"
@@ -74,7 +151,45 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different callbac
 </div>
 `;
 
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different callback configurations 2`] = `
+exports[`ButtonsNavigation - Snapshots > matches snapshot with continue button disabled 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
+  data-testid="container"
+>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-slot="button"
+    data-testid="button-secondary"
+    data-variant="secondary"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-slot="button"
+    data-testid="button-default"
+    disabled=""
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Continue
+  </button>
+</div>
+`;
+
+exports[`ButtonsNavigation - Snapshots > matches snapshot with continue callback only 1`] = `
 <div
   class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
   data-testid="container"
@@ -111,118 +226,7 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different callbac
 </div>
 `;
 
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different callback configurations 3`] = `
-<div
-  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
-  data-testid="container"
->
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-secondary"
-    data-variant="secondary"
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-left-icon"
-    >
-      ArrowLeft
-    </div>
-    Back
-  </button>
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-default"
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-right-icon"
-    >
-      ArrowRight
-    </div>
-    Continue
-  </button>
-</div>
-`;
-
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different configurations 1`] = `
-<div
-  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
-  data-testid="container"
->
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-secondary"
-    data-variant="secondary"
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-left-icon"
-    >
-      ArrowLeft
-    </div>
-    Back
-  </button>
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-default"
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-right-icon"
-    >
-      ArrowRight
-    </div>
-    Continue
-  </button>
-</div>
-`;
-
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different configurations 2`] = `
-<div
-  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
-  data-testid="container"
->
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-secondary"
-    data-variant="secondary"
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-left-icon"
-    >
-      ArrowLeft
-    </div>
-    Go Back
-  </button>
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-default"
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-right-icon"
-    >
-      ArrowRight
-    </div>
-    Next Step
-  </button>
-</div>
-`;
-
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different configurations 3`] = `
+exports[`ButtonsNavigation - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between custom-navigation-class"
   data-testid="container"
@@ -259,7 +263,7 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different configu
 </div>
 `;
 
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different disabled states 1`] = `
+exports[`ButtonsNavigation - Snapshots > matches snapshot with custom text 1`] = `
 <div
   class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
   data-testid="container"
@@ -270,7 +274,6 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different disable
     data-slot="button"
     data-testid="button-secondary"
     data-variant="secondary"
-    disabled=""
   >
     <div
       class="mr-2 h-4 w-4"
@@ -278,7 +281,7 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different disable
     >
       ArrowLeft
     </div>
-    Back
+    Go Back
   </button>
   <button
     class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
@@ -292,12 +295,12 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different disable
     >
       ArrowRight
     </div>
-    Continue
+    Next Step
   </button>
 </div>
 `;
 
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different disabled states 2`] = `
+exports[`ButtonsNavigation - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
   data-testid="container"
@@ -322,46 +325,6 @@ exports[`ButtonsNavigation - Snapshots > matches snapshots for different disable
     data-size="lg"
     data-slot="button"
     data-testid="button-default"
-    disabled=""
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-right-icon"
-    >
-      ArrowRight
-    </div>
-    Continue
-  </button>
-</div>
-`;
-
-exports[`ButtonsNavigation - Snapshots > matches snapshots for different disabled states 3`] = `
-<div
-  class="mx-auto w-full flex-col flex flex-row gap-3 lg:gap-6 justify-between"
-  data-testid="container"
->
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-secondary"
-    data-variant="secondary"
-    disabled=""
-  >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-left-icon"
-    >
-      ArrowLeft
-    </div>
-    Back
-  </button>
-  <button
-    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer bg-brand/20 text-brand border shadow-xs hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full flex-1 md:flex-0 w-full"
-    data-size="lg"
-    data-slot="button"
-    data-testid="button-default"
-    disabled=""
   >
     <div
       class="mr-2 h-4 w-4"

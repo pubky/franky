@@ -294,14 +294,9 @@ describe('Header - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for HeaderTitle with different configurations', () => {
-    const { container: defaultContainer } = render(<HeaderTitle>Default Title</HeaderTitle>);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(
-      <HeaderTitle className="custom-title">Custom Title</HeaderTitle>,
-    );
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderTitle with custom title', () => {
+    const { container } = render(<HeaderTitle currentTitle="Custom Title" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshots for HeaderSignIn', () => {
@@ -309,64 +304,68 @@ describe('Header - Snapshots', () => {
     expect(defaultContainer.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for OnboardingHeader with different configurations', () => {
-    const { container: defaultContainer } = render(<OnboardingHeader currentStep={1} totalSteps={5} />);
+  it('matches snapshots for HeaderSignIn', () => {
+    const { container: defaultContainer } = render(<HeaderSignIn />);
     expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(
-      <OnboardingHeader currentStep={3} totalSteps={5} className="custom-header" />,
-    );
-    expect(customClassContainer.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for SocialLinks with different configurations', () => {
-    const { container: defaultContainer } = render(<SocialLinks />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(<SocialLinks className="custom-social" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for OnboardingHeader with default props', () => {
+    const { container } = render(<HeaderOnboarding currentStep={1} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for ButtonSignIn with different configurations', () => {
-    const { container: defaultContainer } = render(<ButtonSignIn />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(<ButtonSignIn className="custom-signin" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderSocialLinks with default props', () => {
+    const { container } = render(<HeaderSocialLinks />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for HomeHeader with different configurations', () => {
-    const { container: defaultContainer } = render(<HomeHeader />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(<HomeHeader className="custom-home-header" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderSocialLinks with custom className', () => {
+    const { container } = render(<HeaderSocialLinks className="custom-social" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for NavigationButtons with different configurations', () => {
-    const { container: defaultContainer } = render(<NavigationButtons />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderButtonSignIn with default props', () => {
+    const { container } = render(<HeaderButtonSignIn />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withCounterContainer } = render(<NavigationButtons counter={5} />);
-    expect(withCounterContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderButtonSignIn with custom className', () => {
+    const { container } = render(<HeaderButtonSignIn className="custom-signin" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    // check counter badge is not shown when counter is 0
-    const { container: withCounterContainerZero } = render(<NavigationButtons counter={0} />);
-    expect(withCounterContainerZero.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderHome with default props', () => {
+    const { container } = render(<HeaderHome />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    // check counter is '21+' when counter is greater than 21
-    const { container: withCounterContainerHigh } = render(
-      <NavigationButtons counter={25} avatarImage="/avatar.jpg" />,
-    );
-    expect(withCounterContainerHigh.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderNavigationButtons with default props', () => {
+    const { container } = render(<HeaderNavigationButtons />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withAvatarContainer } = render(<NavigationButtons avatarImage="/avatar.jpg" />);
-    expect(withAvatarContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderNavigationButtons with counter', () => {
+    const { container } = render(<HeaderNavigationButtons counter={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withBothContainer } = render(<NavigationButtons counter={15} avatarImage="/avatar.jpg" />);
-    expect(withBothContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderNavigationButtons with counter zero', () => {
+    const { container } = render(<HeaderNavigationButtons counter={0} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: customClassContainer } = render(<NavigationButtons className="custom-nav" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot for HeaderNavigationButtons with high counter and avatar', () => {
+    const { container } = render(<HeaderNavigationButtons counter={25} image="/avatar.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with avatar only', () => {
+    const { container } = render(<HeaderNavigationButtons image="/avatar.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with counter and avatar', () => {
+    const { container } = render(<HeaderNavigationButtons counter={15} image="/avatar.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

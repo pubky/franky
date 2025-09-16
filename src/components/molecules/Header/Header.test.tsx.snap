@@ -1,5 +1,36 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Header - Snapshots > matches snapshot for ButtonSignIn with custom className 1`] = `
+<button
+  class="custom-signin"
+  data-testid="button-secondary"
+  data-variant="secondary"
+>
+  <div
+    class="mr-2 h-4 w-4"
+    data-testid="login-icon"
+  >
+    LogIn
+  </div>
+  Sign in
+</button>
+`;
+
+exports[`Header - Snapshots > matches snapshot for ButtonSignIn with default props 1`] = `
+<button
+  data-testid="button-secondary"
+  data-variant="secondary"
+>
+  <div
+    class="mr-2 h-4 w-4"
+    data-testid="login-icon"
+  >
+    LogIn
+  </div>
+  Sign in
+</button>
+`;
+
 exports[`Header - Snapshots > matches snapshot for HeaderContainer with default props 1`] = `
 <header
   class="py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
@@ -17,38 +48,7 @@ exports[`Header - Snapshots > matches snapshot for HeaderContainer with default 
 </header>
 `;
 
-exports[`Header - Snapshots > matches snapshots for ButtonSignIn with different configurations 1`] = `
-<button
-  data-testid="button-secondary"
-  data-variant="secondary"
->
-  <div
-    class="mr-2 h-4 w-4"
-    data-testid="login-icon"
-  >
-    LogIn
-  </div>
-  Sign in
-</button>
-`;
-
-exports[`Header - Snapshots > matches snapshots for ButtonSignIn with different configurations 2`] = `
-<button
-  class="custom-signin"
-  data-testid="button-secondary"
-  data-variant="secondary"
->
-  <div
-    class="mr-2 h-4 w-4"
-    data-testid="login-icon"
-  >
-    LogIn
-  </div>
-  Sign in
-</button>
-`;
-
-exports[`Header - Snapshots > matches snapshots for HeaderTitle with different configurations 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderTitle with custom className 1`] = `
 <div
   class="flex-1 hidden md:flex"
   data-testid="container"
@@ -61,7 +61,7 @@ exports[`Header - Snapshots > matches snapshots for HeaderTitle with different c
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for HeaderTitle with different configurations 2`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderTitle with default props 1`] = `
 <div
   class="flex-1 hidden md:flex"
   data-testid="container"
@@ -74,7 +74,7 @@ exports[`Header - Snapshots > matches snapshots for HeaderTitle with different c
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for HomeHeader with different configurations 1`] = `
+exports[`Header - Snapshots > matches snapshot for HomeHeader with custom className 1`] = `
 <div
   class="flex-1 flex-row items-center justify-end"
   data-testid="container"
@@ -92,7 +92,7 @@ exports[`Header - Snapshots > matches snapshots for HomeHeader with different co
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for HomeHeader with different configurations 2`] = `
+exports[`Header - Snapshots > matches snapshot for HomeHeader with default props 1`] = `
 <div
   class="flex-1 flex-row items-center justify-end"
   data-testid="container"
@@ -110,7 +110,7 @@ exports[`Header - Snapshots > matches snapshots for HomeHeader with different co
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 1`] = `
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with avatar only 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -229,7 +229,7 @@ exports[`Header - Snapshots > matches snapshots for NavigationButtons with diffe
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 2`] = `
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with counter 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -361,377 +361,7 @@ exports[`Header - Snapshots > matches snapshots for NavigationButtons with diffe
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 3`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 4`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-    <div
-      class="absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
-      data-testid="badge"
-      data-variant="secondary"
-    >
-      <div
-        class="text-primary-foreground text-xs"
-        data-size="sm"
-        data-testid="typography"
-      >
-        21+
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 5`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 6`] = `
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with counter and avatar 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -863,7 +493,7 @@ exports[`Header - Snapshots > matches snapshots for NavigationButtons with diffe
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 7`] = `
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with counter zero 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -982,20 +612,377 @@ exports[`Header - Snapshots > matches snapshots for NavigationButtons with diffe
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for OnboardingHeader with different configurations 1`] = `
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with custom className 1`] = `
 <div
-  data-current="1"
-  data-testid="progress-steps"
-  data-total="5"
+  class="flex flex-row w-auto justify-start items-center gap-3"
+  data-testid="container"
 >
-  Progress 
-  1
-  /
-  5
+  <a
+    data-testid="link"
+    href="/feed"
+  >
+    <button
+      class="w-12 h-12"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </button>
+  </a>
+  <a
+    class="sm:hidden"
+    data-testid="link"
+    href="/search"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/hot"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/bookmarks"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/settings"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </button>
+  </a>
+  <a
+    class="relative"
+    data-testid="link"
+    href="/profile"
+  >
+    <div
+      class="w-12 h-12"
+      data-testid="avatar"
+    >
+      <img
+        alt="avatar"
+        data-testid="avatar-image"
+      />
+      <div
+        data-testid="avatar-fallback"
+      >
+        SN
+      </div>
+    </div>
+  </a>
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for OnboardingHeader with different configurations 2`] = `
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with default props 1`] = `
+<div
+  class="flex flex-row w-auto justify-start items-center gap-3"
+  data-testid="container"
+>
+  <a
+    data-testid="link"
+    href="/feed"
+  >
+    <button
+      class="w-12 h-12"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </button>
+  </a>
+  <a
+    class="sm:hidden"
+    data-testid="link"
+    href="/search"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/hot"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/bookmarks"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/settings"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </button>
+  </a>
+  <a
+    class="relative"
+    data-testid="link"
+    href="/profile"
+  >
+    <div
+      class="w-12 h-12"
+      data-testid="avatar"
+    >
+      <img
+        alt="avatar"
+        data-testid="avatar-image"
+      />
+      <div
+        data-testid="avatar-fallback"
+      >
+        SN
+      </div>
+    </div>
+  </a>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshot for NavigationButtons with high counter and avatar 1`] = `
+<div
+  class="flex flex-row w-auto justify-start items-center gap-3"
+  data-testid="container"
+>
+  <a
+    data-testid="link"
+    href="/feed"
+  >
+    <button
+      class="w-12 h-12"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </button>
+  </a>
+  <a
+    class="sm:hidden"
+    data-testid="link"
+    href="/search"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/hot"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/bookmarks"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/settings"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </button>
+  </a>
+  <a
+    class="relative"
+    data-testid="link"
+    href="/profile"
+  >
+    <div
+      class="w-12 h-12"
+      data-testid="avatar"
+    >
+      <img
+        alt="avatar"
+        data-testid="avatar-image"
+      />
+      <div
+        data-testid="avatar-fallback"
+      >
+        SN
+      </div>
+    </div>
+    <div
+      class="absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
+      data-testid="badge"
+      data-variant="secondary"
+    >
+      <div
+        class="text-primary-foreground text-xs"
+        data-size="sm"
+        data-testid="typography"
+      >
+        21+
+      </div>
+    </div>
+  </a>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshot for OnboardingHeader with custom className 1`] = `
 <div
   data-current="3"
   data-testid="progress-steps"
@@ -1008,9 +995,22 @@ exports[`Header - Snapshots > matches snapshots for OnboardingHeader with differ
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for SocialLinks with different configurations 1`] = `
+exports[`Header - Snapshots > matches snapshot for OnboardingHeader with default props 1`] = `
 <div
-  class="hidden md:flex flex-row justify-end gap-6 mr-6"
+  data-current="1"
+  data-testid="progress-steps"
+  data-total="5"
+>
+  Progress 
+  1
+  /
+  5
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshot for SocialLinks with custom className 1`] = `
+<div
+  class="hidden md:flex flex-row justify-end gap-6 mr-6 custom-social"
   data-testid="container"
 >
   <a
@@ -1055,9 +1055,9 @@ exports[`Header - Snapshots > matches snapshots for SocialLinks with different c
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for SocialLinks with different configurations 2`] = `
+exports[`Header - Snapshots > matches snapshot for SocialLinks with default props 1`] = `
 <div
-  class="hidden md:flex flex-row justify-end gap-6 mr-6 custom-social"
+  class="hidden md:flex flex-row justify-end gap-6 mr-6"
   data-testid="container"
 >
   <a

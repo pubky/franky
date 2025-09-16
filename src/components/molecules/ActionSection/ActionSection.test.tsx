@@ -52,30 +52,31 @@ describe('ActionSection - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<ActionSection />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<ActionSection className="custom-actions" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: customClassContainer } = render(<ActionSection className="custom-actions" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
-
-    const { container: withChildrenContainer } = render(
+  it('matches snapshot with children', () => {
+    const { container } = render(
       <ActionSection>
         <div>Custom content</div>
       </ActionSection>,
     );
-    expect(withChildrenContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different action configurations', () => {
+  it('matches snapshot with single action', () => {
     const mockAction = vi.fn();
 
-    const { container: singleActionContainer } = render(
-      <ActionSection actions={[{ label: 'Single Action', onClick: mockAction }]} />,
-    );
-    expect(singleActionContainer.firstChild).toMatchSnapshot();
+    const { container } = render(<ActionSection actions={[{ label: 'Single Action', onClick: mockAction }]} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: multipleActionsContainer } = render(
+  it('matches snapshot with multiple actions', () => {
+    const mockAction = vi.fn();
+
+    const { container } = render(
       <ActionSection
         actions={[
           { label: 'Continue', onClick: mockAction, variant: 'default' as const },
@@ -83,9 +84,13 @@ describe('ActionSection - Snapshots', () => {
         ]}
       />,
     );
-    expect(multipleActionsContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: withIconContainer } = render(
+  it('matches snapshot with action containing icon', () => {
+    const mockAction = vi.fn();
+
+    const { container } = render(
       <ActionSection
         actions={[
           {
@@ -96,6 +101,6 @@ describe('ActionSection - Snapshots', () => {
         ]}
       />,
     );
-    expect(withIconContainer.firstChild).toMatchSnapshot();
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

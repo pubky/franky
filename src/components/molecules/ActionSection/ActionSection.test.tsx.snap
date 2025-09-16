@@ -1,18 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ActionSection - Snapshots > matches snapshot with default props 1`] = `
-<div
-  class="mx-auto flex gap-6 w-full flex-row"
-  data-testid="container"
->
-  <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
-    data-testid="container"
-  />
-</div>
-`;
-
-exports[`ActionSection - Snapshots > matches snapshots for different action configurations 1`] = `
+exports[`ActionSection - Snapshots > matches snapshot with action containing icon 1`] = `
 <div
   class="mx-auto flex gap-6 w-full flex-row"
   data-testid="container"
@@ -31,13 +19,56 @@ exports[`ActionSection - Snapshots > matches snapshots for different action conf
       data-testid="button-secondary"
       data-variant="secondary"
     >
-      Single Action
+      <span>
+        🚀
+      </span>
+      Action with Icon
     </button>
   </div>
 </div>
 `;
 
-exports[`ActionSection - Snapshots > matches snapshots for different action configurations 2`] = `
+exports[`ActionSection - Snapshots > matches snapshot with children 1`] = `
+<div
+  class="mx-auto flex gap-6 w-full flex-row"
+  data-testid="container"
+>
+  <div
+    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    data-testid="container"
+  >
+    <div>
+      Custom content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ActionSection - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="mx-auto flex gap-6 w-full flex-row custom-actions"
+  data-testid="container"
+>
+  <div
+    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    data-testid="container"
+  />
+</div>
+`;
+
+exports[`ActionSection - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="mx-auto flex gap-6 w-full flex-row"
+  data-testid="container"
+>
+  <div
+    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    data-testid="container"
+  />
+</div>
+`;
+
+exports[`ActionSection - Snapshots > matches snapshot with multiple actions 1`] = `
 <div
   class="mx-auto flex gap-6 w-full flex-row"
   data-testid="container"
@@ -70,7 +101,7 @@ exports[`ActionSection - Snapshots > matches snapshots for different action conf
 </div>
 `;
 
-exports[`ActionSection - Snapshots > matches snapshots for different action configurations 3`] = `
+exports[`ActionSection - Snapshots > matches snapshot with single action 1`] = `
 <div
   class="mx-auto flex gap-6 w-full flex-row"
   data-testid="container"
@@ -89,51 +120,8 @@ exports[`ActionSection - Snapshots > matches snapshots for different action conf
       data-testid="button-secondary"
       data-variant="secondary"
     >
-      <span>
-        🚀
-      </span>
-      Action with Icon
+      Single Action
     </button>
-  </div>
-</div>
-`;
-
-exports[`ActionSection - Snapshots > matches snapshots for different configurations 1`] = `
-<div
-  class="mx-auto flex gap-6 w-full flex-row"
-  data-testid="container"
->
-  <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
-    data-testid="container"
-  />
-</div>
-`;
-
-exports[`ActionSection - Snapshots > matches snapshots for different configurations 2`] = `
-<div
-  class="mx-auto flex gap-6 w-full flex-row custom-actions"
-  data-testid="container"
->
-  <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
-    data-testid="container"
-  />
-</div>
-`;
-
-exports[`ActionSection - Snapshots > matches snapshots for different configurations 3`] = `
-<div
-  class="mx-auto flex gap-6 w-full flex-row"
-  data-testid="container"
->
-  <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
-    data-testid="container"
-  >
-    <div>
-      Custom content
-    </div>
   </div>
 </div>
 `;

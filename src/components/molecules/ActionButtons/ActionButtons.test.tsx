@@ -75,32 +75,35 @@ describe('ActionButtons - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different configurations', () => {
-    const { container: defaultContainer } = render(<ActionButtons />);
-    expect(defaultContainer.firstChild).toMatchSnapshot();
-
-    const { container: customTextContainer } = render(
-      <ActionButtons signInText="Log In" createAccountText="Register" />,
-    );
-    expect(customTextContainer.firstChild).toMatchSnapshot();
-
-    const { container: customClassContainer } = render(<ActionButtons className="custom-action-buttons" />);
-    expect(customClassContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with custom text', () => {
+    const { container } = render(<ActionButtons signInText="Log In" createAccountText="Register" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshots for different callback configurations', () => {
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<ActionButtons className="custom-action-buttons" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with both callbacks', () => {
     const mockOnSignIn = vi.fn();
     const mockOnCreateAccount = vi.fn();
 
-    const { container: withCallbacksContainer } = render(
-      <ActionButtons onSignIn={mockOnSignIn} onCreateAccount={mockOnCreateAccount} />,
-    );
-    expect(withCallbacksContainer.firstChild).toMatchSnapshot();
+    const { container } = render(<ActionButtons onSignIn={mockOnSignIn} onCreateAccount={mockOnCreateAccount} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const { container: signInOnlyContainer } = render(<ActionButtons onSignIn={mockOnSignIn} />);
-    expect(signInOnlyContainer.firstChild).toMatchSnapshot();
+  it('matches snapshot with sign in callback only', () => {
+    const mockOnSignIn = vi.fn();
 
-    const { container: createAccountOnlyContainer } = render(<ActionButtons onCreateAccount={mockOnCreateAccount} />);
-    expect(createAccountOnlyContainer.firstChild).toMatchSnapshot();
+    const { container } = render(<ActionButtons onSignIn={mockOnSignIn} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with create account callback only', () => {
+    const mockOnCreateAccount = vi.fn();
+
+    const { container } = render(<ActionButtons onCreateAccount={mockOnCreateAccount} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

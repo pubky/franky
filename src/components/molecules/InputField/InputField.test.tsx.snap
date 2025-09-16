@@ -1,52 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`InputField - Snapshots > matches snapshot with default props 1`] = `
-<div
-  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
-  data-testid="container"
->
-  <input
-    aria-invalid="false"
-    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
-    data-testid="input"
-    type="text"
-    value="test value"
-  />
-</div>
-`;
-
-exports[`InputField - Snapshots > matches snapshots for different configurations 1`] = `
-<div
-  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
-  data-testid="container"
->
-  <input
-    aria-invalid="false"
-    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
-    data-testid="input"
-    type="text"
-    value="test"
-  />
-</div>
-`;
-
-exports[`InputField - Snapshots > matches snapshots for different configurations 2`] = `
-<div
-  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
-  data-testid="container"
->
-  <input
-    aria-invalid="false"
-    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
-    data-testid="input"
-    placeholder="Enter text here"
-    type="text"
-    value=""
-  />
-</div>
-`;
-
-exports[`InputField - Snapshots > matches snapshots for different configurations 3`] = `
+exports[`InputField - Snapshots > matches snapshot when disabled 1`] = `
 <div
   class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
   data-testid="container"
@@ -62,63 +16,7 @@ exports[`InputField - Snapshots > matches snapshots for different configurations
 </div>
 `;
 
-exports[`InputField - Snapshots > matches snapshots for different configurations 4`] = `
-<div
-  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
-  data-testid="container"
->
-  <input
-    aria-invalid="false"
-    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
-    data-testid="input"
-    readonly=""
-    type="text"
-    value="test"
-  />
-</div>
-`;
-
-exports[`InputField - Snapshots > matches snapshots for different configurations 5`] = `
-<div
-  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base custom-input-field"
-  data-testid="container"
->
-  <input
-    aria-invalid="false"
-    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
-    data-testid="input"
-    type="text"
-    value="test"
-  />
-</div>
-`;
-
-exports[`InputField - Snapshots > matches snapshots for different states 1`] = `
-<div
-  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-4.5 h-12 text-base"
-  data-testid="container"
->
-  <div
-    class="mx-auto flex-col flex w-auto justify-center items-center cursor-pointer"
-    data-testid="container"
-  >
-    <div
-      data-testid="custom-icon"
-    >
-      Icon
-    </div>
-  </div>
-  <input
-    aria-invalid="false"
-    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
-    data-testid="input"
-    type="text"
-    value="test"
-  />
-</div>
-`;
-
-exports[`InputField - Snapshots > matches snapshots for different states 2`] = `
+exports[`InputField - Snapshots > matches snapshot when loading 1`] = `
 <div
   class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 text-brand border-brand h-12 text-base"
   data-testid="container"
@@ -144,7 +42,7 @@ exports[`InputField - Snapshots > matches snapshots for different states 2`] = `
 </div>
 `;
 
-exports[`InputField - Snapshots > matches snapshots for different states 3`] = `
+exports[`InputField - Snapshots > matches snapshot when not loading with icon 1`] = `
 <div
   class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-4.5 h-12 text-base"
   data-testid="container"
@@ -169,9 +67,25 @@ exports[`InputField - Snapshots > matches snapshots for different states 3`] = `
 </div>
 `;
 
-exports[`InputField - Snapshots > matches snapshots for different variants 1`] = `
+exports[`InputField - Snapshots > matches snapshot when readOnly 1`] = `
 <div
   class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+  data-testid="container"
+>
+  <input
+    aria-invalid="false"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+    data-testid="input"
+    readonly=""
+    type="text"
+    value="test"
+  />
+</div>
+`;
+
+exports[`InputField - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base custom-input-field"
   data-testid="container"
 >
   <input
@@ -184,7 +98,7 @@ exports[`InputField - Snapshots > matches snapshots for different variants 1`] =
 </div>
 `;
 
-exports[`InputField - Snapshots > matches snapshots for different variants 2`] = `
+exports[`InputField - Snapshots > matches snapshot with dashed variant 1`] = `
 <div
   class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 border-dashed h-12 text-base"
   data-testid="container"
@@ -195,6 +109,62 @@ exports[`InputField - Snapshots > matches snapshots for different variants 2`] =
     data-testid="input"
     type="text"
     value="test"
+  />
+</div>
+`;
+
+exports[`InputField - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+  data-testid="container"
+>
+  <input
+    aria-invalid="false"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+    data-testid="input"
+    type="text"
+    value="test value"
+  />
+</div>
+`;
+
+exports[`InputField - Snapshots > matches snapshot with icon 1`] = `
+<div
+  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-4.5 h-12 text-base"
+  data-testid="container"
+>
+  <div
+    class="mx-auto flex-col flex w-auto justify-center items-center cursor-pointer"
+    data-testid="container"
+  >
+    <div
+      data-testid="custom-icon"
+    >
+      Icon
+    </div>
+  </div>
+  <input
+    aria-invalid="false"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+    data-testid="input"
+    type="text"
+    value="test"
+  />
+</div>
+`;
+
+exports[`InputField - Snapshots > matches snapshot with placeholder 1`] = `
+<div
+  class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+  data-testid="container"
+>
+  <input
+    aria-invalid="false"
+    class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+    data-testid="input"
+    placeholder="Enter text here"
+    type="text"
+    value=""
   />
 </div>
 `;
