@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 interface InputFieldProps {
+  id?: string;
   value: string;
   placeholder?: string;
   disabled?: boolean;
@@ -26,6 +27,7 @@ interface InputFieldProps {
 }
 
 export function InputField({
+  id,
   value,
   placeholder,
   disabled = false,
@@ -97,6 +99,7 @@ export function InputField({
           </Atoms.Container>
         )}
         <Atoms.Input
+          id={id}
           type="text"
           className={Libs.cn('w-full !bg-transparent border-none')}
           value={loading ? loadingText : value}
