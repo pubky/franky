@@ -5,7 +5,7 @@ import { defaultMs } from './support/slow-down';
 
 export default defineConfig({
   e2e: {
-    baseUrl: 'http://localhost:4200',
+    baseUrl: 'http://localhost:3000',
     specPattern: 'e2e/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'support/e2e.ts',
     videosFolder: 'videos',

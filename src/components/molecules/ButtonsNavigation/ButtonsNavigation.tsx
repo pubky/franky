@@ -2,6 +2,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 interface ButtonsNavigationProps {
+  id?: string;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
   onHandleBackButton?: () => void;
   onHandleContinueButton?: () => void;
@@ -13,6 +14,7 @@ interface ButtonsNavigationProps {
 }
 
 export function ButtonsNavigation({
+  id,
   className,
   onHandleBackButton,
   onHandleContinueButton,
@@ -25,6 +27,7 @@ export function ButtonsNavigation({
   return (
     <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between', className)}>
       <Atoms.Button
+        id={`${id}-back-btn`}
         size="lg"
         className="rounded-full flex-1 md:flex-0 w-full"
         variant={'secondary'}
@@ -36,6 +39,7 @@ export function ButtonsNavigation({
       </Atoms.Button>
       {!hiddenContinueButton && (
         <Atoms.Button
+          id={`${id}-continue-btn`}
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           onClick={onHandleContinueButton}
