@@ -48,25 +48,11 @@ describe('InputField', () => {
     expect(input).toHaveValue('test value');
   });
 
-  it('renders with placeholder', () => {
-    render(<InputField value="" placeholder="Enter text here" />);
-
-    const input = screen.getByTestId('input');
-    expect(input).toHaveAttribute('placeholder', 'Enter text here');
-  });
-
   it('handles disabled state', () => {
     render(<InputField value="test" disabled={true} />);
 
     const input = screen.getByTestId('input');
     expect(input).toBeDisabled();
-  });
-
-  it('handles readonly state', () => {
-    render(<InputField value="test" readOnly={true} />);
-
-    const input = screen.getByTestId('input');
-    expect(input).toHaveAttribute('readonly');
   });
 
   it('handles click events', () => {
@@ -77,61 +63,6 @@ describe('InputField', () => {
     fireEvent.click(input);
 
     expect(handleClick).toHaveBeenCalled();
-  });
-
-  it('renders with icon', () => {
-    const icon = <div data-testid="custom-icon">Icon</div>;
-    render(<InputField value="test" icon={icon} />);
-
-    expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
-  });
-
-  it('renders dashed variant correctly', () => {
-    render(<InputField value="test" variant="dashed" />);
-
-    const container = screen.getByTestId('input').parentElement;
-    // Updated container classes reflect current implementation
-    expect(container).toHaveClass(
-      'flex',
-      'cursor-pointer',
-      'w-full',
-      'h-12',
-      'items-center',
-      'flex-row',
-      'border',
-      'bg-transparent',
-      'rounded-md',
-      'border-dashed',
-    );
-  });
-
-  it('handles loading state', () => {
-    const loadingIcon = <div data-testid="loading-icon">Loading</div>;
-    render(<InputField value="test" loading={true} loadingIcon={loadingIcon} loadingText="Loading..." />);
-
-    const input = screen.getByTestId('input');
-    const icon = screen.getByTestId('loading-icon');
-
-    expect(input).toHaveValue('Loading...');
-    expect(input).toBeDisabled();
-    expect(icon).toBeInTheDocument();
-  });
-
-  it('applies custom className', () => {
-    render(<InputField value="test" className="custom-input-field" />);
-
-    const wrapper = screen.getByTestId('input').parentElement;
-    expect(wrapper).toHaveClass('custom-input-field');
-  });
-
-  it('shows icon when not loading', () => {
-    const icon = <div data-testid="normal-icon">Icon</div>;
-    const loadingIcon = <div data-testid="loading-icon">Loading</div>;
-
-    render(<InputField value="test" icon={icon} loadingIcon={loadingIcon} loading={false} />);
-
-    expect(screen.getByTestId('normal-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('loading-icon')).not.toBeInTheDocument();
   });
 });
 

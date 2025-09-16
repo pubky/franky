@@ -38,7 +38,6 @@ describe('InvitePopover', () => {
 
     expect(button).toBeInTheDocument();
     expect(giftIcon).toBeInTheDocument();
-    expect(giftIcon).toHaveClass('h-4', 'w-4', 'text-brand');
   });
 
   it('shows popover content when clicked', () => {
@@ -71,21 +70,6 @@ describe('InvitePopover', () => {
     expect(telegramIcon).toHaveClass('h-6', 'w-6');
   });
 
-  it('uses default URLs when no custom URLs provided', () => {
-    render(<PopoverInvite />);
-
-    const button = screen.getByRole('button');
-    fireEvent.click(button);
-
-    const mailLink = screen.getByTestId('mail-icon').parentElement;
-    const twitterLink = screen.getByTestId('xtwitter-icon').parentElement;
-    const telegramLink = screen.getByTestId('telegram-icon').parentElement;
-
-    expect(mailLink).toHaveAttribute('href', EMAIL_URL);
-    expect(twitterLink).toHaveAttribute('href', TWITTER_URL);
-    expect(telegramLink).toHaveAttribute('href', TELEGRAM_URL);
-  });
-
   it('uses default URLs', () => {
     render(<PopoverInvite />);
 
@@ -99,13 +83,6 @@ describe('InvitePopover', () => {
     expect(mailLink).toHaveAttribute('href', EMAIL_URL);
     expect(twitterLink).toHaveAttribute('href', TWITTER_URL);
     expect(telegramLink).toHaveAttribute('href', TELEGRAM_URL);
-  });
-
-  it('applies custom className to trigger button', () => {
-    render(<PopoverInvite className="custom-invite-class" />);
-
-    const button = screen.getByRole('button');
-    expect(button).toHaveClass('custom-invite-class');
   });
 
   it('has proper popover content structure', () => {

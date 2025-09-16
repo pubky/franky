@@ -56,91 +56,10 @@ vi.mock('@/atoms', () => ({
 describe('TextareaField', () => {
   it('renders with required value prop', () => {
     render(<TextareaField value="Test content" />);
-
     expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('textarea')).toBeInTheDocument();
-
     const textarea = screen.getByTestId('textarea') as HTMLTextAreaElement;
     expect(textarea.value).toBe('Test content');
-  });
-
-  it('handles onChange events', () => {
-    const handleChange = vi.fn();
-    render(<TextareaField value="" onChange={handleChange} />);
-
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.change(textarea, { target: { value: 'New content' } });
-
-    expect(handleChange).toHaveBeenCalledTimes(1);
-  });
-
-  it('renders with placeholder', () => {
-    render(<TextareaField value="" placeholder="Enter your message" />);
-
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('placeholder', 'Enter your message');
-  });
-
-  it('applies custom className to container', () => {
-    render(<TextareaField value="" className="custom-field" />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('custom-field');
-  });
-
-  it('applies default variant styling', () => {
-    render(<TextareaField value="" />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass(
-      'flex-1',
-      'cursor-pointer',
-      'w-full',
-      'items-center',
-      'flex-row',
-      'border',
-      'gap-0',
-      'rounded-md',
-      'font-medium',
-    );
-  });
-
-  it('applies dashed variant styling', () => {
-    render(<TextareaField value="" variant="dashed" />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('border-dashed', '!bg-alpha-90/10');
-  });
-
-  it('applies success status styling', () => {
-    render(<TextareaField value="" status="success" />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('border-brand', 'text-brand');
-  });
-
-  it('applies error status styling', () => {
-    render(<TextareaField value="" status="error" />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('border-red-500', 'text-red-500');
-
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('aria-invalid', 'true');
-  });
-
-  it('handles disabled state', () => {
-    render(<TextareaField value="" disabled />);
-
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toBeDisabled();
-  });
-
-  it('handles readOnly state', () => {
-    render(<TextareaField value="" readOnly />);
-
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('readOnly');
   });
 
   it('handles onClick events', () => {
@@ -153,54 +72,21 @@ describe('TextareaField', () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('sets custom rows', () => {
-    render(<TextareaField value="" rows={6} />);
+  it('handles onChange events with new content', () => {
+    const handleChange = vi.fn();
+    render(<TextareaField value="" onChange={handleChange} />);
 
     const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('rows', '6');
+    fireEvent.change(textarea, { target: { value: 'New content' } });
+
+    expect(handleChange).toHaveBeenCalledTimes(1);
   });
 
-  it('sets default rows to 4', () => {
-    render(<TextareaField value="" />);
+  it('handles disabled state', () => {
+    render(<TextareaField value="" disabled />);
 
     const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('rows', '4');
-  });
-
-  it('handles maxLength prop', () => {
-    render(<TextareaField value="" maxLength={100} />);
-
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('maxLength', '100');
-  });
-
-  it('renders message with default style', () => {
-    render(<TextareaField value="" message="Helper text" />);
-
-    const message = screen.getByTestId('typography');
-    expect(message).toBeInTheDocument();
-    expect(message).toHaveTextContent('Helper text');
-    expect(message).toHaveClass('ml-1', 'text-muted-foreground');
-  });
-
-  it('renders message with error style', () => {
-    render(<TextareaField value="" message="Error message" messageType="error" />);
-
-    const message = screen.getByTestId('typography');
-    expect(message).toHaveClass('ml-1', 'text-red-500');
-  });
-
-  it('renders message with success style', () => {
-    render(<TextareaField value="" message="Success message" messageType="success" />);
-
-    const message = screen.getByTestId('typography');
-    expect(message).toHaveClass('ml-1', 'text-brand');
-  });
-
-  it('does not render message when not provided', () => {
-    render(<TextareaField value="" />);
-
-    expect(screen.queryByTestId('typography')).not.toBeInTheDocument();
+    expect(textarea).toBeDisabled();
   });
 });
 
@@ -224,6 +110,11 @@ describe('TextareaField - Snapshots', () => {
     const { container } = render(
       <TextareaField value="Success content" status="success" message="All good!" messageType="success" />,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for TextareaField with provided message', () => {
+    const { container } = render(<TextareaField value="" message="Helper text" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

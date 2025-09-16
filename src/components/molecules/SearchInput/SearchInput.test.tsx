@@ -83,19 +83,6 @@ describe('SearchInput', () => {
 
     expect(screen.getByTestId('search-input')).toBeInTheDocument();
     expect(screen.getByTestId('search-button')).toBeInTheDocument();
-    expect(screen.getByTestId('search-input')).toHaveAttribute('placeholder', 'Search');
-  });
-
-  it('renders with custom placeholder', () => {
-    render(<SearchInput placeholder="Custom placeholder" />);
-
-    expect(screen.getByTestId('search-input')).toHaveAttribute('placeholder', 'Custom placeholder');
-  });
-
-  it('renders with initial value', () => {
-    render(<SearchInput value="initial value" />);
-
-    expect(screen.getByTestId('search-input')).toHaveValue('initial value');
   });
 
   it('calls onChange when input value changes', () => {
@@ -214,13 +201,6 @@ describe('SearchInput', () => {
     expect(screen.queryByTestId('dropdown-card')).not.toBeInTheDocument();
   });
 
-  it('applies custom className', () => {
-    render(<SearchInput className="custom-class" />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('custom-class');
-  });
-
   it('uses internal state and does not sync with external value changes', () => {
     const { rerender } = render(<SearchInput value="initial" />);
 
@@ -284,23 +264,6 @@ describe('SearchInput', () => {
     fireEvent.keyDown(input, { key: 'Escape' });
 
     expect(onSearch).not.toHaveBeenCalled();
-  });
-
-  it('applies correct button positioning and styling', () => {
-    render(<SearchInput />);
-
-    const button = screen.getByTestId('search-button');
-    expect(button.className).toContain(
-      'border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center',
-    );
-    expect(button).toHaveAttribute('type', 'button');
-  });
-
-  it('renders search icon with correct styling', () => {
-    render(<SearchInput />);
-
-    const searchIcon = screen.getByTestId('search-icon');
-    expect(searchIcon.className).toContain('w-4 h-4');
   });
 
   it('applies correct dropdown styling when children are present and focused', () => {

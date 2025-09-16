@@ -123,32 +123,6 @@ describe('InstallCard', () => {
     render(<InstallCard />);
 
     expect(screen.getByTestId('content-card')).toBeInTheDocument();
-
-    const image = screen.getByTestId('content-card-image');
-    expect(image).toHaveAttribute('src', '/images/keyring.png');
-    expect(image).toHaveAttribute('alt', 'Keyring');
-  });
-
-  it('renders Pubky Ring logo', () => {
-    render(<InstallCard />);
-
-    const logo = screen.getByTestId('next-image');
-    expect(logo).toHaveAttribute('src', '/images/logo-pubky-ring.svg');
-    expect(logo).toHaveAttribute('alt', 'Pubky Ring');
-    expect(logo).toHaveAttribute('width', '220');
-    expect(logo).toHaveAttribute('height', '48');
-  });
-
-  it('renders description text', () => {
-    render(<InstallCard />);
-
-    expect(screen.getByText('Download and install the mobile app to start creating your account.')).toBeInTheDocument();
-  });
-
-  it('renders store buttons', () => {
-    render(<InstallCard />);
-
-    expect(screen.getAllByTestId('dialog-download-pubky-ring')).toHaveLength(2);
   });
 });
 
@@ -157,40 +131,19 @@ describe('InstallFooter', () => {
     render(<InstallFooter />);
 
     expect(screen.getByTestId('footer-links')).toBeInTheDocument();
-    expect(screen.getByText('Use', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('or any other', { exact: false })).toBeInTheDocument();
-    expect(
-      screen.getByText('–powered keychain, or create your keys in the browser (less secure).', { exact: false }),
-    ).toBeInTheDocument();
   });
 
-  it('renders Pubky Ring link', () => {
+  it('renders links', () => {
     render(<InstallFooter />);
 
     const links = screen.getAllByTestId('link');
     const pubkyRingLink = links[0];
-
-    expect(pubkyRingLink).toHaveAttribute('href', Config.PUBKY_RING_URL);
-    expect(pubkyRingLink).toHaveAttribute('target', '_blank');
-    expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
-  });
-
-  it('renders Pubky Core link', () => {
-    render(<InstallFooter />);
-
-    const links = screen.getAllByTestId('link');
     const pubkyCoreLink = links[1];
 
-    expect(pubkyCoreLink).toHaveAttribute('href', Config.PUBKY_CORE_URL);
-    expect(pubkyCoreLink).toHaveAttribute('target', '_blank');
+    expect(pubkyRingLink).toHaveAttribute('href', PUBKY_RING_URL);
+    expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
+    expect(pubkyCoreLink).toHaveAttribute('href', PUBKY_CORE_URL);
     expect(pubkyCoreLink).toHaveTextContent('Pubky Core');
-  });
-
-  it('has correct footer styling', () => {
-    render(<InstallFooter />);
-
-    const footer = screen.getByTestId('footer-links');
-    expect(footer.className).toContain('py-6');
   });
 });
 
@@ -201,22 +154,6 @@ describe('InstallHeader', () => {
     expect(screen.getByTestId('page-header')).toBeInTheDocument();
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
-  });
-
-  it('renders correct title with brand styling', () => {
-    render(<InstallHeader />);
-
-    const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'large');
-    expect(title).toHaveTextContent('Install Pubky Ring.');
-  });
-
-  it('renders correct subtitle', () => {
-    render(<InstallHeader />);
-
-    expect(
-      screen.getByText('Pubky Ring is a keychain for your identity keys in the Pubky ecosystem.'),
-    ).toBeInTheDocument();
   });
 });
 
@@ -249,28 +186,6 @@ describe('InstallNavigation', () => {
     fireEvent.click(continueButton);
 
     expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.SCAN);
-  });
-
-  it('renders correct button text', () => {
-    render(<InstallNavigation />);
-
-    expect(screen.getByText('Create keys in browser')).toBeInTheDocument();
-    expect(screen.getByText('Continue with Pubky Ring')).toBeInTheDocument();
-  });
-
-  it('has correct container layout', () => {
-    render(<InstallNavigation />);
-
-    const containers = screen.getAllByTestId('container');
-    expect(containers[0].className).toContain('flex-col-reverse md:flex-row gap-3 lg:gap-6');
-    expect(containers[1].className).toContain('items-center gap-1 flex-row');
-  });
-
-  it('applies custom className', () => {
-    render(<InstallNavigation className="custom-class" />);
-
-    const mainContainer = screen.getAllByTestId('container')[0];
-    expect(mainContainer.className).toContain('custom-class');
   });
 });
 

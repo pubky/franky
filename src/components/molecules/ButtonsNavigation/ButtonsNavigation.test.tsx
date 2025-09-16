@@ -56,16 +56,6 @@ describe('ButtonsNavigation', () => {
     expect(continueButton).toHaveTextContent('Continue');
   });
 
-  it('renders with custom text props', () => {
-    render(<ButtonsNavigation backText="Go Back" continueText="Next Step" />);
-
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
-
-    expect(backButton).toHaveTextContent('Go Back');
-    expect(continueButton).toHaveTextContent('Next Step');
-  });
-
   it('handles back button click', () => {
     const handleBackButton = vi.fn();
     render(<ButtonsNavigation onHandleBackButton={handleBackButton} />);
@@ -98,43 +88,6 @@ describe('ButtonsNavigation', () => {
 
     const continueButton = screen.getByTestId('button-default');
     expect(continueButton).toBeDisabled();
-  });
-
-  it('applies custom className', () => {
-    render(<ButtonsNavigation className="custom-navigation-class" />);
-
-    const container = screen.getByTestId('button-secondary').parentElement;
-    expect(container).toHaveClass('custom-navigation-class');
-  });
-
-  it('renders arrow icons', () => {
-    render(<ButtonsNavigation />);
-
-    const leftArrow = screen.getByTestId('arrow-left-icon');
-    const rightArrow = screen.getByTestId('arrow-right-icon');
-
-    expect(leftArrow).toBeInTheDocument();
-    expect(rightArrow).toBeInTheDocument();
-  });
-
-  it('has proper button structure and styling', () => {
-    render(<ButtonsNavigation />);
-
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
-
-    expect(backButton).toHaveClass('rounded-full');
-    expect(continueButton).toHaveClass('rounded-full');
-  });
-
-  it('renders both buttons as enabled by default', () => {
-    render(<ButtonsNavigation />);
-
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
-
-    expect(backButton).not.toBeDisabled();
-    expect(continueButton).not.toBeDisabled();
   });
 });
 

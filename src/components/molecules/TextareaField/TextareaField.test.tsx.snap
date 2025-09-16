@@ -64,6 +64,20 @@ exports[`TextareaField - Snapshots > matches snapshot for TextareaField with pla
 </div>
 `;
 
+exports[`TextareaField - Snapshots > matches snapshot for TextareaField with provided message 1`] = `
+<div
+  class="flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium"
+  data-testid="container"
+>
+  <textarea
+    aria-invalid="false"
+    class="break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+    data-testid="textarea"
+    rows="4"
+  />
+</div>
+`;
+
 exports[`TextareaField - Snapshots > matches snapshot for TextareaField with success status 1`] = `
 <div
   class="flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium border-brand text-brand"

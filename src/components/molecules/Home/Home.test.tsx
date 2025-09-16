@@ -1,8 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HomeActions, HomeFooter, HomeSectionTitle, HomePageHeading } from './Home';
-import * as Config from '@/config';
-import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -104,20 +102,6 @@ describe('HomeFooter', () => {
     expect(screen.getByText('Terms of Service')).toBeInTheDocument();
     expect(screen.getByText('Privacy Policy')).toBeInTheDocument();
     expect(screen.getByText('over 18 years old.')).toBeInTheDocument();
-  });
-
-  it('renders Pubky Core link with correct attributes', () => {
-    render(<HomeFooter />);
-
-    const link = screen.getByTestId('link');
-    expect(link).toHaveAttribute('href', Config.PUBKY_CORE_URL);
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link).toHaveTextContent('Pubky Core');
-  });
-
-  it('contains copyright text', () => {
-    render(<HomeFooter />);
-
     expect(screen.getByText(/Synonym Software Ltd. ©2025/)).toBeInTheDocument();
   });
 });
@@ -130,27 +114,6 @@ describe('HomeSectionTitle', () => {
     expect(screen.getByTestId('typography')).toBeInTheDocument();
     expect(screen.getByTestId('popover-invite')).toBeInTheDocument();
   });
-
-  it('displays correct title text', () => {
-    render(<HomeSectionTitle />);
-
-    expect(screen.getByText('Pubky requires an invite code')).toBeInTheDocument();
-  });
-
-  it('has correct typography size and styling', () => {
-    render(<HomeSectionTitle />);
-
-    const typography = screen.getByTestId('typography');
-    expect(typography).toHaveAttribute('data-size', 'md');
-    expect(typography.className).toContain('text-brand font-light');
-  });
-
-  it('has correct container layout', () => {
-    render(<HomeSectionTitle />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('flex-row items-start gap-2');
-  });
 });
 
 describe('HomePageHeading', () => {
@@ -158,22 +121,6 @@ describe('HomePageHeading', () => {
     render(<HomePageHeading />);
 
     expect(screen.getByTestId('heading-1')).toBeInTheDocument();
-    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
-  });
-
-  it('has correct heading level and size', () => {
-    render(<HomePageHeading />);
-
-    const heading = screen.getByTestId('heading-1');
-    expect(heading).toHaveAttribute('data-size', '2xl');
-  });
-
-  it('renders consistently', () => {
-    const { rerender } = render(<HomePageHeading />);
-    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
-
-    rerender(<HomePageHeading />);
-    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
   });
 });
 

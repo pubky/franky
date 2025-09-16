@@ -601,6 +601,257 @@ exports[`Header - Snapshots > matches snapshots for NavigationButtons with diffe
       data-variant="secondary"
     >
       <div
+        class="text-primary-foreground text-xs"
+        data-size="sm"
+        data-testid="typography"
+      >
+        21+
+      </div>
+    </div>
+  </a>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 5`] = `
+<div
+  class="flex flex-row w-auto justify-start items-center gap-3"
+  data-testid="container"
+>
+  <a
+    data-testid="link"
+    href="/feed"
+  >
+    <button
+      class="w-12 h-12"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </button>
+  </a>
+  <a
+    class="sm:hidden"
+    data-testid="link"
+    href="/search"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/hot"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/bookmarks"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/settings"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </button>
+  </a>
+  <a
+    class="relative"
+    data-testid="link"
+    href="/profile"
+  >
+    <div
+      class="w-12 h-12"
+      data-testid="avatar"
+    >
+      <img
+        alt="avatar"
+        data-testid="avatar-image"
+      />
+      <div
+        data-testid="avatar-fallback"
+      >
+        SN
+      </div>
+    </div>
+  </a>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 6`] = `
+<div
+  class="flex flex-row w-auto justify-start items-center gap-3"
+  data-testid="container"
+>
+  <a
+    data-testid="link"
+    href="/feed"
+  >
+    <button
+      class="w-12 h-12"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </button>
+  </a>
+  <a
+    class="sm:hidden"
+    data-testid="link"
+    href="/search"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/hot"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/bookmarks"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </button>
+  </a>
+  <a
+    data-testid="link"
+    href="/settings"
+  >
+    <button
+      class="w-12 h-12 border bg-transparent"
+      data-size="icon"
+      data-testid="button-secondary"
+      data-variant="secondary"
+    >
+      <div
+        class="size-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </button>
+  </a>
+  <a
+    class="relative"
+    data-testid="link"
+    href="/profile"
+  >
+    <div
+      class="w-12 h-12"
+      data-testid="avatar"
+    >
+      <img
+        alt="avatar"
+        data-testid="avatar-image"
+      />
+      <div
+        data-testid="avatar-fallback"
+      >
+        SN
+      </div>
+    </div>
+    <div
+      class="absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
+      data-testid="badge"
+      data-variant="secondary"
+    >
+      <div
         class="text-primary-foreground "
         data-size="sm"
         data-testid="typography"
@@ -612,7 +863,7 @@ exports[`Header - Snapshots > matches snapshots for NavigationButtons with diffe
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 5`] = `
+exports[`Header - Snapshots > matches snapshots for NavigationButtons with different configurations 7`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"

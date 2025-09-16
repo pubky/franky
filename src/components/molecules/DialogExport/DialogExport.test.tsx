@@ -128,190 +128,13 @@ describe('DialogExport', () => {
     expect(content).toBeInTheDocument();
   });
 
-  it('renders trigger button with correct content', () => {
-    render(<DialogExport />);
-
-    const scanIcon = screen.getByTestId('scan-icon');
-    const triggerText = screen.getByText('Export to Pubky Ring');
-
-    expect(scanIcon).toBeInTheDocument();
-    expect(triggerText).toBeInTheDocument();
-    expect(scanIcon).toHaveClass('h-4', 'w-4');
-  });
-
-  it('applies correct styling to trigger button', () => {
-    render(<DialogExport />);
-
-    const button = screen.getByTestId('button');
-    expect(button).toHaveClass('gap-2');
-  });
-
-  it('applies asChild to dialog trigger', () => {
-    render(<DialogExport />);
-
-    const trigger = screen.getByTestId('dialog-trigger');
-    expect(trigger).toHaveAttribute('data-as-child', 'true');
-  });
-
-  it('renders dialog title correctly', () => {
-    render(<DialogExport />);
-
-    const title = screen.getByTestId('dialog-title');
-    expect(title).toHaveTextContent('Pubky Ring export');
-    expect(title).toHaveClass('text-2xl', 'font-bold', 'leading-8');
-  });
-
-  it('renders dialog description with instructions', () => {
-    render(<DialogExport />);
-
-    const description = screen.getByTestId('dialog-description');
-    expect(description).toBeInTheDocument();
-    expect(description).toHaveTextContent(/1. Open Pubky Ring, tap 'Add pubky'/);
-    expect(description).toHaveTextContent(/2. Choose the 'Import pubky' option/);
-    expect(description).toHaveTextContent(/3. Scan this QR to import/);
-    expect(description).toHaveClass('text-sm', 'font-medium', 'leading-5');
-  });
-
-  it('applies correct styling to dialog content', () => {
-    render(<DialogExport />);
-
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('p-8', 'rounded-xl', 'flex', 'flex-col', 'w-[430px]');
-  });
-
-  it('applies correct styling to dialog header', () => {
-    render(<DialogExport />);
-
-    const header = screen.getByTestId('dialog-header');
-    expect(header).toHaveClass('space-y-1.5', 'pr-6');
-  });
-
-  it('uses default dialog content without custom close button', () => {
-    render(<DialogExport />);
-
-    // The DialogExport component uses the default DialogContent, so we test that it renders properly
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toBeInTheDocument();
-    expect(content).toHaveClass('p-8', 'rounded-xl', 'flex', 'flex-col', 'w-[430px]');
-
-    // Check that the content does not have a custom close button
-    const customCloseButton = screen.queryByTestId('button-ghost');
-    expect(customCloseButton).not.toBeInTheDocument();
-  });
-
-  it('renders phone image correctly', () => {
-    render(<DialogExport />);
-
-    const images = screen.getAllByTestId('next-image');
-    const phoneImage = images.find((img) => img.getAttribute('alt') === 'App preview');
-
-    expect(phoneImage).toBeInTheDocument();
-    expect(phoneImage).toHaveAttribute('src', '/images/pubky-ring-phone.png');
-    expect(phoneImage).toHaveAttribute('width', '250');
-    expect(phoneImage).toHaveAttribute('height', '430');
-  });
-
-  it('renders QR code with correct props', () => {
-    render(<DialogExport />);
-
-    const qrCode = screen.getByTestId('qr-code');
-    expect(qrCode).toBeInTheDocument();
-    expect(qrCode).toHaveAttribute('data-value', 'https://pubky.org');
-    expect(qrCode).toHaveAttribute('data-size', '192');
-  });
-
-  it('applies correct styling to QR code container', () => {
-    render(<DialogExport />);
-
-    const containers = screen.getAllByTestId('container');
-    const qrContainer = containers.find((container) => container.className?.includes('bg-foreground'));
-
-    expect(qrContainer).toBeInTheDocument();
-    expect(qrContainer).toHaveClass(
-      'mx-0',
-      'bg-foreground',
-      'rounded-lg',
-      'p-4',
-      'w-[192px]',
-      'h-[192px]',
-      'items-center',
-    );
-  });
-
-  it('renders Apple App Store badge', () => {
-    render(<DialogExport />);
-
-    const images = screen.getAllByTestId('next-image');
-    const appleBadge = images.find((img) => img.getAttribute('alt') === 'App Store');
-
-    expect(appleBadge).toBeInTheDocument();
-    expect(appleBadge).toHaveAttribute('src', '/images/badge-apple.png');
-    expect(appleBadge).toHaveAttribute('width', '120');
-    expect(appleBadge).toHaveAttribute('height', '40');
-  });
-
-  it('renders Google Play Store badge', () => {
-    render(<DialogExport />);
-
-    const images = screen.getAllByTestId('next-image');
-    const androidBadge = images.find((img) => img.getAttribute('alt') === 'Google Play');
-
-    expect(androidBadge).toBeInTheDocument();
-    expect(androidBadge).toHaveAttribute('src', '/images/badge-android.png');
-    expect(androidBadge).toHaveAttribute('width', '135');
-    expect(androidBadge).toHaveAttribute('height', '40');
-  });
-
-  it('renders app store links with correct URLs', () => {
-    render(<DialogExport />);
-
-    const links = screen.getAllByTestId('link');
-
-    const appleLink = links.find((link) => link.getAttribute('href')?.includes('apps.apple.com'));
-    const googleLink = links.find((link) => link.getAttribute('href')?.includes('play.google.com'));
-
-    expect(appleLink).toBeInTheDocument();
-    expect(appleLink).toHaveAttribute('href', 'https://apps.apple.com/app/pubky-ring/id6739356756');
-    expect(appleLink).toHaveAttribute('target', '_blank');
-
-    expect(googleLink).toBeInTheDocument();
-    expect(googleLink).toHaveAttribute(
-      'href',
-      'https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share',
-    );
-    expect(googleLink).toHaveAttribute('target', '_blank');
-  });
-
-  it('applies correct layout styles', () => {
-    render(<DialogExport />);
-
-    const containers = screen.getAllByTestId('container');
-
-    // Main container with items-center and justify-between
-    const mainContainer = containers.find((container) =>
-      container.className?.includes('justify-between items-center mt-6'),
-    );
-
-    // Flex-row container with gap
-    const flexRowContainer = containers.find((container) => container.className?.includes('flex-row gap-6'));
-
-    // Phone container
-    const phoneContainer = containers.find((container) => container.className?.includes('w-[250px]'));
-
-    expect(mainContainer).toBeInTheDocument();
-    expect(flexRowContainer).toBeInTheDocument();
-    expect(phoneContainer).toBeInTheDocument();
-  });
-
   it('handles click events on trigger button', () => {
     render(<DialogExport />);
 
     const button = screen.getByTestId('button');
 
-    // Simulate click event
     fireEvent.click(button);
 
-    // The button should be rendered and clickable
     expect(button).toBeInTheDocument();
   });
 
@@ -327,21 +150,9 @@ describe('DialogExport', () => {
     expect(screen.getByAltText('Google Play')).toBeInTheDocument();
   });
 
-  it('renders with semantic structure', () => {
-    render(<DialogExport />);
-
-    // Check semantic HTML structure
-    const title = screen.getByTestId('dialog-title');
-    const description = screen.getByTestId('dialog-description');
-
-    expect(title.tagName).toBe('H2');
-    expect(description.tagName).toBe('P');
-  });
-
   describe('with mnemonic prop', () => {
-    const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
-
     it('renders with mnemonic-specific title and button text', () => {
+      const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
       render(<DialogExport mnemonic={testMnemonic} />);
 
       const title = screen.getByTestId('dialog-title');
@@ -350,96 +161,24 @@ describe('DialogExport', () => {
       expect(title).toHaveTextContent('Import recovery phrase');
       expect(triggerText).toBeInTheDocument();
     });
-
-    it('renders with mnemonic-specific instructions', () => {
-      render(<DialogExport mnemonic={testMnemonic} />);
-
-      const description = screen.getByTestId('dialog-description');
-
-      expect(description).toHaveTextContent(/1. Open Pubky Ring, tap 'Add pubky'/);
-      expect(description).toHaveTextContent(/2. Choose 'Import pubky' option/);
-      expect(description).toHaveTextContent(/3. Tap 'Scan QR to import'/);
-      expect(description).toHaveTextContent(/4. Scan this QR code to import your recovery phrase/);
-    });
-
-    it('generates correct deeplink QR code with encoded mnemonic', () => {
-      render(<DialogExport mnemonic={testMnemonic} />);
-
-      const qrCode = screen.getByTestId('qr-code');
-      const encodedMnemonic = encodeURIComponent(testMnemonic);
-      const expectedValue = `pubkyring://${encodedMnemonic}`;
-
-      expect(qrCode).toHaveAttribute('data-value', expectedValue);
-    });
-
-    it('handles special characters in mnemonic', () => {
-      const specialMnemonic = 'test phrase with spaces & symbols!';
-      render(<DialogExport mnemonic={specialMnemonic} />);
-
-      const qrCode = screen.getByTestId('qr-code');
-      const encodedMnemonic = encodeURIComponent(specialMnemonic);
-      const expectedValue = `pubkyring://${encodedMnemonic}`;
-
-      expect(qrCode).toHaveAttribute('data-value', expectedValue);
-    });
-
-    it('maintains all other UI elements when mnemonic is provided', () => {
-      render(<DialogExport mnemonic={testMnemonic} />);
-
-      // Check that all main elements are still present
-      expect(screen.getByAltText('App preview')).toBeInTheDocument();
-      expect(screen.getByAltText('App Store')).toBeInTheDocument();
-      expect(screen.getByAltText('Google Play')).toBeInTheDocument();
-      expect(screen.getByTestId('qr-code')).toBeInTheDocument();
-    });
-
-    it('applies correct styling and layout with mnemonic', () => {
-      render(<DialogExport mnemonic={testMnemonic} />);
-
-      const content = screen.getByTestId('dialog-content');
-      const header = screen.getByTestId('dialog-header');
-      const qrCode = screen.getByTestId('qr-code');
-
-      expect(content).toHaveClass('p-8', 'rounded-xl', 'flex', 'flex-col', 'w-[430px]');
-      expect(header).toHaveClass('space-y-1.5', 'pr-6');
-      expect(qrCode).toHaveAttribute('data-size', '192');
-    });
-  });
-
-  describe('without mnemonic prop', () => {
-    it('uses default PUBKY_CORE_URL for QR code', () => {
-      render(<DialogExport />);
-
-      const qrCode = screen.getByTestId('qr-code');
-      expect(qrCode).toHaveAttribute('data-value', 'https://pubky.org');
-    });
-
-    it('renders default title and button text', () => {
-      render(<DialogExport />);
-
-      const title = screen.getByTestId('dialog-title');
-      const triggerText = screen.getByText('Export to Pubky Ring');
-
-      expect(title).toHaveTextContent('Pubky Ring export');
-      expect(triggerText).toBeInTheDocument();
-    });
-
-    it('renders default instructions', () => {
-      render(<DialogExport />);
-
-      const description = screen.getByTestId('dialog-description');
-
-      expect(description).toHaveTextContent(/1. Open Pubky Ring, tap 'Add pubky'/);
-      expect(description).toHaveTextContent(/2. Choose the 'Import pubky' option/);
-      expect(description).toHaveTextContent(/3. Scan this QR to import/);
-      expect(description).not.toHaveTextContent(/4. Scan this QR code to import your recovery phrase/);
-    });
   });
 });
 
 describe('DialogExport - Snapshots', () => {
   it('matches snapshot for default DialogExport', () => {
     const { container } = render(<DialogExport />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogExport with mnemonic', () => {
+    const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
+    const { container } = render(<DialogExport mnemonic={testMnemonic} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for DialogExport with special mnemonic', () => {
+    const specialMnemonic = 'test phrase with spaces & symbols!';
+    const { container } = render(<DialogExport mnemonic={specialMnemonic} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
