@@ -1,5 +1,4 @@
-import { Client, Keypair, PublicKey } from '@synonymdev/pubky';
-
+import * as Pubky from '@synonymdev/pubky';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
@@ -10,15 +9,15 @@ export class HomeserverService {
     secretKey: '',
   };
   private static instance: HomeserverService;
-  private client: Client;
+  private client: Pubky.Client;
   private currentKeypair: Core.TKeyPair = this.defaultKeypair;
   private testnet = Config.TESTNET.toString() === 'true';
   private pkarrRelays = Config.PKARR_RELAYS.split(',');
 
   private constructor(secretKey: string) {
     this.client = this.testnet
-      ? Client.testnet()
-      : new Client({
+      ? Pubky.Client.testnet()
+      : new Pubky.Client({
           pkarr: { relays: this.pkarrRelays, requestTimeout: null },
           userMaxRecordAge: null,
         });
@@ -86,7 +85,7 @@ export class HomeserverService {
 
   private async checkHomeserver(pubky: string) {
     try {
-      const pubkyPublicKey = PublicKey.from(pubky);
+      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
       const homeserver = await this.client.getHomeserver(pubkyPublicKey);
 
       if (!homeserver) {
@@ -108,7 +107,7 @@ export class HomeserverService {
 
   private async checkSession(pubky: string) {
     try {
-      const pubkyPublicKey = PublicKey.from(pubky);
+      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
       const session = await this.client.session(pubkyPublicKey);
       if (!session) {
         throw Libs.createHomeserverError(
@@ -126,7 +125,7 @@ export class HomeserverService {
     }
   }
 
-  private async signin(keypair: Keypair) {
+  private async signin(keypair: Pubky.Keypair) {
     try {
       await this.client.signin(keypair);
       Libs.Logger.debug('Signin successful', { keypair });
@@ -137,7 +136,7 @@ export class HomeserverService {
 
   async signup(keypair: Core.TKeyPair, signupToken: string) {
     try {
-      const homeserverPublicKey = PublicKey.from(Config.HOMESERVER);
+      const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
       Libs.Logger.debug('Signing up', {
         keypair,
         signupToken,
@@ -167,9 +166,9 @@ export class HomeserverService {
     }
   }
 
-  async logout(publicKey: string): Promise<void> {
+  async logout(publicKey: string) {
     try {
-      const pubKey = PublicKey.from(publicKey);
+      const pubKey = Pubky.PublicKey.from(publicKey);
       await this.client.signout(pubKey);
 
       this.currentKeypair = this.defaultKeypair;
@@ -198,7 +197,7 @@ export class HomeserverService {
     }
   }
 
-  async authenticateKeypair(keypair: Keypair) {
+  async authenticateKeypair(keypair: Pubky.Keypair) {
     try {
       const publicKey = keypair.publicKey().z32();
       const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());
@@ -222,7 +221,7 @@ export class HomeserverService {
     } catch (error) {
       try {
         // try to republish homeserver
-        await this.client.republishHomeserver(keypair, PublicKey.from(Config.HOMESERVER));
+        await this.client.republishHomeserver(keypair, Pubky.PublicKey.from(Config.HOMESERVER));
         Libs.Logger.debug('Republish homeserver successful', { keypair });
       } catch {
         this.handleError(
