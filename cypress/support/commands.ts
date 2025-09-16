@@ -24,60 +24,29 @@ Cypress.Commands.add(
     cy.visit('/');
     cy.location('pathname').should('eq', '/');
 
+    cy.get('#create-account-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/install');
+
+    cy.get('#create-keys-in-browser-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/pubky');
+
+    // copy pubky to alias
+    if (pubkyAlias) {
+    cy.get('#copy-to-clipboard-action-btn').click();
+    cy.saveCopiedPubkyToAlias(pubkyAlias);
+    }
+    
+    cy.get('#public-key-navigation-continue-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/backup');
 
 
-    // cy.get('#onboarding-create-account-btn').click();
-    // cy.location('pathname').should('eq', '/onboarding/intro');
+    cy.get('#backup-recovery-file-btn').click();
+    // consider backing up here
+    cy.get('#backup-navigation-continue-btn').click();
+    cy.location('pathname').should('eq', '/onboarding/homeserver');
 
-    // if (skipOnboardingSlides === SkipOnboardingSlides.Yes) {
-    //   // click 'Skip Intro' button
-    //   cy.get('#onboarding-skip-intro-btn').click();
-    // } else {
-    //   // click 'Continue' button 6 times to skip onboarding slides
-    //   for (let i = 0; i < 6; i++) {
-    //     cy.get('#onboarding-continue-btn').click();
-    //     if (i < 5) cy.location('pathname').should('eq', '/onboarding/intro');
-    //   }
-    // }
-
-    // cy.get('#onboarding-sign-up-link').click();
-    // cy.location('pathname').should('eq', '/onboarding/sign-up');
-
-    // cy.get('#onboarding-name-input').type(profileName);
-
-    // // request invite code from homeserver and input it
-    // cy.request({
-    //   method: 'GET',
-    //   url: 'http://localhost:6288/generate_signup_token',
-    //   headers: {
-    //     'X-Admin-Password': 'admin'
-    //   }
-    // }).then((response) => {
-    //   const inviteCode = response.body;
-    //   cy.wrap(inviteCode).as('inviteCode');
-    //   cy.get('#onboarding-token-input').type(inviteCode);
-    // });
-
-    // profileBio ? cy.get('#onboarding-bio-input').type(profileBio) : null;
-
-    // cy.get('#onboarding-submit-button').click();
-
-    // cy.location('pathname').should('eq', '/onboarding/pubky');
-
-    // // store pubky as an alias for future use
-    // // will only work if called from before or beforeEach
-    // if (pubkyAlias) {
-    //   cy.get('#onboarding-copy-pubky-btn').click();
-    //   cy.saveCopiedPubkyToAlias(pubkyAlias);
-    // }
-
-    // cy.get('#onboarding-confirm-link').click();
-
-    // cy.location('pathname').should('eq', '/onboarding/confirm');
-
-    // cy.get('#onboarding-start-exploring-btn').click();
-
-    // cy.location('pathname').should('eq', '/home');
+    // input invite code
+    // click continue button
   }
 );
 

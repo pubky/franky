@@ -30,6 +30,7 @@ export const PublicKeyNavigation = () => {
 
   return (
     <Molecules.ButtonsNavigation
+      id="public-key-navigation"
       className="py-6"
       onHandleBackButton={onHandleBackButton}
       onHandleContinueButton={onHandleContinueButton}

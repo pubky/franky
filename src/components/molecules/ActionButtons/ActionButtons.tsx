@@ -19,11 +19,11 @@ export function ActionButtons({
 }: ActionButtonsProps) {
   return (
     <Atoms.Container className={Libs.cn('gap-3 flex-row sm:items-center', className)} {...props}>
-      <Atoms.Button variant="secondary" className="w-[158px] sm:w-auto" size="lg" onClick={onSignIn}>
+      <Atoms.Button id="sign-in-btn" variant="secondary" className="w-[158px] sm:w-auto" size="lg" onClick={onSignIn}>
         <Libs.LogIn className="mr-2 h-4 w-4" />
         {signInText}
       </Atoms.Button>
-      <Atoms.Button className="w-[158px] sm:w-auto" size="lg" onClick={onCreateAccount}>
+      <Atoms.Button id="create-account-btn" className="w-[158px] sm:w-auto" size="lg" onClick={onCreateAccount}>
         <Libs.UserRoundPlus className="mr-2 h-4 w-4" />
         {createAccountText}
       </Atoms.Button>

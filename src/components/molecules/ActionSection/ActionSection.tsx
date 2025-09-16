@@ -7,6 +7,7 @@ interface ActionSectionProps {
   children?: ReactNode;
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
   actions?: Array<{
+    id?: string;
     label: string;
     icon?: ReactNode;
     onClick: () => void;
@@ -23,6 +24,7 @@ export function ActionSection({ children, className, actions = [] }: ActionSecti
         <Atoms.Container className="flex-row gap-3">
           {actions.map((action, index) => (
             <Atoms.Button
+              id={action.id}
               key={index}
               variant={action.variant || 'secondary'}
               className="rounded-full"

@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next node_modules && npm install",
+    "start:e2e": "cypress open -P cypress",
+    "test:e2e": "cypress run -P cypress",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
