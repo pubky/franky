@@ -1,4 +1,4 @@
-import { CheckIndexed, HasBackedUp, SkipOnboardingSlides } from './enums';
+import { CheckIndexed, HasBackedUp, BackupType } from './enums';
 
 declare global {
   namespace Cypress {
@@ -8,7 +8,7 @@ declare global {
       onboardAsNewUser(
         profileName: string,
         profileBio?: string,
-        skipOnboardingSlides?: SkipOnboardingSlides,
+        backup?: BackupType,
         pubkyAlias?: string
       ): Chainable<void>;
       backupRecoveryFile(passcode?: string): Chainable<void>;

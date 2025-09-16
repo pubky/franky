@@ -1,8 +1,9 @@
 // <reference types="cypress" />
 
+import { backupDownloadFilePath } from './common';
 import { goToProfilePageFromHeader } from './header';
 //import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
-import { HasBackedUp, SkipOnboardingSlides } from './types/enums';
+import { HasBackedUp, BackupType } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -18,7 +19,8 @@ Cypress.Commands.add(
   (
     profileName: string,
     profileBio: string = '',
-    skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
+    backup?: BackupType,
+    //skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
     pubkyAlias?: string
   ) => {
     cy.visit('/');
@@ -32,21 +34,51 @@ Cypress.Commands.add(
 
     // copy pubky to alias
     if (pubkyAlias) {
-    cy.get('#copy-to-clipboard-action-btn').click();
-    cy.saveCopiedPubkyToAlias(pubkyAlias);
+      cy.get('#copy-to-clipboard-action-btn').click();
+      cy.saveCopiedPubkyToAlias(pubkyAlias);
     }
-    
+
     cy.get('#public-key-navigation-continue-btn').click();
     cy.location('pathname').should('eq', '/onboarding/backup');
 
+    if (backup === BackupType.EncryptedFile) {
+      cy.get('#backuo-encrypted-file-btn').click();
+      cy.get('#password').type('123456');
+      cy.get('#confirmPassword').type('123456');
+      cy.get('#download-file-btn').click();
+      cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky1'));
+      cy.get('#backup-successful-ok-btn').click();
+    };
+    // todo: if (backup === BackupType.RecoveryPhrase)
 
-    cy.get('#backup-recovery-file-btn').click();
-    // consider backing up here
     cy.get('#backup-navigation-continue-btn').click();
     cy.location('pathname').should('eq', '/onboarding/homeserver');
 
-    // input invite code
-    // click continue button
+    // request invite code from homeserver and input it
+    cy.request({
+      method: 'GET',
+      url: 'http://localhost:6288/generate_signup_token',
+      headers: {
+        'X-Admin-Password': 'admin'
+      }
+    }).then((response) => {
+      const inviteCode = response.body;
+      cy.wrap(inviteCode).as('inviteCode');
+      cy.get('#invite-code-input').type(inviteCode);
+    });
+
+    cy.get('#continue-btn').click();
+
+    cy.location('pathname').should('eq', '/onboarding/profile');
+
+    cy.get('#profile-name-input').type(profileName);
+    cy.get('#profile-bio-input').type(profileBio);
+    //cy.get('#profile-links-input').type(profileLinks);
+
+    // todo: finish onboarding
+    cy.get('#profile-finish-btn').click();
+
+    cy.pause();
   }
 );
 

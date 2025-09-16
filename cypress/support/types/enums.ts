@@ -12,3 +12,9 @@ export enum CheckIndexed {
   No = 0,
   Yes = 1
 }
+
+export enum BackupType {
+  EncryptedFile = 'encryptedFile',
+  RecoveryPhrase = 'recoveryPhrase',
+  PubkyRing = 'pubkyRing',
+}
