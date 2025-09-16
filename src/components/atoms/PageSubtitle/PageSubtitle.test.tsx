@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { PageSubtitle } from './PageSubtitle';
+
+describe('PageSubtitle', () => {
+  it('renders with default props', () => {
+    render(<PageSubtitle>Test subtitle</PageSubtitle>);
+    const pageSubtitle = screen.getByText('Test subtitle');
+    expect(pageSubtitle).toBeInTheDocument();
+  });
+});
 
 describe('PageSubtitle - Snapshots', () => {
   it('matches snapshot with default props', () => {

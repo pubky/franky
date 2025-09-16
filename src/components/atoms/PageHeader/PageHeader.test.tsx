@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { PageHeader } from './PageHeader';
+
+describe('PageHeader', () => {
+  it('renders with default props', () => {
+    render(<PageHeader>Header content</PageHeader>);
+    const pageHeader = screen.getByText('Header content');
+    expect(pageHeader).toBeInTheDocument();
+  });
+});
 
 describe('PageHeader - Snapshots', () => {
   it('matches snapshot with default props', () => {

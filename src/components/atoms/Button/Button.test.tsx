@@ -3,6 +3,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Button } from './Button';
 
 describe('Button', () => {
+  it('renders with default props', () => {
+    render(<Button>Default Button</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+  });
+
   it('handles click events', () => {
     const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click me</Button>);

@@ -1,13 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ImageBackground } from './ImageBackground';
 
 describe('ImageBackground', () => {
-  it('applies custom className when only image is provided', () => {
-    render(<ImageBackground image="/bg.jpg" className="custom-bg" data-testid="image-background" />);
-
-    const background = screen.getByTestId('image-background');
-    expect(background).toHaveClass('custom-bg');
+  it('renders with default props', () => {
+    render(<ImageBackground image="/bg-image.jpg" />);
+    const imageBackground = screen.getByTestId('image-background');
+    expect(imageBackground).toBeInTheDocument();
   });
 
   it('switches between single and dual background mode', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 // Mock Radix UI Dialog components
 vi.mock('@radix-ui/react-dialog', () => ({
@@ -63,6 +63,14 @@ import {
   DialogTitle,
   DialogDescription,
 } from './Dialog';
+
+describe('Dialog', () => {
+  it('renders with default props', () => {
+    render(<Dialog>Default Dialog</Dialog>);
+    const dialog = screen.getByText('Default Dialog');
+    expect(dialog).toBeInTheDocument();
+  });
+});
 
 describe('Dialog - Snapshots', () => {
   it('matches snapshot for Dialog with default props', () => {

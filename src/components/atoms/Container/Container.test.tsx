@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Container } from './Container';
+
+describe('Container', () => {
+  it('renders with default props', () => {
+    render(<Container>Default Container</Container>);
+    const container = screen.getByText('Default Container');
+    expect(container).toBeInTheDocument();
+  });
+});
 
 describe('Container - Snapshots', () => {
   it('matches snapshot with default props', () => {

@@ -54,30 +54,6 @@ describe('Input', () => {
 
     expect(ref).toHaveBeenCalledWith(expect.any(HTMLInputElement));
   });
-
-  it('supports all standard input attributes', () => {
-    render(
-      <Input
-        data-testid="input"
-        id="test-input"
-        name="testName"
-        required
-        maxLength={100}
-        minLength={5}
-        pattern="[a-z]+"
-        autoComplete="off"
-      />,
-    );
-    const input = screen.getByTestId('input');
-
-    expect(input).toHaveAttribute('id', 'test-input');
-    expect(input).toHaveAttribute('name', 'testName');
-    expect(input).toHaveAttribute('required');
-    expect(input).toHaveAttribute('maxLength', '100');
-    expect(input).toHaveAttribute('minLength', '5');
-    expect(input).toHaveAttribute('pattern', '[a-z]+');
-    expect(input).toHaveAttribute('autoComplete', 'off');
-  });
 });
 
 describe('Input - Snapshots', () => {
@@ -117,5 +93,21 @@ describe('Input - Snapshots', () => {
 
     const { container: readOnlyContainer } = render(<Input readOnly />);
     expect(readOnlyContainer.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for standard input attributes', () => {
+    const { container } = render(
+      <Input
+        data-testid="input"
+        id="test-input"
+        name="testName"
+        required
+        maxLength={100}
+        minLength={5}
+        pattern="[a-z]+"
+        autoComplete="off"
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

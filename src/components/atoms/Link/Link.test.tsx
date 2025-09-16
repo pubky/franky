@@ -1,7 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Link } from './Link';
+
+describe('Link', () => {
+  it('renders with default props', () => {
+    render(<Link href="https://example.com">Default Link</Link>);
+    const link = screen.getByText('Default Link');
+    expect(link).toBeInTheDocument();
+  });
+});
 
 describe('Link - Snapshots', () => {
   it('matches snapshot with default props', () => {

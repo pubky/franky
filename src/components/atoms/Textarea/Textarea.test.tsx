@@ -3,6 +3,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Textarea } from './Textarea';
 
 describe('Textarea', () => {
+  it('renders with default props', () => {
+    render(<Textarea>Default Textarea</Textarea>);
+    const textarea = screen.getByText('Default Textarea');
+    expect(textarea).toBeInTheDocument();
+  });
+
   it('handles onChange events', () => {
     const handleChange = vi.fn();
     render(<Textarea onChange={handleChange} data-testid="textarea" />);

@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Label } from './Label';
+
+describe('Label', () => {
+  it('renders with default props', () => {
+    render(<Label>Default Label</Label>);
+    const label = screen.getByText('Default Label');
+    expect(label).toBeInTheDocument();
+  });
+});
 
 describe('Label - Snapshots', () => {
   it('matches snapshot with default props', () => {

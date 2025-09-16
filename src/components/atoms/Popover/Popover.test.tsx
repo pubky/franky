@@ -4,6 +4,12 @@ import { Popover, PopoverTrigger, PopoverContent } from './Popover';
 import { normaliseRadixIds } from '@/libs/utils/utils';
 
 describe('Popover', () => {
+  it('renders with default props', () => {
+    render(<Popover>Default Popover</Popover>);
+    const popover = screen.getByText('Default Popover');
+    expect(popover).toBeInTheDocument();
+  });
+
   it('shows content when trigger is clicked', async () => {
     render(
       <Popover>

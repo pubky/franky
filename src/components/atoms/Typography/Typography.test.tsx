@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Typography } from './Typography';
+
+describe('Typography', () => {
+  it('renders with default props', () => {
+    render(<Typography>Default text</Typography>);
+    const typography = screen.getByText('Default text');
+    expect(typography).toBeInTheDocument();
+  });
+});
 
 describe('Typography - Snapshots', () => {
   it('matches snapshot with default props', () => {

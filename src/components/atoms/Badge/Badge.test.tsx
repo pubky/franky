@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Badge } from './Badge';
+
+describe('Badge', () => {
+  it('renders with default props', () => {
+    render(<Badge>Default Badge</Badge>);
+    const badge = screen.getByText('Default Badge');
+    expect(badge).toBeInTheDocument();
+  });
+});
 
 describe('Badge - Snapshots', () => {
   it('matches snapshot with default props', () => {

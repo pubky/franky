@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { FooterLinks } from './FooterLinks';
 
 // Mock UI components
@@ -18,6 +18,14 @@ vi.mock('@/components/ui', () => ({
     </p>
   ),
 }));
+
+describe('FooterLinks', () => {
+  it('renders with default props', () => {
+    render(<FooterLinks>Footer text</FooterLinks>);
+    const footerLinks = screen.getByText('Footer text');
+    expect(footerLinks).toBeInTheDocument();
+  });
+});
 
 describe('FooterLinks - Snapshots', () => {
   it('matches snapshot with default props', () => {

@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { List } from './List';
+
+describe('List', () => {
+  it('renders with default props', () => {
+    render(<List>Default List</List>);
+    const list = screen.getByText('Default List');
+    expect(list).toBeInTheDocument();
+  });
+});
 
 describe('List - Snapshots', () => {
   it('matches snapshot with default props', () => {

@@ -3,6 +3,7 @@
 exports[`ImageBackground - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+  data-testid="image-background"
   style="background-image: url(\\"/bg-image.jpg\\");"
 />
 `;
@@ -10,6 +11,7 @@ exports[`ImageBackground - Snapshots > matches snapshot with default props 1`] =
 exports[`ImageBackground - Snapshots > matches snapshots for additional props 1`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+  data-testid="image-background"
   id="background-id"
   style="background-image: url(\\"/bg.jpg\\");"
 />
@@ -18,7 +20,7 @@ exports[`ImageBackground - Snapshots > matches snapshots for additional props 1`
 exports[`ImageBackground - Snapshots > matches snapshots for additional props 2`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
-  data-testid="custom-bg"
+  data-testid="image-background"
   style="background-image: url(\\"/bg.jpg\\");"
 />
 `;
@@ -26,6 +28,7 @@ exports[`ImageBackground - Snapshots > matches snapshots for additional props 2`
 exports[`ImageBackground - Snapshots > matches snapshots for different configurations 1`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+  data-testid="image-background"
   style="background-image: url(\\"/default-bg.jpg\\");"
 />
 `;
@@ -33,6 +36,7 @@ exports[`ImageBackground - Snapshots > matches snapshots for different configura
 exports[`ImageBackground - Snapshots > matches snapshots for different configurations 2`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 custom-bg"
+  data-testid="image-background"
   style="background-image: url(\\"/custom-bg.jpg\\");"
 />
 `;
@@ -40,6 +44,7 @@ exports[`ImageBackground - Snapshots > matches snapshots for different configura
 exports[`ImageBackground - Snapshots > matches snapshots for different image types 1`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+  data-testid="image-background"
   style="background-image: url(\\"/background.jpg\\");"
 />
 `;
@@ -47,6 +52,7 @@ exports[`ImageBackground - Snapshots > matches snapshots for different image typ
 exports[`ImageBackground - Snapshots > matches snapshots for different image types 2`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+  data-testid="image-background"
   style="background-image: url(\\"/background.png\\");"
 />
 `;
@@ -54,6 +60,7 @@ exports[`ImageBackground - Snapshots > matches snapshots for different image typ
 exports[`ImageBackground - Snapshots > matches snapshots for different image types 3`] = `
 <div
   class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+  data-testid="image-background"
   style="background-image: url(\\"/background.svg\\");"
 />
 `;

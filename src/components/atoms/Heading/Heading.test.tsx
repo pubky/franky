@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Heading } from './Heading';
+
+describe('Heading', () => {
+  it('renders with default props', () => {
+    render(<Heading>Default Heading</Heading>);
+    const heading = screen.getByText('Default Heading');
+    expect(heading).toBeInTheDocument();
+  });
+});
 
 describe('Heading - Snapshots', () => {
   it('matches snapshot with default props', () => {
