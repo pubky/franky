@@ -1,0 +1,1 @@
+export { DialogRestoreEncryptedFile } from './DialogRestoreEncryptedFile';

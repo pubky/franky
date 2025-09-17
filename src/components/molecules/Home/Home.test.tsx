@@ -11,9 +11,6 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock console.log
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-
 // Mock molecules
 vi.mock('@/molecules', () => ({
   ActionButtons: ({ onSignIn, onCreateAccount }: { onSignIn: () => void; onCreateAccount: () => void }) => (
@@ -85,7 +82,7 @@ describe('HomeActions', () => {
     const signInButton = screen.getByTestId('sign-in-button');
     fireEvent.click(signInButton);
 
-    expect(mockConsoleLog).toHaveBeenCalledWith('Sign in clicked');
+    expect(mockPush).toHaveBeenCalledWith('/sign-in');
   });
 });
 

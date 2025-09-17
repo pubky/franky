@@ -27,6 +27,8 @@
       "@/organisms/*": ["./src/components/organisms/*"],
       "@/templates": ["./src/components/templates/index.ts"],
       "@/templates/*": ["./src/components/templates/*"],
+      "@/hooks": ["./src/hooks/index.ts"],
+      "@/hooks/*": ["./src/hooks/*"],
       "@/*": ["./src/*"]
     }
   },

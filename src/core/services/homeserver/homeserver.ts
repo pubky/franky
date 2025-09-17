@@ -1,16 +1,7 @@
-import { Client, PublicKey } from '@synonymdev/pubky';
-import { type FetchOptions, type SignupResult, type TKeyPair } from '@/core';
-import {
-  AppError,
-  HomeserverErrorType,
-  createCommonError,
-  CommonErrorType,
-  createHomeserverError,
-  Env,
-  Logger,
-  Identity,
-} from '@/libs';
-import { useOnboardingStore, useProfileStore } from '@/core/stores';
+import * as Pubky from '@synonymdev/pubky';
+import * as Core from '@/core';
+import * as Libs from '@/libs';
+import * as Config from '@/config';
 
 export class HomeserverService {
   private defaultKeypair = {
@@ -18,182 +9,229 @@ export class HomeserverService {
     secretKey: '',
   };
   private static instance: HomeserverService;
-  private client: Client;
-  private currentKeypair: TKeyPair = this.defaultKeypair;
-  private testnet = Env.NEXT_PUBLIC_TESTNET.toString() === 'true';
-  private pkarrRelays = Env.NEXT_PUBLIC_PKARR_RELAYS.split(',');
+  private client: Pubky.Client;
+  private currentKeypair: Core.TKeyPair = this.defaultKeypair;
+  private testnet = Config.TESTNET.toString() === 'true';
+  private pkarrRelays = Config.PKARR_RELAYS.split(',');
 
-  private constructor() {
+  private constructor(secretKey: string) {
     this.client = this.testnet
-      ? Client.testnet()
-      : new Client({
+      ? Pubky.Client.testnet()
+      : new Pubky.Client({
           pkarr: { relays: this.pkarrRelays, requestTimeout: null },
           userMaxRecordAge: null,
         });
 
     // Initialize session from store
-    this.initializeFromStore();
-  }
-
-  public static getInstance(): HomeserverService {
-    if (!HomeserverService.instance) {
-      HomeserverService.instance = new HomeserverService();
-    }
-    return HomeserverService.instance;
-  }
-
-  private initializeFromStore(): void {
     try {
-      const { secretKey } = useOnboardingStore.getState();
-      const { session } = useProfileStore.getState();
-
-      // If we have a session and valid keys, restore the keypair
-      if (session && secretKey && secretKey.length === 64) {
-        this.currentKeypair = Identity.keypairFromSecretKey(secretKey);
-        Logger.debug('HomeserverService: Initialized from store', {
-          hasSession: !!session,
-          hasKeypair: !!this.currentKeypair,
-        });
-      }
-    } catch (error) {
-      Logger.error('HomeserverService: Failed to initialize from store', error);
-      // Clear potentially corrupted session
-      useProfileStore.getState().reset();
+      this.currentKeypair = Libs.Identity.keypairFromSecretKey(secretKey);
+    } catch {
+      // If secretKey is invalid, use default empty keypair
+      this.currentKeypair = this.defaultKeypair;
     }
   }
 
-  async signup(keypair: TKeyPair, signupToken: string): Promise<SignupResult> {
+  public static getInstance(secretKey: string): HomeserverService {
     try {
-      const homeserverPublicKey = PublicKey.from(Env.NEXT_PUBLIC_HOMESERVER);
-      Logger.debug('Signing up', {
-        keypair,
-        signupToken,
-        homeserverPublicKey: homeserverPublicKey,
-        homeserverPublicKeyZ32: homeserverPublicKey.z32(),
-      });
-      const pubkyKeypair = Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
-      const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
-      this.currentKeypair = keypair;
-
-      Logger.debug('Signup successful', { session });
-
-      return { session };
-    } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
+      if (!HomeserverService.instance) {
+        HomeserverService.instance = new HomeserverService(secretKey);
       }
+      return HomeserverService.instance;
+    } catch (error) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+    }
+  }
 
-      // Simply pass through the error with original message preserved
-      const errorMessage = error instanceof Error ? error.message : String(error);
+  private handleError(
+    error: unknown,
+    homeserverErrorType: Libs.HomeserverErrorType,
+    message: string,
+    statusCode: number,
+    additionalContext: Record<string, unknown> = {},
+    alwaysUseHomeserverError = false,
+  ): never {
+    // Re-throw AppErrors as they are already properly formatted
+    if (error instanceof Libs.AppError) {
+      throw error;
+    }
 
-      throw createHomeserverError(HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {
-        originalError: errorMessage,
+    // Handle Error instances with original message preservation
+    if (error instanceof Error) {
+      throw Libs.createHomeserverError(homeserverErrorType, message, statusCode, {
+        originalError: error.message,
+        ...additionalContext,
       });
     }
-  }
 
-  async fetch(url: string, options?: FetchOptions): Promise<Response> {
-    try {
-      // Ensure we're authenticated, automatically using keypair from store if needed
-      await this.ensureAuthenticated();
+    // For non-Error exceptions, use homeserver error if requested (signup case)
+    if (alwaysUseHomeserverError) {
+      throw Libs.createHomeserverError(homeserverErrorType, message, statusCode, {
+        originalError: String(error),
+        ...additionalContext,
+      });
+    }
 
-      const response = await this.client.fetch(url, { ...options, credentials: 'include' });
-
-      Logger.debug('Response from homeserver', { response });
-
-      return response;
-    } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-
-      if (error instanceof Error) {
-        throw createHomeserverError(HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
-          originalError: error.message,
-          url,
-        });
-      }
-
-      throw createCommonError(CommonErrorType.NETWORK_ERROR, 'An unexpected error occurred during fetch', 500, {
+    // Default: Handle non-Error exceptions with network error
+    throw Libs.createCommonError(
+      Libs.CommonErrorType.NETWORK_ERROR,
+      `An unexpected error occurred during ${message.toLowerCase()}`,
+      statusCode,
+      {
         error,
-        url,
-      });
-    }
+        ...additionalContext,
+      },
+    );
   }
 
-  async logout(): Promise<void> {
+  private async checkHomeserver(pubky: string) {
     try {
-      if (!this.isAuthenticated()) {
-        throw createHomeserverError(
-          HomeserverErrorType.NOT_AUTHENTICATED,
-          'Not authenticated. No active session to logout.',
+      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
+      const homeserver = await this.client.getHomeserver(pubkyPublicKey);
+
+      if (!homeserver) {
+        throw Libs.createHomeserverError(
+          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+          'Failed to get homeserver. Try again.',
           401,
         );
       }
 
-      const pubKey = PublicKey.from(this.currentKeypair?.publicKey);
-      await this.client.signout(pubKey);
-
-      this.currentKeypair = this.defaultKeypair;
-
-      Logger.debug('Logout successful');
+      Libs.Logger.debug('Homeserver successful', { homeserver });
+      return homeserver;
     } catch (error) {
-      if (error instanceof AppError) {
-        throw error;
-      }
-
-      if (error instanceof Error) {
-        throw createHomeserverError(HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500, {
-          originalError: error.message,
-        });
-      }
-
-      throw createCommonError(CommonErrorType.NETWORK_ERROR, 'An unexpected error occurred during logout', 500, {
+      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get homeserver. Try again.', 401, {
         error,
       });
     }
   }
 
-  async ensureAuthenticated(secretKey?: string): Promise<void> {
-    // If already authenticated, nothing to do
-    if (this.isAuthenticated()) {
-      return;
-    }
-
-    // Try to get keypair from the store if no secret key provided
-    let keyToUse = secretKey;
-    if (!keyToUse) {
-      const { secretKey } = useOnboardingStore.getState();
-      if (secretKey && secretKey.length === 64) {
-        keyToUse = secretKey;
-        Logger.debug('Using keypair from store for authentication');
-      }
-    }
-
-    // If we have a secret key, try to restore the keypair and check if session exists
-    if (keyToUse) {
-      this.currentKeypair = Identity.keypairFromSecretKey(keyToUse);
-
-      // Check if we have a valid session in the store
-      const { session } = useProfileStore.getState();
+  private async checkSession(pubky: string) {
+    try {
+      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
+      const session = await this.client.session(pubkyPublicKey);
       if (!session) {
-        Logger.warn('Keypair exists but no session - user might need to sign up');
-        this.currentKeypair = this.defaultKeypair;
+        throw Libs.createHomeserverError(
+          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+          'Failed to get session. Try again.',
+          401,
+        );
       }
-    }
-
-    // If still not authenticated, throw error
-    if (!this.isAuthenticated()) {
-      throw createHomeserverError(
-        HomeserverErrorType.NOT_AUTHENTICATED,
-        'Not authenticated. Please sign up first.',
-        401,
-      );
+      Libs.Logger.debug('Session successful', { session });
+      return session;
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get session. Try again.', 401, {
+        error,
+      });
     }
   }
 
-  isAuthenticated(): boolean {
-    const profileStore = useProfileStore.getState();
-    return profileStore.session !== null;
+  private async signin(keypair: Pubky.Keypair) {
+    try {
+      await this.client.signin(keypair);
+      Libs.Logger.debug('Signin successful', { keypair });
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.SIGNIN_FAILED, 'Failed to sign in. Try again.', 401, { error });
+    }
+  }
+
+  async signup(keypair: Core.TKeyPair, signupToken: string) {
+    try {
+      const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
+      Libs.Logger.debug('Signing up', {
+        keypair,
+        signupToken,
+        homeserverPublicKey: homeserverPublicKey,
+      });
+      const pubkyKeypair = Libs.Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
+      const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
+      this.currentKeypair = keypair;
+
+      Libs.Logger.debug('Signup successful', { session });
+
+      return { pubky: keypair.publicKey, session };
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {}, true);
+    }
+  }
+
+  async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+    try {
+      const response = await this.client.fetch(url, { ...options, credentials: 'include' });
+
+      Libs.Logger.debug('Response from homeserver', { response });
+
+      return response;
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
+    }
+  }
+
+  async logout(publicKey: string) {
+    try {
+      const pubKey = Pubky.PublicKey.from(publicKey);
+      await this.client.signout(pubKey);
+
+      this.currentKeypair = this.defaultKeypair;
+
+      Libs.Logger.debug('Logout successful');
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500);
+    }
+  }
+
+  async generateAuthUrl(caps?: string) {
+    const capabilities = caps || '/pub/pubky.app/:rw';
+
+    try {
+      const authRequest = this.client.authRequest(Config.DEFAULT_HTTP_RELAY, capabilities);
+
+      return {
+        url: String(authRequest.url()),
+        promise: authRequest.response(),
+      };
+    } catch (error) {
+      this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
+        capabilities,
+        relay: Config.DEFAULT_HTTP_RELAY,
+      });
+    }
+  }
+
+  async authenticateKeypair(keypair: Pubky.Keypair) {
+    try {
+      const publicKey = keypair.publicKey().z32();
+      const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());
+
+      // get homeserver from pkarr records
+      await this.checkHomeserver(publicKey);
+
+      // sign in with keypair
+      await this.signin(keypair);
+
+      // Retrieve the session
+      const session = await this.checkSession(publicKey);
+
+      // update current keypair
+      this.currentKeypair = {
+        publicKey,
+        secretKey,
+      };
+
+      return { pubky: publicKey, session };
+    } catch (error) {
+      try {
+        // try to republish homeserver
+        await this.client.republishHomeserver(keypair, Pubky.PublicKey.from(Config.HOMESERVER));
+        Libs.Logger.debug('Republish homeserver successful', { keypair });
+      } catch {
+        this.handleError(
+          error,
+          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+          'Not authenticated. Please sign up first.',
+          401,
+          { error },
+        );
+      }
+    }
   }
 }

@@ -5,11 +5,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import {
   HeaderContainer,
   HeaderTitle,
-  OnboardingHeader,
-  SocialLinks,
-  ButtonSignIn,
-  HomeHeader,
-  NavigationButtons,
+  HeaderOnboarding,
+  HeaderSocialLinks,
+  HeaderButtonSignIn,
+  HeaderHome,
+  HeaderSignIn,
+  HeaderNavigationButtons,
 } from './Header';
 import { GITHUB_URL, TWITTER_GETPUBKY_URL, TELEGRAM_URL } from '@/config';
 
@@ -127,8 +128,10 @@ vi.mock('@/molecules', () => ({
       Progress {currentStep}/{totalSteps}
     </div>
   ),
-  SocialLinks: () => <div data-testid="social-links">Social Links</div>,
-  ButtonSignIn: () => <div data-testid="button-sign-in">Sign In Button</div>,
+  HeaderSocialLinks: () => <div data-testid="social-links">Social Links</div>,
+  HeaderButtonSignIn: () => <div data-testid="button-sign-in">Sign In Button</div>,
+  SearchInput: () => <div data-testid="search-input">Search Input</div>,
+  HeaderNavigationButtons: () => <div data-testid="navigation-buttons">Navigation Buttons</div>,
 }));
 
 // Mock libs
@@ -220,9 +223,9 @@ describe('HeaderTitle', () => {
   });
 });
 
-describe('OnboardingHeader', () => {
+describe('HeaderOnboarding', () => {
   it('renders progress steps with correct props', () => {
-    render(<OnboardingHeader currentStep={3} />);
+    render(<HeaderOnboarding currentStep={3} />);
 
     const progressSteps = screen.getByTestId('progress-steps');
     expect(progressSteps).toBeInTheDocument();
@@ -231,9 +234,9 @@ describe('OnboardingHeader', () => {
   });
 });
 
-describe('SocialLinks', () => {
+describe('HeaderSocialLinks', () => {
   it('renders social media links', () => {
-    render(<SocialLinks />);
+    render(<HeaderSocialLinks />);
 
     const links = screen.getAllByTestId('link');
     expect(links).toHaveLength(3);
@@ -249,27 +252,27 @@ describe('SocialLinks', () => {
   });
 
   it('applies custom className', () => {
-    render(<SocialLinks className="custom-class" />);
+    render(<HeaderSocialLinks className="custom-class" />);
 
     const container = screen.getByTestId('container');
     expect(container.className).toContain('custom-class');
   });
 
   it('has correct default styling', () => {
-    render(<SocialLinks />);
+    render(<HeaderSocialLinks />);
 
     const container = screen.getByTestId('container');
     expect(container.className).toContain('hidden md:flex flex-row justify-end gap-6 mr-6');
   });
 });
 
-describe('ButtonSignIn', () => {
+describe('HeaderButtonSignIn', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders sign in button', () => {
-    render(<ButtonSignIn />);
+    render(<HeaderButtonSignIn />);
 
     const button = screen.getByTestId('button-secondary');
     expect(button).toBeInTheDocument();
@@ -277,73 +280,69 @@ describe('ButtonSignIn', () => {
   });
 
   it('handles click event', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    render(<ButtonSignIn />);
+    render(<HeaderButtonSignIn />);
 
     const button = screen.getByTestId('button-secondary');
     fireEvent.click(button);
 
-    expect(consoleSpy).toHaveBeenCalledWith('sign in');
-
-    consoleSpy.mockRestore();
+    expect(mockPush).toHaveBeenCalledWith('/sign-in');
   });
 
   it('has correct variant', () => {
-    render(<ButtonSignIn />);
+    render(<HeaderButtonSignIn />);
 
     const button = screen.getByTestId('button-secondary');
     expect(button).toHaveAttribute('data-variant', 'secondary');
   });
 
   it('passes through additional props', () => {
-    render(<ButtonSignIn id="custom-id" />);
+    render(<HeaderButtonSignIn id="custom-id" />);
 
     const button = screen.getByTestId('button-secondary');
     expect(button).toHaveAttribute('id', 'custom-id');
   });
 });
 
-describe('HomeHeader', () => {
+describe('HeaderHome', () => {
   it('renders social links and sign in button', () => {
-    render(<HomeHeader />);
+    render(<HeaderHome />);
 
     expect(screen.getByTestId('social-links')).toBeInTheDocument();
     expect(screen.getByTestId('button-sign-in')).toBeInTheDocument();
   });
 
   it('has correct container structure', () => {
-    render(<HomeHeader />);
+    render(<HeaderHome />);
 
     const container = screen.getByTestId('container');
     expect(container.className).toContain('flex-1 flex-row items-center justify-end');
   });
 });
 
-describe('NavigationButtons', () => {
+describe('HeaderNavigationButtons', () => {
   it('renders all navigation buttons', () => {
-    render(<NavigationButtons />);
+    render(<HeaderNavigationButtons />);
 
     expect(screen.getAllByTestId('button-secondary')).toHaveLength(5);
     expect(screen.getAllByTestId('link')).toHaveLength(6);
   });
 
   it('renders with avatar when image is provided', () => {
-    render(<NavigationButtons image="/test-image.jpg" />);
+    render(<HeaderNavigationButtons image="/test-image.jpg" />);
 
     const avatarImage = screen.getByTestId('avatar-image');
     expect(avatarImage).toHaveAttribute('src', '/test-image.jpg');
   });
 
   it('renders avatar fallback when no image', () => {
-    render(<NavigationButtons />);
+    render(<HeaderNavigationButtons />);
 
     expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
     expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('SN');
   });
 
   it('renders counter badge when provided', () => {
-    render(<NavigationButtons counter={5} />);
+    render(<HeaderNavigationButtons counter={5} />);
 
     const badge = screen.getByTestId('badge');
     expect(badge).toBeInTheDocument();
@@ -351,13 +350,13 @@ describe('NavigationButtons', () => {
   });
 
   it('does not render counter badge when not provided', () => {
-    render(<NavigationButtons />);
+    render(<HeaderNavigationButtons />);
 
     expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
   });
 
   it('has correct navigation links', () => {
-    render(<NavigationButtons />);
+    render(<HeaderNavigationButtons />);
 
     const links = screen.getAllByTestId('link');
 
@@ -370,7 +369,7 @@ describe('NavigationButtons', () => {
   });
 
   it('renders counter badge with 21+ when counter exceeds 21', () => {
-    render(<NavigationButtons counter={25} />);
+    render(<HeaderNavigationButtons counter={25} />);
 
     const badge = screen.getByTestId('badge');
     expect(badge).toBeInTheDocument();
@@ -378,7 +377,7 @@ describe('NavigationButtons', () => {
   });
 
   it('renders exact counter when counter is 21 or less', () => {
-    render(<NavigationButtons counter={21} />);
+    render(<HeaderNavigationButtons counter={21} />);
 
     const badge = screen.getByTestId('badge');
     expect(badge).toBeInTheDocument();
@@ -386,13 +385,13 @@ describe('NavigationButtons', () => {
   });
 
   it('does not render counter badge when counter is 0', () => {
-    render(<NavigationButtons counter={0} />);
+    render(<HeaderNavigationButtons counter={0} />);
 
     expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
   });
 
   it('applies small screen hidden class to search link', () => {
-    render(<NavigationButtons />);
+    render(<HeaderNavigationButtons />);
 
     const links = screen.getAllByTestId('link');
     const searchLink = links[1]; // Second link is the search link
@@ -401,7 +400,7 @@ describe('NavigationButtons', () => {
   });
 
   it('applies correct styling classes to counter badge', () => {
-    render(<NavigationButtons counter={5} />);
+    render(<HeaderNavigationButtons counter={5} />);
 
     const badge = screen.getByTestId('badge');
     expect(badge.className).toContain('absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5');
@@ -409,16 +408,43 @@ describe('NavigationButtons', () => {
   });
 
   it('applies smaller text when counter exceeds 21', () => {
-    render(<NavigationButtons counter={25} />);
+    render(<HeaderNavigationButtons counter={25} />);
 
     const typography = screen.getByTestId('typography');
     expect(typography.className).toContain('text-xs');
   });
 
   it('does not apply smaller text when counter is 21 or less', () => {
-    render(<NavigationButtons counter={15} />);
+    render(<HeaderNavigationButtons counter={15} />);
 
     const typography = screen.getByTestId('typography');
     expect(typography.className).not.toContain('text-xs');
+  });
+});
+
+describe('HeaderSignIn', () => {
+  it('renders search input and navigation buttons', () => {
+    render(<HeaderSignIn />);
+
+    expect(screen.getByTestId('search-input')).toBeInTheDocument();
+    expect(screen.getByTestId('navigation-buttons')).toBeInTheDocument();
+  });
+
+  it('has correct container structure', () => {
+    render(<HeaderSignIn />);
+
+    const container = screen.getByTestId('container');
+    expect(container.className).toContain('flex-1 flex-row items-center justify-end gap-3');
+  });
+
+  it('renders with proper component layout', () => {
+    render(<HeaderSignIn />);
+
+    const container = screen.getByTestId('container');
+    const searchInput = screen.getByTestId('search-input');
+    const navigationButtons = screen.getByTestId('navigation-buttons');
+
+    expect(container).toContainElement(searchInput);
+    expect(container).toContainElement(navigationButtons);
   });
 });

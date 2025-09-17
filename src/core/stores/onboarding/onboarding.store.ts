@@ -21,6 +21,13 @@ export const useOnboardingStore = create<OnboardingStore>()(
           secretKey: state.secretKey,
           hasHydrated: false, // Will be set by rehydration handler
         }),
+
+        // Set hasHydrated to true after rehydration
+        onRehydrateStorage: () => (state) => {
+          if (state) {
+            state.setHydrated(true);
+          }
+        },
       },
     ),
     {

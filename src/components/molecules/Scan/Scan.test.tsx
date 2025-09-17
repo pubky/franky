@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import React from 'react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
 import { PUBKY_RING_URL, PUBKY_CORE_URL } from '@/config';
 
@@ -18,6 +19,25 @@ vi.mock('next/image', () => ({
     // eslint-disable-next-line @next/next/no-img-element
     <img data-testid="next-image" src={src} alt={alt} width={width} height={height} />
   ),
+}));
+
+// Mock QRCodeSVG
+vi.mock('qrcode.react', () => ({
+  QRCodeSVG: ({ size }: { size: number }) => (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img data-testid="next-image" src="/images/pubky-ring-qr-example.png" alt="Pubky Ring" width={size} height={size} />
+  ),
+}));
+
+// Mock Core modules
+vi.mock('@/core', () => ({
+  AuthController: {
+    getAuthUrl: vi.fn().mockResolvedValue({
+      url: 'mock-auth-url',
+      promise: Promise.resolve({ mockKeypair: true }),
+    }),
+    loginWithAuthUrl: vi.fn().mockResolvedValue({}),
+  },
 }));
 
 // Mock molecules
@@ -58,6 +78,48 @@ vi.mock('@/molecules', () => ({
       )}
     </div>
   ),
+  toast: vi.fn(),
+}));
+
+// Mock libs
+vi.mock('@/libs', () => ({
+  Loader2: ({ className }: { className?: string }) => (
+    <svg
+      className={className}
+      data-testid="loader-icon"
+      aria-hidden="true"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+    </svg>
+  ),
+  Key: ({ className }: { className?: string }) => (
+    <svg
+      className={className}
+      data-testid="key-icon"
+      aria-hidden="true"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" />
+      <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />
+    </svg>
+  ),
 }));
 
 // Mock atoms
@@ -72,6 +134,20 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   ),
+  Typography: ({
+    children,
+    as,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: string;
+    size?: string;
+    className?: string;
+  }) => {
+    const Tag = as || 'span';
+    return React.createElement(Tag, { 'data-testid': 'typography', className, 'data-size': size }, children);
+  },
   FooterLinks: ({ children }: { children: React.ReactNode }) => <div data-testid="footer-links">{children}</div>,
   Link: ({ children, href, target }: { children: React.ReactNode; href: string; target?: string }) => (
     <a data-testid="link" href={href} target={target}>
@@ -83,8 +159,10 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('ScanContent', () => {
-  it('renders desktop and mobile content containers', () => {
-    render(<ScanContent />);
+  it('renders desktop and mobile content containers', async () => {
+    await act(async () => {
+      render(<ScanContent />);
+    });
 
     const containers = screen.getAllByTestId('container');
     expect(containers.length).toBeGreaterThan(0);
@@ -98,20 +176,35 @@ describe('ScanContent', () => {
     expect(mobileContainer).toBeInTheDocument();
   });
 
-  it('renders QR code image in desktop version', () => {
-    render(<ScanContent />);
+  it('renders QR code image in desktop version', async () => {
+    await act(async () => {
+      render(<ScanContent />);
+    });
+
+    // Wait for the component to finish loading and show QR code
+    await waitFor(() => {
+      const images = screen.getAllByTestId('next-image');
+      const qrImage = images.find((img) => img.getAttribute('src') === '/images/pubky-ring-qr-example.png');
+      expect(qrImage).toBeInTheDocument();
+    });
 
     const images = screen.getAllByTestId('next-image');
     const qrImage = images.find((img) => img.getAttribute('src') === '/images/pubky-ring-qr-example.png');
 
-    expect(qrImage).toBeInTheDocument();
     expect(qrImage).toHaveAttribute('alt', 'Pubky Ring');
     expect(qrImage).toHaveAttribute('width', '220');
     expect(qrImage).toHaveAttribute('height', '220');
   });
 
-  it('renders logo and button in mobile version', () => {
-    render(<ScanContent />);
+  it('renders logo and button in mobile version', async () => {
+    await act(async () => {
+      render(<ScanContent />);
+    });
+
+    // Wait for the component to finish loading
+    await waitFor(() => {
+      expect(screen.getByText('Authorize with Pubky Ring')).toBeInTheDocument();
+    });
 
     const images = screen.getAllByTestId('next-image');
     const logoImage = images.find((img) => img.getAttribute('src') === '/images/logo-pubky-ring.svg');
@@ -122,11 +215,12 @@ describe('ScanContent', () => {
     expect(logoImage).toHaveAttribute('height', '30');
 
     expect(screen.getByTestId('button')).toBeInTheDocument();
-    expect(screen.getByText('Authorize with Pubky Ring')).toBeInTheDocument();
   });
 
-  it('renders content cards with column layout', () => {
-    render(<ScanContent />);
+  it('renders content cards with column layout', async () => {
+    await act(async () => {
+      render(<ScanContent />);
+    });
 
     const contentCards = screen.getAllByTestId('content-card');
     contentCards.forEach((card) => {

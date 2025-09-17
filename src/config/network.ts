@@ -3,3 +3,4 @@ import { Env } from '@/libs';
 export const TESTNET = Env.NEXT_PUBLIC_TESTNET;
 export const PKARR_RELAYS = Env.NEXT_PUBLIC_PKARR_RELAYS;
 export const HOMESERVER = Env.NEXT_PUBLIC_HOMESERVER;
+export const DEFAULT_HTTP_RELAY = Env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY;
