@@ -1,5 +1,6 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 interface DialogWelcomeProps {
   isOpen: boolean;
@@ -12,7 +13,7 @@ interface DialogWelcomeProps {
 
 export function DialogWelcome({ isOpen, onOpenChange, name, image, publicKey, bio }: DialogWelcomeProps) {
   const displayPublicKey = Libs.formatPublicKey({ key: publicKey, length: 10 });
-  const { copyToClipboard } = Libs.useCopyToClipboard();
+  const { copyToClipboard } = Hooks.useCopyToClipboard();
   const initials = Libs.extractInitials({ name, maxLength: 2 });
 
   const handleCopyToClipboard = () => {

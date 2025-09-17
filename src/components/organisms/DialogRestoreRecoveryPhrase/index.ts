@@ -1,0 +1,1 @@
+export { DialogRestoreRecoveryPhrase } from './DialogRestoreRecoveryPhrase';

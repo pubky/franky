@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -9,6 +10,7 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 
 export const CreateProfileForm = () => {
+  const router = useRouter();
   const { publicKey } = Core.useOnboardingStore();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -71,8 +73,8 @@ export const CreateProfileForm = () => {
     }
   };
 
-  const validateUser = async () => {
-    const { data, error } = await Core.UserValidator.check(name, bio, links, avatarFile);
+  const validateUser = () => {
+    const { data, error } = Core.UserValidator.check(name, bio, links, avatarFile);
 
     if (error.length > 0) {
       for (const issue of error) {
@@ -104,10 +106,12 @@ export const CreateProfileForm = () => {
     // TODO: Maybe wrap in TRY/CATCH/FINALLY block?
     setIsSaving(true);
     setContinueText('Saving...');
-    const user = await validateUser();
+    const user = validateUser();
 
     if (!user) return;
 
+    // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
+    //       and save the state of the avatar file and the preview image in the store
     let image: string | null = null;
     if (avatarFile) {
       setContinueText('Uploading avatar...');
@@ -126,8 +130,8 @@ export const CreateProfileForm = () => {
 
     // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
     // TODO: navigate to profile page
-    setIsSaving(false);
-    setContinueText('Finish');
+    // setIsSaving(false);
+    router.push('/feed');
   };
 
   return (

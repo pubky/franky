@@ -15,7 +15,7 @@ export const HomeActions = () => {
   };
 
   const handleSignIn = () => {
-    console.log('Sign in clicked');
+    router.push('/sign-in');
   };
 
   return <Molecules.ActionButtons onSignIn={handleSignIn} onCreateAccount={handleCreateAccount} />;

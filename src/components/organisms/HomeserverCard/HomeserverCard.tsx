@@ -17,7 +17,7 @@ export function HomeserverCard() {
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
-  const { secretKey, publicKey } = Core.useOnboardingStore();
+  const { publicKey, secretKey } = Core.useOnboardingStore();
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
 
   // generate an invite code and put it in console log if you are in development mode
@@ -30,13 +30,7 @@ export function HomeserverCard() {
   }, []);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: extract this function to a helper function, maybe a mask function
-    // Allow only uppercase alphanumerics and format as AAAA-BBBB-CCCC
-    const uppercaseValue = e.target.value.toUpperCase();
-    const alphanumericOnly = uppercaseValue.replace(/[^A-Z0-9]/g, '');
-    const trimmed = alphanumericOnly.slice(0, 12);
-    const groups = trimmed.match(/.{1,4}/g) || [];
-    const formatted = groups.join('-');
+    const formatted = Libs.formatInviteCode(e.target.value);
     setInviteCode(formatted);
     setContinueButtonDisabled(formatted.length !== 14);
   };
@@ -63,11 +57,10 @@ export function HomeserverCard() {
       setStatus('default');
       setIsLoading(true);
       setButtonContinueText('Validating');
-
-      await Core.AuthController.signUp({ publicKey, secretKey }, inviteCode);
-
+      const keypair = { publicKey, secretKey };
+      const signupToken = inviteCode;
+      await Core.AuthController.signUp({ keypair, signupToken });
       setButtonContinueText('Signing up');
-
       router.push('/onboarding/profile');
     } catch {
       showErrorToast();

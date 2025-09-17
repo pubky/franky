@@ -13,6 +13,7 @@ export enum NexusErrorType {
 
 export enum HomeserverErrorType {
   SIGNUP_FAILED = 'SIGNUP_FAILED',
+  SIGNIN_FAILED = 'SIGNIN_FAILED',
   FETCH_FAILED = 'FETCH_FAILED',
   LOGOUT_FAILED = 'LOGOUT_FAILED',
   INVALID_HOMESERVER_KEY = 'INVALID_HOMESERVER_KEY',
@@ -24,6 +25,7 @@ export enum HomeserverErrorType {
   SESSION_EXPIRED = 'SESSION_EXPIRED',
   NETWORK_ERROR = 'NETWORK_ERROR',
   USER_ALREADY_EXISTS = 'User already exists',
+  AUTH_REQUEST_FAILED = 'AUTH_REQUEST_FAILED',
 }
 
 export enum DatabaseErrorType {

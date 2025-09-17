@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import { useRouter } from 'next/navigation';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -29,11 +30,11 @@ export const HeaderTitle = ({ currentTitle }: { currentTitle: string }) => {
   );
 };
 
-export const OnboardingHeader = ({ currentStep }: { currentStep: number }) => {
+export const HeaderOnboarding = ({ currentStep }: { currentStep: number }) => {
   return <Molecules.ProgressSteps currentStep={currentStep} totalSteps={5} />;
 };
 
-export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
       <Atoms.Link href={Config.GITHUB_URL} target="_blank" variant="muted" size="default">
@@ -49,9 +50,11 @@ export function SocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) 
   );
 }
 
-export function ButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElement>) {
+export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElement>) {
+  const router = useRouter();
+
   const handleSignIn = () => {
-    console.log('sign in');
+    router.push('/sign-in');
   };
 
   return (
@@ -62,16 +65,25 @@ export function ButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElemen
   );
 }
 
-export const HomeHeader = () => {
+export const HeaderHome = () => {
   return (
     <Atoms.Container className="flex-1 flex-row items-center justify-end">
-      <Molecules.SocialLinks />
-      <Molecules.ButtonSignIn />
+      <Molecules.HeaderSocialLinks />
+      <Molecules.HeaderButtonSignIn />
     </Atoms.Container>
   );
 };
 
-export function NavigationButtons({ image, counter = 0 }: { image?: string; counter?: number }) {
+export const HeaderSignIn = () => {
+  return (
+    <Atoms.Container className="flex-1 flex-row items-center justify-end gap-3">
+      <Molecules.SearchInput />
+      <Molecules.HeaderNavigationButtons />
+    </Atoms.Container>
+  );
+};
+
+export function HeaderNavigationButtons({ image, counter = 0 }: { image?: string; counter?: number }) {
   const counterString = counter > 21 ? '21+' : counter.toString();
 
   return (

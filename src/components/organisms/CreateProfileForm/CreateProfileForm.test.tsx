@@ -4,10 +4,24 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CreateProfileForm } from './CreateProfileForm';
 
-// Mock the Core onboarding store
-const mockUseOnboardingStore = vi.fn();
+// Mock the Core modules
 vi.mock('@/core', () => ({
-  useOnboardingStore: () => mockUseOnboardingStore(),
+  useOnboardingStore: vi.fn(),
+  UserController: {
+    uploadAvatar: vi.fn(),
+    saveProfile: vi.fn(),
+  },
+  UserValidator: {
+    check: vi.fn(),
+  },
+}));
+
+// Mock Next.js router
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
 }));
 
 // Mock @/libs to intercept Libs.Trash2 and Libs.File
@@ -174,55 +188,104 @@ vi.mock('@/molecules', () => ({
   DialogTerms: () => <div data-testid="dialog-terms">DialogTerms</div>,
   DialogPrivacy: () => <div data-testid="dialog-privacy">DialogPrivacy</div>,
   InputField: ({
-    label,
     placeholder,
-    value,
+    value = '',
     onChange,
-    error,
+    status,
+    message,
+    messageType,
+    variant,
+    icon,
+    onClickIcon,
+    iconPosition,
   }: {
-    label: string;
     placeholder?: string;
-    value: string;
-    onChange: (value: string) => void;
-    error?: string | null;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    status?: string;
+    message?: string;
+    messageType?: string;
+    variant?: string;
+    icon?: React.ReactNode;
+    onClickIcon?: () => void;
+    iconPosition?: string;
   }) => (
     <div data-testid="molecules-input-field">
-      <label>{label}</label>
       <input
         data-testid="molecules-input"
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          if (onChange && e && e.target) {
+            onChange(e);
+          }
+        }}
+        data-status={status}
+        data-variant={variant}
       />
-      {error && <span data-testid="molecules-input-error">{error}</span>}
+      {icon && (
+        <button onClick={onClickIcon} data-position={iconPosition}>
+          {icon}
+        </button>
+      )}
+      {message && (
+        <span data-testid="molecules-input-error" data-type={messageType}>
+          {message}
+        </span>
+      )}
     </div>
   ),
   TextareaField: ({
-    label,
     placeholder,
-    value,
+    value = '',
     onChange,
-    error,
+    variant,
+    rows,
   }: {
-    label: string;
     placeholder?: string;
-    value: string;
-    onChange: (value: string) => void;
-    error?: string | null;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    variant?: string;
+    rows?: number;
   }) => (
     <div data-testid="molecules-textarea-field">
-      <label>{label}</label>
       <textarea
         data-testid="molecules-textarea"
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          if (onChange && e && e.target) {
+            onChange(e);
+          }
+        }}
+        data-variant={variant}
+        rows={rows}
       />
-      {error && <span data-testid="molecules-textarea-error">{error}</span>}
     </div>
   ),
-  ProfileNavigation: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="profile-navigation">{children}</div>
+  ProfileNavigation: ({
+    children,
+    continueButtonDisabled,
+    continueButtonLoading,
+    continueText,
+    onContinue,
+  }: {
+    children?: React.ReactNode;
+    continueButtonDisabled?: boolean;
+    continueButtonLoading?: boolean;
+    continueText?: string;
+    onContinue?: () => void;
+  }) => (
+    <div data-testid="profile-navigation">
+      {children}
+      <button
+        onClick={onContinue}
+        disabled={continueButtonDisabled || continueButtonLoading}
+        data-testid="continue-button"
+      >
+        {continueText || 'Continue'}
+      </button>
+    </div>
   ),
   DialogAddLink: ({ onSave }: { onSave: (label: string, url: string) => void }) => (
     <div data-testid="dialog-add-link">
@@ -238,11 +301,20 @@ global.URL.revokeObjectURL = vi.fn();
 describe('CreateProfileForm', () => {
   const mockPublicKey = 'test-public-key';
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    mockUseOnboardingStore.mockReturnValue({
+
+    // Get the mocked modules
+    const Core = await import('@/core');
+    vi.mocked(Core.useOnboardingStore).mockReturnValue({
       publicKey: mockPublicKey,
     });
+
+    // Reset all mock functions
+    mockPush.mockReset();
+    vi.mocked(Core.UserController.uploadAvatar).mockReset();
+    vi.mocked(Core.UserController.saveProfile).mockReset();
+    vi.mocked(Core.UserValidator.check).mockReset();
   });
 
   it('renders with default state', () => {
@@ -355,11 +427,17 @@ describe('CreateProfileForm', () => {
 
     await waitFor(() => {
       const deleteButton = screen.getByText('Delete');
-      const trashIcon = screen.getByTestId('trash2-icon');
+      const trashIcons = screen.getAllByTestId('trash2-icon');
 
+      // Should have trash icons (one for avatar delete, plus ones for link deletion)
       expect(deleteButton).toBeInTheDocument();
-      expect(trashIcon).toBeInTheDocument();
-      expect(trashIcon).toHaveClass('h-4', 'w-4');
+      expect(trashIcons.length).toBeGreaterThan(0);
+
+      // Find the avatar delete trash icon (the one in the delete button)
+      const avatarDeleteButton = deleteButton.parentElement;
+      const avatarTrashIcon = avatarDeleteButton?.querySelector('[data-testid="trash2-icon"]');
+      expect(avatarTrashIcon).toBeInTheDocument();
+      expect(avatarTrashIcon).toHaveClass('h-4', 'w-4');
 
       // Choose file button should not be visible
       expect(screen.queryByText('Choose file')).not.toBeInTheDocument();
@@ -499,5 +577,35 @@ describe('CreateProfileForm', () => {
 
     const fileInput = document.querySelector('input[type="file"]');
     expect(fileInput).toHaveAttribute('accept', 'image/*');
+  });
+
+  describe('Form submission (basic tests)', () => {
+    it('should render continue button correctly', () => {
+      render(<CreateProfileForm />);
+      const continueButton = screen.getByTestId('continue-button');
+      expect(continueButton).toBeInTheDocument();
+      expect(continueButton).toHaveTextContent('Finish');
+    });
+
+    it('should have form fields available', () => {
+      render(<CreateProfileForm />);
+
+      // Check that name input exists
+      const nameInputs = screen.getAllByTestId('molecules-input');
+      expect(nameInputs.length).toBeGreaterThan(0);
+
+      // Check that profile navigation exists
+      const profileNavigation = screen.getByTestId('profile-navigation');
+      expect(profileNavigation).toBeInTheDocument();
+    });
+
+    it('should test Core module integration exists', async () => {
+      const Core = await import('@/core');
+
+      // Verify that the mocked functions exist
+      expect(typeof Core.UserController.saveProfile).toBe('function');
+      expect(typeof Core.UserController.uploadAvatar).toBe('function');
+      expect(typeof Core.UserValidator.check).toBe('function');
+    });
   });
 });

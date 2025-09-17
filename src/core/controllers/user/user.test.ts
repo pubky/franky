@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   UserController,
   UserModel,
@@ -9,6 +9,40 @@ import {
   generateTestUserId,
   createTestUserDetails,
 } from '@/core';
+
+// Mock HomeserverService
+vi.mock('@/core/services/homeserver', () => ({
+  HomeserverService: {
+    getInstance: vi.fn(() => ({
+      fetch: vi.fn(),
+    })),
+  },
+}));
+
+// Mock File normalizers
+vi.mock('@/core/pipes/file', () => ({
+  FileNormalizer: {
+    toBlob: vi.fn(),
+    toFile: vi.fn(),
+  },
+}));
+
+// Mock User normalizer
+vi.mock('@/core/pipes/user', () => ({
+  UserNormalizer: {
+    to: vi.fn(),
+  },
+}));
+
+// Mock stores
+vi.mock('@/core/stores', () => ({
+  useProfileStore: {
+    getState: vi.fn(() => ({
+      setCurrentUserPubky: vi.fn(),
+      setAuthenticated: vi.fn(),
+    })),
+  },
+}));
 
 describe('UserController', () => {
   beforeEach(async () => {
@@ -89,6 +123,18 @@ describe('UserController', () => {
       await UserController.delete(testUserId1);
 
       await expect(UserController.get(testUserId1)).rejects.toThrow(`User not found: ${testUserId1}`);
+    });
+  });
+
+  describe('Avatar Upload (Basic Integration)', () => {
+    it('should test basic controller method exists', () => {
+      expect(typeof UserController.uploadAvatar).toBe('function');
+    });
+  });
+
+  describe('Profile Save (Basic Integration)', () => {
+    it('should test basic controller method exists', () => {
+      expect(typeof UserController.saveProfile).toBe('function');
     });
   });
 

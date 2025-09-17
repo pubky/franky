@@ -337,4 +337,102 @@ describe('DialogExport', () => {
     expect(title.tagName).toBe('H2');
     expect(description.tagName).toBe('P');
   });
+
+  describe('with mnemonic prop', () => {
+    const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
+
+    it('renders with mnemonic-specific title and button text', () => {
+      render(<DialogExport mnemonic={testMnemonic} />);
+
+      const title = screen.getByTestId('dialog-title');
+      const triggerText = screen.getByText('Export recovery phrase');
+
+      expect(title).toHaveTextContent('Import recovery phrase');
+      expect(triggerText).toBeInTheDocument();
+    });
+
+    it('renders with mnemonic-specific instructions', () => {
+      render(<DialogExport mnemonic={testMnemonic} />);
+
+      const description = screen.getByTestId('dialog-description');
+
+      expect(description).toHaveTextContent(/1. Open Pubky Ring, tap 'Add pubky'/);
+      expect(description).toHaveTextContent(/2. Choose 'Import pubky' option/);
+      expect(description).toHaveTextContent(/3. Tap 'Scan QR to import'/);
+      expect(description).toHaveTextContent(/4. Scan this QR code to import your recovery phrase/);
+    });
+
+    it('generates correct deeplink QR code with encoded mnemonic', () => {
+      render(<DialogExport mnemonic={testMnemonic} />);
+
+      const qrCode = screen.getByTestId('qr-code');
+      const encodedMnemonic = encodeURIComponent(testMnemonic);
+      const expectedValue = `pubkyring://${encodedMnemonic}`;
+
+      expect(qrCode).toHaveAttribute('data-value', expectedValue);
+    });
+
+    it('handles special characters in mnemonic', () => {
+      const specialMnemonic = 'test phrase with spaces & symbols!';
+      render(<DialogExport mnemonic={specialMnemonic} />);
+
+      const qrCode = screen.getByTestId('qr-code');
+      const encodedMnemonic = encodeURIComponent(specialMnemonic);
+      const expectedValue = `pubkyring://${encodedMnemonic}`;
+
+      expect(qrCode).toHaveAttribute('data-value', expectedValue);
+    });
+
+    it('maintains all other UI elements when mnemonic is provided', () => {
+      render(<DialogExport mnemonic={testMnemonic} />);
+
+      // Check that all main elements are still present
+      expect(screen.getByAltText('App preview')).toBeInTheDocument();
+      expect(screen.getByAltText('App Store')).toBeInTheDocument();
+      expect(screen.getByAltText('Google Play')).toBeInTheDocument();
+      expect(screen.getByTestId('qr-code')).toBeInTheDocument();
+    });
+
+    it('applies correct styling and layout with mnemonic', () => {
+      render(<DialogExport mnemonic={testMnemonic} />);
+
+      const content = screen.getByTestId('dialog-content');
+      const header = screen.getByTestId('dialog-header');
+      const qrCode = screen.getByTestId('qr-code');
+
+      expect(content).toHaveClass('p-8', 'rounded-xl', 'flex', 'flex-col', 'w-[430px]');
+      expect(header).toHaveClass('space-y-1.5', 'pr-6');
+      expect(qrCode).toHaveAttribute('data-size', '192');
+    });
+  });
+
+  describe('without mnemonic prop', () => {
+    it('uses default PUBKY_CORE_URL for QR code', () => {
+      render(<DialogExport />);
+
+      const qrCode = screen.getByTestId('qr-code');
+      expect(qrCode).toHaveAttribute('data-value', 'https://pubky.org');
+    });
+
+    it('renders default title and button text', () => {
+      render(<DialogExport />);
+
+      const title = screen.getByTestId('dialog-title');
+      const triggerText = screen.getByText('Export to Pubky Ring');
+
+      expect(title).toHaveTextContent('Pubky Ring export');
+      expect(triggerText).toBeInTheDocument();
+    });
+
+    it('renders default instructions', () => {
+      render(<DialogExport />);
+
+      const description = screen.getByTestId('dialog-description');
+
+      expect(description).toHaveTextContent(/1. Open Pubky Ring, tap 'Add pubky'/);
+      expect(description).toHaveTextContent(/2. Choose the 'Import pubky' option/);
+      expect(description).toHaveTextContent(/3. Scan this QR to import/);
+      expect(description).not.toHaveTextContent(/4. Scan this QR code to import your recovery phrase/);
+    });
+  });
 });
