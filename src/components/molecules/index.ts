@@ -48,3 +48,5 @@ export * from './Toaster';
 export * from './WordSlot';
 export * from './User';
 export * from './UsersList';
+export * from './Post';
+export * from './Posts';
