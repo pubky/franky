@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
+import * as Core from '@/core';
+import { useCallback } from 'react';
 
 export function Feed() {
   const router = useRouter();
@@ -11,6 +13,14 @@ export function Feed() {
     // Just navigate to logout page - logout logic will happen there
     router.push('/logout');
   };
+
+  const handleBootstrap = useCallback(async () => {
+    const currentUserPubky = Core.useProfileStore.getState().currentUserPubky;
+    if (!currentUserPubky) {
+      return;
+    }
+    await Core.BootstrapController.run(currentUserPubky);
+  }, []);
 
   return (
     <Atoms.Container size="container" className="px-6">
@@ -22,6 +32,9 @@ export function Feed() {
         {/* Logout button */}
         <Atoms.Button variant="secondary" size="lg" onClick={handleLogout}>
           Logout
+        </Atoms.Button>
+        <Atoms.Button variant="secondary" size="lg" onClick={handleBootstrap}>
+          Bootstrap
         </Atoms.Button>
       </Atoms.Container>
     </Atoms.Container>

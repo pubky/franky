@@ -87,7 +87,7 @@ export interface NexusPost {
   bookmark: NexusBookmark | null;
 }
 
-export interface NexusList {
+export interface NexusBootstrapList {
   stream: string[];
   influencers: UserModelPK[];
   recommended: UserModelPK[];
