@@ -58,6 +58,21 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   ),
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <span data-size={size} className={className}>
+      {children}
+    </span>
+  ),
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div className={className} data-testid="card">
+      {children}
+    </div>
+  ),
+}));
+
+// Mock the molecules
+vi.mock('@/molecules', () => ({
+  Posts: () => <div data-testid="posts">Mocked Posts Component</div>,
 }));
 
 describe('Feed', () => {
@@ -89,7 +104,7 @@ describe('Feed', () => {
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toBeInTheDocument();
     expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
-    expect(logoutButton).toHaveAttribute('data-size', 'lg');
+    expect(logoutButton).toHaveAttribute('data-size', 'sm');
   });
 
   it('navigates to logout page when logout button is clicked', async () => {
@@ -115,5 +130,8 @@ describe('Feed', () => {
 
     expect(outerContainer).toBeInTheDocument();
     expect(innerContainer).toBeInTheDocument();
+
+    // Check that Posts component is rendered
+    expect(screen.getByTestId('posts')).toBeInTheDocument();
   });
 });

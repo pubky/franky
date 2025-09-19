@@ -3,10 +3,12 @@ import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 import { DB_VERSION, DB_NAME } from '@/config';
 import { UserModelSchema, userTableSchema } from '@/core/models/user/user.schema';
 import { PostModelSchema, postTableSchema } from '@/core/models/post/posts.schema';
+import { PostMockSchema, postMockTableSchema } from '@/core/models/postMock/postMock.schema';
 
 class AppDatabase extends Dexie {
   users!: Dexie.Table<UserModelSchema>;
   posts!: Dexie.Table<PostModelSchema>;
+  postMocks!: Dexie.Table<PostMockSchema>;
 
   constructor() {
     super(DB_NAME);
@@ -15,6 +17,7 @@ class AppDatabase extends Dexie {
       this.version(DB_VERSION).stores({
         users: userTableSchema,
         posts: postTableSchema,
+        postMocks: postMockTableSchema,
       });
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.DB_SCHEMA_ERROR, 'Failed to initialize database schema', 500, {
