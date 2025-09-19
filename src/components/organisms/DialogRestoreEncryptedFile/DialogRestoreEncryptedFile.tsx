@@ -42,6 +42,12 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
 
     try {
       await Core.AuthController.loginWithEncryptedFile({ encryptedFile: selectedFile, password });
+      const currentUserPubky = Core.useProfileStore.getState().currentUserPubky;
+      if (!currentUserPubky) {
+        throw new Error('Current user public key not found');
+      }
+      // Once we have the session, we have to bootstrap the app
+      await Core.BootstrapController.run(currentUserPubky);
       onRestore?.();
     } catch (error) {
       if (error instanceof Error) {
