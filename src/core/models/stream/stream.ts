@@ -47,7 +47,11 @@ export class StreamModel implements Core.StreamModelSchema {
   }
 
   // Instance methods
+<<<<<<< HEAD
   addPosts(postIds: string[]): void {
+=======
+  addPosts(postIds: Core.PostModelPK[]): void {
+>>>>>>> dde0620 (feat: consume bootstrap endoint when signIn)
     // Filter out posts that already exist and add new ones to beginning
     const newPosts = postIds.filter((postId) => !this.posts.includes(postId));
     this.posts.unshift(...newPosts); // Add to beginning for chronological order
@@ -66,7 +70,15 @@ export class StreamModel implements Core.StreamModelSchema {
     }
   }
 
+<<<<<<< HEAD
   static async create(id: string, name: string | null = null, posts: string[] = []): Promise<Core.StreamModel> {
+=======
+  static async create(
+    id: string,
+    name: string | null = null,
+    posts: Core.PostModelPK[] = [],
+  ): Promise<Core.StreamModel> {
+>>>>>>> dde0620 (feat: consume bootstrap endoint when signIn)
     try {
       const streamData = Core.createDefaultStream(id, name, posts);
       const stream = new Core.StreamModel(streamData);
