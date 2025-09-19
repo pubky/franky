@@ -42,6 +42,7 @@ export const ProfileNavigation = ({
       </Atoms.Button>
       {!hiddenContinueButton && (
         <Atoms.Button
+          id="profile-finish-btn"
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           onClick={onHandleContinueButton}
