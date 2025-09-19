@@ -44,6 +44,7 @@ export const LogoutNavigation = () => {
 
   return (
     <Molecules.ButtonsNavigation
+      id="logout-navigation"
       backText="Homepage"
       continueText="Sign back in"
       onHandleContinueButton={onHandleContinueButton}

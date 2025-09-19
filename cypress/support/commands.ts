@@ -78,7 +78,7 @@ Cypress.Commands.add(
     // todo: finish onboarding
     cy.get('#profile-finish-btn').click();
 
-    cy.pause();
+    cy.location('pathname').should('eq', '/feed');
   }
 );
 
