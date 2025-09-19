@@ -69,7 +69,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_PUBKY_CORE_URL: z.string().optional().default('https://pubky.org'),
   NEXT_PUBLIC_TWITTER_URL: z.string().optional().default('https://x.com/pubky'),
   NEXT_PUBLIC_TWITTER_GETPUBKY_URL: z.string().optional().default('https://x.com/getpubky'),
-  NEXT_PUBLIC_TELEGRAM_URL: z.string().optional().default('https://t.me/pubky'),
+  NEXT_PUBLIC_TELEGRAM_URL: z.string().optional().default('https://t.me/pubkychat'),
   NEXT_PUBLIC_GITHUB_URL: z.string().optional().default('https://github.com/pubky'),
   NEXT_PUBLIC_EMAIL: z.string().optional().default('hello@pubky.com'),
   NEXT_PUBLIC_APP_STORE_URL: z.string().optional().default('https://apps.apple.com/app/pubky-ring/id6739356756'),
