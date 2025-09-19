@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -14,7 +14,7 @@ export const SignInContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [errorCount, setErrorCount] = useState(0);
-  const router = useRouter();
+  // const router = useRouter();
 
   const fetchUrl = async () => {
     try {
@@ -27,7 +27,17 @@ export const SignInContent = () => {
 
       promise?.then(async (response) => {
         await Core.AuthController.loginWithAuthUrl({ keypair: response });
-        router.push('/feed');
+
+        const currentUserPubky = Core.useProfileStore.getState().currentUserPubky;
+        if (!currentUserPubky) {
+          // TODO: Edge case to not have pubky but that error does not reach the main catch block
+          throw new Error('Current user public key not found');
+        }
+        // Once we have the session, we have to bootstrap the app
+        await Core.BootstrapController.run(currentUserPubky);
+        console.log('Current user public key found, refreshing...');
+        // TODO: There is something that is forcing the redirection
+        //router.push('/feed');
       });
     } catch (error) {
       console.error('Failed to generate auth URL:', error);
