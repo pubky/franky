@@ -12,6 +12,7 @@ import * as Organisms from '@/organisms';
 
 const POSTS_PER_PAGE = 20;
 
+
 export function Feed() {
   const [posts, setPosts] = useState<Core.NexusPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,6 +99,14 @@ export function Feed() {
     const [userId, postId] = post.details.id.split(':');
     router.push(`/post/${userId}/${postId}`);
   };
+
+  const handleBootstrap = useCallback(async () => {
+    const currentUserPubky = Core.useAuthStore.getState().currentUserPubky;
+    if (!currentUserPubky) {
+      return;
+    }
+    await Core.BootstrapController.run(currentUserPubky);
+  }, []);
 
   return (
     <Organisms.ContentLayout>
