@@ -38,12 +38,6 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
       await Core.AuthController.loginWithMnemonic({ mnemonic });
 
       if (!hasErrors && allFilled) {
-        const currentUserPubky = Core.useProfileStore.getState().currentUserPubky;
-        if (!currentUserPubky) {
-          throw new Error('Current user public key not found');
-        }
-        // Once we have the session, we have to bootstrap the app
-        await Core.BootstrapController.run(currentUserPubky);
         onRestore?.();
       }
     } catch (error) {
