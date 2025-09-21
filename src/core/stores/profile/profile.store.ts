@@ -2,14 +2,16 @@ import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
 import { ProfileStore, profileInitialState } from './profile.types';
 import { createProfileActions } from './profile.actions';
+import { createProfileSelectors } from './profile.selectors';
 
 // Store creation
 export const useProfileStore = create<ProfileStore>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         ...profileInitialState,
         ...createProfileActions(set),
+        ...createProfileSelectors(get),
       }),
       {
         name: 'profile-store',

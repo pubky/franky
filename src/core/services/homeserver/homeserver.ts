@@ -199,25 +199,25 @@ export class HomeserverService {
 
   async authenticateKeypair(keypair: Pubky.Keypair) {
     try {
-      const publicKey = keypair.publicKey().z32();
+      const pubky = keypair.publicKey().z32();
       const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());
 
       // get homeserver from pkarr records
-      await this.checkHomeserver(publicKey);
+      await this.checkHomeserver(pubky);
 
       // sign in with keypair
       await this.signin(keypair);
 
       // Retrieve the session
-      const session = await this.checkSession(publicKey);
+      const session = await this.checkSession(pubky);
 
       // update current keypair
       this.currentKeypair = {
-        publicKey,
+        publicKey: pubky,
         secretKey,
       };
 
-      return { pubky: publicKey, session };
+      return { pubky, session };
     } catch (error) {
       try {
         // try to republish homeserver

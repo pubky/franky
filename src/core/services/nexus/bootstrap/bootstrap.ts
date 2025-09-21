@@ -1,38 +1,28 @@
-import { Env, createNexusError, NexusErrorType, mapHttpStatusToNexusErrorType } from '@/libs';
-import { type NexusBootstrapResponse } from '@/core';
+import * as Libs from '@/libs';
+import * as Core from '@/core';
+import * as BootstrapServiceGuard from './bootstrap.guard';
 
-export class BootstrapService {
-  private static baseUrl = Env.NEXT_PUBLIC_NEXUS_URL;
+export class NexusBootstrapService {
+  private static baseUrl = Libs.Env.NEXT_PUBLIC_NEXUS_URL;
 
-  static async get(userPK: string): Promise<NexusBootstrapResponse> {
+  static async retrieveAndPersist(pubky: string) {
     try {
-      const response = await fetch(`${this.baseUrl}/bootstrap/${userPK}`);
+      const response = await fetch(`${this.baseUrl}/bootstrap/${pubky}`);
 
-      if (!response.ok) {
-        const errorType = mapHttpStatusToNexusErrorType(response.status);
-        throw createNexusError(errorType, `Bootstrap request failed: ${response.statusText}`, response.status, {
-          userPK,
-          statusCode: response.status,
-          statusText: response.statusText,
-        });
-      }
+      BootstrapServiceGuard.ensureHttpResponseOk({ response, pubky });
+      const { users, posts, list } = await BootstrapServiceGuard.parseBootstrapResponseOrThrow({ response, pubky });
 
-      let data: unknown;
-      try {
-        data = await response.json();
-      } catch (error) {
-        throw createNexusError(NexusErrorType.INVALID_RESPONSE, 'Failed to parse bootstrap response', 500, {
-          error,
-          userPK,
-        });
-      }
-
-      return data as NexusBootstrapResponse;
+      // Persist fetched data in the database
+      await Core.UserModel.bulkSave(users);
+      await Core.PostModel.bulkSave(posts);
+      await Core.StreamModel.create(Core.StreamTypes.TIMELINE_ALL, null, list.stream);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
-
       // Handle network/fetch errors
-      throw createNexusError(NexusErrorType.NETWORK_ERROR, 'Failed to fetch bootstrap data', 500, { error, userPK });
+      throw Libs.createNexusError(Libs.NexusErrorType.NETWORK_ERROR, 'Failed to fetch bootstrap data', 500, {
+        error,
+        pubky,
+      });
     }
   }
 }

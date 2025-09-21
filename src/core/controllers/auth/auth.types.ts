@@ -18,5 +18,5 @@ export interface TLoginWithEncryptedFileParams {
   password: string;
 }
 export interface TLoginWithAuthUrlParams {
-  keypair: PublicKey;
+  publicKey: PublicKey;
 }

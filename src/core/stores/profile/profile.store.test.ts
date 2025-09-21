@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
 import type { SignupResult } from '@/core';
-import { Logger } from '@/libs/logger';
+import { useProfileStore } from './profile.store';
 
 // Mock the logger
 vi.mock('@/libs/logger', () => ({
@@ -14,173 +12,83 @@ vi.mock('@/libs/logger', () => ({
   },
 }));
 
-// Simplified test interfaces matching the actual store
-export interface ProfileState {
-  currentUserPubky: string | null;
-  session: SignupResult['session'] | null;
-  isAuthenticated: boolean;
-}
-
-export interface ProfileActions {
-  setCurrentUserPubky: (pubky: string | null) => void;
-  setSession: (session: SignupResult['session'] | null) => void;
-  clearSession: () => void;
-  setAuthenticated: (isAuthenticated: boolean) => void;
-  reset: () => void;
-}
-
-export type ProfileStore = ProfileState & ProfileActions;
-
-// Default state
-const defaultState: ProfileState = {
-  currentUserPubky: null,
-  session: null,
-  isAuthenticated: false,
-};
-
-// Create a test store without persistence
-const createTestStore = () =>
-  create<ProfileStore>()(
-    devtools(
-      (set) => ({
-        ...defaultState,
-
-        setCurrentUserPubky: (pubky: string | null) => {
-          Logger.info('Setting current user pubky', { pubky: pubky ? '***' : 'null' });
-          set(
-            {
-              currentUserPubky: pubky,
-              // Don't automatically set isAuthenticated - let it be set explicitly
-            },
-            false,
-            'setCurrentUserPubky',
-          );
-        },
-
-        setSession: (session: SignupResult['session'] | null) => {
-          Logger.info('Setting session', { hasSession: !!session });
-          set(
-            {
-              session,
-              // Don't automatically set isAuthenticated - let it be set explicitly
-            },
-            false,
-            'setSession',
-          );
-        },
-
-        clearSession: () => {
-          Logger.info('Clearing session');
-          set(
-            {
-              session: null,
-              isAuthenticated: false,
-            },
-            false,
-            'clearSession',
-          );
-        },
-
-        setAuthenticated: (isAuthenticated: boolean) => {
-          Logger.info('Setting authentication state', { isAuthenticated });
-          set(
-            {
-              isAuthenticated,
-            },
-            false,
-            'setAuthenticated',
-          );
-        },
-
-        reset: () => {
-          Logger.info('Resetting profile store');
-          set(defaultState, false, 'reset');
-        },
-      }),
-      {
-        name: 'profile-store-test',
-      },
-    ),
-  );
-
 describe('ProfileStore', () => {
-  let testStore: ReturnType<typeof createTestStore>;
-
   beforeEach(() => {
-    // Create a fresh store instance for each test
-    testStore = createTestStore();
+    // Reset the real store to initial state before each test
+    useProfileStore.getState().reset();
     vi.clearAllMocks();
   });
 
   describe('Authentication Management', () => {
     it('should set currentUserPubky without automatically updating authentication state', () => {
       const pubky = 'test-pubky-key';
-      const store = testStore.getState();
+      const store = useProfileStore.getState();
 
       // Set pubky - should not automatically set authenticated
       store.setCurrentUserPubky(pubky);
-      expect(testStore.getState().currentUserPubky).toBe(pubky);
-      expect(testStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().currentUserPubky).toBe(pubky);
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
 
       // Add session - should still not automatically set authenticated
       const mockSession = {} as SignupResult['session'];
       store.setSession(mockSession);
-      expect(testStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
 
       // Only when explicitly set should it be authenticated
       store.setAuthenticated(true);
-      expect(testStore.getState().isAuthenticated).toBe(true);
+      expect(useProfileStore.getState().isAuthenticated).toBe(true);
     });
 
     it('should set session without automatically updating authentication state', () => {
       const mockSession = {} as SignupResult['session'];
-      const store = testStore.getState();
+      const store = useProfileStore.getState();
 
       // Set session - should not automatically set authenticated
       store.setSession(mockSession);
-      expect(testStore.getState().session).toBe(mockSession);
-      expect(testStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().session).toBe(mockSession);
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
 
       // Add pubky - should still not automatically set authenticated
       store.setCurrentUserPubky('test-pubky');
-      expect(testStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
 
       // Only when explicitly set should it be authenticated
       store.setAuthenticated(true);
-      expect(testStore.getState().isAuthenticated).toBe(true);
+      expect(useProfileStore.getState().isAuthenticated).toBe(true);
     });
 
-    it('should clear session and authentication state', () => {
-      const store = testStore.getState();
+    it('should clear session and authentication state manually', () => {
+      const store = useProfileStore.getState();
       const mockSession = {} as SignupResult['session'];
 
       // Set up authenticated state
       store.setCurrentUserPubky('test-pubky');
       store.setSession(mockSession);
       store.setAuthenticated(true);
-      expect(testStore.getState().isAuthenticated).toBe(true);
+      expect(useProfileStore.getState().isAuthenticated).toBe(true);
 
-      // Clear session
-      store.clearSession();
-      expect(testStore.getState().session).toBeNull();
-      expect(testStore.getState().isAuthenticated).toBe(false);
-      expect(testStore.getState().currentUserPubky).toBe('test-pubky'); // Should remain
+      // Clear session and authentication manually (not using reset which clears everything)
+      store.setSession(null);
+      store.setAuthenticated(false);
+      expect(useProfileStore.getState().session).toBeNull();
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().currentUserPubky).toBe('test-pubky'); // Should remain
     });
 
     it('should manually set authentication state', () => {
-      const store = testStore.getState();
+      const store = useProfileStore.getState();
 
       store.setAuthenticated(true);
-      expect(testStore.getState().isAuthenticated).toBe(true);
+      expect(useProfileStore.getState().isAuthenticated).toBe(true);
 
       store.setAuthenticated(false);
-      expect(testStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
     });
   });
 
   describe('Store Reset', () => {
     it('should reset store to default state', () => {
-      const store = testStore.getState();
+      const store = useProfileStore.getState();
       const mockSession = {} as SignupResult['session'];
 
       // Set some state
@@ -189,17 +97,70 @@ describe('ProfileStore', () => {
       store.setAuthenticated(true);
 
       // Verify state is set
-      expect(testStore.getState().currentUserPubky).toBe('test-pubky');
-      expect(testStore.getState().session).toBe(mockSession);
-      expect(testStore.getState().isAuthenticated).toBe(true);
+      expect(useProfileStore.getState().currentUserPubky).toBe('test-pubky');
+      expect(useProfileStore.getState().session).toBe(mockSession);
+      expect(useProfileStore.getState().isAuthenticated).toBe(true);
 
       // Reset store
       store.reset();
 
       // Verify state is reset
-      expect(testStore.getState().currentUserPubky).toBeNull();
-      expect(testStore.getState().session).toBeNull();
-      expect(testStore.getState().isAuthenticated).toBe(false);
+      expect(useProfileStore.getState().currentUserPubky).toBeNull();
+      expect(useProfileStore.getState().session).toBeNull();
+      expect(useProfileStore.getState().isAuthenticated).toBe(false);
+    });
+  });
+
+  describe('Selectors', () => {
+    it('should return current user pubky when available', () => {
+      const store = useProfileStore.getState();
+      const testPubky = 'test-pubky-123';
+
+      // Set pubky
+      store.setCurrentUserPubky(testPubky);
+
+      // Use selector to get pubky
+      const selectedPubky = store.selectCurrentUserPubky();
+      expect(selectedPubky).toBe(testPubky);
+    });
+
+    it('should throw error when trying to select pubky when not available', () => {
+      const store = useProfileStore.getState();
+
+      // Ensure pubky is null
+      store.setCurrentUserPubky(null);
+
+      // Selector should throw error
+      expect(() => store.selectCurrentUserPubky()).toThrow(
+        'Current user pubky is not available. User may not be authenticated.'
+      );
+    });
+
+    it('should throw error when trying to select pubky from initial state', () => {
+      const store = useProfileStore.getState();
+
+      // Initial state should have null pubky
+      expect(useProfileStore.getState().currentUserPubky).toBeNull();
+
+      // Selector should throw error
+      expect(() => store.selectCurrentUserPubky()).toThrow(
+        'Current user pubky is not available. User may not be authenticated.'
+      );
+    });
+
+    it('should still throw error even when authenticated but pubky is null', () => {
+      const store = useProfileStore.getState();
+      const mockSession = {} as SignupResult['session'];
+
+      // Set authenticated but no pubky (edge case)
+      store.setSession(mockSession);
+      store.setAuthenticated(true);
+      store.setCurrentUserPubky(null);
+
+      // Selector should still throw error
+      expect(() => store.selectCurrentUserPubky()).toThrow(
+        'Current user pubky is not available. User may not be authenticated.'
+      );
     });
   });
 });
