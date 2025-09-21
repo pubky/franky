@@ -136,13 +136,13 @@ vi.mock('@/atoms', () => ({
 // Mock core
 const mockSetKeypair = vi.fn();
 const mockSetMnemonic = vi.fn();
-const mockPublicKey = 'pubky1234567890abcdef';
+const mockPubky = 'pubky1234567890abcdef';
 
 vi.mock('@/core', () => ({
   useOnboardingStore: () => ({
     setKeypair: mockSetKeypair,
     setMnemonic: mockSetMnemonic,
-    publicKey: mockPublicKey,
+    pubky: mockPubky,
   }),
 }));
 
@@ -159,7 +159,7 @@ vi.mock('@/hooks', () => ({
 vi.mock('@/libs', () => ({
   Identity: {
     generateKeypair: vi.fn(() => ({
-      publicKey: 'test-public-key',
+      pubky: 'test-public-key',
       secretKey: 'test-secret-key-64-chars-long-hex-string-for-testing-purposes',
       mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
     })),
@@ -215,7 +215,7 @@ describe('PublicKeyCard', () => {
     expect(screen.getByTestId('input-field')).toBeInTheDocument();
 
     const input = screen.getByTestId('input');
-    expect(input).toHaveAttribute('value', mockPublicKey);
+    expect(input).toHaveAttribute('value', mockPubky);
     expect(input).toHaveAttribute('readOnly');
     expect(input).toHaveAttribute('data-variant', 'dashed');
   });
@@ -229,7 +229,7 @@ describe('PublicKeyCard', () => {
     // Wait for async operation to complete
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPubky);
     // Note: The toast is now handled internally by useCopyToClipboard hook
   });
 
@@ -242,7 +242,7 @@ describe('PublicKeyCard', () => {
     // Wait for async operation to complete
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPubky);
     // Note: The toast is now handled internally by useCopyToClipboard hook
   });
 
@@ -254,7 +254,7 @@ describe('PublicKeyCard', () => {
 
     // The button should be clickable and not throw any errors
     expect(copyButton).toBeInTheDocument();
-    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPublicKey);
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPubky);
   });
 
   it('has correct action section styling', () => {

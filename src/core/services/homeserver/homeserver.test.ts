@@ -11,7 +11,7 @@ vi.mock('pubky-app-specs', () => ({
 
 // Mock useKeypairStore
 const mockKeypairStore = {
-  publicKey: '',
+  pubky: '',
   secretKey: new Uint8Array(32).fill(1),
   session: null as Session | null,
   isAuthenticated: false,
@@ -24,7 +24,7 @@ const mockKeypairStore = {
 
 // Mock useUserStore (now useProfileStore)
 const mockUserStore = {
-  publicKey: '',
+  pubky: '',
   session: null as Session | null,
   isAuthenticated: false,
   setSession: vi.fn(),
@@ -66,11 +66,11 @@ vi.doMock('@synonymdev/pubky', () => {
   });
 
   const createMockKeypair = () => ({
-    publicKey: vi.fn(() => ({ z32: () => 'test-public-key-z32' })),
+    pubky: vi.fn(() => ({ z32: () => 'test-public-key-z32' })),
     secretKey: vi.fn(() => new Uint8Array([1, 2, 3, 4])),
   });
 
-  const createMockPublicKey = () => ({
+  const createMockPubky = () => ({
     z32: vi.fn(() => 'test-public-key-z32'),
   });
 
@@ -85,7 +85,7 @@ vi.doMock('@synonymdev/pubky', () => {
       fromSecretKey: vi.fn(createMockKeypair),
     },
     PublicKey: {
-      from: vi.fn(createMockPublicKey),
+      from: vi.fn(createMockPubky),
     },
   };
 });
@@ -112,7 +112,7 @@ const createMockSession = (): Session =>
 
 // Create a mock TKeyPair object
 const createMockTKeyPair = () => ({
-  publicKey: 'test-public-key-z32',
+  pubky: 'test-public-key-z32',
   secretKey: Buffer.from(new Uint8Array(32).fill(1)).toString('hex'),
 });
 
@@ -125,14 +125,14 @@ describe('HomeserverService', () => {
     vi.resetModules();
 
     // Reset mock stores
-    mockKeypairStore.publicKey = '';
+    mockKeypairStore.pubky = '';
     mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
     mockKeypairStore.session = null;
     mockKeypairStore.isAuthenticated = false;
 
     mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
-    mockUserStore.publicKey = '';
+    mockUserStore.pubky = '';
     mockUserStore.session = null;
     mockUserStore.isAuthenticated = false;
 
@@ -166,7 +166,7 @@ describe('HomeserverService', () => {
     it('should signup successfully', async () => {
       const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = {
-        publicKey: 'test-public-key-z32',
+        pubky: 'test-public-key-z32',
         secretKey: Buffer.from(new Uint8Array(32).fill(1)).toString('hex'),
       };
       const signupToken = 'test-token';
@@ -185,7 +185,7 @@ describe('HomeserverService', () => {
     it('should signup with token', async () => {
       const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = {
-        publicKey: 'test-public-key-z32',
+        pubky: 'test-public-key-z32',
         secretKey: Buffer.from(new Uint8Array(32).fill(1)).toString('hex'),
       };
       const token = 'signup-token';
@@ -396,7 +396,7 @@ describe('HomeserverService', () => {
       await service.logout('test-public-key-z32');
 
       expect(service['currentKeypair']).toEqual({
-        publicKey: '',
+        pubky: '',
         secretKey: '',
       });
     });
@@ -412,7 +412,7 @@ describe('HomeserverService', () => {
       mockOnboardingStore.secretKey = new Uint8Array(0);
 
       // Mock the client to return a successful response
-      vi.spyOn(service.client, 'fetch').mockResolvedValue(new Response('test data'));
+      vi.spyOn(service['client'], 'fetch').mockResolvedValue(new Response('test data'));
 
       const result = await service.fetch('https://example.com/data');
       expect(result).toBeInstanceOf(Response);
@@ -426,7 +426,7 @@ describe('HomeserverService', () => {
       mockUserStore.isAuthenticated = false;
 
       // Mock the client to return a successful logout
-      vi.spyOn(service.client, 'signout').mockResolvedValue(undefined);
+      vi.spyOn(service['client'], 'signout').mockResolvedValue(undefined);
 
       // Should not throw an error, just process the logout
       await expect(service.logout('test-public-key-z32')).resolves.toBeUndefined();

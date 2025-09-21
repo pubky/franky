@@ -17,7 +17,7 @@ export function useAuthActions() {
     async (profileData: { name?: string; bio?: string; avatar?: string }) => {
       try {
         // Set the user as authenticated with their pubky
-        profileStore.setCurrentUserPubky(onboardingStore.publicKey);
+        profileStore.setCurrentUserPubky(onboardingStore.pubky);
         profileStore.setAuthenticated(true);
         profileStore.setSession(null);
 
@@ -30,7 +30,7 @@ export function useAuthActions() {
         return { success: false, error };
       }
     },
-    [onboardingStore.publicKey, profileStore, router],
+    [onboardingStore.pubky, profileStore, router],
   );
 
   // Logout user completely

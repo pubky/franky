@@ -5,7 +5,7 @@ import { useAuthStatus } from './useAuthStatus';
 // Mock the stores
 const mockOnboardingStore = {
   hasHydrated: true,
-  publicKey: '',
+  pubky: '',
   secretKey: '',
   reset: vi.fn(),
   setHydrated: vi.fn(),
@@ -27,7 +27,7 @@ describe('useAuthStatus', () => {
     vi.clearAllMocks();
     // Reset default mock values
     mockOnboardingStore.hasHydrated = true;
-    mockOnboardingStore.publicKey = '';
+    mockOnboardingStore.pubky = '';
     mockOnboardingStore.secretKey = '';
     mockProfileStore.isAuthenticated = false;
   });
@@ -71,7 +71,7 @@ describe('useAuthStatus', () => {
 
   it('should check keypair existence correctly', () => {
     mockOnboardingStore.hasHydrated = true;
-    mockOnboardingStore.publicKey = 'test-public-key';
+    mockOnboardingStore.pubky = 'test-public-key';
     mockOnboardingStore.secretKey = 'test-secret-key';
 
     const { result } = renderHook(() => useAuthStatus());
@@ -81,7 +81,7 @@ describe('useAuthStatus', () => {
 
   it('should handle missing keypair correctly', () => {
     mockOnboardingStore.hasHydrated = true;
-    mockOnboardingStore.publicKey = '';
+    mockOnboardingStore.pubky = '';
     mockOnboardingStore.secretKey = '';
 
     const { result } = renderHook(() => useAuthStatus());
@@ -93,7 +93,7 @@ describe('useAuthStatus', () => {
     it('should remain not loading after store reset if hydration is preserved', () => {
       // Simulate authenticated state
       mockOnboardingStore.hasHydrated = true;
-      mockOnboardingStore.publicKey = 'test-public-key';
+      mockOnboardingStore.pubky = 'test-public-key';
       mockOnboardingStore.secretKey = 'test-secret-key';
       mockProfileStore.isAuthenticated = true;
 
@@ -104,7 +104,7 @@ describe('useAuthStatus', () => {
       expect(result.current.status).toBe('AUTHENTICATED');
 
       // Simulate logout: reset stores but preserve hydration
-      mockOnboardingStore.publicKey = '';
+      mockOnboardingStore.pubky = '';
       mockOnboardingStore.secretKey = '';
       mockProfileStore.isAuthenticated = false;
       // hasHydrated should remain true (this is the fix)
@@ -121,7 +121,7 @@ describe('useAuthStatus', () => {
     it('would be stuck loading if hydration was not preserved (demonstrating the bug)', () => {
       // Simulate the old buggy behavior
       mockOnboardingStore.hasHydrated = true;
-      mockOnboardingStore.publicKey = 'test-public-key';
+      mockOnboardingStore.pubky = 'test-public-key';
       mockOnboardingStore.secretKey = 'test-secret-key';
       mockProfileStore.isAuthenticated = true;
 
@@ -132,7 +132,7 @@ describe('useAuthStatus', () => {
       expect(result.current.status).toBe('AUTHENTICATED');
 
       // Simulate the old buggy logout: reset stores including hydration
-      mockOnboardingStore.publicKey = '';
+      mockOnboardingStore.pubky = '';
       mockOnboardingStore.secretKey = '';
       mockProfileStore.isAuthenticated = false;
       mockOnboardingStore.hasHydrated = false; // This was the bug

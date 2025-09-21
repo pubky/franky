@@ -11,7 +11,7 @@ import * as Core from '@/core';
 
 export const CreateProfileForm = () => {
   const router = useRouter();
-  const { publicKey } = Core.useOnboardingStore();
+  const { pubky } = Core.useOnboardingStore();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [continueText, setContinueText] = useState('Finish');
@@ -116,12 +116,12 @@ export const CreateProfileForm = () => {
     if (avatarFile) {
       setContinueText('Uploading avatar...');
       if (!avatarFile) return null;
-      image = await Core.UserController.uploadAvatar(avatarFile, publicKey);
+      image = await Core.UserController.uploadAvatar(avatarFile, pubky);
       if (!image) return;
     }
 
     setContinueText('Saving profile...');
-    const response = await Core.UserController.saveProfile(user, image, publicKey);
+    const response = await Core.UserController.saveProfile(user, image, pubky);
 
     if (!response.ok) {
       console.error('Failed to save profile', response);

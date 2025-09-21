@@ -8,5 +8,5 @@ export interface NexusBootstrapResponse {
 
 export interface TBootstrapGuardParams {
   response: Response;
-  pubky: string;
+  pubky: Core.Pubky;
 }

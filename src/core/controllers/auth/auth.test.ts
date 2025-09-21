@@ -29,11 +29,11 @@ vi.mock('@/core/stores', () => ({
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
     fromSecretKey: vi.fn(() => ({
-      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      pubky: vi.fn(() => ({ z32: () => 'test-public-key' })),
       secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
     })),
     random: vi.fn(() => ({
-      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      pubky: vi.fn(() => ({ z32: () => 'test-public-key' })),
       secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
     })),
   },
@@ -80,7 +80,7 @@ describe('AuthController', () => {
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
-        pubky: keypair.publicKey,
+        pubky: keypair.pubky,
         session: mockSession,
       });
 

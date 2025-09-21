@@ -64,11 +64,11 @@ export class AuthController {
 
   static async logout() {
     const profileStore = Core.useProfileStore.getState();
-    const publicKey = profileStore.currentUserPubky || '';
+    const pubky = profileStore.currentUserPubky || '';
 
     try {
       const homeserverService = this.getHomeserverService();
-      await homeserverService.logout(publicKey);
+      await homeserverService.logout(pubky);
     } finally {
       // Always clear local state, even if homeserver logout fails
       Core.useOnboardingStore.getState().reset();

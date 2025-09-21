@@ -26,7 +26,7 @@ describe('OnboardingStore', () => {
     // Reset store state to initial state
     useOnboardingStore.setState({
       secretKey: '',
-      publicKey: '',
+      pubky: '',
       mnemonic: '',
       isBackedUp: false,
       hasHydrated: false,
@@ -42,7 +42,7 @@ describe('OnboardingStore', () => {
       const state = useOnboardingStore.getState();
 
       expect(state.secretKey).toEqual('');
-      expect(state.publicKey).toEqual('');
+      expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
       expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(false);
@@ -54,7 +54,7 @@ describe('OnboardingStore', () => {
       // Set some state
       useOnboardingStore.setState({
         secretKey: localStorageMock.secretKey,
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
         isBackedUp: true,
         hasHydrated: true,
@@ -65,7 +65,7 @@ describe('OnboardingStore', () => {
 
       const state = useOnboardingStore.getState();
       expect(state.secretKey).toEqual('');
-      expect(state.publicKey).toEqual('');
+      expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
       expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(true); // Should preserve hydration state
@@ -75,7 +75,7 @@ describe('OnboardingStore', () => {
       // Set some state with hasHydrated false
       useOnboardingStore.setState({
         secretKey: localStorageMock.secretKey,
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
         isBackedUp: true,
         hasHydrated: false,
@@ -86,7 +86,7 @@ describe('OnboardingStore', () => {
 
       const state = useOnboardingStore.getState();
       expect(state.secretKey).toEqual('');
-      expect(state.publicKey).toEqual('');
+      expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
       expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(false); // Should preserve hydration state even when false
@@ -103,20 +103,20 @@ describe('OnboardingStore', () => {
     });
 
     it('should set both keys with setKeypair action', () => {
-      const testPublicKey = 'test-public-key-123';
+      const testPubky = 'test-public-key-123';
       const testSecretKey = 'test-secret-key-456';
 
       const state = useOnboardingStore.getState();
 
       // Initially keys should be empty
-      expect(state.publicKey).toEqual('');
+      expect(state.pubky).toEqual('');
       expect(state.secretKey).toEqual('');
 
       // Set both keys at once
-      state.setKeypair(testPublicKey, testSecretKey);
+      state.setKeypair(testPubky, testSecretKey);
 
       const updatedState = useOnboardingStore.getState();
-      expect(updatedState.publicKey).toEqual(testPublicKey);
+      expect(updatedState.pubky).toEqual(testPubky);
       expect(updatedState.secretKey).toEqual(testSecretKey);
     });
   });
