@@ -132,7 +132,7 @@ describe('ProfileStore', () => {
 
       // Selector should throw error
       expect(() => store.selectCurrentUserPubky()).toThrow(
-        'Current user pubky is not available. User may not be authenticated.'
+        'Current user pubky is not available. User may not be authenticated.',
       );
     });
 
@@ -144,7 +144,7 @@ describe('ProfileStore', () => {
 
       // Selector should throw error
       expect(() => store.selectCurrentUserPubky()).toThrow(
-        'Current user pubky is not available. User may not be authenticated.'
+        'Current user pubky is not available. User may not be authenticated.',
       );
     });
 
@@ -159,7 +159,7 @@ describe('ProfileStore', () => {
 
       // Selector should still throw error
       expect(() => store.selectCurrentUserPubky()).toThrow(
-        'Current user pubky is not available. User may not be authenticated.'
+        'Current user pubky is not available. User may not be authenticated.',
       );
     });
   });
