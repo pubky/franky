@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding profile page on pubky app.',
 });
 
-export default function ProfilePage() {
-  return <Templates.Profile />;
+export default function ProfilePageForm() {
+  return <Templates.ProfileForm />;
 }

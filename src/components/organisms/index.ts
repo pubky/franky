@@ -18,6 +18,7 @@ export * from './PostReplies';
 export * from './PostReplyInput';
 export * from './PostTags';
 export * from './PostUserDetails';
+export * from './Profile';
 export * from './PublicKeyCard';
 export * from './RightSidebar';
 export * from './SignInNavigation';

@@ -1,11 +1,14 @@
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 
-export function Profile() {
+export interface ProfilePageProps {
+  pubky: string;
+}
+
+export function ProfilePage({ pubky }: ProfilePageProps) {
   return (
     <Atoms.Container size="container" className="px-6">
-      <Organisms.CreateProfileHeader />
-      <Organisms.CreateProfileForm />
+      <Organisms.ProfileHeader pubkyParam={pubky} />
     </Atoms.Container>
   );
 }
