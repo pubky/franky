@@ -42,12 +42,6 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
 
     try {
       await Core.AuthController.loginWithEncryptedFile({ encryptedFile: selectedFile, password });
-      const currentUserPubky = Core.useProfileStore.getState().currentUserPubky;
-      if (!currentUserPubky) {
-        throw new Error('Current user public key not found');
-      }
-      // Once we have the session, we have to bootstrap the app
-      await Core.BootstrapController.run(currentUserPubky);
       onRestore?.();
     } catch (error) {
       if (error instanceof Error) {
@@ -61,6 +55,8 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           errorMessage.includes('cipher')
         ) {
           setError('Invalid password or corrupted file. Please check your password and try again.');
+        } else if (error instanceof Libs.AppError && Object.values(Libs.NexusErrorType).includes(error.type as Libs.NexusErrorType)) {
+          setError('Something went wrong with nexus. Please try again.');
         } else {
           setError('Failed to restore from file. Please check your file and try again.');
         }

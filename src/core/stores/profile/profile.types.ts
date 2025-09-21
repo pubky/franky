@@ -13,7 +13,11 @@ export interface ProfileActions {
   reset: () => void;
 }
 
-export type ProfileStore = ProfileState & ProfileActions;
+export interface ProfileSelectors {
+  selectCurrentUserPubky: () => string;
+}
+
+export type ProfileStore = ProfileState & ProfileActions & ProfileSelectors;
 
 export const profileInitialState: ProfileState = {
   currentUserPubky: null,
