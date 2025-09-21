@@ -5,5 +5,6 @@ export * from './DialogRestoreEncryptedFile';
 export * from './DialogRestoreRecoveryPhrase';
 export * from './Header';
 export * from './HomeserverCard';
+export * from './Profile';
 export * from './PublicKeyCard';
 export * from './SignInNavigation';

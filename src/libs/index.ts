@@ -5,3 +5,4 @@ export * from './identity';
 export * from './logger';
 export * from './share';
 export * from './utils';
+export * from './http';

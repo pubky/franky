@@ -2,7 +2,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class AuthController {
-  private constructor() { } // Prevent instantiation
+  private constructor() {} // Prevent instantiation
 
   private static async saveAuthenticatedDataAndBootstrap({ session, pubky }: Core.TAuthenticatedData) {
     try {
