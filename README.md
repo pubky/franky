@@ -2,8 +2,10 @@
 
 # Franky
 
-Franky is a social media app that uses Pubky Protocol.
-
+- "Franky" is the codename for the next version of the [/pubky-app/](https://github.com/pubky/pubky-app) web portal; a publisher, and social feed for the next web. 
+- The beta app that is currently live at https://pubky.app will be deprecated once Franky is complete.
+- **THIS VERSION IS A WORK IN PROGRESS**, including a rewrite with improved architecture, and Tailwind/ShadCN design system.
+  
 ---
 
 ## Getting Started
