@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { UsersList } from './UsersList';
-import type { UserData } from '@/atoms';
+import type { UserData } from '../User/User';
 
 const mockUsers: UserData[] = [
   {
