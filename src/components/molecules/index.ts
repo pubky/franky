@@ -33,3 +33,4 @@ export * from './SearchInput';
 export * from './TextareaField';
 export * from './Toaster';
 export * from './User';
+export * from './UsersList';
