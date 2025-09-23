@@ -187,6 +187,9 @@ vi.mock('@/molecules', () => ({
   DialogAge: () => <div data-testid="dialog-age">DialogAge</div>,
   DialogTerms: () => <div data-testid="dialog-terms">DialogTerms</div>,
   DialogPrivacy: () => <div data-testid="dialog-privacy">DialogPrivacy</div>,
+  useToast: () => ({
+    toast: vi.fn(),
+  }),
   InputField: ({
     placeholder,
     value = '',

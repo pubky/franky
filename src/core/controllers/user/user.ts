@@ -1,18 +1,28 @@
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { PubkyAppUser } from 'pubky-app-specs';
 import { z } from 'zod';
 
 export class UserController {
   private constructor() {} // Prevent instantiation
 
-  private static getHomeserverService() {
+  private static async getAuthenticatedHomeserverService() {
     const onboardingStore = Core.useOnboardingStore.getState();
-    return Core.HomeserverService.getInstance(onboardingStore.secretKey);
+
+    if (!onboardingStore.secretKey) {
+      throw new Error('No secretKey found in onboarding store. User may need to re-authenticate.');
+    }
+
+    const homeserver = Core.HomeserverService.getInstance(onboardingStore.secretKey);
+    const pubkyKeypair = Libs.Identity.pubkyKeypairFromSecretKey(onboardingStore.secretKey);
+    await homeserver.authenticateKeypair(pubkyKeypair);
+
+    return homeserver;
   }
 
   // Upload avatar to homeserver and return the url
   static async uploadAvatar(avatarFile: File, pubky: Core.Pubky): Promise<string> {
-    const homeserver = this.getHomeserverService();
+    const homeserver = await this.getAuthenticatedHomeserverService();
 
     // 1. Upload Blob
     const fileContent = await avatarFile.arrayBuffer();
@@ -59,7 +69,7 @@ export class UserController {
       // save user profile in the global store
 
       // Write the user profile to the homeserver
-      const homeserver = this.getHomeserverService();
+      const homeserver = await this.getAuthenticatedHomeserverService();
       const response = await homeserver.fetch(meta.url, {
         method: 'PUT',
         body: JSON.stringify(userJson),

@@ -11,6 +11,7 @@ import * as Core from '@/core';
 
 export const CreateProfileForm = () => {
   const router = useRouter();
+  const { toast } = Molecules.useToast();
   const { pubky } = Core.useOnboardingStore();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
@@ -125,6 +126,14 @@ export const CreateProfileForm = () => {
 
     if (!response.ok) {
       console.error('Failed to save profile', response);
+      setContinueText('Try again!');
+      setIsSaving(false);
+
+      // TODO: change to sooner toast
+      toast({
+        title: 'Failed to save profile',
+        description: 'Please try again.',
+      });
       return;
     }
 
