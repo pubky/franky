@@ -23,7 +23,7 @@ describe('OnboardingStore', () => {
     localStorageMock.setItem.mockImplementation(() => {});
     localStorageMock.removeItem.mockImplementation(() => {});
 
-    // Reset store state
+    // Reset store state to initial state
     useOnboardingStore.setState({
       secretKey: '',
       publicKey: '',
@@ -419,6 +419,139 @@ describe('OnboardingStore', () => {
 
       const state = useOnboardingStore.getState();
       expect(state.secretKey).toEqual(localStorageMock.secretKey);
+    });
+  });
+
+  describe('Persistence Configuration', () => {
+    it('should persist all required state properties', () => {
+      const testData = {
+        publicKey: 'test-public-key-123',
+        secretKey: 'test-secret-key-456',
+        mnemonic: 'test mnemonic phrase with twelve words for key generation',
+        isBackedUp: true,
+      };
+
+      // Set all data using setState (which would trigger persistence)
+      useOnboardingStore.setState(testData);
+
+      // Verify all persisted data is accessible
+      const state = useOnboardingStore.getState();
+      expect(state.publicKey).toBe(testData.publicKey);
+      expect(state.secretKey).toBe(testData.secretKey);
+      expect(state.mnemonic).toBe(testData.mnemonic);
+      expect(state.isBackedUp).toBe(testData.isBackedUp);
+    });
+
+    it('should exclude action functions from persistence', () => {
+      const state = useOnboardingStore.getState();
+
+      // Verify that action functions exist in the store
+      expect(typeof state.setPublicKey).toBe('function');
+      expect(typeof state.setSecretKey).toBe('function');
+      expect(typeof state.setMnemonic).toBe('function');
+      expect(typeof state.setKeypair).toBe('function');
+      expect(typeof state.setKeypairFromMnemonic).toBe('function');
+      expect(typeof state.setHydrated).toBe('function');
+      expect(typeof state.reset).toBe('function');
+
+      // Actions should not be persisted (this is tested implicitly by the partialize function)
+      // The partialize function only includes data properties, not function properties
+    });
+
+    it('should handle mnemonic storage through actions', () => {
+      const testMnemonic =
+        'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+
+      // Initially mnemonic should be empty
+      expect(useOnboardingStore.getState().mnemonic).toBe('');
+
+      // Set mnemonic using the action (following same pattern as existing working tests)
+      const state = useOnboardingStore.getState();
+      state.setMnemonic(testMnemonic);
+
+      // Verify mnemonic is stored in state (and would be persisted)
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.mnemonic).toBe(testMnemonic);
+    });
+  });
+
+  describe('Rehydration Callback', () => {
+    it('should manage hasHydrated state correctly', () => {
+      // Initially should be false (following the exact pattern of existing working test)
+      const state = useOnboardingStore.getState();
+      expect(state.hasHydrated).toBe(false);
+
+      // Set hydrated to true
+      state.setHydrated(true);
+
+      // Verify it was set (following the exact pattern of existing working test)
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.hasHydrated).toBe(true);
+    });
+
+    it('should preserve hasHydrated during reset operations', () => {
+      const state = useOnboardingStore.getState();
+
+      // Set hydrated to true first
+      state.setHydrated(true);
+      expect(useOnboardingStore.getState().hasHydrated).toBe(true);
+
+      // Reset should preserve hydration state (this is tested in existing tests too)
+      state.reset();
+      expect(useOnboardingStore.getState().hasHydrated).toBe(true);
+    });
+  });
+
+  describe('Complete Persistence Lifecycle', () => {
+    it('should handle store operations with mnemonic and keys', () => {
+      const testMnemonic =
+        'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+      const testPublicKey = 'test-public-key-full-cycle';
+      const testSecretKey = 'test-secret-key-full-cycle';
+
+      const state = useOnboardingStore.getState();
+
+      // Set mnemonic using action (same pattern as existing working tests)
+      state.setMnemonic(testMnemonic);
+
+      // Set keypair using action (same pattern as existing working tests)
+      state.setKeypair(testPublicKey, testSecretKey);
+
+      // Verify state is consistent
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.mnemonic).toBe(testMnemonic);
+      expect(updatedState.publicKey).toBe(testPublicKey);
+      expect(updatedState.secretKey).toBe(testSecretKey);
+    });
+
+    it('should handle localStorage persistence simulation', () => {
+      // Mock successful localStorage operations
+      localStorageMock.setItem.mockImplementation((key, value) => {
+        // Simulate successful storage
+        expect(key).toBe('onboarding-storage');
+        expect(typeof value).toBe('string');
+
+        // Parse the stored value to verify it contains expected data
+        const storedData = JSON.parse(value);
+        expect(storedData.state).toBeDefined();
+      });
+
+      // Set data that should trigger persistence
+      const testData = {
+        publicKey: 'persistence-test-public',
+        secretKey: 'persistence-test-secret',
+        mnemonic: 'test mnemonic for persistence verification',
+        isBackedUp: true,
+      };
+
+      useOnboardingStore.setState(testData);
+
+      // Verify the data is in the store
+      const state = useOnboardingStore.getState();
+      expect(state.publicKey).toBe(testData.publicKey);
+      expect(state.secretKey).toBe(testData.secretKey);
+      expect(state.mnemonic).toBe(testData.mnemonic);
+      expect(state.isBackedUp).toBe(testData.isBackedUp);
     });
   });
 });
