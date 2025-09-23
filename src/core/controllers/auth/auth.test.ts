@@ -3,6 +3,8 @@ import { AuthController } from './auth';
 import { HomeserverService } from '@/core/services/homeserver';
 import { Identity } from '@/libs';
 
+const TEST_SECRET_KEY = Buffer.from(new Uint8Array(32).fill(1)).toString('hex');
+
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
@@ -27,16 +29,20 @@ vi.mock('@/core/stores', () => ({
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
     fromSecretKey: vi.fn(() => ({
-      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      pubky: vi.fn(() => ({ z32: () => 'test-public-key' })),
       secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
     })),
     random: vi.fn(() => ({
-      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      pubky: vi.fn(() => ({ z32: () => 'test-public-key' })),
       secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
     })),
   },
   createRecoveryFile: vi.fn(() => new Uint8Array([1, 2, 3, 4, 5])),
 }));
+
+// Mock fetch for bootstrap service
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 // Mock the Env module
 vi.mock('@/libs/env', () => ({
@@ -49,6 +55,17 @@ vi.mock('@/libs/env', () => ({
 describe('AuthController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock bootstrap service fetch response
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          users: [],
+          posts: [],
+          list: { stream: [] },
+        }),
+    });
   });
 
   afterEach(() => {
@@ -57,12 +74,13 @@ describe('AuthController', () => {
 
   describe('signUp', () => {
     it('should successfully sign up a user and call setSession', async () => {
-      const homeserverService = HomeserverService.getInstance();
+      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
       const signupToken = 'test-token';
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
 
       const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
+        pubky: keypair.pubky,
         session: mockSession,
       });
 
@@ -76,7 +94,7 @@ describe('AuthController', () => {
     });
 
     it('should throw error if signup fails', async () => {
-      const homeserverService = HomeserverService.getInstance();
+      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
       const signupToken = 'invalid-token';
 
@@ -107,7 +125,7 @@ describe('AuthController', () => {
     });
 
     it('should successfully logout user, clear stores, cookies and redirect', async () => {
-      const homeserverService = HomeserverService.getInstance();
+      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
 
       // Set some cookies to test clearing
@@ -124,7 +142,7 @@ describe('AuthController', () => {
     });
 
     it('should throw error when homeserver logout fails but still clear local state', async () => {
-      const homeserverService = HomeserverService.getInstance();
+      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));
 
       // Should throw error when homeserver logout fails, but local state should still be cleared
@@ -139,7 +157,7 @@ describe('AuthController', () => {
     });
 
     it('should clear all existing cookies', async () => {
-      const homeserverService = HomeserverService.getInstance();
+      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
 
       // Set multiple cookies

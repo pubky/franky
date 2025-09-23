@@ -7,13 +7,13 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export const CreateProfileHeader = () => {
-  const { publicKey } = Core.useOnboardingStore();
+  const { pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
-  const displayPublicKey = Libs.formatPublicKey({ key: publicKey, length: 10 });
+  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(publicKey);
+    copyToClipboard(pubky);
   };
 
   return (

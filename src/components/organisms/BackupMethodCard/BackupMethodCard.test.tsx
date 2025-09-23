@@ -217,7 +217,7 @@ describe('BackupMethodCard', () => {
     const testMnemonic = 'integration test mnemonic phrase';
     mockUseOnboardingStore.mockReturnValue({
       mnemonic: testMnemonic,
-      publicKey: 'test-public-key',
+      pubky: 'test-public-key',
       secretKey: 'test-secret-key',
       isBackedUp: false,
       hasHydrated: true,

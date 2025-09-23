@@ -9,23 +9,23 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
-  const { setKeypair, setMnemonic, publicKey } = Core.useOnboardingStore();
+  const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
 
   useEffect(() => {
-    if (publicKey === '') {
+    if (pubky === '') {
       const generatePubky = () => {
         const keypair = Libs.Identity.generateKeypair();
-        setKeypair(keypair.publicKey, keypair.secretKey);
+        setKeypair(keypair.pubky, keypair.secretKey);
         setMnemonic(keypair.mnemonic);
       };
 
       generatePubky();
     }
-  }, [publicKey, setKeypair, setMnemonic]);
+  }, [pubky, setKeypair, setMnemonic]);
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(publicKey);
+    copyToClipboard(pubky);
   };
 
   return (
@@ -55,14 +55,14 @@ export function PublicKeyCard() {
         className="flex-col items-start gap-3 justify-start w-full"
       >
         <Molecules.InputField
-          value={publicKey}
+          value={pubky}
           variant="dashed"
           readOnly
           onClick={handleCopyToClipboard}
-          loading={publicKey === ''}
+          loading={pubky === ''}
           loadingText="Generating pubky..."
           icon={<Libs.Key className="h-4 w-4 text-brand" />}
-          status={publicKey === '' ? 'default' : 'success'}
+          status={pubky === '' ? 'default' : 'success'}
           className="w-full max-w-[576px]"
         />
       </Molecules.ActionSection>

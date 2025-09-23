@@ -61,7 +61,9 @@ export class Identity {
 
   static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
     try {
-      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
+      const arrayBuffer = new ArrayBuffer(recoveryFile.byteLength);
+      new Uint8Array(arrayBuffer).set(recoveryFile);
+      const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
 
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -123,7 +125,7 @@ export class Identity {
 
       return {
         secretKey: this.secretKeyToHex(keypair.secretKey()),
-        publicKey: keypair.publicKey().z32(),
+        pubky: keypair.publicKey().z32(),
       };
     } catch (error) {
       throw Libs.createCommonError(
@@ -142,7 +144,7 @@ export class Identity {
 
       return {
         secretKey: this.secretKeyToHex(keypair.secretKey()),
-        publicKey: keypair.publicKey().z32(),
+        pubky: keypair.publicKey().z32(),
       };
     } catch (error) {
       throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
@@ -162,11 +164,11 @@ export class Identity {
     // Generate mnemonic first, then create keypair from it
     const words = this.generateSeedWords();
     const mnemonic = words.join(' ');
-    const { secretKey, publicKey } = this.generateKeypairFromMnemonic(mnemonic);
+    const { secretKey, pubky } = this.generateKeypairFromMnemonic(mnemonic);
 
     return {
       secretKey,
-      publicKey,
+      pubky,
       mnemonic,
     };
   }
