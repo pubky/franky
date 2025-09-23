@@ -5,19 +5,16 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
+import { type TProfilePageProps } from '@/templates';
 
-export interface ProfileHeaderProps {
-  pubkyParam: string;
-}
-
-export const ProfileHeader = ({ pubkyParam }: ProfileHeaderProps) => {
+export const ProfileHeader = ({ pubkyParam }: TProfilePageProps) => {
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const { currentUserPubky } = Core.useProfileStore();
   const isOwnProfile = currentUserPubky === pubkyParam;
 
-  const userData = useLiveQuery(() => Core.db.users.get(pubkyParam), [pubkyParam]);
+  const userDetails = useLiveQuery(() => Core.db.users.get(pubkyParam).then((user) => user?.details), [pubkyParam]);
 
-  if (userData === undefined) {
+  if (userDetails === undefined) {
     return (
       <Atoms.Container className="flex flex-col gap-6 p-6 bg-background border border-border rounded-lg">
         <div className="animate-pulse">
@@ -33,9 +30,9 @@ export const ProfileHeader = ({ pubkyParam }: ProfileHeaderProps) => {
     );
   }
 
-  const name = userData.details.name;
-  const bio = userData.details.bio;
-  const status = userData.details.status;
+  const name = userDetails.name;
+  const bio = userDetails.bio;
+  const status = userDetails.status;
 
   const renderUserPublicKey = () => (
     <Atoms.Button
