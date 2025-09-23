@@ -7,6 +7,55 @@ describe('Button', () => {
     render(<Button>Default Button</Button>);
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
+    expect(button).toHaveClass('bg-brand/20', 'text-brand');
+  });
+
+  it('renders different variants correctly', () => {
+    const { rerender } = render(<Button variant="secondary">Secondary</Button>);
+    let button = screen.getByRole('button');
+    expect(button).toHaveClass('bg-secondary', 'text-secondary-foreground');
+
+    rerender(<Button variant="outline">Outline</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('border', 'bg-background');
+
+    rerender(<Button variant="ghost">Ghost</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('hover:bg-accent');
+
+    rerender(<Button variant="brand">Brand</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('bg-brand', 'text-background');
+
+    rerender(<Button variant="destructive">Destructive</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('bg-destructive', 'text-white');
+
+    rerender(<Button variant="link">Link</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('text-primary', 'underline-offset-4');
+
+    rerender(<Button variant="dark">Dark</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('bg-neutral-900', 'text-white');
+
+    rerender(<Button variant="dark-outline">Dark Outline</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('border', 'bg-transparent');
+  });
+
+  it('renders different sizes correctly', () => {
+    const { rerender } = render(<Button size="sm">Small</Button>);
+    let button = screen.getByRole('button');
+    expect(button).toHaveClass('h-8', 'gap-1.5', 'px-3');
+
+    rerender(<Button size="lg">Large</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('h-10', 'px-8');
+
+    rerender(<Button size="icon">Icon</Button>);
+    button = screen.getByRole('button');
+    expect(button).toHaveClass('size-9');
   });
 
   it('handles click events', () => {
@@ -104,5 +153,43 @@ describe('Button - Snapshots', () => {
       </Button>,
     );
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('has correct test id for different variants', () => {
+    const { rerender } = render(<Button variant="ghost">Ghost</Button>);
+    let button = screen.getByTestId('button-ghost');
+    expect(button).toBeInTheDocument();
+
+    rerender(<Button variant="outline">Outline</Button>);
+    button = screen.getByTestId('button-outline');
+    expect(button).toBeInTheDocument();
+
+    rerender(<Button variant="dark">Dark</Button>);
+    button = screen.getByTestId('button-dark');
+    expect(button).toBeInTheDocument();
+
+    rerender(<Button variant="dark-outline">Dark Outline</Button>);
+    button = screen.getByTestId('button-dark-outline');
+    expect(button).toBeInTheDocument();
+
+    rerender(
+      <Button variant="ghost" size="icon">
+        Ghost Icon
+      </Button>,
+    );
+    button = screen.getByTestId('popover-button');
+    expect(button).toBeInTheDocument();
+  });
+
+  it('has correct data attributes', () => {
+    render(
+      <Button variant="secondary" size="lg">
+        Test
+      </Button>,
+    );
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('data-slot', 'button');
+    expect(button).toHaveAttribute('data-variant', 'secondary');
+    expect(button).toHaveAttribute('data-size', 'lg');
   });
 });
