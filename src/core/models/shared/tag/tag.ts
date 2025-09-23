@@ -1,4 +1,6 @@
-import { Pubky, PaginationParams, NexusTag, DEFAULT_PAGINATION } from '@/core';
+import { Pubky, PaginationParams } from '@/core/models/models.types';
+import { DEFAULT_PAGINATION } from '@/core/models/models.defaults';
+import { NexusTag } from '@/core/services/nexus/nexus.types';
 import { Logger } from '@/libs';
 
 export class TagModel implements NexusTag {

@@ -89,41 +89,4 @@ export class UserController {
       throw error;
     }
   }
-
-  static async insert(userData: Core.NexusUser | Core.UserModelSchema): Promise<Core.UserModel> {
-    return await Core.UserModel.insert(userData);
-  }
-
-  static async get(pubky: Core.Pubky): Promise<Core.UserModel> {
-    return await Core.UserModel.findById(pubky);
-  }
-
-  static async getByIds(pubkys: Core.Pubky[]): Promise<Core.UserModel[]> {
-    return await Core.UserModel.find(pubkys);
-  }
-
-  // userData can be NexusUser or UserModelSchema because it can come from the homeserver or the database
-  static async save(userData: Core.NexusUser | Core.UserModelSchema): Promise<Core.UserModel> {
-    try {
-      const existingUser = await Core.UserModel.findById(userData.details.id);
-      await existingUser.edit(userData);
-      return existingUser;
-    } catch {
-      // User doesn't exist, create new one
-      return this.insert(userData);
-    }
-  }
-
-  static async delete(pubky: Core.Pubky): Promise<void> {
-    const user = await this.get(pubky);
-    return await user.delete();
-  }
-
-  static async bulkSave(usersData: Core.NexusUser[]): Promise<Core.UserModel[]> {
-    return await Core.UserModel.bulkSave(usersData);
-  }
-
-  static async bulkDelete(pubkys: Core.Pubky[]): Promise<void> {
-    return await Core.UserModel.bulkDelete(pubkys);
-  }
 }

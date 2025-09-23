@@ -13,7 +13,7 @@ export class NexusBootstrapService {
       const { users, posts, list } = await BootstrapServiceGuard.parseBootstrapResponseOrThrow({ response, pubky });
 
       // Persist fetched data in the database
-      await Core.UserModel.bulkSave(users);
+      await this.persistUsers(users);
       await Core.PostModel.bulkSave(posts);
       await Core.StreamModel.create(Core.StreamTypes.TIMELINE_ALL, null, list.stream);
     } catch (error) {
@@ -24,5 +24,12 @@ export class NexusBootstrapService {
         pubky,
       });
     }
+  }
+
+  static async persistUsers(users: Core.NexusUser[]) {
+    await Core.UserCountsModel.bulkSave(users.map((user) => [user.details.id, user.counts]));
+    await Core.UserDetailsModel.bulkSave(users.map((user) => user.details));
+    await Core.UserRelationshipsModel.bulkSave(users.map((user) => [user.details.id, user.relationship]));
+    await Core.UserTagsModel.bulkSave(users.map((user) => [user.details.id, user.tags]));
   }
 }
