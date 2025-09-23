@@ -1,6 +1,7 @@
 export * from './ActionButtons';
 export * from './ActionSection';
 export * from './Backup';
+export * from './Breadcrumb';
 export * from './ContainerRoot';
 export * from './Homeserver';
 export * from './ButtonsNavigation';
