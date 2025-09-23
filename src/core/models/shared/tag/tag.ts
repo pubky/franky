@@ -1,9 +1,9 @@
-import { UserModelPK, PaginationParams, NexusTag, DEFAULT_PAGINATION } from '@/core';
+import { Pubky, PaginationParams, NexusTag, DEFAULT_PAGINATION } from '@/core';
 import { Logger } from '@/libs';
 
 export class TagModel implements NexusTag {
   label: string;
-  taggers: UserModelPK[];
+  taggers: Pubky[];
   taggers_count: number;
   relationship: boolean;
 
@@ -18,7 +18,7 @@ export class TagModel implements NexusTag {
     return tags.filter((tag) => tag.label === label);
   }
 
-  static findByTagger(tags: TagModel[], taggerId: UserModelPK): TagModel[] {
+  static findByTagger(tags: TagModel[], taggerId: Pubky): TagModel[] {
     return tags.filter((tag) => tag.taggers.includes(taggerId));
   }
 
@@ -26,11 +26,11 @@ export class TagModel implements NexusTag {
     return [...new Set(tags.map((tag) => tag.label))];
   }
 
-  hasUser(userId: UserModelPK): boolean {
+  hasUser(userId: Pubky): boolean {
     return this.taggers.includes(userId);
   }
 
-  addTagger(userId: UserModelPK): boolean {
+  addTagger(userId: Pubky): boolean {
     if (this.hasUser(userId)) return false;
 
     this.taggers.push(userId);
@@ -38,7 +38,7 @@ export class TagModel implements NexusTag {
     return true;
   }
 
-  removeTagger(userId: UserModelPK): boolean {
+  removeTagger(userId: Pubky): boolean {
     const initialLength = this.taggers.length;
     this.taggers = this.taggers.filter((id) => id !== userId);
 
@@ -49,7 +49,7 @@ export class TagModel implements NexusTag {
     return false;
   }
 
-  getTaggers(pagination: PaginationParams = DEFAULT_PAGINATION): UserModelPK[] {
+  getTaggers(pagination: PaginationParams = DEFAULT_PAGINATION): Pubky[] {
     try {
       const { skip, limit } = { ...DEFAULT_PAGINATION, ...pagination };
       Logger.debug('Getting taggers with pagination', {

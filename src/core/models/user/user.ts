@@ -1,6 +1,6 @@
 import { Table } from 'dexie';
 import {
-  type UserModelPK,
+  type Pubky,
   type Timestamp,
   type SyncStatus,
   type UserModelSchema,
@@ -17,14 +17,14 @@ import { SYNC_TTL } from '@/config/sync';
 export class UserModel implements UserModelSchema {
   private static table: Table<UserModelSchema> = db.table('users');
 
-  id: UserModelPK;
+  id: Pubky;
   details: NexusUserDetails;
   counts: NexusUserCounts;
   tags: TagModel[];
   relationship: NexusUserRelationship;
-  following: UserModelPK[];
-  followers: UserModelPK[];
-  muted: UserModelPK[];
+  following: Pubky[];
+  followers: Pubky[];
+  muted: Pubky[];
   indexed_at: Timestamp | null;
   updated_at: Timestamp;
   sync_status: SyncStatus;
@@ -120,7 +120,7 @@ export class UserModel implements UserModelSchema {
     }
   }
 
-  static async findById(id: UserModelPK): Promise<UserModel> {
+  static async findById(id: Pubky): Promise<UserModel> {
     try {
       const userData = await this.table.get(id);
       if (!userData) {
@@ -140,7 +140,7 @@ export class UserModel implements UserModelSchema {
     }
   }
 
-  static async find(userPKs: UserModelPK[]): Promise<UserModel[]> {
+  static async find(userPKs: Pubky[]): Promise<UserModel[]> {
     try {
       const users = await this.table.where('id').anyOf(userPKs).toArray();
       if (users.length !== userPKs.length) {
@@ -195,7 +195,7 @@ export class UserModel implements UserModelSchema {
     }
   }
 
-  static async bulkDelete(userPKs: UserModelPK[]): Promise<void> {
+  static async bulkDelete(userPKs: Pubky[]): Promise<void> {
     try {
       await db.transaction('rw', this.table, async () => {
         await this.table.bulkDelete(userPKs);

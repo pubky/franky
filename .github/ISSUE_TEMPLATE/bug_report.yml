@@ -1,0 +1,61 @@
+name: Bug Report
+description: Create a report to help us improve
+title: '[Bug]: '
+labels: ['bug']
+projects: ['Pubky App']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: textarea
+    id: describe-bug
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      placeholder: The bug happened when I opened the app...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce-bug
+    attributes:
+      label: Reproduce
+      description: How do you trigger this bug? Please walk us through it step by step.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Recording
+      description: If applicable, add screenshots or a video recording to help explain your problem.
+    validations:
+      required: false
+  - type: input
+    id: browser
+    attributes:
+      label: Web Browser
+      description: What web browser and version are you using?
+      placeholder: e.g. Chrome Version 127.0.6533.120 (Official Build) (arm64)
+    validations:
+      required: false
+  - type: input
+    id: version
+    attributes:
+      label: Pubky App Version
+      description: What version of Pubky App were you running when the bug occurred? You can find the version number on the Settings page.
+      placeholder: e.g. v0.12
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console log output
+      description: Please copy and paste any relevant console log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false

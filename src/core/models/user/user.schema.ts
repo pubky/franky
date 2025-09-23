@@ -1,10 +1,10 @@
-import { NexusUser, SyncStatus, Timestamp, UserModelPK } from '@/core';
+import { NexusUser, SyncStatus, Timestamp, Pubky } from '@/core';
 
 export interface UserModelSchema extends NexusUser {
-  id: UserModelPK;
-  following: UserModelPK[];
-  followers: UserModelPK[];
-  muted: UserModelPK[];
+  id: Pubky;
+  following: Pubky[];
+  followers: Pubky[];
+  muted: Pubky[];
   indexed_at: Timestamp | null;
   updated_at: Timestamp;
   sync_status: SyncStatus;

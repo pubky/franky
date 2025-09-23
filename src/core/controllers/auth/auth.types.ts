@@ -3,7 +3,7 @@ import { PublicKey } from '@synonymdev/pubky';
 import * as Core from '@/core';
 
 export interface TAuthenticatedData {
-  pubky: string;
+  pubky: Core.Pubky;
   session: Core.SignupResult['session'];
 }
 export interface TSignUpParams {

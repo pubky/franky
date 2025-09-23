@@ -3,7 +3,10 @@
 echo "🔍 Running pre-commit checks..."
 
 echo "✨ Formatting code..."
-npm run format
+if ! npm run format:check; then
+  echo "❌ Code formatting check failed. Run \`npm run format\` to fix formatting issues then add changes and commit again."
+  exit 1
+fi
 
 echo "🧪 Running tests..."
 npm run test

@@ -1,6 +1,6 @@
-import { db, UserModelPK, NexusUserDetails, UserModel } from '@/core';
+import { db, type Pubky, type NexusUserDetails, UserModel } from '@/core';
 
-export function generateTestUserId(index: number = 0): UserModelPK {
+export function generateTestUserId(index: number = 0): Pubky {
   return `operrr8wsbpr3ue9d4qj41ge1kcc6r7fdiy6o3ugjrrhi4y77rd${index}`;
 }
 
@@ -17,8 +17,8 @@ export function createTestUserDetails(overrides: Partial<NexusUserDetails> = {})
   };
 }
 
-export async function createTestUsers(count: number): Promise<UserModelPK[]> {
-  const userIds: UserModelPK[] = [];
+export async function createTestUsers(count: number): Promise<Pubky[]> {
+  const userIds: Pubky[] = [];
   for (let i = 0; i < count; i++) {
     const userId = generateTestUserId(i);
     await db.users.add(

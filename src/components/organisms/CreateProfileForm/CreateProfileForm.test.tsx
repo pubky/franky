@@ -299,7 +299,7 @@ global.URL.createObjectURL = vi.fn(() => 'mock-object-url');
 global.URL.revokeObjectURL = vi.fn();
 
 describe('CreateProfileForm', () => {
-  const mockPublicKey = 'test-public-key';
+  const mockPubky = 'test-public-key';
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -307,7 +307,7 @@ describe('CreateProfileForm', () => {
     // Get the mocked modules
     const Core = await import('@/core');
     vi.mocked(Core.useOnboardingStore).mockReturnValue({
-      publicKey: mockPublicKey,
+      pubky: mockPubky,
     });
 
     // Reset all mock functions

@@ -5,7 +5,7 @@ import * as BootstrapServiceGuard from './bootstrap.guard';
 export class NexusBootstrapService {
   private static baseUrl = Libs.Env.NEXT_PUBLIC_NEXUS_URL;
 
-  static async retrieveAndPersist(pubky: string) {
+  static async retrieveAndPersist(pubky: Core.Pubky) {
     try {
       const response = await fetch(`${this.baseUrl}/bootstrap/${pubky}`);
 

@@ -8,7 +8,7 @@ import { CommonErrorType } from '@/libs';
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
     fromSecretKey: vi.fn(() => ({
-      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      pubky: vi.fn(() => ({ z32: () => 'test-public-key' })),
       secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
     })),
   },
@@ -126,7 +126,7 @@ describe('Identity', () => {
       crypto.getRandomValues(secretKey);
 
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: Buffer.from(secretKey).toString('hex'),
       };
 
@@ -139,7 +139,7 @@ describe('Identity', () => {
 
     it('should throw error for invalid secret key format', async () => {
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: 'invalid',
       };
 
@@ -148,7 +148,7 @@ describe('Identity', () => {
 
     it('should throw error for null secret key', async () => {
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: null as unknown as string,
       };
 
@@ -158,7 +158,7 @@ describe('Identity', () => {
     it('should throw error for incorrect secret key length', async () => {
       const shortKey = new Uint8Array(16);
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: Buffer.from(shortKey).toString('hex'),
       };
 
@@ -167,7 +167,7 @@ describe('Identity', () => {
 
     it('should throw CommonError with proper error type for invalid secret key', async () => {
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: null as unknown as string,
       };
 
@@ -182,7 +182,7 @@ describe('Identity', () => {
     it('should throw CommonError with proper error type for invalid secret key length', async () => {
       const shortKey = new Uint8Array(16);
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: Buffer.from(shortKey).toString('hex'),
       };
 
@@ -199,7 +199,7 @@ describe('Identity', () => {
       crypto.getRandomValues(secretKey);
 
       const keypair = {
-        publicKey: 'test-public-key',
+        pubky: 'test-public-key',
         secretKey: Buffer.from(secretKey).toString('hex'),
       };
 
@@ -275,8 +275,8 @@ describe('Identity', () => {
         }),
       ).resolves.not.toThrow();
 
-      // Verify the download process
-      expect(global.Blob).toHaveBeenCalledWith([recoveryFile], { type: 'application/octet-stream' });
+      // Verify the download process - function converts Uint8Array to ArrayBuffer internally
+      expect(global.Blob).toHaveBeenCalledWith([expect.any(ArrayBuffer)], { type: 'application/octet-stream' });
       expect(document.createElement).toHaveBeenCalledWith('a');
       expect(document.body.appendChild).toHaveBeenCalled();
       expect(document.body.removeChild).toHaveBeenCalled();
@@ -309,7 +309,7 @@ describe('Identity', () => {
         }),
       ).resolves.not.toThrow();
 
-      expect(global.Blob).toHaveBeenCalledWith([new Uint8Array(0)], { type: 'application/octet-stream' });
+      expect(global.Blob).toHaveBeenCalledWith([expect.any(ArrayBuffer)], { type: 'application/octet-stream' });
     });
 
     it('should use correct filename', async () => {
@@ -341,7 +341,7 @@ describe('Identity', () => {
       const result = Identity.keypairFromSecretKey(Buffer.from(secretKey).toString('hex'));
 
       expect(result).toBeDefined();
-      expect(result.publicKey).toBeDefined();
+      expect(result.pubky).toBeDefined();
       expect(result.secretKey).toBeDefined();
     });
 
@@ -368,10 +368,10 @@ describe('Identity', () => {
       const result = Identity.generateKeypair();
 
       expect(result).toBeDefined();
-      expect(result.publicKey).toBeDefined();
+      expect(result.pubky).toBeDefined();
       expect(result.secretKey).toBeDefined();
       expect(result.mnemonic).toBeDefined();
-      expect(typeof result.publicKey).toBe('string');
+      expect(typeof result.pubky).toBe('string');
       expect(typeof result.secretKey).toBe('string');
       expect(typeof result.mnemonic).toBe('string');
       expect(result.secretKey).toHaveLength(64); // 32 bytes in hex
@@ -388,7 +388,7 @@ describe('Identity', () => {
       const result1 = Identity.generateKeypair();
       const result2 = Identity.generateKeypair();
 
-      expect(result1.publicKey).not.toBe(result2.publicKey);
+      expect(result1.pubky).not.toBe(result2.pubky);
       expect(result1.secretKey).not.toBe(result2.secretKey);
       expect(result1.mnemonic).not.toBe(result2.mnemonic);
     });
@@ -400,7 +400,7 @@ describe('Identity', () => {
       const keypairFromMnemonic = Identity.generateKeypairFromMnemonic(result.mnemonic);
 
       // Should match the original
-      expect(result.publicKey).toBe(keypairFromMnemonic.publicKey);
+      expect(result.pubky).toBe(keypairFromMnemonic.pubky);
       expect(result.secretKey).toBe(keypairFromMnemonic.secretKey);
     });
   });
@@ -414,9 +414,9 @@ describe('Identity', () => {
       const keypair = Identity.generateKeypairFromMnemonic(mnemonic);
 
       expect(keypair).toBeDefined();
-      expect(keypair.publicKey).toBeDefined();
+      expect(keypair.pubky).toBeDefined();
       expect(keypair.secretKey).toBeDefined();
-      expect(typeof keypair.publicKey).toBe('string');
+      expect(typeof keypair.pubky).toBe('string');
       expect(typeof keypair.secretKey).toBe('string');
       expect(keypair.secretKey).toHaveLength(64); // 32 bytes in hex
     });
@@ -435,7 +435,7 @@ describe('Identity', () => {
       const keypair1 = Identity.generateKeypairFromMnemonic(mnemonic);
       const keypair2 = Identity.generateKeypairFromMnemonic(mnemonic);
 
-      expect(keypair1.publicKey).toBe(keypair2.publicKey);
+      expect(keypair1.pubky).toBe(keypair2.pubky);
       expect(keypair1.secretKey).toBe(keypair2.secretKey);
     });
   });
@@ -451,13 +451,13 @@ describe('Identity', () => {
 
       // Restore keypair using pubkyKeypairFromMnemonic
       const restoredKeypair = Identity.pubkyKeypairFromMnemonic(mnemonic);
-      const restoredPublicKey = restoredKeypair.publicKey().z32();
+      const restoredPubKy = restoredKeypair.publicKey().z32();
 
       // The restored keypair should be valid and match
-      expect(restoredPublicKey).toBeDefined();
-      expect(typeof restoredPublicKey).toBe('string');
-      expect(restoredPublicKey.length).toBeGreaterThan(0);
-      expect(restoredPublicKey).toBe(keypair.publicKey);
+      expect(restoredPubKy).toBeDefined();
+      expect(typeof restoredPubKy).toBe('string');
+      expect(restoredPubKy.length).toBeGreaterThan(0);
+      expect(restoredPubKy).toBe(keypair.pubky);
     });
 
     it('should have consistent restore process', () => {
@@ -467,13 +467,13 @@ describe('Identity', () => {
 
       // Restore keypair multiple times
       const restoredKeypair1 = Identity.pubkyKeypairFromMnemonic(mnemonic);
-      const restoredPublicKey1 = restoredKeypair1.publicKey().z32();
+      const restoredPubKy1 = restoredKeypair1.publicKey().z32();
 
       const restoredKeypair2 = Identity.pubkyKeypairFromMnemonic(mnemonic);
-      const restoredPublicKey2 = restoredKeypair2.publicKey().z32();
+      const restoredPubKy2 = restoredKeypair2.publicKey().z32();
 
       // Both restorations should produce the same result
-      expect(restoredPublicKey1).toBe(restoredPublicKey2);
+      expect(restoredPubKy1).toBe(restoredPubKy2);
     });
   });
 });

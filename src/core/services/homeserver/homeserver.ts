@@ -5,7 +5,7 @@ import * as Config from '@/config';
 
 export class HomeserverService {
   private defaultKeypair = {
-    publicKey: '',
+    pubky: '' as Core.Pubky,
     secretKey: '',
   };
   private static instance: HomeserverService;
@@ -83,7 +83,7 @@ export class HomeserverService {
     );
   }
 
-  private async checkHomeserver(pubky: string) {
+  private async checkHomeserver(pubky: Core.Pubky) {
     try {
       const pubkyPublicKey = Pubky.PublicKey.from(pubky);
       const homeserver = await this.client.getHomeserver(pubkyPublicKey);
@@ -105,7 +105,7 @@ export class HomeserverService {
     }
   }
 
-  private async checkSession(pubky: string) {
+  private async checkSession(pubky: Core.Pubky) {
     try {
       const pubkyPublicKey = Pubky.PublicKey.from(pubky);
       const session = await this.client.session(pubkyPublicKey);
@@ -148,7 +148,7 @@ export class HomeserverService {
 
       Libs.Logger.debug('Signup successful', { session });
 
-      return { pubky: keypair.publicKey, session };
+      return { pubky: keypair.pubky, session };
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {}, true);
     }
@@ -166,9 +166,9 @@ export class HomeserverService {
     }
   }
 
-  async logout(publicKey: string) {
+  async logout(pubky: Core.Pubky) {
     try {
-      const pubKey = Pubky.PublicKey.from(publicKey);
+      const pubKey = Pubky.PublicKey.from(pubky);
       await this.client.signout(pubKey);
 
       this.currentKeypair = this.defaultKeypair;
@@ -213,7 +213,7 @@ export class HomeserverService {
 
       // update current keypair
       this.currentKeypair = {
-        publicKey: pubky,
+        pubky,
         secretKey,
       };
 
