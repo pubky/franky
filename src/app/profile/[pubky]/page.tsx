@@ -8,10 +8,10 @@ export const metadata = Molecules.Metadata({
 });
 
 interface ProfilePageParams {
-  params: Promise<Template.ProfilePageProps>;
+  params: Promise<Template.TProfilePageProps>;
 }
 
 export default async function ProfilePage({ params }: ProfilePageParams) {
-  const { pubky } = await params;
-  return <Templates.ProfilePage pubky={pubky} />;
+  const { pubkyParam } = await params;
+  return <Templates.ProfilePage pubky={pubkyParam} />;
 }
