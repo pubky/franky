@@ -25,8 +25,37 @@ export class AuthController {
 
   static async signUp({ keypair, signupToken }: Core.TSignUpParams) {
     const homeserverService = this.getHomeserverService();
-    const data = await homeserverService.signup(keypair, signupToken);
-    if (data) await this.saveAuthenticatedDataAndBootstrap(data);
+    const { session, pubky } = await homeserverService.signup(keypair, signupToken);
+    //if (data) await this.saveAuthenticatedDataAndBootstrap(data);
+    const profileStore = Core.useProfileStore.getState();
+    profileStore.setSession(session);
+    profileStore.setCurrentUserPubky(pubky);
+  }
+
+  static async authorizeAndBootstrap() {
+    try {
+      const profileStore = Core.useProfileStore.getState();
+      const pubky = profileStore.currentUserPubky || '';
+      let success = false;
+      let retries = 0;
+      while (!success && retries < 3) {
+        try {
+          await Core.NexusBootstrapService.retrieveAndPersist(pubky);
+          success = true;
+          profileStore.setAuthenticated(true);
+        } catch (error) {
+          console.error('Failed to bootstrap', error, retries);
+          // Wait 5 seconds before retrying. Let nexus to index the user
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+          retries++;
+        }
+      }
+      if (!success) {
+        throw new Error('User still not indexed');
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
   static async loginWithMnemonic({ mnemonic }: Core.TLoginWithMnemonicParams) {
