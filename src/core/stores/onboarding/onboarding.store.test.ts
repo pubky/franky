@@ -425,7 +425,7 @@ describe('OnboardingStore', () => {
   describe('Persistence Configuration', () => {
     it('should persist all required state properties', () => {
       const testData = {
-        publicKey: 'test-public-key-123',
+        pubky: 'test-public-key-123',
         secretKey: 'test-secret-key-456',
         mnemonic: 'test mnemonic phrase with twelve words for key generation',
         isBackedUp: true,
@@ -436,7 +436,7 @@ describe('OnboardingStore', () => {
 
       // Verify all persisted data is accessible
       const state = useOnboardingStore.getState();
-      expect(state.publicKey).toBe(testData.publicKey);
+      expect(state.pubky).toBe(testData.pubky);
       expect(state.secretKey).toBe(testData.secretKey);
       expect(state.mnemonic).toBe(testData.mnemonic);
       expect(state.isBackedUp).toBe(testData.isBackedUp);
@@ -446,7 +446,7 @@ describe('OnboardingStore', () => {
       const state = useOnboardingStore.getState();
 
       // Verify that action functions exist in the store
-      expect(typeof state.setPublicKey).toBe('function');
+      expect(typeof state.setPubky).toBe('function');
       expect(typeof state.setSecretKey).toBe('function');
       expect(typeof state.setMnemonic).toBe('function');
       expect(typeof state.setKeypair).toBe('function');
@@ -520,7 +520,7 @@ describe('OnboardingStore', () => {
       // Verify state is consistent
       const updatedState = useOnboardingStore.getState();
       expect(updatedState.mnemonic).toBe(testMnemonic);
-      expect(updatedState.publicKey).toBe(testPublicKey);
+      expect(updatedState.pubky).toBe(testPublicKey);
       expect(updatedState.secretKey).toBe(testSecretKey);
     });
 
@@ -538,7 +538,7 @@ describe('OnboardingStore', () => {
 
       // Set data that should trigger persistence
       const testData = {
-        publicKey: 'persistence-test-public',
+        pubky: 'persistence-test-public',
         secretKey: 'persistence-test-secret',
         mnemonic: 'test mnemonic for persistence verification',
         isBackedUp: true,
@@ -548,7 +548,7 @@ describe('OnboardingStore', () => {
 
       // Verify the data is in the store
       const state = useOnboardingStore.getState();
-      expect(state.publicKey).toBe(testData.publicKey);
+      expect(state.pubky).toBe(testData.pubky);
       expect(state.secretKey).toBe(testData.secretKey);
       expect(state.mnemonic).toBe(testData.mnemonic);
       expect(state.isBackedUp).toBe(testData.isBackedUp);

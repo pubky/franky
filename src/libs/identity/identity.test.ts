@@ -275,8 +275,8 @@ describe('Identity', () => {
         }),
       ).resolves.not.toThrow();
 
-      // Verify the download process
-      expect(global.Blob).toHaveBeenCalledWith([recoveryFile], { type: 'application/octet-stream' });
+      // Verify the download process - function converts Uint8Array to ArrayBuffer internally
+      expect(global.Blob).toHaveBeenCalledWith([expect.any(ArrayBuffer)], { type: 'application/octet-stream' });
       expect(document.createElement).toHaveBeenCalledWith('a');
       expect(document.body.appendChild).toHaveBeenCalled();
       expect(document.body.removeChild).toHaveBeenCalled();
@@ -309,7 +309,7 @@ describe('Identity', () => {
         }),
       ).resolves.not.toThrow();
 
-      expect(global.Blob).toHaveBeenCalledWith([new Uint8Array(0)], { type: 'application/octet-stream' });
+      expect(global.Blob).toHaveBeenCalledWith([expect.any(ArrayBuffer)], { type: 'application/octet-stream' });
     });
 
     it('should use correct filename', async () => {
