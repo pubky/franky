@@ -118,7 +118,7 @@ describe('DialogTerms', () => {
   it('renders effective date', () => {
     render(<DialogTerms />);
 
-    expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
+    expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
   });
 
   it('renders scrollable content area', () => {
@@ -168,7 +168,7 @@ describe('DialogTerms', () => {
 
     // Check for main sections that should be present
     expect(screen.getAllByText(/TERMS AND CONDITIONS/)).toHaveLength(2); // Appears twice
-    expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
+    expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
     expect(screen.getByText(/Thank you for using the Pubky platform/)).toBeInTheDocument();
   });
 });

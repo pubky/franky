@@ -118,7 +118,7 @@ describe('DialogPrivacy', () => {
   it('renders effective date', () => {
     render(<DialogPrivacy />);
 
-    const effectiveDate = screen.getByText('Effective Date: 15 May 2025');
+    const effectiveDate = screen.getByText('Effective Date: June 19, 2025');
     expect(effectiveDate).toBeInTheDocument();
     expect(effectiveDate).toHaveClass('text-muted-foreground');
   });
@@ -171,6 +171,6 @@ describe('DialogPrivacy', () => {
     // Check for main sections that should be present
     expect(screen.getByText(/SCOPE/)).toBeInTheDocument();
     expect(screen.getByText(/POLICY SUMMARY/)).toBeInTheDocument();
-    expect(screen.getByText(/Effective Date: 15 May 2025/)).toBeInTheDocument();
+    expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
   });
 });
