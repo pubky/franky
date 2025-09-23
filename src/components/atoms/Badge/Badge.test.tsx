@@ -58,4 +58,26 @@ describe('Badge - Snapshots', () => {
     );
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it('has correct test id for different variants', () => {
+    const { rerender } = render(<Badge variant="secondary">Secondary</Badge>);
+    let badge = screen.getByTestId('badge-secondary');
+    expect(badge).toBeInTheDocument();
+
+    rerender(<Badge variant="destructive">Destructive</Badge>);
+    badge = screen.getByTestId('badge-destructive');
+    expect(badge).toBeInTheDocument();
+
+    rerender(<Badge variant="outline">Outline</Badge>);
+    badge = screen.getByTestId('badge-outline');
+    expect(badge).toBeInTheDocument();
+  });
+
+  it('has correct data attributes', () => {
+    render(<Badge variant="secondary">Test Badge</Badge>);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveAttribute('data-slot', 'badge');
+    expect(badge).toHaveAttribute('data-variant', 'secondary');
+    expect(badge).toHaveAttribute('data-testid', 'badge-secondary');
+  });
 });
