@@ -11,7 +11,8 @@ import * as Core from '@/core';
 
 export const CreateProfileForm = () => {
   const router = useRouter();
-  const { publicKey } = Core.useOnboardingStore();
+  const { toast } = Molecules.useToast();
+  const { pubky } = Core.useOnboardingStore();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [continueText, setContinueText] = useState('Finish');
@@ -116,21 +117,30 @@ export const CreateProfileForm = () => {
     if (avatarFile) {
       setContinueText('Uploading avatar...');
       if (!avatarFile) return null;
-      image = await Core.UserController.uploadAvatar(avatarFile, publicKey);
+      image = await Core.UserController.uploadAvatar(avatarFile, pubky);
       if (!image) return;
     }
 
     setContinueText('Saving profile...');
-    const response = await Core.UserController.saveProfile(user, image, publicKey);
+    const response = await Core.UserController.saveProfile(user, image, pubky);
 
     if (!response.ok) {
       console.error('Failed to save profile', response);
+      setContinueText('Try again!');
+      setIsSaving(false);
+
+      // TODO: change to sooner toast
+      toast({
+        title: 'Failed to save profile',
+        description: 'Please try again.',
+      });
       return;
     }
 
     // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
     // TODO: navigate to profile page
     // setIsSaving(false);
+    await Core.AuthController.authorizeAndBootstrap();
     router.push('/feed');
   };
 

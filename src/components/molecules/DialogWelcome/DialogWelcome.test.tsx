@@ -127,7 +127,7 @@ describe('DialogWelcome', () => {
     isOpen: true,
     onOpenChange: vi.fn(),
     name: 'Satoshi Nakamoto',
-    publicKey: 'test-public-key-12345',
+    pubky: 'test-public-key-12345',
     image: 'https://example.com/avatar.jpg',
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
   };
@@ -318,7 +318,7 @@ describe('DialogWelcome', () => {
       isOpen: true,
       onOpenChange: vi.fn(),
       name: 'Test User',
-      publicKey: 'test-key',
+      pubky: 'test-key',
     };
 
     render(<DialogWelcome {...minimalProps} />);

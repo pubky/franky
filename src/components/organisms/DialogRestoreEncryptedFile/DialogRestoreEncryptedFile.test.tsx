@@ -13,6 +13,14 @@ vi.mock('@/core', () => ({
   AuthController: {
     loginWithEncryptedFile: vi.fn(),
   },
+  BootstrapController: {
+    run: vi.fn().mockResolvedValue({}),
+  },
+  useProfileStore: {
+    getState: vi.fn().mockReturnValue({
+      currentUserPubky: 'mock-user-pubkey-123',
+    }),
+  },
 }));
 
 // Mock @radix-ui/react-dialog

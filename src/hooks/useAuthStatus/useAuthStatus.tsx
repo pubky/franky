@@ -13,7 +13,7 @@ export function useAuthStatus(): Hooks.AuthStatusResult {
     const isLoading = !onboardingStore.hasHydrated;
 
     // Check if user has keypair
-    const hasKeypair = Boolean(onboardingStore.publicKey && onboardingStore.secretKey);
+    const hasKeypair = Boolean(onboardingStore.pubky && onboardingStore.secretKey);
 
     // Check if user has profile data
     const hasProfile = profileStore.isAuthenticated;
@@ -35,7 +35,7 @@ export function useAuthStatus(): Hooks.AuthStatusResult {
       hasProfile,
       isFullyAuthenticated: status === Hooks.AuthStatus.AUTHENTICATED,
     };
-  }, [onboardingStore.hasHydrated, onboardingStore.publicKey, onboardingStore.secretKey, profileStore.isAuthenticated]);
+  }, [onboardingStore.hasHydrated, onboardingStore.pubky, onboardingStore.secretKey, profileStore.isAuthenticated]);
 
   return authStatusResult;
 }
