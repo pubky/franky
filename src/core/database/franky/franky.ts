@@ -3,43 +3,55 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as Core from '@/core';
 
-import { PostModelSchema, postTableSchema } from '@/core/models/post/posts.schema';
 import { StreamModelSchema, streamTableSchema } from '@/core/models/stream/stream.schema';
 import { userDetailsTableSchema } from '@/core/models/user/details/userDetails.schema';
 import { userCountsTableSchema } from '@/core/models/user/counts/userCounts.schema';
 import { userRelationshipsTableSchema } from '@/core/models/user/relationships/userRelationships.schema';
 import { userConnectionsTableSchema } from '@/core/models/user/connections/userConnections.schema';
 import { userTtlTableSchema } from '@/core/models/user/ttl/userTtl.schema';
-import { tagCollectionTableSchema } from '@/core/models/abstract/tag.shema';
+import { postCountsTableSchema } from '@/core/models/post/counts/postCounts.schema';
+import { postDetailsTableSchema } from '@/core/models/post/details/postDetails.schema';
+import { postRelationshipsTableSchema } from '@/core/models/post/relationships/postRelationships.schema';
+import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
+import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 
 class AppDatabase extends Dexie {
+  // User
   user_counts!: Dexie.Table<Core.UserCountsModelSchema>;
   user_details!: Dexie.Table<Core.UserDetailsModelSchema>;
   user_relationships!: Dexie.Table<Core.UserRelationshipsModelSchema>;
   user_tags!: Dexie.Table<Core.TagCollectionModelSchema<Core.Pubky>>;
   user_connections!: Dexie.Table<Core.UserConnectionsModelSchema>;
   user_ttl!: Dexie.Table<Core.UserTtlModelSchema>;
-
+  // Post
+  post_counts!: Dexie.Table<Core.PostCountsModelSchema>;
+  post_details!: Dexie.Table<Core.PostDetailsModelSchema>;
+  post_relationships!: Dexie.Table<Core.PostRelationshipsModelSchema>;
+  post_tags!: Dexie.Table<Core.TagCollectionModelSchema<string>>;
+  post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
+  // Streams
   streams!: Dexie.Table<StreamModelSchema>;
-
-  posts!: Dexie.Table<PostModelSchema>;
-  // post_tags!: Dexie.Table<Core.TagCollectionModelSchema<Core.PostModelPK>>;
 
   constructor() {
     super(Config.DB_NAME);
 
     try {
       this.version(Config.DB_VERSION).stores({
+        // User related tables
         user_counts: userCountsTableSchema,
         user_details: userDetailsTableSchema,
         user_relationships: userRelationshipsTableSchema,
         user_connections: userConnectionsTableSchema,
         user_ttl: userTtlTableSchema,
         user_tags: tagCollectionTableSchema,
+        // Post related tables
+        post_counts: postCountsTableSchema,
+        post_details: postDetailsTableSchema,
+        post_relationships: postRelationshipsTableSchema,
+        post_tags: tagCollectionTableSchema,
+        post_ttl: postTtlTableSchema,
+        // Streams
         streams: streamTableSchema,
-        // users: userTableSchema,
-        posts: postTableSchema,
-        // post_tags: tagCollectionTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(

@@ -1,6 +1,6 @@
 import { Table } from 'dexie';
-import { TagCollection } from '@/core/models/abstract/tagCollection';
-import { TagCollectionModelSchema } from '@/core/models/abstract/tag.shema';
+import { TagCollection } from '@/core/models/shared/tag/tagCollection';
+import { TagCollectionModelSchema } from '@/core/models/shared/tag/tag.schema';
 import { Pubky } from '@/core/models/models.types';
 import { db } from '@/core/database/franky/franky';
 

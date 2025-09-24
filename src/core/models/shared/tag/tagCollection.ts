@@ -2,7 +2,7 @@ import { Table } from 'dexie';
 
 import * as Libs from '@/libs';
 import { TagModel } from '@/core/models/shared/tag';
-import { TagCollectionModelSchema } from './tag.shema';
+import { TagCollectionModelSchema } from './tag.schema';
 import { PaginationParams, Pubky, NexusModelTuple } from '@/core/models/models.types';
 import { DEFAULT_PAGINATION } from '@/core/models/models.defaults';
 import { NexusTag } from '@/core/services/nexus/nexus.types';
@@ -101,15 +101,3 @@ export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<
     }
   }
 }
-
-// -------- Concrete models (inherit everything above) --------
-
-// Example: Post tags (same API, different table and id type)
-// export class PostTagsModel extends TagCollection<Core.PostModelPK, Core.TagCollectionModelSchema<Core.PostModelPK>>
-//   implements Core.TagCollectionModelSchema<Core.PostModelPK> {
-//   static table: Table<Core.TagCollectionModelSchema<Core.PostModelPK>> = Core.db.table('post_tags');
-
-//   constructor(data: Core.TagCollectionModelSchema<Core.PostModelPK>) {
-//     super(data);
-//   }
-// }

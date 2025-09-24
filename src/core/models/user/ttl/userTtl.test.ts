@@ -58,7 +58,7 @@ describe('UserTtlModel', () => {
 
     it('should throw error for non-existent user ttl', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserTtlModel.findById(nonExistentId)).rejects.toThrow(`UserTtl not found: ${nonExistentId}`);
+      await expect(Core.UserTtlModel.findById(nonExistentId)).rejects.toThrow(`TTL not found: ${nonExistentId}`);
     });
 
     it('should bulk save user ttl from tuples', async () => {

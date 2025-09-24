@@ -56,15 +56,15 @@ describe('NexusService', () => {
           id: testPostId,
           content: 'Bootstrap post content',
           kind: 'short',
-          parent: null,
-          root: null,
+          uri: `https://pubky.app/${testUserId}/pub/pubky.app/posts/${testPostId}`,
           author: testUserId,
           indexed_at: Date.now(),
-          attachments: [],
+          attachments: null,
         },
         counts: {
           replies: 0,
-          tags: 0,
+          tags: 2,
+          unique_tags: 2,
           reposts: 0,
         },
         author: {
@@ -123,8 +123,9 @@ describe('NexusService', () => {
           },
         ],
         relationships: {
-          replied: false,
-          reposted: false,
+          replied: null,
+          reposted: null,
+          mentioned: [],
         },
         bookmark: null,
       },
@@ -206,12 +207,29 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      // Verify post was persisted to database
-      const savedPost = await Core.PostModel.findById(testPostId);
-      expect(savedPost).toBeTruthy();
-      expect(savedPost.details.id).toBe(testPostId);
-      expect(savedPost.details.content).toBe('Bootstrap post content');
-      expect(savedPost.details.author).toBe(pubky);
+      // Verify post details were persisted to database
+      const savedPostDetails = await Core.PostDetailsModel.findById(testPostId);
+      expect(savedPostDetails).toBeTruthy();
+      expect(savedPostDetails.id).toBe(testPostId);
+      expect(savedPostDetails.content).toBe('Bootstrap post content');
+      expect(savedPostDetails.author).toBe(pubky);
+
+      // Verify post counts were persisted to database
+      const savedPostCounts = await Core.PostCountsModel.findById(testPostId);
+      expect(savedPostCounts).toBeTruthy();
+      expect(savedPostCounts.id).toBe(testPostId);
+      expect(savedPostCounts.replies).toBe(0);
+      expect(savedPostCounts.reposts).toBe(0);
+
+      // Verify post tags were persisted to database
+      const savedPostTags = await Core.PostTagsModel.findById(testPostId);
+      expect(savedPostTags).toBeTruthy();
+      expect(savedPostTags.id).toBe(testPostId);
+      expect(savedPostTags.tags).toHaveLength(2);
+      expect(savedPostTags.tags[0].label).toBe('tech');
+      expect(savedPostTags.tags[0].taggers_count).toBe(1);
+      expect(savedPostTags.tags[1].label).toBe('announcement');
+      expect(savedPostTags.tags[1].taggers_count).toBe(2);
     });
 
     it('should create stream in the database', async () => {
@@ -261,9 +279,18 @@ describe('NexusService', () => {
       const savedUserTags = await Core.UserTagsModel.findById(testUserId);
       expect(savedUserTags).toBeTruthy();
 
-      const savedPost = await Core.PostModel.findById(testPostId);
-      expect(savedPost).toBeTruthy();
-      expect(savedPost.details.content).toBe('Bootstrap post content');
+      // Verify post details were persisted
+      const savedPostDetails = await Core.PostDetailsModel.findById(testPostId);
+      expect(savedPostDetails).toBeTruthy();
+      expect(savedPostDetails.content).toBe('Bootstrap post content');
+
+      // Verify post counts were persisted
+      const savedPostCounts = await Core.PostCountsModel.findById(testPostId);
+      expect(savedPostCounts).toBeTruthy();
+
+      // Verify post tags were persisted
+      const savedPostTags = await Core.PostTagsModel.findById(testPostId);
+      expect(savedPostTags).toBeTruthy();
 
       const savedStream = await Core.StreamModel.findById(Core.StreamTypes.TIMELINE_ALL);
       expect(savedStream).toBeTruthy();

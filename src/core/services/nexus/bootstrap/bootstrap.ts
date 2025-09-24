@@ -14,7 +14,7 @@ export class NexusBootstrapService {
 
       // Persist fetched data in the database
       await this.persistUsers(users);
-      await Core.PostModel.bulkSave(posts);
+      await this.persistPosts(posts);
       await Core.StreamModel.create(Core.StreamTypes.TIMELINE_ALL, null, list.stream);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
@@ -31,5 +31,12 @@ export class NexusBootstrapService {
     await Core.UserDetailsModel.bulkSave(users.map((user) => user.details));
     await Core.UserRelationshipsModel.bulkSave(users.map((user) => [user.details.id, user.relationship]));
     await Core.UserTagsModel.bulkSave(users.map((user) => [user.details.id, user.tags]));
+  }
+
+  static async persistPosts(posts: Core.NexusPost[]) {
+    await Core.PostCountsModel.bulkSave(posts.map((post) => [post.details.id, post.counts]));
+    await Core.PostDetailsModel.bulkSave(posts.map((post) => post.details));
+    await Core.PostRelationshipsModel.bulkSave(posts.map((post) => [post.details.id, post.relationships]));
+    await Core.PostTagsModel.bulkSave(posts.map((post) => [post.details.id, post.tags]));
   }
 }
