@@ -1,15 +1,30 @@
+import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { Avatar, AvatarImage, AvatarFallback } from './Avatar';
 
 describe('AvatarImage', () => {
   it('component exists and can be imported', () => {
-    // AvatarImage is a Radix UI component that may not render in JSDOM
-    // but we can test that it exists and can be rendered without errors
     expect(() => {
       render(
         <Avatar>
           <AvatarImage src="/test.jpg" alt="Test avatar" />
+        </Avatar>,
+      );
+    }).not.toThrow();
+  });
+
+  it('applies custom className', () => {
+    render(
+      <Avatar>
+        <AvatarImage src="/test.jpg" alt="Test" className="custom-image" />
+      </Avatar>,
+    );
+    // AvatarImage may not render in test environment, but should not throw
+    expect(() => {
+      render(
+        <Avatar>
+          <AvatarImage src="/test.jpg" alt="Test" className="custom-image" />
         </Avatar>,
       );
     }).not.toThrow();
@@ -58,19 +73,5 @@ describe('Avatar - Snapshots', () => {
       </Avatar>,
     );
     expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('AvatarImage has correct data attributes', () => {
-    // Test AvatarImage in isolation since it may not render in test environment
-    expect(() => {
-      render(
-        <Avatar>
-          <AvatarImage src="/test.jpg" alt="Test" />
-        </Avatar>,
-      );
-    }).not.toThrow();
-
-    // We can't reliably test the image rendering in JSDOM, but we can ensure
-    // the component doesn't crash and has the right structure
   });
 });

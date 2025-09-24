@@ -1,68 +1,51 @@
+'use client';
+
 import * as React from 'react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-import * as Libs from '@/libs';
-import type { AvatarProps, AvatarImageProps, AvatarFallbackProps } from './Avatar.types';
+import { cn } from '@/libs';
 
-const defaultProps = {
-  size: 'default' as const,
-};
+const avatarVariants = cva('relative flex shrink-0 overflow-hidden rounded-full', {
+  variants: {
+    size: {
+      sm: 'h-6 w-6',
+      default: 'h-10 w-10',
+      lg: 'h-12 w-12',
+      xl: 'h-16 w-16',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+});
 
-export function Avatar({ ...props }: AvatarProps) {
-  const { className, size, ...restProps } = { ...defaultProps, ...props };
+const Avatar = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & VariantProps<typeof avatarVariants>
+>(({ className, size, ...props }, ref) => (
+  <AvatarPrimitive.Root ref={ref} className={cn(avatarVariants({ size }), className)} {...props} />
+));
+Avatar.displayName = AvatarPrimitive.Root.displayName;
 
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'sm':
-        return 'size-6';
-      case 'default':
-        return 'size-8';
-      case 'lg':
-        return 'size-12';
-      case 'xl':
-        return 'size-16';
-      default:
-        return 'size-8';
-    }
-  };
+const AvatarImage = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Image>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Image ref={ref} className={cn('aspect-square h-full w-full', className)} {...props} />
+));
+AvatarImage.displayName = AvatarPrimitive.Image.displayName;
 
-  const getTestId = () => {
-    return `avatar-${size}`;
-  };
+const AvatarFallback = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Fallback>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Fallback
+    ref={ref}
+    className={cn('flex h-full w-full items-center justify-center rounded-full bg-muted', className)}
+    {...props}
+  />
+));
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-  return (
-    <AvatarPrimitive.Root
-      data-slot="avatar"
-      data-testid={getTestId()}
-      data-size={size}
-      className={Libs.cn('relative flex shrink-0 overflow-hidden rounded-full', getSizeStyles(), className)}
-      {...restProps}
-    />
-  );
-}
-
-export function AvatarImage({ ...props }: AvatarImageProps) {
-  const { className, ...restProps } = props;
-
-  return (
-    <AvatarPrimitive.Image
-      data-slot="avatar-image"
-      data-testid="avatar-image"
-      className={Libs.cn('aspect-square size-full', className)}
-      {...restProps}
-    />
-  );
-}
-
-export function AvatarFallback({ ...props }: AvatarFallbackProps) {
-  const { className, ...restProps } = props;
-
-  return (
-    <AvatarPrimitive.Fallback
-      data-slot="avatar-fallback"
-      data-testid="avatar-fallback"
-      className={Libs.cn('bg-muted flex size-full items-center justify-center rounded-full', className)}
-      {...restProps}
-    />
-  );
-}
+export { Avatar, AvatarImage, AvatarFallback, avatarVariants };
