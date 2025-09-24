@@ -11,6 +11,86 @@ vi.mock('./use-toast', () => ({
 // Mock @/libs to intercept any icons and utilities
 vi.mock('@/libs', () => ({
   X: () => <svg data-testid="x-icon" />,
+  Radio: ({ className }: { className?: string }) => (
+    <div data-testid="radio-icon" className={className}>
+      Radio
+    </div>
+  ),
+  UsersRound2: ({ className }: { className?: string }) => (
+    <div data-testid="users-round2-icon" className={className}>
+      UsersRound2
+    </div>
+  ),
+  HeartHandshake: ({ className }: { className?: string }) => (
+    <div data-testid="heart-handshake-icon" className={className}>
+      HeartHandshake
+    </div>
+  ),
+  UserRound: ({ className }: { className?: string }) => (
+    <div data-testid="user-round-icon" className={className}>
+      UserRound
+    </div>
+  ),
+  SquareAsterisk: ({ className }: { className?: string }) => (
+    <div data-testid="square-asterisk-icon" className={className}>
+      SquareAsterisk
+    </div>
+  ),
+  Flame: ({ className }: { className?: string }) => (
+    <div data-testid="flame-icon" className={className}>
+      Flame
+    </div>
+  ),
+  Columns3: ({ className }: { className?: string }) => (
+    <div data-testid="columns3-icon" className={className}>
+      Columns3
+    </div>
+  ),
+  Menu: ({ className }: { className?: string }) => (
+    <div data-testid="menu-icon" className={className}>
+      Menu
+    </div>
+  ),
+  LayoutGrid: ({ className }: { className?: string }) => (
+    <div data-testid="layout-grid-icon" className={className}>
+      LayoutGrid
+    </div>
+  ),
+  Layers: ({ className }: { className?: string }) => (
+    <div data-testid="layers-icon" className={className}>
+      Layers
+    </div>
+  ),
+  StickyNote: ({ className }: { className?: string }) => (
+    <div data-testid="sticky-note-icon" className={className}>
+      StickyNote
+    </div>
+  ),
+  Newspaper: ({ className }: { className?: string }) => (
+    <div data-testid="newspaper-icon" className={className}>
+      Newspaper
+    </div>
+  ),
+  Image: ({ className }: { className?: string }) => (
+    <div data-testid="image-icon" className={className}>
+      Image
+    </div>
+  ),
+  CirclePlay: ({ className }: { className?: string }) => (
+    <div data-testid="circle-play-icon" className={className}>
+      CirclePlay
+    </div>
+  ),
+  Link: ({ className }: { className?: string }) => (
+    <div data-testid="link-icon" className={className}>
+      Link
+    </div>
+  ),
+  Download: ({ className }: { className?: string }) => (
+    <div data-testid="download-icon" className={className}>
+      Download
+    </div>
+  ),
   cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
