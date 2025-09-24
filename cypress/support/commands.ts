@@ -19,11 +19,13 @@ Cypress.Commands.add(
   (
     profileName: string,
     profileBio: string = '',
-    backup?: BackupType,
+    backup?: BackupType[],
     //skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
     pubkyAlias?: string
   ) => {
-    cy.visit('/');
+    cy.location('pathname').then((pathname) => {
+      if (pathname !== '/') cy.visit('/');
+    });
     cy.location('pathname').should('eq', '/');
 
     cy.get('#create-account-btn').click();
@@ -41,15 +43,16 @@ Cypress.Commands.add(
     cy.get('#public-key-navigation-continue-btn').click();
     cy.location('pathname').should('eq', '/onboarding/backup');
 
-    if (backup === BackupType.EncryptedFile) {
-      cy.get('#backuo-encrypted-file-btn').click();
+    if (backup?.includes(BackupType.EncryptedFile)) {
+      cy.get('#backup-encrypted-file-btn').click();
       cy.get('#password').type('123456');
       cy.get('#confirmPassword').type('123456');
       cy.get('#download-file-btn').click();
-      cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath('pubky1'));
+      cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profileName));
       cy.get('#backup-successful-ok-btn').click();
     };
     // todo: if (backup === BackupType.RecoveryPhrase)
+    // todo: support multiple backup types (BackupType[])
 
     cy.get('#backup-navigation-continue-btn').click();
     cy.location('pathname').should('eq', '/onboarding/homeserver');
@@ -82,49 +85,76 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('signOut', (hasBackedUp: HasBackedUp) => {
-  cy.location('pathname').then((currentPath) => {
-    if (currentPath !== '/profile') {
-      goToProfilePageFromHeader();
-    }
-  });
-
-  cy.location('pathname').should('eq', '/profile');
-
-  cy.get('#profile-sign-out-btn').click();
-
-  // sign out model only shows if user has not backed up recovery file
-  if (hasBackedUp === HasBackedUp.No) cy.get('#logout-modal-sign-out-btn').click();
-
+Cypress.Commands.add('signOut', () => {
+  // temporary approach to sign out
+  cy.get('#feed-logout-btn').click();
   cy.location('pathname').should('eq', '/logout');
+  // navigate back to homepage
+  cy.get('#logout-navigation-back-btn').click();
+  cy.location('pathname').should('eq', '/');
 
-  cy.get('#sign-back-in-btn').click();
-  cy.location('pathname').should('eq', '/sign-in');
+  // todo: implement sign out using the following as a reference
+  // cy.location('pathname').then((currentPath) => {
+  //   if (currentPath !== '/profile') {
+  //     goToProfilePageFromHeader();
+  //   }
+  // });
+
+  // cy.location('pathname').should('eq', '/profile');
+
+  // cy.get('#profile-sign-out-btn').click();
+
+  // // sign out model only shows if user has not backed up recovery file
+  // if (hasBackedUp === HasBackedUp.No) cy.get('#logout-modal-sign-out-btn').click();
+
+  // cy.location('pathname').should('eq', '/logout');
+
+  // cy.get('#sign-back-in-btn').click();
+  // cy.location('pathname').should('eq', '/sign-in');
 });
 
-Cypress.Commands.add('signIn', (backupFilepath: string, passcode = '123456') => {
-  cy.location('pathname').then((currentPath) => {
-    if (currentPath !== '/sign-in') {
-      cy.visit('/sign-in');
-    }
+Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcode = '123456') => {
+  cy.location('pathname').then((pathname) => {
+    if (pathname !== '/') cy.visit('/');
   });
+  cy.location('pathname').should('eq', '/');
 
-  cy.location('pathname').then((currentPath) => {
-    if (currentPath === '/onboarding/sign-in') {
-      cy.visit('/sign-in');
-    }
-  });
-
+  cy.get('#sign-in-btn').click();
   cy.location('pathname').should('eq', '/sign-in');
 
-  cy.get('#fileInput').selectFile(
+  cy.get('#restore-encrypted-file-btn').click();
+  
+  cy.get('#encrypted-file-input').selectFile(
     backupFilepath,
     { force: true } // force to bypass visibility check of hidden input field
   );
-  cy.get('#sign-in-password-input').type(passcode);
-  cy.get('#sign-in-recovery-file-btn').click();
+  
+  cy.get('#restore-password').type(passcode);
+  cy.get('#encrypted-file-restore-btn').click();
+  cy.location('pathname').should('eq', '/feed');
 
-  cy.location('pathname').should('eq', '/home');
+  // cy.location('pathname').then((currentPath) => {
+  //   if (currentPath !== '/sign-in') {
+  //     cy.visit('/sign-in');
+  //   }
+  // });
+
+  // cy.location('pathname').then((currentPath) => {
+  //   if (currentPath === '/onboarding/sign-in') {
+  //     cy.visit('/sign-in');
+  //   }
+  // });
+
+  // cy.location('pathname').should('eq', '/sign-in');
+
+  // cy.get('#fileInput').selectFile(
+  //   backupFilepath,
+  //   { force: true } // force to bypass visibility check of hidden input field
+  // );
+  // cy.get('#sign-in-password-input').type(passcode);
+  // cy.get('#sign-in-recovery-file-btn').click();
+
+  // cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {

@@ -187,6 +187,7 @@ function RestoreForm({
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
+          id="recovery-phrase-restore-btn"
           size="lg"
           className="rounded-full flex-1"
           onClick={onRestore}

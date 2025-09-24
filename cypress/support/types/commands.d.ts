@@ -4,11 +4,12 @@ declare global {
   namespace Cypress {
     interface Chainable<Subject = any> {
       signOut(hasBackedUp: HasBackedUp): Chainable<void>;
-      signIn(backupFilepath: string, passcode?: string): Chainable<void>;
+      signInWithEncryptedFile(backupFilepath: string, passcode?: string): Chainable<void>;
+      signInWithRecoveryPhrase(recoveryPhrase: string): Chainable<void>;
       onboardAsNewUser(
         profileName: string,
         profileBio?: string,
-        backup?: BackupType,
+        backup?: BackupType[],
         pubkyAlias?: string
       ): Chainable<void>;
       backupRecoveryFile(passcode?: string): Chainable<void>;
