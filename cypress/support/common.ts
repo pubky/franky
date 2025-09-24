@@ -3,7 +3,7 @@ import * as path from 'path';
 
 export const defaultBackupFilename = (): string => {
   // return `pubky_recovery_${moment().utc().format('YYYY-MM-DD')}.pkarr`
-  return 'recovery_key.pkarr';
+  return 'recovery.pkarr';
 };
 
 export const backupDownloadFilePath = (filename?: string): string => {
