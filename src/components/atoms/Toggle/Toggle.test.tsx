@@ -1,74 +1,72 @@
-import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Toggle } from './Toggle';
 
 describe('Toggle', () => {
   it('renders with default props', () => {
-    render(<Toggle />);
-    const toggle = screen.getByTestId('toggle-default');
+    render(<Toggle>Toggle</Toggle>);
+
+    const toggle = screen.getByRole('button');
     expect(toggle).toBeInTheDocument();
-    expect(toggle).toHaveAttribute('data-pressed', 'false');
-  });
-
-  it('renders with custom text', () => {
-    render(<Toggle>Custom Text</Toggle>);
-    expect(screen.getByText('Custom Text')).toBeInTheDocument();
-  });
-
-  it('renders without text when showText is false', () => {
-    render(<Toggle showText={false}>Custom Text</Toggle>);
-    expect(screen.queryByText('Custom Text')).not.toBeInTheDocument();
-  });
-
-  it('renders without icon when showIcon is false', () => {
-    render(<Toggle showIcon={false} />);
-    const toggle = screen.getByTestId('toggle-default');
-    const icon = toggle.querySelector('svg');
-    expect(icon).not.toBeInTheDocument();
-  });
-
-  it('renders with custom icon', () => {
-    const CustomIcon = () => <div data-testid="custom-icon">Custom</div>;
-    render(<Toggle icon={<CustomIcon />} />);
-    expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
-  });
-
-  it('handles pressed state', () => {
-    render(<Toggle pressed />);
-    const toggle = screen.getByTestId('toggle-default');
-    expect(toggle).toHaveAttribute('data-pressed', 'true');
-    expect(toggle).toHaveAttribute('aria-pressed', 'true');
+    expect(toggle).toHaveTextContent('Toggle');
   });
 
   it('handles click events', () => {
     const handleClick = vi.fn();
-    render(<Toggle onClick={handleClick} />);
-    const toggle = screen.getByTestId('toggle-default');
+    render(<Toggle onClick={handleClick}>Toggle</Toggle>);
+
+    const toggle = screen.getByRole('button');
     fireEvent.click(toggle);
+
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders different variants', () => {
-    render(<Toggle variant="outline" />);
-    expect(screen.getByTestId('toggle-outline')).toBeInTheDocument();
+  it('applies variant classes correctly', () => {
+    const { rerender } = render(<Toggle variant="default">Default</Toggle>);
+    let toggle = screen.getByRole('button');
+    expect(toggle).toHaveClass('bg-transparent');
+
+    rerender(<Toggle variant="outline">Outline</Toggle>);
+    toggle = screen.getByRole('button');
+    expect(toggle).toHaveClass('border', 'border-input', 'bg-transparent');
   });
 
-  it('renders different sizes', () => {
-    render(<Toggle size="lg" />);
-    const toggle = screen.getByTestId('toggle-default');
-    expect(toggle).toHaveAttribute('data-size', 'lg');
+  it('applies size classes correctly', () => {
+    const { rerender } = render(<Toggle size="sm">Small</Toggle>);
+    let toggle = screen.getByRole('button');
+    expect(toggle).toHaveClass('h-8', 'px-1.5', 'min-w-8');
+
+    rerender(<Toggle size="lg">Large</Toggle>);
+    toggle = screen.getByRole('button');
+    expect(toggle).toHaveClass('h-10', 'px-2.5', 'min-w-10');
   });
 
-  it('is disabled when disabled prop is passed', () => {
-    render(<Toggle disabled />);
-    const toggle = screen.getByTestId('toggle-default');
+  it('can be disabled', () => {
+    render(<Toggle disabled>Disabled</Toggle>);
+
+    const toggle = screen.getByRole('button');
     expect(toggle).toBeDisabled();
+    expect(toggle).toHaveClass('disabled:pointer-events-none', 'disabled:opacity-50');
   });
 
   it('forwards ref correctly', () => {
     const ref = vi.fn();
-    render(<Toggle ref={ref} />);
+    render(<Toggle ref={ref}>Toggle</Toggle>);
+
     expect(ref).toHaveBeenCalled();
+  });
+
+  it('accepts custom className', () => {
+    render(<Toggle className="custom-class">Toggle</Toggle>);
+
+    const toggle = screen.getByRole('button');
+    expect(toggle).toHaveClass('custom-class');
+  });
+
+  it('renders with pressed state', () => {
+    render(<Toggle pressed>Pressed</Toggle>);
+
+    const toggle = screen.getByRole('button');
+    expect(toggle).toHaveAttribute('data-state', 'on');
   });
 });
