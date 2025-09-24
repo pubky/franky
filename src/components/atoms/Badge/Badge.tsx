@@ -1,9 +1,10 @@
+'use client';
+
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-import * as Libs from '@/libs';
-import type { BadgeProps } from './Badge.types';
+import { cn } from '@/libs';
 
 const badgeVariants = cva(
   'inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden',
@@ -23,28 +24,28 @@ const badgeVariants = cva(
   },
 );
 
-const defaultProps = {
-  variant: 'default' as const,
-  asChild: false,
-};
+export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof badgeVariants> {
+  asChild?: boolean;
+}
 
-export function Badge({ ...props }: BadgeProps) {
-  const { className, variant, asChild, ...restProps } = { ...defaultProps, ...props };
+function Badge({ className, variant, asChild = false, ...props }: BadgeProps) {
+  const effectiveVariant = variant || 'default';
 
   const getTestId = () => {
-    const effectiveVariant = variant || 'default';
     return `badge-${effectiveVariant}`;
   };
 
-  const Comp = asChild ? Slot : 'span';
+  const Comp = asChild ? Slot : 'div';
 
   return (
     <Comp
+      className={cn(badgeVariants({ variant }), className)}
       data-slot="badge"
       data-testid={getTestId()}
-      data-variant={variant}
-      {...restProps}
-      className={Libs.cn(badgeVariants({ variant }), className)}
+      data-variant={effectiveVariant}
+      {...props}
     />
   );
 }
+
+export { Badge, badgeVariants };

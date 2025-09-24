@@ -63,10 +63,10 @@ describe('Badge', () => {
     expect(badge).toHaveAttribute('data-custom', 'test');
   });
 
-  it('renders as span element by default', () => {
+  it('renders as div element by default', () => {
     render(<Badge data-testid="badge">Badge</Badge>);
     const badge = screen.getByTestId('badge');
-    expect(badge.tagName).toBe('SPAN');
+    expect(badge.tagName).toBe('DIV');
   });
 
   it('renders as child component when asChild is true', () => {
