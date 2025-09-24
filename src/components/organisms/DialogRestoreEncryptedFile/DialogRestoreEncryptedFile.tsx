@@ -85,7 +85,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none">
+        <Atoms.Button id="restore-encrypted-file-btn" variant="outline" className="rounded-full w-auto md:flex-none">
           <Libs.Upload className="h-4 w-4" />
           <span>Restore from file</span>
         </Atoms.Button>
@@ -130,6 +130,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Container>
 
             <input
+              id="encrypted-file-input"
               ref={fileInputRef}
               type="file"
               accept=".pkarr"
@@ -182,6 +183,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Button>
           </DialogClose>
           <Atoms.Button
+            id="encrypted-file-restore-btn"
             className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
             onClick={handleRestore}
             disabled={!selectedFile || !password || isRestoring}

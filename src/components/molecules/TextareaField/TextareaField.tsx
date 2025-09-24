@@ -2,6 +2,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 interface TextareaFieldProps {
+  id?: string;
   value: string;
   placeholder?: string;
   disabled?: boolean;
@@ -19,6 +20,7 @@ interface TextareaFieldProps {
 }
 
 export function TextareaField({
+  id,
   value,
   placeholder,
   disabled = false,
@@ -56,6 +58,7 @@ export function TextareaField({
     <>
       <Atoms.Container className={Libs.cn(containerClasses, statusClasses[status], className)}>
         <Atoms.Textarea
+          id={id}
           className={textAreaClasses}
           value={value}
           placeholder={placeholder}
