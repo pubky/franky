@@ -1,9 +1,10 @@
+'use client';
+
 import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
-import { cva } from 'class-variance-authority';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-import * as Libs from '@/libs';
-import type { ButtonProps } from './Button.types';
+import { cn } from '@/libs';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*="size-"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full',
@@ -37,36 +38,41 @@ const buttonVariants = cva(
   },
 );
 
-const defaultProps = {
-  asChild: false,
-  type: 'button' as const,
-};
-
-export function Button({ ...props }: ButtonProps) {
-  const { className, variant, size, asChild, ...restProps } = { ...defaultProps, ...props };
-
-  const getTestId = () => {
-    const effectiveVariant = variant || 'default';
-    if (effectiveVariant === 'ghost' && size === 'icon') return 'popover-button';
-    if (effectiveVariant === 'ghost') return 'button-ghost';
-    if (effectiveVariant === 'outline') return 'button-outline';
-    if (effectiveVariant === 'secondary') return 'button-secondary';
-    if (effectiveVariant === 'default') return 'button-default';
-    if (effectiveVariant === 'dark') return 'button-dark';
-    if (effectiveVariant === 'dark-outline') return 'button-dark-outline';
-    return 'button';
-  };
-
-  const Comp = asChild ? Slot : 'button';
-
-  return (
-    <Comp
-      data-slot="button"
-      data-testid={getTestId()}
-      data-variant={variant}
-      data-size={size}
-      {...restProps}
-      className={Libs.cn(buttonVariants({ variant, size, className }))}
-    />
-  );
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const getTestId = () => {
+      const effectiveVariant = variant || 'default';
+      if (effectiveVariant === 'ghost' && size === 'icon') return 'popover-button';
+      if (effectiveVariant === 'ghost') return 'button-ghost';
+      if (effectiveVariant === 'outline') return 'button-outline';
+      if (effectiveVariant === 'secondary') return 'button-secondary';
+      if (effectiveVariant === 'default') return 'button-default';
+      if (effectiveVariant === 'dark') return 'button-dark';
+      if (effectiveVariant === 'dark-outline') return 'button-dark-outline';
+      return 'button';
+    };
+
+    const Comp = asChild ? Slot : 'button';
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        data-slot="button"
+        data-testid={getTestId()}
+        data-variant={variant}
+        data-size={size}
+        {...props}
+      />
+    );
+  },
+);
+Button.displayName = 'Button';
+
+export { Button, buttonVariants };
