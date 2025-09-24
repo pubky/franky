@@ -88,7 +88,7 @@ describe('PostRelationshipsModel', () => {
     it('should throw error for non-existent post relationships', async () => {
       const nonExistentId = 'non-existent-post-999';
       await expect(Core.PostRelationshipsModel.findById(nonExistentId)).rejects.toThrow(
-        `Post relationships not found: ${nonExistentId}`,
+        `Record not found: ${nonExistentId}`,
       );
     });
 

@@ -61,7 +61,7 @@ describe('UserRelationshipsModel', () => {
     it('should throw error for non-existent user relationships', async () => {
       const nonExistentId = Core.generateTestUserId(999);
       await expect(Core.UserRelationshipsModel.findById(nonExistentId)).rejects.toThrow(
-        `User relationships not found: ${nonExistentId}`,
+        `Record not found: ${nonExistentId}`,
       );
     });
 

@@ -60,9 +60,7 @@ describe('PostCountsModel', () => {
 
     it('should throw error for non-existent post counts', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostCountsModel.findById(nonExistentId)).rejects.toThrow(
-        `Post counts not found: ${nonExistentId}`,
-      );
+      await expect(Core.PostCountsModel.findById(nonExistentId)).rejects.toThrow(`Record not found: ${nonExistentId}`);
     });
 
     it('should bulk save post counts from tuples', async () => {

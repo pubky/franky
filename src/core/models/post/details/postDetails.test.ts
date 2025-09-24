@@ -78,9 +78,7 @@ describe('PostDetailsModel', () => {
 
     it('should throw error for non-existent post details', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostDetailsModel.findById(nonExistentId)).rejects.toThrow(
-        `Post details not found: ${nonExistentId}`,
-      );
+      await expect(Core.PostDetailsModel.findById(nonExistentId)).rejects.toThrow(`Record not found: ${nonExistentId}`);
     });
 
     it('should bulk save post details from tuples', async () => {

@@ -56,7 +56,7 @@ describe('UserConnectionsModel', () => {
     it('should throw error for non-existent user connections', async () => {
       const nonExistentId = Core.generateTestUserId(999);
       await expect(Core.UserConnectionsModel.findById(nonExistentId)).rejects.toThrow(
-        `User connections not found: ${nonExistentId}`,
+        `Record not found: ${nonExistentId}`,
       );
     });
 
