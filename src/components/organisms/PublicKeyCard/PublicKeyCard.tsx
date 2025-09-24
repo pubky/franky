@@ -28,6 +28,34 @@ export function PublicKeyCard() {
     copyToClipboard(pubky);
   };
 
+  const handleShare = async () => {
+    try {
+      const text = `Here is my Pubky:\n${pubky}`;
+      if (navigator.share) {
+        await navigator.share({
+          title: 'My Pubky',
+          text,
+        });
+        return;
+      }
+
+      // Fallback: copy to clipboard and notify
+      await copyToClipboard(pubky);
+      Molecules.toast({
+        title: 'Pubky copied',
+        description: 'Paste it into your favorite app to share it.',
+      });
+    } catch (err) {
+      const error = err as { name?: string } | undefined;
+      // Ignore user-cancelled shares
+      if (error?.name === 'AbortError') return;
+      Molecules.toast({
+        title: 'Share failed',
+        description: 'Unable to share right now. Please try again.',
+      });
+    }
+  };
+
   return (
     <Molecules.ContentCard
       image={{
@@ -49,6 +77,12 @@ export function PublicKeyCard() {
             label: 'Copy to clipboard',
             icon: <Libs.Copy className="mr-2 h-4 w-4" />,
             onClick: handleCopyToClipboard,
+            variant: 'secondary',
+          },
+          {
+            label: 'Share',
+            icon: <Libs.Share className="mr-2 h-4 w-4" />,
+            onClick: handleShare,
             variant: 'secondary',
           },
         ]}

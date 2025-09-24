@@ -10,9 +10,11 @@ import { PublicKeyCard } from './PublicKeyCard';
 //   },
 // });
 
-// Mock toast
-const mockToast = vi.fn();
-const mockDismiss = vi.fn();
+// Hoisted mocks so they can be used inside vi.mock factories
+const { mockToast, mockDismiss } = vi.hoisted(() => ({
+  mockToast: vi.fn(),
+  mockDismiss: vi.fn(),
+}));
 
 interface ImageProps {
   src: string;
@@ -32,6 +34,7 @@ vi.mock('@/molecules', () => ({
   useToast: () => ({
     toast: mockToast,
   }),
+  toast: mockToast,
   ContentCard: ({ children, image }: { children: React.ReactNode; image?: ImageProps }) => (
     <div data-testid="content-card">
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -167,6 +170,11 @@ vi.mock('@/libs', () => ({
   Copy: ({ className }: { className?: string }) => (
     <div data-testid="copy-icon" className={className}>
       Copy
+    </div>
+  ),
+  Share: ({ className }: { className?: string }) => (
+    <div data-testid="share-icon" className={className}>
+      Share
     </div>
   ),
   Key: ({ className }: { className?: string }) => (
