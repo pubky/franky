@@ -68,7 +68,9 @@ describe('UserDetailsModel', () => {
 
     it('should throw error for non-existent user details', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserDetailsModel.findById(nonExistentId)).rejects.toThrow(`Record not found: ${nonExistentId}`);
+      await expect(Core.UserDetailsModel.findById(nonExistentId)).rejects.toThrow(
+        `Record not found in user_details: ${nonExistentId}`,
+      );
     });
 
     it('should bulk save user details', async () => {

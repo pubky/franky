@@ -70,7 +70,9 @@ describe('UserCountsModel', () => {
 
     it('should throw error for non-existent user counts', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserCountsModel.findById(nonExistentId)).rejects.toThrow(`Record not found: ${nonExistentId}`);
+      await expect(Core.UserCountsModel.findById(nonExistentId)).rejects.toThrow(
+        `Record not found in user_counts: ${nonExistentId}`,
+      );
     });
 
     it('should bulk save user counts from tuples', async () => {
