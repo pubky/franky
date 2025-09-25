@@ -3,11 +3,10 @@ import * as Core from '@/core';
 import * as BootstrapServiceGuard from './bootstrap.guard';
 
 export class NexusBootstrapService {
-  private static baseUrl = Libs.Env.NEXT_PUBLIC_NEXUS_URL;
-
   static async retrieveAndPersist(pubky: Core.Pubky) {
     try {
-      const response = await fetch(`${this.baseUrl}/bootstrap/${pubky}`);
+      const url = Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky));
+      const response = await fetch(url, Core.createFetchOptions());
 
       BootstrapServiceGuard.ensureHttpResponseOk({ response, pubky });
       const { users, posts, list } = await BootstrapServiceGuard.parseBootstrapResponseOrThrow({ response, pubky });
