@@ -37,8 +37,8 @@ const breadcrumbItemVariants = cva('flex items-center justify-center gap-2.5', {
 const breadcrumbSeparatorVariants = cva('text-muted-foreground shrink-0', {
   variants: {
     size: {
-      sm: 'w-[15px] h-[15px]',
-      md: 'w-[15px] h-[15px]',
+      sm: 'w-4 h-4',
+      md: 'w-4 h-4',
     },
   },
   defaultVariants: {

@@ -210,7 +210,7 @@ describe('Breadcrumb', () => {
       );
 
       let separator = container.querySelector('li[role="presentation"]');
-      expect(separator).toHaveClass('w-[15px]', 'h-[15px]');
+      expect(separator).toHaveClass('w-4', 'h-4');
 
       rerender(
         <Breadcrumb>
@@ -219,7 +219,7 @@ describe('Breadcrumb', () => {
       );
 
       separator = container.querySelector('li[role="presentation"]');
-      expect(separator).toHaveClass('w-[15px]', 'h-[15px]');
+      expect(separator).toHaveClass('w-4', 'h-4');
     });
   });
 
