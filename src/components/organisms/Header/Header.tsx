@@ -36,7 +36,7 @@ export function Header() {
   return (
     <Molecules.HeaderContainer>
       <Molecules.Logo noLink={currentStep === 5} />
-      {!isSignedIn || (currentStep === 5 && <Molecules.HeaderTitle currentTitle={currentTitle} />)}
+      {(!isSignedIn || currentStep === 5) && <Molecules.HeaderTitle currentTitle={currentTitle} />}
       {isOnboarding ? (
         <Molecules.HeaderOnboarding currentStep={currentStep} />
       ) : isSignedIn ? (
