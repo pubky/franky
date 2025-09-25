@@ -225,47 +225,47 @@ describe('Breadcrumb', () => {
 
   describe('BreadcrumbEllipsis', () => {
     it('renders with presentation role', () => {
-      render(
+      const { container } = render(
         <Breadcrumb>
           <BreadcrumbEllipsis />
         </Breadcrumb>,
       );
 
-      const ellipsis = screen.getByRole('presentation');
+      const ellipsis = container.querySelector('span[role="presentation"]');
       expect(ellipsis).toBeInTheDocument();
     });
 
     it('renders MoreHorizontal icon', () => {
-      render(
+      const { container } = render(
         <Breadcrumb>
           <BreadcrumbEllipsis />
         </Breadcrumb>,
       );
 
-      const ellipsis = screen.getByRole('presentation');
-      const svg = ellipsis.querySelector('svg');
+      const ellipsis = container.querySelector('span[role="presentation"]');
+      const svg = ellipsis?.querySelector('svg');
       expect(svg).toBeInTheDocument();
     });
 
     it('applies correct size classes', () => {
-      render(
+      const { container } = render(
         <Breadcrumb>
           <BreadcrumbEllipsis />
         </Breadcrumb>,
       );
 
-      const ellipsis = screen.getByRole('presentation');
+      const ellipsis = container.querySelector('span[role="presentation"]');
       expect(ellipsis).toHaveClass('w-9', 'h-9');
     });
 
     it('applies custom className', () => {
-      render(
+      const { container } = render(
         <Breadcrumb>
           <BreadcrumbEllipsis className="custom-ellipsis" />
         </Breadcrumb>,
       );
 
-      const ellipsis = screen.getByRole('presentation');
+      const ellipsis = container.querySelector('span[role="presentation"]');
       expect(ellipsis).toHaveClass('custom-ellipsis');
     });
   });
@@ -278,7 +278,7 @@ describe('Breadcrumb', () => {
         </Breadcrumb>,
       );
 
-      const page = screen.getByRole('listitem');
+      const page = screen.getByRole('link');
       expect(page).toHaveClass('text-foreground');
     });
 
@@ -289,7 +289,7 @@ describe('Breadcrumb', () => {
         </Breadcrumb>,
       );
 
-      const page = screen.getByRole('listitem');
+      const page = screen.getByRole('link');
       expect(page).toHaveAttribute('aria-current', 'page');
     });
 
@@ -328,12 +328,12 @@ describe('Breadcrumb', () => {
 
       // Check links
       const links = screen.getAllByRole('link');
-      expect(links).toHaveLength(2);
+      expect(links).toHaveLength(3); // Home, Products, and Product Details (BreadcrumbPage)
       expect(links[0]).toHaveAttribute('href', '/');
       expect(links[1]).toHaveAttribute('href', '/products');
 
       // Check current page
-      const currentPage = screen.getByText('Product Details').closest('li');
+      const currentPage = screen.getByText('Product Details');
       expect(currentPage).toHaveAttribute('aria-current', 'page');
     });
   });
@@ -354,7 +354,7 @@ describe('Breadcrumb', () => {
       const separator = container.querySelector('li[role="presentation"]');
       expect(separator).toHaveAttribute('aria-hidden', 'true');
 
-      const currentPage = screen.getByText('Current').closest('li');
+      const currentPage = screen.getByText('Current');
       expect(currentPage).toHaveAttribute('aria-current', 'page');
     });
 
