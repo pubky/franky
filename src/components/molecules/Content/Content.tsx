@@ -36,7 +36,7 @@ export function ContentCard({ children, className, classNameImage, image, layout
             containerClassName={classNameImage}
           />
         )}
-        <Atoms.Container className="gap-3 justify-start w-full">{children}</Atoms.Container>
+        <Atoms.Container className="gap-4 justify-start w-full">{children}</Atoms.Container>
       </Atoms.Container>
     </Atoms.Card>
   );
