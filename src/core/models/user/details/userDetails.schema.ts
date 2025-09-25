@@ -1,8 +1,6 @@
 import * as Core from '@/core';
 
-export interface UserDetailsModelSchema extends Core.NexusUserDetails {
-  id: Core.Pubky;
-}
+export type UserDetailsModelSchema = Core.NexusUserDetails;
 
 // Primary and compound indexes for Dexie
 export const userDetailsTableSchema = `

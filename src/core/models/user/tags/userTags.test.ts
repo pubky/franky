@@ -163,7 +163,9 @@ describe('UserTagsModel', () => {
 
     it('should throw error for non-existent user tags', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserTagsModel.findById(nonExistentId)).rejects.toThrow(`Tags not found: ${nonExistentId}`);
+      await expect(Core.UserTagsModel.findById(nonExistentId)).rejects.toThrow(
+        `Tags not found in user_tags: ${nonExistentId}`,
+      );
     });
 
     it('should bulk save user tags from tuples', async () => {

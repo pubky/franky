@@ -19,7 +19,6 @@ export class UserConnectionsModel
     this.followers = userConnections.followers;
   }
 
-  //TODO: Maybe we should add some type for the following and followers
   static toSchema(
     data: Core.NexusModelTuple<Pick<UserConnectionsModelSchema, 'following' | 'followers'>>,
   ): UserConnectionsModelSchema {

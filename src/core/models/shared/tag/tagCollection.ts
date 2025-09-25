@@ -57,10 +57,15 @@ export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<
     try {
       return await this.table.put(data);
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to insert tags', 500, {
-        error,
-        data,
-      });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.SAVE_FAILED,
+        `Failed to insert tags in ${this.table.name}`,
+        500,
+        {
+          error,
+          data,
+        },
+      );
     }
   }
 
@@ -71,18 +76,28 @@ export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<
     try {
       const rec = await this.table.get(id);
       if (!rec) {
-        throw Libs.createDatabaseError(Libs.DatabaseErrorType.FIND_FAILED, `Tags not found: ${String(id)}`, 404, {
-          tagsId: id,
-        });
+        throw Libs.createDatabaseError(
+          Libs.DatabaseErrorType.FIND_FAILED,
+          `Tags not found in ${this.table.name}: ${String(id)}`,
+          404,
+          {
+            tagsId: id,
+          },
+        );
       }
-      Libs.Logger.debug('Found tags', { id });
+      Libs.Logger.debug(`Found tags in ${this.table.name}`, { id });
       return new this(rec);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, `Failed to find tags ${String(id)}`, 500, {
-        error,
-        tagsId: id,
-      });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to find tags in ${this.table.name}: ${String(id)}`,
+        500,
+        {
+          error,
+          tagsId: id,
+        },
+      );
     }
   }
 
@@ -94,10 +109,15 @@ export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<
       const toSave = tuples.map((t) => ({ id: t[0] as TId, tags: t[1] }) as TSchema);
       return await this.table.bulkPut(toSave);
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.BULK_OPERATION_FAILED, 'Failed to bulk save tags', 500, {
-        error,
-        tuples,
-      });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
+        `Failed to bulk save tags in ${this.table.name}`,
+        500,
+        {
+          error,
+          tuples,
+        },
+      );
     }
   }
 }

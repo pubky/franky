@@ -1,8 +1,6 @@
 import * as Core from '@/core';
 
-export interface PostDetailsModelSchema extends Core.NexusPostDetails {
-  id: string;
-}
+export type PostDetailsModelSchema = Core.NexusPostDetails;
 
 // Primary and compound indexes for Dexie
 export const postDetailsTableSchema = `

@@ -58,7 +58,9 @@ describe('PostTtlModel', () => {
 
     it('should throw error for non-existent post ttl', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostTtlModel.findById(nonExistentId)).rejects.toThrow(`TTL not found: ${nonExistentId}`);
+      await expect(Core.PostTtlModel.findById(nonExistentId)).rejects.toThrow(
+        `TTL not found in post_ttl: ${nonExistentId}`,
+      );
     });
 
     it('should bulk save post ttl from tuples', async () => {

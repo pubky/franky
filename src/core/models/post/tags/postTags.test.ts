@@ -169,7 +169,9 @@ describe('PostTagsModel', () => {
 
     it('should throw error for non-existent post tags', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostTagsModel.findById(nonExistentId)).rejects.toThrow(`Tags not found: ${nonExistentId}`);
+      await expect(Core.PostTagsModel.findById(nonExistentId)).rejects.toThrow(
+        `Tags not found in post_tags: ${nonExistentId}`,
+      );
     });
 
     it('should bulk save post tags from tuples', async () => {

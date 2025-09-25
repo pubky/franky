@@ -1,8 +1,9 @@
-import * as Core from '@/core';
-import { ModelUserConnections } from './userConnections.default';
+import { Pubky } from '@/core';
 
-export interface UserConnectionsModelSchema extends ModelUserConnections {
-  id: Core.Pubky;
+export interface UserConnectionsModelSchema {
+  id: Pubky;
+  following: Pubky[];
+  followers: Pubky[];
 }
 
 // Primary and compound indexes for Dexie
