@@ -151,7 +151,12 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      expect(mockFetch).toHaveBeenCalledWith(`https://nexus.staging.pubky.app/v0/bootstrap/${pubky}`);
+      expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     });
 
     it('should persist users to the database', async () => {
@@ -297,7 +302,12 @@ describe('NexusService', () => {
       expect(savedStream!.posts).toEqual([testPostId, 'random-post-id']);
 
       // Verify fetch was called correctly
-      expect(mockFetch).toHaveBeenCalledWith(`https://nexus.staging.pubky.app/v0/bootstrap/${pubky}`);
+      expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     });
 
     it('should throw INVALID_REQUEST error on 400', async () => {
