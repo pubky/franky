@@ -1,7 +1,7 @@
 import { Table } from 'dexie';
 
 import * as Libs from '@/libs';
-import { NexusModelTuple } from '@/core/models/models.types';
+import { NexusModelTuple } from './baseTuple.type';
 
 // Base for models whose bulkSave input is an array of tuples: [id, data]
 export abstract class TupleModelBase<Id, Schema extends { id: Id }> {

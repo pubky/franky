@@ -1,4 +1,3 @@
-export * from './posts.helpers';
 export * from './counts';
 export * from './details';
 export * from './relationships';

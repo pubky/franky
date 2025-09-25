@@ -1,7 +1,7 @@
 import { Table } from 'dexie';
 
 import * as Core from '@/core';
-import { TupleModelBase } from '@/core/models/shared/base/tupleModel';
+import { TupleModelBase } from '@/core/models/shared/base/tuple/baseTuple';
 
 export class PostRelationshipsModel
   extends TupleModelBase<string, Core.PostRelationshipsModelSchema>

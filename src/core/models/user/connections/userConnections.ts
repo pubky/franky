@@ -2,7 +2,7 @@ import { Table } from 'dexie';
 
 import * as Core from '@/core';
 import { UserConnectionsModelSchema } from './userConnections.schema';
-import { TupleModelBase } from '@/core/models/shared/base/tupleModel';
+import { TupleModelBase } from '@/core/models/shared/base/tuple/baseTuple';
 
 export class UserConnectionsModel
   extends TupleModelBase<Core.Pubky, UserConnectionsModelSchema>

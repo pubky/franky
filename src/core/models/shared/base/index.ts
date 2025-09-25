@@ -1,2 +1,2 @@
-export * from './tupleModel';
-export * from './recordModel';
+export * from './tuple';
+export * from './record';

@@ -1,56 +1,52 @@
 import { Table } from 'dexie';
 
 import * as Libs from '@/libs';
-import { TagModel } from '@/core/models/shared/tag';
-import { TagCollectionModelSchema } from './tag.schema';
-import { PaginationParams, Pubky, NexusModelTuple } from '@/core/models/models.types';
-import { DEFAULT_PAGINATION } from '@/core/models/models.defaults';
-import { NexusTag } from '@/core/services/nexus/nexus.types';
+import * as Core from '@/core';
 
-export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<Id>> {
+export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSchema<Id>> {
   id: Id;
-  tags: TagModel[];
+  tags: Core.TagModel[];
 
   constructor(data: Schema) {
     this.id = data.id;
-    this.tags = data.tags.map((t) => new TagModel(t));
+    this.tags = data.tags.map((t) => new Core.TagModel(t));
   }
 
   // -------- Instance helpers (shared) --------
-  findByLabel(label: string): TagModel[] {
-    return TagModel.findByLabel(this.tags, label);
+  findByLabel(label: string): Core.TagModel[] {
+    return Core.TagModel.findByLabel(this.tags, label);
   }
 
-  findByTagger(taggerId: Pubky): TagModel[] {
-    return TagModel.findByTagger(this.tags, taggerId);
+  findByTagger(taggerId: Core.Pubky): Core.TagModel[] {
+    return Core.TagModel.findByTagger(this.tags, taggerId);
   }
 
   getUniqueLabels(): string[] {
-    return TagModel.getUniqueLabels(this.tags);
+    return Core.TagModel.getUniqueLabels(this.tags);
   }
 
-  getTaggers(label: string, pagination?: PaginationParams): Pubky[] {
+  getTaggers(label: string, pagination?: Core.PaginationParams): Core.Pubky[] {
     const tag = this.tags.find((t) => t.label === label);
-    return tag ? tag.getTaggers(pagination ?? DEFAULT_PAGINATION) : [];
+    return tag ? tag.getTaggers(pagination ?? Core.DEFAULT_PAGINATION) : [];
   }
 
-  addTagger(label: string, userId: Pubky): boolean {
+  addTagger(label: string, userId: Core.Pubky): boolean {
     let tag = this.tags.find((t) => t.label === label);
     if (!tag) {
-      tag = new TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
+      tag = new Core.TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
       this.tags.push(tag);
     }
     return tag.addTagger(userId);
   }
 
-  removeTagger(label: string, userId: Pubky): boolean {
+  removeTagger(label: string, userId: Core.Pubky): boolean {
     const tag = this.tags.find((t) => t.label === label);
     return tag ? tag.removeTagger(userId) : false;
   }
 
   // -------- Static CRUD (inherited by subclasses) --------
   // Note: subclasses MUST set their own static "table" field. TS cannot enforce abstract static.
-  static async insert<TId, TSchema extends TagCollectionModelSchema<TId>>(
+  static async insert<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
     this: { table: Table<TSchema> },
     data: TSchema,
   ) {
@@ -69,10 +65,11 @@ export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<
     }
   }
 
-  static async findById<TId, TSchema extends TagCollectionModelSchema<TId>, TModel extends TagCollection<TId, TSchema>>(
-    this: { table: Table<TSchema>; new (data: TSchema): TModel },
-    id: TId,
-  ): Promise<TModel> {
+  static async findById<
+    TId,
+    TSchema extends Core.TagCollectionModelSchema<TId>,
+    TModel extends TagCollection<TId, TSchema>,
+  >(this: { table: Table<TSchema>; new (data: TSchema): TModel }, id: TId): Promise<TModel> {
     try {
       const rec = await this.table.get(id);
       if (!rec) {
@@ -101,9 +98,9 @@ export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<
     }
   }
 
-  static async bulkSave<TId, TSchema extends TagCollectionModelSchema<TId>>(
+  static async bulkSave<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
     this: { table: Table<TSchema> },
-    tuples: NexusModelTuple<NexusTag[]>[],
+    tuples: Core.NexusModelTuple<Core.NexusTag[]>[],
   ) {
     try {
       const toSave = tuples.map((t) => ({ id: t[0] as TId, tags: t[1] }) as TSchema);

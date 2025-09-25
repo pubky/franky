@@ -1,10 +1,9 @@
 import { Table } from 'dexie';
 
 import * as Libs from '@/libs';
-import { NexusModelTuple } from '@/core/models/models.types';
-import { TtlModelSchema } from './ttl.schema';
+import * as Core from '@/core';
 
-export abstract class Ttl<Id, Schema extends TtlModelSchema<Id>> {
+export abstract class Ttl<Id, Schema extends Core.TtlModelSchema<Id>> {
   id: Id;
   ttl: number;
 
@@ -12,7 +11,7 @@ export abstract class Ttl<Id, Schema extends TtlModelSchema<Id>> {
     this.id = data.id;
     this.ttl = data.ttl;
   }
-  static async insert<TId, TSchema extends TtlModelSchema<TId>>(this: { table: Table<TSchema> }, data: TSchema) {
+  static async insert<TId, TSchema extends Core.TtlModelSchema<TId>>(this: { table: Table<TSchema> }, data: TSchema) {
     try {
       return await this.table.put(data);
     } catch (error) {
@@ -28,7 +27,7 @@ export abstract class Ttl<Id, Schema extends TtlModelSchema<Id>> {
     }
   }
 
-  static async findById<TId, TSchema extends TtlModelSchema<TId>, TModel extends Ttl<TId, TSchema>>(
+  static async findById<TId, TSchema extends Core.TtlModelSchema<TId>, TModel extends Ttl<TId, TSchema>>(
     this: { table: Table<TSchema>; new (data: TSchema): TModel },
     id: TId,
   ): Promise<TModel> {
@@ -63,9 +62,9 @@ export abstract class Ttl<Id, Schema extends TtlModelSchema<Id>> {
     }
   }
 
-  static async bulkSave<TId, TSchema extends TtlModelSchema<TId>>(
+  static async bulkSave<TId, TSchema extends Core.TtlModelSchema<TId>>(
     this: { table: Table<TSchema> },
-    records: NexusModelTuple<Pick<TSchema, 'ttl'>>[],
+    records: Core.NexusModelTuple<Pick<TSchema, 'ttl'>>[],
   ) {
     try {
       const toSave = records.map((tuple) => ({ id: tuple[0] as TId, ...tuple[1] }) as TSchema);

@@ -1,7 +1,7 @@
 import { Table } from 'dexie';
 
 import * as Core from '@/core';
-import { RecordModelBase } from '@/core/models/shared/base/recordModel';
+import { RecordModelBase } from '@/core/models/shared/base/record/baseRecord';
 
 export class PostDetailsModel
   extends RecordModelBase<string, Core.PostDetailsModelSchema>
