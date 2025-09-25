@@ -14,6 +14,9 @@ vi.mock('@/core', () => ({
   UserValidator: {
     check: vi.fn(),
   },
+  AuthController: {
+    authorizeAndBootstrap: vi.fn(),
+  },
 }));
 
 // Mock Next.js router
@@ -183,12 +186,13 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock molecules
+const mockToast = vi.fn();
 vi.mock('@/molecules', () => ({
   DialogAge: () => <div data-testid="dialog-age">DialogAge</div>,
   DialogTerms: () => <div data-testid="dialog-terms">DialogTerms</div>,
   DialogPrivacy: () => <div data-testid="dialog-privacy">DialogPrivacy</div>,
   useToast: () => ({
-    toast: vi.fn(),
+    toast: mockToast,
   }),
   InputField: ({
     placeholder,
@@ -315,9 +319,11 @@ describe('CreateProfileForm', () => {
 
     // Reset all mock functions
     mockPush.mockReset();
+    mockToast.mockReset();
     vi.mocked(Core.UserController.uploadAvatar).mockReset();
     vi.mocked(Core.UserController.saveProfile).mockReset();
     vi.mocked(Core.UserValidator.check).mockReset();
+    vi.mocked(Core.AuthController.authorizeAndBootstrap).mockReset();
   });
 
   it('renders with default state', () => {
@@ -609,6 +615,61 @@ describe('CreateProfileForm', () => {
       expect(typeof Core.UserController.saveProfile).toBe('function');
       expect(typeof Core.UserController.uploadAvatar).toBe('function');
       expect(typeof Core.UserValidator.check).toBe('function');
+      expect(typeof Core.AuthController.authorizeAndBootstrap).toBe('function');
+    });
+
+    it('should handle authorizeAndBootstrap error and show error toast', async () => {
+      const Core = await import('@/core');
+
+      // Mock successful validation and profile save
+      vi.mocked(Core.UserValidator.check).mockReturnValue({
+        data: {
+          name: 'Test User',
+          bio: 'Test bio',
+          links: [],
+        },
+        error: [],
+      });
+
+      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+        ok: true,
+      } as Response);
+
+      // Mock authorizeAndBootstrap to throw an error
+      const bootstrapError = new Error('Failed to fetch user data');
+      vi.mocked(Core.AuthController.authorizeAndBootstrap).mockRejectedValue(bootstrapError);
+
+      render(<CreateProfileForm />);
+
+      // Fill in the name field to make form valid
+      const nameInput = screen.getAllByTestId('molecules-input')[0];
+      fireEvent.change(nameInput, { target: { value: 'Test User' } });
+
+      // Submit the form
+      const continueButton = screen.getByTestId('continue-button');
+      expect(continueButton).not.toBeDisabled();
+
+      fireEvent.click(continueButton);
+
+      // Wait for the error handling to complete
+      await waitFor(() => {
+        // Should show error toast
+        expect(mockToast).toHaveBeenCalledWith({
+          title: 'Please try again.',
+          description: 'Failed to fetch the new user data. Indexing might be in progress...',
+        });
+
+        // Button text should change to "Try again!"
+        expect(continueButton).toHaveTextContent('Try again!');
+
+        // Should not navigate to feed page
+        expect(mockPush).not.toHaveBeenCalledWith('/feed');
+      });
+
+      // Verify the mocks were called in the correct order
+      expect(Core.UserValidator.check).toHaveBeenCalled();
+      expect(Core.UserController.saveProfile).toHaveBeenCalled();
+      expect(Core.AuthController.authorizeAndBootstrap).toHaveBeenCalled();
     });
   });
 });

@@ -140,8 +140,20 @@ export const CreateProfileForm = () => {
     // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
     // TODO: navigate to profile page
     // setIsSaving(false);
-    await Core.AuthController.authorizeAndBootstrap();
-    router.push('/feed');
+    try {
+      await Core.AuthController.authorizeAndBootstrap();
+      router.push('/feed');
+    } catch {
+      setContinueText('Try again!');
+      setIsSaving(false);
+
+      // TODO: change to sooner toast
+      toast({
+        title: 'Please try again.',
+        description: 'Failed to fetch the new user data. Indexing might be in progress...',
+      });
+      return;
+    }
   };
 
   return (
