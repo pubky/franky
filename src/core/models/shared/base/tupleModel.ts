@@ -44,7 +44,7 @@ export abstract class TupleModelBase<Id, Schema extends { id: Id }> {
           },
         );
       }
-      Libs.Logger.debug('Found record', { id });
+      Libs.Logger.debug(`Found record in ${this.table.name}`, { id });
       return new this(record);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;

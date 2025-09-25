@@ -1,7 +1,7 @@
 import { Table } from 'dexie';
 import * as Libs from '@/libs';
 
-// Base for models whose bulkSave input is an array of full records (already include id)
+// Base for models whose bulkSave input is an array of full records (already included the id)
 export abstract class RecordModelBase<Id, Schema extends { id: Id }> {
   id: Id;
 
@@ -13,10 +13,15 @@ export abstract class RecordModelBase<Id, Schema extends { id: Id }> {
     try {
       return await this.table.put(data);
     } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to insert record', 500, {
-        error,
-        data,
-      });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.SAVE_FAILED,
+        `Failed to insert record in ${this.table.name}`,
+        500,
+        {
+          error,
+          data,
+        },
+      );
     }
   }
 
