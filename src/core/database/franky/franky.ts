@@ -1,71 +1,122 @@
 import Dexie from 'dexie';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import { DB_VERSION, DB_NAME } from '@/config';
-import { UserModelSchema, userTableSchema } from '@/core/models/user/user.schema';
-import { PostModelSchema, postTableSchema } from '@/core/models/post/posts.schema';
+import * as Libs from '@/libs';
+import * as Config from '@/config';
+import * as Core from '@/core';
+
 import { StreamModelSchema, streamTableSchema } from '@/core/models/stream/stream.schema';
+import { userDetailsTableSchema } from '@/core/models/user/details/userDetails.schema';
+import { userCountsTableSchema } from '@/core/models/user/counts/userCounts.schema';
+import { userRelationshipsTableSchema } from '@/core/models/user/relationships/userRelationships.schema';
+import { userConnectionsTableSchema } from '@/core/models/user/connections/userConnections.schema';
+import { userTtlTableSchema } from '@/core/models/user/ttl/userTtl.schema';
+import { postCountsTableSchema } from '@/core/models/post/counts/postCounts.schema';
+import { postDetailsTableSchema } from '@/core/models/post/details/postDetails.schema';
+import { postRelationshipsTableSchema } from '@/core/models/post/relationships/postRelationships.schema';
+import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
+import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 
 class AppDatabase extends Dexie {
-  users!: Dexie.Table<UserModelSchema>;
-  posts!: Dexie.Table<PostModelSchema>;
+  // User
+  user_counts!: Dexie.Table<Core.UserCountsModelSchema>;
+  user_details!: Dexie.Table<Core.UserDetailsModelSchema>;
+  user_relationships!: Dexie.Table<Core.UserRelationshipsModelSchema>;
+  user_tags!: Dexie.Table<Core.TagCollectionModelSchema<Core.Pubky>>;
+  user_connections!: Dexie.Table<Core.UserConnectionsModelSchema>;
+  user_ttl!: Dexie.Table<Core.UserTtlModelSchema>;
+  // Post
+  post_counts!: Dexie.Table<Core.PostCountsModelSchema>;
+  post_details!: Dexie.Table<Core.PostDetailsModelSchema>;
+  post_relationships!: Dexie.Table<Core.PostRelationshipsModelSchema>;
+  post_tags!: Dexie.Table<Core.TagCollectionModelSchema<string>>;
+  post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
+  // Streams
   streams!: Dexie.Table<StreamModelSchema>;
 
   constructor() {
-    super(DB_NAME);
+    super(Config.DB_NAME);
 
     try {
-      this.version(DB_VERSION).stores({
-        users: userTableSchema,
-        posts: postTableSchema,
+      this.version(Config.DB_VERSION).stores({
+        // User related tables
+        user_counts: userCountsTableSchema,
+        user_details: userDetailsTableSchema,
+        user_relationships: userRelationshipsTableSchema,
+        user_connections: userConnectionsTableSchema,
+        user_ttl: userTtlTableSchema,
+        user_tags: tagCollectionTableSchema,
+        // Post related tables
+        post_counts: postCountsTableSchema,
+        post_details: postDetailsTableSchema,
+        post_relationships: postRelationshipsTableSchema,
+        post_tags: tagCollectionTableSchema,
+        post_ttl: postTtlTableSchema,
+        // Streams
         streams: streamTableSchema,
       });
     } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.DB_SCHEMA_ERROR, 'Failed to initialize database schema', 500, {
-        error,
-      });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.DB_SCHEMA_ERROR,
+        'Failed to initialize database schema',
+        500,
+        {
+          error,
+        },
+      );
     }
   }
 
   async initialize() {
     try {
-      const db = await Dexie.exists(DB_NAME);
+      const db = await Dexie.exists(Config.DB_NAME);
 
       if (!db) {
-        Logger.info('Creating new database...');
+        Libs.Logger.info('Creating new database...');
         await this.open();
         return;
       }
 
       const currentVersion = this.verno;
 
-      if (currentVersion !== DB_VERSION) {
-        Logger.info(`Database version mismatch. Current: ${currentVersion}, Expected: ${DB_VERSION}`);
+      if (currentVersion !== Config.DB_VERSION) {
+        Libs.Logger.info(`Database version mismatch. Current: ${currentVersion}, Expected: ${Config.DB_VERSION}`);
         try {
           await this.delete();
         } catch (error) {
-          throw createDatabaseError(DatabaseErrorType.DB_DELETE_FAILED, 'Failed to delete outdated database', 500, {
-            error,
-            currentVersion,
-            expectedVersion: DB_VERSION,
-          });
+          throw Libs.createDatabaseError(
+            Libs.DatabaseErrorType.DB_DELETE_FAILED,
+            'Failed to delete outdated database',
+            500,
+            {
+              error,
+              currentVersion,
+              expectedVersion: Config.DB_VERSION,
+            },
+          );
         }
 
         try {
           await this.open();
-          Logger.info('Database recreated with new schema');
+          Libs.Logger.info('Database recreated with new schema');
         } catch (error) {
-          throw createDatabaseError(DatabaseErrorType.DB_OPEN_FAILED, 'Failed to open database after recreation', 500, {
-            error,
-            version: DB_VERSION,
-          });
+          throw Libs.createDatabaseError(
+            Libs.DatabaseErrorType.DB_OPEN_FAILED,
+            'Failed to open database after recreation',
+            500,
+            {
+              error,
+              version: Config.DB_VERSION,
+            },
+          );
         }
       } else {
-        Logger.debug('Database version is current');
+        Libs.Logger.debug('Database version is current');
       }
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
 
-      throw createDatabaseError(DatabaseErrorType.DB_INIT_FAILED, 'Failed to initialize database', 500, { error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.DB_INIT_FAILED, 'Failed to initialize database', 500, {
+        error,
+      });
     }
   }
 }
