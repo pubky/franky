@@ -30,29 +30,33 @@ export function PublicKeyCard() {
 
   const handleShare = async () => {
     try {
-      const text = `Here is my Pubky:\n${pubky}`;
-      if (navigator.share) {
-        await navigator.share({
+      await Libs.shareWithFallback(
+        {
           title: 'My Pubky',
-          text,
-        });
-        return;
-      }
-
-      // Fallback: copy to clipboard and notify
-      await copyToClipboard(pubky);
-      Molecules.toast({
-        title: 'Pubky copied',
-        description: 'Paste it into your favorite app to share it.',
-      });
-    } catch (err) {
-      const error = err as { name?: string } | undefined;
-      // Ignore user-cancelled shares
-      if (error?.name === 'AbortError') return;
-      Molecules.toast({
-        title: 'Share failed',
-        description: 'Unable to share right now. Please try again.',
-      });
+          text: `Here is my Pubky:\n${pubky}`,
+        },
+        {
+          onFallback: () => copyToClipboard(pubky),
+          onSuccess: (result) => {
+            if (result.method === 'fallback') {
+              Molecules.toast({
+                title: 'Pubky copied',
+                description: 'Paste it into your favorite app to share it.',
+              });
+            }
+          },
+          onError: () => {
+            Molecules.toast({
+              title: 'Share failed',
+              description: 'Unable to share right now. Please try again.',
+            });
+          },
+        },
+      );
+    } catch (error) {
+      // Error handling is done in the onError callback
+      // This catch block is here for any unexpected errors
+      console.error('Unexpected share error:', error);
     }
   };
 
