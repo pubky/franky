@@ -66,7 +66,9 @@ describe('ImageBackground - Snapshots', () => {
   });
 
   it('matches snapshots for image and mobileImages props', () => {
-    const { container: withImageContainer } = render(<ImageBackground image="/bg.jpg" mobileImage="/bg-mobile.jpg" className="custom-bg"  />);
+    const { container: withImageContainer } = render(
+      <ImageBackground image="/bg.jpg" mobileImage="/bg-mobile.jpg" className="custom-bg" />,
+    );
     expect(withImageContainer.firstChild).toMatchSnapshot();
   });
 });

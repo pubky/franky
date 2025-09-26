@@ -1,7 +1,7 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { BackupNavigation, BackupPageHeader } from './Backup';
-import { ImageProps } from 'next/image';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -18,44 +18,81 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Heading: ({
+  Button: ({
     children,
-    level,
-    size,
     className,
+    onClick,
+    disabled,
+    variant,
+    size,
   }: {
     children: React.ReactNode;
-    level?: number;
-    size?: string;
     className?: string;
-  }) => {
-    const Tag = `h${level || 1}` as keyof JSX.IntrinsicElements;
-    return (
-      <Tag data-testid={`heading-${level || 1}`} data-size={size} className={className}>
-        {children}
-      </Tag>
-    );
-  },
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <p data-testid="typography" data-size={size} className={className}>
+    onClick?: () => void;
+    disabled?: boolean;
+    variant?: string;
+    size?: string;
+  }) => (
+    <button
+      data-testid="button"
+      className={className}
+      onClick={onClick}
+      disabled={disabled}
+      data-variant={variant}
+      data-size={size}
+    >
       {children}
-    </p>
+    </button>
   ),
   PageHeader: ({ children }: { children: React.ReactNode }) => <div data-testid="page-header">{children}</div>,
   PageSubtitle: ({ children }: { children: React.ReactNode }) => <div data-testid="page-subtitle">{children}</div>,
 }));
 
-  describe('BackupNavigation - Snapshots', () => {§
-    it('matches snapshot for default BackupNavigation', () => {
-      const { container } = render(<BackupNavigation />);
-      expect(container.firstChild).toMatchSnapshot();
-    });
-  });
+// Mock molecules
+vi.mock('@/molecules', () => ({
+  ButtonsNavigation: ({
+    className,
+    onHandleBackButton,
+    onHandleContinueButton,
+    backText,
+    continueText,
+  }: {
+    className?: string;
+    onHandleBackButton?: () => void;
+    onHandleContinueButton?: () => void;
+    backText?: string;
+    continueText?: string;
+  }) => (
+    <div data-testid="buttons-navigation" className={className}>
+      <button onClick={onHandleBackButton}>{backText}</button>
+      <button onClick={onHandleContinueButton}>{continueText}</button>
+    </div>
+  ),
+  PageTitle: ({ children, size }: { children: React.ReactNode; size?: string }) => (
+    <h1 data-testid="page-title" data-size={size}>
+      {children}
+    </h1>
+  ),
+}));
 
-  describe('BackupPageHeader - Snapshots', () => {
-    it('matches snapshot for default BackupPageHeader', () => {
-      const { container } = render(<BackupPageHeader />);
-      expect(container.firstChild).toMatchSnapshot();
-    });
+// Mock app
+vi.mock('@/app', () => ({
+  ONBOARDING_ROUTES: {
+    HOMESERVER: '/homeserver',
+    PUBKY: '/pubky',
+  },
+}));
+
+describe('BackupNavigation - Snapshots', () => {
+  it('matches snapshot for default BackupNavigation', () => {
+    const { container } = render(<BackupNavigation />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
+
+describe('BackupPageHeader - Snapshots', () => {
+  it('matches snapshot for default BackupPageHeader', () => {
+    const { container } = render(<BackupPageHeader />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

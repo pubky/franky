@@ -208,8 +208,8 @@ describe('ScanFooter', () => {
     const pubkyRingLink = links[0];
     const pubkyCoreLink = links[1];
 
-    expect(pubkyRingLink).toHaveAttribute('href', PUBKY_RING_URL);
-    expect(pubkyCoreLink).toHaveAttribute('href', PUBKY_CORE_URL);
+    expect(pubkyRingLink).toHaveAttribute('href', Config.PUBKY_RING_URL);
+    expect(pubkyCoreLink).toHaveAttribute('href', Config.PUBKY_CORE_URL);
   });
 });
 

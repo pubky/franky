@@ -43,7 +43,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
       >
         Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud provider. 
         <span
-          class="text-brand font-bold"
+          class="text-foreground font-bold"
         >
           Never share this file with anyone.
         </span>

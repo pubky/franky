@@ -10,7 +10,7 @@ exports[`Content - Snapshots > matches snapshot for ContentCard with column layo
     data-testid="container"
   >
     <div
-      class="gap-3 justify-start w-full"
+      class="gap-4 justify-start w-full"
       data-testid="container"
     >
       <div>
@@ -31,7 +31,7 @@ exports[`Content - Snapshots > matches snapshot for ContentCard with custom clas
     data-testid="container"
   >
     <div
-      class="gap-3 justify-start w-full"
+      class="gap-4 justify-start w-full"
       data-testid="container"
     >
       <div>
@@ -52,7 +52,7 @@ exports[`Content - Snapshots > matches snapshot for ContentCard with default pro
     data-testid="container"
   >
     <div
-      class="gap-3 justify-start w-full"
+      class="gap-4 justify-start w-full"
       data-testid="container"
     >
       <div>
@@ -87,7 +87,7 @@ exports[`Content - Snapshots > matches snapshot for ContentCard with image 1`] =
       />
     </div>
     <div
-      class="gap-3 justify-start w-full"
+      class="gap-4 justify-start w-full"
       data-testid="container"
     >
       <div>

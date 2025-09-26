@@ -41,7 +41,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
           class="text-muted-foreground text-base font-normal"
           data-testid="typography"
         >
-          Effective Date: 15 May 2025
+          Effective Date: June 19, 2025
         </p>
         <p
           class="text-muted-foreground text-base font-normal"
@@ -453,6 +453,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
             privacy@synonym.to
           </a>
           . Please include your name, public key, and email address, and indicate you are making a “Privacy Rights” request. If we deny your rights request and you would like to appeal, you may contact us at
+           
           <a
             data-testid="link"
             href="mailto:info@synonym.to"

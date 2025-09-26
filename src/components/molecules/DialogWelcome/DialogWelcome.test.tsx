@@ -176,13 +176,13 @@ describe('DialogWelcome - Snapshots', () => {
     isOpen: true,
     onOpenChange: vi.fn(),
     name: 'Satoshi Nakamoto',
-    publicKey: 'test-public-key-12345',
+    pubky: 'test-public-key-12345',
     image: 'https://example.com/avatar.jpg',
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
   };
 
   it('matches snapshot with default props', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} />);
+    const { container } = render(<DialogWelcome {...defaultProps} pubky="test-public-key-12345" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -191,7 +191,7 @@ describe('DialogWelcome - Snapshots', () => {
       isOpen: true,
       onOpenChange: vi.fn(),
       name: 'Test User',
-      publicKey: 'test-key',
+      pubky: 'test-key',
     };
 
     const { container } = render(<DialogWelcome {...minimalProps} />);
@@ -232,7 +232,7 @@ describe('DialogWelcome - Snapshots', () => {
 
   it('matches snapshot with different public key format', () => {
     const { container } = render(
-      <DialogWelcome {...defaultProps} publicKey="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
+      <DialogWelcome {...defaultProps} pubky="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
@@ -248,7 +248,7 @@ describe('DialogWelcome - Snapshots', () => {
     isOpen: true,
     onOpenChange: vi.fn(),
     name: 'Satoshi Nakamoto',
-    publicKey: 'test-public-key-12345',
+    pubky: 'test-public-key-12345',
     image: 'https://example.com/avatar.jpg',
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
   };
@@ -304,7 +304,7 @@ describe('DialogWelcome - Snapshots', () => {
 
   it('matches snapshot with different public key format', () => {
     const { container } = render(
-      <DialogWelcome {...defaultProps} publicKey="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
+      <DialogWelcome {...defaultProps} pubky="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });

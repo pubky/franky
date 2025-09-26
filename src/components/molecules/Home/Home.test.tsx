@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HomeActions, HomeFooter, HomeSectionTitle, HomePageHeading } from './Home';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();

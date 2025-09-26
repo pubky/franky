@@ -1,84 +1,24 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Backup Components - Snapshots > BackupMethodCard - Snapshots > matches snapshot for default BackupMethodCard 1`] = `
-<div
-  data-image="{\\"src\\":\\"/images/shield.png\\",\\"alt\\":\\"Shield\\",\\"width\\":192,\\"height\\":192}"
-  data-testid="content-card"
->
-  <div
-    class="items-center gap-1 flex-row"
-    data-testid="container"
-  >
-    <h2
-      data-size="lg"
-      data-testid="heading-2"
-    >
-      Choose backup method
-    </h2>
-    <div
-      data-testid="popover-backup"
-    >
-      Backup Popover
-    </div>
-  </div>
-  <div
-    class="max-w-[576px] mx-0"
-    data-testid="container"
-  >
-    <p
-      class="text-secondary-foreground opacity-80 font-medium text-base"
-      data-size="sm"
-      data-testid="typography"
-    >
-      Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can also choose to do this later.
-    </p>
-    <div
-      class="flex-row mt-6 gap-3 flex-wrap"
-      data-testid="container"
-    >
-      <div
-        data-testid="dialog-backup-phrase"
-      >
-        Backup Phrase Dialog
-      </div>
-      <div
-        data-testid="dialog-backup-encrypted"
-      >
-        Backup Encrypted Dialog
-      </div>
-      <div
-        data-testid="dialog-export"
-      >
-        Export Dialog
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`Backup Components - Snapshots > BackupNavigation - Snapshots > matches snapshot for default BackupNavigation 1`] = `
+exports[`BackupNavigation - Snapshots > matches snapshot for default BackupNavigation 1`] = `
 <div
   class="py-6"
   data-testid="buttons-navigation"
 >
-  <button
-    data-testid="back-button"
-  >
+  <button>
     Back
   </button>
-  <button
-    data-testid="continue-button"
-  >
+  <button>
     Continue
   </button>
 </div>
 `;
 
-exports[`Backup Components - Snapshots > BackupPageHeader - Snapshots > matches snapshot for default BackupPageHeader 1`] = `
+exports[`BackupPageHeader - Snapshots > matches snapshot for default BackupPageHeader 1`] = `
 <div
   data-testid="page-header"
 >
-  <div
+  <h1
     data-size="large"
     data-testid="page-title"
   >
@@ -88,7 +28,7 @@ exports[`Backup Components - Snapshots > BackupPageHeader - Snapshots > matches 
     >
       pubky.
     </span>
-  </div>
+  </h1>
   <div
     data-testid="page-subtitle"
   >

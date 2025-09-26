@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Header - Snapshots > matches snapshot for ButtonSignIn with custom className 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderButtonSignIn with custom className 1`] = `
 <button
   class="custom-signin"
   data-testid="button-secondary"
@@ -16,7 +16,7 @@ exports[`Header - Snapshots > matches snapshot for ButtonSignIn with custom clas
 </button>
 `;
 
-exports[`Header - Snapshots > matches snapshot for ButtonSignIn with default props 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderButtonSignIn with default props 1`] = `
 <button
   data-testid="button-secondary"
   data-variant="secondary"
@@ -48,33 +48,7 @@ exports[`Header - Snapshots > matches snapshot for HeaderContainer with default 
 </header>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HeaderTitle with custom className 1`] = `
-<div
-  class="flex-1 hidden md:flex"
-  data-testid="container"
->
-  <div
-    class="text-muted-foreground font-normal"
-    data-size="lg"
-    data-testid="heading-2"
-  />
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderTitle with default props 1`] = `
-<div
-  class="flex-1 hidden md:flex"
-  data-testid="container"
->
-  <div
-    class="text-muted-foreground font-normal"
-    data-size="lg"
-    data-testid="heading-2"
-  />
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HomeHeader with custom className 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderHome with default props 1`] = `
 <div
   class="flex-1 flex-row items-center justify-end"
   data-testid="container"
@@ -92,25 +66,7 @@ exports[`Header - Snapshots > matches snapshot for HomeHeader with custom classN
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HomeHeader with default props 1`] = `
-<div
-  class="flex-1 flex-row items-center justify-end"
-  data-testid="container"
->
-  <div
-    data-testid="social-links"
-  >
-    Social Links
-  </div>
-  <div
-    data-testid="button-sign-in"
-  >
-    Sign In Button
-  </div>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with avatar only 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with avatar only 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -218,6 +174,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with avatar
       <img
         alt="avatar"
         data-testid="avatar-image"
+        src="/avatar.jpg"
       />
       <div
         data-testid="avatar-fallback"
@@ -229,7 +186,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with avatar
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with counter 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with counter 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -361,7 +318,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with counte
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with counter and avatar 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with counter and avatar 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -469,6 +426,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with counte
       <img
         alt="avatar"
         data-testid="avatar-image"
+        src="/avatar.jpg"
       />
       <div
         data-testid="avatar-fallback"
@@ -493,7 +451,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with counte
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with counter zero 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with counter zero 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -612,7 +570,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with counte
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with custom className 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with default props 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -731,7 +689,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with custom
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with default props 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with high counter and avatar 1`] = `
 <div
   class="flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
@@ -839,125 +797,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with defaul
       <img
         alt="avatar"
         data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for NavigationButtons with high counter and avatar 1`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
+        src="/avatar.jpg"
       />
       <div
         data-testid="avatar-fallback"
@@ -982,33 +822,7 @@ exports[`Header - Snapshots > matches snapshot for NavigationButtons with high c
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for OnboardingHeader with custom className 1`] = `
-<div
-  data-current="3"
-  data-testid="progress-steps"
-  data-total="5"
->
-  Progress 
-  3
-  /
-  5
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for OnboardingHeader with default props 1`] = `
-<div
-  data-current="1"
-  data-testid="progress-steps"
-  data-total="5"
->
-  Progress 
-  1
-  /
-  5
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for SocialLinks with custom className 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderSocialLinks with custom className 1`] = `
 <div
   class="hidden md:flex flex-row justify-end gap-6 mr-6 custom-social"
   data-testid="container"
@@ -1043,7 +857,7 @@ exports[`Header - Snapshots > matches snapshot for SocialLinks with custom class
     data-size="default"
     data-testid="link"
     data-variant="muted"
-    href="https://t.me/pubky"
+    href="https://t.me/pubkychat"
   >
     <div
       class="w-6 h-6"
@@ -1055,7 +869,7 @@ exports[`Header - Snapshots > matches snapshot for SocialLinks with custom class
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for SocialLinks with default props 1`] = `
+exports[`Header - Snapshots > matches snapshot for HeaderSocialLinks with default props 1`] = `
 <div
   class="hidden md:flex flex-row justify-end gap-6 mr-6"
   data-testid="container"
@@ -1090,7 +904,7 @@ exports[`Header - Snapshots > matches snapshot for SocialLinks with default prop
     data-size="default"
     data-testid="link"
     data-variant="muted"
-    href="https://t.me/pubky"
+    href="https://t.me/pubkychat"
   >
     <div
       class="w-6 h-6"
@@ -1099,5 +913,69 @@ exports[`Header - Snapshots > matches snapshot for SocialLinks with default prop
       Telegram
     </div>
   </a>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshot for HeaderTitle with custom title 1`] = `
+<div
+  class="flex-1 hidden md:flex"
+  data-testid="container"
+>
+  <div
+    class="text-muted-foreground font-normal"
+    data-size="lg"
+    data-testid="heading-2"
+  >
+    Custom Title
+  </div>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshot for OnboardingHeader with default props 1`] = `
+<div
+  data-current="1"
+  data-testid="progress-steps"
+  data-total="5"
+>
+  Progress 
+  1
+  /
+  5
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshots for HeaderSignIn 1`] = `
+<div
+  class="flex-1 flex-row items-center justify-end gap-3"
+  data-testid="container"
+>
+  <div
+    data-testid="search-input"
+  >
+    Search Input
+  </div>
+  <div
+    data-testid="navigation-buttons"
+  >
+    Navigation Buttons
+  </div>
+</div>
+`;
+
+exports[`Header - Snapshots > matches snapshots for HeaderSignIn 2`] = `
+<div
+  class="flex-1 flex-row items-center justify-end gap-3"
+  data-testid="container"
+>
+  <div
+    data-testid="search-input"
+  >
+    Search Input
+  </div>
+  <div
+    data-testid="navigation-buttons"
+  >
+    Navigation Buttons
+  </div>
 </div>
 `;

@@ -86,7 +86,7 @@ exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for PopoverInvit
         <a
           class="text-muted-foreground hover:text-brand"
           data-testid="link"
-          href="https://t.me/pubky"
+          href="https://t.me/pubkychat"
         >
           <div
             class="h-6 w-6"
@@ -187,7 +187,7 @@ exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for default Popo
         <a
           class="text-muted-foreground hover:text-brand"
           data-testid="link"
-          href="https://t.me/pubky"
+          href="https://t.me/pubkychat"
         >
           <div
             class="h-6 w-6"

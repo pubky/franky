@@ -56,3 +56,10 @@ exports[`ImageBackground - Snapshots > matches snapshot with id prop 1`] = `
   style="background-image: url(\\"/bg.jpg\\");"
 />
 `;
+
+exports[`ImageBackground - Snapshots > matches snapshots for image and mobileImages props 1`] = `
+<div
+  class="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10 lg:hidden custom-bg"
+  style="background-image: url(\\"/bg-mobile.jpg\\");"
+/>
+`;

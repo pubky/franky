@@ -6,7 +6,7 @@ exports[`ActionSection - Snapshots > matches snapshot with action containing ico
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
     data-testid="container"
   />
   <div
@@ -34,7 +34,7 @@ exports[`ActionSection - Snapshots > matches snapshot with children 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
     data-testid="container"
   >
     <div>
@@ -50,7 +50,7 @@ exports[`ActionSection - Snapshots > matches snapshot with custom className 1`] 
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
     data-testid="container"
   />
 </div>
@@ -62,7 +62,7 @@ exports[`ActionSection - Snapshots > matches snapshot with default props 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
     data-testid="container"
   />
 </div>
@@ -74,7 +74,7 @@ exports[`ActionSection - Snapshots > matches snapshot with multiple actions 1`] 
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
     data-testid="container"
   />
   <div
@@ -107,7 +107,7 @@ exports[`ActionSection - Snapshots > matches snapshot with single action 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-3 justify-start w-full"
+    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
     data-testid="container"
   />
   <div
