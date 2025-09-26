@@ -100,7 +100,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         </Atoms.DialogTitle>
         <Atoms.DialogDescription className="text-sm leading-5">
           Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud
-          provider. <span className="text-brand font-bold">Never share this file with anyone.</span>
+          provider. <span className="text-foreground font-bold">Never share this file with anyone.</span>
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
