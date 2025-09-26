@@ -1,7 +1,33 @@
+'use client';
+
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Templates from '@/templates';
+import { useLiveQuery } from 'dexie-react-hooks';
+import * as Core from '@/core';
 
-export function ProfileLeftSidebar() {
+export const ProfileLeftSidebar = ({ pubkySlug }: Templates.TProfilePageProps) => {
+  const userCounts = useLiveQuery(() => Core.db.user_counts.get(pubkySlug).then((user) => user), [pubkySlug]);
+
+  if (!userCounts) {
+    return (
+      <aside className="w-52 flex-shrink-0">
+        <Atoms.Container className="bg-background rounded-lg p-4">
+          <nav className="space-y-2">
+            {Array.from({ length: 7 }).map((_, index) => (
+              <div key={index} className="flex items-center justify-between py-2 px-3 rounded-lg">
+                <div className="w-24 h-4 bg-muted rounded animate-pulse" />
+                <div className="w-8 h-6 bg-muted rounded animate-pulse" />
+              </div>
+            ))}
+          </nav>
+        </Atoms.Container>
+      </aside>
+    );
+  }
+
+  const { posts, replies, following, followers, friends, tagged } = userCounts;
+
   return (
     <aside className="w-52 flex-shrink-0">
       <Atoms.Container className="bg-background rounded-lg p-4">
@@ -22,7 +48,7 @@ export function ProfileLeftSidebar() {
               <span className="text-sm font-medium">Posts</span>
             </div>
             <Atoms.Badge variant="secondary" className="text-xs px-2 py-1">
-              4
+              {posts}
             </Atoms.Badge>
           </div>
 
@@ -32,7 +58,7 @@ export function ProfileLeftSidebar() {
               <span className="text-sm font-medium">Replies</span>
             </div>
             <Atoms.Badge variant="secondary" className="text-xs px-2 py-1">
-              7
+              {replies}
             </Atoms.Badge>
           </div>
 
@@ -42,7 +68,7 @@ export function ProfileLeftSidebar() {
               <span className="text-sm font-medium">Followers</span>
             </div>
             <Atoms.Badge variant="secondary" className="text-xs px-2 py-1">
-              5
+              {followers}
             </Atoms.Badge>
           </div>
 
@@ -52,7 +78,7 @@ export function ProfileLeftSidebar() {
               <span className="text-sm font-medium">Following</span>
             </div>
             <Atoms.Badge variant="secondary" className="text-xs px-2 py-1">
-              27
+              {following}
             </Atoms.Badge>
           </div>
 
@@ -62,7 +88,7 @@ export function ProfileLeftSidebar() {
               <span className="text-sm font-medium">Friends</span>
             </div>
             <Atoms.Badge variant="secondary" className="text-xs px-2 py-1">
-              10
+              {friends}
             </Atoms.Badge>
           </div>
 
@@ -72,11 +98,11 @@ export function ProfileLeftSidebar() {
               <span className="text-sm font-medium">Tagged</span>
             </div>
             <Atoms.Badge variant="secondary" className="text-xs px-2 py-1">
-              5
+              {tagged}
             </Atoms.Badge>
           </div>
         </nav>
       </Atoms.Container>
     </aside>
   );
-}
+};
