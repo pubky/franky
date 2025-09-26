@@ -10,16 +10,16 @@ export function useAuthActions() {
   const router = useRouter();
   const { status } = useAuthStatus();
   const onboardingStore = Core.useOnboardingStore();
-  const profileStore = Core.useProfileStore();
+  const authStore = Core.useAuthStore();
 
   // Complete profile creation and transition from status 2 to 3
   const completeProfileCreation = useCallback(
     async (profileData: { name?: string; bio?: string; avatar?: string }) => {
       try {
         // Set the user as authenticated with their pubky
-        profileStore.setCurrentUserPubky(onboardingStore.pubky);
-        profileStore.setAuthenticated(true);
-        profileStore.setSession(null);
+        authStore.setCurrentUserPubky(onboardingStore.pubky);
+        authStore.setAuthenticated(true);
+        authStore.setSession(null);
 
         // Redirect to feed after successful profile creation
         router.push('/feed');
@@ -30,18 +30,18 @@ export function useAuthActions() {
         return { success: false, error };
       }
     },
-    [onboardingStore.pubky, profileStore, router],
+    [onboardingStore.pubky, authStore, router],
   );
 
   // Logout user completely
   const logout = useCallback(() => {
     // Reset both stores
     onboardingStore.reset();
-    profileStore.reset();
+    authStore.reset();
 
     // Redirect to home
     router.push('/');
-  }, [onboardingStore, profileStore, router]);
+  }, [onboardingStore, authStore, router]);
 
   // Check if user can access a specific route
   const canAccessRoute = useCallback(

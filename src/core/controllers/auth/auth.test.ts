@@ -12,7 +12,7 @@ vi.mock('pubky-app-specs', () => ({
 
 // Mock stores - simplified approach
 vi.mock('@/core/stores', () => ({
-  useProfileStore: {
+  useAuthStore: {
     getState: vi.fn(() => ({
       setSession: vi.fn(),
       clearSession: vi.fn(),

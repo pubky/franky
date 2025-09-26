@@ -1,21 +1,20 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { ProfileStore, profileInitialState } from './profile.types';
-import { createProfileActions } from './profile.actions';
-import { createProfileSelectors } from './profile.selectors';
+import { AuthStore, authInitialState } from './auth.types';
+import { createAuthActions } from './auth';
+import { createAuthSelectors } from './auth.selectors';
 
 // Store creation
-export const useProfileStore = create<ProfileStore>()(
+export const useAuthStore = create<AuthStore>()(
   devtools(
     persist(
       (set, get) => ({
-        ...profileInitialState,
-        ...createProfileActions(set),
-        ...createProfileSelectors(get),
+        ...authInitialState,
+        ...createAuthActions(set),
+        ...createAuthSelectors(get),
       }),
       {
-        name: 'profile-store',
-
+        name: 'auth-store',
         // Only persist essential data
         partialize: (state) => ({
           currentUserPubky: state.currentUserPubky,
@@ -25,7 +24,7 @@ export const useProfileStore = create<ProfileStore>()(
       },
     ),
     {
-      name: 'profile-store',
+      name: 'auth-store',
       enabled: process.env.NODE_ENV === 'development',
     },
   ),
