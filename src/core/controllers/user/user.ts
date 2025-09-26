@@ -78,14 +78,14 @@ export class UserController {
       // else, throw specific error for UI to handle
       if (response.ok) {
         // TODO: Also user profile action creator to mutate user profile in the store
-        Core.useProfileStore.getState().setCurrentUserPubky(pubky);
-        Core.useProfileStore.getState().setAuthenticated(true);
+        Core.useAuthStore.getState().setCurrentUserPubky(pubky);
+        Core.useAuthStore.getState().setAuthenticated(true);
       }
       return response;
     } catch (error) {
       console.error('Failed to save profile', error);
-      Core.useProfileStore.getState().setAuthenticated(false);
-      Core.useProfileStore.getState().setCurrentUserPubky(null);
+      Core.useAuthStore.getState().setAuthenticated(false);
+      Core.useAuthStore.getState().setCurrentUserPubky(null);
       throw error;
     }
   }

@@ -6,13 +6,13 @@ export class AuthController {
 
   private static async saveAuthenticatedDataAndBootstrap({ session, pubky }: Core.TAuthenticatedData) {
     try {
-      const profileStore = Core.useProfileStore.getState();
-      profileStore.setSession(session);
-      profileStore.setCurrentUserPubky(pubky);
+      const authStore = Core.useAuthStore.getState();
+      authStore.setSession(session);
+      authStore.setCurrentUserPubky(pubky);
       // Once we have the session, we have to bootstrap the app
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
       // Setting that state, the guard enforces to redirect to the main page (/feed)
-      profileStore.setAuthenticated(true);
+      authStore.setAuthenticated(true);
     } catch (error) {
       throw error;
     }
@@ -27,15 +27,15 @@ export class AuthController {
     const homeserverService = this.getHomeserverService();
     const { session, pubky } = await homeserverService.signup(keypair, signupToken);
     //if (data) await this.saveAuthenticatedDataAndBootstrap(data);
-    const profileStore = Core.useProfileStore.getState();
-    profileStore.setSession(session);
-    profileStore.setCurrentUserPubky(pubky);
+    const authStore = Core.useAuthStore.getState();
+    authStore.setSession(session);
+    authStore.setCurrentUserPubky(pubky);
   }
 
   static async authorizeAndBootstrap() {
     try {
-      const profileStore = Core.useProfileStore.getState();
-      const pubky = profileStore.currentUserPubky || '';
+      const authStore = Core.useAuthStore.getState();
+      const pubky = authStore.currentUserPubky || '';
       let success = false;
       let retries = 0;
       while (!success && retries < 3) {
@@ -46,7 +46,7 @@ export class AuthController {
 
           await Core.NexusBootstrapService.retrieveAndPersist(pubky);
           success = true;
-          profileStore.setAuthenticated(true);
+          authStore.setAuthenticated(true);
         } catch (error) {
           console.error('Failed to bootstrap', error, retries);
           retries++;
@@ -76,15 +76,15 @@ export class AuthController {
 
   static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams) {
     if (publicKey) {
-      const profileStore = Core.useProfileStore.getState();
+      const authStore = Core.useAuthStore.getState();
       const onboardingStore = Core.useOnboardingStore.getState();
       onboardingStore.reset();
       const pubky = publicKey.z32();
-      profileStore.setCurrentUserPubky(pubky);
+      authStore.setCurrentUserPubky(pubky);
       // Once we have the session, we have to bootstrap the app
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
       // Setting that state, the guard enforces to redirect to the main page (/feed)
-      profileStore.setAuthenticated(true);
+      authStore.setAuthenticated(true);
     }
   }
 
@@ -94,8 +94,8 @@ export class AuthController {
   }
 
   static async logout() {
-    const profileStore = Core.useProfileStore.getState();
-    const pubky = profileStore.currentUserPubky || '';
+    const authStore = Core.useAuthStore.getState();
+    const pubky = authStore.currentUserPubky || '';
 
     try {
       const homeserverService = this.getHomeserverService();
@@ -103,7 +103,7 @@ export class AuthController {
     } finally {
       // Always clear local state, even if homeserver logout fails
       Core.useOnboardingStore.getState().reset();
-      Core.useProfileStore.getState().reset();
+      Core.useAuthStore.getState().reset();
       Libs.clearCookies();
     }
   }
