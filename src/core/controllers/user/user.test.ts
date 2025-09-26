@@ -70,7 +70,7 @@ describe('UserController', () => {
         useOnboardingStore: {
           getState: vi.fn(() => mockOnboardingStore),
         },
-        useAuthStore: {
+        useProfileStore: {
           getState: vi.fn(() => mockProfileStore),
         },
         HomeserverService: {
