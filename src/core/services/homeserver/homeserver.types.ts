@@ -1,4 +1,5 @@
 import type { Session } from '@synonymdev/pubky';
+import * as Core from '@/core';
 
 export type FetchOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -10,6 +11,6 @@ export type SignupResult = {
 };
 
 export type TKeyPair = {
-  publicKey: string;
+  pubky: Core.Pubky;
   secretKey: string;
 };

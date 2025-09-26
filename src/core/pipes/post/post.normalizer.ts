@@ -5,7 +5,7 @@ import * as Libs from '@/libs';
 export class PostNormalizer {
   private constructor() {}
 
-  static async to(post: Core.PostValidatorData, pubky: string): Promise<PostResult> {
+  static async to(post: Core.PostValidatorData, pubky: Core.Pubky): Promise<PostResult> {
     const builder = Core.PubkySpecsSingleton.get(pubky);
 
     const kind = post.kind === 'short' ? PubkyAppPostKind.Short : PubkyAppPostKind.Long;

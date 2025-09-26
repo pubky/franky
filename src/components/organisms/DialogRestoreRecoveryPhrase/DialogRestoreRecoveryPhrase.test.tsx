@@ -85,6 +85,14 @@ vi.mock('@/core', () => ({
   AuthController: {
     loginWithMnemonic: vi.fn(),
   },
+  BootstrapController: {
+    run: vi.fn().mockResolvedValue({}),
+  },
+  useProfileStore: {
+    getState: vi.fn().mockReturnValue({
+      currentUserPubky: 'mock-user-pubkey-123',
+    }),
+  },
 }));
 
 // Mock Molecules module

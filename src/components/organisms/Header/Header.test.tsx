@@ -284,6 +284,112 @@ describe('Header', () => {
     });
   });
 
+  describe('HeaderTitle Display Logic', () => {
+    it('renders HeaderTitle when user is not signed in', () => {
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      mockUsePathname.mockReturnValue('/');
+
+      render(<Header />);
+
+      expect(screen.getByTestId('header-title')).toBeInTheDocument();
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Sign in');
+    });
+
+    it('renders HeaderTitle when on step 5 (profile) even if signed in', () => {
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUsePathname.mockReturnValue('/onboarding/profile');
+
+      render(<Header />);
+
+      expect(screen.getByTestId('header-title')).toBeInTheDocument();
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Profile');
+    });
+
+    it('does not render HeaderTitle when signed in and not on step 5', () => {
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUsePathname.mockReturnValue('/');
+
+      render(<Header />);
+
+      expect(screen.queryByTestId('header-title')).not.toBeInTheDocument();
+    });
+
+    it('renders HeaderTitle with correct title for each onboarding step', () => {
+      const testCases = [
+        { path: '/onboarding/install', expectedTitle: 'Identity keys' },
+        { path: '/onboarding/scan', expectedTitle: 'Use Pubky Ring' },
+        { path: '/onboarding/pubky', expectedTitle: 'Your pubky' },
+        { path: '/onboarding/backup', expectedTitle: 'Backup' },
+        { path: '/onboarding/homeserver', expectedTitle: 'Homeserver' },
+        { path: '/onboarding/profile', expectedTitle: 'Profile' },
+        { path: '/logout', expectedTitle: 'Signed out' },
+      ];
+
+      testCases.forEach(({ path, expectedTitle }) => {
+        mockUsePathname.mockReturnValue(path);
+        mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+
+        const { rerender } = render(<Header />);
+
+        expect(screen.getByTestId('header-title')).toHaveTextContent(expectedTitle);
+
+        rerender(<></>); // Clear for next iteration
+      });
+    });
+  });
+
+  describe('Step 5 (Profile) Specific Logic', () => {
+    it('renders logo with noLink=true only on step 5 (profile)', () => {
+      mockUsePathname.mockReturnValue('/onboarding/profile');
+
+      render(<Header />);
+
+      const logo = screen.getByTestId('logo');
+      expect(logo).toHaveAttribute('data-no-link', 'true');
+    });
+
+    it('renders logo with noLink=false on all other steps', () => {
+      const nonProfilePaths = [
+        '/onboarding/install',
+        '/onboarding/scan',
+        '/onboarding/pubky',
+        '/onboarding/backup',
+        '/onboarding/homeserver',
+        '/',
+        '/logout',
+      ];
+
+      nonProfilePaths.forEach((path) => {
+        mockUsePathname.mockReturnValue(path);
+
+        const { rerender } = render(<Header />);
+
+        const logo = screen.getByTestId('logo');
+        expect(logo).toHaveAttribute('data-no-link', 'false');
+
+        rerender(<></>); // Clear for next iteration
+      });
+    });
+
+    it('shows HeaderTitle on step 5 regardless of authentication state', () => {
+      // Test with authenticated user
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUsePathname.mockReturnValue('/onboarding/profile');
+
+      const { rerender } = render(<Header />);
+
+      expect(screen.getByTestId('header-title')).toBeInTheDocument();
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Profile');
+
+      // Test with unauthenticated user
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+      rerender(<Header />);
+
+      expect(screen.getByTestId('header-title')).toBeInTheDocument();
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Profile');
+    });
+  });
+
   describe('State Updates', () => {
     it('updates authentication state when isAuthenticated changes', () => {
       mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
@@ -315,6 +421,41 @@ describe('Header', () => {
 
       onboardingHeader = screen.getByTestId('onboarding-header');
       expect(onboardingHeader).toHaveAttribute('data-step', '3');
+    });
+
+    it('updates HeaderTitle visibility when authentication state changes', () => {
+      mockUsePathname.mockReturnValue('/');
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
+
+      const { rerender } = render(<Header />);
+
+      // Should show HeaderTitle when not authenticated
+      expect(screen.getByTestId('header-title')).toBeInTheDocument();
+
+      // Change to authenticated
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      rerender(<Header />);
+
+      // Should hide HeaderTitle when authenticated (not on step 5)
+      expect(screen.queryByTestId('header-title')).not.toBeInTheDocument();
+    });
+
+    it('updates HeaderTitle visibility when moving to/from step 5', () => {
+      mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+      mockUsePathname.mockReturnValue('/');
+
+      const { rerender } = render(<Header />);
+
+      // Should not show HeaderTitle when authenticated and not on step 5
+      expect(screen.queryByTestId('header-title')).not.toBeInTheDocument();
+
+      // Move to step 5 (profile)
+      mockUsePathname.mockReturnValue('/onboarding/profile');
+      rerender(<Header />);
+
+      // Should show HeaderTitle when on step 5, even if authenticated
+      expect(screen.getByTestId('header-title')).toBeInTheDocument();
+      expect(screen.getByTestId('header-title')).toHaveTextContent('Profile');
     });
   });
 });
