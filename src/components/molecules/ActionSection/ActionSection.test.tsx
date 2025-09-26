@@ -20,7 +20,7 @@ vi.mock('@/components/ui', () => ({
     className?: string;
     onClick?: () => void;
   }) => (
-    <button data-testid={`button-${variant || 'default'}`} className={className} onClick={onClick}>
+    <button data-slot="button" data-variant={variant} className={className} onClick={onClick}>
       {children}
     </button>
   ),
@@ -45,8 +45,8 @@ describe('ActionSection', () => {
 
     render(<ActionSection actions={actions} />);
 
-    const continueButton = screen.getByTestId('button-default');
-    const backButton = screen.getByTestId('button-outline');
+    const continueButton = screen.getByRole('button', { name: 'Continue' });
+    const backButton = screen.getByRole('button', { name: 'Back' });
 
     expect(continueButton).toBeInTheDocument();
     expect(continueButton).toHaveTextContent('Continue');
@@ -60,7 +60,7 @@ describe('ActionSection', () => {
 
     render(<ActionSection actions={actions} />);
 
-    const button = screen.getByTestId('button-secondary');
+    const button = screen.getByRole('button', { name: 'Default Action' });
     expect(button).toBeInTheDocument();
     expect(button).toHaveTextContent('Default Action');
   });
@@ -97,7 +97,7 @@ describe('ActionSection', () => {
 
     render(<ActionSection actions={actions} />);
 
-    const button = screen.getByTestId('button-secondary');
+    const button = screen.getByRole('button', { name: /action with icon/i });
     const icon = screen.getByTestId('action-icon');
 
     expect(button).toBeInTheDocument();
