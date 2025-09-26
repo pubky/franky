@@ -25,6 +25,19 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
   await navigator.clipboard.writeText(text);
 }
 
+// Helper function to normalize Radix UI IDs in container HTML for snapshot tests
+export const normaliseRadixIds = (container: HTMLElement) => {
+  const clonedContainer = container.cloneNode(true) as HTMLElement;
+  const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
+  elementsWithAriaControls.forEach((el) => {
+    const ariaControls = el.getAttribute('aria-controls');
+    if (ariaControls && ariaControls.includes('radix-«r')) {
+      el.setAttribute('aria-controls', 'radix-«r0»');
+    }
+  });
+  return clonedContainer;
+};
+
 export function extractInitials({ name, maxLength = 2 }: ExtractInitialsProps) {
   if (!name || typeof name !== 'string') return '';
 

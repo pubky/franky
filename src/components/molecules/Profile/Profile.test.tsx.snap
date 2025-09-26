@@ -1,0 +1,160 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with different configurations 1`] = `
+<div
+  class="flex-row gap-3 lg:gap-6 justify-between py-6 custom-nav"
+  data-testid="container"
+>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-secondary"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Previous
+  </button>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-default"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Complete
+  </button>
+</div>
+`;
+
+exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with disabled states 1`] = `
+<div
+  class="flex-row gap-3 lg:gap-6 justify-between py-6"
+  data-testid="container"
+>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-secondary"
+    disabled=""
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-default"
+    disabled=""
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Finish
+  </button>
+</div>
+`;
+
+exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with hidden continue button 1`] = `
+<div
+  class="flex-row gap-3 lg:gap-6 justify-between py-6"
+  data-testid="container"
+>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-secondary"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+</div>
+`;
+
+exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with loading state 1`] = `
+<div
+  class="flex-row gap-3 lg:gap-6 justify-between py-6"
+  data-testid="container"
+>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-secondary"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-default"
+  >
+    <div
+      class="mr-2 h-4 w-4 animate-spin"
+      data-testid="loader2-icon"
+    >
+      Loader2
+    </div>
+    Finish
+  </button>
+</div>
+`;
+
+exports[`ProfileNavigation - Snapshots > matches snapshot for default ProfileNavigation 1`] = `
+<div
+  class="flex-row gap-3 lg:gap-6 justify-between py-6"
+  data-testid="container"
+>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-secondary"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-left-icon"
+    >
+      ArrowLeft
+    </div>
+    Back
+  </button>
+  <button
+    class="rounded-full flex-1 md:flex-0 w-full"
+    data-size="lg"
+    data-testid="button-default"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Finish
+  </button>
+</div>
+`;

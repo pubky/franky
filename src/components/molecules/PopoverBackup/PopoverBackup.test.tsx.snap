@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PopoverBackup - Snapshots > matches snapshot for PopoverBackup with custom className 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="hover:bg-white/10 custom-backup-style"
+      data-size="icon"
+      data-testid="button-ghost"
+    >
+      <div
+        class="h-4 w-4 text-white"
+        data-testid="circle-help-icon"
+      >
+        CircleHelp
+      </div>
+    </button>
+  </div>
+  <div
+    class="w-[327px] p-6"
+    data-testid="popover-content"
+  >
+    <div
+      class="gap-2"
+      data-testid="container"
+    >
+      <h4
+        class="text-popover-foreground"
+        data-size="sm"
+        data-testid="heading-4"
+      >
+        Why is this important?
+      </h4>
+      <p
+        class="text-sm text-muted-foreground font-medium leading-light"
+        data-size="sm"
+        data-testid="typography"
+      >
+        The secret seed for your pubky is like a master password. Anyone with access can take full control of your account. You are responsible for keeping your keys safe.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PopoverBackup - Snapshots > matches snapshot for default PopoverBackup 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="hover:bg-white/10"
+      data-size="icon"
+      data-testid="button-ghost"
+    >
+      <div
+        class="h-4 w-4 text-white"
+        data-testid="circle-help-icon"
+      >
+        CircleHelp
+      </div>
+    </button>
+  </div>
+  <div
+    class="w-[327px] p-6"
+    data-testid="popover-content"
+  >
+    <div
+      class="gap-2"
+      data-testid="container"
+    >
+      <h4
+        class="text-popover-foreground"
+        data-size="sm"
+        data-testid="heading-4"
+      >
+        Why is this important?
+      </h4>
+      <p
+        class="text-sm text-muted-foreground font-medium leading-light"
+        data-size="sm"
+        data-testid="typography"
+      >
+        The secret seed for your pubky is like a master password. Anyone with access can take full control of your account. You are responsible for keeping your keys safe.
+      </p>
+    </div>
+  </div>
+</div>
+`;
