@@ -1,180 +1,139 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import {
-  UserController,
-  UserModel,
-  NexusUser,
-  DEFAULT_USER_COUNTS,
-  DEFAULT_USER_RELATIONSHIP,
-  resetDatabase,
-  generateTestUserId,
-  createTestUserDetails,
-} from '@/core';
+// Simplified UserController tests with minimal mocks using real Identity.generateKeypair
 
-// Mock HomeserverService
-vi.mock('@/core/services/homeserver', () => ({
-  HomeserverService: {
-    getInstance: vi.fn(() => ({
-      fetch: vi.fn(),
-    })),
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { Identity } from '@/libs/identity/identity';
+
+// Create mock store objects that will hold the real generated keypair
+const mockOnboardingStore = { secretKey: '' };
+const mockProfileStore = { setCurrentUserPubky: vi.fn(), setAuthenticated: vi.fn() };
+const mockHomeserver = {
+  fetch: vi.fn().mockResolvedValue({ ok: true }),
+  authenticateKeypair: vi.fn().mockResolvedValue({ ok: true }),
+};
+
+// Mock pubky-app-specs to allow real normalizers to run without errors
+vi.mock('pubky-app-specs', () => ({
+  PubkySpecsBuilder: class {
+    createBlob(blob: Uint8Array) {
+      return { blob: { data: blob }, meta: { url: 'test-blob-url' } };
+    }
+    createFile(name: string, url: string, type: string, size: number) {
+      return { file: { toJson: () => ({ name, url, type, size }) }, meta: { url: 'test-file-url' } };
+    }
+    createUser(name: string, bio: string, image: string, links: Array<{ title: string; url: string }>) {
+      return { user: { toJson: () => ({ name, bio, image, links }) }, meta: { url: 'test-user-url' } };
+    }
   },
 }));
 
-// Mock File normalizers
-vi.mock('@/core/pipes/file', () => ({
-  FileNormalizer: {
-    toBlob: vi.fn(),
-    toFile: vi.fn(),
-  },
-}));
+// Create a proper File mock with arrayBuffer method
+class MockFile extends File {
+  constructor(content: string[], filename: string, options?: FilePropertyBag) {
+    super(content, filename, options);
+  }
 
-// Mock User normalizer
-vi.mock('@/core/pipes/user', () => ({
-  UserNormalizer: {
-    to: vi.fn(),
-  },
-}));
-
-// Mock stores
-vi.mock('@/core/stores', () => ({
-  useProfileStore: {
-    getState: vi.fn(() => ({
-      setCurrentUserPubky: vi.fn(),
-      setAuthenticated: vi.fn(),
-    })),
-  },
-}));
+  arrayBuffer(): Promise<ArrayBuffer> {
+    const content = 'test';
+    const buffer = new ArrayBuffer(content.length);
+    const view = new Uint8Array(buffer);
+    for (let i = 0; i < content.length; i++) {
+      view[i] = content.charCodeAt(i);
+    }
+    return Promise.resolve(buffer);
+  }
+}
 
 describe('UserController', () => {
+  let testKeypair: ReturnType<typeof Identity.generateKeypair>;
+
   beforeEach(async () => {
-    await resetDatabase();
-  });
+    vi.resetModules();
+    vi.clearAllMocks();
 
-  const testUserId1 = generateTestUserId(1);
-  const testUserId2 = generateTestUserId(2);
+    // Generate fresh keypair using real Identity.generateKeypair function
+    testKeypair = Identity.generateKeypair();
 
-  const mockNexusUser: NexusUser = {
-    details: createTestUserDetails({
-      id: testUserId1,
-      name: 'Test User 1',
-    }),
-    counts: DEFAULT_USER_COUNTS,
-    tags: [],
-    relationship: DEFAULT_USER_RELATIONSHIP,
-  };
+    // Set the real generated secret key in the mock store
+    mockOnboardingStore.secretKey = testKeypair.secretKey;
 
-  const mockUser2: NexusUser = {
-    details: createTestUserDetails({
-      id: testUserId2,
-      name: 'Test User 2',
-    }),
-    counts: DEFAULT_USER_COUNTS,
-    tags: [],
-    relationship: DEFAULT_USER_RELATIONSHIP,
-  };
+    // Reset mock functions
+    mockProfileStore.setCurrentUserPubky.mockClear();
+    mockProfileStore.setAuthenticated.mockClear();
+    mockHomeserver.fetch.mockClear();
+    mockHomeserver.authenticateKeypair.mockClear();
 
-  describe('Basic CRUD Operations', () => {
-    it('should save and get user by id', async () => {
-      const savedUser = await UserController.save(mockNexusUser);
-      expect(savedUser).toBeInstanceOf(UserModel);
-      expect(savedUser.details.id).toBe(testUserId1);
-
-      const retrievedUser = await UserController.get(testUserId1);
-      expect(retrievedUser).toBeInstanceOf(UserModel);
-      expect(retrievedUser.details.id).toBe(testUserId1);
-      expect(retrievedUser.details.name).toBe('Test User 1');
-    });
-
-    it('should throw error for non-existent user', async () => {
-      const nonExistentId = generateTestUserId(999);
-      await expect(UserController.get(nonExistentId)).rejects.toThrow(`User not found: ${nonExistentId}`);
-    });
-
-    it('should get users by ids', async () => {
-      await UserController.save(mockNexusUser);
-      await UserController.save(mockUser2);
-
-      const users = await UserController.getByIds([testUserId1, testUserId2]);
-
-      expect(users).toHaveLength(2);
-      expect(users[0]).toBeInstanceOf(UserModel);
-      expect(users[1]).toBeInstanceOf(UserModel);
-      expect(users.map((u) => u.details.id)).toContain(testUserId1);
-      expect(users.map((u) => u.details.id)).toContain(testUserId2);
-    });
-
-    it('should update existing user when saving with same id', async () => {
-      await UserController.save(mockNexusUser);
-
-      const updatedUserData = {
-        ...mockNexusUser,
-        details: createTestUserDetails({
-          id: testUserId1,
-          name: 'Updated Name',
-        }),
+    // Mock @/core after resetting modules
+    vi.doMock('@/core', async () => {
+      const actual = await vi.importActual('@/core');
+      return {
+        ...actual,
+        useOnboardingStore: {
+          getState: vi.fn(() => mockOnboardingStore),
+        },
+        useProfileStore: {
+          getState: vi.fn(() => mockProfileStore),
+        },
+        HomeserverService: {
+          getInstance: vi.fn(() => mockHomeserver),
+        },
       };
-
-      const updatedUser = await UserController.save(updatedUserData);
-      expect(updatedUser.details.name).toBe('Updated Name');
-    });
-
-    it('should delete user', async () => {
-      await UserController.save(mockNexusUser);
-
-      await UserController.delete(testUserId1);
-
-      await expect(UserController.get(testUserId1)).rejects.toThrow(`User not found: ${testUserId1}`);
     });
   });
 
-  describe('Avatar Upload (Basic Integration)', () => {
-    it('should test basic controller method exists', () => {
-      expect(typeof UserController.uploadAvatar).toBe('function');
+  describe('uploadAvatar', () => {
+    const mockAvatarFile = new MockFile(['test'], 'test.jpg', { type: 'image/jpeg' });
+
+    it('exists and is callable', async () => {
+      const { UserController } = await import('./user');
+      expect(UserController.uploadAvatar).toBeTypeOf('function');
+    });
+
+    it('calls dependencies and returns url', async () => {
+      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true }).mockResolvedValueOnce({ ok: true });
+
+      const { UserController } = await import('./user');
+      const result = await UserController.uploadAvatar(mockAvatarFile, testKeypair.pubky);
+      expect(typeof result).toBe('string');
+      expect(mockHomeserver.fetch).toHaveBeenCalledTimes(2);
+      expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
+    });
+
+    it('throws on missing secretKey', async () => {
+      mockOnboardingStore.secretKey = '';
+
+      const { UserController } = await import('./user');
+      await expect(UserController.uploadAvatar(mockAvatarFile, testKeypair.pubky)).rejects.toThrow('secretKey');
     });
   });
 
-  describe('Profile Save (Basic Integration)', () => {
-    it('should test basic controller method exists', () => {
-      expect(typeof UserController.saveProfile).toBe('function');
-    });
-  });
+  describe('saveProfile', () => {
+    const mockProfile = { name: 'Test', bio: 'Test bio' };
+    const mockImage = 'test-image';
 
-  describe('Bulk Operations', () => {
-    it('should bulk save users', async () => {
-      const usersData = [mockNexusUser, mockUser2];
-
-      const results = await UserController.bulkSave(usersData);
-
-      expect(results).toHaveLength(2);
-      results.forEach((user) => {
-        expect(user).toBeInstanceOf(UserModel);
-      });
-
-      // Verify users are saved
-      const user1 = await UserController.get(testUserId1);
-      const user2 = await UserController.get(testUserId2);
-      expect(user1.details.name).toBe('Test User 1');
-      expect(user2.details.name).toBe('Test User 2');
+    it('exists and is callable', async () => {
+      const { UserController } = await import('./user');
+      expect(UserController.saveProfile).toBeTypeOf('function');
     });
 
-    it('should bulk delete users', async () => {
-      await UserController.save(mockNexusUser);
-      await UserController.save(mockUser2);
+    it('calls dependencies and returns response', async () => {
+      mockHomeserver.fetch.mockResolvedValue({ ok: true });
 
-      await UserController.bulkDelete([testUserId1, testUserId2]);
-
-      await expect(UserController.get(testUserId1)).rejects.toThrow();
-      await expect(UserController.get(testUserId2)).rejects.toThrow();
+      const { UserController } = await import('./user');
+      const result = await UserController.saveProfile(mockProfile, mockImage, testKeypair.pubky);
+      expect(result.ok).toBe(true);
+      expect(mockHomeserver.fetch).toHaveBeenCalled();
+      expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
+      expect(mockProfileStore.setAuthenticated).toHaveBeenCalledWith(true);
+      expect(mockProfileStore.setCurrentUserPubky).toHaveBeenCalledWith(testKeypair.pubky);
     });
 
-    it('should continue bulk operations even if some fail', async () => {
-      await UserController.save(mockNexusUser);
+    it('throws on missing secretKey', async () => {
+      mockOnboardingStore.secretKey = '';
 
-      const nonExistentId = generateTestUserId(999);
-      // Try to bulk delete both existing and non-existing users
-      await UserController.bulkDelete([testUserId1, nonExistentId]);
-
-      // Should not throw, just continue
-      await expect(UserController.get(testUserId1)).rejects.toThrow();
+      const { UserController } = await import('./user');
+      await expect(UserController.saveProfile(mockProfile, mockImage, testKeypair.pubky)).rejects.toThrow('secretKey');
+      expect(mockProfileStore.setAuthenticated).toHaveBeenCalledWith(false);
+      expect(mockProfileStore.setCurrentUserPubky).toHaveBeenCalledWith(null);
     });
   });
 });

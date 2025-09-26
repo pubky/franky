@@ -83,7 +83,7 @@ describe('ActionButtons', () => {
     expect(signInButton).toHaveAttribute('data-variant', 'secondary');
 
     // Create account button should be primary (default) variant - no explicit variant means default
-    expect(createAccountButton).toHaveAttribute('data-testid', 'button-default');
+    expect(createAccountButton).not.toHaveAttribute('data-variant');
 
     // Both buttons should have proper size classes
     expect(signInButton).toHaveClass('h-10');

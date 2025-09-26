@@ -32,7 +32,7 @@ vi.mock('@/components/ui', () => ({
     onClick?: () => void;
     disabled?: boolean;
   }) => (
-    <button data-testid={`button-${variant || 'default'}`} className={className} onClick={onClick} disabled={disabled}>
+    <button data-slot="button" data-variant={variant} className={className} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   ),
@@ -47,8 +47,8 @@ describe('ButtonsNavigation', () => {
   it('renders with default props', () => {
     render(<ButtonsNavigation />);
 
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
+    const backButton = screen.getByRole('button', { name: /back/i });
+    const continueButton = screen.getByRole('button', { name: /continue/i });
 
     expect(backButton).toBeInTheDocument();
     expect(continueButton).toBeInTheDocument();
@@ -59,8 +59,8 @@ describe('ButtonsNavigation', () => {
   it('renders with custom text props', () => {
     render(<ButtonsNavigation backText="Go Back" continueText="Next Step" />);
 
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
+    const backButton = screen.getByRole('button', { name: /go back/i });
+    const continueButton = screen.getByRole('button', { name: /next step/i });
 
     expect(backButton).toHaveTextContent('Go Back');
     expect(continueButton).toHaveTextContent('Next Step');
@@ -70,7 +70,7 @@ describe('ButtonsNavigation', () => {
     const handleBackButton = vi.fn();
     render(<ButtonsNavigation onHandleBackButton={handleBackButton} />);
 
-    const backButton = screen.getByTestId('button-secondary');
+    const backButton = screen.getByRole('button', { name: /back/i });
     fireEvent.click(backButton);
 
     expect(handleBackButton).toHaveBeenCalledTimes(1);
@@ -80,7 +80,7 @@ describe('ButtonsNavigation', () => {
     const handleContinueButton = vi.fn();
     render(<ButtonsNavigation onHandleContinueButton={handleContinueButton} />);
 
-    const continueButton = screen.getByTestId('button-default');
+    const continueButton = screen.getByRole('button', { name: /continue/i });
     fireEvent.click(continueButton);
 
     expect(handleContinueButton).toHaveBeenCalledTimes(1);
@@ -89,21 +89,21 @@ describe('ButtonsNavigation', () => {
   it('disables back button when backButtonDisabled is true', () => {
     render(<ButtonsNavigation backButtonDisabled={true} />);
 
-    const backButton = screen.getByTestId('button-secondary');
+    const backButton = screen.getByRole('button', { name: /back/i });
     expect(backButton).toBeDisabled();
   });
 
   it('disables continue button when continueButtonDisabled is true', () => {
     render(<ButtonsNavigation continueButtonDisabled={true} />);
 
-    const continueButton = screen.getByTestId('button-default');
+    const continueButton = screen.getByRole('button', { name: /continue/i });
     expect(continueButton).toBeDisabled();
   });
 
   it('applies custom className', () => {
     render(<ButtonsNavigation className="custom-navigation-class" />);
 
-    const container = screen.getByTestId('button-secondary').parentElement;
+    const container = screen.getByRole('button', { name: /back/i }).parentElement;
     expect(container).toHaveClass('custom-navigation-class');
   });
 
@@ -120,8 +120,8 @@ describe('ButtonsNavigation', () => {
   it('has proper button structure and styling', () => {
     render(<ButtonsNavigation />);
 
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
+    const backButton = screen.getByRole('button', { name: /back/i });
+    const continueButton = screen.getByRole('button', { name: /continue/i });
 
     expect(backButton).toHaveClass('rounded-full');
     expect(continueButton).toHaveClass('rounded-full');
@@ -130,8 +130,8 @@ describe('ButtonsNavigation', () => {
   it('renders both buttons as enabled by default', () => {
     render(<ButtonsNavigation />);
 
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
+    const backButton = screen.getByRole('button', { name: /back/i });
+    const continueButton = screen.getByRole('button', { name: /continue/i });
 
     expect(backButton).not.toBeDisabled();
     expect(continueButton).not.toBeDisabled();

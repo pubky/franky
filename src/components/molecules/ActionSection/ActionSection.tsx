@@ -18,7 +18,7 @@ interface ActionSectionProps {
 export function ActionSection({ children, className, actions = [] }: ActionSectionProps) {
   return (
     <Atoms.Container className={Libs.cn('gap-6 w-full flex-row', className)}>
-      <Atoms.Container className="flex-col items-start gap-3 justify-start w-full">{children}</Atoms.Container>
+      <Atoms.Container className="flex-col items-start gap-4 justify-start w-full">{children}</Atoms.Container>
       {actions.length > 0 && (
         <Atoms.Container className="flex-row gap-3">
           {actions.map((action, index) => (
