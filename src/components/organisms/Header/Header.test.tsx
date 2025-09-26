@@ -11,7 +11,7 @@ vi.mock('next/navigation', () => ({
 // Mock Core
 const mockUseProfileStore = vi.fn();
 vi.mock('@/core', () => ({
-  useProfileStore: () => mockUseProfileStore(),
+  useAuthStore: () => mockUseProfileStore(),
 }));
 
 // Mock molecules

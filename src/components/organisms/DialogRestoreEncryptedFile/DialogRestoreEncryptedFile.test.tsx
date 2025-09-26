@@ -16,7 +16,7 @@ vi.mock('@/core', () => ({
   BootstrapController: {
     run: vi.fn().mockResolvedValue({}),
   },
-  useProfileStore: {
+  useAuthStore: {
     getState: vi.fn().mockReturnValue({
       currentUserPubky: 'mock-user-pubkey-123',
     }),
