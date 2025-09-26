@@ -38,7 +38,7 @@ export function DialogBackupEncrypted() {
 function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { secretKey, publicKey } = useOnboardingStore();
+  const { secretKey, pubky } = useOnboardingStore();
 
   // Password strength calculation
   const calculatePasswordStrength = (password: string) => {
@@ -84,7 +84,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   const handleDownload = () => {
     Identity.createRecoveryFile(
       {
-        publicKey: publicKey,
+        pubky,
         secretKey: secretKey,
       },
       password,

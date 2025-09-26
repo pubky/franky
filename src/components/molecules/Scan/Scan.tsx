@@ -15,7 +15,6 @@ export const ScanContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [errorCount, setErrorCount] = useState(0);
-  const router = useRouter();
 
   const fetchUrl = async () => {
     try {
@@ -26,9 +25,8 @@ export const ScanContent = () => {
 
       if (url) setUrl(url);
 
-      promise?.then(async (response) => {
-        await Core.AuthController.loginWithAuthUrl({ keypair: response });
-        router.push('/feed');
+      promise?.then(async (publicKey) => {
+        await Core.AuthController.loginWithAuthUrl({ publicKey });
       });
     } catch (error) {
       console.error('Failed to generate auth URL:', error);

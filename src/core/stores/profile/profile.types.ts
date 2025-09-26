@@ -1,19 +1,23 @@
-import { SignupResult } from '@/core';
+import * as Core from '@/core';
 
 export interface ProfileState {
-  currentUserPubky: string | null;
-  session: SignupResult['session'] | null;
+  currentUserPubky: Core.Pubky | null;
+  session: Core.SignupResult['session'] | null;
   isAuthenticated: boolean;
 }
 
 export interface ProfileActions {
-  setCurrentUserPubky: (pubky: string | null) => void;
-  setSession: (session: SignupResult['session'] | null) => void;
+  setCurrentUserPubky: (pubky: Core.Pubky | null) => void;
+  setSession: (session: Core.SignupResult['session'] | null) => void;
   setAuthenticated: (isAuthenticated: boolean) => void;
   reset: () => void;
 }
 
-export type ProfileStore = ProfileState & ProfileActions;
+export interface ProfileSelectors {
+  selectCurrentUserPubky: () => Core.Pubky;
+}
+
+export type ProfileStore = ProfileState & ProfileActions & ProfileSelectors;
 
 export const profileInitialState: ProfileState = {
   currentUserPubky: null,

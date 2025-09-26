@@ -17,7 +17,7 @@ export function HomeserverCard() {
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
-  const { publicKey, secretKey } = Core.useOnboardingStore();
+  const { pubky, secretKey } = Core.useOnboardingStore();
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
 
   // generate an invite code and put it in console log if you are in development mode
@@ -57,7 +57,7 @@ export function HomeserverCard() {
       setStatus('default');
       setIsLoading(true);
       setButtonContinueText('Validating');
-      const keypair = { publicKey, secretKey };
+      const keypair = { pubky, secretKey };
       const signupToken = inviteCode;
       await Core.AuthController.signUp({ keypair, signupToken });
       setButtonContinueText('Signing up');

@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -14,7 +13,6 @@ export const SignInContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [errorCount, setErrorCount] = useState(0);
-  const router = useRouter();
 
   const fetchUrl = async () => {
     try {
@@ -25,17 +23,24 @@ export const SignInContent = () => {
 
       if (url) setUrl(url);
 
-      promise?.then(async (response) => {
-        await Core.AuthController.loginWithAuthUrl({ keypair: response });
-        router.push('/feed');
+      promise?.then(async (publicKey) => {
+        try {
+          await Core.AuthController.loginWithAuthUrl({ publicKey });
+        } catch (error) {
+          Libs.Logger.error('Failed to login with auth URL:', error);
+          Molecules.toast({
+            title: 'Sign in failed',
+            description: 'Unable to complete authorization with Pubky Ring. Please try again.',
+          });
+        }
       });
     } catch (error) {
-      console.error('Failed to generate auth URL:', error);
+      Libs.Logger.error('Failed to generate auth URL:', error);
       setErrorCount(errorCount + 1);
       if (errorCount < 3) fetchUrl();
       Molecules.toast({
-        title: 'Error generating auth URL',
-        description: 'Please try again.',
+        title: 'QR code generation failed',
+        description: 'Unable to generate sign-in QR code. Please refresh the page.',
       });
     } finally {
       setIsLoading(false);
