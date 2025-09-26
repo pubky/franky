@@ -14,6 +14,7 @@ export const ImageBackground = ({
     return (
       <div
         {...props}
+        data-testid="image-background"
         className={cn(baseClasses, props.className)}
         style={{
           backgroundImage: `url(${image})`,

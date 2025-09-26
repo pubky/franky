@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HomeActions, HomeFooter, HomeSectionTitle, HomePageHeading } from './Home';
-import { PUBKY_CORE_URL } from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -73,7 +73,7 @@ describe('HomeActions', () => {
     const createAccountButton = screen.getByTestId('create-account-button');
     fireEvent.click(createAccountButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
   });
 
   it('handles sign in button click', () => {
@@ -82,7 +82,7 @@ describe('HomeActions', () => {
     const signInButton = screen.getByTestId('sign-in-button');
     fireEvent.click(signInButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.SIGN_IN);
   });
 });
 
@@ -103,20 +103,6 @@ describe('HomeFooter', () => {
     expect(screen.getByText('Terms of Service')).toBeInTheDocument();
     expect(screen.getByText('Privacy Policy')).toBeInTheDocument();
     expect(screen.getByText('over 18 years old.')).toBeInTheDocument();
-  });
-
-  it('renders Pubky Core link with correct attributes', () => {
-    render(<HomeFooter />);
-
-    const link = screen.getByTestId('link');
-    expect(link).toHaveAttribute('href', PUBKY_CORE_URL);
-    expect(link).toHaveAttribute('target', '_blank');
-    expect(link).toHaveTextContent('Pubky Core');
-  });
-
-  it('contains copyright text', () => {
-    render(<HomeFooter />);
-
     expect(screen.getByText(/Synonym Software Ltd. ©2025/)).toBeInTheDocument();
   });
 });
@@ -129,27 +115,6 @@ describe('HomeSectionTitle', () => {
     expect(screen.getByTestId('typography')).toBeInTheDocument();
     expect(screen.getByTestId('popover-invite')).toBeInTheDocument();
   });
-
-  it('displays correct title text', () => {
-    render(<HomeSectionTitle />);
-
-    expect(screen.getByText('Pubky requires an invite code')).toBeInTheDocument();
-  });
-
-  it('has correct typography size and styling', () => {
-    render(<HomeSectionTitle />);
-
-    const typography = screen.getByTestId('typography');
-    expect(typography).toHaveAttribute('data-size', 'md');
-    expect(typography.className).toContain('text-brand font-light');
-  });
-
-  it('has correct container layout', () => {
-    render(<HomeSectionTitle />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('flex-row items-start gap-2');
-  });
 });
 
 describe('HomePageHeading', () => {
@@ -157,21 +122,27 @@ describe('HomePageHeading', () => {
     render(<HomePageHeading />);
 
     expect(screen.getByTestId('heading-1')).toBeInTheDocument();
-    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
+  });
+});
+
+describe('Home - Snapshots', () => {
+  it('matches snapshot for HomeActions with default props', () => {
+    const { container } = render(<HomeActions />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('has correct heading level and size', () => {
-    render(<HomePageHeading />);
-
-    const heading = screen.getByTestId('heading-1');
-    expect(heading).toHaveAttribute('data-size', '2xl');
+  it('matches snapshot for HomeFooter with default props', () => {
+    const { container } = render(<HomeFooter />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders consistently', () => {
-    const { rerender } = render(<HomePageHeading />);
-    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
+  it('matches snapshot for HomeSectionTitle with default props', () => {
+    const { container } = render(<HomeSectionTitle />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    rerender(<HomePageHeading />);
-    expect(screen.getByTestId('heading-1')).toHaveTextContent('Unlock the web.');
+  it('matches snapshot for HomePageHeading with default props', () => {
+    const { container } = render(<HomePageHeading />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

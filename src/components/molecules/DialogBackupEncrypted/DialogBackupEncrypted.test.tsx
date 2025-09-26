@@ -1,0 +1,162 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render } from '@testing-library/react';
+import { DialogBackupEncrypted } from './DialogBackupEncrypted';
+
+// Mock Next.js Image
+vi.mock('next/image', () => ({
+  __esModule: true,
+  default: ({
+    src,
+    alt,
+    width,
+    height,
+    className,
+  }: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+    className?: string;
+  }) => <img data-testid="next-image" src={src} alt={alt} width={width} height={height} className={className} />,
+}));
+
+// Mock Radix UI DialogClose
+vi.mock('@radix-ui/react-dialog', () => ({
+  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+    <div data-testid="radix-dialog-close" data-as-child={asChild}>
+      {children}
+    </div>
+  ),
+}));
+
+// Mock stores
+vi.mock('@/core', () => ({
+  useOnboardingStore: () => ({
+    secretKey: 'mock-secret-key',
+    publicKey: 'mock-public-key',
+  }),
+}));
+
+// Mock identity library
+vi.mock('@/libs', () => ({
+  FileText: ({ className }: { className?: string }) => (
+    <div data-testid="file-text-icon" className={className}>
+      FileText
+    </div>
+  ),
+  ArrowLeft: ({ className }: { className?: string }) => (
+    <div data-testid="arrow-left-icon" className={className}>
+      ArrowLeft
+    </div>
+  ),
+  ArrowRight: ({ className }: { className?: string }) => (
+    <div data-testid="arrow-right-icon" className={className}>
+      ArrowRight
+    </div>
+  ),
+  Download: ({ className }: { className?: string }) => (
+    <div data-testid="download-icon" className={className}>
+      Download
+    </div>
+  ),
+  Identity: {
+    createRecoveryFile: vi.fn(),
+  },
+}));
+
+// Mock atoms
+vi.mock('@/components/atoms', () => ({
+  Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
+  DialogTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+    <div data-testid="dialog-trigger" data-as-child={asChild}>
+      {children}
+    </div>
+  ),
+  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-content" className={className}>
+      {children}
+    </div>
+  ),
+  DialogHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-header" className={className}>
+      {children}
+    </div>
+  ),
+  DialogTitle: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <h2 data-testid="dialog-title" className={className}>
+      {children}
+    </h2>
+  ),
+  DialogDescription: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <p data-testid="dialog-description" className={className}>
+      {children}
+    </p>
+  ),
+  Button: ({
+    children,
+    variant,
+    className,
+    onClick,
+    disabled,
+  }: {
+    children: React.ReactNode;
+    variant?: string;
+    className?: string;
+    onClick?: () => void;
+    disabled?: boolean;
+  }) => (
+    <button data-testid={`button-${variant || 'default'}`} className={className} onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
+  ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
+  Label: ({ children, className, htmlFor }: { children: React.ReactNode; className?: string; htmlFor?: string }) => (
+    <label data-testid="label" className={className} htmlFor={htmlFor}>
+      {children}
+    </label>
+  ),
+  Input: ({
+    id,
+    type,
+    value,
+    onChange,
+    className,
+    placeholder,
+    autoComplete,
+  }: {
+    id?: string;
+    type?: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: string;
+    placeholder?: string;
+    autoComplete?: string;
+  }) => (
+    <input
+      data-testid="input"
+      id={id}
+      type={type}
+      value={value}
+      onChange={onChange}
+      className={className}
+      placeholder={placeholder}
+      autoComplete={autoComplete}
+    />
+  ),
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <p data-testid="typography" data-size={size} className={className}>
+      {children}
+    </p>
+  ),
+}));
+
+describe('DialogBackupEncrypted - Snapshots', () => {
+  it('matches snapshot for default DialogBackupEncrypted', () => {
+    const { container } = render(<DialogBackupEncrypted />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

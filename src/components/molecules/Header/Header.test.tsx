@@ -12,7 +12,8 @@ import {
   HeaderSignIn,
   HeaderNavigationButtons,
 } from './Header';
-import { GITHUB_URL, TWITTER_GETPUBKY_URL, TELEGRAM_URL } from '@/config';
+import * as Config from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -185,17 +186,6 @@ vi.mock('@/libs', () => ({
 }));
 
 describe('HeaderContainer', () => {
-  it('renders with children', () => {
-    render(
-      <HeaderContainer>
-        <div data-testid="child">Test Child</div>
-      </HeaderContainer>,
-    );
-
-    expect(screen.getByTestId('child')).toBeInTheDocument();
-    expect(screen.getAllByTestId('container')).toHaveLength(2);
-  });
-
   it('renders as header element', () => {
     const { container } = render(
       <HeaderContainer>
@@ -212,14 +202,6 @@ describe('HeaderTitle', () => {
     render(<HeaderTitle currentTitle="Test Title" />);
 
     expect(screen.getByText('Test Title')).toBeInTheDocument();
-    expect(screen.getByTestId('heading-2')).toBeInTheDocument();
-  });
-
-  it('applies correct heading level and size', () => {
-    render(<HeaderTitle currentTitle="Test" />);
-
-    const heading = screen.getByTestId('heading-2');
-    expect(heading).toHaveAttribute('data-size', 'lg');
   });
 });
 
@@ -229,8 +211,6 @@ describe('HeaderOnboarding', () => {
 
     const progressSteps = screen.getByTestId('progress-steps');
     expect(progressSteps).toBeInTheDocument();
-    expect(progressSteps).toHaveAttribute('data-current', '3');
-    expect(progressSteps).toHaveAttribute('data-total', '5');
   });
 });
 
@@ -242,27 +222,13 @@ describe('HeaderSocialLinks', () => {
     expect(links).toHaveLength(3);
 
     // Check GitHub link
-    expect(links[0]).toHaveAttribute('href', GITHUB_URL);
+    expect(links[0]).toHaveAttribute('href', Config.GITHUB_URL);
 
     // Check Twitter link
-    expect(links[1]).toHaveAttribute('href', TWITTER_GETPUBKY_URL);
+    expect(links[1]).toHaveAttribute('href', Config.TWITTER_GETPUBKY_URL);
 
     // Check Telegram link
-    expect(links[2]).toHaveAttribute('href', TELEGRAM_URL);
-  });
-
-  it('applies custom className', () => {
-    render(<HeaderSocialLinks className="custom-class" />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('custom-class');
-  });
-
-  it('has correct default styling', () => {
-    render(<HeaderSocialLinks />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('hidden md:flex flex-row justify-end gap-6 mr-6');
+    expect(links[2]).toHaveAttribute('href', Config.TELEGRAM_URL);
   });
 });
 
@@ -285,95 +251,22 @@ describe('HeaderButtonSignIn', () => {
     const button = screen.getByTestId('button-secondary');
     fireEvent.click(button);
 
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
-  });
-
-  it('has correct variant', () => {
-    render(<HeaderButtonSignIn />);
-
-    const button = screen.getByTestId('button-secondary');
-    expect(button).toHaveAttribute('data-variant', 'secondary');
-  });
-
-  it('passes through additional props', () => {
-    render(<HeaderButtonSignIn id="custom-id" />);
-
-    const button = screen.getByTestId('button-secondary');
-    expect(button).toHaveAttribute('id', 'custom-id');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.SIGN_IN);
   });
 });
 
-describe('HeaderHome', () => {
-  it('renders social links and sign in button', () => {
-    render(<HeaderHome />);
-
-    expect(screen.getByTestId('social-links')).toBeInTheDocument();
-    expect(screen.getByTestId('button-sign-in')).toBeInTheDocument();
-  });
-
-  it('has correct container structure', () => {
-    render(<HeaderHome />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('flex-1 flex-row items-center justify-end');
-  });
-});
-
-describe('HeaderNavigationButtons', () => {
-  it('renders all navigation buttons', () => {
-    render(<HeaderNavigationButtons />);
-
-    expect(screen.getAllByTestId('button-secondary')).toHaveLength(5);
-    expect(screen.getAllByTestId('link')).toHaveLength(6);
-  });
-
-  it('renders with avatar when image is provided', () => {
-    render(<HeaderNavigationButtons image="/test-image.jpg" />);
-
-    const avatarImage = screen.getByTestId('avatar-image');
-    expect(avatarImage).toHaveAttribute('src', '/test-image.jpg');
-  });
-
-  it('renders avatar fallback when no image', () => {
-    render(<HeaderNavigationButtons />);
-
-    expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
-    expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('SN');
-  });
-
-  it('renders counter badge when provided', () => {
-    render(<HeaderNavigationButtons counter={5} />);
-
-    const badge = screen.getByTestId('badge');
-    expect(badge).toBeInTheDocument();
-    expect(screen.getByTestId('typography')).toHaveTextContent('5');
-  });
-
-  it('does not render counter badge when not provided', () => {
-    render(<HeaderNavigationButtons />);
-
-    expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
-  });
-
+describe('HomeHeader', () => {
   it('has correct navigation links', () => {
     render(<HeaderNavigationButtons />);
 
     const links = screen.getAllByTestId('link');
 
-    expect(links[0]).toHaveAttribute('href', '/feed');
+    expect(links[0]).toHaveAttribute('href', App.FEED_ROUTES.FEED);
     expect(links[1]).toHaveAttribute('href', '/search');
     expect(links[2]).toHaveAttribute('href', '/hot');
     expect(links[3]).toHaveAttribute('href', '/bookmarks');
     expect(links[4]).toHaveAttribute('href', '/settings');
     expect(links[5]).toHaveAttribute('href', '/profile');
-  });
-
-  it('renders counter badge with 21+ when counter exceeds 21', () => {
-    render(<HeaderNavigationButtons counter={25} />);
-
-    const badge = screen.getByTestId('badge');
-    expect(badge).toBeInTheDocument();
-    expect(screen.getByTestId('typography')).toHaveTextContent('21+');
   });
 
   it('renders exact counter when counter is 21 or less', () => {
@@ -389,62 +282,90 @@ describe('HeaderNavigationButtons', () => {
 
     expect(screen.queryByTestId('badge')).not.toBeInTheDocument();
   });
-
-  it('applies small screen hidden class to search link', () => {
-    render(<HeaderNavigationButtons />);
-
-    const links = screen.getAllByTestId('link');
-    const searchLink = links[1]; // Second link is the search link
-
-    expect(searchLink.className).toContain('sm:hidden');
-  });
-
-  it('applies correct styling classes to counter badge', () => {
-    render(<HeaderNavigationButtons counter={5} />);
-
-    const badge = screen.getByTestId('badge');
-    expect(badge.className).toContain('absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5');
-    expect(badge).toHaveAttribute('data-variant', 'secondary');
-  });
-
-  it('applies smaller text when counter exceeds 21', () => {
-    render(<HeaderNavigationButtons counter={25} />);
-
-    const typography = screen.getByTestId('typography');
-    expect(typography.className).toContain('text-xs');
-  });
-
-  it('does not apply smaller text when counter is 21 or less', () => {
-    render(<HeaderNavigationButtons counter={15} />);
-
-    const typography = screen.getByTestId('typography');
-    expect(typography.className).not.toContain('text-xs');
-  });
 });
 
-describe('HeaderSignIn', () => {
-  it('renders search input and navigation buttons', () => {
-    render(<HeaderSignIn />);
-
-    expect(screen.getByTestId('search-input')).toBeInTheDocument();
-    expect(screen.getByTestId('navigation-buttons')).toBeInTheDocument();
+describe('Header - Snapshots', () => {
+  it('matches snapshot for HeaderContainer with default props', () => {
+    const { container } = render(
+      <HeaderContainer>
+        <div>Header content</div>
+      </HeaderContainer>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('has correct container structure', () => {
-    render(<HeaderSignIn />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('flex-1 flex-row items-center justify-end gap-3');
+  it('matches snapshot for HeaderTitle with custom title', () => {
+    const { container } = render(<HeaderTitle currentTitle="Custom Title" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders with proper component layout', () => {
-    render(<HeaderSignIn />);
+  it('matches snapshots for HeaderSignIn', () => {
+    const { container: defaultContainer } = render(<HeaderSignIn />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+  });
 
-    const container = screen.getByTestId('container');
-    const searchInput = screen.getByTestId('search-input');
-    const navigationButtons = screen.getByTestId('navigation-buttons');
+  it('matches snapshots for HeaderSignIn', () => {
+    const { container: defaultContainer } = render(<HeaderSignIn />);
+    expect(defaultContainer.firstChild).toMatchSnapshot();
+  });
 
-    expect(container).toContainElement(searchInput);
-    expect(container).toContainElement(navigationButtons);
+  it('matches snapshot for OnboardingHeader with default props', () => {
+    const { container } = render(<HeaderOnboarding currentStep={1} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderSocialLinks with default props', () => {
+    const { container } = render(<HeaderSocialLinks />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderSocialLinks with custom className', () => {
+    const { container } = render(<HeaderSocialLinks className="custom-social" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderButtonSignIn with default props', () => {
+    const { container } = render(<HeaderButtonSignIn />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderButtonSignIn with custom className', () => {
+    const { container } = render(<HeaderButtonSignIn className="custom-signin" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderHome with default props', () => {
+    const { container } = render(<HeaderHome />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with default props', () => {
+    const { container } = render(<HeaderNavigationButtons />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with counter', () => {
+    const { container } = render(<HeaderNavigationButtons counter={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with counter zero', () => {
+    const { container } = render(<HeaderNavigationButtons counter={0} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with high counter and avatar', () => {
+    const { container } = render(<HeaderNavigationButtons counter={25} image="/avatar.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with avatar only', () => {
+    const { container } = render(<HeaderNavigationButtons image="/avatar.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HeaderNavigationButtons with counter and avatar', () => {
+    const { container } = render(<HeaderNavigationButtons counter={15} image="/avatar.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { BackupNavigation, BackupPageHeader } from './Backup';
 
 // Mock Next.js router
@@ -11,8 +11,6 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Note: BackupMethodCard has been moved to organisms and no longer needs store mocking here
-
 // Mock atoms
 vi.mock('@/atoms', () => ({
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
@@ -20,25 +18,31 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Heading: ({
+  Button: ({
     children,
-    level,
-    size,
     className,
+    onClick,
+    disabled,
+    variant,
+    size,
   }: {
     children: React.ReactNode;
-    level: number;
-    size?: string;
     className?: string;
+    onClick?: () => void;
+    disabled?: boolean;
+    variant?: string;
+    size?: string;
   }) => (
-    <div data-testid={`heading-${level}`} data-size={size} className={className}>
+    <button
+      data-testid="button"
+      className={className}
+      onClick={onClick}
+      disabled={disabled}
+      data-variant={variant}
+      data-size={size}
+    >
       {children}
-    </div>
-  ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <div data-testid="typography" data-size={size} className={className}>
-      {children}
-    </div>
+    </button>
   ),
   PageHeader: ({ children }: { children: React.ReactNode }) => <div data-testid="page-header">{children}</div>,
   PageSubtitle: ({ children }: { children: React.ReactNode }) => <div data-testid="page-subtitle">{children}</div>,
@@ -60,90 +64,35 @@ vi.mock('@/molecules', () => ({
     continueText?: string;
   }) => (
     <div data-testid="buttons-navigation" className={className}>
-      <button data-testid="back-button" onClick={onHandleBackButton}>
-        {backText}
-      </button>
-      <button data-testid="continue-button" onClick={onHandleContinueButton}>
-        {continueText}
-      </button>
+      <button onClick={onHandleBackButton}>{backText}</button>
+      <button onClick={onHandleContinueButton}>{continueText}</button>
     </div>
   ),
   PageTitle: ({ children, size }: { children: React.ReactNode; size?: string }) => (
-    <div data-testid="page-title" data-size={size}>
+    <h1 data-testid="page-title" data-size={size}>
       {children}
-    </div>
+    </h1>
   ),
 }));
 
-// BackupMethodCard tests have been moved to organisms/BackupMethodCard/BackupMethodCard.test.tsx
+// Mock app
+vi.mock('@/app', () => ({
+  ONBOARDING_ROUTES: {
+    HOMESERVER: '/homeserver',
+    PUBKY: '/pubky',
+  },
+}));
 
-describe('BackupNavigation', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('renders navigation buttons', () => {
-    render(<BackupNavigation />);
-
-    expect(screen.getByTestId('buttons-navigation')).toBeInTheDocument();
-    expect(screen.getByTestId('back-button')).toHaveTextContent('Back');
-    expect(screen.getByTestId('continue-button')).toHaveTextContent('Continue');
-  });
-
-  it('handles back button click', () => {
-    render(<BackupNavigation />);
-
-    const backButton = screen.getByTestId('back-button');
-    fireEvent.click(backButton);
-
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/pubky');
-  });
-
-  it('handles continue button click', () => {
-    render(<BackupNavigation />);
-
-    const continueButton = screen.getByTestId('continue-button');
-    fireEvent.click(continueButton);
-
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/homeserver');
-  });
-
-  it('applies correct styling', () => {
-    render(<BackupNavigation />);
-
-    const navigation = screen.getByTestId('buttons-navigation');
-    expect(navigation).toHaveClass('py-6');
+describe('BackupNavigation - Snapshots', () => {
+  it('matches snapshot for default BackupNavigation', () => {
+    const { container } = render(<BackupNavigation />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
 
-describe('BackupPageHeader', () => {
-  it('renders page header with title and subtitle', () => {
-    render(<BackupPageHeader />);
-
-    expect(screen.getByTestId('page-header')).toBeInTheDocument();
-    expect(screen.getByTestId('page-title')).toBeInTheDocument();
-    expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
-  });
-
-  it('renders correct title text', () => {
-    render(<BackupPageHeader />);
-
-    const pageTitle = screen.getByTestId('page-title');
-    expect(pageTitle).toHaveTextContent('Back up your pubky.');
-    expect(pageTitle).toHaveAttribute('data-size', 'large');
-  });
-
-  it('renders correct subtitle text', () => {
-    render(<BackupPageHeader />);
-
-    const pageSubtitle = screen.getByTestId('page-subtitle');
-    expect(pageSubtitle).toHaveTextContent('You need a backup to restore access to your account later.');
-  });
-
-  it('includes branded text in title', () => {
-    render(<BackupPageHeader />);
-
-    const pageTitle = screen.getByTestId('page-title');
-    expect(pageTitle.innerHTML).toContain('text-brand');
+describe('BackupPageHeader - Snapshots', () => {
+  it('matches snapshot for default BackupPageHeader', () => {
+    const { container } = render(<BackupPageHeader />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

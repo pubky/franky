@@ -4,37 +4,9 @@ import { Textarea } from './Textarea';
 
 describe('Textarea', () => {
   it('renders with default props', () => {
-    render(<Textarea data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
+    render(<Textarea>Default Textarea</Textarea>);
+    const textarea = screen.getByText('Default Textarea');
     expect(textarea).toBeInTheDocument();
-    expect(textarea.tagName).toBe('TEXTAREA');
-    expect(textarea).toHaveClass(
-      'flex',
-      'field-sizing-content',
-      'min-h-16',
-      'w-full',
-      'rounded-md',
-      'border',
-      'border-input',
-      'bg-transparent',
-      'px-3',
-      'py-2',
-      'text-base',
-      'shadow-xs',
-    );
-    expect(textarea).toHaveAttribute('data-slot', 'textarea');
-  });
-
-  it('applies custom className', () => {
-    render(<Textarea className="custom-textarea" data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveClass('custom-textarea');
-  });
-
-  it('forwards additional props', () => {
-    render(<Textarea placeholder="Enter text" data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('placeholder', 'Enter text');
   });
 
   it('handles onChange events', () => {
@@ -51,17 +23,9 @@ describe('Textarea', () => {
     render(<Textarea disabled data-testid="textarea" />);
     const textarea = screen.getByTestId('textarea');
     expect(textarea).toBeDisabled();
-    expect(textarea).toHaveClass('disabled:cursor-not-allowed', 'disabled:opacity-50');
   });
 
-  it('shows focus styles', () => {
-    render(<Textarea data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
-
-    expect(textarea).toHaveClass('focus-visible:border-ring', 'focus-visible:ring-ring/50', 'outline-none');
-  });
-
-  it('handles value prop', () => {
+  it('handles updating value', () => {
     const { rerender } = render(<Textarea value="Initial value" onChange={() => {}} data-testid="textarea" />);
     const textarea = screen.getByTestId('textarea') as HTMLTextAreaElement;
     expect(textarea.value).toBe('Initial value');
@@ -69,28 +33,71 @@ describe('Textarea', () => {
     rerender(<Textarea value="Updated value" onChange={() => {}} data-testid="textarea" />);
     expect(textarea.value).toBe('Updated value');
   });
+});
 
-  it('handles defaultValue prop', () => {
-    render(<Textarea defaultValue="Default text" data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea') as HTMLTextAreaElement;
-    expect(textarea.value).toBe('Default text');
+describe('Textarea - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<Textarea />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('handles rows prop', () => {
-    render(<Textarea rows={5} data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveAttribute('rows', '5');
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Textarea className="custom-textarea" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('supports resize behavior', () => {
-    render(<Textarea className="resize-none" data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveClass('resize-none');
+  it('matches snapshot with placeholder', () => {
+    const { container } = render(<Textarea placeholder="Enter text" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('handles invalid state styling', () => {
-    render(<Textarea aria-invalid data-testid="textarea" />);
-    const textarea = screen.getByTestId('textarea');
-    expect(textarea).toHaveClass('aria-invalid:ring-destructive/20', 'aria-invalid:border-destructive');
+  it('matches snapshot for disabled state', () => {
+    const { container } = render(<Textarea disabled />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for invalid state', () => {
+    const { container } = render(<Textarea aria-invalid />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for readOnly state', () => {
+    const { container } = render(<Textarea readOnly />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with value prop', () => {
+    const { container } = render(<Textarea value="Initial value" onChange={() => {}} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with defaultValue prop', () => {
+    const { container } = render(<Textarea defaultValue="Default text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom rows', () => {
+    const { container } = render(<Textarea rows={5} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with resize-none className', () => {
+    const { container } = render(<Textarea className="resize-none" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<Textarea id="textarea-id" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<Textarea data-testid="custom-textarea" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with name prop', () => {
+    const { container } = render(<Textarea name="textarea-name" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

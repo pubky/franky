@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PublicKeyHeader, PublicKeyNavigation } from './Pubkey';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -49,28 +50,6 @@ describe('PublicKeyHeader', () => {
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
   });
-
-  it('renders correct title with brand styling', () => {
-    render(<PublicKeyHeader />);
-
-    const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'large');
-    expect(title).toHaveTextContent('Your unique pubky.');
-  });
-
-  it('renders correct subtitle', () => {
-    render(<PublicKeyHeader />);
-
-    expect(screen.getByText('Share your pubky with your friends so they can follow you.')).toBeInTheDocument();
-  });
-
-  it('contains brand-styled text', () => {
-    render(<PublicKeyHeader />);
-
-    // Check that the title contains the word "pubky" (which should have brand styling)
-    const title = screen.getByTestId('page-title');
-    expect(title.textContent).toContain('pubky');
-  });
 });
 
 describe('PublicKeyNavigation', () => {
@@ -92,7 +71,7 @@ describe('PublicKeyNavigation', () => {
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
   });
 
   it('handles continue button click', () => {
@@ -101,13 +80,22 @@ describe('PublicKeyNavigation', () => {
     const continueButton = screen.getByTestId('continue-button');
     fireEvent.click(continueButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/backup');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.BACKUP);
+  });
+});
+
+describe('PublicKey Components - Snapshots', () => {
+  describe('PublicKeyHeader - Snapshots', () => {
+    it('matches snapshot for default PublicKeyHeader', () => {
+      const { container } = render(<PublicKeyHeader />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
   });
 
-  it('renders button text correctly', () => {
-    render(<PublicKeyNavigation />);
-
-    expect(screen.getByText('Back')).toBeInTheDocument();
-    expect(screen.getByText('Continue')).toBeInTheDocument();
+  describe('PublicKeyNavigation - Snapshots', () => {
+    it('matches snapshot for default PublicKeyNavigation', () => {
+      const { container } = render(<PublicKeyNavigation />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
   });
 });

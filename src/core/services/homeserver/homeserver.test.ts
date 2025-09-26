@@ -22,7 +22,7 @@ const mockKeypairStore = {
   setAuthenticated: vi.fn(),
 };
 
-// Mock useUserStore (now useProfileStore)
+// Mock useUserStore (now useAuthStore)
 const mockUserStore = {
   pubky: '',
   session: null as Session | null,
@@ -52,7 +52,7 @@ vi.mock('@/core/stores', () => ({
   useOnboardingStore: {
     getState: vi.fn(() => mockOnboardingStore),
   },
-  useProfileStore: {
+  useAuthStore: {
     getState: vi.fn(() => mockUserStore),
   },
 }));

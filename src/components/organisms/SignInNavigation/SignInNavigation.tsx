@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as App from '@/app';
 
 export const SignInNavigation = () => {
   const router = useRouter();
 
   const handleRestore = () => {
-    router.push('/feed');
+    router.push(App.FEED_ROUTES.FEED);
   };
 
   return (

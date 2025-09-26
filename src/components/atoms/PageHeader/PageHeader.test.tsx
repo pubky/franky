@@ -4,42 +4,40 @@ import { PageHeader } from './PageHeader';
 
 describe('PageHeader', () => {
   it('renders with default props', () => {
-    const { container } = render(<PageHeader>Header content</PageHeader>);
+    render(<PageHeader>Header content</PageHeader>);
+    const pageHeader = screen.getByText('Header content');
+    expect(pageHeader).toBeInTheDocument();
+  });
+});
 
-    const header = container.firstChild as HTMLElement;
-    expect(header).toBeInTheDocument();
-    expect(header).toHaveClass('flex', 'flex-col', 'gap-3');
-    expect(screen.getByText('Header content')).toBeInTheDocument();
+describe('PageHeader - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<PageHeader>Header content</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders with children', () => {
-    render(
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<PageHeader className="custom-header">Custom header</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with simple content', () => {
+    const { container } = render(<PageHeader>Simple content</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
       <PageHeader>
         <h1>Page Title</h1>
         <p>Page Subtitle</p>
       </PageHeader>,
     );
-
-    expect(screen.getByText('Page Title')).toBeInTheDocument();
-    expect(screen.getByText('Page Subtitle')).toBeInTheDocument();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies custom className', () => {
-    const { container } = render(<PageHeader className="custom-header">Header content</PageHeader>);
-
-    const header = container.firstChild as HTMLElement;
-    expect(header).toHaveClass('custom-header');
-  });
-
-  it('maintains default flex structure', () => {
-    const { container } = render(<PageHeader>Content</PageHeader>);
-
-    const header = container.firstChild as HTMLElement;
-    expect(header).toHaveClass('flex', 'flex-col', 'gap-3');
-  });
-
-  it('renders with complex children', () => {
-    render(
+  it('matches snapshot with nested children', () => {
+    const { container } = render(
       <PageHeader>
         <div>
           <span>
@@ -51,20 +49,16 @@ describe('PageHeader', () => {
         </div>
       </PageHeader>,
     );
-
-    expect(screen.getByText('Title')).toBeInTheDocument();
-    expect(screen.getByText('Subtitle')).toBeInTheDocument();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('passes through additional props', () => {
-    const { container } = render(
-      <PageHeader data-testid="page-header" id="header-id">
-        Content
-      </PageHeader>,
-    );
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<PageHeader id="header-id">Header with ID</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const header = container.firstChild as HTMLElement;
-    expect(header).toHaveAttribute('data-testid', 'page-header');
-    expect(header).toHaveAttribute('id', 'header-id');
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<PageHeader data-testid="page-header">Header with test ID</PageHeader>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

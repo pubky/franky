@@ -5,48 +5,66 @@ import { useRouter, usePathname } from 'next/navigation';
 
 import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
+import * as App from '@/app';
 
 interface RouteGuardProviderProps {
   children: React.ReactNode;
 }
 
+/**
+ * RouteGuardProvider protects routes based on user authentication status.
+ *
+ * This provider:
+ * - Checks if the current route is accessible for the user's auth status
+ * - Redirects unauthorized users to appropriate default routes
+ * - Shows loading states while determining access permissions
+ * - Allows public routes to be accessed by anyone
+ *
+ * Route access is configured via ROUTE_ACCESS_MAP which maps:
+ * - UNAUTHENTICATED users → onboarding/auth routes
+ * - AUTHENTICATED users → app routes (feed, profile, etc.)
+ */
 export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
   const { status, isLoading } = Hooks.useAuthStatus();
 
-  // Check if current route is allowed BEFORE rendering
+  // Determine if the current route is accessible based on authentication status
   const isRouteAccessible = useMemo(() => {
-    // If still loading, don't allow access yet
+    // Wait for authentication status to be determined before allowing access
     if (isLoading) return false;
 
-    // Always allow access to public routes
-    if (Providers.PUBLIC_ROUTES.includes(pathname)) return true;
+    // Public routes are always accessible regardless of authentication status
+    if (App.PUBLIC_ROUTES.includes(pathname)) return true;
 
+    // Get the allowed routes for the current authentication status
     const routeAccess = Providers.ROUTE_ACCESS_MAP[status];
+
+    // Check if current pathname matches any allowed route (exact match or sub-route)
     return routeAccess.allowedRoutes.some((route) => {
-      // Exact match or starts with route pattern
       return pathname === route || pathname.startsWith(route + '/');
     });
   }, [isLoading, pathname, status]);
 
+  // Handle automatic redirects when user tries to access unauthorized routes
   useEffect(() => {
-    // Don't redirect while loading
+    // Wait for authentication status to be determined
     if (isLoading) return;
 
-    // Don't redirect if route is accessible
+    // No redirect needed if user has access to current route
     if (isRouteAccessible) return;
 
-    // Redirect to the default route for this auth status
+    // Redirect user to the appropriate default route for their authentication status
     const routeAccess = Providers.ROUTE_ACCESS_MAP[status];
     const redirectTo = routeAccess.redirectTo;
 
+    // Only redirect if we have a target and we're not already there
     if (redirectTo && pathname !== redirectTo) {
       router.push(redirectTo);
     }
   }, [status, pathname, router, isLoading, isRouteAccessible]);
 
-  // Show loading state while hydrating OR while checking route access
+  // Show loading spinner while determining authentication status or route access
   if (isLoading || !isRouteAccessible) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -58,6 +76,6 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
     );
   }
 
-  // Only render children when route access is confirmed
+  // Render the protected content only when user has confirmed access
   return <>{children}</>;
 }

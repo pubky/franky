@@ -3,109 +3,122 @@ import { render, screen } from '@testing-library/react';
 import { List } from './List';
 
 describe('List', () => {
-  it('renders as ul by default', () => {
-    render(
-      <List>
-        <li>Item 1</li>
-        <li>Item 2</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('list');
-    expect(list.tagName).toBe('UL');
-    expect(list).toHaveClass('list-disc');
-  });
-
-  it('renders as ol when specified', () => {
-    render(
-      <List as="ol">
-        <li>Item 1</li>
-        <li>Item 2</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('list');
-    expect(list.tagName).toBe('OL');
-  });
-
-  it('applies default variant classes', () => {
-    render(
-      <List>
-        <li>Item 1</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('list');
-    expect(list).toHaveClass('list-disc');
-  });
-
-  it('applies decimal variant classes', () => {
-    render(
-      <List variant="decimal">
-        <li>Item 1</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('list');
-    expect(list).toHaveClass('list-decimal');
-  });
-
-  it('applies none variant classes', () => {
-    render(
-      <List variant="none">
-        <li>Item 1</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('list');
-    expect(list).toHaveClass('list-none');
-  });
-
-  it('applies custom className', () => {
-    render(
-      <List className="custom-list-class">
-        <li>Item 1</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('list');
-    expect(list).toHaveClass('custom-list-class');
-  });
-
-  it('applies custom data-testid', () => {
-    render(
-      <List data-testid="custom-list">
-        <li>Item 1</li>
-      </List>,
-    );
-
-    const list = screen.getByTestId('custom-list');
+  it('renders with default props', () => {
+    render(<List>Default List</List>);
+    const list = screen.getByText('Default List');
     expect(list).toBeInTheDocument();
   });
+});
 
-  it('renders children correctly', () => {
-    render(
+describe('List - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(
+      <List>
+        <li>Item 1</li>
+        <li>Item 2</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ul element', () => {
+    const { container } = render(
+      <List as="ul">
+        <li>Unordered item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ol element', () => {
+    const { container } = render(
+      <List as="ol">
+        <li>Ordered item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for default variant', () => {
+    const { container } = render(
+      <List variant="default">
+        <li>Default item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for decimal variant', () => {
+    const { container } = render(
+      <List variant="decimal">
+        <li>Decimal item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for none variant', () => {
+    const { container } = render(
+      <List variant="none">
+        <li>None item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(
+      <List className="custom-list-class">
+        <li>Custom class item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom data-testid', () => {
+    const { container } = render(
+      <List data-testid="custom-list">
+        <li>Custom test ID item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with single item', () => {
+    const { container } = render(
+      <List>
+        <li>Single item</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with multiple items', () => {
+    const { container } = render(
       <List>
         <li>First item</li>
         <li>Second item</li>
         <li>Third item</li>
       </List>,
     );
-
-    expect(screen.getByText('First item')).toBeInTheDocument();
-    expect(screen.getByText('Second item')).toBeInTheDocument();
-    expect(screen.getByText('Third item')).toBeInTheDocument();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('passes additional props to the element', () => {
-    render(
-      <List id="test-list" aria-label="Test list">
-        <li>Item 1</li>
+  it('matches snapshot with id prop', () => {
+    const { container } = render(
+      <List id="test-list">
+        <li>Item with ID</li>
       </List>,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const list = screen.getByTestId('list');
-    expect(list).toHaveAttribute('id', 'test-list');
-    expect(list).toHaveAttribute('aria-label', 'Test list');
+  it('matches snapshot with aria-label prop', () => {
+    const { container } = render(
+      <List aria-label="Test list">
+        <li>Item with aria-label</li>
+      </List>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

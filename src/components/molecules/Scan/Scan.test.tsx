@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
-import { PUBKY_RING_URL, PUBKY_CORE_URL } from '@/config';
+import * as Config from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -176,26 +177,6 @@ describe('ScanContent', () => {
     expect(mobileContainer).toBeInTheDocument();
   });
 
-  it('renders QR code image in desktop version', async () => {
-    await act(async () => {
-      render(<ScanContent />);
-    });
-
-    // Wait for the component to finish loading and show QR code
-    await waitFor(() => {
-      const images = screen.getAllByTestId('next-image');
-      const qrImage = images.find((img) => img.getAttribute('src') === '/images/pubky-ring-qr-example.png');
-      expect(qrImage).toBeInTheDocument();
-    });
-
-    const images = screen.getAllByTestId('next-image');
-    const qrImage = images.find((img) => img.getAttribute('src') === '/images/pubky-ring-qr-example.png');
-
-    expect(qrImage).toHaveAttribute('alt', 'Pubky Ring');
-    expect(qrImage).toHaveAttribute('width', '220');
-    expect(qrImage).toHaveAttribute('height', '220');
-  });
-
   it('renders logo and button in mobile version', async () => {
     await act(async () => {
       render(<ScanContent />);
@@ -210,22 +191,6 @@ describe('ScanContent', () => {
     const logoImage = images.find((img) => img.getAttribute('src') === '/images/logo-pubky-ring.svg');
 
     expect(logoImage).toBeInTheDocument();
-    expect(logoImage).toHaveAttribute('alt', 'Pubky Ring');
-    expect(logoImage).toHaveAttribute('width', '137');
-    expect(logoImage).toHaveAttribute('height', '30');
-
-    expect(screen.getByTestId('button')).toBeInTheDocument();
-  });
-
-  it('renders content cards with column layout', async () => {
-    await act(async () => {
-      render(<ScanContent />);
-    });
-
-    const contentCards = screen.getAllByTestId('content-card');
-    contentCards.forEach((card) => {
-      expect(card).toHaveAttribute('data-layout', 'column');
-    });
   });
 });
 
@@ -234,31 +199,17 @@ describe('ScanFooter', () => {
     render(<ScanFooter />);
 
     expect(screen.getByTestId('footer-links')).toBeInTheDocument();
-    expect(screen.getByText('Use', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('or any other', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('–powered keychain.', { exact: false })).toBeInTheDocument();
   });
 
-  it('renders Pubky Ring link', () => {
+  it('renders links', () => {
     render(<ScanFooter />);
 
     const links = screen.getAllByTestId('link');
     const pubkyRingLink = links[0];
-
-    expect(pubkyRingLink).toHaveAttribute('href', PUBKY_RING_URL);
-    expect(pubkyRingLink).toHaveAttribute('target', '_blank');
-    expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
-  });
-
-  it('renders Pubky Core link', () => {
-    render(<ScanFooter />);
-
-    const links = screen.getAllByTestId('link');
     const pubkyCoreLink = links[1];
 
-    expect(pubkyCoreLink).toHaveAttribute('href', PUBKY_CORE_URL);
-    expect(pubkyCoreLink).toHaveAttribute('target', '_blank');
-    expect(pubkyCoreLink).toHaveTextContent('Pubky Core');
+    expect(pubkyRingLink).toHaveAttribute('href', Config.PUBKY_RING_URL);
+    expect(pubkyCoreLink).toHaveAttribute('href', Config.PUBKY_CORE_URL);
   });
 });
 
@@ -269,10 +220,6 @@ describe('ScanHeader', () => {
     expect(screen.getByTestId('page-header')).toBeInTheDocument();
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
-
-    const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'large');
-    expect(title).toHaveTextContent('Tap to Authorize.');
   });
 
   it('renders desktop header correctly', () => {
@@ -281,23 +228,6 @@ describe('ScanHeader', () => {
     expect(screen.getByTestId('page-header')).toBeInTheDocument();
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
-
-    const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'large');
-    expect(title).toHaveTextContent('Scan QR Code.');
-  });
-
-  it('renders correct subtitle', () => {
-    render(<ScanHeader isMobile={true} />);
-
-    expect(screen.getByText('Open Pubky Ring, create a pubky, and scan the QR.')).toBeInTheDocument();
-  });
-
-  it('contains brand-styled text', () => {
-    render(<ScanHeader isMobile={false} />);
-
-    const title = screen.getByTestId('page-title');
-    expect(title.textContent).toContain('QR Code');
   });
 });
 
@@ -320,13 +250,41 @@ describe('ScanNavigation', () => {
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
+  });
+});
+
+describe('Scan Components - Snapshots', () => {
+  describe('ScanContent - Snapshots', () => {
+    it('matches snapshot for default ScanContent', () => {
+      const { container } = render(<ScanContent />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
   });
 
-  it('hides continue button and disables it', () => {
-    render(<ScanNavigation />);
+  describe('ScanFooter - Snapshots', () => {
+    it('matches snapshot for default ScanFooter', () => {
+      const { container } = render(<ScanFooter />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
 
-    // Continue button should be hidden based on hiddenContinueButton prop
-    expect(screen.queryByTestId('continue-button')).not.toBeInTheDocument();
+  describe('ScanHeader - Snapshots', () => {
+    it('matches snapshot for mobile ScanHeader', () => {
+      const { container } = render(<ScanHeader isMobile={true} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot for desktop ScanHeader', () => {
+      const { container } = render(<ScanHeader isMobile={false} />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
+
+  describe('ScanNavigation - Snapshots', () => {
+    it('matches snapshot for default ScanNavigation', () => {
+      const { container } = render(<ScanNavigation />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
   });
 });

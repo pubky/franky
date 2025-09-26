@@ -8,6 +8,7 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
+import * as App from '@/app';
 
 export const CreateProfileForm = () => {
   const router = useRouter();
@@ -142,7 +143,7 @@ export const CreateProfileForm = () => {
     // setIsSaving(false);
     try {
       await Core.AuthController.authorizeAndBootstrap();
-      router.push('/feed');
+      router.push(App.FEED_ROUTES.FEED);
     } catch {
       setContinueText('Try again!');
       setIsSaving(false);

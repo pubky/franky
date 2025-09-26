@@ -19,7 +19,7 @@ const mockProfileStore = {
 
 vi.mock('@/core', () => ({
   useOnboardingStore: () => mockOnboardingStore,
-  useProfileStore: () => mockProfileStore,
+  useAuthStore: () => mockProfileStore,
 }));
 
 describe('useAuthStatus', () => {
