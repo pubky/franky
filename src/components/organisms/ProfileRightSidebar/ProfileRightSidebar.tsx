@@ -30,6 +30,7 @@ export const ProfileRightSidebar = ({ pubkySlug }: Templates.TProfilePageProps) 
     ];
     const randomIndex = Math.floor(Math.random() * colors.length);
     const color = colors[randomIndex];
+    console.log(color);
     return `bg-${color}-700 text-${color}-100 hover:bg-${color}-600`;
   };
 
@@ -54,12 +55,13 @@ export const ProfileRightSidebar = ({ pubkySlug }: Templates.TProfilePageProps) 
   };
 
   const renderUserTags = (tags: Core.NexusTag[]) => {
+    const tagColorClassName = getTagColor();
     return (
       <div className="space-y-3">
         {tags.map((tag) => (
           <div key={tag.label} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Atoms.Badge className={getTagColor()}>{tag.label}</Atoms.Badge>
+              <Atoms.Badge className={tagColorClassName}>{tag.label}</Atoms.Badge>
               <span className="text-sm text-muted-foreground">{tag.taggers_count}</span>
             </div>
             <Atoms.Button variant="ghost" size="sm">
