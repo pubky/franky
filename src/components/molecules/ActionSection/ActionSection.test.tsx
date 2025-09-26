@@ -27,15 +27,6 @@ vi.mock('@/components/ui', () => ({
 }));
 
 describe('ActionSection', () => {
-  it('renders with default props', () => {
-    render(<ActionSection />);
-
-    const containers = screen.getAllByTestId('container');
-    const mainContainer = containers[0]; // The outer container
-    expect(mainContainer).toBeInTheDocument();
-    expect(mainContainer).toHaveClass('gap-6');
-  });
-
   it('renders with actions', () => {
     const mockAction = vi.fn();
     const actions = [
@@ -53,55 +44,63 @@ describe('ActionSection', () => {
     expect(backButton).toBeInTheDocument();
     expect(backButton).toHaveTextContent('Back');
   });
+});
 
-  it('renders actions with default secondary variant', () => {
-    const mockAction = vi.fn();
-    const actions = [{ label: 'Default Action', onClick: mockAction }];
-
-    render(<ActionSection actions={actions} />);
-
-    const button = screen.getByTestId('button-secondary');
-    expect(button).toBeInTheDocument();
-    expect(button).toHaveTextContent('Default Action');
+describe('ActionSection - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<ActionSection />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies custom className', () => {
-    render(<ActionSection className="custom-actions" />);
-
-    const containers = screen.getAllByTestId('container');
-    const mainContainer = containers[0]; // The outer container
-    expect(mainContainer).toHaveClass('custom-actions');
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<ActionSection className="custom-actions" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders with custom children', () => {
-    render(
+  it('matches snapshot with children', () => {
+    const { container } = render(
       <ActionSection>
-        <div data-testid="custom-content">Custom content</div>
+        <div>Custom content</div>
       </ActionSection>,
     );
-
-    const customContent = screen.getByTestId('custom-content');
-    expect(customContent).toBeInTheDocument();
-    expect(customContent).toHaveTextContent('Custom content');
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders actions with icons', () => {
+  it('matches snapshot with single action', () => {
     const mockAction = vi.fn();
-    const actions = [
-      {
-        label: 'Action with Icon',
-        icon: <span data-testid="action-icon">🚀</span>,
-        onClick: mockAction,
-      },
-    ];
 
-    render(<ActionSection actions={actions} />);
+    const { container } = render(<ActionSection actions={[{ label: 'Single Action', onClick: mockAction }]} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const button = screen.getByTestId('button-secondary');
-    const icon = screen.getByTestId('action-icon');
+  it('matches snapshot with multiple actions', () => {
+    const mockAction = vi.fn();
 
-    expect(button).toBeInTheDocument();
-    expect(icon).toBeInTheDocument();
-    expect(button).toHaveTextContent('Action with Icon');
+    const { container } = render(
+      <ActionSection
+        actions={[
+          { label: 'Continue', onClick: mockAction, variant: 'default' as const },
+          { label: 'Back', onClick: mockAction, variant: 'outline' as const },
+        ]}
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with action containing icon', () => {
+    const mockAction = vi.fn();
+
+    const { container } = render(
+      <ActionSection
+        actions={[
+          {
+            label: 'Action with Icon',
+            icon: <span>🚀</span>,
+            onClick: mockAction,
+          },
+        ]}
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

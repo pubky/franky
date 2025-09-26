@@ -1,0 +1,93 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PopoverPublicKey - Snapshots > matches snapshot for PopoverPublicKey with custom className 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="hover:bg-white/10 custom-public-key-style"
+      data-size="icon"
+      data-testid="popover-button"
+      data-variant="ghost"
+    >
+      <svg
+        data-testid="circle-help-icon"
+      />
+    </button>
+  </div>
+  <div
+    class="w-[327px] p-6"
+    data-testid="popover-content"
+  >
+    <div
+      class="flex flex-col gap-2"
+      data-testid="container"
+    >
+      <h4
+        class="text-lg font-semibold text-foreground text-popover-foreground"
+        data-size="sm"
+        data-testid="heading-4"
+      >
+        Why not a normal user @handle?
+      </h4>
+      <p
+        class="text-lg font-semibold text-foreground text-sm text-muted-foreground font-medium leading-light"
+        data-size="sm"
+        data-testid="typography"
+      >
+        This user handle is a cryptographic public key, making it unique and platform-independent. No need for a centralized username registry.
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PopoverPublicKey - Snapshots > matches snapshot for default PopoverPublicKey 1`] = `
+<div
+  data-testid="popover"
+>
+  <div
+    data-as-child="true"
+    data-testid="popover-trigger"
+  >
+    <button
+      class="hover:bg-white/10"
+      data-size="icon"
+      data-testid="popover-button"
+      data-variant="ghost"
+    >
+      <svg
+        data-testid="circle-help-icon"
+      />
+    </button>
+  </div>
+  <div
+    class="w-[327px] p-6"
+    data-testid="popover-content"
+  >
+    <div
+      class="flex flex-col gap-2"
+      data-testid="container"
+    >
+      <h4
+        class="text-lg font-semibold text-foreground text-popover-foreground"
+        data-size="sm"
+        data-testid="heading-4"
+      >
+        Why not a normal user @handle?
+      </h4>
+      <p
+        class="text-lg font-semibold text-foreground text-sm text-muted-foreground font-medium leading-light"
+        data-size="sm"
+        data-testid="typography"
+      >
+        This user handle is a cryptographic public key, making it unique and platform-independent. No need for a centralized username registry.
+      </p>
+    </div>
+  </div>
+</div>
+`;
