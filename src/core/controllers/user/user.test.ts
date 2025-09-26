@@ -5,7 +5,7 @@ import { Identity } from '@/libs/identity/identity';
 
 // Create mock store objects that will hold the real generated keypair
 const mockOnboardingStore = { secretKey: '' };
-const mockProfileStore = { setCurrentUserPubky: vi.fn(), setAuthenticated: vi.fn() };
+const mockAuthStore = { setCurrentUserPubky: vi.fn(), setAuthenticated: vi.fn() };
 const mockHomeserver = {
   fetch: vi.fn().mockResolvedValue({ ok: true }),
   authenticateKeypair: vi.fn().mockResolvedValue({ ok: true }),
@@ -57,8 +57,8 @@ describe('UserController', () => {
     mockOnboardingStore.secretKey = testKeypair.secretKey;
 
     // Reset mock functions
-    mockProfileStore.setCurrentUserPubky.mockClear();
-    mockProfileStore.setAuthenticated.mockClear();
+    mockAuthStore.setCurrentUserPubky.mockClear();
+    mockAuthStore.setAuthenticated.mockClear();
     mockHomeserver.fetch.mockClear();
     mockHomeserver.authenticateKeypair.mockClear();
 
@@ -70,8 +70,8 @@ describe('UserController', () => {
         useOnboardingStore: {
           getState: vi.fn(() => mockOnboardingStore),
         },
-        useProfileStore: {
-          getState: vi.fn(() => mockProfileStore),
+        useAuthStore: {
+          getState: vi.fn(() => mockAuthStore),
         },
         HomeserverService: {
           getInstance: vi.fn(() => mockHomeserver),
@@ -123,8 +123,8 @@ describe('UserController', () => {
       expect(result.ok).toBe(true);
       expect(mockHomeserver.fetch).toHaveBeenCalled();
       expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
-      expect(mockProfileStore.setAuthenticated).toHaveBeenCalledWith(true);
-      expect(mockProfileStore.setCurrentUserPubky).toHaveBeenCalledWith(testKeypair.pubky);
+      expect(mockAuthStore.setAuthenticated).toHaveBeenCalledWith(true);
+      expect(mockAuthStore.setCurrentUserPubky).toHaveBeenCalledWith(testKeypair.pubky);
     });
 
     it('throws on missing secretKey', async () => {
@@ -132,8 +132,8 @@ describe('UserController', () => {
 
       const { UserController } = await import('./user');
       await expect(UserController.saveProfile(mockProfile, mockImage, testKeypair.pubky)).rejects.toThrow('secretKey');
-      expect(mockProfileStore.setAuthenticated).toHaveBeenCalledWith(false);
-      expect(mockProfileStore.setCurrentUserPubky).toHaveBeenCalledWith(null);
+      expect(mockAuthStore.setAuthenticated).toHaveBeenCalledWith(false);
+      expect(mockAuthStore.setCurrentUserPubky).toHaveBeenCalledWith(null);
     });
   });
 });
