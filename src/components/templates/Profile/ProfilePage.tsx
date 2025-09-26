@@ -11,9 +11,9 @@ export function ProfilePage({ pubkySlug }: TProfilePageProps) {
     <Atoms.Container size="container" className="w-full">
       <Organisms.ProfileHeader pubkySlug={pubkySlug} />
       <Atoms.Container size="container" className="w-full flex flex-row gap-6">
-        <Organisms.ProfileLeftSidebar />
+        <Organisms.ProfileLeftSidebar pubkySlug={pubkySlug} />
         <Organisms.ProfileContent pubkySlug={pubkySlug} />
-        <Organisms.ProfileRightSidebar />
+        <Organisms.ProfileRightSidebar pubkySlug={pubkySlug} />
       </Atoms.Container>
     </Atoms.Container>
   );
