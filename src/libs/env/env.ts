@@ -29,7 +29,8 @@ const envSchema = z.object({
     .default('false')
     .transform((val) => (typeof val === 'string' ? val === 'true' : val)),
 
-  NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app/v0'),
+  NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app'),
+  NEXT_PUBLIC_NEXUS_VERSION: z.string().default('v0'),
 
   NEXT_PUBLIC_SYNC_TTL: z
     .string()
@@ -90,6 +91,7 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
       NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
+      NEXT_PUBLIC_NEXUS_VERSION: process.env.NEXT_PUBLIC_NEXUS_VERSION,
       NEXT_PUBLIC_SYNC_TTL: process.env.NEXT_PUBLIC_SYNC_TTL,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,

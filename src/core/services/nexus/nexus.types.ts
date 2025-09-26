@@ -1,4 +1,4 @@
-import { type Pubky, type Timestamp, type PostModelPK, type TagModel } from '@/core';
+import { type Pubky, type Timestamp, type TagModel } from '@/core';
 
 export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
 
@@ -57,8 +57,8 @@ export interface NexusUser {
 
 // Post types
 export interface NexusPostDetails {
+  id: string;
   content: string;
-  id: PostModelPK;
   indexed_at: number;
   author: Pubky;
   kind: NexusPostKind;

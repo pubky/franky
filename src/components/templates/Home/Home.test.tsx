@@ -4,13 +4,13 @@ import { Home } from './Home';
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  ImageBackground: ({ className, image }: { className?: string; image: string }) => (
-    <div data-testid="image-background" className={className} data-image={image}>
+  ImageBackground: ({ className, image, mobileImage }: { className?: string; image: string; mobileImage?: string }) => (
+    <div data-testid="image-background" className={className} data-image={image} data-mobile-image={mobileImage}>
       Image Background
     </div>
   ),
-  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
-    <div data-testid="container" className={`container ${size || ''}`}>
+  Container: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <div data-testid="container" className={`container ${size || ''} ${className || ''}`}>
       {children}
     </div>
   ),
@@ -18,12 +18,15 @@ vi.mock('@/atoms', () => ({
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
-  PageWrapper: ({ children }: { children: React.ReactNode }) => <div data-testid="page-wrapper">{children}</div>,
-  HomePageHeading: ({ title }: { title: string }) => <div data-testid="home-page-heading">{title}</div>,
+  PageContainer: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <div data-testid="page-container" className={`page-container ${size || ''} ${className || ''}`}>
+      {children}
+    </div>
+  ),
+  HomePageHeading: () => <div data-testid="home-page-heading">Home Page Heading</div>,
   HomeSectionTitle: () => <div data-testid="home-section-title">Section Title</div>,
   HomeActions: () => <div data-testid="home-actions">Actions</div>,
   HomeFooter: () => <div data-testid="home-footer">Footer</div>,
-  PageContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="page-container">{children}</div>,
 }));
 
 describe('Home', () => {
@@ -32,6 +35,7 @@ describe('Home', () => {
 
     expect(screen.getByTestId('image-background')).toBeInTheDocument();
     expect(screen.getByTestId('container')).toBeInTheDocument();
+    expect(screen.getByTestId('page-container')).toBeInTheDocument();
     expect(screen.getByTestId('home-page-heading')).toBeInTheDocument();
     expect(screen.getByTestId('home-section-title')).toBeInTheDocument();
     expect(screen.getByTestId('home-actions')).toBeInTheDocument();
@@ -43,16 +47,24 @@ describe('Home', () => {
 
     const imageBackground = screen.getByTestId('image-background');
     expect(imageBackground).toHaveAttribute('data-image', '/images/bg-home.svg');
-    expect(imageBackground.className).toContain('opacity-10 lg:opacity-100');
+    expect(imageBackground).toHaveAttribute('data-mobile-image', '/images/bg-home-mobile.svg');
   });
 
-  it('renders heading with correct title', () => {
+  it('renders container with correct props', () => {
     render(<Home />);
 
-    expect(screen.getByTestId('home-page-heading')).toBeInTheDocument();
+    const container = screen.getByTestId('container');
+    expect(container).toHaveClass('container container px-6');
   });
 
-  it('renders components in correct order within page wrapper', () => {
+  it('renders page container with correct props', () => {
+    render(<Home />);
+
+    const pageContainer = screen.getByTestId('page-container');
+    expect(pageContainer).toHaveClass('page-container narrow items-start mx-0 flex flex-col gap-6');
+  });
+
+  it('renders components in correct order within page container', () => {
     render(<Home />);
 
     const pageContainer = screen.getByTestId('page-container');
@@ -65,7 +77,7 @@ describe('Home', () => {
     expect(children[3]).toHaveAttribute('data-testid', 'home-footer');
   });
 
-  it('renders image background outside of page wrapper', () => {
+  it('renders image background outside of page container', () => {
     render(<Home />);
 
     // Check that image background is a direct child of the fragment (container)

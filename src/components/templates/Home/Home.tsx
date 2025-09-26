@@ -4,7 +4,7 @@ import * as Molecules from '@/molecules';
 export function Home() {
   return (
     <>
-      <Atoms.ImageBackground className="opacity-10 lg:opacity-100" image="/images/bg-home.svg" />
+      <Atoms.ImageBackground image="/images/bg-home.svg" mobileImage="/images/bg-home-mobile.svg" />
       <Atoms.Container size="container" className="px-6">
         <Molecules.PageContainer size="narrow" className="items-start mx-0 flex flex-col gap-6">
           <Molecules.HomePageHeading />

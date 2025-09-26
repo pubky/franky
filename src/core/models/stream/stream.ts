@@ -8,7 +8,7 @@ export class StreamModel implements Core.StreamModelSchema {
   // Stream ID pattern: colon-separated segments (e.g., "timeframe:all:all", "timeframe:following:all", "timeframe:all:short:pubky_dev")
   // Can have 1 or more segments separated by colons
   id: string;
-  posts: Core.PostModelPK[];
+  posts: string[];
   name: string | null;
 
   constructor(stream: Core.StreamModelSchema) {
@@ -47,7 +47,7 @@ export class StreamModel implements Core.StreamModelSchema {
   }
 
   // Instance methods
-  addPosts(postIds: Core.PostModelPK[]): void {
+  addPosts(postIds: string[]): void {
     // Filter out posts that already exist and add new ones to beginning
     const newPosts = postIds.filter((postId) => !this.posts.includes(postId));
     this.posts.unshift(...newPosts); // Add to beginning for chronological order
@@ -66,11 +66,7 @@ export class StreamModel implements Core.StreamModelSchema {
     }
   }
 
-  static async create(
-    id: string,
-    name: string | null = null,
-    posts: Core.PostModelPK[] = [],
-  ): Promise<Core.StreamModel> {
+  static async create(id: string, name: string | null = null, posts: string[] = []): Promise<Core.StreamModel> {
     try {
       const streamData = Core.createDefaultStream(id, name, posts);
       const stream = new Core.StreamModel(streamData);
