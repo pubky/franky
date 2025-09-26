@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import { ScanContent, ScanFooter, ScanHeader, ScanNavigation } from './Scan';
-import { PUBKY_RING_URL, PUBKY_CORE_URL } from '@/config';
+import * as Config from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -245,7 +246,7 @@ describe('ScanFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyRingLink = links[0];
 
-    expect(pubkyRingLink).toHaveAttribute('href', PUBKY_RING_URL);
+    expect(pubkyRingLink).toHaveAttribute('href', Config.PUBKY_RING_URL);
     expect(pubkyRingLink).toHaveAttribute('target', '_blank');
     expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
   });
@@ -256,7 +257,7 @@ describe('ScanFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyCoreLink = links[1];
 
-    expect(pubkyCoreLink).toHaveAttribute('href', PUBKY_CORE_URL);
+    expect(pubkyCoreLink).toHaveAttribute('href', Config.PUBKY_CORE_URL);
     expect(pubkyCoreLink).toHaveAttribute('target', '_blank');
     expect(pubkyCoreLink).toHaveTextContent('Pubky Core');
   });
@@ -320,7 +321,7 @@ describe('ScanNavigation', () => {
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
   });
 
   it('hides continue button and disables it', () => {

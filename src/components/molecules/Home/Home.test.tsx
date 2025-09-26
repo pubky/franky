@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { HomeActions, HomeFooter, HomeSectionTitle, HomePageHeading } from './Home';
-import { PUBKY_CORE_URL } from '@/config';
+import * as Config from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -73,7 +74,7 @@ describe('HomeActions', () => {
     const createAccountButton = screen.getByTestId('create-account-button');
     fireEvent.click(createAccountButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
   });
 
   it('handles sign in button click', () => {
@@ -82,7 +83,7 @@ describe('HomeActions', () => {
     const signInButton = screen.getByTestId('sign-in-button');
     fireEvent.click(signInButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.SIGN_IN);
   });
 });
 
@@ -109,7 +110,7 @@ describe('HomeFooter', () => {
     render(<HomeFooter />);
 
     const link = screen.getByTestId('link');
-    expect(link).toHaveAttribute('href', PUBKY_CORE_URL);
+    expect(link).toHaveAttribute('href', Config.PUBKY_CORE_URL);
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveTextContent('Pubky Core');
   });

@@ -7,6 +7,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import * as App from '@/app';
 
 export const InstallCard = () => {
   return (
@@ -68,11 +69,11 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
   const router = useRouter();
 
   const handleCreate = () => {
-    router.push('/onboarding/pubky');
+    router.push(App.ONBOARDING_ROUTES.PUBKY);
   };
 
   const handleContinue = () => {
-    router.push('/onboarding/scan');
+    router.push(App.ONBOARDING_ROUTES.SCAN);
   };
 
   return (

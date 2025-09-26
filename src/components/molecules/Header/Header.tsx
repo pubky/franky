@@ -5,6 +5,7 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 import { useRouter } from 'next/navigation';
+import * as App from '@/app';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -54,7 +55,7 @@ export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButton
   const router = useRouter();
 
   const handleSignIn = () => {
-    router.push('/sign-in');
+    router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
   return (
@@ -88,7 +89,7 @@ export function HeaderNavigationButtons({ image, counter = 0 }: { image?: string
 
   return (
     <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
-      <Atoms.Link href="/feed">
+      <Atoms.Link href={App.FEED_ROUTES.FEED}>
         <Atoms.Button className="w-12 h-12" variant="secondary" size="icon">
           <Libs.Home className="size-6" />
         </Atoms.Button>

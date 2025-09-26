@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PublicKeyHeader, PublicKeyNavigation } from './Pubkey';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -92,7 +93,7 @@ describe('PublicKeyNavigation', () => {
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/install');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.INSTALL);
   });
 
   it('handles continue button click', () => {
@@ -101,7 +102,7 @@ describe('PublicKeyNavigation', () => {
     const continueButton = screen.getByTestId('continue-button');
     fireEvent.click(continueButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/backup');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.BACKUP);
   });
 
   it('renders button text correctly', () => {
