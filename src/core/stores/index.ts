@@ -1,3 +1,3 @@
 export * from './onboarding';
-export * from './profile';
+export * from './auth';
 export * from './stores.types';

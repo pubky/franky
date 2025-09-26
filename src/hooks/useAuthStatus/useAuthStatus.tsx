@@ -6,7 +6,7 @@ import * as Hooks from '@/hooks';
 export function useAuthStatus(): Hooks.AuthStatusResult {
   // Get state from stores
   const onboardingStore = Core.useOnboardingStore();
-  const profileStore = Core.useProfileStore();
+  const authStore = Core.useAuthStore();
 
   const authStatusResult = useMemo((): Hooks.AuthStatusResult => {
     // Check if stores are still hydrating
@@ -16,13 +16,13 @@ export function useAuthStatus(): Hooks.AuthStatusResult {
     const hasKeypair = Boolean(onboardingStore.pubky && onboardingStore.secretKey);
 
     // Check if user has profile data
-    const hasProfile = profileStore.isAuthenticated;
+    const hasProfile = authStore.isAuthenticated;
 
     // Determine the authentication status
     let status: Hooks.AuthStatus;
 
     // TODO: add validation here to check when the user has a session but no profile
-    if (!profileStore.isAuthenticated) {
+    if (!authStore.isAuthenticated) {
       status = Hooks.AuthStatus.UNAUTHENTICATED;
     } else {
       status = Hooks.AuthStatus.AUTHENTICATED;
@@ -35,7 +35,7 @@ export function useAuthStatus(): Hooks.AuthStatusResult {
       hasProfile,
       isFullyAuthenticated: status === Hooks.AuthStatus.AUTHENTICATED,
     };
-  }, [onboardingStore.hasHydrated, onboardingStore.pubky, onboardingStore.secretKey, profileStore.isAuthenticated]);
+  }, [onboardingStore.hasHydrated, onboardingStore.pubky, onboardingStore.secretKey, authStore.isAuthenticated]);
 
   return authStatusResult;
 }
