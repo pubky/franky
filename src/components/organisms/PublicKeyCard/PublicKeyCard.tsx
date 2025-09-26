@@ -28,6 +28,38 @@ export function PublicKeyCard() {
     copyToClipboard(pubky);
   };
 
+  const handleShare = async () => {
+    try {
+      await Libs.shareWithFallback(
+        {
+          title: 'My Pubky',
+          text: `Here is my Pubky:\n${pubky}`,
+        },
+        {
+          onFallback: () => copyToClipboard(pubky),
+          onSuccess: (result) => {
+            if (result.method === 'fallback') {
+              Molecules.toast({
+                title: 'Pubky copied',
+                description: 'Paste it into your favorite app to share it.',
+              });
+            }
+          },
+          onError: () => {
+            Molecules.toast({
+              title: 'Share failed',
+              description: 'Unable to share right now. Please try again.',
+            });
+          },
+        },
+      );
+    } catch (error) {
+      // Error handling is done in the onError callback
+      // This catch block is here for any unexpected errors
+      console.error('Unexpected share error:', error);
+    }
+  };
+
   return (
     <Molecules.ContentCard
       image={{
@@ -49,6 +81,12 @@ export function PublicKeyCard() {
             label: 'Copy to clipboard',
             icon: <Libs.Copy className="mr-2 h-4 w-4" />,
             onClick: handleCopyToClipboard,
+            variant: 'secondary',
+          },
+          {
+            label: 'Share',
+            icon: <Libs.Share className="mr-2 h-4 w-4" />,
+            onClick: handleShare,
             variant: 'secondary',
           },
         ]}
