@@ -20,7 +20,7 @@ vi.mock('@/components/ui', () => ({
     className?: string;
     onClick?: () => void;
   }) => (
-    <button data-testid={`button-${variant || 'default'}`} className={className} onClick={onClick}>
+    <button data-slot="button" data-variant={variant} className={className} onClick={onClick}>
       {children}
     </button>
   ),
@@ -36,8 +36,8 @@ describe('ActionSection', () => {
 
     render(<ActionSection actions={actions} />);
 
-    const continueButton = screen.getByTestId('button-default');
-    const backButton = screen.getByTestId('button-outline');
+    const continueButton = screen.getByRole('button', { name: 'Continue' });
+    const backButton = screen.getByRole('button', { name: 'Back' });
 
     expect(continueButton).toBeInTheDocument();
     expect(continueButton).toHaveTextContent('Continue');

@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Button } from './Button';
@@ -8,6 +9,9 @@ describe('Button', () => {
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
     expect(button).toHaveClass('bg-brand/20', 'text-brand');
+    expect(button).toHaveAttribute('data-slot', 'button');
+    // data-variant is only set when variant prop is explicitly provided
+    expect(button).not.toHaveAttribute('data-variant');
   });
 
   it('renders different variants correctly', () => {
@@ -17,7 +21,7 @@ describe('Button', () => {
 
     rerender(<Button variant="outline">Outline</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('border', 'bg-background');
+    expect(button).toHaveClass('bg-background');
 
     rerender(<Button variant="ghost">Ghost</Button>);
     button = screen.getByRole('button');
@@ -41,7 +45,7 @@ describe('Button', () => {
 
     rerender(<Button variant="dark-outline">Dark Outline</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('border', 'bg-transparent');
+    expect(button).toHaveClass('bg-transparent');
   });
 
   it('renders different sizes correctly', () => {
@@ -82,6 +86,7 @@ describe('Button', () => {
     const link = screen.getByRole('link', { name: /link button/i });
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute('href', '/test');
+    expect(link).toHaveAttribute('data-slot', 'button');
   });
 });
 
@@ -155,30 +160,22 @@ describe('Button - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('has correct test id for different variants', () => {
-    const { rerender } = render(<Button variant="ghost">Ghost</Button>);
-    let button = screen.getByTestId('button-ghost');
-    expect(button).toBeInTheDocument();
+  it('forwards ref correctly', () => {
+    const ref = React.createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>Button</Button>);
+    expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
 
-    rerender(<Button variant="outline">Outline</Button>);
-    button = screen.getByTestId('button-outline');
-    expect(button).toBeInTheDocument();
-
-    rerender(<Button variant="dark">Dark</Button>);
-    button = screen.getByTestId('button-dark');
-    expect(button).toBeInTheDocument();
-
-    rerender(<Button variant="dark-outline">Dark Outline</Button>);
-    button = screen.getByTestId('button-dark-outline');
-    expect(button).toBeInTheDocument();
-
-    rerender(
-      <Button variant="ghost" size="icon">
-        Ghost Icon
+  it('forwards ref correctly with asChild', () => {
+    const ref = React.createRef<HTMLAnchorElement>();
+    render(
+      <Button asChild>
+        <a ref={ref} href="/test">
+          Link Button
+        </a>
       </Button>,
     );
-    button = screen.getByTestId('popover-button');
-    expect(button).toBeInTheDocument();
+    expect(ref.current).toBeInstanceOf(HTMLAnchorElement);
   });
 
   it('has correct data attributes', () => {
@@ -191,5 +188,78 @@ describe('Button - Snapshots', () => {
     expect(button).toHaveAttribute('data-slot', 'button');
     expect(button).toHaveAttribute('data-variant', 'secondary');
     expect(button).toHaveAttribute('data-size', 'lg');
+  });
+
+  it('supports accessibility attributes', () => {
+    render(
+      <Button aria-label="Close dialog" role="button">
+        ×
+      </Button>,
+    );
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Close dialog');
+  });
+
+  it('handles focus states correctly', () => {
+    render(<Button tabIndex={0}>Focusable Button</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('tabIndex', '0');
+    expect(button).toHaveClass('focus-visible:border-ring', 'focus-visible:ring-ring/50');
+  });
+
+  it('handles hover states correctly', () => {
+    render(<Button variant="default">Hover Button</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('hover:!bg-brand/30');
+  });
+
+  it('handles invalid states correctly', () => {
+    render(<Button aria-invalid="true">Invalid Button</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveAttribute('aria-invalid', 'true');
+    expect(button).toHaveClass('aria-invalid:ring-destructive/20', 'aria-invalid:border-destructive');
+  });
+
+  it('renders with icons correctly', () => {
+    render(
+      <Button>
+        <span>🎉</span>
+        <span>New Feature</span>
+      </Button>,
+    );
+    expect(screen.getByText('🎉')).toBeInTheDocument();
+    expect(screen.getByText('New Feature')).toBeInTheDocument();
+  });
+
+  it('applies all base classes correctly', () => {
+    render(<Button>Base Classes Test</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass(
+      'inline-flex',
+      'items-center',
+      'justify-center',
+      'whitespace-nowrap',
+      'text-sm',
+      'transition-all',
+      'disabled:pointer-events-none',
+      'disabled:opacity-50',
+      'shrink-0',
+      'outline-none',
+      'font-semibold',
+      'cursor-pointer',
+      'rounded-full',
+      'border',
+      'shadow-xs',
+    );
+  });
+
+  it('forwards additional props', () => {
+    render(
+      <Button data-testid="button" data-custom="test">
+        Test
+      </Button>,
+    );
+    const button = screen.getByTestId('button');
+    expect(button).toHaveAttribute('data-custom', 'test');
   });
 });
