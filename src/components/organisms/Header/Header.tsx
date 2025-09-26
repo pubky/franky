@@ -18,7 +18,7 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
 };
 
 export function Header() {
-  const { isAuthenticated } = Core.useProfileStore();
+  const { isAuthenticated } = Core.useAuthStore();
   const pathname = usePathname();
   const [currentStep, setCurrentStep] = useState(1);
   const [currentTitle, setCurrentTitle] = useState('');
