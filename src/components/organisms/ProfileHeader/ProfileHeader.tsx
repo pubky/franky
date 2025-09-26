@@ -5,14 +5,14 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
-import { type TProfilePageProps } from '@/templates';
+import * as Templates from '@/templates';
 
-export const ProfileHeader = ({ pubkyParam }: TProfilePageProps) => {
+export const ProfileHeader = ({ pubkySlug }: Templates.TProfilePageProps) => {
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const { currentUserPubky } = Core.useProfileStore();
-  const isOwnProfile = currentUserPubky === pubkyParam;
+  const isOwnProfile = currentUserPubky === pubkySlug;
 
-  const userDetails = useLiveQuery(() => Core.db.users.get(pubkyParam).then((user) => user?.details), [pubkyParam]);
+  const userDetails = useLiveQuery(() => Core.db.user_details.get(pubkySlug).then((user) => user), [pubkySlug]);
 
   if (userDetails === undefined) {
     return (
@@ -38,10 +38,10 @@ export const ProfileHeader = ({ pubkyParam }: TProfilePageProps) => {
     <Atoms.Button
       variant="secondary"
       className="rounded-full gap-2 px-4 py-2 text-sm"
-      onClick={() => copyToClipboard(pubkyParam)}
+      onClick={() => copyToClipboard(pubkySlug)}
     >
       <Libs.Key className="w-4 h-4" />
-      {Libs.formatPublicKey({ key: pubkyParam, length: 10 })}
+      {Libs.formatPublicKey({ key: pubkySlug, length: 10 })}
     </Atoms.Button>
   );
 
@@ -121,7 +121,7 @@ export const ProfileHeader = ({ pubkyParam }: TProfilePageProps) => {
       <Atoms.Container className="flex flex-row items-center gap-4 w-auto m-0">
         <Atoms.Avatar className="w-40 h-40 md:w-40 md:h-40">
           <Atoms.AvatarImage
-            src={Libs.buildNexusStaticUrl(Core.FILES_API.GET_AVATAR(pubkyParam))}
+            src={Libs.buildNexusStaticUrl(Core.FILES_API.GET_AVATAR(pubkySlug))}
             alt={`${name}'s avatar`}
             loading="lazy"
           />
@@ -138,7 +138,7 @@ export const ProfileHeader = ({ pubkyParam }: TProfilePageProps) => {
 
         {/* Action Buttons Section */}
         <Atoms.Container className="flex flex-row items-center justify-between gap-4 w-auto m-0">
-          {pubkyParam && renderUserPublicKey()}
+          {pubkySlug && renderUserPublicKey()}
           {isOwnProfile && renderActionButtons()}
           {status && renderStatusBadge(status)}
         </Atoms.Container>
