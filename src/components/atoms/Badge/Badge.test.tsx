@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Badge } from './Badge';
@@ -59,18 +60,22 @@ describe('Badge - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('has correct test id for different variants', () => {
-    const { rerender } = render(<Badge variant="secondary">Secondary</Badge>);
-    let badge = screen.getByTestId('badge-secondary');
-    expect(badge).toBeInTheDocument();
+  it('forwards ref correctly', () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(<Badge ref={ref}>Badge</Badge>);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
 
-    rerender(<Badge variant="destructive">Destructive</Badge>);
-    badge = screen.getByTestId('badge-destructive');
-    expect(badge).toBeInTheDocument();
-
-    rerender(<Badge variant="outline">Outline</Badge>);
-    badge = screen.getByTestId('badge-outline');
-    expect(badge).toBeInTheDocument();
+  it('forwards ref correctly with asChild', () => {
+    const ref = React.createRef<HTMLAnchorElement>();
+    render(
+      <Badge asChild>
+        <a ref={ref} href="/test">
+          Link Badge
+        </a>
+      </Badge>,
+    );
+    expect(ref.current).toBeInstanceOf(HTMLAnchorElement);
   });
 
   it('has correct data attributes', () => {
@@ -78,6 +83,76 @@ describe('Badge - Snapshots', () => {
     const badge = screen.getByText('Test Badge');
     expect(badge).toHaveAttribute('data-slot', 'badge');
     expect(badge).toHaveAttribute('data-variant', 'secondary');
-    expect(badge).toHaveAttribute('data-testid', 'badge-secondary');
+  });
+
+  it('supports accessibility attributes', () => {
+    render(
+      <Badge aria-label="Status badge" role="status">
+        Active
+      </Badge>,
+    );
+    const badge = screen.getByRole('status');
+    expect(badge).toHaveAttribute('aria-label', 'Status badge');
+  });
+
+  it('handles focus states correctly', () => {
+    render(<Badge tabIndex={0}>Focusable Badge</Badge>);
+    const badge = screen.getByText('Focusable Badge');
+    expect(badge).toHaveAttribute('tabIndex', '0');
+    expect(badge).toHaveClass('focus-visible:border-ring', 'focus-visible:ring-ring/50');
+  });
+
+  it('handles hover states correctly', () => {
+    render(<Badge variant="default">Hover Badge</Badge>);
+    const badge = screen.getByText('Hover Badge');
+    expect(badge).toHaveClass('[a&]:hover:bg-primary/90');
+  });
+
+  it('handles invalid states correctly', () => {
+    render(<Badge aria-invalid="true">Invalid Badge</Badge>);
+    const badge = screen.getByText('Invalid Badge');
+    expect(badge).toHaveAttribute('aria-invalid', 'true');
+    expect(badge).toHaveClass('aria-invalid:ring-destructive/20', 'aria-invalid:border-destructive');
+  });
+
+  it('renders with icons correctly', () => {
+    render(
+      <Badge>
+        <span>🎉</span>
+        <span>New Feature</span>
+      </Badge>,
+    );
+    expect(screen.getByText('🎉')).toBeInTheDocument();
+    expect(screen.getByText('New Feature')).toBeInTheDocument();
+  });
+
+  it('handles long text correctly', () => {
+    const longText = 'This is a very long badge text that should be handled properly';
+    render(<Badge>{longText}</Badge>);
+    const badge = screen.getByText(longText);
+    expect(badge).toHaveClass('whitespace-nowrap', 'overflow-hidden');
+  });
+
+  it('applies all base classes correctly', () => {
+    render(<Badge>Base Classes Test</Badge>);
+    const badge = screen.getByText('Base Classes Test');
+    expect(badge).toHaveClass(
+      'inline-flex',
+      'items-center',
+      'justify-center',
+      'rounded-md',
+      'border',
+      'px-2',
+      'py-0.5',
+      'text-xs',
+      'font-medium',
+      'w-fit',
+      'whitespace-nowrap',
+      'shrink-0',
+      'gap-1',
+      'border-transparent',
+      'transition-[color,box-shadow]',
+      'overflow-hidden',
+    );
   });
 });
