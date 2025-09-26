@@ -6,11 +6,13 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Templates from '@/templates';
+import { useRouter } from 'next/navigation';
 
 export const ProfileHeader = ({ pubkySlug }: Templates.TProfilePageProps) => {
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const { currentUserPubky } = Core.useProfileStore();
   const isOwnProfile = currentUserPubky === pubkySlug;
+  const router = useRouter();
 
   const userDetails = useLiveQuery(() => Core.db.user_details.get(pubkySlug).then((user) => user), [pubkySlug]);
 
@@ -61,8 +63,7 @@ export const ProfileHeader = ({ pubkySlug }: Templates.TProfilePageProps) => {
         variant="outline"
         className="rounded-full gap-2 px-4 py-2"
         onClick={() => {
-          // TODO: Implement sign out functionality
-          console.log('Sign out clicked');
+          router.push('/logout');
         }}
       >
         <Libs.LogOut className="w-4 h-4" />
@@ -95,25 +96,87 @@ export const ProfileHeader = ({ pubkySlug }: Templates.TProfilePageProps) => {
     </Atoms.Container>
   );
 
-  const renderStatusBadge = (status: string) => (
-    <Atoms.Container className="flex items-center gap-2 w-auto m-0">
-      <Atoms.Badge
-        variant="secondary"
-        className={Libs.cn(
-          'rounded-full gap-2 px-3 py-1',
-          status.toLowerCase() === 'away' && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-        )}
-      >
-        <div
-          className={Libs.cn(
-            'w-2 h-2 rounded-full',
-            status.toLowerCase() === 'away' ? 'bg-yellow-500' : 'bg-green-500',
-          )}
-        />
-        {status}
-      </Atoms.Badge>
-    </Atoms.Container>
-  );
+  const getCurrentStatusOption = (status: string) => {
+    return (
+      Core.USER_STATUS_LIST.find((option) => option.label.toLowerCase() === status.toLowerCase()) ||
+      Core.USER_STATUS_LIST[0]
+    );
+  };
+
+  const handleStatusChange = async (newStatus: string) => {
+    try {
+      // Update the local database immediately for optimistic UI updates
+      await Core.db.user_details.update(pubkySlug, { status: newStatus });
+      console.log('Status updated to:', newStatus);
+
+      // TODO: Sync status change to homeserver
+      // This should be implemented as part of the UserController or a new method
+      // that handles partial profile updates
+    } catch (error) {
+      console.error('Failed to update status:', error);
+      // TODO: Show error toast to user
+    }
+  };
+
+  const renderStatusDropdown = (status: string) => {
+    const currentStatus = getCurrentStatusOption(status);
+
+    return (
+      <Atoms.Container className="flex items-center gap-2 w-auto m-0">
+        <Atoms.Popover>
+          <Atoms.PopoverTrigger asChild>
+            <Atoms.Button
+              variant="secondary"
+              className={Libs.cn(
+                'rounded-full gap-2 px-3 py-1 hover:bg-muted/80 transition-colors',
+                status.toLowerCase() === Core.UserStatus.AWAY &&
+                  'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+              )}
+            >
+              <span className="text-lg">{currentStatus.emoji}</span>
+              {currentStatus.label}
+              <Libs.ChevronDown className="w-3 h-3 ml-1" />
+            </Atoms.Button>
+          </Atoms.PopoverTrigger>
+          <Atoms.PopoverContent className="w-64 p-2" align="start">
+            <div className="space-y-1">
+              {Core.USER_STATUS_LIST.map((option) => (
+                <Atoms.Button
+                  key={option.id}
+                  variant="ghost"
+                  className="w-full justify-start gap-3 px-3 py-2 h-auto text-left hover:bg-muted/50"
+                  onClick={() => handleStatusChange(option.label)}
+                >
+                  <span className="text-lg">{option.emoji}</span>
+                  <span className="flex-1">{option.label}</span>
+                  {currentStatus.id === option.id && <Libs.Check className="w-4 h-4 text-primary" />}
+                </Atoms.Button>
+              ))}
+
+              <div className="border-t pt-2 mt-2">
+                <div className="text-sm text-muted-foreground px-3 py-1 uppercase tracking-wide font-medium">
+                  Custom Status
+                </div>
+                <Atoms.Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 px-3 py-2 h-auto text-left hover:bg-muted/50 border-2 border-dashed border-muted-foreground/20"
+                  onClick={() => {
+                    // TODO: Implement custom status functionality
+                    console.log('Add custom status clicked');
+                  }}
+                >
+                  <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center">
+                    <Libs.Smile className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                  <span className="flex-1 text-muted-foreground">Add status</span>
+                </Atoms.Button>
+              </div>
+            </div>
+          </Atoms.PopoverContent>
+        </Atoms.Popover>
+      </Atoms.Container>
+    );
+  };
 
   return (
     <Atoms.Container className={Libs.cn('flex flex-row gap-6 p-6 bg-background')}>
@@ -140,7 +203,7 @@ export const ProfileHeader = ({ pubkySlug }: Templates.TProfilePageProps) => {
         <Atoms.Container className="flex flex-row items-center justify-between gap-4 w-auto m-0">
           {pubkySlug && renderUserPublicKey()}
           {isOwnProfile && renderActionButtons()}
-          {status && renderStatusBadge(status)}
+          {status && renderStatusDropdown(status)}
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>
