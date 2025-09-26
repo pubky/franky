@@ -2,8 +2,8 @@ import * as Templates from '@/templates';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export function ProfileContent({ pubkyParam }: Templates.TProfilePageProps) {
-  console.log('pubkyParam', pubkyParam);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function ProfileContent({ pubkySlug }: Templates.TProfilePageProps) {
   return (
     <main className="flex-1 min-w-0">
       <Atoms.Container className="bg-background rounded-lg p-6">
