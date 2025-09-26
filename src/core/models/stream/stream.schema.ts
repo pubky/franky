@@ -1,8 +1,6 @@
-import * as Core from '@/core';
-
 export interface StreamModelSchema {
   id: string;
-  posts: Core.PostModelPK[];
+  posts: string[];
   name: string | null;
 }
 

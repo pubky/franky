@@ -19,9 +19,9 @@ describe('NexusService', () => {
           indexed_at: Date.now(),
         },
         counts: {
-          tagged: 0,
-          tags: 0,
-          unique_tags: 0,
+          tagged: 2,
+          tags: 2,
+          unique_tags: 2,
           posts: 1,
           replies: 0,
           following: 0,
@@ -29,7 +29,20 @@ describe('NexusService', () => {
           friends: 0,
           bookmarks: 0,
         },
-        tags: [],
+        tags: [
+          {
+            label: 'developer',
+            taggers: ['tagger-user-1', 'tagger-user-2'],
+            taggers_count: 2,
+            relationship: false,
+          },
+          {
+            label: 'p2p',
+            taggers: ['tagger-user-3'],
+            taggers_count: 1,
+            relationship: false,
+          },
+        ],
         relationship: {
           following: false,
           followed_by: false,
@@ -43,15 +56,15 @@ describe('NexusService', () => {
           id: testPostId,
           content: 'Bootstrap post content',
           kind: 'short',
-          parent: null,
-          root: null,
+          uri: `https://pubky.app/${testUserId}/pub/pubky.app/posts/${testPostId}`,
           author: testUserId,
           indexed_at: Date.now(),
-          attachments: [],
+          attachments: null,
         },
         counts: {
           replies: 0,
-          tags: 0,
+          tags: 2,
+          unique_tags: 2,
           reposts: 0,
         },
         author: {
@@ -65,9 +78,9 @@ describe('NexusService', () => {
             indexed_at: Date.now(),
           },
           counts: {
-            tagged: 0,
-            tags: 0,
-            unique_tags: 0,
+            tagged: 2,
+            tags: 2,
+            unique_tags: 2,
             posts: 1,
             replies: 0,
             following: 0,
@@ -75,17 +88,44 @@ describe('NexusService', () => {
             friends: 0,
             bookmarks: 0,
           },
-          tags: [],
+          tags: [
+            {
+              label: 'developer',
+              taggers: ['tagger-user-1', 'tagger-user-2'],
+              taggers_count: 2,
+              relationship: false,
+            },
+            {
+              label: 'p2p',
+              taggers: ['tagger-user-3'],
+              taggers_count: 1,
+              relationship: false,
+            },
+          ],
           relationship: {
             following: false,
             followed_by: false,
             muted: false,
           },
         },
-        tags: [],
+        tags: [
+          {
+            label: 'tech',
+            taggers: ['post-tagger-1'],
+            taggers_count: 1,
+            relationship: false,
+          },
+          {
+            label: 'announcement',
+            taggers: ['post-tagger-2', 'post-tagger-3'],
+            taggers_count: 2,
+            relationship: false,
+          },
+        ],
         relationships: {
-          replied: false,
-          reposted: false,
+          replied: null,
+          reposted: null,
+          mentioned: [],
         },
         bookmark: null,
       },
@@ -111,7 +151,12 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      expect(mockFetch).toHaveBeenCalledWith(`https://nexus.staging.pubky.app/v0/bootstrap/${pubky}`);
+      expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     });
 
     it('should persist users to the database', async () => {
@@ -124,12 +169,36 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      // Verify user was persisted to database
-      const savedUser = await Core.UserModel.findById(pubky);
-      expect(savedUser).toBeTruthy();
-      expect(savedUser.details.id).toBe(pubky);
-      expect(savedUser.details.name).toBe('Bootstrap User');
-      expect(savedUser.details.bio).toBe('Bootstrap bio');
+      // Verify user details were persisted to database
+      const savedUserDetails = await Core.UserDetailsModel.findById(pubky);
+      expect(savedUserDetails).toBeTruthy();
+      expect(savedUserDetails.id).toBe(pubky);
+      expect(savedUserDetails.name).toBe('Bootstrap User');
+      expect(savedUserDetails.bio).toBe('Bootstrap bio');
+
+      // Verify user counts were persisted to database
+      const savedUserCounts = await Core.UserCountsModel.findById(pubky);
+      expect(savedUserCounts).toBeTruthy();
+      expect(savedUserCounts.id).toBe(pubky);
+      expect(savedUserCounts.posts).toBe(1);
+
+      // Verify user relationships were persisted to database
+      const savedUserRelationships = await Core.UserRelationshipsModel.findById(pubky);
+      expect(savedUserRelationships).toBeTruthy();
+      expect(savedUserRelationships.id).toBe(pubky);
+      expect(savedUserRelationships.following).toBe(false);
+      expect(savedUserRelationships.followed_by).toBe(false);
+      expect(savedUserRelationships.muted).toBe(false);
+
+      // Verify user tags were persisted to database
+      const savedUserTags = await Core.UserTagsModel.findById(pubky);
+      expect(savedUserTags).toBeTruthy();
+      expect(savedUserTags.id).toBe(pubky);
+      expect(savedUserTags.tags).toHaveLength(2);
+      expect(savedUserTags.tags[0].label).toBe('developer');
+      expect(savedUserTags.tags[0].taggers_count).toBe(2);
+      expect(savedUserTags.tags[1].label).toBe('p2p');
+      expect(savedUserTags.tags[1].taggers_count).toBe(1);
     });
 
     it('should persist posts to the database', async () => {
@@ -143,12 +212,29 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      // Verify post was persisted to database
-      const savedPost = await Core.PostModel.findById(testPostId);
-      expect(savedPost).toBeTruthy();
-      expect(savedPost.details.id).toBe(testPostId);
-      expect(savedPost.details.content).toBe('Bootstrap post content');
-      expect(savedPost.details.author).toBe(pubky);
+      // Verify post details were persisted to database
+      const savedPostDetails = await Core.PostDetailsModel.findById(testPostId);
+      expect(savedPostDetails).toBeTruthy();
+      expect(savedPostDetails.id).toBe(testPostId);
+      expect(savedPostDetails.content).toBe('Bootstrap post content');
+      expect(savedPostDetails.author).toBe(pubky);
+
+      // Verify post counts were persisted to database
+      const savedPostCounts = await Core.PostCountsModel.findById(testPostId);
+      expect(savedPostCounts).toBeTruthy();
+      expect(savedPostCounts.id).toBe(testPostId);
+      expect(savedPostCounts.replies).toBe(0);
+      expect(savedPostCounts.reposts).toBe(0);
+
+      // Verify post tags were persisted to database
+      const savedPostTags = await Core.PostTagsModel.findById(testPostId);
+      expect(savedPostTags).toBeTruthy();
+      expect(savedPostTags.id).toBe(testPostId);
+      expect(savedPostTags.tags).toHaveLength(2);
+      expect(savedPostTags.tags[0].label).toBe('tech');
+      expect(savedPostTags.tags[0].taggers_count).toBe(1);
+      expect(savedPostTags.tags[1].label).toBe('announcement');
+      expect(savedPostTags.tags[1].taggers_count).toBe(2);
     });
 
     it('should create stream in the database', async () => {
@@ -185,20 +271,43 @@ describe('NexusService', () => {
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
       // Verify all data was persisted
-      const savedUser = await Core.UserModel.findById(testUserId);
-      expect(savedUser).toBeTruthy();
-      expect(savedUser.details.name).toBe('Bootstrap User');
+      const savedUserDetails = await Core.UserDetailsModel.findById(testUserId);
+      expect(savedUserDetails).toBeTruthy();
+      expect(savedUserDetails.name).toBe('Bootstrap User');
 
-      const savedPost = await Core.PostModel.findById(testPostId);
-      expect(savedPost).toBeTruthy();
-      expect(savedPost.details.content).toBe('Bootstrap post content');
+      const savedUserCounts = await Core.UserCountsModel.findById(testUserId);
+      expect(savedUserCounts).toBeTruthy();
+
+      const savedUserRelationships = await Core.UserRelationshipsModel.findById(testUserId);
+      expect(savedUserRelationships).toBeTruthy();
+
+      const savedUserTags = await Core.UserTagsModel.findById(testUserId);
+      expect(savedUserTags).toBeTruthy();
+
+      // Verify post details were persisted
+      const savedPostDetails = await Core.PostDetailsModel.findById(testPostId);
+      expect(savedPostDetails).toBeTruthy();
+      expect(savedPostDetails.content).toBe('Bootstrap post content');
+
+      // Verify post counts were persisted
+      const savedPostCounts = await Core.PostCountsModel.findById(testPostId);
+      expect(savedPostCounts).toBeTruthy();
+
+      // Verify post tags were persisted
+      const savedPostTags = await Core.PostTagsModel.findById(testPostId);
+      expect(savedPostTags).toBeTruthy();
 
       const savedStream = await Core.StreamModel.findById(Core.StreamTypes.TIMELINE_ALL);
       expect(savedStream).toBeTruthy();
       expect(savedStream!.posts).toEqual([testPostId, 'random-post-id']);
 
       // Verify fetch was called correctly
-      expect(mockFetch).toHaveBeenCalledWith(`https://nexus.staging.pubky.app/v0/bootstrap/${pubky}`);
+      expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     });
 
     it('should throw INVALID_REQUEST error on 400', async () => {
