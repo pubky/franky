@@ -2,6 +2,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LogoutContent, LogoutHeader, LogoutNavigation } from './Logout';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -102,13 +103,13 @@ describe('LogoutNavigation', () => {
     render(<LogoutNavigation />);
     const backButton = screen.getByText('Homepage');
     fireEvent.click(backButton);
-    expect(mockPush).toHaveBeenCalledWith('/');
+    expect(mockPush).toHaveBeenCalledWith(App.ROOT_ROUTES);
   });
 
   it('navigates to sign-in page when continue button is clicked', () => {
     render(<LogoutNavigation />);
     const continueButton = screen.getByText('Sign back in');
     fireEvent.click(continueButton);
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.SIGN_IN);
   });
 });

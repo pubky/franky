@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BackupNavigation, BackupPageHeader } from './Backup';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -96,7 +97,7 @@ describe('BackupNavigation', () => {
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/pubky');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.PUBKY);
   });
 
   it('handles continue button click', () => {
@@ -105,7 +106,7 @@ describe('BackupNavigation', () => {
     const continueButton = screen.getByTestId('continue-button');
     fireEvent.click(continueButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/homeserver');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.HOMESERVER);
   });
 
   it('applies correct styling', () => {
