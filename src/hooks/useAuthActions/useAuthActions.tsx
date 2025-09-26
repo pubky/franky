@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import * as Core from '@/core';
 import { useAuthStatus } from '../useAuthStatus';
 import { ROUTE_ACCESS_MAP } from '@/providers/RouteGuardProvider/RouteGuardProvider.constants';
+import * as App from '@/app';
 
 export function useAuthActions() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export function useAuthActions() {
         authStore.setSession(null);
 
         // Redirect to feed after successful profile creation
-        router.push('/feed');
+        router.push(App.FEED_ROUTES.FEED);
 
         return { success: true, profileData };
       } catch (error) {
@@ -40,7 +41,7 @@ export function useAuthActions() {
     authStore.reset();
 
     // Redirect to home
-    router.push('/');
+    router.push(App.ROOT_ROUTES);
   }, [onboardingStore, authStore, router]);
 
   // Check if user can access a specific route

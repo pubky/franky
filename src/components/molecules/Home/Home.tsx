@@ -6,16 +6,17 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import * as App from '@/app';
 
 export const HomeActions = () => {
   const router = useRouter();
 
   const handleCreateAccount = () => {
-    router.push('/onboarding/install');
+    router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
   const handleSignIn = () => {
-    router.push('/sign-in');
+    router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
   return <Molecules.ActionButtons onSignIn={handleSignIn} onCreateAccount={handleCreateAccount} />;

@@ -10,6 +10,7 @@ import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Config from '@/config';
 import * as Core from '@/core';
+import * as App from '@/app';
 
 export const ScanContent = () => {
   const [url, setUrl] = useState('');
@@ -143,7 +144,7 @@ export const ScanNavigation = () => {
   const router = useRouter();
 
   const onHandleBackButton = () => {
-    router.push('/onboarding/install');
+    router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
   return (

@@ -7,6 +7,7 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as App from '@/app';
 
 export function HomeserverCard() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export function HomeserverCard() {
       const signupToken = inviteCode;
       await Core.AuthController.signUp({ keypair, signupToken });
       setButtonContinueText('Signing up');
-      router.push('/onboarding/profile');
+      router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch {
       showErrorToast();
       setContinueButtonDisabled(false);
@@ -122,7 +123,7 @@ export function HomeserverCard() {
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           variant={'secondary'}
-          onClick={() => router.push('/onboarding/backup')}
+          onClick={() => router.push(App.ONBOARDING_ROUTES.BACKUP)}
         >
           <Libs.ArrowLeft className="mr-2 h-4 w-4" />
           Back

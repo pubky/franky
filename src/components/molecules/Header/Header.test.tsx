@@ -12,7 +12,8 @@ import {
   HeaderSignIn,
   HeaderNavigationButtons,
 } from './Header';
-import { GITHUB_URL, TWITTER_GETPUBKY_URL, TELEGRAM_URL } from '@/config';
+import * as Config from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -242,13 +243,13 @@ describe('HeaderSocialLinks', () => {
     expect(links).toHaveLength(3);
 
     // Check GitHub link
-    expect(links[0]).toHaveAttribute('href', GITHUB_URL);
+    expect(links[0]).toHaveAttribute('href', Config.GITHUB_URL);
 
     // Check Twitter link
-    expect(links[1]).toHaveAttribute('href', TWITTER_GETPUBKY_URL);
+    expect(links[1]).toHaveAttribute('href', Config.TWITTER_GETPUBKY_URL);
 
     // Check Telegram link
-    expect(links[2]).toHaveAttribute('href', TELEGRAM_URL);
+    expect(links[2]).toHaveAttribute('href', Config.TELEGRAM_URL);
   });
 
   it('applies custom className', () => {
@@ -285,7 +286,7 @@ describe('HeaderButtonSignIn', () => {
     const button = screen.getByTestId('button-secondary');
     fireEvent.click(button);
 
-    expect(mockPush).toHaveBeenCalledWith('/sign-in');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.SIGN_IN);
   });
 
   it('has correct variant', () => {
@@ -360,7 +361,7 @@ describe('HeaderNavigationButtons', () => {
 
     const links = screen.getAllByTestId('link');
 
-    expect(links[0]).toHaveAttribute('href', '/feed');
+    expect(links[0]).toHaveAttribute('href', App.FEED_ROUTES.FEED);
     expect(links[1]).toHaveAttribute('href', '/search');
     expect(links[2]).toHaveAttribute('href', '/hot');
     expect(links[3]).toHaveAttribute('href', '/bookmarks');

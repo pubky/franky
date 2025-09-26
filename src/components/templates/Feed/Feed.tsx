@@ -3,13 +3,14 @@
 import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
+import * as App from '@/app';
 
 export function Feed() {
   const router = useRouter();
 
   const handleLogout = () => {
     // Just navigate to logout page - logout logic will happen there
-    router.push('/logout');
+    router.push(App.AUTH_ROUTES.LOGOUT);
   };
 
   return (

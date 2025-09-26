@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Feed } from './Feed';
+import * as App from '@/app';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -101,7 +102,7 @@ describe('Feed', () => {
     const logoutButton = screen.getByText('Logout');
     fireEvent.click(logoutButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/logout');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
     expect(mockLogout).not.toHaveBeenCalled(); // Should not logout immediately
   });
 

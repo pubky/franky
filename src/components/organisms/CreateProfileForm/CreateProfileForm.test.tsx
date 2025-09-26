@@ -3,6 +3,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CreateProfileForm } from './CreateProfileForm';
+import * as App from '@/app';
 
 // Mock the Core modules
 vi.mock('@/core', () => ({
@@ -663,7 +664,7 @@ describe('CreateProfileForm', () => {
         expect(continueButton).toHaveTextContent('Try again!');
 
         // Should not navigate to feed page
-        expect(mockPush).not.toHaveBeenCalledWith('/feed');
+        expect(mockPush).not.toHaveBeenCalledWith(App.FEED_ROUTES.FEED);
       });
 
       // Verify the mocks were called in the correct order
