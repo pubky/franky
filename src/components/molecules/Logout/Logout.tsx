@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as App from '@/app';
 
 export const LogoutContent = () => {
   return (
@@ -34,11 +35,11 @@ export const LogoutNavigation = () => {
   const router = useRouter();
 
   const onHandleBackButton = () => {
-    router.push('/');
+    router.push(App.ROOT_ROUTES);
   };
 
   const onHandleContinueButton = () => {
-    router.push('/sign-in');
+    router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
   return (

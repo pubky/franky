@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
+import * as App from '@/app';
 
 export const HomeserverHeader = () => {
   return (
@@ -37,7 +38,7 @@ export const HomeserverNavigation = ({
   const router = useRouter();
 
   const onHandleBackButton = () => {
-    router.push('/onboarding/backup');
+    router.push(App.ONBOARDING_ROUTES.BACKUP);
   };
 
   return (

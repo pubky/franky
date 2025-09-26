@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { InstallCard, InstallFooter, InstallHeader, InstallNavigation } from './Install';
-import { PUBKY_RING_URL, PUBKY_CORE_URL } from '@/config';
+import * as Config from '@/config';
+import * as App from '@/app';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -169,7 +170,7 @@ describe('InstallFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyRingLink = links[0];
 
-    expect(pubkyRingLink).toHaveAttribute('href', PUBKY_RING_URL);
+    expect(pubkyRingLink).toHaveAttribute('href', Config.PUBKY_RING_URL);
     expect(pubkyRingLink).toHaveAttribute('target', '_blank');
     expect(pubkyRingLink).toHaveTextContent('Pubky Ring');
   });
@@ -180,7 +181,7 @@ describe('InstallFooter', () => {
     const links = screen.getAllByTestId('link');
     const pubkyCoreLink = links[1];
 
-    expect(pubkyCoreLink).toHaveAttribute('href', PUBKY_CORE_URL);
+    expect(pubkyCoreLink).toHaveAttribute('href', Config.PUBKY_CORE_URL);
     expect(pubkyCoreLink).toHaveAttribute('target', '_blank');
     expect(pubkyCoreLink).toHaveTextContent('Pubky Core');
   });
@@ -238,7 +239,7 @@ describe('InstallNavigation', () => {
     const createButton = screen.getByTestId('button-outline');
     fireEvent.click(createButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/pubky');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.PUBKY);
   });
 
   it('handles continue button click', () => {
@@ -247,7 +248,7 @@ describe('InstallNavigation', () => {
     const continueButton = screen.getByTestId('button');
     fireEvent.click(continueButton);
 
-    expect(mockPush).toHaveBeenCalledWith('/onboarding/scan');
+    expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.SCAN);
   });
 
   it('renders correct button text', () => {
