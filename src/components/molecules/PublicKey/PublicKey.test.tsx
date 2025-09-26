@@ -50,28 +50,6 @@ describe('PublicKeyHeader', () => {
     expect(screen.getByTestId('page-title')).toBeInTheDocument();
     expect(screen.getByTestId('page-subtitle')).toBeInTheDocument();
   });
-
-  it('renders correct title with brand styling', () => {
-    render(<PublicKeyHeader />);
-
-    const title = screen.getByTestId('page-title');
-    expect(title).toHaveAttribute('data-size', 'large');
-    expect(title).toHaveTextContent('Your unique pubky.');
-  });
-
-  it('renders correct subtitle', () => {
-    render(<PublicKeyHeader />);
-
-    expect(screen.getByText('Share your pubky with your friends so they can follow you.')).toBeInTheDocument();
-  });
-
-  it('contains brand-styled text', () => {
-    render(<PublicKeyHeader />);
-
-    // Check that the title contains the word "pubky" (which should have brand styling)
-    const title = screen.getByTestId('page-title');
-    expect(title.textContent).toContain('pubky');
-  });
 });
 
 describe('PublicKeyNavigation', () => {
@@ -104,11 +82,20 @@ describe('PublicKeyNavigation', () => {
 
     expect(mockPush).toHaveBeenCalledWith(App.ONBOARDING_ROUTES.BACKUP);
   });
+});
 
-  it('renders button text correctly', () => {
-    render(<PublicKeyNavigation />);
+describe('PublicKey Components - Snapshots', () => {
+  describe('PublicKeyHeader - Snapshots', () => {
+    it('matches snapshot for default PublicKeyHeader', () => {
+      const { container } = render(<PublicKeyHeader />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
+  });
 
-    expect(screen.getByText('Back')).toBeInTheDocument();
-    expect(screen.getByText('Continue')).toBeInTheDocument();
+  describe('PublicKeyNavigation - Snapshots', () => {
+    it('matches snapshot for default PublicKeyNavigation', () => {
+      const { container } = render(<PublicKeyNavigation />);
+      expect(container.firstChild).toMatchSnapshot();
+    });
   });
 });

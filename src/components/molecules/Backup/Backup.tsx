@@ -30,7 +30,7 @@ export const BackupNavigation = () => {
 
 export const BackupPageHeader = () => {
   return (
-    <Atoms.PageHeader>
+    <Atoms.PageHeader data-testid="backup-page-header">
       <Molecules.PageTitle size="large">
         Back up your <span className="text-brand">pubky.</span>
       </Molecules.PageTitle>

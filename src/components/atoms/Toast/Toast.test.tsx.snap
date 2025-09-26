@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Toast - Snapshots > matches snapshot for ToastProvider 1`] = `
+<div>
+  Test content
+</div>
+`;
+
+exports[`Toast - Snapshots > matches snapshot for ToastViewport 1`] = `
+<div
+  aria-label="Notifications (F8)"
+  role="region"
+  style="pointer-events: none;"
+  tabindex="-1"
+>
+  <ol
+    class="fixed bottom-0 left-1/2 z-[100] flex max-h-screen w-full -translate-x-1/2 flex-col-reverse p-4 sm:bottom-8 sm:max-w-[550px]"
+    tabindex="-1"
+  />
+</div>
+`;

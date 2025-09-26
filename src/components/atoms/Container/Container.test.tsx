@@ -4,124 +4,99 @@ import { Container } from './Container';
 
 describe('Container', () => {
   it('renders with default props', () => {
-    render(<Container data-testid="container">Test content</Container>);
-
-    const container = screen.getByTestId('container');
+    render(<Container>Default Container</Container>);
+    const container = screen.getByText('Default Container');
     expect(container).toBeInTheDocument();
-    expect(container.tagName).toBe('DIV');
-    expect(container).toHaveClass('mx-auto', 'w-full', 'flex-col', 'flex');
-    expect(screen.getByText('Test content')).toBeInTheDocument();
+  });
+});
+
+describe('Container - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<Container>Default Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders different HTML elements', () => {
-    const { rerender } = render(
-      <Container as="section" data-testid="container">
-        Content
-      </Container>,
-    );
-
-    let container = screen.getByTestId('container');
-    expect(container.tagName).toBe('SECTION');
-
-    rerender(
-      <Container as="main" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container.tagName).toBe('MAIN');
+  it('matches snapshot for div element', () => {
+    const { container } = render(<Container as="div">Div Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders different sizes correctly', () => {
-    const { rerender } = render(
-      <Container size="sm" data-testid="container">
-        Content
-      </Container>,
-    );
-
-    let container = screen.getByTestId('container');
-    expect(container).toHaveClass('max-w-screen-sm');
-
-    rerender(
-      <Container size="md" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container).toHaveClass('max-w-screen-md');
-
-    rerender(
-      <Container size="lg" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container).toHaveClass('max-w-screen-lg');
-
-    rerender(
-      <Container size="xl" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container).toHaveClass('max-w-screen-xl');
-
-    rerender(
-      <Container size="container" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container).toHaveClass('container');
+  it('matches snapshot for section element', () => {
+    const { container } = render(<Container as="section">Section Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders different display modes correctly', () => {
-    const { rerender } = render(
-      <Container display="grid" data-testid="container">
-        Content
-      </Container>,
-    );
-
-    let container = screen.getByTestId('container');
-    expect(container).toHaveClass('grid');
-
-    rerender(
-      <Container display="block" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container).toHaveClass('block');
-
-    rerender(
-      <Container display="flex" data-testid="container">
-        Content
-      </Container>,
-    );
-    container = screen.getByTestId('container');
-    expect(container).toHaveClass('flex');
+  it('matches snapshot for main element', () => {
+    const { container } = render(<Container as="main">Main Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies custom className', () => {
-    render(
-      <Container className="custom-container" data-testid="container">
-        Content
-      </Container>,
-    );
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('custom-container');
+  it('matches snapshot for article element', () => {
+    const { container } = render(<Container as="article">Article Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('combines all props correctly', () => {
-    render(
-      <Container as="article" size="lg" display="grid" className="custom" data-testid="container">
-        Combined props content
+  it('matches snapshot for header element', () => {
+    const { container } = render(<Container as="header">Header Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for footer element', () => {
+    const { container } = render(<Container as="footer">Footer Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for default size', () => {
+    const { container } = render(<Container size="default">Default Size</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for small size', () => {
+    const { container } = render(<Container size="sm">Small Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for medium size', () => {
+    const { container } = render(<Container size="md">Medium Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for large size', () => {
+    const { container } = render(<Container size="lg">Large Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for extra large size', () => {
+    const { container } = render(<Container size="xl">Extra Large Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for container size', () => {
+    const { container } = render(<Container size="container">Container Size</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for flex display', () => {
+    const { container } = render(<Container display="flex">Flex Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for grid display', () => {
+    const { container } = render(<Container display="grid">Grid Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for block display', () => {
+    const { container } = render(<Container display="block">Block Container</Container>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for combined props', () => {
+    const { container: combinedContainer } = render(
+      <Container as="article" size="lg" display="grid" className="custom-class">
+        Combined Props Container
       </Container>,
     );
-
-    const container = screen.getByTestId('container');
-    expect(container.tagName).toBe('ARTICLE');
-    expect(container).toHaveClass('mx-auto', 'w-full', 'flex-col', 'grid', 'max-w-screen-lg', 'custom');
+    expect(combinedContainer.firstChild).toMatchSnapshot();
   });
 });

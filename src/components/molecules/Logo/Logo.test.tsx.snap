@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Logo - Snapshots > matches snapshot for Logo with custom className 1`] = `
+<a
+  class="flex items-center min-w-[109px] min-h-[36px] custom-logo-style"
+  href="/"
+>
+  <img
+    alt="Pubky"
+    class="w-[109px] h-[36px] -mt-1"
+    data-testid="logo-image"
+    height="36"
+    src="/pubky-logo.svg"
+    width="109"
+  />
+</a>
+`;
+
+exports[`Logo - Snapshots > matches snapshot for Logo with custom dimensions 1`] = `
+<a
+  class="flex items-center min-w-[200px] min-h-[80px]"
+  href="/"
+>
+  <img
+    alt="Pubky"
+    class="w-[200px] h-[80px] -mt-1"
+    data-testid="logo-image"
+    height="80"
+    src="/pubky-logo.svg"
+    width="200"
+  />
+</a>
+`;
+
+exports[`Logo - Snapshots > matches snapshot for default Logo 1`] = `
+<a
+  class="flex items-center min-w-[109px] min-h-[36px]"
+  href="/"
+>
+  <img
+    alt="Pubky"
+    class="w-[109px] h-[36px] -mt-1"
+    data-testid="logo-image"
+    height="36"
+    src="/pubky-logo.svg"
+    width="109"
+  />
+</a>
+`;

@@ -136,16 +136,6 @@ describe('ButtonsNavigation', () => {
     expect(continueButton).toHaveTextContent('Continue');
   });
 
-  it('renders with custom text props', () => {
-    render(<ButtonsNavigation backText="Go Back" continueText="Next Step" />);
-
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
-
-    expect(backButton).toHaveTextContent('Go Back');
-    expect(continueButton).toHaveTextContent('Next Step');
-  });
-
   it('handles back button click', () => {
     const handleBackButton = vi.fn();
     render(<ButtonsNavigation onHandleBackButton={handleBackButton} />);
@@ -179,41 +169,60 @@ describe('ButtonsNavigation', () => {
     const continueButton = screen.getByTestId('button-default');
     expect(continueButton).toBeDisabled();
   });
+});
 
-  it('applies custom className', () => {
-    render(<ButtonsNavigation className="custom-navigation-class" />);
-
-    const container = screen.getByTestId('button-secondary').parentElement;
-    expect(container).toHaveClass('custom-navigation-class');
+describe('ButtonsNavigation - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<ButtonsNavigation />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders arrow icons', () => {
-    render(<ButtonsNavigation />);
-
-    const leftArrow = screen.getByTestId('arrow-left-icon');
-    const rightArrow = screen.getByTestId('arrow-right-icon');
-
-    expect(leftArrow).toBeInTheDocument();
-    expect(rightArrow).toBeInTheDocument();
+  it('matches snapshot with custom text', () => {
+    const { container } = render(<ButtonsNavigation backText="Go Back" continueText="Next Step" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('has proper button structure and styling', () => {
-    render(<ButtonsNavigation />);
-
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
-
-    expect(backButton).toHaveClass('rounded-full');
-    expect(continueButton).toHaveClass('rounded-full');
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<ButtonsNavigation className="custom-navigation-class" />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders both buttons as enabled by default', () => {
-    render(<ButtonsNavigation />);
+  it('matches snapshot with back button disabled', () => {
+    const { container } = render(<ButtonsNavigation backButtonDisabled={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const backButton = screen.getByTestId('button-secondary');
-    const continueButton = screen.getByTestId('button-default');
+  it('matches snapshot with continue button disabled', () => {
+    const { container } = render(<ButtonsNavigation continueButtonDisabled={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    expect(backButton).not.toBeDisabled();
-    expect(continueButton).not.toBeDisabled();
+  it('matches snapshot with both buttons disabled', () => {
+    const { container } = render(<ButtonsNavigation backButtonDisabled={true} continueButtonDisabled={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with both callbacks', () => {
+    const mockBackHandler = vi.fn();
+    const mockContinueHandler = vi.fn();
+
+    const { container } = render(
+      <ButtonsNavigation onHandleBackButton={mockBackHandler} onHandleContinueButton={mockContinueHandler} />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with back callback only', () => {
+    const mockBackHandler = vi.fn();
+
+    const { container } = render(<ButtonsNavigation onHandleBackButton={mockBackHandler} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with continue callback only', () => {
+    const mockContinueHandler = vi.fn();
+
+    const { container } = render(<ButtonsNavigation onHandleContinueButton={mockContinueHandler} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

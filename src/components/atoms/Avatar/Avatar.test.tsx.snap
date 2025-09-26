@@ -1,0 +1,65 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Avatar - Snapshots > matches snapshot with AvatarFallback only 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  data-slot="avatar"
+>
+  <span
+    class="bg-muted flex size-full items-center justify-center rounded-full"
+    data-slot="avatar-fallback"
+  >
+    JD
+  </span>
+</span>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with AvatarImage and AvatarFallback 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  data-slot="avatar"
+>
+  <span
+    class="bg-muted flex size-full items-center justify-center rounded-full"
+    data-slot="avatar-fallback"
+  >
+    JD
+  </span>
+</span>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with custom AvatarFallback className 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  data-slot="avatar"
+>
+  <span
+    class="bg-muted flex size-full items-center justify-center rounded-full custom-fallback"
+    data-slot="avatar-fallback"
+  >
+    AB
+  </span>
+</span>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with custom className 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full custom-avatar"
+  data-slot="avatar"
+/>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with custom data attribute 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  data-custom="custom-avatar"
+  data-slot="avatar"
+/>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with default props 1`] = `
+<span
+  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  data-slot="avatar"
+/>
+`;

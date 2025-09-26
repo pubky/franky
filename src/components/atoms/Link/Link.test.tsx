@@ -3,69 +3,131 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Link } from './Link';
 
-describe('SocialLink', () => {
+describe('Link', () => {
   it('renders with default props', () => {
-    render(
-      <Link href="https://example.com">
-        <span>Test Icon</span>
-      </Link>,
-    );
-
-    const link = screen.getByRole('link');
+    render(<Link href="https://example.com">Default Link</Link>);
+    const link = screen.getByText('Default Link');
     expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', 'https://example.com');
-    expect(link).toHaveClass('cursor-pointer', 'text-brand', 'hover:text-brand/80', 'transition-colors', 'text-sm');
-    expect(screen.getByText('Test Icon')).toBeInTheDocument();
   });
+});
 
-  it('renders with custom className', () => {
-    render(
-      <Link href="https://example.com" className="custom-link-class">
-        <span>Test Icon</span>
+describe('Link - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(
+      <Link href="https://example.com">
+        <span>Default Link</span>
       </Link>,
     );
-
-    const link = screen.getByRole('link');
-    expect(link).toHaveClass('custom-link-class');
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders different types of children', () => {
-    const { rerender } = render(
+  it('matches snapshot for default variant', () => {
+    const { container } = render(
+      <Link href="https://example.com" variant="default">
+        <span>Default Variant</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for muted variant', () => {
+    const { container } = render(
+      <Link href="https://example.com" variant="muted">
+        <span>Muted Variant</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for default size', () => {
+    const { container } = render(
+      <Link href="https://example.com" size="default">
+        <span>Default Size</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for large size', () => {
+    const { container } = render(
+      <Link href="https://example.com" size="lg">
+        <span>Large Size</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for extra large size', () => {
+    const { container } = render(
+      <Link href="https://example.com" size="xl">
+        <span>Extra Large Size</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for HTTP link', () => {
+    const { container } = render(
+      <Link href="https://example.com">
+        <span>HTTP Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for email link', () => {
+    const { container } = render(
+      <Link href="mailto:test@example.com">
+        <span>Email Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for phone link', () => {
+    const { container } = render(
+      <Link href="tel:+1234567890">
+        <span>Phone Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with text children', () => {
+    const { container } = render(
+      <Link href="https://example.com">
+        <span>Text Link</span>
+      </Link>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with SVG children', () => {
+    const { container } = render(
       <Link href="https://example.com">
         <svg data-testid="svg-icon">
           <circle cx="50" cy="50" r="40" />
         </svg>
       </Link>,
     );
-
-    expect(screen.getByTestId('svg-icon')).toBeInTheDocument();
-
-    rerender(
-      <Link href="https://example.com">
-        <img src="/icon.png" alt="Icon" data-testid="img-icon" />
-      </Link>,
-    );
-
-    expect(screen.getByTestId('img-icon')).toBeInTheDocument();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('handles different href formats', () => {
-    const { rerender } = render(
-      <Link href="mailto:test@example.com">
-        <span>Email</span>
+  it('matches snapshot with image children', () => {
+    const { container } = render(
+      <Link href="https://example.com">
+        <img src="/icon.png" alt="Icon" />
       </Link>,
     );
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    let link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', 'mailto:test@example.com');
-
-    rerender(
-      <Link href="tel:+1234567890">
-        <span>Phone</span>
+  it('matches snapshot with combined props', () => {
+    const { container } = render(
+      <Link href="https://example.com" variant="muted" size="lg" className="custom-class">
+        <span>Combined Props Link</span>
       </Link>,
     );
-
-    link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', 'tel:+1234567890');
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

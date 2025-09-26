@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { DialogPrivacy } from './DialogPrivacy';
 
 // Mock atoms
@@ -66,111 +66,20 @@ describe('DialogPrivacy', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('displays default trigger text', () => {
-    render(<DialogPrivacy />);
-
-    const triggers = screen.getAllByText('Privacy Policy');
-    const trigger = triggers.find((element) => element.tagName === 'SPAN');
-    expect(trigger).toBeInTheDocument();
-    expect(trigger?.tagName).toBe('SPAN');
-  });
-
-  it('displays static trigger text', () => {
-    render(<DialogPrivacy />);
-
-    const triggers = screen.getAllByText('Privacy Policy');
-    const trigger = triggers.find((element) => element.tagName === 'SPAN');
-    expect(trigger).toBeInTheDocument();
-    expect(trigger?.tagName).toBe('SPAN');
-    expect(trigger).toHaveTextContent('Privacy Policy');
-  });
-
-  it('applies correct styling to trigger', () => {
-    render(<DialogPrivacy />);
-
-    const triggers = screen.getAllByText('Privacy Policy');
-    const trigger = triggers.find((element) => element.tagName === 'SPAN');
-    expect(trigger).toHaveClass('text-brand');
-  });
-
-  it('renders dialog title correctly', () => {
-    render(<DialogPrivacy />);
-
-    const title = screen.getByTestId('dialog-title');
-    expect(title).toHaveTextContent('Privacy Policy');
-    expect(title.tagName).toBe('H2');
-  });
-
-  it('applies correct styling to dialog content', () => {
-    render(<DialogPrivacy />);
-
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('sm:max-w-xl');
-  });
-
-  it('applies correct styling to dialog header', () => {
-    render(<DialogPrivacy />);
-
-    const header = screen.getByTestId('dialog-header');
-    expect(header).toHaveClass('pr-6');
-  });
-
-  it('renders effective date', () => {
-    render(<DialogPrivacy />);
-
-    const effectiveDate = screen.getByText('Effective Date: June 19, 2025');
-    expect(effectiveDate).toBeInTheDocument();
-    expect(effectiveDate).toHaveClass('text-muted-foreground');
-  });
-
-  it('renders scrollable content area', () => {
-    render(<DialogPrivacy />);
-
-    const scrollableArea = document.querySelector('.h-\\[320px\\]');
-    expect(scrollableArea).toBeInTheDocument();
-    expect(scrollableArea).toHaveClass('h-[320px]', 'pr-4', 'overflow-y-auto');
-  });
-
   it('renders privacy policy content', () => {
     render(<DialogPrivacy />);
 
     // Check for some key privacy policy content
     expect(screen.getByText(/SCOPE This Privacy Policy/)).toBeInTheDocument();
     expect(screen.getByText(/POLICY SUMMARY This summary offers/)).toBeInTheDocument();
+    expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
     expect(screen.getAllByText(/Synonym Software Ltd/).length).toBeGreaterThan(0);
   });
+});
 
-  it('trigger uses asChild prop correctly', () => {
-    render(<DialogPrivacy />);
-
-    const trigger = screen.getByTestId('dialog-trigger');
-    expect(trigger).toHaveAttribute('data-as-child', 'true');
-  });
-
-  it('maintains proper content structure', () => {
-    render(<DialogPrivacy />);
-
-    const triggers = screen.getAllByText('Privacy Policy');
-    const trigger = triggers.find((element) => element.tagName === 'SPAN');
-    fireEvent.click(trigger!);
-
-    // Check that dialog content is rendered
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Privacy Policy');
-  });
-
-  it('always displays the same static trigger text', () => {
-    render(<DialogPrivacy />);
-    const triggers = screen.getAllByText('Privacy Policy');
-    const trigger = triggers.find((element) => element.tagName === 'SPAN');
-    expect(trigger).toHaveTextContent('Privacy Policy');
-  });
-
-  it('renders complete privacy policy sections', () => {
-    render(<DialogPrivacy />);
-
-    // Check for main sections that should be present
-    expect(screen.getByText(/SCOPE/)).toBeInTheDocument();
-    expect(screen.getByText(/POLICY SUMMARY/)).toBeInTheDocument();
-    expect(screen.getByText(/Effective Date: June 19, 2025/)).toBeInTheDocument();
+describe('DialogPrivacy - Snapshots', () => {
+  it('matches snapshot for default DialogPrivacy', () => {
+    const { container } = render(<DialogPrivacy />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

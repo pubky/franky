@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { DialogAge } from './DialogAge';
 
 // Mock atoms
@@ -58,76 +58,18 @@ describe('DialogAge', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('displays default trigger text', () => {
-    render(<DialogAge />);
-
-    const trigger = screen.getByText('over 18 years old.');
-    expect(trigger).toBeInTheDocument();
-    expect(trigger.tagName).toBe('SPAN');
-  });
-
-  it('applies correct styling to trigger link', () => {
-    render(<DialogAge />);
-
-    const link = screen.getByText('over 18 years old.');
-    expect(link).toHaveClass('text-brand');
-  });
-
-  it('renders dialog title correctly', () => {
+  it('renders age requirement content', () => {
     render(<DialogAge />);
 
     const title = screen.getByTestId('dialog-title');
     expect(title).toHaveTextContent('Age minimum: 18');
-    expect(title.tagName).toBe('H2');
-  });
-
-  it('applies correct styling to dialog content', () => {
-    render(<DialogAge />);
-
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('sm:max-w-xl');
-  });
-
-  it('applies correct styling to dialog header', () => {
-    render(<DialogAge />);
-
-    const header = screen.getByTestId('dialog-header');
-    expect(header).toHaveClass('pr-6');
-  });
-
-  it('renders age requirement content', () => {
-    render(<DialogAge />);
-
     expect(screen.getByText(/You can only use Pubky if you are over 18 years old/)).toBeInTheDocument();
   });
+});
 
-  it('trigger uses asChild prop correctly', () => {
-    render(<DialogAge />);
-
-    const trigger = screen.getByTestId('dialog-trigger');
-    expect(trigger).toHaveAttribute('data-as-child', 'true');
-  });
-
-  it('maintains proper content structure', () => {
-    render(<DialogAge />);
-
-    const trigger = screen.getByText('over 18 years old.');
-    fireEvent.click(trigger);
-
-    // Check that dialog content is rendered
-    expect(screen.getByTestId('dialog-title')).toHaveTextContent('Age minimum: 18');
-    expect(screen.getByText('You can only use Pubky if you are over 18 years old.')).toBeInTheDocument();
-  });
-
-  it('always displays the same static link text', () => {
-    render(<DialogAge />);
-    expect(screen.getByText('over 18 years old.')).toBeInTheDocument();
-  });
-
-  it('renders age-related content sections', () => {
-    render(<DialogAge />);
-
-    // Check for content related to age requirements - there are multiple elements with this text
-    expect(screen.getAllByText(/over 18 years old/)).toHaveLength(2);
+describe('DialogAge - Snapshots', () => {
+  it('matches snapshot for default DialogAge', () => {
+    const { container } = render(<DialogAge />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

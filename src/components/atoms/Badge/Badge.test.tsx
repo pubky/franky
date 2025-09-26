@@ -7,84 +7,55 @@ describe('Badge', () => {
     render(<Badge>Default Badge</Badge>);
     const badge = screen.getByText('Default Badge');
     expect(badge).toBeInTheDocument();
-    expect(badge).toHaveClass(
-      'inline-flex',
-      'items-center',
-      'justify-center',
-      'rounded-md',
-      'border',
-      'px-2',
-      'py-0.5',
-      'text-xs',
-      'font-medium',
-    );
-    expect(badge).toHaveAttribute('data-slot', 'badge');
+  });
+});
+
+describe('Badge - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<Badge>Default Badge</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders default variant correctly', () => {
-    render(<Badge variant="default">Default</Badge>);
-    const badge = screen.getByText('Default');
-    expect(badge).toHaveClass('border-transparent', 'bg-primary', 'text-primary-foreground');
+  it('matches snapshot for default variant', () => {
+    const { container } = render(<Badge variant="default">Default</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders secondary variant correctly', () => {
-    render(<Badge variant="secondary">Secondary</Badge>);
-    const badge = screen.getByText('Secondary');
-    expect(badge).toHaveClass('border-transparent', 'bg-secondary', 'text-secondary-foreground');
+  it('matches snapshot for secondary variant', () => {
+    const { container } = render(<Badge variant="secondary">Secondary</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders destructive variant correctly', () => {
-    render(<Badge variant="destructive">Destructive</Badge>);
-    const badge = screen.getByText('Destructive');
-    expect(badge).toHaveClass('border-transparent', 'bg-destructive', 'text-white');
+  it('matches snapshot for destructive variant', () => {
+    const { container } = render(<Badge variant="destructive">Destructive</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders outline variant correctly', () => {
-    render(<Badge variant="outline">Outline</Badge>);
-    const badge = screen.getByText('Outline');
-    expect(badge).toHaveClass('text-foreground');
+  it('matches snapshot for outline variant', () => {
+    const { container } = render(<Badge variant="outline">Outline</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies custom className', () => {
-    render(<Badge className="custom-badge">Custom</Badge>);
-    const badge = screen.getByText('Custom');
-    expect(badge).toHaveClass('custom-badge');
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Badge className="custom-badge">Custom</Badge>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('forwards additional props', () => {
-    render(
-      <Badge data-testid="badge" data-custom="test">
-        Test
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
+      <Badge>
+        <span>Complex Content</span>
       </Badge>,
     );
-    const badge = screen.getByTestId('badge');
-    expect(badge).toHaveAttribute('data-custom', 'test');
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders as span element by default', () => {
-    render(<Badge data-testid="badge">Badge</Badge>);
-    const badge = screen.getByTestId('badge');
-    expect(badge.tagName).toBe('SPAN');
-  });
-
-  it('renders as child component when asChild is true', () => {
-    render(
+  it('matches snapshot for asChild prop', () => {
+    const { container } = render(
       <Badge asChild>
         <a href="/test">Link Badge</a>
       </Badge>,
     );
-
-    const link = screen.getByRole('link', { name: /link badge/i });
-    expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', '/test');
-  });
-
-  it('renders children correctly', () => {
-    render(
-      <Badge>
-        <span>Child content</span>
-      </Badge>,
-    );
-    expect(screen.getByText('Child content')).toBeInTheDocument();
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

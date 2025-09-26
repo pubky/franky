@@ -1,0 +1,136 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchInput - Snapshots > matches snapshot for SearchInput with custom className 1`] = `
+<div
+  class="relative w-full custom-search"
+  data-testid="container"
+>
+  <input
+    class="px-6 py-6  border-border rounded-full bg-gradient-to-b from-background via-background via-60% to-transparent"
+    data-testid="search-input"
+    placeholder="Search"
+    type="text"
+    value=""
+  />
+  <button
+    class="border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+    data-testid="search-button"
+    type="button"
+  >
+    <div
+      class="w-4 h-4"
+      data-testid="search-icon"
+    >
+      Search
+    </div>
+  </button>
+</div>
+`;
+
+exports[`SearchInput - Snapshots > matches snapshot for SearchInput with custom placeholder 1`] = `
+<div
+  class="relative w-full"
+  data-testid="container"
+>
+  <input
+    class="px-6 py-6  border-border rounded-full bg-gradient-to-b from-background via-background via-60% to-transparent"
+    data-testid="search-input"
+    placeholder="Search users..."
+    type="text"
+    value=""
+  />
+  <button
+    class="border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+    data-testid="search-button"
+    type="button"
+  >
+    <div
+      class="w-4 h-4"
+      data-testid="search-icon"
+    >
+      Search
+    </div>
+  </button>
+</div>
+`;
+
+exports[`SearchInput - Snapshots > matches snapshot for SearchInput with dropdown children 1`] = `
+<div
+  class="relative w-full"
+  data-testid="container"
+>
+  <input
+    class="px-6 py-6  border-border rounded-full bg-gradient-to-b from-background via-background via-60% to-transparent"
+    data-testid="search-input"
+    placeholder="Search"
+    type="text"
+    value=""
+  />
+  <button
+    class="border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+    data-testid="search-button"
+    type="button"
+  >
+    <div
+      class="w-4 h-4"
+      data-testid="search-icon"
+    >
+      Search
+    </div>
+  </button>
+</div>
+`;
+
+exports[`SearchInput - Snapshots > matches snapshot for SearchInput with initial value 1`] = `
+<div
+  class="relative w-full"
+  data-testid="container"
+>
+  <input
+    class="px-6 py-6  border-border rounded-full bg-gradient-to-b from-background via-background via-60% to-transparent"
+    data-testid="search-input"
+    placeholder="Search"
+    type="text"
+    value="test query"
+  />
+  <button
+    class="border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+    data-testid="search-button"
+    type="button"
+  >
+    <div
+      class="w-4 h-4"
+      data-testid="search-icon"
+    >
+      Search
+    </div>
+  </button>
+</div>
+`;
+
+exports[`SearchInput - Snapshots > matches snapshot for default SearchInput 1`] = `
+<div
+  class="relative w-full"
+  data-testid="container"
+>
+  <input
+    class="px-6 py-6  border-border rounded-full bg-gradient-to-b from-background via-background via-60% to-transparent"
+    data-testid="search-input"
+    placeholder="Search"
+    type="text"
+    value=""
+  />
+  <button
+    class="border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center"
+    data-testid="search-button"
+    type="button"
+  >
+    <div
+      class="w-4 h-4"
+      data-testid="search-icon"
+    >
+      Search
+    </div>
+  </button>
+</div>
+`;

@@ -13,6 +13,15 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
     },
+    // Snapshot testing configuration
+    snapshotFormat: {
+      escapeString: true,
+      printBasicPrototype: false,
+    },
+    // Configure snapshots to be placed alongside test files
+    resolveSnapshotPath: (testPath, snapExtension) => {
+      return testPath + snapExtension;
+    },
     // Suppress specific warnings
     onConsoleLog(log) {
       // Suppress WebAssembly warnings
