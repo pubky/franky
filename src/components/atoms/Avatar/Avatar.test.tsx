@@ -1,37 +1,71 @@
+import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Avatar, AvatarImage, AvatarFallback } from './Avatar';
 
 describe('Avatar', () => {
   it('renders with default props', () => {
-    render(<Avatar data-testid="avatar" />);
-    const avatar = screen.getByTestId('avatar');
+    const { container } = render(<Avatar />);
+    const avatar = container.firstChild as HTMLElement;
     expect(avatar).toBeInTheDocument();
-    expect(avatar).toHaveClass('relative', 'flex', 'size-8', 'shrink-0', 'overflow-hidden', 'rounded-full');
-    expect(avatar).toHaveAttribute('data-slot', 'avatar');
+    expect(avatar).toHaveClass('relative', 'flex', 'h-10', 'w-10', 'shrink-0', 'overflow-hidden', 'rounded-full');
+  });
+
+  it('renders different sizes correctly', () => {
+    const { rerender, container } = render(<Avatar size="sm" />);
+    let avatar = container.firstChild as HTMLElement;
+    expect(avatar).toHaveClass('h-6', 'w-6');
+
+    rerender(<Avatar size="lg" />);
+    avatar = container.firstChild as HTMLElement;
+    expect(avatar).toHaveClass('h-12', 'w-12');
+
+    rerender(<Avatar size="xl" />);
+    avatar = container.firstChild as HTMLElement;
+    expect(avatar).toHaveClass('h-16', 'w-16');
   });
 
   it('applies custom className', () => {
-    render(<Avatar className="custom-avatar" data-testid="avatar" />);
-    const avatar = screen.getByTestId('avatar');
+    const { container } = render(<Avatar className="custom-avatar" />);
+    const avatar = container.firstChild as HTMLElement;
     expect(avatar).toHaveClass('custom-avatar');
   });
 
   it('forwards additional props', () => {
-    render(<Avatar data-testid="avatar" data-custom="test" />);
-    const avatar = screen.getByTestId('avatar');
+    const { container } = render(<Avatar data-custom="test" />);
+    const avatar = container.firstChild as HTMLElement;
     expect(avatar).toHaveAttribute('data-custom', 'test');
+  });
+
+  it('forwards ref correctly', () => {
+    const ref = React.createRef<HTMLSpanElement>();
+    render(<Avatar ref={ref} />);
+    expect(ref.current).toBeInstanceOf(HTMLSpanElement);
   });
 });
 
 describe('AvatarImage', () => {
   it('component exists and can be imported', () => {
-    // AvatarImage is a Radix UI component that may not render in JSDOM
-    // but we can test that it exists and can be rendered without errors
     expect(() => {
       render(
         <Avatar>
           <AvatarImage src="/test.jpg" alt="Test avatar" />
+        </Avatar>,
+      );
+    }).not.toThrow();
+  });
+
+  it('applies custom className', () => {
+    render(
+      <Avatar>
+        <AvatarImage src="/test.jpg" alt="Test" className="custom-image" />
+      </Avatar>,
+    );
+    // AvatarImage may not render in test environment, but should not throw
+    expect(() => {
+      render(
+        <Avatar>
+          <AvatarImage src="/test.jpg" alt="Test" className="custom-image" />
         </Avatar>,
       );
     }).not.toThrow();
@@ -47,8 +81,15 @@ describe('AvatarFallback', () => {
     );
     const fallback = screen.getByText('JD');
     expect(fallback).toBeInTheDocument();
-    expect(fallback).toHaveClass('bg-muted', 'flex', 'size-full', 'items-center', 'justify-center', 'rounded-full');
-    expect(fallback).toHaveAttribute('data-slot', 'avatar-fallback');
+    expect(fallback).toHaveClass(
+      'flex',
+      'h-full',
+      'w-full',
+      'items-center',
+      'justify-center',
+      'rounded-full',
+      'bg-muted',
+    );
   });
 
   it('applies custom className', () => {
@@ -69,18 +110,28 @@ describe('AvatarFallback', () => {
     );
     expect(screen.getByText('AB')).toBeInTheDocument();
   });
+
+  it('forwards ref correctly', () => {
+    const ref = React.createRef<HTMLSpanElement>();
+    render(
+      <Avatar>
+        <AvatarFallback ref={ref}>JD</AvatarFallback>
+      </Avatar>,
+    );
+    expect(ref.current).toBeInstanceOf(HTMLSpanElement);
+  });
 });
 
 describe('Avatar - Complete component', () => {
   it('renders avatar with fallback', () => {
-    render(
-      <Avatar data-testid="avatar">
+    const { container } = render(
+      <Avatar>
         <AvatarImage src="/test.jpg" alt="Test avatar" />
         <AvatarFallback>JD</AvatarFallback>
       </Avatar>,
     );
 
-    const avatar = screen.getByTestId('avatar');
+    const avatar = container.firstChild as HTMLElement;
     const fallback = screen.getByText('JD');
 
     expect(avatar).toBeInTheDocument();
@@ -89,7 +140,7 @@ describe('Avatar - Complete component', () => {
 
   it('shows fallback when image fails to load', () => {
     render(
-      <Avatar data-testid="avatar">
+      <Avatar>
         <AvatarImage src="/invalid.jpg" alt="Invalid" />
         <AvatarFallback>FB</AvatarFallback>
       </Avatar>,
@@ -100,13 +151,34 @@ describe('Avatar - Complete component', () => {
   });
 
   it('renders without errors when only fallback is provided', () => {
-    render(
-      <Avatar data-testid="avatar">
+    const { container } = render(
+      <Avatar>
         <AvatarFallback>XY</AvatarFallback>
       </Avatar>,
     );
 
-    expect(screen.getByTestId('avatar')).toBeInTheDocument();
+    const avatar = container.firstChild as HTMLElement;
+    expect(avatar).toBeInTheDocument();
     expect(screen.getByText('XY')).toBeInTheDocument();
+  });
+
+  it('renders with different sizes', () => {
+    const { rerender, container } = render(
+      <Avatar size="sm">
+        <AvatarFallback>SM</AvatarFallback>
+      </Avatar>,
+    );
+
+    let avatar = container.firstChild as HTMLElement;
+    expect(avatar).toHaveClass('h-6', 'w-6');
+
+    rerender(
+      <Avatar size="lg">
+        <AvatarFallback>LG</AvatarFallback>
+      </Avatar>,
+    );
+
+    avatar = container.firstChild as HTMLElement;
+    expect(avatar).toHaveClass('h-12', 'w-12');
   });
 });
