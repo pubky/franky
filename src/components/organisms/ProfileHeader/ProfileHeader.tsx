@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 export const ProfileHeader = ({ pubkySlug }: Templates.TProfilePageProps) => {
   const { copyToClipboard } = Hooks.useCopyToClipboard();
-  const { currentUserPubky } = Core.useProfileStore();
+  const { currentUserPubky } = Core.useAuthStore();
   const isOwnProfile = currentUserPubky === pubkySlug;
   const router = useRouter();
 
