@@ -10,28 +10,26 @@ import * as Core from '@/core';
 export const ProfileRightSidebar = ({ pubkySlug }: Templates.TProfilePageProps) => {
   // Function to get random color for a tag
   const getTagColor = () => {
-    const colors = [
-      'red',
-      'blue',
-      'green',
-      'yellow',
-      'purple',
-      'pink',
-      'indigo',
-      'orange',
-      'teal',
-      'cyan',
-      'emerald',
-      'rose',
-      'violet',
-      'amber',
-      'lime',
-      'sky',
+    const colorClasses = [
+      'bg-red-700 text-red-100 hover:bg-red-600',
+      'bg-blue-700 text-blue-100 hover:bg-blue-600',
+      'bg-green-700 text-green-100 hover:bg-green-600',
+      'bg-yellow-700 text-yellow-100 hover:bg-yellow-600',
+      'bg-purple-700 text-purple-100 hover:bg-purple-600',
+      'bg-pink-700 text-pink-100 hover:bg-pink-600',
+      'bg-indigo-700 text-indigo-100 hover:bg-indigo-600',
+      'bg-orange-700 text-orange-100 hover:bg-orange-600',
+      'bg-teal-700 text-teal-100 hover:bg-teal-600',
+      'bg-cyan-700 text-cyan-100 hover:bg-cyan-600',
+      'bg-emerald-700 text-emerald-100 hover:bg-emerald-600',
+      'bg-rose-700 text-rose-100 hover:bg-rose-600',
+      'bg-violet-700 text-violet-100 hover:bg-violet-600',
+      'bg-amber-700 text-amber-100 hover:bg-amber-600',
+      'bg-lime-700 text-lime-100 hover:bg-lime-600',
+      'bg-sky-700 text-sky-100 hover:bg-sky-600',
     ];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    const color = colors[randomIndex];
-    console.log(color);
-    return `bg-${color}-700 text-${color}-100 hover:bg-${color}-600`;
+    const randomIndex = Math.floor(Math.random() * colorClasses.length);
+    return colorClasses[randomIndex];
   };
 
   const userTags = useLiveQuery(() => Core.db.user_tags.get(pubkySlug).then((tags) => tags), [pubkySlug]);
@@ -55,13 +53,12 @@ export const ProfileRightSidebar = ({ pubkySlug }: Templates.TProfilePageProps) 
   };
 
   const renderUserTags = (tags: Core.NexusTag[]) => {
-    const tagColorClassName = getTagColor();
     return (
       <div className="space-y-3">
         {tags.map((tag) => (
           <div key={tag.label} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Atoms.Badge className={tagColorClassName}>{tag.label}</Atoms.Badge>
+              <Atoms.Badge className={getTagColor()}>{tag.label}</Atoms.Badge>
               <span className="text-sm text-muted-foreground">{tag.taggers_count}</span>
             </div>
             <Atoms.Button variant="ghost" size="sm">
