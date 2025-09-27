@@ -52,6 +52,47 @@ describe('ActionButtons', () => {
     expect(mockOnCreateAccount).toHaveBeenCalledTimes(1);
   });
 
+  it('applies default className structure', () => {
+    render(<ActionButtons />);
+
+    const container = screen.getByRole('button', { name: /sign in/i }).parentElement;
+    expect(container).toHaveClass('mx-auto', 'w-full', 'flex', 'gap-3', 'flex-row', 'sm:items-center');
+  });
+
+  it('applies custom className', () => {
+    render(<ActionButtons className="custom-action-buttons" />);
+
+    const container = screen.getByRole('button', { name: /sign in/i }).parentElement;
+    expect(container).toHaveClass('custom-action-buttons');
+  });
+
+  it('has proper button variants and sizes', () => {
+    render(<ActionButtons />);
+
+    const signInButton = screen.getByRole('button', { name: /sign in/i });
+    const createAccountButton = screen.getByRole('button', { name: /create account/i });
+
+    // Sign in button should be secondary variant
+    expect(signInButton).toHaveAttribute('data-variant', 'secondary');
+
+    // Create account button should be primary (default) variant - no explicit variant means default
+    expect(createAccountButton).not.toHaveAttribute('data-variant');
+
+    // Both buttons should have proper size classes
+    expect(signInButton).toHaveClass('h-10');
+    expect(createAccountButton).toHaveClass('h-10');
+  });
+
+  it('renders icons with proper classes', () => {
+    render(<ActionButtons />);
+
+    const loginIcon = screen.getByTestId('login-icon');
+    const userPlusIcon = screen.getByTestId('user-plus-icon');
+
+    expect(loginIcon).toHaveClass('mr-2', 'h-4', 'w-4');
+    expect(userPlusIcon).toHaveClass('mr-2', 'h-4', 'w-4');
+  });
+
   it('handles both callbacks simultaneously', () => {
     const mockOnSignIn = vi.fn();
     const mockOnCreateAccount = vi.fn();
