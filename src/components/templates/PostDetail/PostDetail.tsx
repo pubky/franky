@@ -116,36 +116,46 @@ export function PostDetail({ profileId, postId }: PostProps) {
   }
 
   return (
-    <Atoms.Container className="flex flex-col gap-4">
+    <Atoms.Container className="flex flex-col">
       <Atoms.Container size="container" className="px-6 gap-4">
         <Atoms.Typography>Post by {postData.details.author}</Atoms.Typography>
         <Molecules.PostWide post={postData} />
       </Atoms.Container>
 
       {/* Replies */}
-      <Atoms.Container size="container" className="px-6 pb-8">
+      <Atoms.Container size="container" className="px-6 pb-8 mt-4">
         <Atoms.Container className="flex flex-col gap-4">
-          {replies.map((reply) => (
-            <Atoms.Container
-              key={reply.details.id}
-              style={{ display: 'grid', gridTemplateColumns: '32px 1fr', gap: '1rem' }}
-            >
-              <Atoms.ReplyConnector />
-              <Molecules.PostWide post={reply} />
-            </Atoms.Container>
+          {replies.map((reply, index) => (
+            <div key={reply.details.id} className="flex gap-4">
+              <div className="w-8 flex-shrink-0">{/* Reply connector SVG will go here */}</div>
+              <div className="flex-1">
+                <Molecules.PostWide post={reply} showReplyConnector={true} replyConnectorVariant="default" />
+              </div>
+            </div>
           ))}
-        </Atoms.Container>
 
-        {/* Reply textarea */}
-        <Atoms.Container className="mt-4" style={{ display: 'grid', gridTemplateColumns: '32px 1fr', gap: '1rem' }}>
-          <Atoms.ReplyConnector variant="terminal" />
-          <Atoms.Textarea
-            placeholder="Write a reply..."
-            className="min-h-20"
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
+          <div className="flex gap-4">
+            <div className="w-8 flex-shrink-0">
+              <svg width="48" height="50" viewBox="0 0 48 50" preserveAspectRatio="xMinYMin meet">
+                <path
+                  d="M 16 0 v 42 a 8 8 0 0 0 8 8 h 24"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.25)"
+                  strokeWidth="2"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <Atoms.Textarea
+                placeholder="Write a reply..."
+                className="min-h-20"
+                value={replyContent}
+                onChange={(e) => setReplyContent(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+          </div>
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>
