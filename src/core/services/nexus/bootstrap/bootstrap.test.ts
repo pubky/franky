@@ -321,8 +321,8 @@ describe('NexusService', () => {
         type: Libs.NexusErrorType.INVALID_REQUEST,
         statusCode: 400,
         details: expect.objectContaining({
-          pubky,
           statusCode: 400,
+          statusText: 'Bad Request',
         }),
       });
     });
@@ -350,7 +350,6 @@ describe('NexusService', () => {
         type: Libs.NexusErrorType.INVALID_RESPONSE,
         statusCode: 500,
         details: expect.objectContaining({
-          pubky,
           error: expect.any(Error),
         }),
       });
