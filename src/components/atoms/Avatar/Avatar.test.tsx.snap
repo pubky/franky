@@ -2,12 +2,10 @@
 
 exports[`Avatar - Snapshots > matches snapshot with AvatarFallback only 1`] = `
 <span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
-  data-slot="avatar"
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 >
   <span
-    class="bg-muted flex size-full items-center justify-center rounded-full"
-    data-slot="avatar-fallback"
+    class="flex h-full w-full items-center justify-center rounded-full bg-muted"
   >
     JD
   </span>
@@ -16,12 +14,10 @@ exports[`Avatar - Snapshots > matches snapshot with AvatarFallback only 1`] = `
 
 exports[`Avatar - Snapshots > matches snapshot with AvatarImage and AvatarFallback 1`] = `
 <span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
-  data-slot="avatar"
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 >
   <span
-    class="bg-muted flex size-full items-center justify-center rounded-full"
-    data-slot="avatar-fallback"
+    class="flex h-full w-full items-center justify-center rounded-full bg-muted"
   >
     JD
   </span>
@@ -30,12 +26,10 @@ exports[`Avatar - Snapshots > matches snapshot with AvatarImage and AvatarFallba
 
 exports[`Avatar - Snapshots > matches snapshot with custom AvatarFallback className 1`] = `
 <span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
-  data-slot="avatar"
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 >
   <span
-    class="bg-muted flex size-full items-center justify-center rounded-full custom-fallback"
-    data-slot="avatar-fallback"
+    class="flex h-full w-full items-center justify-center rounded-full bg-muted custom-fallback"
   >
     AB
   </span>
@@ -44,22 +38,19 @@ exports[`Avatar - Snapshots > matches snapshot with custom AvatarFallback classN
 
 exports[`Avatar - Snapshots > matches snapshot with custom className 1`] = `
 <span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full custom-avatar"
-  data-slot="avatar"
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 custom-avatar"
 />
 `;
 
 exports[`Avatar - Snapshots > matches snapshot with custom data attribute 1`] = `
 <span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
   data-custom="custom-avatar"
-  data-slot="avatar"
 />
 `;
 
 exports[`Avatar - Snapshots > matches snapshot with default props 1`] = `
 <span
-  class="relative flex size-8 shrink-0 overflow-hidden rounded-full"
-  data-slot="avatar"
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 />
 `;
