@@ -24,33 +24,21 @@ export function DialogBackup() {
                 <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
                   Recovery phrase
                 </Atoms.Typography>
-                <Image src="/images/note.png" alt="Note" width={112} height={112} className="self-center w-28 h-28" />
+                <Image src="/images/note.png" alt="Note" width={112} height={112} className="self-center" />
                 <Atoms.Button>Continue</Atoms.Button>
               </Atoms.Card>
               <Atoms.Card className="w-full p-6 bg-card rounded-lg flex flex-col gap-6">
                 <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
                   Download encrypted file
                 </Atoms.Typography>
-                <Image
-                  src="/images/folder.png"
-                  alt="Folder"
-                  width={112}
-                  height={112}
-                  className="self-center w-28 h-28"
-                />
+                <Image src="/images/folder.png" alt="Folder" width={112} height={112} className="self-center" />
                 <Atoms.Button>Continue</Atoms.Button>
               </Atoms.Card>
               <Atoms.Card className="w-full p-6 bg-card rounded-lg flex flex-col gap-6">
                 <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
                   Export to Pubky Ring
                 </Atoms.Typography>
-                <Image
-                  src="/images/keyring.png"
-                  alt="Keys"
-                  width={112}
-                  height={112}
-                  className="self-center w-28 h-28"
-                />
+                <Image src="/images/keyring.png" alt="Keys" width={112} height={112} className="self-center" />
                 <Atoms.Button>Continue</Atoms.Button>
               </Atoms.Card>
             </Atoms.Container>

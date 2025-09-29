@@ -90,11 +90,9 @@ describe('DialogBackup', () => {
     expect(triggerButton.tagName).toBe('BUTTON');
   });
 
-  it('applies correct styling to trigger button', () => {
-    render(<DialogBackup />);
-
-    const triggerButton = screen.getByText('Backup');
-    expect(triggerButton).toHaveClass('text-primary-foreground', 'hover:text-primary-foreground');
+  it('matches snapshot for trigger button', () => {
+    const { container } = render(<DialogBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('renders dialog title correctly', () => {
@@ -150,45 +148,29 @@ describe('DialogBackup', () => {
     expect(keyringImage).toHaveAttribute('data-src', '/images/keyring.png');
   });
 
-  it('applies correct styling to dialog content', () => {
-    render(<DialogBackup />);
-
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('sm:max-w-xl', 'gap-0');
+  it('matches snapshot for dialog content', () => {
+    const { container } = render(<DialogBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies correct styling to dialog header', () => {
-    render(<DialogBackup />);
-
-    const header = screen.getByTestId('dialog-header');
-    expect(header).toHaveClass('pr-6');
+  it('matches snapshot for dialog header', () => {
+    const { container } = render(<DialogBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies correct styling to cards', () => {
-    render(<DialogBackup />);
-
-    const cards = screen.getAllByTestId('card');
-    cards.forEach((card) => {
-      expect(card).toHaveClass('w-full', 'p-6', 'bg-card', 'rounded-lg', 'flex', 'flex-col', 'gap-6');
-    });
+  it('matches snapshot for cards', () => {
+    const { container } = render(<DialogBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies correct styling to card titles', () => {
-    render(<DialogBackup />);
-
-    const cardTitles = screen.getAllByText(/Recovery phrase|Download encrypted file|Export to Pubky Ring/);
-    cardTitles.forEach((title) => {
-      expect(title).toHaveClass('text-base', 'font-bold', 'text-card-foreground', 'leading-none');
-    });
+  it('matches snapshot for card titles', () => {
+    const { container } = render(<DialogBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies correct styling to images', () => {
-    render(<DialogBackup />);
-
-    const images = screen.getAllByTestId('image');
-    images.forEach((image) => {
-      expect(image).toHaveClass('w-28', 'h-28');
-    });
+  it('matches snapshot for images', () => {
+    const { container } = render(<DialogBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('renders all required elements', () => {

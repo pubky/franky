@@ -1,0 +1,841 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogBackup > matches snapshot for card titles 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="text-primary-foreground hover:text-primary-foreground"
+      data-testid="button"
+      data-variant="outline"
+    >
+      Backup
+    </button>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Back up your pubky
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-4"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+        </p>
+        <div
+          class="w-full flex md:flex-row flex-col gap-3"
+          data-testid="container"
+        >
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Recovery phrase
+            </p>
+            <div
+              class="self-center"
+              data-alt="Note"
+              data-height="112"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Note
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Download encrypted file
+            </p>
+            <div
+              class="self-center"
+              data-alt="Folder"
+              data-height="112"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Export to Pubky Ring
+            </p>
+            <div
+              class="self-center"
+              data-alt="Keys"
+              data-height="112"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogBackup > matches snapshot for cards 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="text-primary-foreground hover:text-primary-foreground"
+      data-testid="button"
+      data-variant="outline"
+    >
+      Backup
+    </button>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Back up your pubky
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-4"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+        </p>
+        <div
+          class="w-full flex md:flex-row flex-col gap-3"
+          data-testid="container"
+        >
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Recovery phrase
+            </p>
+            <div
+              class="self-center"
+              data-alt="Note"
+              data-height="112"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Note
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Download encrypted file
+            </p>
+            <div
+              class="self-center"
+              data-alt="Folder"
+              data-height="112"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Export to Pubky Ring
+            </p>
+            <div
+              class="self-center"
+              data-alt="Keys"
+              data-height="112"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogBackup > matches snapshot for dialog content 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="text-primary-foreground hover:text-primary-foreground"
+      data-testid="button"
+      data-variant="outline"
+    >
+      Backup
+    </button>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Back up your pubky
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-4"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+        </p>
+        <div
+          class="w-full flex md:flex-row flex-col gap-3"
+          data-testid="container"
+        >
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Recovery phrase
+            </p>
+            <div
+              class="self-center"
+              data-alt="Note"
+              data-height="112"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Note
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Download encrypted file
+            </p>
+            <div
+              class="self-center"
+              data-alt="Folder"
+              data-height="112"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Export to Pubky Ring
+            </p>
+            <div
+              class="self-center"
+              data-alt="Keys"
+              data-height="112"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogBackup > matches snapshot for dialog header 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="text-primary-foreground hover:text-primary-foreground"
+      data-testid="button"
+      data-variant="outline"
+    >
+      Backup
+    </button>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Back up your pubky
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-4"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+        </p>
+        <div
+          class="w-full flex md:flex-row flex-col gap-3"
+          data-testid="container"
+        >
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Recovery phrase
+            </p>
+            <div
+              class="self-center"
+              data-alt="Note"
+              data-height="112"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Note
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Download encrypted file
+            </p>
+            <div
+              class="self-center"
+              data-alt="Folder"
+              data-height="112"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Export to Pubky Ring
+            </p>
+            <div
+              class="self-center"
+              data-alt="Keys"
+              data-height="112"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogBackup > matches snapshot for images 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="text-primary-foreground hover:text-primary-foreground"
+      data-testid="button"
+      data-variant="outline"
+    >
+      Backup
+    </button>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Back up your pubky
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-4"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+        </p>
+        <div
+          class="w-full flex md:flex-row flex-col gap-3"
+          data-testid="container"
+        >
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Recovery phrase
+            </p>
+            <div
+              class="self-center"
+              data-alt="Note"
+              data-height="112"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Note
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Download encrypted file
+            </p>
+            <div
+              class="self-center"
+              data-alt="Folder"
+              data-height="112"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Export to Pubky Ring
+            </p>
+            <div
+              class="self-center"
+              data-alt="Keys"
+              data-height="112"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogBackup > matches snapshot for trigger button 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="text-primary-foreground hover:text-primary-foreground"
+      data-testid="button"
+      data-variant="outline"
+    >
+      Backup
+    </button>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Back up your pubky
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-4"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-medium"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+        </p>
+        <div
+          class="w-full flex md:flex-row flex-col gap-3"
+          data-testid="container"
+        >
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Recovery phrase
+            </p>
+            <div
+              class="self-center"
+              data-alt="Note"
+              data-height="112"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Note
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Download encrypted file
+            </p>
+            <div
+              class="self-center"
+              data-alt="Folder"
+              data-height="112"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+          <div
+            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            data-testid="card"
+          >
+            <p
+              class="text-base font-bold text-card-foreground leading-none"
+              data-size="md"
+              data-testid="typography"
+            >
+              Export to Pubky Ring
+            </p>
+            <div
+              class="self-center"
+              data-alt="Keys"
+              data-height="112"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="112"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+            <button
+              data-testid="button"
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

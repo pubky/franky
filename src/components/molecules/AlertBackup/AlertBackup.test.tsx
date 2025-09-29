@@ -32,20 +32,9 @@ vi.mock('@/molecules', () => ({
 }));
 
 describe('AlertBackup', () => {
-  it('renders with correct structure', () => {
-    render(<AlertBackup />);
-
-    const mainContainer = screen.getAllByTestId('container')[0];
-    expect(mainContainer).toHaveClass(
-      'px-6',
-      'py-3',
-      'bg-brand',
-      'rounded-lg',
-      'flex',
-      'flex-row',
-      'items-center',
-      'gap-3',
-    );
+  it('matches snapshot for default AlertBackup', () => {
+    const { container } = render(<AlertBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('renders warning icon and message', () => {
@@ -63,18 +52,14 @@ describe('AlertBackup', () => {
     expect(screen.getByTestId('dialog-confirm-backup')).toBeInTheDocument();
   });
 
-  it('applies correct styling to warning message', () => {
-    render(<AlertBackup />);
-
-    const warningText = screen.getByText('Back up now');
-    expect(warningText).toHaveClass('font-bold', 'text-primary-foreground');
+  it('matches snapshot for warning message', () => {
+    const { container } = render(<AlertBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies correct styling to warning icon', () => {
-    render(<AlertBackup />);
-
-    const warningIcon = screen.getByTestId('triangle-alert');
-    expect(warningIcon).toHaveClass('h-4', 'w-4', 'font-bold', 'text-primary-foreground');
+  it('matches snapshot for warning icon', () => {
+    const { container } = render(<AlertBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
   it('renders all required elements', () => {
