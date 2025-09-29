@@ -1,7 +1,7 @@
-import { type NexusList, type NexusPost, type NexusUser } from '@/core';
+import * as Core from '@/core';
 
 export interface NexusBootstrapResponse {
-  users: NexusUser[];
-  posts: NexusPost[];
-  list: NexusList;
+  users: Core.NexusUser[];
+  posts: Core.NexusPost[];
+  list: Core.NexusBootstrapList;
 }

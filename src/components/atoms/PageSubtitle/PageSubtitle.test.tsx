@@ -5,40 +5,63 @@ import { PageSubtitle } from './PageSubtitle';
 describe('PageSubtitle', () => {
   it('renders with default props', () => {
     render(<PageSubtitle>Test subtitle</PageSubtitle>);
+    const pageSubtitle = screen.getByText('Test subtitle');
+    expect(pageSubtitle).toBeInTheDocument();
+  });
+});
 
-    const subtitle = screen.getByText('Test subtitle');
-    expect(subtitle).toBeInTheDocument();
-    expect(subtitle.tagName).toBe('H2');
-    expect(subtitle).toHaveClass('text-xl', 'lg:text-2xl', 'text-muted-foreground', 'font-light', 'leading-normal');
+describe('PageSubtitle - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<PageSubtitle>Test subtitle</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies custom className', () => {
-    render(<PageSubtitle className="custom-subtitle">Test subtitle</PageSubtitle>);
-
-    const subtitle = screen.getByText('Test subtitle');
-    expect(subtitle).toHaveClass('custom-subtitle');
+  it('matches snapshot for h2 element', () => {
+    const { container } = render(<PageSubtitle as="h2">H2 subtitle</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders complex children correctly', () => {
-    render(
+  it('matches snapshot for h5 element', () => {
+    const { container } = render(<PageSubtitle as="h5">H5 subtitle</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for p element', () => {
+    const { container } = render(<PageSubtitle as="p">P subtitle</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<PageSubtitle className="custom-subtitle">Custom subtitle</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with title prop', () => {
+    const { container } = render(<PageSubtitle title="Title prop subtitle" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with simple content', () => {
+    const { container } = render(<PageSubtitle>Simple subtitle</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with complex children', () => {
+    const { container } = render(
       <PageSubtitle>
         <span>Complex</span> <strong>subtitle</strong> content
       </PageSubtitle>,
     );
-
-    expect(screen.getByText('Complex')).toBeInTheDocument();
-    expect(screen.getByText('subtitle')).toBeInTheDocument();
-    expect(screen.getByText('content')).toBeInTheDocument();
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('passes through additional props', () => {
-    render(
-      <PageSubtitle data-testid="page-subtitle" id="subtitle-id">
-        Test
-      </PageSubtitle>,
-    );
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<PageSubtitle id="subtitle-id">Subtitle with ID</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const subtitle = screen.getByTestId('page-subtitle');
-    expect(subtitle).toHaveAttribute('id', 'subtitle-id');
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<PageSubtitle data-testid="page-subtitle">Subtitle with test ID</PageSubtitle>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

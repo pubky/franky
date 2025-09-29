@@ -53,9 +53,18 @@ global.fetch = vi.fn().mockResolvedValue(
   }),
 );
 
+// Mock Next.js font imports
+vi.mock('next/font/google', () => ({
+  Inter_Tight: vi.fn(() => ({
+    variable: '--font-geist-sans',
+    className: 'inter-tight',
+  })),
+}));
+
 process.env.NEXT_PUBLIC_DB_VERSION = '1';
 process.env.NEXT_PUBLIC_DEBUG_MODE = 'false';
-process.env.NEXT_PUBLIC_NEXUS_URL = 'https://nexus.staging.pubky.app/v0';
+process.env.NEXT_PUBLIC_NEXUS_URL = 'https://nexus.staging.pubky.app';
+process.env.NEXT_PUBLIC_NEXUS_VERSION = 'v0';
 process.env.NEXT_PUBLIC_SYNC_TTL = '300000';
 process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL = 'http://localhost:6288/generate_signup_token';
 process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD = 'admin';

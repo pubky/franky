@@ -127,7 +127,7 @@ describe('DialogWelcome', () => {
     isOpen: true,
     onOpenChange: vi.fn(),
     name: 'Satoshi Nakamoto',
-    publicKey: 'test-public-key-12345',
+    pubky: 'test-public-key-12345',
     image: 'https://example.com/avatar.jpg',
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
   };
@@ -150,86 +150,6 @@ describe('DialogWelcome', () => {
     expect(title).toBeInTheDocument();
   });
 
-  it('displays correct dialog title', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const title = screen.getByTestId('dialog-title');
-    expect(title).toHaveTextContent('Welcome to Pubky!');
-  });
-
-  it('displays correct dialog description', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const description = screen.getByTestId('dialog-description');
-    expect(description).toHaveTextContent('Your keys, your content, your rules.');
-  });
-
-  it('displays user name correctly', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const nameTypography = screen.getByText('Satoshi Nakamoto');
-    expect(nameTypography).toBeInTheDocument();
-  });
-
-  it('displays user bio correctly', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const bioTypography = screen.getByText(
-      'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-    );
-    expect(bioTypography).toBeInTheDocument();
-  });
-
-  it('displays avatar with correct image', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const avatarImage = screen.getByTestId('avatar-image');
-    expect(avatarImage).toHaveAttribute('src', 'https://example.com/avatar.jpg');
-  });
-
-  it('displays avatar fallback with correct initials', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const avatarFallback = screen.getByTestId('avatar-fallback');
-    expect(avatarFallback).toHaveTextContent('SN');
-  });
-
-  it('calculates initials correctly from name', () => {
-    render(<DialogWelcome {...defaultProps} name="John Doe Smith" />);
-
-    const avatarFallback = screen.getByTestId('avatar-fallback');
-    expect(avatarFallback).toHaveTextContent('JD');
-  });
-
-  it('displays public key in copy button', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    // Check that the public key is displayed in the copy button
-    const copyButton = screen.getByTestId('button-secondary');
-    // The button should contain some text content (the formatted public key)
-    expect(copyButton).toHaveTextContent(/\w+/);
-  });
-
-  it('displays copy button with key icon', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const copyButton = screen.getByTestId('button-secondary');
-    const keyIcon = screen.getByTestId('key-icon');
-
-    expect(copyButton).toBeInTheDocument();
-    expect(keyIcon).toBeInTheDocument();
-  });
-
-  it('displays explore button with arrow icon', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const exploreButton = screen.getByText('Explore Pubky');
-    const arrowIcon = screen.getByTestId('arrow-right-icon');
-
-    expect(exploreButton).toBeInTheDocument();
-    expect(arrowIcon).toBeInTheDocument();
-  });
-
   it('calls onOpenChange when explore button is clicked', () => {
     const onOpenChange = vi.fn();
     render(<DialogWelcome {...defaultProps} onOpenChange={onOpenChange} />);
@@ -240,108 +160,6 @@ describe('DialogWelcome', () => {
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it('copy button is clickable', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const copyButton = screen.getByTestId('button-secondary');
-    expect(copyButton).toBeInTheDocument();
-    expect(copyButton).toHaveAttribute('data-variant', 'secondary');
-  });
-
-  it('applies correct styling to dialog content', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('sm:max-w-xl');
-  });
-
-  it('applies correct styling to dialog header', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const header = screen.getByTestId('dialog-header');
-    expect(header).toHaveClass('text-left', 'pr-6', 'gap-0');
-  });
-
-  it('renders scrollable content area', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const scrollableArea = document.querySelector('.max-h-\\[420px\\]');
-    expect(scrollableArea).toBeInTheDocument();
-    expect(scrollableArea).toHaveClass('max-h-[420px]', 'overflow-y-auto');
-  });
-
-  it('applies responsive layout classes to card', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const card = screen.getByTestId('card');
-    expect(card).toHaveClass(
-      'flex-col',
-      'sm:flex-row',
-      'justify-center',
-      'sm:justify-start',
-      'items-center',
-      'sm:items-start',
-    );
-  });
-
-  it('applies responsive layout classes to content container', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    // Find the container that contains the avatar content with responsive classes
-    const containers = screen.getAllByTestId('container');
-    const avatarContentContainer = containers.find(
-      (container) => container.className?.includes('justify-center') || container.className?.includes('items-center'),
-    );
-
-    expect(avatarContentContainer).toBeInTheDocument();
-    expect(avatarContentContainer).toHaveClass(
-      'flex',
-      'flex-col',
-      'justify-center',
-      'sm:justify-start',
-      'items-center',
-      'sm:items-start',
-    );
-  });
-
-  it('applies responsive text alignment to bio', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    const bioTypography = screen.getByText(
-      'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-    );
-    expect(bioTypography).toHaveClass('text-center', 'sm:text-left');
-  });
-
-  it('works without optional props', () => {
-    const minimalProps = {
-      isOpen: true,
-      onOpenChange: vi.fn(),
-      name: 'Test User',
-      publicKey: 'test-key',
-    };
-
-    render(<DialogWelcome {...minimalProps} />);
-
-    expect(screen.getByText('Test User')).toBeInTheDocument();
-    expect(screen.getByText('TU')).toBeInTheDocument(); // Initials
-    expect(screen.getByText('test-key')).toBeInTheDocument();
-  });
-
-  it('handles empty name gracefully', () => {
-    render(<DialogWelcome {...defaultProps} name="" />);
-
-    const avatarFallback = screen.getByTestId('avatar-fallback');
-    expect(avatarFallback).toHaveTextContent('');
-  });
-
-  it('handles single word name', () => {
-    render(<DialogWelcome {...defaultProps} name="Satoshi" />);
-
-    const avatarFallback = screen.getByTestId('avatar-fallback');
-    expect(avatarFallback).toHaveTextContent('S');
-  });
-
   it('calls copyToClipboard when copy button is clicked', () => {
     render(<DialogWelcome {...defaultProps} />);
 
@@ -350,5 +168,149 @@ describe('DialogWelcome', () => {
 
     // The button should be clickable and not throw any errors
     expect(copyButton).toBeInTheDocument();
+  });
+});
+
+describe('DialogWelcome - Snapshots', () => {
+  const defaultProps = {
+    isOpen: true,
+    onOpenChange: vi.fn(),
+    name: 'Satoshi Nakamoto',
+    pubky: 'test-public-key-12345',
+    image: 'https://example.com/avatar.jpg',
+    bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
+  };
+
+  it('matches snapshot with default props', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} pubky="test-public-key-12345" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with minimal props', () => {
+    const minimalProps = {
+      isOpen: true,
+      onOpenChange: vi.fn(),
+      name: 'Test User',
+      pubky: 'test-key',
+    };
+
+    const { container } = render(<DialogWelcome {...minimalProps} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with single word name', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} name="Satoshi" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with empty name', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} name="" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with long name', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} name="John Doe Smith Johnson-Baker-Taylor-Jones" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot without bio', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} bio={undefined} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with long bio', () => {
+    const longBio =
+      'This is a very long bio that should test how the component handles extensive text content and whether it properly wraps and displays within the dialog constraints.';
+    const { container } = render(<DialogWelcome {...defaultProps} bio={longBio} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot without image', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} image={undefined} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with different public key format', () => {
+    const { container } = render(
+      <DialogWelcome {...defaultProps} pubky="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when dialog is closed', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} isOpen={false} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
+
+describe('DialogWelcome - Snapshots', () => {
+  const defaultProps = {
+    isOpen: true,
+    onOpenChange: vi.fn(),
+    name: 'Satoshi Nakamoto',
+    pubky: 'test-public-key-12345',
+    image: 'https://example.com/avatar.jpg',
+    bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
+  };
+
+  it('matches snapshot with default props', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with minimal props', () => {
+    const minimalProps = {
+      isOpen: true,
+      onOpenChange: vi.fn(),
+      name: 'Test User',
+      pubky: 'test-key',
+    };
+
+    const { container } = render(<DialogWelcome {...minimalProps} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with single word name', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} name="Satoshi" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with empty name', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} name="" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with long name', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} name="John Doe Smith Johnson-Baker-Taylor-Jones" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot without bio', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} bio={undefined} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with long bio', () => {
+    const longBio =
+      'This is a very long bio that should test how the component handles extensive text content and whether it properly wraps and displays within the dialog constraints.';
+    const { container } = render(<DialogWelcome {...defaultProps} bio={longBio} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot without image', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} image={undefined} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with different public key format', () => {
+    const { container } = render(
+      <DialogWelcome {...defaultProps} pubky="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when dialog is closed', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} isOpen={false} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

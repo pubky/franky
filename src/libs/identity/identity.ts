@@ -1,19 +1,19 @@
-import { Keypair as PubkyKeypair, createRecoveryFile } from '@synonymdev/pubky';
+import { Keypair, Keypair as PubkyKeypair, createRecoveryFile, decryptRecoveryFile } from '@synonymdev/pubky';
 import * as bip39 from 'bip39';
-import crypto from 'crypto';
-import { CommonErrorType, createCommonError } from '@/libs';
-import { TKeyPair } from '@/core';
+
+import * as Libs from '@/libs';
+import * as Core from '@/core';
 
 export class Identity {
-  static async createRecoveryFile(keypair: TKeyPair | PubkyKeypair, password: string): Promise<void> {
+  static async createRecoveryFile(keypair: Core.TKeyPair | PubkyKeypair, password: string): Promise<void> {
     // Handle both string and Uint8Array secret keys for backward compatibility
     let secretKeyHex: string;
 
     if (keypair.secretKey instanceof Uint8Array) {
       // Convert Uint8Array to hex string
       if (keypair.secretKey.length !== 32) {
-        throw createCommonError(
-          CommonErrorType.INVALID_INPUT,
+        throw Libs.createCommonError(
+          Libs.CommonErrorType.INVALID_INPUT,
           `Invalid secret key length. Expected 32 bytes, got ${keypair.secretKey.length}. Please regenerate your keys.`,
           400,
           { secretKeyLength: keypair.secretKey.length },
@@ -23,8 +23,8 @@ export class Identity {
     } else if (typeof keypair.secretKey === 'string') {
       // Validate hex string format
       if (keypair.secretKey.length !== 64) {
-        throw createCommonError(
-          CommonErrorType.INVALID_INPUT,
+        throw Libs.createCommonError(
+          Libs.CommonErrorType.INVALID_INPUT,
           `Invalid secret key length. Expected 64 hex characters, got ${keypair.secretKey.length}. Please regenerate your keys.`,
           400,
           { secretKeyLength: keypair.secretKey.length },
@@ -32,8 +32,8 @@ export class Identity {
       }
       secretKeyHex = keypair.secretKey;
     } else {
-      throw createCommonError(
-        CommonErrorType.INVALID_INPUT,
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
         'Invalid secret key format. Please regenerate your keys.',
         400,
         { secretKeyType: typeof keypair.secretKey },
@@ -50,18 +50,20 @@ export class Identity {
         throw error;
       }
 
-      throw createCommonError(
-        CommonErrorType.UNEXPECTED_ERROR,
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.UNEXPECTED_ERROR,
         'Failed to create recovery file. Please try regenerating your keys.',
         500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
   }
 
   static async handleDownloadRecoveryFile({ recoveryFile, filename }: { recoveryFile: Uint8Array; filename: string }) {
     try {
-      const blob = new Blob([recoveryFile], { type: 'application/octet-stream' });
+      const arrayBuffer = new ArrayBuffer(recoveryFile.byteLength);
+      new Uint8Array(arrayBuffer).set(recoveryFile);
+      const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
 
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -72,31 +74,16 @@ export class Identity {
 
       URL.revokeObjectURL(link.href);
     } catch (error) {
-      console.log(error);
+      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'Failed to download recovery file', 500, {
+        error,
+      });
     }
   }
 
-  static generateSeedWords(secretKey: string): string[] {
-    // Convert secret key to buffer (secretKey is already a Uint8Array)
-    const secretBuffer = this.secretKeyFromHex(secretKey);
-
-    // Validate minimum length (should be at least 32 bytes for good entropy)
-    if (secretBuffer.length < 32) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Secret key is shorter than recommended 32 bytes', 400, {
-        actualLength: secretBuffer.length,
-      });
-    }
-
+  static generateSeedWords(): string[] {
     try {
-      // Create a hash of the secret key to use as entropy
-      // This ensures we get consistent seed words from the same secret key
-      const entropy = crypto.createHash('sha256').update(secretBuffer).digest();
-
-      // Take first 128 bits (16 bytes) for 12-word mnemonic
-      const entropy128 = entropy.slice(0, 16);
-
-      // Generate mnemonic from entropy
-      const mnemonic = bip39.entropyToMnemonic(entropy128);
+      // Generate 12-word mnemonic using BIP39 standard (128 bits entropy)
+      const mnemonic = bip39.generateMnemonic(128);
 
       // Validate the generated mnemonic
       if (!bip39.validateMnemonic(mnemonic)) {
@@ -112,61 +99,128 @@ export class Identity {
 
       return words;
     } catch (error) {
-      throw createCommonError(
-        CommonErrorType.UNEXPECTED_ERROR,
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.UNEXPECTED_ERROR,
         'Failed to generate BIP39 seed words. Please try regenerating your keys.',
         500,
-        { originalError: error instanceof Error ? error.message : 'Unknown error' },
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
       );
     }
   }
 
-  static keypairFromSecretKey(secretKey: string): TKeyPair {
+  static generateKeypairFromMnemonic(mnemonic: string) {
+    if (!bip39.validateMnemonic(mnemonic)) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid mnemonic', 400);
+    }
+
+    try {
+      // Convert mnemonic to seed using BIP39 standard
+      const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
+
+      // Use first 32 bytes as secret key
+      const secretKey = seedMnemonic.slice(0, 32);
+
+      // Create keypair from secret key
+      const keypair = Keypair.fromSecretKey(secretKey);
+
+      return {
+        secretKey: this.secretKeyToHex(keypair.secretKey()),
+        pubky: keypair.publicKey().z32(),
+      };
+    } catch (error) {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Failed to generate keypair from mnemonic',
+        400,
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
+      );
+    }
+  }
+
+  static keypairFromSecretKey(secretKey: string) {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
       const keypair = PubkyKeypair.fromSecretKey(secretKeyUint8Array);
 
       return {
         secretKey: this.secretKeyToHex(keypair.secretKey()),
-        publicKey: keypair.publicKey().z32(),
+        pubky: keypair.publicKey().z32(),
       };
     } catch (error) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
   }
 
   static pubkyKeypairFromSecretKey(secretKey: string): PubkyKeypair {
     try {
       const secretKeyUint8Array = this.secretKeyFromHex(secretKey);
-      const keypair = PubkyKeypair.fromSecretKey(secretKeyUint8Array);
-
-      return keypair;
+      return PubkyKeypair.fromSecretKey(secretKeyUint8Array);
     } catch (error) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
   }
 
-  static generateKeypair(): TKeyPair {
-    const keypair = PubkyKeypair.random();
-    const secretKey = this.secretKeyToHex(keypair.secretKey());
-    const publicKey = keypair.publicKey().z32();
+  static generateKeypair() {
+    // Generate mnemonic first, then create keypair from it
+    const words = this.generateSeedWords();
+    const mnemonic = words.join(' ');
+    const { secretKey, pubky } = this.generateKeypairFromMnemonic(mnemonic);
 
-    return { secretKey, publicKey };
+    return {
+      secretKey,
+      pubky,
+      mnemonic,
+    };
   }
 
-  static secretKeyFromHex(secretKey: string): Uint8Array {
+  static secretKeyFromHex(secretKey: string) {
     try {
       return new Uint8Array(Buffer.from(secretKey, 'hex'));
     } catch (error) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
     }
   }
 
-  static secretKeyToHex(secretKey: Uint8Array): string {
+  static secretKeyToHex(secretKey: Uint8Array) {
     try {
       return Buffer.from(secretKey).toString('hex');
     } catch (error) {
-      throw createCommonError(CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid secret key format', 400, { error });
+    }
+  }
+
+  static pubkyKeypairFromMnemonic(mnemonic: string) {
+    if (!bip39.validateMnemonic(mnemonic)) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery phrase', 400);
+    }
+
+    try {
+      // Convert mnemonic to seed using BIP39 standard
+      const seedMnemonic = bip39.mnemonicToSeedSync(mnemonic);
+
+      // Use first 32 bytes as secret key (same as signup process)
+      const secretKey = seedMnemonic.slice(0, 32);
+
+      return Keypair.fromSecretKey(secretKey);
+    } catch (error) {
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.INVALID_INPUT,
+        'Failed to restore keypair from recovery phrase',
+        400,
+        { originalError: error instanceof Error ? error.message : 'Unknown error', error },
+      );
+    }
+  }
+
+  static async decryptRecoveryFile(encryptedFile: File, password: string) {
+    const arrayBuffer = await encryptedFile.arrayBuffer();
+    const recoveryFile = new Uint8Array(arrayBuffer);
+    try {
+      return decryptRecoveryFile(recoveryFile, password);
+    } catch (error) {
+      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, 'Invalid recovery file or password', 400, {
+        error,
+      });
     }
   }
 }

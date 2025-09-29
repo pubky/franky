@@ -29,7 +29,8 @@ const envSchema = z.object({
     .default('false')
     .transform((val) => (typeof val === 'string' ? val === 'true' : val)),
 
-  NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app/v0'),
+  NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app'),
+  NEXT_PUBLIC_NEXUS_VERSION: z.string().default('v0'),
 
   NEXT_PUBLIC_SYNC_TTL: z
     .string()
@@ -50,6 +51,7 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_HOMESERVER_ADMIN_URL: z.string().url().default('http://localhost:6288/generate_signup_token'),
   NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
+  NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://relay.pubky.app'),
 
   // Test environment variable (optional)
   VITEST: z.string().optional(),
@@ -68,7 +70,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_PUBKY_CORE_URL: z.string().optional().default('https://pubky.org'),
   NEXT_PUBLIC_TWITTER_URL: z.string().optional().default('https://x.com/pubky'),
   NEXT_PUBLIC_TWITTER_GETPUBKY_URL: z.string().optional().default('https://x.com/getpubky'),
-  NEXT_PUBLIC_TELEGRAM_URL: z.string().optional().default('https://t.me/pubky'),
+  NEXT_PUBLIC_TELEGRAM_URL: z.string().optional().default('https://t.me/pubkychat'),
   NEXT_PUBLIC_GITHUB_URL: z.string().optional().default('https://github.com/pubky'),
   NEXT_PUBLIC_EMAIL: z.string().optional().default('hello@pubky.com'),
   NEXT_PUBLIC_APP_STORE_URL: z.string().optional().default('https://apps.apple.com/app/pubky-ring/id6739356756'),
@@ -89,12 +91,14 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_DB_VERSION: process.env.NEXT_PUBLIC_DB_VERSION,
       NEXT_PUBLIC_DEBUG_MODE: process.env.NEXT_PUBLIC_DEBUG_MODE,
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
+      NEXT_PUBLIC_NEXUS_VERSION: process.env.NEXT_PUBLIC_NEXUS_VERSION,
       NEXT_PUBLIC_SYNC_TTL: process.env.NEXT_PUBLIC_SYNC_TTL,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
       NEXT_PUBLIC_HOMESERVER_ADMIN_URL: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL,
       NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
+      NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
       VITEST: process.env.VITEST,
       NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
       NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,

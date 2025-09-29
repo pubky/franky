@@ -1,22 +1,24 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
+import * as Core from '@/core';
 
 interface DialogWelcomeProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   name: string;
-  publicKey: string;
+  pubky: Core.Pubky;
   image?: string;
   bio?: string;
 }
 
-export function DialogWelcome({ isOpen, onOpenChange, name, image, publicKey, bio }: DialogWelcomeProps) {
-  const displayPublicKey = Libs.formatPublicKey({ key: publicKey, length: 10 });
-  const { copyToClipboard } = Libs.useCopyToClipboard();
+export function DialogWelcome({ isOpen, onOpenChange, name, image, pubky, bio }: DialogWelcomeProps) {
+  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
+  const { copyToClipboard } = Hooks.useCopyToClipboard();
   const initials = Libs.extractInitials({ name, maxLength: 2 });
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(publicKey);
+    copyToClipboard(pubky);
   };
 
   const handleExplorePubky = () => {

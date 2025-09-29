@@ -1,0 +1,194 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Install Components - Snapshots > InstallCard - Snapshots > matches snapshot for default InstallCard 1`] = `
+<div
+  data-testid="content-card"
+>
+  <img
+    alt="Keyring"
+    data-testid="content-card-image"
+    src="/images/keyring.png"
+  />
+  <div
+    class="gap-3"
+    data-testid="container"
+  >
+    <div
+      class="flex-col items-center sm:items-start"
+      data-testid="container"
+    >
+      <img
+        alt="Pubky Ring"
+        data-testid="next-image"
+        height="48"
+        src="/images/logo-pubky-ring.svg"
+        width="220"
+      />
+    </div>
+    <p
+      class="text-secondary-foreground opacity-80 font-medium text-base"
+      data-testid="typography"
+    >
+      Download and install the mobile app to start creating your account.
+    </p>
+  </div>
+  <div
+    class="flex-row gap-4 justify-around sm:justify-start"
+    data-testid="container"
+  >
+    <div
+      data-store="apple"
+      data-testid="dialog-download-pubky-ring"
+    >
+      Download Dialog
+    </div>
+    <div
+      data-store="android"
+      data-testid="dialog-download-pubky-ring"
+    >
+      Download Dialog
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Install Components - Snapshots > InstallFooter - Snapshots > matches snapshot for default InstallFooter 1`] = `
+<div
+  class="py-6"
+  data-testid="footer-links"
+>
+  Use
+   
+  <a
+    data-testid="link"
+    href="https://pubkyring.app/"
+    target="_blank"
+  >
+    Pubky Ring
+  </a>
+   
+  or any other
+   
+  <a
+    data-testid="link"
+    href="https://pubky.org"
+    target="_blank"
+  >
+    Pubky Core
+  </a>
+  –powered keychain, or create your keys in the browser (less secure).
+</div>
+`;
+
+exports[`Install Components - Snapshots > InstallHeader - Snapshots > matches snapshot for default InstallHeader 1`] = `
+<div
+  data-testid="page-header"
+>
+  <div
+    data-size="large"
+    data-testid="page-title"
+  >
+    Install 
+    <br
+      class="block sm:hidden"
+    />
+     
+    <span
+      class="text-brand"
+    >
+      Pubky Ring.
+    </span>
+  </div>
+  <div
+    data-testid="page-subtitle"
+  >
+    Pubky Ring is a keychain for your identity keys in the Pubky ecosystem.
+  </div>
+</div>
+`;
+
+exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matches snapshot for InstallNavigation with custom className 1`] = `
+<div
+  class="flex-col-reverse md:flex-row gap-3 lg:gap-6 custom-navigation"
+  data-testid="container"
+>
+  <div
+    class="items-center gap-1 flex-row"
+    data-testid="container"
+  >
+    <button
+      class="rounded-full flex-1 md:flex-none"
+      data-testid="button-outline"
+      data-variant="outline"
+    >
+      <div
+        class="mr-2 h-4 w-4"
+        data-testid="app-window-icon"
+      >
+        AppWindow
+      </div>
+      Create keys in browser
+    </button>
+    <div
+      data-testid="popover-tradeoffs"
+    >
+      Tradeoffs Popover
+    </div>
+  </div>
+  <button
+    class="rounded-full"
+    data-testid="button"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Continue with Pubky Ring
+  </button>
+</div>
+`;
+
+exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matches snapshot for default InstallNavigation 1`] = `
+<div
+  class="flex-col-reverse md:flex-row gap-3 lg:gap-6"
+  data-testid="container"
+>
+  <div
+    class="items-center gap-1 flex-row"
+    data-testid="container"
+  >
+    <button
+      class="rounded-full flex-1 md:flex-none"
+      data-testid="button-outline"
+      data-variant="outline"
+    >
+      <div
+        class="mr-2 h-4 w-4"
+        data-testid="app-window-icon"
+      >
+        AppWindow
+      </div>
+      Create keys in browser
+    </button>
+    <div
+      data-testid="popover-tradeoffs"
+    >
+      Tradeoffs Popover
+    </div>
+  </div>
+  <button
+    class="rounded-full"
+    data-testid="button"
+  >
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="arrow-right-icon"
+    >
+      ArrowRight
+    </div>
+    Continue with Pubky Ring
+  </button>
+</div>
+`;

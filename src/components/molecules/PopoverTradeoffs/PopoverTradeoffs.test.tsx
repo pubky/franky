@@ -83,73 +83,11 @@ describe('PopoverTradeoffs', () => {
     expect(content).toBeInTheDocument();
     expect(button).toBeInTheDocument();
   });
+});
 
-  it('renders alert triangle icon in trigger button', () => {
-    render(<PopoverTradeoffs />);
-
-    const alertIcon = screen.getByTestId('alert-triangle-icon');
-    expect(alertIcon).toBeInTheDocument();
-    expect(alertIcon).toHaveClass('h-4', 'w-4');
-  });
-
-  it('applies correct styling to popover content', () => {
-    render(<PopoverTradeoffs />);
-
-    const content = screen.getByTestId('popover-content');
-    expect(content).toHaveClass('w-full');
-  });
-
-  it('renders tradeoffs title', () => {
-    render(<PopoverTradeoffs />);
-
-    const title = screen.getByText('Be aware of these tradeoffs:');
-    expect(title).toBeInTheDocument();
-    expect(title.tagName).toBe('H4');
-    expect(title).toHaveClass('text-popover-foreground');
-  });
-
-  it('renders tradeoffs content', () => {
-    render(<PopoverTradeoffs />);
-
-    expect(screen.getByText(/Less secure than mobile keychain/)).toBeInTheDocument();
-    expect(screen.getByText(/Browser-based key generation/)).toBeInTheDocument();
-    expect(screen.getByText(/Suboptimal sign-in experience/)).toBeInTheDocument();
-  });
-
-  it('trigger uses asChild prop correctly', () => {
-    render(<PopoverTradeoffs />);
-
-    const trigger = screen.getByTestId('popover-trigger');
-    expect(trigger).toHaveAttribute('data-as-child', 'true');
-  });
-
-  it('button has correct variant and size', () => {
-    render(<PopoverTradeoffs />);
-
-    const button = screen.getByTestId('button-ghost');
-    expect(button).toBeInTheDocument();
-  });
-
-  it('maintains proper content structure', () => {
-    render(<PopoverTradeoffs />);
-
-    const list = screen.getByRole('list');
-    expect(list).toBeInTheDocument();
-    expect(list).toHaveClass('list-disc', 'list-inside', 'text-muted-foreground', 'text-sm');
-  });
-
-  it('renders security comparison information', () => {
-    render(<PopoverTradeoffs />);
-
-    // Check for security-related content
-    expect(screen.getByText(/Less secure than mobile keychain/)).toBeInTheDocument();
-    expect(screen.getByText(/Browser-based key generation/)).toBeInTheDocument();
-  });
-
-  it('icon has correct accessibility attributes', () => {
-    render(<PopoverTradeoffs />);
-
-    const alertIcon = screen.getByTestId('alert-triangle-icon');
-    expect(alertIcon).toBeInTheDocument();
+describe('PopoverTradeoffs - Snapshots', () => {
+  it('matches snapshot for default PopoverTradeoffs', () => {
+    const { container } = render(<PopoverTradeoffs />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

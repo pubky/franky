@@ -25,7 +25,7 @@ export function DialogTerms() {
             <Atoms.Typography className={baseCSS}>
               TERMS AND CONDITIONS
               <br />
-              Effective Date: 15 May 2025
+              Effective Date: June 19, 2025
             </Atoms.Typography>
             <Atoms.Typography className={baseCSS}>
               Thank you for using the Pubky platform and the products, services and features we make available to you as

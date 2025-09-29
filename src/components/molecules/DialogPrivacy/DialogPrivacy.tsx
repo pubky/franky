@@ -20,7 +20,7 @@ export function DialogPrivacy() {
         <Atoms.Container className="h-[320px] pr-4 overflow-y-auto">
           <Atoms.Container className="flex-col gap-4">
             {/** Section 1 */}
-            <Atoms.Typography className={baseCSS}>Effective Date: 15 May 2025</Atoms.Typography>
+            <Atoms.Typography className={baseCSS}>Effective Date: June 19, 2025</Atoms.Typography>
             <Atoms.Typography className={baseCSS}>
               SCOPE
               <br /> This Privacy Policy (“Policy“) describes how Synonym Software Ltd. treats personal information on
@@ -340,7 +340,7 @@ export function DialogPrivacy() {
               Individuals who wish to exercise their rights under this section can contact us at{' '}
               <Atoms.Link href={EMAIL_PRIVACY_URL}>privacy@synonym.to</Atoms.Link>. Please include your name, public
               key, and email address, and indicate you are making a “Privacy Rights” request. If we deny your rights
-              request and you would like to appeal, you may contact us at
+              request and you would like to appeal, you may contact us at{' '}
               <Atoms.Link href={EMAIL_URL}>info@synonym.to</Atoms.Link>.
             </Atoms.Typography>
             <Atoms.Typography className={baseCSS}>

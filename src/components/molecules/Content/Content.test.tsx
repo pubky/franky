@@ -45,72 +45,6 @@ describe('ContentCard', () => {
     expect(screen.getByTestId('card')).toBeInTheDocument();
     expect(screen.getByText('Test content')).toBeInTheDocument();
   });
-
-  it('applies default classes to card', () => {
-    render(
-      <ContentCard>
-        <div>Content</div>
-      </ContentCard>,
-    );
-
-    const card = screen.getByTestId('card');
-    expect(card).toHaveClass('p-6', 'md:p-12');
-  });
-
-  it('applies custom className to card', () => {
-    render(
-      <ContentCard className="custom-card">
-        <div>Content</div>
-      </ContentCard>,
-    );
-
-    const card = screen.getByTestId('card');
-    expect(card).toHaveClass('custom-card');
-  });
-
-  it('renders with image', () => {
-    const image = {
-      src: '/test.jpg',
-      alt: 'Test image',
-      width: 200,
-      height: 200,
-    };
-
-    render(
-      <ContentCard image={image}>
-        <div>Content with image</div>
-      </ContentCard>,
-    );
-
-    const img = screen.getByTestId('content-image');
-    expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', '/test.jpg');
-    expect(img).toHaveAttribute('alt', 'Test image');
-    expect(screen.getByText('Content with image')).toBeInTheDocument();
-  });
-
-  it('applies row layout by default', () => {
-    render(
-      <ContentCard>
-        <div>Content</div>
-      </ContentCard>,
-    );
-
-    const container = screen.getAllByTestId('container')[0];
-    expect(container).toHaveClass('flex-col', 'lg:flex-row');
-  });
-
-  it('applies column layout when specified', () => {
-    render(
-      <ContentCard layout="column">
-        <div>Content</div>
-      </ContentCard>,
-    );
-
-    const container = screen.getAllByTestId('container')[0];
-    expect(container).toHaveClass('flex-col');
-    expect(container).not.toHaveClass('lg:flex-row');
-  });
 });
 
 describe('ContentContainer', () => {
@@ -124,50 +58,6 @@ describe('ContentContainer', () => {
     expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByText('Container content')).toBeInTheDocument();
   });
-
-  it('applies default max-width and gap', () => {
-    render(
-      <ContentContainer>
-        <div>Content</div>
-      </ContentContainer>,
-    );
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('max-w-[1200px]', 'gap-6');
-  });
-
-  it('applies custom max-width', () => {
-    render(
-      <ContentContainer maxWidth="sm">
-        <div>Content</div>
-      </ContentContainer>,
-    );
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('max-w-[588px]');
-  });
-
-  it('applies custom gap', () => {
-    render(
-      <ContentContainer gap="lg">
-        <div>Content</div>
-      </ContentContainer>,
-    );
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('gap-8');
-  });
-
-  it('applies custom className', () => {
-    render(
-      <ContentContainer className="custom-container">
-        <div>Content</div>
-      </ContentContainer>,
-    );
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('custom-container');
-  });
 });
 
 describe('ContentImage', () => {
@@ -177,9 +67,6 @@ describe('ContentImage', () => {
     const img = screen.getByTestId('content-image');
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute('src', '/test.jpg');
-    expect(img).toHaveAttribute('alt', 'Test');
-    expect(img).toHaveAttribute('width', '100');
-    expect(img).toHaveAttribute('height', '100');
   });
 
   it('hides on mobile by default', () => {
@@ -198,22 +85,110 @@ describe('ContentImage', () => {
     expect(wrapper).toHaveClass('flex');
     expect(wrapper).not.toHaveClass('hidden');
   });
+});
 
-  it('applies custom className to image', () => {
-    render(<ContentImage src="/test.jpg" alt="Test" width={100} height={100} className="custom-image" />);
-
-    const img = screen.getByTestId('content-image');
-    expect(img).toHaveClass('custom-image');
+describe('Content - Snapshots', () => {
+  it('matches snapshot for ContentCard with default props', () => {
+    const { container } = render(
+      <ContentCard>
+        <div>Test content</div>
+      </ContentCard>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('applies container styling', () => {
+  it('matches snapshot for ContentCard with custom className', () => {
+    const { container } = render(
+      <ContentCard className="custom-card">
+        <div>Custom content</div>
+      </ContentCard>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentCard with column layout', () => {
+    const { container } = render(
+      <ContentCard layout="column">
+        <div>Column layout content</div>
+      </ContentCard>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentCard with image', () => {
+    const image = {
+      src: '/test.jpg',
+      alt: 'Test image',
+      width: 200,
+      height: 200,
+    };
+    const { container } = render(
+      <ContentCard image={image}>
+        <div>Content with image</div>
+      </ContentCard>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentContainer with default props', () => {
+    const { container } = render(
+      <ContentContainer>
+        <div>Default container</div>
+      </ContentContainer>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentContainer with small max width', () => {
+    const { container } = render(
+      <ContentContainer maxWidth="sm">
+        <div>Small max width</div>
+      </ContentContainer>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentContainer with large gap', () => {
+    const { container } = render(
+      <ContentContainer gap="lg">
+        <div>Large gap</div>
+      </ContentContainer>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentContainer with custom className', () => {
+    const { container } = render(
+      <ContentContainer className="custom-container">
+        <div>Custom class</div>
+      </ContentContainer>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentImage with default props', () => {
+    const { container } = render(<ContentImage src="/test.jpg" alt="Test" width={100} height={100} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentImage visible on mobile', () => {
+    const { container } = render(
+      <ContentImage src="/test.jpg" alt="Test" width={100} height={100} hiddenOnMobile={false} />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentImage with custom className', () => {
+    const { container } = render(
+      <ContentImage src="/test.jpg" alt="Test" width={100} height={100} className="custom-image" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for ContentImage with custom container className', () => {
     const { container } = render(
       <ContentImage src="/test.jpg" alt="Test" width={100} height={100} containerClassName="custom-container" />,
     );
-
-    const wrapper = container.firstChild as HTMLElement;
-    expect(wrapper).toHaveClass('custom-container');
-    expect(wrapper.style.width).toBe('100px');
-    expect(wrapper.style.height).toBe('100px');
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

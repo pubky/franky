@@ -83,19 +83,6 @@ describe('SearchInput', () => {
 
     expect(screen.getByTestId('search-input')).toBeInTheDocument();
     expect(screen.getByTestId('search-button')).toBeInTheDocument();
-    expect(screen.getByTestId('search-input')).toHaveAttribute('placeholder', 'Search');
-  });
-
-  it('renders with custom placeholder', () => {
-    render(<SearchInput placeholder="Custom placeholder" />);
-
-    expect(screen.getByTestId('search-input')).toHaveAttribute('placeholder', 'Custom placeholder');
-  });
-
-  it('renders with initial value', () => {
-    render(<SearchInput value="initial value" />);
-
-    expect(screen.getByTestId('search-input')).toHaveValue('initial value');
   });
 
   it('calls onChange when input value changes', () => {
@@ -214,13 +201,6 @@ describe('SearchInput', () => {
     expect(screen.queryByTestId('dropdown-card')).not.toBeInTheDocument();
   });
 
-  it('applies custom className', () => {
-    render(<SearchInput className="custom-class" />);
-
-    const container = screen.getByTestId('container');
-    expect(container.className).toContain('custom-class');
-  });
-
   it('uses internal state and does not sync with external value changes', () => {
     const { rerender } = render(<SearchInput value="initial" />);
 
@@ -286,23 +266,6 @@ describe('SearchInput', () => {
     expect(onSearch).not.toHaveBeenCalled();
   });
 
-  it('applies correct button positioning and styling', () => {
-    render(<SearchInput />);
-
-    const button = screen.getByTestId('search-button');
-    expect(button.className).toContain(
-      'border-none bg-transparent absolute right-2 top-1/2 transform text-muted-foreground -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center',
-    );
-    expect(button).toHaveAttribute('type', 'button');
-  });
-
-  it('renders search icon with correct styling', () => {
-    render(<SearchInput />);
-
-    const searchIcon = screen.getByTestId('search-icon');
-    expect(searchIcon.className).toContain('w-4 h-4');
-  });
-
   it('applies correct dropdown styling when children are present and focused', () => {
     render(
       <SearchInput>
@@ -337,5 +300,37 @@ describe('SearchInput', () => {
 
     // Input should still be focused and dropdown should appear
     expect(screen.getByTestId('dropdown-card')).toBeInTheDocument();
+  });
+});
+
+describe('SearchInput - Snapshots', () => {
+  it('matches snapshot for default SearchInput', () => {
+    const { container } = render(<SearchInput />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with custom placeholder', () => {
+    const { container } = render(<SearchInput placeholder="Search users..." />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with initial value', () => {
+    const { container } = render(<SearchInput value="test query" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with custom className', () => {
+    const { container } = render(<SearchInput className="custom-search" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SearchInput with dropdown children', () => {
+    const { container } = render(
+      <SearchInput>
+        <div>Suggested results</div>
+        <div>Recent searches</div>
+      </SearchInput>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

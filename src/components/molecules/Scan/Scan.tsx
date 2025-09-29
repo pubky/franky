@@ -1,33 +1,102 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { QRCodeSVG } from 'qrcode.react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Config from '@/config';
+import * as Core from '@/core';
+import * as App from '@/app';
 
 export const ScanContent = () => {
+  const [url, setUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorCount, setErrorCount] = useState(0);
+
+  const fetchUrl = async () => {
+    try {
+      const data = await Core.AuthController.getAuthUrl();
+      if (!data) return;
+
+      const { url, promise } = data;
+
+      if (url) setUrl(url);
+
+      promise?.then(async (publicKey) => {
+        await Core.AuthController.loginWithAuthUrl({ publicKey });
+      });
+    } catch (error) {
+      console.error('Failed to generate auth URL:', error);
+      setErrorCount(errorCount + 1);
+      if (errorCount < 3) fetchUrl();
+      Molecules.toast({
+        title: 'Error generating auth URL',
+        description: 'Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMobileAuth = () => {
+    fetchUrl();
+  };
+
+  useEffect(() => {
+    fetchUrl();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
+      {/** Desktop view */}
       <Atoms.Container size="container" className="hidden md:flex">
         <ScanHeader isMobile={false} />
         <Molecules.ContentCard layout="column">
-          {/* TODO: change to real qr code url */}
           <Atoms.Container className="items-center justify-center">
-            <Image src="/images/pubky-ring-qr-example.png" alt="Pubky Ring" width={220} height={220} />
+            <div className="bg-foreground rounded-lg p-4 w-[220px] h-[220px] flex items-center justify-center">
+              {isLoading || !url ? (
+                <Atoms.Container className="items-center gap-2">
+                  <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
+                  <Atoms.Typography as="small" size="sm" className="text-background">
+                    Generating QR Code...
+                  </Atoms.Typography>
+                </Atoms.Container>
+              ) : (
+                <QRCodeSVG value={url} size={220} />
+              )}
+            </div>
           </Atoms.Container>
         </Molecules.ContentCard>
       </Atoms.Container>
+
+      {/** Mobile view */}
       <Atoms.Container size="container" className="md:hidden">
         <ScanHeader isMobile={true} />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
             <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
-            <Atoms.Button className="w-full h-[60px] rounded-full" size="lg">
-              <Libs.Key className="mr-2 h-4 w-4" />
-              Authorize with Pubky Ring
+            <Atoms.Button
+              className="w-full h-[60px] rounded-full"
+              size="lg"
+              onClick={handleMobileAuth}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Libs.Key className="mr-2 h-4 w-4" />
+                  Authorize with Pubky Ring
+                </>
+              )}
             </Atoms.Button>
           </Atoms.Container>
         </Molecules.ContentCard>
@@ -75,7 +144,7 @@ export const ScanNavigation = () => {
   const router = useRouter();
 
   const onHandleBackButton = () => {
-    router.push('/onboarding/install');
+    router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
   return (

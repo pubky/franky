@@ -8,7 +8,7 @@ import { CommonErrorType } from '@/libs';
 vi.mock('@synonymdev/pubky', () => ({
   Keypair: {
     fromSecretKey: vi.fn(() => ({
-      publicKey: vi.fn(() => ({ z32: () => 'test-public-key' })),
+      pubky: vi.fn(() => ({ z32: () => 'test-public-key' })),
       secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
     })),
   },
@@ -38,12 +38,8 @@ describe('Identity', () => {
   });
 
   describe('generateSeedWords', () => {
-    it('should generate valid BIP39 seed words from a secret key', () => {
-      // Create a valid 32-byte secret key
-      const secretKey = new Uint8Array(32);
-      crypto.getRandomValues(secretKey);
-
-      const result = Identity.generateSeedWords(Buffer.from(secretKey).toString('hex'));
+    it('should generate valid BIP39 seed words', () => {
+      const result = Identity.generateSeedWords();
 
       expect(result).toHaveLength(12);
       expect(result.every((word) => typeof word === 'string' && word.length > 0)).toBe(true);
@@ -53,58 +49,28 @@ describe('Identity', () => {
       expect(bip39.validateMnemonic(mnemonic)).toBe(true);
     });
 
-    it('should generate consistent seed words for the same secret key', () => {
-      // Create a specific secret key for consistency testing
-      const secretKey = new Uint8Array(32);
-      secretKey.fill(42); // Fill with a specific value for deterministic results
+    it('should generate different seed words on each call', () => {
+      const result1 = Identity.generateSeedWords();
+      const result2 = Identity.generateSeedWords();
 
-      const result1 = Identity.generateSeedWords(Buffer.from(secretKey).toString('hex'));
-      const result2 = Identity.generateSeedWords(Buffer.from(secretKey).toString('hex'));
-
-      expect(result1).toEqual(result2);
-      expect(result1.join(' ')).toBe(result2.join(' '));
+      // Should generate different mnemonics (very unlikely to be the same)
+      expect(result1.join(' ')).not.toBe(result2.join(' '));
     });
 
-    it('should throw error for null or undefined secret key', () => {
-      expect(() => Identity.generateSeedWords(null as unknown as string)).toThrow();
-      expect(() => Identity.generateSeedWords(undefined as unknown as string)).toThrow();
+    it('should generate exactly 12 words', () => {
+      const result = Identity.generateSeedWords();
+      expect(result).toHaveLength(12);
     });
 
-    it('should throw error for non-Uint8Array input', () => {
-      expect(() => Identity.generateSeedWords('not-a-uint8array' as unknown as string)).toThrow();
-      expect(() => Identity.generateSeedWords(123 as unknown as string)).toThrow();
-      expect(() => Identity.generateSeedWords({} as unknown as string)).toThrow();
-    });
+    it('should throw CommonError if BIP39 generation fails', () => {
+      // Mock bip39.generateMnemonic to throw
+      const mockGenerateMnemonic = vi.spyOn(bip39, 'generateMnemonic').mockImplementation(() => {
+        throw new Error('BIP39 generation failed');
+      });
 
-    it('should throw error for short secret keys', () => {
-      // Create a short secret key (less than 32 bytes)
-      const shortSecretKey = new Uint8Array(16);
-      crypto.getRandomValues(shortSecretKey);
+      expect(() => Identity.generateSeedWords()).toThrow();
 
-      // Should throw an error for short keys
-      expect(() => Identity.generateSeedWords(Buffer.from(shortSecretKey).toString('hex'))).toThrow(
-        'Secret key is shorter than recommended 32 bytes',
-      );
-    });
-
-    it('should throw CommonError with proper error type for invalid input', () => {
-      try {
-        Identity.generateSeedWords(null as unknown as string);
-      } catch (error) {
-        expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
-        expect(error).toHaveProperty('statusCode', 400);
-      }
-    });
-
-    it('should throw CommonError with proper error type for short keys', () => {
-      const shortSecretKey = new Uint8Array(16);
-
-      try {
-        Identity.generateSeedWords(Buffer.from(shortSecretKey).toString('hex'));
-      } catch (error) {
-        expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
-        expect(error).toHaveProperty('statusCode', 400);
-      }
+      mockGenerateMnemonic.mockRestore();
     });
   });
 
@@ -160,8 +126,8 @@ describe('Identity', () => {
       crypto.getRandomValues(secretKey);
 
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: secretKey,
+        pubky: 'test-public-key',
+        secretKey: Buffer.from(secretKey).toString('hex'),
       };
 
       await expect(Identity.createRecoveryFile(keypair, 'password123')).resolves.not.toThrow();
@@ -173,8 +139,8 @@ describe('Identity', () => {
 
     it('should throw error for invalid secret key format', async () => {
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: 'invalid' as unknown as Uint8Array,
+        pubky: 'test-public-key',
+        secretKey: 'invalid',
       };
 
       await expect(Identity.createRecoveryFile(keypair, 'password123')).rejects.toThrow();
@@ -182,8 +148,8 @@ describe('Identity', () => {
 
     it('should throw error for null secret key', async () => {
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: null as unknown as Uint8Array,
+        pubky: 'test-public-key',
+        secretKey: null as unknown as string,
       };
 
       await expect(Identity.createRecoveryFile(keypair, 'password123')).rejects.toThrow();
@@ -192,8 +158,8 @@ describe('Identity', () => {
     it('should throw error for incorrect secret key length', async () => {
       const shortKey = new Uint8Array(16);
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: shortKey,
+        pubky: 'test-public-key',
+        secretKey: Buffer.from(shortKey).toString('hex'),
       };
 
       await expect(Identity.createRecoveryFile(keypair, 'password123')).rejects.toThrow();
@@ -201,8 +167,8 @@ describe('Identity', () => {
 
     it('should throw CommonError with proper error type for invalid secret key', async () => {
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: null as unknown as Uint8Array,
+        pubky: 'test-public-key',
+        secretKey: null as unknown as string,
       };
 
       try {
@@ -216,8 +182,8 @@ describe('Identity', () => {
     it('should throw CommonError with proper error type for invalid secret key length', async () => {
       const shortKey = new Uint8Array(16);
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: shortKey,
+        pubky: 'test-public-key',
+        secretKey: Buffer.from(shortKey).toString('hex'),
       };
 
       try {
@@ -233,8 +199,8 @@ describe('Identity', () => {
       crypto.getRandomValues(secretKey);
 
       const keypair = {
-        publicKey: 'test-public-key',
-        secretKey: secretKey,
+        pubky: 'test-public-key',
+        secretKey: Buffer.from(secretKey).toString('hex'),
       };
 
       // Mock createRecoveryFile to throw an error
@@ -309,8 +275,8 @@ describe('Identity', () => {
         }),
       ).resolves.not.toThrow();
 
-      // Verify the download process
-      expect(global.Blob).toHaveBeenCalledWith([recoveryFile], { type: 'application/octet-stream' });
+      // Verify the download process - function converts Uint8Array to ArrayBuffer internally
+      expect(global.Blob).toHaveBeenCalledWith([expect.any(ArrayBuffer)], { type: 'application/octet-stream' });
       expect(document.createElement).toHaveBeenCalledWith('a');
       expect(document.body.appendChild).toHaveBeenCalled();
       expect(document.body.removeChild).toHaveBeenCalled();
@@ -332,7 +298,7 @@ describe('Identity', () => {
           recoveryFile: new Uint8Array(0),
           filename: 'test.pkarr',
         }),
-      ).resolves.not.toThrow();
+      ).rejects.toThrow('Failed to download recovery file');
     });
 
     it('should handle empty recovery file', async () => {
@@ -343,7 +309,7 @@ describe('Identity', () => {
         }),
       ).resolves.not.toThrow();
 
-      expect(global.Blob).toHaveBeenCalledWith([new Uint8Array(0)], { type: 'application/octet-stream' });
+      expect(global.Blob).toHaveBeenCalledWith([expect.any(ArrayBuffer)], { type: 'application/octet-stream' });
     });
 
     it('should use correct filename', async () => {
@@ -375,7 +341,7 @@ describe('Identity', () => {
       const result = Identity.keypairFromSecretKey(Buffer.from(secretKey).toString('hex'));
 
       expect(result).toBeDefined();
-      expect(result.publicKey).toBeDefined();
+      expect(result.pubky).toBeDefined();
       expect(result.secretKey).toBeDefined();
     });
 
@@ -394,6 +360,120 @@ describe('Identity', () => {
         expect(error).toHaveProperty('type', CommonErrorType.INVALID_INPUT);
         expect(error).toHaveProperty('statusCode', 400);
       }
+    });
+  });
+
+  describe('generateKeypair', () => {
+    it('should generate a keypair with mnemonic using BIP39 strategy', () => {
+      const result = Identity.generateKeypair();
+
+      expect(result).toBeDefined();
+      expect(result.pubky).toBeDefined();
+      expect(result.secretKey).toBeDefined();
+      expect(result.mnemonic).toBeDefined();
+      expect(typeof result.pubky).toBe('string');
+      expect(typeof result.secretKey).toBe('string');
+      expect(typeof result.mnemonic).toBe('string');
+      expect(result.secretKey).toHaveLength(64); // 32 bytes in hex
+
+      // Verify mnemonic is valid BIP39
+      expect(bip39.validateMnemonic(result.mnemonic)).toBe(true);
+
+      // Verify mnemonic has 12 words
+      const words = result.mnemonic.split(' ');
+      expect(words).toHaveLength(12);
+    });
+
+    it('should generate different keypairs on each call', () => {
+      const result1 = Identity.generateKeypair();
+      const result2 = Identity.generateKeypair();
+
+      expect(result1.pubky).not.toBe(result2.pubky);
+      expect(result1.secretKey).not.toBe(result2.secretKey);
+      expect(result1.mnemonic).not.toBe(result2.mnemonic);
+    });
+
+    it('should generate keypair that is consistent with mnemonic', () => {
+      const result = Identity.generateKeypair();
+
+      // Generate keypair from the mnemonic
+      const keypairFromMnemonic = Identity.generateKeypairFromMnemonic(result.mnemonic);
+
+      // Should match the original
+      expect(result.pubky).toBe(keypairFromMnemonic.pubky);
+      expect(result.secretKey).toBe(keypairFromMnemonic.secretKey);
+    });
+  });
+
+  describe('generateKeypairFromMnemonic', () => {
+    it('should generate a valid keypair from mnemonic', () => {
+      // Generate a mnemonic
+      const seedWords = Identity.generateSeedWords();
+      const mnemonic = seedWords.join(' ');
+
+      const keypair = Identity.generateKeypairFromMnemonic(mnemonic);
+
+      expect(keypair).toBeDefined();
+      expect(keypair.pubky).toBeDefined();
+      expect(keypair.secretKey).toBeDefined();
+      expect(typeof keypair.pubky).toBe('string');
+      expect(typeof keypair.secretKey).toBe('string');
+      expect(keypair.secretKey).toHaveLength(64); // 32 bytes in hex
+    });
+
+    it('should throw error for invalid mnemonic', () => {
+      const invalidMnemonic = 'invalid mnemonic phrase test';
+
+      expect(() => Identity.generateKeypairFromMnemonic(invalidMnemonic)).toThrow();
+    });
+
+    it('should generate consistent keypairs for same mnemonic', () => {
+      // Generate a mnemonic
+      const seedWords = Identity.generateSeedWords();
+      const mnemonic = seedWords.join(' ');
+
+      const keypair1 = Identity.generateKeypairFromMnemonic(mnemonic);
+      const keypair2 = Identity.generateKeypairFromMnemonic(mnemonic);
+
+      expect(keypair1.pubky).toBe(keypair2.pubky);
+      expect(keypair1.secretKey).toBe(keypair2.secretKey);
+    });
+  });
+
+  describe('seed phrase consistency', () => {
+    it('should restore a valid keypair from generated seed words', () => {
+      // Generate seed words
+      const seedWords = Identity.generateSeedWords();
+      const mnemonic = seedWords.join(' ');
+
+      // Generate keypair from mnemonic
+      const keypair = Identity.generateKeypairFromMnemonic(mnemonic);
+
+      // Restore keypair using pubkyKeypairFromMnemonic
+      const restoredKeypair = Identity.pubkyKeypairFromMnemonic(mnemonic);
+      const restoredPubKy = restoredKeypair.publicKey().z32();
+
+      // The restored keypair should be valid and match
+      expect(restoredPubKy).toBeDefined();
+      expect(typeof restoredPubKy).toBe('string');
+      expect(restoredPubKy.length).toBeGreaterThan(0);
+      expect(restoredPubKy).toBe(keypair.pubky);
+    });
+
+    it('should have consistent restore process', () => {
+      // Generate seed words
+      const seedWords = Identity.generateSeedWords();
+      const mnemonic = seedWords.join(' ');
+
+      // Restore keypair multiple times
+      const restoredKeypair1 = Identity.pubkyKeypairFromMnemonic(mnemonic);
+      const restoredPubKy1 = restoredKeypair1.publicKey().z32();
+
+      const restoredKeypair2 = Identity.pubkyKeypairFromMnemonic(mnemonic);
+      const restoredPubKy2 = restoredKeypair2.publicKey().z32();
+
+      // Both restorations should produce the same result
+      expect(restoredPubKy1).toBe(restoredPubKy2);
     });
   });
 });

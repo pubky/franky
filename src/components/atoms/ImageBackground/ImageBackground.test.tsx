@@ -4,36 +4,71 @@ import { ImageBackground } from './ImageBackground';
 
 describe('ImageBackground', () => {
   it('renders with default props', () => {
-    render(<ImageBackground image="/bg-image.jpg" data-testid="image-background" />);
-
-    const background = screen.getByTestId('image-background');
-    expect(background).toBeInTheDocument();
-    expect(background).toHaveClass('fixed', 'inset-0', 'bg-cover', 'bg-center', 'bg-no-repeat', '-z-10');
-    expect(background).toHaveStyle({ backgroundImage: 'url(/bg-image.jpg)' });
+    render(<ImageBackground image="/bg-image.jpg" />);
+    const imageBackground = screen.getByTestId('image-background');
+    expect(imageBackground).toBeInTheDocument();
   });
 
-  it('applies custom className', () => {
-    render(<ImageBackground image="/bg.jpg" className="custom-bg" data-testid="image-background" />);
+  it('switches between single and dual background mode', () => {
+    const { rerender } = render(<ImageBackground image="/bg.jpg" data-testid="image-background" />);
 
-    const background = screen.getByTestId('image-background');
-    expect(background).toHaveClass('custom-bg');
-  });
-
-  it('passes through additional props', () => {
-    render(<ImageBackground image="/bg.jpg" id="background-id" data-testid="image-background" />);
-
-    const background = screen.getByTestId('image-background');
-    expect(background).toHaveAttribute('id', 'background-id');
-  });
-
-  it('renders with different background images', () => {
-    const { rerender } = render(<ImageBackground image="/bg1.jpg" data-testid="image-background" />);
-
+    // Initially single background
     let background = screen.getByTestId('image-background');
-    expect(background).toHaveStyle({ backgroundImage: 'url(/bg1.jpg)' });
+    expect(background).toBeInTheDocument();
 
-    rerender(<ImageBackground image="/bg2.png" data-testid="image-background" />);
+    // Add mobileImage - should now render two backgrounds
+    rerender(<ImageBackground image="/bg-desktop.jpg" mobileImage="/bg-mobile.jpg" data-testid="image-background" />);
+
+    const backgrounds = screen.getAllByTestId('image-background');
+    expect(backgrounds).toHaveLength(2);
+
+    // Remove mobileImage - should go back to single background
+    rerender(<ImageBackground image="/bg.jpg" data-testid="image-background" />);
     background = screen.getByTestId('image-background');
-    expect(background).toHaveStyle({ backgroundImage: 'url(/bg2.png)' });
+    expect(background).toBeInTheDocument();
+  });
+});
+
+describe('ImageBackground - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<ImageBackground image="/bg-image.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<ImageBackground image="/custom-bg.jpg" className="custom-bg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with JPG image', () => {
+    const { container } = render(<ImageBackground image="/background.jpg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with PNG image', () => {
+    const { container } = render(<ImageBackground image="/background.png" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with SVG image', () => {
+    const { container } = render(<ImageBackground image="/background.svg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with id prop', () => {
+    const { container } = render(<ImageBackground image="/bg.jpg" id="background-id" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with data-testid prop', () => {
+    const { container } = render(<ImageBackground image="/bg.jpg" data-testid="custom-bg" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshots for image and mobileImages props', () => {
+    const { container: withImageContainer } = render(
+      <ImageBackground image="/bg.jpg" mobileImage="/bg-mobile.jpg" className="custom-bg" />,
+    );
+    expect(withImageContainer.firstChild).toMatchSnapshot();
   });
 });

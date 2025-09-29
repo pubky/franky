@@ -7,6 +7,7 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as App from '@/app';
 
 export function HomeserverCard() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export function HomeserverCard() {
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
-  const { secretKey, publicKey } = Core.useOnboardingStore();
+  const { pubky, secretKey } = Core.useOnboardingStore();
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
 
   // generate an invite code and put it in console log if you are in development mode
@@ -30,13 +31,7 @@ export function HomeserverCard() {
   }, []);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: extract this function to a helper function, maybe a mask function
-    // Allow only uppercase alphanumerics and format as AAAA-BBBB-CCCC
-    const uppercaseValue = e.target.value.toUpperCase();
-    const alphanumericOnly = uppercaseValue.replace(/[^A-Z0-9]/g, '');
-    const trimmed = alphanumericOnly.slice(0, 12);
-    const groups = trimmed.match(/.{1,4}/g) || [];
-    const formatted = groups.join('-');
+    const formatted = Libs.formatInviteCode(e.target.value);
     setInviteCode(formatted);
     setContinueButtonDisabled(formatted.length !== 14);
   };
@@ -63,12 +58,11 @@ export function HomeserverCard() {
       setStatus('default');
       setIsLoading(true);
       setButtonContinueText('Validating');
-
-      await Core.AuthController.signUp({ publicKey, secretKey }, inviteCode);
-
+      const keypair = { pubky, secretKey };
+      const signupToken = inviteCode;
+      await Core.AuthController.signUp({ keypair, signupToken });
       setButtonContinueText('Signing up');
-
-      router.push('/onboarding/profile');
+      router.push(App.ONBOARDING_ROUTES.PROFILE);
     } catch {
       showErrorToast();
       setContinueButtonDisabled(false);
@@ -129,7 +123,7 @@ export function HomeserverCard() {
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           variant={'secondary'}
-          onClick={() => router.push('/onboarding/backup')}
+          onClick={() => router.push(App.ONBOARDING_ROUTES.BACKUP)}
         >
           <Libs.ArrowLeft className="mr-2 h-4 w-4" />
           Back

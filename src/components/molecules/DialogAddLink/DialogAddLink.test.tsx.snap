@@ -1,0 +1,184 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogAddLink - Snapshots > matches snapshot for DialogAddLink with iconPosition variations 1`] = `
+<div>
+  <div
+    data-icon-position="left"
+    data-testid="input-field"
+  >
+    <input
+      data-testid="input"
+      placeholder="Left icon"
+    />
+    <div
+      data-testid="input-icon"
+    >
+      Left Icon
+    </div>
+  </div>
+  <div
+    data-icon-position="right"
+    data-testid="input-field"
+  >
+    <input
+      data-testid="input"
+      placeholder="Right icon"
+    />
+    <div
+      data-testid="input-icon"
+    >
+      Right Icon
+    </div>
+  </div>
+  <div
+    data-icon-position="center"
+    data-testid="input-field"
+  >
+    <input
+      data-testid="input"
+      placeholder="Center icon"
+    />
+    <div
+      data-testid="input-icon"
+    >
+      Center Icon
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogAddLink - Snapshots > matches snapshot for default DialogAddLink 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <button
+      class="w-fit rounded-full"
+      data-size="sm"
+      data-testid="button-secondary"
+    >
+      <div
+        class="h-4 w-4"
+        data-testid="link-icon"
+      >
+        Link
+      </div>
+      <span>
+        Add link
+      </span>
+    </button>
+  </div>
+  <div
+    class="p-8 rounded-xl border bg-popover max-w-xl sm:p-6 sm:rounded-lg"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        class="text-2xl font-bold text-foreground sm:text-xl"
+        data-testid="dialog-title"
+      >
+        Add link
+      </h2>
+    </div>
+    <div
+      class="gap-6"
+      data-testid="container"
+    >
+      <div
+        class="gap-2"
+        data-testid="container"
+      >
+        <label
+          class="text-xs font-medium tracking-wide text-muted-foreground"
+          data-testid="label"
+        >
+          LABEL
+        </label>
+        <div
+          data-testid="input-field"
+        >
+          <input
+            data-size="lg"
+            data-status="default"
+            data-testid="input"
+            data-variant="dashed"
+            maxlength="30"
+            placeholder="Twitter"
+            value=""
+          />
+        </div>
+      </div>
+      <div
+        class="gap-2"
+        data-testid="container"
+      >
+        <label
+          class="text-xs font-medium tracking-wide text-muted-foreground"
+          data-testid="label"
+        >
+          URL
+        </label>
+        <div
+          data-icon-position="right"
+          data-testid="input-field"
+        >
+          <input
+            data-size="lg"
+            data-status="default"
+            data-testid="input"
+            data-variant="dashed"
+            placeholder="https://twitter.com/satoshi"
+            value=""
+          />
+          <div
+            data-testid="input-icon"
+          >
+            <div
+              class="h-4 w-4"
+              data-testid="clipboard-icon"
+            >
+              Clipboard
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex-row gap-4"
+      data-testid="dialog-footer"
+    >
+      <div
+        data-as-child="true"
+        data-testid="dialog-close"
+      >
+        <button
+          class="rounded-full border border-border bg-background sm:size-default flex-1"
+          data-size="lg"
+          data-testid="button-outline"
+        >
+          Cancel
+        </button>
+      </div>
+      <div
+        data-as-child="true"
+        data-testid="dialog-close"
+      >
+        <button
+          class="rounded-full text-brand border-brand sm:size-default flex-1"
+          data-size="lg"
+          data-testid="button-default"
+          disabled=""
+        >
+          Save link
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

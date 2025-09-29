@@ -11,7 +11,7 @@ vi.mock('pubky-app-specs', () => ({
 
 // Mock useKeypairStore
 const mockKeypairStore = {
-  publicKey: '',
+  pubky: '',
   secretKey: new Uint8Array(32).fill(1),
   session: null as Session | null,
   isAuthenticated: false,
@@ -22,9 +22,9 @@ const mockKeypairStore = {
   setAuthenticated: vi.fn(),
 };
 
-// Mock useUserStore (now useProfileStore)
+// Mock useUserStore (now useAuthStore)
 const mockUserStore = {
-  publicKey: '',
+  pubky: '',
   session: null as Session | null,
   isAuthenticated: false,
   setSession: vi.fn(),
@@ -52,7 +52,7 @@ vi.mock('@/core/stores', () => ({
   useOnboardingStore: {
     getState: vi.fn(() => mockOnboardingStore),
   },
-  useProfileStore: {
+  useAuthStore: {
     getState: vi.fn(() => mockUserStore),
   },
 }));
@@ -66,11 +66,11 @@ vi.doMock('@synonymdev/pubky', () => {
   });
 
   const createMockKeypair = () => ({
-    publicKey: vi.fn(() => ({ z32: () => 'test-public-key-z32' })),
+    pubky: vi.fn(() => ({ z32: () => 'test-public-key-z32' })),
     secretKey: vi.fn(() => new Uint8Array([1, 2, 3, 4])),
   });
 
-  const createMockPublicKey = () => ({
+  const createMockPubky = () => ({
     z32: vi.fn(() => 'test-public-key-z32'),
   });
 
@@ -85,7 +85,7 @@ vi.doMock('@synonymdev/pubky', () => {
       fromSecretKey: vi.fn(createMockKeypair),
     },
     PublicKey: {
-      from: vi.fn(createMockPublicKey),
+      from: vi.fn(createMockPubky),
     },
   };
 });
@@ -112,24 +112,27 @@ const createMockSession = (): Session =>
 
 // Create a mock TKeyPair object
 const createMockTKeyPair = () => ({
-  publicKey: 'test-public-key-z32',
+  pubky: 'test-public-key-z32',
   secretKey: Buffer.from(new Uint8Array(32).fill(1)).toString('hex'),
 });
 
 describe('HomeserverService', () => {
+  // Valid secret key for testing
+  const TEST_SECRET_KEY = Buffer.from(new Uint8Array(32).fill(1)).toString('hex');
+
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.resetModules();
 
     // Reset mock stores
-    mockKeypairStore.publicKey = '';
+    mockKeypairStore.pubky = '';
     mockKeypairStore.secretKey = new Uint8Array(32).fill(1);
     mockKeypairStore.session = null;
     mockKeypairStore.isAuthenticated = false;
 
     mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
-    mockUserStore.publicKey = '';
+    mockUserStore.pubky = '';
     mockUserStore.session = null;
     mockUserStore.isAuthenticated = false;
 
@@ -152,8 +155,8 @@ describe('HomeserverService', () => {
 
   describe('Singleton Pattern', () => {
     it('should create only one instance', () => {
-      const instance1 = HomeserverService.getInstance();
-      const instance2 = HomeserverService.getInstance();
+      const instance1 = HomeserverService.getInstance(TEST_SECRET_KEY);
+      const instance2 = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       expect(instance1).toBe(instance2);
     });
@@ -161,9 +164,9 @@ describe('HomeserverService', () => {
 
   describe('Authentication', () => {
     it('should signup successfully', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = {
-        publicKey: 'test-public-key-z32',
+        pubky: 'test-public-key-z32',
         secretKey: Buffer.from(new Uint8Array(32).fill(1)).toString('hex'),
       };
       const signupToken = 'test-token';
@@ -180,9 +183,9 @@ describe('HomeserverService', () => {
     });
 
     it('should signup with token', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = {
-        publicKey: 'test-public-key-z32',
+        pubky: 'test-public-key-z32',
         secretKey: Buffer.from(new Uint8Array(32).fill(1)).toString('hex'),
       };
       const token = 'signup-token';
@@ -198,7 +201,7 @@ describe('HomeserverService', () => {
     });
 
     it('should handle signup errors', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = createMockTKeyPair();
       const error = new Error('Server error');
 
@@ -212,7 +215,7 @@ describe('HomeserverService', () => {
     });
 
     it('should logout successfully', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
@@ -222,14 +225,14 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockResolvedValue(undefined);
 
-      await service.logout();
+      await service.logout('test-public-key-z32');
 
       expect(mockClient.signout).toHaveBeenCalled();
       expect(PublicKey.from).toHaveBeenCalledWith('test-public-key-z32');
     });
 
     it('should handle logout errors', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
@@ -240,7 +243,7 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockRejectedValue(error);
 
-      await expect(service.logout()).rejects.toMatchObject({
+      await expect(service.logout('test-public-key-z32')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });
@@ -254,12 +257,12 @@ describe('HomeserverService', () => {
       mockUserStore.isAuthenticated = true;
       mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       service['currentKeypair'] = createMockTKeyPair();
     });
 
     it('should fetch data (GET)', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockResolvedValue(new Response('{"data": "test"}', { status: 200 }));
 
@@ -270,7 +273,7 @@ describe('HomeserverService', () => {
     });
 
     it('should create/update data (PUT)', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockResolvedValue(new Response('OK', { status: 200 }));
 
@@ -288,7 +291,7 @@ describe('HomeserverService', () => {
     });
 
     it('should delete data (DELETE)', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockResolvedValue(new Response('', { status: 200 }));
 
@@ -304,7 +307,7 @@ describe('HomeserverService', () => {
     });
 
     it('should handle fetch errors', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockRejectedValue(new Error('Network error'));
 
@@ -322,12 +325,12 @@ describe('HomeserverService', () => {
       mockUserStore.isAuthenticated = true;
       mockOnboardingStore.secretKey = new Uint8Array(32).fill(1);
 
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       service['currentKeypair'] = createMockTKeyPair();
     });
 
     it('should handle empty response data', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockResolvedValue(new Response('', { status: 200 }));
 
@@ -338,7 +341,7 @@ describe('HomeserverService', () => {
     });
 
     it('should handle different HTTP status codes', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockResolvedValue(new Response('Not Found', { status: 404 }));
 
@@ -348,7 +351,7 @@ describe('HomeserverService', () => {
     });
 
     it('should preserve credentials option', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.fetch.mockResolvedValue(new Response('OK', { status: 200 }));
 
@@ -367,7 +370,7 @@ describe('HomeserverService', () => {
 
   describe('Session and Keypair State Management', () => {
     it('should track session after successful signup', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = createMockTKeyPair();
 
       const mockClient = service['client'] as unknown as MockClient;
@@ -380,7 +383,7 @@ describe('HomeserverService', () => {
     });
 
     it('should clear keypair after logout', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
@@ -390,45 +393,47 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockResolvedValue(undefined);
 
-      await service.logout();
+      await service.logout('test-public-key-z32');
 
       expect(service['currentKeypair']).toEqual({
-        publicKey: '',
+        pubky: '',
         secretKey: '',
       });
     });
   });
 
   describe('Error Handling', () => {
-    it('should throw NOT_AUTHENTICATED error when fetching without session', async () => {
-      const service = HomeserverService.getInstance();
+    it('should handle fetch calls even without authentication state (delegates to client)', async () => {
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Ensure not authenticated
       mockUserStore.session = null;
       mockUserStore.isAuthenticated = false;
       mockOnboardingStore.secretKey = new Uint8Array(0);
 
-      await expect(service.fetch('https://example.com/data')).rejects.toMatchObject({
-        type: HomeserverErrorType.NOT_AUTHENTICATED,
-        statusCode: 401,
-      });
+      // Mock the client to return a successful response
+      vi.spyOn(service['client'], 'fetch').mockResolvedValue(new Response('test data'));
+
+      const result = await service.fetch('https://example.com/data');
+      expect(result).toBeInstanceOf(Response);
     });
 
-    it('should throw NOT_AUTHENTICATED error when logging out without session', async () => {
-      const service = HomeserverService.getInstance();
+    it('should handle logout calls even without authentication state (delegates to client)', async () => {
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Ensure not authenticated
       mockUserStore.session = null;
       mockUserStore.isAuthenticated = false;
 
-      await expect(service.logout()).rejects.toMatchObject({
-        type: HomeserverErrorType.NOT_AUTHENTICATED,
-        statusCode: 401,
-      });
+      // Mock the client to return a successful logout
+      vi.spyOn(service['client'], 'signout').mockResolvedValue(undefined);
+
+      // Should not throw an error, just process the logout
+      await expect(service.logout('test-public-key-z32')).resolves.toBeUndefined();
     });
 
     it('should throw FETCH_FAILED error when fetch operation fails', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
@@ -446,7 +451,7 @@ describe('HomeserverService', () => {
     });
 
     it('should throw LOGOUT_FAILED error when logout operation fails', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
 
       // Set up authenticated state
       mockUserStore.session = createMockSession();
@@ -456,14 +461,14 @@ describe('HomeserverService', () => {
       const mockClient = service['client'] as unknown as MockClient;
       mockClient.signout.mockRejectedValue(new Error('Server error'));
 
-      await expect(service.logout()).rejects.toMatchObject({
+      await expect(service.logout('test-public-key-z32')).rejects.toMatchObject({
         type: HomeserverErrorType.LOGOUT_FAILED,
         statusCode: 500,
       });
     });
 
     it('should throw SIGNUP_FAILED error when signup operation fails', async () => {
-      const service = HomeserverService.getInstance();
+      const service = HomeserverService.getInstance(TEST_SECRET_KEY);
       const keypair = createMockTKeyPair();
 
       const mockClient = service['client'] as unknown as MockClient;

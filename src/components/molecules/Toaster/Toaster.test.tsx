@@ -110,114 +110,6 @@ describe('Toaster', () => {
     expect(container.firstChild).toBeTruthy();
   });
 
-  it('should render single toast with title only', () => {
-    const mockToast = {
-      id: '1',
-      title: 'Test Title',
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
-    });
-
-    render(<Toaster />);
-
-    expect(screen.getByText('Test Title')).toBeInTheDocument();
-  });
-
-  it('should render toast with title and description', () => {
-    const mockToast = {
-      id: '1',
-      title: 'Success',
-      description: 'Operation completed successfully',
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
-    });
-
-    render(<Toaster />);
-
-    expect(screen.getByText('Success')).toBeInTheDocument();
-    expect(screen.getByText('Operation completed successfully')).toBeInTheDocument();
-  });
-
-  it('should render toast with action button', () => {
-    const mockAction = (
-      <button data-testid="custom-action" onClick={() => {}}>
-        Undo
-      </button>
-    );
-
-    const mockToast = {
-      id: '1',
-      title: 'File deleted',
-      description: 'Your file has been deleted',
-      action: mockAction,
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
-    });
-
-    render(<Toaster />);
-
-    expect(screen.getByText('File deleted')).toBeInTheDocument();
-    expect(screen.getByText('Your file has been deleted')).toBeInTheDocument();
-    expect(screen.getByTestId('custom-action')).toBeInTheDocument();
-    expect(screen.getByText('Undo')).toBeInTheDocument();
-  });
-
-  it('should render multiple toasts', () => {
-    const mockToasts = [
-      {
-        id: '1',
-        title: 'First Toast',
-        description: 'First description',
-        open: true,
-      },
-      {
-        id: '2',
-        title: 'Second Toast',
-        description: 'Second description',
-        open: true,
-      },
-    ];
-
-    mockUseToast.mockReturnValue({
-      toasts: mockToasts,
-    });
-
-    render(<Toaster />);
-
-    expect(screen.getByText('First Toast')).toBeInTheDocument();
-    expect(screen.getByText('First description')).toBeInTheDocument();
-    expect(screen.getByText('Second Toast')).toBeInTheDocument();
-    expect(screen.getByText('Second description')).toBeInTheDocument();
-  });
-
-  it('should render toast without description when only title is provided', () => {
-    const mockToast = {
-      id: '1',
-      title: 'Simple Toast',
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
-    });
-
-    render(<Toaster />);
-
-    expect(screen.getByText('Simple Toast')).toBeInTheDocument();
-
-    // Description should not be rendered
-    expect(screen.queryByText('undefined')).not.toBeInTheDocument();
-  });
-
   it('should render toast without title when only description is provided', () => {
     const mockToast = {
       id: '1',
@@ -234,26 +126,7 @@ describe('Toaster', () => {
     expect(screen.getByText('Just a description')).toBeInTheDocument();
   });
 
-  it('should handle toast with custom props', () => {
-    const mockToast = {
-      id: '1',
-      title: 'Custom Toast',
-      className: 'custom-toast-class',
-      'data-testid': 'custom-toast',
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
-    });
-
-    render(<Toaster />);
-
-    expect(screen.getByText('Custom Toast')).toBeInTheDocument();
-    expect(screen.getByTestId('custom-toast')).toBeInTheDocument();
-  });
-
-  it('should handle complex toast with action button functionality', () => {
+  it('should handle complex toast with action button click', () => {
     const handleActionClick = vi.fn();
     const mockAction = (
       <button data-testid="toast-action" onClick={handleActionClick}>
@@ -290,5 +163,109 @@ describe('Toaster', () => {
     // Test action button functionality
     fireEvent.click(screen.getByTestId('toast-action'));
     expect(handleActionClick).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Toaster - Snapshots', () => {
+  it('matches snapshot for empty Toaster', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with single toast', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'Test Toast',
+          description: 'This is a test toast message',
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with title-only toast', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'Simple Toast',
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with toast with action', () => {
+    const mockAction = (
+      <button data-testid="custom-action" onClick={() => {}}>
+        Undo
+      </button>
+    );
+
+    const mockToast = {
+      id: '1',
+      title: 'Toast with Action',
+      description: 'This toast has an action button',
+      action: mockAction,
+      open: true,
+    };
+
+    mockUseToast.mockReturnValue({
+      toasts: [mockToast],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with toast action', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'Toast with Action',
+          description: 'This toast has an action button',
+          action: <button>Undo</button>,
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with multiple toasts', () => {
+    mockUseToast.mockReturnValue({
+      toasts: [
+        {
+          id: '1',
+          title: 'First Toast',
+          description: 'First description',
+          open: true,
+        },
+        {
+          id: '2',
+          title: 'Second Toast',
+          description: 'Second description',
+          open: true,
+        },
+      ],
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

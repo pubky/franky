@@ -2,14 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
+import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
+import * as App from '@/app';
 
 export const CreateProfileForm = () => {
-  const { publicKey } = Core.useOnboardingStore();
+  const router = useRouter();
+  const { toast } = Molecules.useToast();
+  const { pubky } = Core.useOnboardingStore();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [continueText, setContinueText] = useState('Finish');
@@ -71,8 +75,8 @@ export const CreateProfileForm = () => {
     }
   };
 
-  const validateUser = async () => {
-    const { data, error } = await Core.UserValidator.check(name, bio, links, avatarFile);
+  const validateUser = () => {
+    const { data, error } = Core.UserValidator.check(name, bio, links, avatarFile);
 
     if (error.length > 0) {
       for (const issue of error) {
@@ -104,30 +108,53 @@ export const CreateProfileForm = () => {
     // TODO: Maybe wrap in TRY/CATCH/FINALLY block?
     setIsSaving(true);
     setContinueText('Saving...');
-    const user = await validateUser();
+    const user = validateUser();
 
     if (!user) return;
 
+    // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
+    //       and save the state of the avatar file and the preview image in the store
     let image: string | null = null;
     if (avatarFile) {
       setContinueText('Uploading avatar...');
       if (!avatarFile) return null;
-      image = await Core.UserController.uploadAvatar(avatarFile, publicKey);
+      image = await Core.UserController.uploadAvatar(avatarFile, pubky);
       if (!image) return;
     }
 
     setContinueText('Saving profile...');
-    const response = await Core.UserController.saveProfile(user, image, publicKey);
+    const response = await Core.UserController.saveProfile(user, image, pubky);
 
     if (!response.ok) {
       console.error('Failed to save profile', response);
+      setContinueText('Try again!');
+      setIsSaving(false);
+
+      // TODO: change to sooner toast
+      toast({
+        title: 'Failed to save profile',
+        description: 'Please try again.',
+      });
       return;
     }
 
     // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
     // TODO: navigate to profile page
-    setIsSaving(false);
-    setContinueText('Finish');
+    // setIsSaving(false);
+    try {
+      await Core.AuthController.authorizeAndBootstrap();
+      router.push(App.FEED_ROUTES.FEED);
+    } catch {
+      setContinueText('Try again!');
+      setIsSaving(false);
+
+      // TODO: change to sooner toast
+      toast({
+        title: 'Please try again.',
+        description: 'Failed to fetch the new user data. Indexing might be in progress...',
+      });
+      return;
+    }
   };
 
   return (

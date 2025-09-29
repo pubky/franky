@@ -6,16 +6,17 @@ import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import * as App from '@/app';
 
 export const HomeActions = () => {
   const router = useRouter();
 
   const handleCreateAccount = () => {
-    router.push('/onboarding/install');
+    router.push(App.ONBOARDING_ROUTES.INSTALL);
   };
 
   const handleSignIn = () => {
-    console.log('Sign in clicked');
+    router.push(App.AUTH_ROUTES.SIGN_IN);
   };
 
   return <Molecules.ActionButtons onSignIn={handleSignIn} onCreateAccount={handleCreateAccount} />;
@@ -23,10 +24,7 @@ export const HomeActions = () => {
 
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Atoms.FooterLinks
-      className={Libs.cn('h-26 sm:pr-16 justify-end flex-row content-end', props.className)}
-      {...props}
-    >
+    <Atoms.FooterLinks className={Libs.cn('sm:pr-16 justify-end flex-row content-end', props.className)} {...props}>
       By creating a Pubky account, you agree to the <Molecules.DialogTerms />, <Molecules.DialogPrivacy />, and confirm
       you are <Molecules.DialogAge /> Pubky is powered by{' '}
       <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
