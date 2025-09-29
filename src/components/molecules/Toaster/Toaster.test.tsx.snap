@@ -19,7 +19,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
     <li
       aria-atomic="true"
       aria-live="off"
-      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white bg-brand/20 outline-brand/80 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -28,7 +28,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
       tabindex="0"
     >
       <div
-        class="flex items-center justify-between gap-4 w-full"
+        class="flex items-center justify-between gap-4 w-full overflow-hidden"
       >
         <div
           class="flex flex-col gap-1 w-full"
@@ -45,14 +45,14 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
           </div>
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="hidden sm:flex items-center justify-between gap-4"
         />
       </div>
     </li>
     <li
       aria-atomic="true"
       aria-live="off"
-      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white bg-brand/20 outline-brand/80 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -61,7 +61,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
       tabindex="0"
     >
       <div
-        class="flex items-center justify-between gap-4 w-full"
+        class="flex items-center justify-between gap-4 w-full overflow-hidden"
       >
         <div
           class="flex flex-col gap-1 w-full"
@@ -78,7 +78,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts
           </div>
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="hidden sm:flex items-center justify-between gap-4"
         />
       </div>
     </li>
@@ -110,7 +110,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with single toast 1`
     <li
       aria-atomic="true"
       aria-live="off"
-      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white bg-brand/20 outline-brand/80 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -119,7 +119,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with single toast 1`
       tabindex="0"
     >
       <div
-        class="flex items-center justify-between gap-4 w-full"
+        class="flex items-center justify-between gap-4 w-full overflow-hidden"
       >
         <div
           class="flex flex-col gap-1 w-full"
@@ -136,7 +136,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with single toast 1`
           </div>
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="hidden sm:flex items-center justify-between gap-4"
         />
       </div>
     </li>
@@ -168,7 +168,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with title-only toas
     <li
       aria-atomic="true"
       aria-live="off"
-      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white bg-brand/20 outline-brand/80 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -177,7 +177,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with title-only toas
       tabindex="0"
     >
       <div
-        class="flex items-center justify-between gap-4 w-full"
+        class="flex items-center justify-between gap-4 w-full overflow-hidden"
       >
         <div
           class="flex flex-col gap-1 w-full"
@@ -189,7 +189,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with title-only toas
           </div>
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="hidden sm:flex items-center justify-between gap-4"
         />
       </div>
     </li>
@@ -221,7 +221,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast action 1`
     <li
       aria-atomic="true"
       aria-live="off"
-      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white bg-brand/20 outline-brand/80 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -230,7 +230,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast action 1`
       tabindex="0"
     >
       <div
-        class="flex items-center justify-between gap-4 w-full"
+        class="flex items-center justify-between gap-4 w-full overflow-hidden"
       >
         <div
           class="flex flex-col gap-1 w-full"
@@ -247,7 +247,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast action 1`
           </div>
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="hidden sm:flex items-center justify-between gap-4"
         >
           <button>
             Undo
@@ -283,7 +283,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast with acti
     <li
       aria-atomic="true"
       aria-live="off"
-      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+      class="group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white bg-brand/20 outline-brand/80 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-bottom-full data-[state=open]:slide-in-from-bottom-full data-[state=open]:sm:slide-in-from-bottom-full"
       data-radix-collection-item=""
       data-state="open"
       data-swipe-direction="right"
@@ -292,7 +292,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast with acti
       tabindex="0"
     >
       <div
-        class="flex items-center justify-between gap-4 w-full"
+        class="flex items-center justify-between gap-4 w-full overflow-hidden"
       >
         <div
           class="flex flex-col gap-1 w-full"
@@ -309,7 +309,7 @@ exports[`Toaster - Snapshots > matches snapshot for Toaster with toast with acti
           </div>
         </div>
         <div
-          class="flex items-center justify-between gap-4"
+          class="hidden sm:flex items-center justify-between gap-4"
         >
           <button
             data-testid="custom-action"

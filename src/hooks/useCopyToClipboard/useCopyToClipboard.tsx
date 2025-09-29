@@ -32,7 +32,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
           action: (
             <Atoms.Button
               variant="outline"
-              className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
+              className="rounded-full h-10 px-4 dark:border-brand text-brand"
               onClick={() => toastInstance.dismiss()}
             >
               OK
@@ -45,6 +45,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
         Molecules.toast({
           title: errorTitle,
           description: errorDescription,
+          variant: 'error',
         });
 
         onError?.(error as Error);

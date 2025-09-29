@@ -23,29 +23,34 @@ ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
 const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
-  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>
->(({ className, ...props }, ref) => {
-  return (
-    <ToastPrimitives.Root
-      ref={ref}
-      className={Libs.cn(
-        'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
-        'data-[swipe=cancel]:translate-x-0',
-        'data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)]',
-        'data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)]',
-        'data-[swipe=move]:transition-none',
-        'data-[state=open]:animate-in',
-        'data-[state=closed]:animate-out',
-        'data-[swipe=end]:animate-out',
-        'data-[state=closed]:fade-out-80',
-        'data-[state=closed]:slide-out-to-right-full',
-        'data-[state=open]:slide-in-from-bottom-full',
-        'data-[state=open]:sm:slide-in-from-bottom-full',
-        className,
-      )}
-      {...props}
-    />
-  );
+  React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & {
+    variant?: ToastVariant;
+  }
+>(({ className, variant = 'default', ...props }, ref) => {
+  const variantStyles = {
+    default: 'bg-brand/20 outline-brand/80',
+    error: 'bg-red-500/20 outline-red-500/80',
+    warning: 'bg-yellow-500/20 outline-yellow-500/80',
+  };
+
+  const baseStyles = [
+    'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all',
+    'flex items-center justify-between gap-4 p-6 rounded-lg shadow-[0px_4px_6px_0px_rgba(5,5,10,0.25)] shadow-[0px_10px_15px_0px_rgba(5,5,10,0.50)] outline outline-1 outline-offset-[-1px] backdrop-blur-[10px] text-white',
+    variantStyles[variant],
+    'data-[swipe=cancel]:translate-x-0',
+    'data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)]',
+    'data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)]',
+    'data-[swipe=move]:transition-none',
+    'data-[state=open]:animate-in',
+    'data-[state=closed]:animate-out',
+    'data-[swipe=end]:animate-out',
+    'data-[state=closed]:fade-out-80',
+    'data-[state=closed]:slide-out-to-bottom-full',
+    'data-[state=open]:slide-in-from-bottom-full',
+    'data-[state=open]:sm:slide-in-from-bottom-full',
+  ];
+
+  return <ToastPrimitives.Root ref={ref} className={Libs.cn(...baseStyles, className)} {...props} />;
 });
 Toast.displayName = ToastPrimitives.Root.displayName;
 
@@ -105,6 +110,7 @@ ToastDescription.displayName = ToastPrimitives.Description.displayName;
 export {
   type ToastProps,
   type ToastActionElement,
+  type ToastVariant,
   ToastProvider,
   ToastViewport,
   Toast,
@@ -114,6 +120,10 @@ export {
   ToastAction,
 };
 
-type ToastProps = React.ComponentPropsWithoutRef<typeof Toast>;
+type ToastProps = React.ComponentPropsWithoutRef<typeof Toast> & {
+  variant?: ToastVariant;
+};
 
 type ToastActionElement = React.ReactElement<typeof ToastAction>;
+
+type ToastVariant = 'default' | 'error' | 'warning';

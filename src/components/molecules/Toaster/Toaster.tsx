@@ -8,19 +8,15 @@ export function Toaster() {
 
   return (
     <ToastProvider>
-      {toasts.map(function ({ id, title, description, action, ...props }) {
+      {toasts.map(function ({ id, title, description, action, variant, ...props }) {
         return (
-          <Toast
-            key={id}
-            className="flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
-            {...props}
-          >
-            <div className="flex items-center justify-between gap-4 w-full">
+          <Toast key={id} variant={variant} {...props}>
+            <div className="flex items-center justify-between gap-4 w-full overflow-hidden">
               <div className="flex flex-col gap-1 w-full">
                 {title && <ToastTitle>{title}</ToastTitle>}
                 {description && <ToastDescription>{description}</ToastDescription>}
               </div>
-              <div className="flex items-center justify-between gap-4">{action}</div>
+              <div className="hidden sm:flex items-center justify-between gap-4">{action}</div>
             </div>
           </Toast>
         );
