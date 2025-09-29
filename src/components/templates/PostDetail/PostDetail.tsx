@@ -51,12 +51,12 @@ export function PostDetail({ profileId, postId }: PostProps) {
       const createdReply = await Core.PostController.addReply(
         postId,
         replyContent.trim(),
-        'current-user-123' // TODO: get current user
+        'current-user-123', // TODO: get current user
       );
 
       if (createdReply) {
         // Add the new reply to the replies list
-        setReplies(prev => [...prev, createdReply]);
+        setReplies((prev) => [...prev, createdReply]);
         // Clear the textarea after successful submission
         setReplyContent('');
       }
@@ -102,7 +102,6 @@ export function PostDetail({ profileId, postId }: PostProps) {
     );
   }
 
-
   return (
     <Atoms.Container className="flex flex-col gap-4">
       <Atoms.Container size="container" className="px-6 gap-4">
@@ -114,7 +113,10 @@ export function PostDetail({ profileId, postId }: PostProps) {
       <Atoms.Container size="container" className="px-6 pb-8">
         <Atoms.Container className="flex flex-col gap-4">
           {replies.map((reply) => (
-            <Atoms.Container key={reply.details.id} style={{ display: 'grid', gridTemplateColumns: '32px 1fr', gap: '1rem' }}>
+            <Atoms.Container
+              key={reply.details.id}
+              style={{ display: 'grid', gridTemplateColumns: '32px 1fr', gap: '1rem' }}
+            >
               <Atoms.ReplyConnector />
               <Molecules.PostWide post={reply} />
             </Atoms.Container>

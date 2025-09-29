@@ -41,7 +41,7 @@ export class PostController {
       }
 
       // Get post IDs for fetching related data
-      const postIds = postDetails.map(post => post.id);
+      const postIds = postDetails.map((post) => post.id);
 
       // Fetch related data in parallel
       const [countsData, tagsData, relationshipsData] = await Promise.all([
@@ -51,12 +51,12 @@ export class PostController {
       ]);
 
       // Create lookup maps for efficient joining
-      const countsMap = new Map(countsData.map(c => [c.id, c]));
-      const tagsMap = new Map(tagsData.map(t => [t.id, t]));
-      const relationshipsMap = new Map(relationshipsData.map(r => [r.id, r]));
+      const countsMap = new Map(countsData.map((c) => [c.id, c]));
+      const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
+      const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
 
       // Combine data into NexusPost objects
-      const posts: Core.NexusPost[] = postDetails.map(details => ({
+      const posts: Core.NexusPost[] = postDetails.map((details) => ({
         details: {
           id: details.id,
           content: details.content,
@@ -73,7 +73,7 @@ export class PostController {
           replies: 0,
           reposts: 0,
         },
-        tags: tagsMap.get(details.id)?.tags.map(t => new Core.TagModel(t)) || [],
+        tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
         relationships: relationshipsMap.get(details.id) || {
           id: details.id,
           replied: null,
@@ -85,7 +85,6 @@ export class PostController {
 
       Logger.debug(`Fetched ${posts.length} posts from normalized tables`, { limit, offset });
       return posts;
-
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to fetch Post records', 500, {
         error,
@@ -104,7 +103,6 @@ export class PostController {
     await this.initialize();
 
     try {
-
       // Fetch post details
       const details = await Core.PostDetailsModel.getById(id);
       if (!details) {
@@ -136,7 +134,7 @@ export class PostController {
           replies: 0,
           reposts: 0,
         },
-        tags: tags?.tags.map(t => new Core.TagModel(t)) || [],
+        tags: tags?.tags.map((t) => new Core.TagModel(t)) || [],
         relationships: relationships || {
           id: details.id,
           replied: null,
@@ -147,7 +145,6 @@ export class PostController {
       };
 
       return post;
-
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to find Post record by ID', 500, {
         error,
@@ -261,7 +258,7 @@ export class PostController {
 
       if (removed) {
         // Remove tags with no taggers
-        postTagsModel.tags = postTagsModel.tags.filter(tag => tag.taggers_count > 0);
+        postTagsModel.tags = postTagsModel.tags.filter((tag) => tag.taggers_count > 0);
 
         // Save the updated model
         await Core.PostTagsModel.insert({
@@ -326,7 +323,7 @@ export class PostController {
       }
 
       // Get the IDs of the reply posts
-      const replyPostIds = replyRelationships.map(rel => rel.id);
+      const replyPostIds = replyRelationships.map((rel) => rel.id);
 
       // Fetch the reply posts using the same logic as fetch()
       const postDetails = await Core.PostDetailsModel.getByIds(replyPostIds);
@@ -343,12 +340,12 @@ export class PostController {
       ]);
 
       // Create lookup maps for efficient joining
-      const countsMap = new Map(countsData.map(c => [c.id, c]));
-      const tagsMap = new Map(tagsData.map(t => [t.id, t]));
-      const relationshipsMap = new Map(relationshipsData.map(r => [r.id, r]));
+      const countsMap = new Map(countsData.map((c) => [c.id, c]));
+      const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
+      const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
 
       // Combine data into NexusPost objects
-      const replies: Core.NexusPost[] = postDetails.map(details => ({
+      const replies: Core.NexusPost[] = postDetails.map((details) => ({
         details: {
           id: details.id,
           content: details.content,
@@ -364,7 +361,7 @@ export class PostController {
           replies: 0,
           reposts: 0,
         },
-        tags: tagsMap.get(details.id)?.tags.map(t => new Core.TagModel(t)) || [],
+        tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
         relationships: relationshipsMap.get(details.id) || {
           replied: null,
           reposted: null,
@@ -378,7 +375,6 @@ export class PostController {
 
       Logger.debug(`Fetched ${replies.length} replies for post ${postId}`);
       return replies;
-
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to fetch replies', 500, {
         error,
@@ -455,7 +451,6 @@ export class PostController {
 
       Logger.debug('Reply created successfully', { replyId, parentPostId });
       return createdReply;
-
     } catch (error) {
       Logger.error('Failed to add reply', { error, parentPostId, content, authorId });
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add reply', 500, {

@@ -54,7 +54,11 @@ export function PostWide({ post }: PostWideProps) {
 
             {/* Tags on mobile - between content and buttons */}
             <Atoms.Container className="block lg:hidden">
-              <Molecules.Tags tags={currentTags as Core.NexusTag[]} postId={post.details.id} onTagAdded={handleTagAdded} />
+              <Molecules.Tags
+                tags={currentTags as Core.NexusTag[]}
+                postId={post.details.id}
+                onTagAdded={handleTagAdded}
+              />
             </Atoms.Container>
 
             {/* Action buttons */}

@@ -20,7 +20,8 @@ export default function SeedPage() {
       const samplePosts = [
         {
           id: 'post-1',
-          content: 'Welcome to the new post system! 🚀 This is a sample post to demonstrate the migration from PostMock to real post tables. The system now uses normalized tables for better data organization and performance.',
+          content:
+            'Welcome to the new post system! 🚀 This is a sample post to demonstrate the migration from PostMock to real post tables. The system now uses normalized tables for better data organization and performance.',
           author: 'alice',
           kind: 'short' as Core.NexusPostKind,
           uri: 'post://alice/post-1',
@@ -29,7 +30,8 @@ export default function SeedPage() {
         },
         {
           id: 'post-2',
-          content: 'Just shipped a new feature! The tag system is now fully integrated with the database. Users can add and remove tags in real-time. Really excited about the improved user experience! ✨',
+          content:
+            'Just shipped a new feature! The tag system is now fully integrated with the database. Users can add and remove tags in real-time. Really excited about the improved user experience! ✨',
           author: 'bob',
           kind: 'short' as Core.NexusPostKind,
           uri: 'post://bob/post-2',
@@ -38,7 +40,8 @@ export default function SeedPage() {
         },
         {
           id: 'post-3',
-          content: 'Working on some exciting new features for the decentralized social network. Privacy and user control are at the forefront of everything we build. 🔒',
+          content:
+            'Working on some exciting new features for the decentralized social network. Privacy and user control are at the forefront of everything we build. 🔒',
           author: 'charlie',
           kind: 'short' as Core.NexusPostKind,
           uri: 'post://charlie/post-3',
@@ -48,7 +51,8 @@ export default function SeedPage() {
         // Reply posts
         {
           id: 'reply-1-1',
-          content: 'This is amazing! The normalized table approach is definitely the way to go. Much better than the old mock system. 👏',
+          content:
+            'This is amazing! The normalized table approach is definitely the way to go. Much better than the old mock system. 👏',
           author: 'jane',
           kind: 'short' as Core.NexusPostKind,
           uri: 'post://jane/reply-1-1',
@@ -72,7 +76,7 @@ export default function SeedPage() {
           uri: 'post://emma/reply-2-1',
           attachments: [],
           indexed_at: Date.now() - 180000, // 3 minutes ago
-        }
+        },
       ];
 
       // Sample tags data
@@ -91,8 +95,8 @@ export default function SeedPage() {
               taggers: ['user-3'],
               taggers_count: 1,
               relationship: false,
-            }
-          ]
+            },
+          ],
         },
         {
           id: 'post-2',
@@ -108,8 +112,8 @@ export default function SeedPage() {
               taggers: ['user-2', 'user-4'],
               taggers_count: 2,
               relationship: false,
-            }
-          ]
+            },
+          ],
         },
         {
           id: 'post-3',
@@ -125,9 +129,9 @@ export default function SeedPage() {
               taggers: ['user-4'],
               taggers_count: 1,
               relationship: false,
-            }
-          ]
-        }
+            },
+          ],
+        },
       ];
 
       // Sample counts data
@@ -174,7 +178,7 @@ export default function SeedPage() {
           unique_tags: 0,
           replies: 0,
           reposts: 1,
-        }
+        },
       ];
 
       // Sample relationships data (including reply relationships)
@@ -215,7 +219,7 @@ export default function SeedPage() {
           replied: 'post-2', // This is a reply to post-2
           reposted: null,
           mentioned: ['@bob'],
-        }
+        },
       ];
 
       // Clear existing data first
@@ -243,7 +247,6 @@ export default function SeedPage() {
         - ${sampleTags.length} tag collections inserted
         - ${sampleCounts.length} count records inserted
         - ${sampleRelationships.length} relationship records inserted`);
-
     } catch (error) {
       console.error('❌ Error seeding database:', error);
       setSeedResult(`❌ Error seeding database: ${error instanceof Error ? error.message : String(error)}`);
@@ -286,11 +289,7 @@ export default function SeedPage() {
       </Atoms.Container>
 
       <Atoms.Container className="flex gap-4 mb-8">
-        <Atoms.Button
-          onClick={handleSeed}
-          disabled={isSeeding}
-          className="flex items-center gap-2"
-        >
+        <Atoms.Button onClick={handleSeed} disabled={isSeeding} className="flex items-center gap-2">
           {isSeeding ? '🌱 Seeding...' : '🌱 Seed Database'}
         </Atoms.Button>
 
@@ -325,7 +324,8 @@ export default function SeedPage() {
 
       <Atoms.Container className="mt-6 p-4 border border-amber-200 bg-amber-50 rounded-lg">
         <Atoms.Typography className="text-amber-800 text-sm">
-          <strong>Note:</strong> After seeding, visit <code>/feed</code> to see the sample posts and test the tag functionality.
+          <strong>Note:</strong> After seeding, visit <code>/feed</code> to see the sample posts and test the tag
+          functionality.
         </Atoms.Typography>
       </Atoms.Container>
     </Atoms.Container>
