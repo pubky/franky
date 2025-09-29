@@ -30,6 +30,7 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(pubky);
+    authStore.setAuthenticated(true);
   }
 
   static async authorizeAndBootstrap() {
