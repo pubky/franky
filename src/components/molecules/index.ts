@@ -51,3 +51,4 @@ export * from './WordSlot';
 export * from './User';
 export * from './UsersList';
 export * from './WhoToFollow';
+export * from './ProfileContent';

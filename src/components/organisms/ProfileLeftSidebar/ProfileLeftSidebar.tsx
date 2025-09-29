@@ -30,7 +30,7 @@ export const ProfileLeftSidebar = ({ pubkySlug }: Templates.TProfilePageProps) =
           section: Core.ProfileSection.FOLLOWING,
         },
         { label: 'Friends', icon: Libs.Heart, count: userCounts.friends, section: Core.ProfileSection.FRIENDS },
-        { label: 'Tagged', icon: Libs.Tag, count: userCounts.tagged, section: Core.ProfileSection.TAGGED },
+        { label: 'Tagged', icon: Libs.Tag, count: userCounts.unique_tags, section: Core.ProfileSection.TAGGED },
       ]
     : [];
 
