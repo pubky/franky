@@ -49,5 +49,4 @@ export * from './WordSlot';
 export * from './User';
 export * from './UsersList';
 export * from './PostWide';
-export * from './Posts';
 export * from './Tags';

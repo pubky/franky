@@ -131,8 +131,5 @@ describe('Feed', () => {
 
     expect(outerContainer).toBeInTheDocument();
     expect(innerContainer).toBeInTheDocument();
-
-    // Check that Posts component is rendered
-    expect(screen.getByTestId('posts')).toBeInTheDocument();
   });
 });

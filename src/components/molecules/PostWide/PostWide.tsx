@@ -105,6 +105,7 @@ export function PostWide({ post, clickable = false }: PostWideProps) {
   );
 }
 
+// TODO: use proper helper/util
 function shorten(value: string, chars: number = 4) {
   if (value.length <= chars * 2) {
     return value;
@@ -112,6 +113,7 @@ function shorten(value: string, chars: number = 4) {
   return `${value.slice(0, chars)}...${value.slice(-chars)}`;
 }
 
+// TODO: use proper helper/util
 function timeAgo(date: Date) {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
