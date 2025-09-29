@@ -1,15 +1,12 @@
 import * as Libs from '@/libs';
 import * as Core from '@/core';
-import * as BootstrapServiceGuard from './bootstrap.guard';
 
 export class NexusBootstrapService {
   static async retrieveAndPersist(pubky: Core.Pubky) {
     try {
       const url = Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky));
-      const response = await fetch(url, Core.createFetchOptions());
 
-      BootstrapServiceGuard.ensureHttpResponseOk({ response, pubky });
-      const { users, posts, list } = await BootstrapServiceGuard.parseBootstrapResponseOrThrow({ response, pubky });
+      const { users, posts, list } = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
 
       // Persist fetched data in the database
       await this.persistUsers(users);
