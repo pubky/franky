@@ -57,6 +57,19 @@ export function PostDetail({ profileId, postId }: PostProps) {
       if (createdReply) {
         // Add the new reply to the replies list
         setReplies((prev) => [...prev, createdReply]);
+
+        // Update the parent post's reply count
+        setPostData((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            counts: {
+              ...prev.counts,
+              replies: prev.counts.replies + 1,
+            },
+          };
+        });
+
         // Clear the textarea after successful submission
         setReplyContent('');
       }

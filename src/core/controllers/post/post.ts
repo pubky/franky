@@ -32,8 +32,13 @@ export class PostController {
     await this.initialize();
 
     try {
-      // Fetch post details with pagination
-      const postDetails = await Core.PostDetailsModel.fetchPaginated(limit, offset);
+      // Get all relationships first (we need this for both filtering and counting)
+      const allRelationships = await Core.PostRelationshipsModel.table.toArray();
+      const replyPostIds = new Set(allRelationships.filter((rel) => rel.replied).map((rel) => rel.id));
+
+      // Fetch post details with pagination and filter out replies
+      const allPostDetails = await Core.PostDetailsModel.fetchPaginated(limit * 2, offset); // Fetch more to account for filtering
+      const postDetails = allPostDetails.filter((post) => !replyPostIds.has(post.id)).slice(0, limit);
 
       // If no posts found, return empty array
       if (postDetails.length === 0) {
@@ -55,33 +60,48 @@ export class PostController {
       const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
       const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
 
+      // Calculate reply counts for each post
+      const replyCounts = new Map<string, number>();
+      allRelationships.forEach((rel) => {
+        if (rel.replied) {
+          replyCounts.set(rel.replied, (replyCounts.get(rel.replied) || 0) + 1);
+        }
+      });
+
       // Combine data into NexusPost objects
-      const posts: Core.NexusPost[] = postDetails.map((details) => ({
-        details: {
-          id: details.id,
-          content: details.content,
-          indexed_at: details.indexed_at,
-          author: details.author,
-          kind: details.kind,
-          uri: details.uri,
-          attachments: details.attachments,
-        },
-        counts: countsMap.get(details.id) || {
+      const posts: Core.NexusPost[] = postDetails.map((details) => {
+        const baseCounts = countsMap.get(details.id) || {
           id: details.id,
           tags: 0,
           unique_tags: 0,
           replies: 0,
           reposts: 0,
-        },
-        tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
-        relationships: relationshipsMap.get(details.id) || {
-          id: details.id,
-          replied: null,
-          reposted: null,
-          mentioned: [],
-        },
-        bookmark: null, // TODO: Add bookmark support if needed
-      }));
+        };
+
+        return {
+          details: {
+            id: details.id,
+            content: details.content,
+            indexed_at: details.indexed_at,
+            author: details.author,
+            kind: details.kind,
+            uri: details.uri,
+            attachments: details.attachments,
+          },
+          counts: {
+            ...baseCounts,
+            replies: replyCounts.get(details.id) || 0, // Use actual reply count
+          },
+          tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
+          relationships: relationshipsMap.get(details.id) || {
+            id: details.id,
+            replied: null,
+            reposted: null,
+            mentioned: [],
+          },
+          bookmark: null, // TODO: Add bookmark support if needed
+        };
+      });
 
       Logger.debug(`Fetched ${posts.length} posts from normalized tables`, { limit, offset });
       return posts;
@@ -109,14 +129,23 @@ export class PostController {
         return null;
       }
 
-      // Fetch related data in parallel
-      const [counts, tags, relationships] = await Promise.all([
+      // Fetch related data in parallel and calculate reply count
+      const [counts, tags, relationships, replyCount] = await Promise.all([
         Core.PostCountsModel.getById(id),
         Core.PostTagsModel.getById(id),
         Core.PostRelationshipsModel.getById(id),
+        Core.PostRelationshipsModel.table.where('replied').equals(id).count(),
       ]);
 
       // Combine into NexusPost
+      const baseCounts = counts || {
+        id: details.id,
+        tags: 0,
+        unique_tags: 0,
+        replies: 0,
+        reposts: 0,
+      };
+
       const post: Core.NexusPost = {
         details: {
           id: details.id,
@@ -127,12 +156,9 @@ export class PostController {
           uri: details.uri,
           attachments: details.attachments,
         },
-        counts: counts || {
-          id: details.id,
-          tags: 0,
-          unique_tags: 0,
-          replies: 0,
-          reposts: 0,
+        counts: {
+          ...baseCounts,
+          replies: replyCount, // Use actual reply count
         },
         tags: tags?.tags.map((t) => new Core.TagModel(t)) || [],
         relationships: relationships || {

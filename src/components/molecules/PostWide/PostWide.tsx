@@ -71,7 +71,12 @@ export function PostWide({ post }: PostWideProps) {
                 <Libs.MessageCircle className="h-4 w-4" />
                 <Atoms.Typography size="sm">{post.counts.replies}</Atoms.Typography>
               </Atoms.Button>
-              <Atoms.Button variant="secondary" size="sm" className="flex items-center gap-1">
+              <Atoms.Button
+                variant="secondary"
+                size="sm"
+                className="flex items-center gap-1"
+                onClick={() => console.log('TODO: repost', post.details.id)}
+              >
                 <Libs.RefreshCw className="h-4 w-4" />
                 <Atoms.Typography size="sm">{post.counts.reposts}</Atoms.Typography>
               </Atoms.Button>

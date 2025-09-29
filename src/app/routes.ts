@@ -18,9 +18,13 @@ export enum FEED_ROUTES {
   FEED = '/feed',
 }
 
+export enum POST_ROUTES {
+  POST = '/post',
+}
+
 export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
 
-export const ALLOWED_ROUTES = [ONBOARDING_ROUTES.PROFILE, FEED_ROUTES.FEED, AUTH_ROUTES.LOGOUT];
+export const ALLOWED_ROUTES = [ONBOARDING_ROUTES.PROFILE, FEED_ROUTES.FEED, POST_ROUTES.POST, AUTH_ROUTES.LOGOUT];
 
 // Route guard configurations for different authentication states
 export const UNAUTHENTICATED_ROUTES = {

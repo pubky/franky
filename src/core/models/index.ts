@@ -1,5 +1,4 @@
 export * from './post';
-export * from './postMock';
 export * from './user';
 export * from './stream';
 export * from './shared';
