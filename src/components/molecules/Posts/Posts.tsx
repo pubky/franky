@@ -129,7 +129,7 @@ export const Posts = () => {
       <div className="w-full space-y-4">
         {posts.map((post) => (
           <div key={post.details.id} onClick={() => handlePostClick(post)}>
-            <Molecules.Post post={post} />
+            <Molecules.PostWide post={post} clickable={true} />
           </div>
         ))}
 

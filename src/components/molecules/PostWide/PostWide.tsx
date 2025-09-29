@@ -8,9 +8,10 @@ import * as Molecules from '@/molecules';
 
 interface PostWideProps {
   post: Core.NexusPost;
+  clickable?: boolean;
 }
 
-export function PostWide({ post }: PostWideProps) {
+export function PostWide({ post, clickable = false }: PostWideProps) {
   const [currentTags, setCurrentTags] = useState(post.tags);
 
   const handleTagAdded = (newTags: Core.NexusTag[]) => {
@@ -18,7 +19,7 @@ export function PostWide({ post }: PostWideProps) {
   };
 
   return (
-    <Atoms.Card className="p-6 rounded-lg">
+    <Atoms.Card className={`p-6 rounded-lg ${clickable ? 'cursor-pointer hover:bg-accent/50 transition-colors' : ''}`}>
       {/* Desktop: 3-column grid, Mobile: single column */}
       <Atoms.Container className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Atoms.Container className="flex flex-col lg:col-span-2 gap-4">
