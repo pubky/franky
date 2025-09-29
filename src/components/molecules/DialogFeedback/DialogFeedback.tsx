@@ -5,10 +5,13 @@ import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export function DialogFeedback() {
+interface DialogFeedbackProps {
+  name: string;
+  avatar: string;
+}
+
+export function DialogFeedback({ name, avatar }: DialogFeedbackProps) {
   const [sent, setSent] = useState(false);
-  const name = 'John Doe';
-  const avatar = '';
 
   return (
     <Atoms.Dialog>

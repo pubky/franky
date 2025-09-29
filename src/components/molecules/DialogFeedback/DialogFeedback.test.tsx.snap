@@ -1,0 +1,141 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogFeedback - Snapshots > matches snapshot after sending feedback 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <div
+      class="cursor-pointer flex flex-col gap-4 p-6 rounded-lg border border-dashed"
+      data-testid="container"
+    >
+      <div
+        class="size-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="John Doe"
+          data-testid="avatar-image"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          JD
+        </div>
+      </div>
+      <p
+        class="text-base text-muted-foreground font-medium"
+        data-size="sm"
+        data-testid="typography"
+      >
+        What do you think about Pubky?
+      </p>
+    </div>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Provide Feedback
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-6"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-normal"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Input Feedback
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogFeedback - Snapshots > matches snapshot for default DialogFeedback 1`] = `
+<div
+  data-testid="dialog"
+>
+  <div
+    data-as-child="true"
+    data-testid="dialog-trigger"
+  >
+    <div
+      class="cursor-pointer flex flex-col gap-4 p-6 rounded-lg border border-dashed"
+      data-testid="container"
+    >
+      <div
+        class="size-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="John Doe"
+          data-testid="avatar-image"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          JD
+        </div>
+      </div>
+      <p
+        class="text-base text-muted-foreground font-medium"
+        data-size="sm"
+        data-testid="typography"
+      >
+        What do you think about Pubky?
+      </p>
+    </div>
+  </div>
+  <div
+    class="sm:max-w-xl gap-0"
+    data-testid="dialog-content"
+  >
+    <div
+      class="pr-6"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Provide Feedback
+      </h2>
+    </div>
+    <div
+      class="h-full pr-4 overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="gap-6"
+        data-testid="container"
+      >
+        <p
+          class="text-muted-foreground font-normal"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Input Feedback
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
