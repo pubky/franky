@@ -21,3 +21,4 @@ export * from './ProfileHeader';
 export * from './PublicKeyCard';
 export * from './RightSidebar';
 export * from './SignInNavigation';
+export * from './UserCard';

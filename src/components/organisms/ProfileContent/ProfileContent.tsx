@@ -2,9 +2,8 @@
 
 import * as Templates from '@/templates';
 import * as Core from '@/core';
-import { UserList } from './UserList';
+import * as Organisms from '@/organisms';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ProfileContent({ pubkySlug }: Templates.TProfilePageProps) {
   const profileSection = Core.useProfileStore((state) => state.selectSection());
 
@@ -21,15 +20,15 @@ export function ProfileContent({ pubkySlug }: Templates.TProfilePageProps) {
   }
 
   if (profileSection === Core.ProfileSection.FOLLOWERS) {
-    return <UserList pubkySlug={pubkySlug} />;
+    return <Organisms.UserRelationshipList pubky={pubkySlug} relationshipType={Core.RelationshipType.FOLLOWERS} />;
   }
 
   if (profileSection === Core.ProfileSection.FOLLOWING) {
-    return <UserList pubkySlug={pubkySlug} />;
+    return <Organisms.UserRelationshipList pubky={pubkySlug} relationshipType={Core.RelationshipType.FOLLOWING} />;
   }
 
   if (profileSection === Core.ProfileSection.FRIENDS) {
-    return <UserList pubkySlug={pubkySlug} />;
+    return <Organisms.UserRelationshipList pubky={pubkySlug} relationshipType={Core.RelationshipType.FRIENDS} />;
   }
 
   if (profileSection === Core.ProfileSection.TAGGED) {

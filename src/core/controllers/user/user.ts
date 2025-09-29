@@ -6,6 +6,21 @@ import { z } from 'zod';
 export class UserController {
   private constructor() {} // Prevent instantiation
 
+  static async getUsersByRelationship({ pubky, type }: Core.TUserRelationshipParams): Promise<Core.Pubky[]> {
+    const url = Core.buildNexusUrl(Core.USER_API.GET_USERS_BY_RELATIONSHIP({ pubky, type }));
+    return await Core.queryNexus<Core.Pubky[]>(url);
+  }
+
+  static async getUser(pubky: Core.Pubky) {
+    const exists = await Core.db.user_details.get(pubky);
+    // Fallback to Nexus if not found
+    if (!exists) {
+      const url = Core.buildNexusUrl(Core.USER_API.GET(pubky));
+      const user = await Core.queryNexus<Core.NexusUser>(url);
+      Core.NexusBootstrapService.persistUsers([user]);
+    }
+  }
+
   private static async getAuthenticatedHomeserverService() {
     const onboardingStore = Core.useOnboardingStore.getState();
 
@@ -20,6 +35,7 @@ export class UserController {
     return homeserver;
   }
 
+  // TODO: Move to profile.controller.ts
   // Upload avatar to homeserver and return the url
   static async uploadAvatar(avatarFile: File, pubky: Core.Pubky): Promise<string> {
     const homeserver = await this.getAuthenticatedHomeserverService();
@@ -46,6 +62,7 @@ export class UserController {
     return fileResult.meta.url;
   }
 
+  // TODO: Move to profile.controller.ts
   static async saveProfile(
     profile: z.infer<typeof Core.UiUserSchema>,
     image: string | null,

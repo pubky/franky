@@ -4,6 +4,7 @@ import * as Libs from '@/libs';
 /**
  * Shared API utilities for all endpoints
  */
+
 export const HTTP_METHODS = {
   GET: 'GET',
   POST: 'POST',
