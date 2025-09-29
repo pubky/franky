@@ -225,8 +225,8 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
                 size="sm"
                 className={`rounded-full ${
                   isUsed
-                    ? 'opacity-40 bg-muted text-muted-foreground cursor-not-allowed'
-                    : 'hover:bg-primary hover:text-primary-foreground cursor-pointer'
+                    ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
+                    : 'dark:border-transparent bg-secondary cursor-pointer'
                 }`}
                 onClick={() => !isUsed && handleWordClick(word)}
                 disabled={isUsed}
