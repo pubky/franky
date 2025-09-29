@@ -1,5 +1,6 @@
 import * as Libs from '@/libs';
 import * as Core from '@/core';
+
 export class TagModel implements Core.NexusTag {
   label: string;
   taggers: Core.Pubky[];
