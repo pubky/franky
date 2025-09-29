@@ -10,7 +10,7 @@ interface PostProps {
   postId: string;
 }
 
-export function PostDetail({ profileId, postId }: PostProps) {
+export function PostDetail({ postId }: PostProps) {
   const [postData, setPostData] = useState<Core.NexusPost | null>(null);
   const [replies, setReplies] = useState<Core.NexusPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -125,7 +125,7 @@ export function PostDetail({ profileId, postId }: PostProps) {
       {/* Replies */}
       <Atoms.Container size="container" className="px-6 pb-8 mt-4">
         <Atoms.Container className="flex flex-col gap-4">
-          {replies.map((reply, index) => (
+          {replies.map((reply) => (
             <div key={reply.details.id} className="flex gap-4">
               <div className="w-8 flex-shrink-0">{/* Reply connector SVG will go here */}</div>
               <div className="flex-1">
