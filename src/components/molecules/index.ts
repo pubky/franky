@@ -1,5 +1,6 @@
 export * from './ActionButtons';
 export * from './ActionSection';
+export * from './AlertBackup';
 export * from './Backup';
 export * from './Breadcrumb';
 export * from './ContainerRoot';
@@ -8,8 +9,10 @@ export * from './ButtonsNavigation';
 export * from './Content';
 export * from './DialogAddLink';
 export * from './DialogAge';
+export * from './DialogBackup';
 export * from './DialogBackupEncrypted';
 export * from './DialogBackupPhrase';
+export * from './DialogConfirmBackup';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogExport';
 export * from './DialogPrivacy';
