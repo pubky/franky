@@ -1,4 +1,4 @@
-import { PostMock, PostMockGenerator, PostModelPK, db } from '@/core';
+import { PostMock, PostMockGenerator, PostModelPK, TagModel, UserModelPK, db } from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 
 export class PostMockController {
@@ -225,5 +225,158 @@ export class PostMockController {
   static async reset(): Promise<void> {
     await this.clear();
     await this.initialize();
+  }
+
+  /**
+   * Add a tag to a post
+   * @param postId - ID of the post to tag
+   * @param label - Tag label
+   * @param taggerId - ID of the user adding the tag
+   * @returns true if tag was added, false if it already exists
+   */
+  static async addTag(postId: PostModelPK, label: string, taggerId: UserModelPK): Promise<boolean> {
+    await this.initialize();
+
+    try {
+      const post = await db.postMocks.get(postId);
+      if (!post) {
+        throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Post not found', 404, { postId });
+      }
+
+      const normalizedLabel = label.toLowerCase().trim();
+      const existingTag = post.tags.find((tag) => tag.label === normalizedLabel);
+
+      if (existingTag) {
+        // Add tagger to existing tag if not already present
+        const added = existingTag.addTagger(taggerId);
+        if (added) {
+          await db.postMocks.put(post);
+          Logger.debug('Added tagger to existing tag', { postId, label, taggerId });
+          return true;
+        }
+        return false; // Tagger already exists
+      } else {
+        // Create new tag
+        const newTag = new TagModel({
+          label: normalizedLabel,
+          taggers: [taggerId],
+          taggers_count: 1,
+          relationship: false,
+        });
+
+        post.tags.push(newTag);
+        await db.postMocks.put(post);
+        Logger.debug('Added new tag to post', { postId, label, taggerId });
+        return true;
+      }
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tag to post', 500, {
+        error,
+        postId,
+        label,
+        taggerId,
+      });
+    }
+  }
+
+  /**
+   * Remove a tag from a post
+   * @param postId - ID of the post
+   * @param label - Tag label to remove
+   * @param taggerId - ID of the user removing the tag
+   * @returns true if tag was removed, false if not found
+   */
+  static async removeTag(postId: PostModelPK, label: string, taggerId: UserModelPK): Promise<boolean> {
+    await this.initialize();
+
+    try {
+      const post = await db.postMocks.get(postId);
+      if (!post) {
+        throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Post not found', 404, { postId });
+      }
+
+      const normalizedLabel = label.toLowerCase().trim();
+      const tagIndex = post.tags.findIndex((tag) => tag.label === normalizedLabel);
+
+      if (tagIndex === -1) {
+        return false; // Tag not found
+      }
+
+      const tag = post.tags[tagIndex];
+      const removed = tag.removeTagger(taggerId);
+
+      if (removed) {
+        // If no taggers left, remove the tag entirely
+        if (tag.taggers_count === 0) {
+          post.tags.splice(tagIndex, 1);
+        }
+
+        await db.postMocks.put(post);
+        Logger.debug('Removed tag from post', { postId, label, taggerId });
+        return true;
+      }
+
+      return false; // Tagger not found
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tag from post', 500, {
+        error,
+        postId,
+        label,
+        taggerId,
+      });
+    }
+  }
+
+  /**
+   * Get all tags for a post
+   * @param postId - ID of the post
+   * @returns Array of TagModel objects
+   */
+  static async getTags(postId: PostModelPK): Promise<TagModel[]> {
+    await this.initialize();
+
+    try {
+      const post = await db.postMocks.get(postId);
+      if (!post) {
+        throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Post not found', 404, { postId });
+      }
+
+      return post.tags;
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to get post tags', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Check if a user has tagged a post with a specific label
+   * @param postId - ID of the post
+   * @param label - Tag label
+   * @param taggerId - ID of the user
+   * @returns true if the user has tagged the post with this label
+   */
+  static async hasUserTagged(postId: PostModelPK, label: string, taggerId: UserModelPK): Promise<boolean> {
+    await this.initialize();
+
+    try {
+      const post = await db.postMocks.get(postId);
+      if (!post) {
+        return false;
+      }
+
+      const normalizedLabel = label.toLowerCase().trim();
+      const tag = post.tags.find((tag) => tag.label === normalizedLabel);
+
+      return tag ? tag.hasUser(taggerId) : false;
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to check user tag', 500, {
+        error,
+        postId,
+        label,
+        taggerId,
+      });
+    }
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -10,7 +11,8 @@ import * as Molecules from '@/molecules';
 const POSTS_PER_PAGE = 20;
 
 export const Posts = () => {
-  const [posts, setPosts] = useState<Core.PostMock[]>([]);
+  const router = useRouter();
+  const [posts, setPosts] = useState<Core.NexusPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export const Posts = () => {
         setLoading(true);
         setError(null);
 
-        const fetchedPosts = await Core.PostMockController.fetch(POSTS_PER_PAGE, 0);
+        const fetchedPosts = await Core.PostController.fetch(POSTS_PER_PAGE, 0);
         setPosts(fetchedPosts);
         setCurrentPage(1);
 
@@ -54,7 +56,7 @@ export const Posts = () => {
       setError(null);
 
       const offset = currentPage * POSTS_PER_PAGE;
-      const newPosts = await Core.PostMockController.fetch(POSTS_PER_PAGE, offset);
+      const newPosts = await Core.PostController.fetch(POSTS_PER_PAGE, offset);
 
       if (newPosts.length === 0) {
         setHasMore(false);
@@ -86,9 +88,9 @@ export const Posts = () => {
     debounceMs: 200,
   });
 
-  // Handle post click
-  const handlePostClick = (post: Core.PostMock) => {
-    console.log('Post clicked:', post.id);
+  const handlePostClick = (post: Core.NexusPost) => {
+    const profileId = post.details.author;
+    router.push(`/post/${profileId}/${post.details.id}`);
   };
 
   if (loading) {
@@ -126,7 +128,7 @@ export const Posts = () => {
       {/* Posts List */}
       <div className="w-full space-y-4">
         {posts.map((post) => (
-          <div key={post.id} onClick={() => handlePostClick(post)}>
+          <div key={post.details.id} onClick={() => handlePostClick(post)}>
             <Molecules.Post post={post} />
           </div>
         ))}

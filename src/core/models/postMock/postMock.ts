@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { PostModelPK, PostMock } from '@/core';
+import { PostModelPK, PostMock, TagModel } from '@/core';
 
 export class PostMockGenerator {
   private static readonly WORD_POOLS = {
@@ -170,11 +170,107 @@ export class PostMockGenerator {
     return uuidv4();
   }
 
+  private static generateRandomAuthor(): string {
+    const names = [
+      'Alice Johnson',
+      'Bob Smith',
+      'Charlie Brown',
+      'Diana Prince',
+      'Eve Wilson',
+      'Frank Miller',
+      'Grace Lee',
+      'Henry Davis',
+      'Ivy Chen',
+      'Jack Thompson',
+      'Kate Rodriguez',
+      'Leo Zhang',
+      'Maya Patel',
+      'Nathan Kim',
+      'Olivia Taylor',
+      'Paul Anderson',
+      "Quinn O'Brien",
+      'Rachel Green',
+      'Sam Williams',
+      'Tara Singh',
+    ];
+    return this.getRandomFromArray(names);
+  }
+
+  private static generateRandomPubkey(): string {
+    // Generate a realistic-looking pubkey (64 hex characters)
+    const chars = '0123456789abcdef';
+    let pubkey = '';
+    for (let i = 0; i < 64; i++) {
+      pubkey += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pubkey;
+  }
+
+  private static generateSampleTags(): TagModel[] {
+    const possibleTags = [
+      'interesting',
+      'technology',
+      'development',
+      'crypto',
+      'web3',
+      'blockchain',
+      'decentralization',
+      'privacy',
+      'security',
+      'innovation',
+      'programming',
+      'coding',
+      'software',
+      'design',
+      'ui',
+      'ux',
+      'protocol',
+      'network',
+      'consensus',
+      'p2p',
+      'distributed',
+    ];
+
+    const tagCount = Math.floor(Math.random() * 4); // 0-3 tags
+    const selectedTags = [];
+    const usedLabels = new Set();
+
+    for (let i = 0; i < tagCount; i++) {
+      let label;
+      do {
+        label = this.getRandomFromArray(possibleTags);
+      } while (usedLabels.has(label));
+
+      usedLabels.add(label);
+
+      // Generate 1-5 mock taggers for each tag
+      const taggerCount = Math.floor(Math.random() * 5) + 1;
+      const taggers = [];
+      for (let j = 0; j < taggerCount; j++) {
+        taggers.push(`user-${Math.floor(Math.random() * 100)}`);
+      }
+
+      selectedTags.push(
+        new TagModel({
+          label,
+          taggers,
+          taggers_count: taggers.length,
+          relationship: Math.random() > 0.7, // 30% chance of being a relationship tag
+        }),
+      );
+    }
+
+    return selectedTags;
+  }
+
   static create(overrides: Partial<PostMock> = {}): PostMock {
     return {
       id: this.generateUUID() as PostModelPK,
       text: this.generateRandomText(),
       createdAt: Date.now(),
+      author: this.generateRandomAuthor(),
+      authorPubkey: this.generateRandomPubkey(),
+      tags: this.generateSampleTags(),
       ...overrides,
     };
   }
