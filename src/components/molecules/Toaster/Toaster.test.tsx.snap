@@ -1,5 +1,15 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Toaster - Snapshots > matches snapshot for Toaster 1`] = `
+<div
+  class="toaster group"
+  data-testid="sonner-toaster"
+  position="bottom-center"
+  theme="light"
+  toastoptions="[object Object]"
+/>
+`;
+
 exports[`Toaster - Snapshots > matches snapshot for Toaster with multiple toasts 1`] = `
 <div
   aria-label="Notifications (F8)"
