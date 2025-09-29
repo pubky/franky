@@ -7,7 +7,7 @@ import * as Core from '@/core';
 
 interface TagsProps {
   tags: Core.NexusTag[];
-  postId: Core.PostModelPK;
+  postId: string;
   onTagAdded?: (newTags: Core.NexusTag[]) => void;
 }
 

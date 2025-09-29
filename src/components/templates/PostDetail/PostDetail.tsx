@@ -6,7 +6,6 @@ import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 
 interface PostProps {
-  profileId: string;
   postId: string;
 }
 
