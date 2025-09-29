@@ -5,8 +5,3 @@ export interface NexusBootstrapResponse {
   posts: Core.NexusPost[];
   list: Core.NexusBootstrapList;
 }
-
-export interface TBootstrapGuardParams {
-  response: Response;
-  pubky: Core.Pubky;
-}
