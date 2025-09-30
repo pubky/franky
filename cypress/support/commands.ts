@@ -51,8 +51,27 @@ Cypress.Commands.add(
       cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profileName));
       cy.get('#backup-successful-ok-btn').click();
     };
-    // todo: if (backup === BackupType.RecoveryPhrase)
-    // todo: support multiple backup types (BackupType[])
+    if (backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation) || backup?.includes(BackupType.RecoveryPhraseWithConfirmation)) {
+      cy.get('#backup-recovery-phrase-btn').click();
+      cy.get('#backup-recovery-phrase-reveal-btn').click();
+
+      // Store the recovery phrase in a unique alias for later use
+      collectRecoveryPhraseWords().then((recoveryPhrase) => {
+        cy.wrap(recoveryPhrase).as(`recoveryPhrase-${profileName}`);
+      });
+
+      cy.get('#backup-recovery-phrase-confirm-btn').click();
+
+      // either skip phrase confirmation or confirm it
+      if (backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation)) {
+        cy.get('#dialog-close-btn').click();
+
+      } else if (backup?.includes(BackupType.RecoveryPhraseWithConfirmation)) {
+        cy.get(`@recoveryPhrase-${profileName}`).then((recoveryPhrase) => {
+          confirmRecoveryPhrase(recoveryPhrase.toString());
+        });
+      }
+    }
 
     cy.get('#backup-navigation-continue-btn').click();
     cy.location('pathname').should('eq', '/onboarding/homeserver');
@@ -84,6 +103,32 @@ Cypress.Commands.add(
     cy.location('pathname').should('eq', '/feed');
   }
 );
+
+// Confirm recovery phrase by clicking each word in order
+function confirmRecoveryPhrase(recoveryPhrase: string): void {
+  const words = recoveryPhrase.split(' ');
+  words.forEach((word) => {
+    cy.get(`#backup-recovery-phrase-word-${word}`).click();
+  });
+  cy.get('#backup-recovery-phrase-validate-btn').click();
+  cy.get('#backup-recovery-phrase-finish-btn').click();
+}
+
+// Collect all 12 recovery phrase words
+function collectRecoveryPhraseWords(): Cypress.Chainable<string> {
+  return cy.get('[id^="backup-recovery-phrase-word-"]').then(($elements) => {
+    const words: string[] = [];
+
+    // Extract words from each element in order
+    $elements.each((index, element) => {
+      const $el = Cypress.$(element);
+      const wordText = $el.parent().find('span').text().trim();
+      words.push(wordText);
+    });
+
+    return words.join(' ');
+  });
+}
 
 Cypress.Commands.add('signOut', () => {
   // temporary approach to sign out
@@ -131,34 +176,35 @@ Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcod
   
   cy.get('#restore-password').type(passcode);
   cy.get('#encrypted-file-restore-btn').click();
+
   cy.location('pathname').should('eq', '/feed');
-
-  // cy.location('pathname').then((currentPath) => {
-  //   if (currentPath !== '/sign-in') {
-  //     cy.visit('/sign-in');
-  //   }
-  // });
-
-  // cy.location('pathname').then((currentPath) => {
-  //   if (currentPath === '/onboarding/sign-in') {
-  //     cy.visit('/sign-in');
-  //   }
-  // });
-
-  // cy.location('pathname').should('eq', '/sign-in');
-
-  // cy.get('#fileInput').selectFile(
-  //   backupFilepath,
-  //   { force: true } // force to bypass visibility check of hidden input field
-  // );
-  // cy.get('#sign-in-password-input').type(passcode);
-  // cy.get('#sign-in-recovery-file-btn').click();
-
-  // cy.location('pathname').should('eq', '/home');
 });
 
+Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
+  cy.location('pathname').then((pathname) => {
+    if (pathname !== '/') cy.visit('/');
+  });
+  cy.location('pathname').should('eq', '/');
+
+  cy.get('#sign-in-btn').click();
+  cy.location('pathname').should('eq', '/sign-in');
+
+  cy.get('#restore-recovery-phrase-btn').click();
+  inputRecoveryPhraseWords(recoveryPhrase);
+  cy.get('#recovery-phrase-restore-btn').click();
+
+  cy.location('pathname').should('eq', '/feed');
+});
+
+// Input recovery phrase words into the form
+function inputRecoveryPhraseWords(recoveryPhrase: string): void {
+  const words = recoveryPhrase.split(' ');
+  words.forEach((word, index) => {
+    cy.get(`#word-slot-input-${index + 1}`).type(word);
+  });
+}
+
 Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
-  // backup recovery file
   cy.get('#remind-backup-now-btn').click();
   cy.get('#backup-recovery-file-btn').click();
   cy.get('#backup-recovery-file-password-input').type(passcode);

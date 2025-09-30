@@ -13,8 +13,10 @@ export enum CheckIndexed {
   Yes = 1
 }
 
+// can use only one of RecoveryPhraseWithConfirmation or RecoveryPhraseWithoutConfirmation
 export enum BackupType {
   EncryptedFile = 'encryptedFile',
-  RecoveryPhrase = 'recoveryPhrase',
+  RecoveryPhraseWithConfirmation = 'recoveryPhraseWithConfirmation',
+  RecoveryPhraseWithoutConfirmation = 'recoveryPhraseWithoutConfirmation',
   PubkyRing = 'pubkyRing',
 }
