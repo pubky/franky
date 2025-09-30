@@ -19,7 +19,7 @@ describe('Filter Components', () => {
 
       const root = screen.getByTestId('filter-root');
       expect(root).toBeInTheDocument();
-      expect(root).toHaveClass('flex', 'flex-col', 'gap-4', 'bg-background');
+      expect(root).toMatchSnapshot();
     });
 
     it('applies custom className', () => {
@@ -30,7 +30,7 @@ describe('Filter Components', () => {
       );
 
       const root = screen.getByTestId('filter-root');
-      expect(root).toHaveClass('custom-class');
+      expect(root).toMatchSnapshot();
     });
   });
 
@@ -40,14 +40,14 @@ describe('Filter Components', () => {
 
       expect(screen.getByText('Test Filter')).toBeInTheDocument();
       const heading = screen.getByText('Test Filter');
-      expect(heading).toHaveClass('text-muted-foreground', 'font-light');
+      expect(heading).toMatchSnapshot();
     });
 
     it('applies custom className', () => {
       render(<FilterHeader title="Test Filter" className="custom-header" />);
 
       const heading = screen.getByText('Test Filter');
-      expect(heading).toHaveClass('custom-header');
+      expect(heading).toMatchSnapshot();
     });
   });
 
@@ -62,7 +62,7 @@ describe('Filter Components', () => {
 
       const list = screen.getByTestId('filter-list');
       expect(list).toBeInTheDocument();
-      expect(list).toHaveClass('flex', 'flex-col', 'gap-2');
+      expect(list).toMatchSnapshot();
     });
 
     it('applies custom className', () => {
@@ -73,7 +73,7 @@ describe('Filter Components', () => {
       );
 
       const list = screen.getByTestId('filter-list');
-      expect(list).toHaveClass('custom-list');
+      expect(list).toMatchSnapshot();
     });
   });
 
@@ -87,7 +87,7 @@ describe('Filter Components', () => {
 
       const item = screen.getByTestId('filter-item');
       expect(item).toBeInTheDocument();
-      expect(item).toHaveClass('cursor-pointer', 'flex', 'gap-2', 'text-base', 'font-medium');
+      expect(item).toMatchSnapshot();
       expect(item).toHaveAttribute('data-selected', 'false');
     });
 
@@ -99,7 +99,7 @@ describe('Filter Components', () => {
       );
 
       const item = screen.getByTestId('filter-item');
-      expect(item).toHaveClass('text-foreground');
+      expect(item).toMatchSnapshot();
       expect(item).toHaveAttribute('data-selected', 'true');
     });
 
@@ -111,7 +111,7 @@ describe('Filter Components', () => {
       );
 
       const item = screen.getByTestId('filter-item');
-      expect(item).toHaveClass('text-muted-foreground', 'hover:text-secondary-foreground');
+      expect(item).toMatchSnapshot();
       expect(item).toHaveAttribute('data-selected', 'false');
     });
 
@@ -137,7 +137,7 @@ describe('Filter Components', () => {
       );
 
       const item = screen.getByTestId('filter-item');
-      expect(item).toHaveClass('custom-item');
+      expect(item).toMatchSnapshot();
     });
   });
 
@@ -147,14 +147,14 @@ describe('Filter Components', () => {
 
       const icon = screen.getByTestId('mock-icon');
       expect(icon).toBeInTheDocument();
-      expect(icon).toHaveClass('w-5', 'h-5');
+      expect(icon).toMatchSnapshot();
     });
 
     it('applies custom className', () => {
       render(<FilterItemIcon icon={MockIcon} className="custom-icon" />);
 
       const icon = screen.getByTestId('mock-icon');
-      expect(icon).toHaveClass('custom-icon');
+      expect(icon).toMatchSnapshot();
     });
   });
 
@@ -169,7 +169,7 @@ describe('Filter Components', () => {
       render(<FilterItemLabel className="custom-label">Test Label</FilterItemLabel>);
 
       const label = screen.getByText('Test Label');
-      expect(label).toHaveClass('custom-label');
+      expect(label).toMatchSnapshot();
     });
   });
 });

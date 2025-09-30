@@ -1,0 +1,204 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FilterReach > applies correct styling classes 1`] = `
+<p
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  data-selected="true"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <div
+    class="w-5 h-5"
+    data-testid="radio-icon"
+  >
+    Radio
+  </div>
+  <span
+    class=""
+  >
+    All
+  </span>
+</p>
+`;
+
+exports[`FilterReach > applies correct styling classes 2`] = `
+<p
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  data-selected="false"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <div
+    class="w-5 h-5"
+    data-testid="users-round2-icon"
+  >
+    UsersRound2
+  </div>
+  <span
+    class=""
+  >
+    Following
+  </span>
+</p>
+`;
+
+exports[`FilterReach > renders with custom selected tab 1`] = `
+<p
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  data-selected="true"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <div
+    class="w-5 h-5"
+    data-testid="users-round2-icon"
+  >
+    UsersRound2
+  </div>
+  <span
+    class=""
+  >
+    Following
+  </span>
+</p>
+`;
+
+exports[`FilterReach > renders with default selected tab 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex flex-col gap-4 bg-background"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div
+    data-slot="filter-header"
+    data-testid="filter-header"
+  >
+    <h2
+      class="text-2xl font-bold text-foreground text-muted-foreground font-light"
+      data-testid="heading-2"
+    >
+      Reach
+    </h2>
+  </div>
+  <div
+    class="mx-auto w-full flex-col flex flex flex-col gap-2"
+    data-slot="filter-list"
+    data-testid="filter-list"
+  >
+    <p
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+      data-selected="true"
+      data-slot="filter-item"
+      data-testid="filter-item"
+    >
+      <div
+        class="w-5 h-5"
+        data-testid="radio-icon"
+      >
+        Radio
+      </div>
+      <span
+        class=""
+      >
+        All
+      </span>
+    </p>
+    <p
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      data-selected="false"
+      data-slot="filter-item"
+      data-testid="filter-item"
+    >
+      <div
+        class="w-5 h-5"
+        data-testid="users-round2-icon"
+      >
+        UsersRound2
+      </div>
+      <span
+        class=""
+      >
+        Following
+      </span>
+    </p>
+    <p
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      data-selected="false"
+      data-slot="filter-item"
+      data-testid="filter-item"
+    >
+      <div
+        class="w-5 h-5"
+        data-testid="heart-handshake-icon"
+      >
+        HeartHandshake
+      </div>
+      <span
+        class=""
+      >
+        Friends
+      </span>
+    </p>
+    <p
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      data-selected="false"
+      data-slot="filter-item"
+      data-testid="filter-item"
+    >
+      <div
+        class="w-5 h-5"
+        data-testid="user-round-icon"
+      >
+        UserRound
+      </div>
+      <span
+        class=""
+      >
+        Me
+      </span>
+    </p>
+  </div>
+</div>
+`;
+
+exports[`FilterReach > shows correct visual state for selected and unselected tabs 1`] = `
+<p
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  data-selected="true"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <div
+    class="w-5 h-5"
+    data-testid="user-round-icon"
+  >
+    UserRound
+  </div>
+  <span
+    class=""
+  >
+    Me
+  </span>
+</p>
+`;
+
+exports[`FilterReach > shows correct visual state for selected and unselected tabs 2`] = `
+<p
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  data-selected="false"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <div
+    class="w-5 h-5"
+    data-testid="radio-icon"
+  >
+    Radio
+  </div>
+  <span
+    class=""
+  >
+    All
+  </span>
+</p>
+`;

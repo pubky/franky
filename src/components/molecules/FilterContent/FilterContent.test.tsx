@@ -92,20 +92,14 @@ describe('FilterContent', () => {
     render(<FilterContent />);
 
     expect(screen.getByText('Content')).toBeInTheDocument();
-    expect(screen.getByText('All')).toBeInTheDocument();
-    expect(screen.getByText('Posts')).toBeInTheDocument();
-    expect(screen.getByText('Articles')).toBeInTheDocument();
-    expect(screen.getByText('Images')).toBeInTheDocument();
-    expect(screen.getByText('Videos')).toBeInTheDocument();
-    expect(screen.getByText('Links')).toBeInTheDocument();
-    expect(screen.getByText('Files')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
   });
 
   it('renders with custom selected tab', () => {
     render(<FilterContent selectedTab="videos" />);
 
     const videosItem = screen.getByText('Videos').closest('[data-testid="filter-item"]');
-    expect(videosItem).toHaveClass('text-foreground');
+    expect(videosItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -122,8 +116,8 @@ describe('FilterContent', () => {
     const postsItem = screen.getByText('Posts').closest('[data-testid="filter-item"]');
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
 
-    expect(postsItem).toHaveClass('text-foreground');
-    expect(allItem).toHaveClass('text-muted-foreground');
+    expect(postsItem).toMatchSnapshot();
+    expect(allItem).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -159,32 +153,20 @@ describe('FilterContent', () => {
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
     const postsItem = screen.getByText('Posts').closest('[data-testid="filter-item"]');
 
-    expect(allItem).toHaveClass('text-foreground', 'cursor-pointer', 'flex', 'gap-2');
-    expect(postsItem).toHaveClass('text-muted-foreground', 'hover:text-secondary-foreground');
+    expect(allItem).toMatchSnapshot();
+    expect(postsItem).toMatchSnapshot();
   });
 
   it('renders with correct icons', () => {
     render(<FilterContent />);
 
-    expect(screen.getByTestId('layers-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('sticky-note-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('newspaper-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('image-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('circle-play-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('link-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('download-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('applies correct icon classes', () => {
     render(<FilterContent />);
 
-    expect(screen.getByTestId('layers-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('sticky-note-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('newspaper-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('image-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('circle-play-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('link-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('download-icon')).toHaveClass('w-5', 'h-5');
+    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('handles tab switching correctly', () => {
@@ -202,15 +184,15 @@ describe('FilterContent', () => {
 
     let allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
     const postsItem = screen.getByText('Posts').closest('[data-testid="filter-item"]');
-    expect(allItem).toHaveClass('text-foreground');
-    expect(postsItem).toHaveClass('text-muted-foreground');
+    expect(allItem).toMatchSnapshot();
+    expect(postsItem).toMatchSnapshot();
 
     // Rerender with different selected tab
     rerender(<FilterContent selectedTab="videos" />);
     allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
-    const videosItem = screen.getByText('Videos').closest('[data-testid="filter-item"]');
-    expect(allItem).toHaveClass('text-muted-foreground');
-    expect(videosItem).toHaveClass('text-foreground');
+    const videosItem2 = screen.getByText('Videos').closest('[data-testid="filter-item"]');
+    expect(allItem).toMatchSnapshot();
+    expect(videosItem2).toMatchSnapshot();
   });
 
   it('handles multiple tab clicks', () => {

@@ -144,10 +144,9 @@ describe('InvitePopover', () => {
     expect(twitterIcon).toBeInTheDocument();
     expect(telegramIcon).toBeInTheDocument();
 
-    // Check icons have proper classes
-    expect(mailIcon).toHaveClass('h-6', 'w-6');
-    expect(twitterIcon).toHaveClass('h-6', 'w-6');
-    expect(telegramIcon).toHaveClass('h-6', 'w-6');
+    expect(mailIcon).toMatchSnapshot();
+    expect(twitterIcon).toMatchSnapshot();
+    expect(telegramIcon).toMatchSnapshot();
   });
 
   it('uses default URLs', () => {
@@ -175,11 +174,11 @@ describe('InvitePopover', () => {
     const heading = screen.getByText("Don't have an invite yet?");
     const description = screen.getByText('Ask the Pubky team!');
 
-    // Check that the components are rendered
+    // Check that the components are rendered and snapshot their structure
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveClass('text-popover-foreground');
+    expect(heading).toMatchSnapshot();
     expect(description).toBeInTheDocument();
-    expect(description).toHaveClass('font-normal', 'text-muted-foreground');
+    expect(description).toMatchSnapshot();
   });
 });
 

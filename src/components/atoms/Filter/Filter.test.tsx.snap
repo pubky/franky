@@ -1,0 +1,148 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Filter Components > FilterHeader > applies custom className 1`] = `
+<h2
+  class="text-2xl text-muted-foreground font-light custom-header"
+  data-testid="heading-2"
+>
+  Test Filter
+</h2>
+`;
+
+exports[`Filter Components > FilterHeader > renders with title 1`] = `
+<h2
+  class="text-2xl text-muted-foreground font-light"
+  data-testid="heading-2"
+>
+  Test Filter
+</h2>
+`;
+
+exports[`Filter Components > FilterItem > applies custom className 1`] = `
+<p
+  class="cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground custom-item"
+  data-selected="false"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <span>
+    Test Item
+  </span>
+</p>
+`;
+
+exports[`Filter Components > FilterItem > renders as selected 1`] = `
+<p
+  class="cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  data-selected="true"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <span>
+    Selected Item
+  </span>
+</p>
+`;
+
+exports[`Filter Components > FilterItem > renders as unselected 1`] = `
+<p
+  class="cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  data-selected="false"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <span>
+    Unselected Item
+  </span>
+</p>
+`;
+
+exports[`Filter Components > FilterItem > renders with default props 1`] = `
+<p
+  class="cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  data-selected="false"
+  data-slot="filter-item"
+  data-testid="filter-item"
+>
+  <span>
+    Test Item
+  </span>
+</p>
+`;
+
+exports[`Filter Components > FilterItemIcon > applies custom className 1`] = `
+<div
+  class="w-5 h-5 custom-icon"
+  data-testid="mock-icon"
+>
+  Icon
+</div>
+`;
+
+exports[`Filter Components > FilterItemIcon > renders with icon 1`] = `
+<div
+  class="w-5 h-5"
+  data-testid="mock-icon"
+>
+  Icon
+</div>
+`;
+
+exports[`Filter Components > FilterItemLabel > applies custom className 1`] = `
+<span
+  class="custom-label"
+>
+  Test Label
+</span>
+`;
+
+exports[`Filter Components > FilterList > applies custom className 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-2 custom-list"
+  data-slot="filter-list"
+  data-testid="filter-list"
+>
+  <div>
+    Item 1
+  </div>
+</div>
+`;
+
+exports[`Filter Components > FilterList > renders with default props 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-2"
+  data-slot="filter-list"
+  data-testid="filter-list"
+>
+  <div>
+    Item 1
+  </div>
+  <div>
+    Item 2
+  </div>
+</div>
+`;
+
+exports[`Filter Components > FilterRoot > applies custom className 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-4 bg-background custom-class"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div>
+    Test content
+  </div>
+</div>
+`;
+
+exports[`Filter Components > FilterRoot > renders with default props 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-4 bg-background"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div>
+    Test content
+  </div>
+</div>
+`;

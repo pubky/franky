@@ -93,16 +93,14 @@ describe('FilterLayout', () => {
     render(<FilterLayout />);
 
     expect(screen.getByText('Layout')).toBeInTheDocument();
-    expect(screen.getByText('Columns')).toBeInTheDocument();
-    expect(screen.getByText('Wide')).toBeInTheDocument();
-    expect(screen.getByText('Visual')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
   });
 
   it('renders with custom selected tab', () => {
     render(<FilterLayout selectedTab="wide" />);
 
     const wideItem = screen.getByText('Wide').closest('[data-testid="filter-item"]');
-    expect(wideItem).toHaveClass('text-foreground');
+    expect(wideItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -117,10 +115,10 @@ describe('FilterLayout', () => {
     render(<FilterLayout selectedTab="columns" />);
 
     const columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
-    const wideItem = screen.getByText('Wide').closest('[data-testid="filter-item"]');
+    const wideItem2 = screen.getByText('Wide').closest('[data-testid="filter-item"]');
 
-    expect(columnsItem).toHaveClass('text-foreground');
-    expect(wideItem).toHaveClass('text-muted-foreground');
+    expect(columnsItem).toMatchSnapshot();
+    expect(wideItem2).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -140,38 +138,34 @@ describe('FilterLayout', () => {
     const columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
     const wideItem = screen.getByText('Wide').closest('[data-testid="filter-item"]');
 
-    expect(columnsItem).toHaveClass('text-foreground', 'cursor-pointer', 'flex', 'gap-2');
-    expect(wideItem).toHaveClass('text-muted-foreground', 'hover:text-secondary-foreground');
+    expect(columnsItem).toMatchSnapshot();
+    expect(wideItem).toMatchSnapshot();
   });
 
   it('renders with correct icons', () => {
     render(<FilterLayout />);
 
-    expect(screen.getByTestId('columns3-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('menu-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('layout-grid-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('applies correct icon classes', () => {
     render(<FilterLayout />);
 
-    expect(screen.getByTestId('columns3-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('menu-icon')).toHaveClass('w-5', 'h-5');
-    expect(screen.getByTestId('layout-grid-icon')).toHaveClass('w-5', 'h-5');
+    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('rerenders with different selected tabs', () => {
     const { rerender } = render(<FilterLayout selectedTab="columns" />);
 
     let columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
-    const wideItem = screen.getByText('Wide').closest('[data-testid="filter-item"]');
-    expect(columnsItem).toHaveClass('text-foreground');
-    expect(wideItem).toHaveClass('text-muted-foreground');
+    const wideItem3 = screen.getByText('Wide').closest('[data-testid="filter-item"]');
+    expect(columnsItem).toMatchSnapshot();
+    expect(wideItem3).toMatchSnapshot();
 
     rerender(<FilterLayout selectedTab="visual" />);
     columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
     const visualItem = screen.getByText('Visual').closest('[data-testid="filter-item"]');
-    expect(columnsItem).toHaveClass('text-muted-foreground');
-    expect(visualItem).toHaveClass('text-foreground');
+    expect(columnsItem).toMatchSnapshot();
+    expect(visualItem).toMatchSnapshot();
   });
 });

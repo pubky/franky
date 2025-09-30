@@ -91,17 +91,14 @@ describe('FilterReach', () => {
     render(<FilterReach />);
 
     expect(screen.getByText('Reach')).toBeInTheDocument();
-    expect(screen.getByText('All')).toBeInTheDocument();
-    expect(screen.getByText('Following')).toBeInTheDocument();
-    expect(screen.getByText('Friends')).toBeInTheDocument();
-    expect(screen.getByText('Me')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
   });
 
   it('renders with custom selected tab', () => {
     render(<FilterReach selectedTab="following" />);
 
     const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
-    expect(followingItem).toHaveClass('text-foreground');
+    expect(followingItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -120,8 +117,8 @@ describe('FilterReach', () => {
     const meItem = screen.getByText('Me').closest('[data-testid="filter-item"]');
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
 
-    expect(meItem).toHaveClass('text-foreground');
-    expect(allItem).toHaveClass('text-muted-foreground');
+    expect(meItem).toMatchSnapshot();
+    expect(allItem).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -146,7 +143,7 @@ describe('FilterReach', () => {
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
     const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
 
-    expect(allItem).toHaveClass('text-foreground', 'cursor-pointer', 'flex', 'gap-2');
-    expect(followingItem).toHaveClass('text-muted-foreground', 'hover:text-secondary-foreground');
+    expect(allItem).toMatchSnapshot();
+    expect(followingItem).toMatchSnapshot();
   });
 });

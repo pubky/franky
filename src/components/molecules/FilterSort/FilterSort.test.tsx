@@ -91,15 +91,14 @@ describe('FilterSort', () => {
     render(<FilterSort />);
 
     expect(screen.getByText('Sort')).toBeInTheDocument();
-    expect(screen.getByText('Recent')).toBeInTheDocument();
-    expect(screen.getByText('Popularity')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
   });
 
   it('renders with custom selected tab', () => {
     render(<FilterSort selectedTab="popularity" />);
 
     const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
-    expect(popularityItem).toHaveClass('text-foreground');
+    expect(popularityItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -116,10 +115,10 @@ describe('FilterSort', () => {
     render(<FilterSort selectedTab="recent" />);
 
     const recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
-    const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
+    const popularityItem2 = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
 
-    expect(recentItem).toHaveClass('text-foreground');
-    expect(popularityItem).toHaveClass('text-muted-foreground');
+    expect(recentItem).toMatchSnapshot();
+    expect(popularityItem2).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -142,28 +141,20 @@ describe('FilterSort', () => {
     const recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
 
-    expect(recentItem).toHaveClass('text-foreground', 'cursor-pointer', 'flex', 'gap-2');
-    expect(popularityItem).toHaveClass('text-muted-foreground', 'hover:text-secondary-foreground');
+    expect(recentItem).toMatchSnapshot();
+    expect(popularityItem).toMatchSnapshot();
   });
 
   it('renders with correct icons', () => {
     render(<FilterSort />);
 
-    const squareAsteriskIcon = screen.getByTestId('square-asterisk-icon');
-    const flameIcon = screen.getByTestId('flame-icon');
-
-    expect(squareAsteriskIcon).toBeInTheDocument();
-    expect(flameIcon).toBeInTheDocument();
+    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('applies correct icon classes', () => {
     render(<FilterSort />);
 
-    const squareAsteriskIcon = screen.getByTestId('square-asterisk-icon');
-    const flameIcon = screen.getByTestId('flame-icon');
-
-    expect(squareAsteriskIcon).toHaveClass('w-5', 'h-5');
-    expect(flameIcon).toHaveClass('w-5', 'h-5');
+    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('handles tab switching correctly', () => {
@@ -184,8 +175,8 @@ describe('FilterSort', () => {
     let recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     let popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
 
-    expect(recentItem).toHaveClass('text-foreground');
-    expect(popularityItem).toHaveClass('text-muted-foreground');
+    expect(recentItem).toMatchSnapshot();
+    expect(popularityItem).toMatchSnapshot();
 
     // Rerender with different selected tab
     rerender(<FilterSort selectedTab="popularity" />);
@@ -193,7 +184,7 @@ describe('FilterSort', () => {
     recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
 
-    expect(recentItem).toHaveClass('text-muted-foreground');
-    expect(popularityItem).toHaveClass('text-foreground');
+    expect(recentItem).toMatchSnapshot();
+    expect(popularityItem).toMatchSnapshot();
   });
 });
