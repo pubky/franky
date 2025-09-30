@@ -34,6 +34,11 @@ vi.mock('@radix-ui/react-dialog', () => ({
 
 // Mock libs
 vi.mock('@/libs', () => ({
+  FileUp: ({ className }: { className?: string }) => (
+    <div data-testid="file-up-icon" className={className}>
+      FileUp
+    </div>
+  ),
   Upload: ({ className }: { className?: string }) => (
     <div data-testid="upload-icon" className={className}>
       Upload
@@ -215,7 +220,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     expect(screen.getByTestId('dialog')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-trigger')).toBeInTheDocument();
-    expect(screen.getByText('Restore from file')).toBeInTheDocument();
+    expect(screen.getByText('Use encrypted file')).toBeInTheDocument();
   });
 
   it('renders dialog content with correct title and description', () => {
@@ -514,7 +519,7 @@ describe('DialogRestoreEncryptedFile', () => {
   it('shows correct icons', () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    expect(screen.getByTestId('upload-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('file-up-icon')).toBeInTheDocument();
     expect(screen.getByTestId('file-text-icon')).toBeInTheDocument();
     expect(screen.getByTestId('rotate-icon')).toBeInTheDocument();
   });
