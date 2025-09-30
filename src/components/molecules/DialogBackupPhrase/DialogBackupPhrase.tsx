@@ -91,21 +91,21 @@ function RecoveryStep1({
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="gap-4 sm:gap-3 flex-row justify-between">
+      <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
         {isHidden ? (
           <>
             <Atoms.DialogClose asChild>
               <Atoms.Button
                 id="backup-recovery-phrase-cancel-btn"
                 variant="outline"
-                className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+                className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               >
                 Cancel
               </Atoms.Button>
             </Atoms.DialogClose>
             <Atoms.Button
               id="backup-recovery-phrase-reveal-btn"
-              className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+              className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               onClick={() => {
                 setIsHidden(!isHidden);
                 setStep(1);
@@ -119,7 +119,7 @@ function RecoveryStep1({
           <>
             <Atoms.Button
               variant="outline"
-              className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+              className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               onClick={() => {
                 setIsHidden(!isHidden);
                 setStep(1);
@@ -130,7 +130,7 @@ function RecoveryStep1({
             </Atoms.Button>
             <Atoms.Button
               id="backup-recovery-phrase-confirm-btn"
-              className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+              className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               onClick={() => setStep(2)}
             >
               <Libs.ArrowRight className="mr-2 h-4 w-4" />
@@ -251,7 +251,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           })}
         </Atoms.Container>
 
-        <Atoms.Container display="grid" className="grid-cols-1 sm:grid-cols-3 gap-3">
+        <Atoms.Container display="grid" className="grid-cols-2 sm:grid-cols-3 gap-3">
           {userWords.map((word, i) => {
             const isCorrect = word !== '' && word === recoveryWords[i];
             const isError = errors[i];
