@@ -136,7 +136,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
         data-testid="radix-dialog-close"
       >
         <button
-          class="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+          class="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           data-testid="button-outline"
         >
           <div
@@ -149,7 +149,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
         </button>
       </div>
       <button
-        class="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+        class="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
         data-testid="button-default"
         disabled=""
       >
