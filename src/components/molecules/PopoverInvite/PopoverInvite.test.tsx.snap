@@ -1,5 +1,50 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`InvitePopover > has proper popover content structure 1`] = `
+<h4
+  class="text-lg font-semibold text-foreground text-popover-foreground"
+  data-testid="heading-4"
+>
+  Don't have an invite yet?
+</h4>
+`;
+
+exports[`InvitePopover > has proper popover content structure 2`] = `
+<p
+  class="text-sm font-semibold text-foreground text-muted-foreground font-normal"
+  data-testid="typography"
+>
+  Ask the Pubky team!
+</p>
+`;
+
+exports[`InvitePopover > renders social contact links in popover 1`] = `
+<div
+  class="h-6 w-6"
+  data-testid="mail-icon"
+>
+  Mail
+</div>
+`;
+
+exports[`InvitePopover > renders social contact links in popover 2`] = `
+<div
+  class="h-6 w-6"
+  data-testid="xtwitter-icon"
+>
+  XTwitter
+</div>
+`;
+
+exports[`InvitePopover > renders social contact links in popover 3`] = `
+<div
+  class="h-6 w-6"
+  data-testid="telegram-icon"
+>
+  Telegram
+</div>
+`;
+
 exports[`PopoverInvite - Snapshots > matches snapshot for PopoverInvite with custom className 1`] = `
 <button
   aria-controls="radix-«r0»"
