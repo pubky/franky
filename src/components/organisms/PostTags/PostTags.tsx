@@ -114,7 +114,10 @@ export const PostTags = ({ postId }: PostTagsProps) => {
                   return (
                     <Atoms.Link
                       key={taggerId}
-                      href={`/profile/${taggerId}`}
+                      href={
+                        // TODO: replace with proper link
+                        `/profile/${taggerId}`
+                      }
                       className="relative"
                       style={{ zIndex: 10 + index, filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
                     >
