@@ -135,7 +135,7 @@ describe('User', () => {
     const multiNameUser = { ...mockUser, name: 'Anna Maria Pleb' };
     render(<User user={multiNameUser} />);
 
-    expect(screen.getByText('AMP')).toBeInTheDocument(); // Multiple initials
+    expect(screen.getByText('AM')).toBeInTheDocument(); // Multiple initials, capped to 2
   });
 
   it('truncates long names and handles', () => {

@@ -31,23 +31,15 @@ export function User({
   actionVariant = Atoms.ButtonVariant.SECONDARY,
   className,
   'data-testid': dataTestId,
-  ...props
 }: UserProps) {
   return (
     <Atoms.Container
       className={Libs.cn('flex flex-row gap-2 items-center', className)}
       data-testid={dataTestId || 'user'}
-      {...props}
     >
       <Atoms.Avatar className="size-8" data-testid="user-avatar">
         <Atoms.AvatarImage src={user.avatar} alt={user.name} />
-        <Atoms.AvatarFallback>
-          {user.name
-            .split(' ')
-            .map((n) => n[0])
-            .join('')
-            .toUpperCase()}
-        </Atoms.AvatarFallback>
+        <Atoms.AvatarFallback>{Libs.extractInitials({ name: user.name, maxLength: 2 })}</Atoms.AvatarFallback>
       </Atoms.Avatar>
 
       <Atoms.Container className="flex flex-1 flex-col min-w-0">
