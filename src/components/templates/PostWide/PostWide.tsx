@@ -1,43 +1,22 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
 import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 
 interface PostWideProps {
   postId: string;
   clickable?: boolean;
   showReplyConnector?: boolean;
-  isLast?: boolean;
 }
 
-export function PostWide({ postId, clickable = false, showReplyConnector = false, isLast = false }: PostWideProps) {
-  const [postHeight, setPostHeight] = useState(100);
-  const cardRef = useRef<HTMLDivElement>(null);
+export function PostWide({ postId, clickable = false, showReplyConnector = false }: PostWideProps) {
+  const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
-  useEffect(() => {
-    if (!showReplyConnector || !cardRef.current) return;
-
-    const updateHeight = () => {
-      if (cardRef.current) {
-        const height = cardRef.current.getBoundingClientRect().height;
-        setPostHeight(height);
-      }
-    };
-
-    // Initial height
-    updateHeight();
-
-    // Use ResizeObserver to watch for content changes
-    const resizeObserver = new ResizeObserver(updateHeight);
-    resizeObserver.observe(cardRef.current);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [showReplyConnector]);
-
-  const { path, tailPath, width, height } = createReplyConnectorPath(postHeight, isLast);
+  const { path, tailPath, width, height } = showReplyConnector
+    ? Libs.createReplyConnectorPath(postHeight)
+    : { path: '', tailPath: null, width: 0, height: 0 };
 
   return (
     <div className="relative">
@@ -91,29 +70,4 @@ export function PostWide({ postId, clickable = false, showReplyConnector = false
       </Atoms.Card>
     </div>
   );
-}
-
-function createReplyConnectorPath(postHeight: number, isLast: boolean = false) {
-  const x = 16;
-  const y = 0;
-  const safePostHeight = Math.max(postHeight || 100, 100);
-  const H = safePostHeight / 2;
-  const W = 24;
-  const R = 8;
-  const gapSpacing = 16; // gap-4 = 16px
-
-  const validH = Math.max(H, R);
-  const path = `M ${x} ${y} v ${validH - R} a ${R} ${R} 0 0 0 ${R} ${R} h ${W}`;
-
-  const hasTail = !isLast;
-  const tailHeight = hasTail ? safePostHeight / 2 - R + gapSpacing : 0;
-  const vbW = x + R + W;
-  const vbH = validH + R + tailHeight;
-
-  return {
-    path,
-    tailPath: hasTail ? `M ${x} ${validH + R} v ${tailHeight}` : null,
-    width: vbW,
-    height: vbH,
-  };
 }

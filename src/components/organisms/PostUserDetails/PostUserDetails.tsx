@@ -10,9 +10,10 @@ interface PostUserDetailsProps {
 }
 
 export function PostUserDetails({ postId }: PostUserDetailsProps) {
-  // TODO: postId will be in format <authorId>:<postId> so we will need to fix
-  // this after https://github.com/pubky/franky/pull/196 is merged
-  const fetchedDetails = useLiveQuery(() => Core.db.user_details.get(postId).then((details) => details), [postId]);
+  const authorId = postId.split(':')[0];
+  const fetchedDetails = useLiveQuery(() => Core.db.user_details.get(authorId).then((details) => details), [authorId]);
+
+  // TODO: remove this default when https://github.com/pubky/franky/pull/196 is merged
   const userDetails = fetchedDetails || {
     name: 'Anonymous User',
     indexed_at: Date.now(),

@@ -229,6 +229,17 @@ export class PostController {
             id: postId,
             tags: postTagsModel.tags as Core.NexusTag[],
           });
+
+          // Update post_counts table
+          const counts = await Core.PostCountsModel.getById(postId);
+          if (counts) {
+            await Core.PostCountsModel.insert({
+              ...counts,
+              tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+              unique_tags: postTagsModel.tags.length,
+            });
+          }
+
           Logger.debug('Added tagger using existing PostTagsModel', { postId, label: normalizedLabel, taggerId });
         }
         return added;
@@ -245,6 +256,17 @@ export class PostController {
             id: postId,
             tags: newPostTags.tags as Core.NexusTag[],
           });
+
+          // Update post_counts table
+          const counts = await Core.PostCountsModel.getById(postId);
+          if (counts) {
+            await Core.PostCountsModel.insert({
+              ...counts,
+              tags: newPostTags.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+              unique_tags: newPostTags.tags.length,
+            });
+          }
+
           Logger.debug('Created new PostTagsModel and added tag', { postId, label: normalizedLabel, taggerId });
         }
         return added;
@@ -302,6 +324,17 @@ export class PostController {
           id: postId,
           tags: postTagsModel.tags as Core.NexusTag[],
         });
+
+        // Update post_counts table
+        const counts = await Core.PostCountsModel.getById(postId);
+        if (counts) {
+          await Core.PostCountsModel.insert({
+            ...counts,
+            tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+            unique_tags: postTagsModel.tags.length,
+          });
+        }
+
         Logger.debug('Removed tagger using PostTagsModel', { postId, label: normalizedLabel, taggerId });
       }
       return removed;
@@ -508,6 +541,15 @@ export class PostController {
         Core.PostRelationshipsModel.table.add(replyRelationships),
         Core.PostCountsModel.table.add(replyCounts),
       ]);
+
+      // Update parent post's reply count
+      const parentCounts = await Core.PostCountsModel.getById(parentPostId);
+      if (parentCounts) {
+        await Core.PostCountsModel.insert({
+          ...parentCounts,
+          replies: parentCounts.replies + 1,
+        });
+      }
 
       // Return the created reply as NexusPost
       const createdReply: Core.NexusPost = {
