@@ -13,8 +13,9 @@ jobs:
       # https://github.com/pubky/pubky-stack
       PUBKY_STACK_REF: ce44db8342d7e0673eba8f6862ba11e163a1ff9b
     strategy:
+      fail-fast: false
       matrix:
-        browser: [chrome, firefox, safari]
+        browser: [chrome, firefox, webkit]
 
     steps:
       - name: Checkout this repository
@@ -90,25 +91,6 @@ jobs:
         working-directory: pubky-stack/docker
         run: docker compose up -d nexusd nexus-redis nexus-neo4j homeserver
 
-      - name: Wait for dockerised pubky-stack to start
-        run: |
-          PORT=8080
-          MAX_WAIT=300     # Maximum wait time in seconds (5 minutes)
-          WAIT_INTERVAL=5  # Interval between checks in seconds
-          ELAPSED=0
-
-          while ! curl -s http://localhost:$PORT; do
-            if [ $ELAPSED -ge $MAX_WAIT ]; then
-              echo "Service did not start within 5 minutes."
-              exit 1
-            fi
-            echo "Waiting for service on port $PORT to be ready... ($ELAPSED seconds elapsed)"
-            sleep $WAIT_INTERVAL
-            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
-          done
-
-          echo "Service is ready."
-
       - name: Build Franky frontend
         working-directory: franky
         run: |
@@ -127,6 +109,31 @@ jobs:
           SUPPORT_ACCOUNT_ID=1" > .env
           npm ci
           npm run build
+
+      - name: Install WebKit for Safari testing
+        if: ${{ matrix.browser == 'safari' }}
+        run: |
+          npm install playwright-webkit --save-dev
+          npx playwright install-deps webkit
+
+      - name: Wait for dockerised pubky-stack to start
+        run: |
+          PORT=8080
+          MAX_WAIT=300     # Maximum wait time in seconds (5 minutes)
+          WAIT_INTERVAL=5  # Interval between checks in seconds
+          ELAPSED=0
+
+          while ! curl -s http://localhost:$PORT; do
+            if [ $ELAPSED -ge $MAX_WAIT ]; then
+              echo "Service did not start within 5 minutes."
+              exit 1
+            fi
+            echo "Waiting for service on port $PORT to be ready... ($ELAPSED seconds elapsed)"
+            sleep $WAIT_INTERVAL
+            ELAPSED=$((ELAPSED + WAIT_INTERVAL))
+          done
+
+          echo "Service is ready."
 
       - name: Run e2e tests (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
