@@ -55,7 +55,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none">
+        <Atoms.Button id="restore-recovery-phrase-btn" variant="outline" className="rounded-full w-auto md:flex-none">
           <Libs.FileText className="mr-2 h-4 w-4" />
           Use recovery phrase
         </Atoms.Button>
@@ -187,6 +187,7 @@ function RestoreForm({
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
+          id="recovery-phrase-restore-btn"
           size="lg"
           className="rounded-full flex-1"
           onClick={onRestore}

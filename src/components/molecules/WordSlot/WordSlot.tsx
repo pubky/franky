@@ -31,6 +31,7 @@ export const WordSlot = (props: Types.WordSlotProps) => {
             {index + 1}
           </Atoms.Badge>
           <Atoms.Input
+            id={`word-slot-input-${index + 1}`}
             value={word}
             placeholder="word"
             className={inputColor}

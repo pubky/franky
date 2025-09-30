@@ -29,7 +29,7 @@ export function DialogBackupPhrase() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="secondary" className="gap-2">
+        <Atoms.Button id="backup-recovery-phrase-btn" variant="secondary" className="gap-2">
           <Libs.FileText className="h-4 w-4" />
           <span>Recovery phrase</span>
         </Atoms.Button>
@@ -78,7 +78,11 @@ function RecoveryStep1({
         <Atoms.Container display="grid" className="grid-cols-2 md:grid-cols-3 gap-3">
           {recoveryWords.map((word, index) => (
             <Atoms.Container key={index} className="items-center gap-3 rounded-md bg-secondary p-4 flex-row">
-              <Atoms.Badge variant="outline" className="h-5 min-w-[20px] rounded-full px-1 font-semibold">
+              <Atoms.Badge
+                id={`backup-recovery-phrase-word-${index + 1}`}
+                variant="outline"
+                className="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+              >
                 {index + 1}
               </Atoms.Badge>
               <span className="text-base font-medium">{word}</span>
@@ -91,11 +95,16 @@ function RecoveryStep1({
         {isHidden ? (
           <>
             <Atoms.DialogClose asChild>
-              <Atoms.Button variant="outline" className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6">
+              <Atoms.Button
+                id="backup-recovery-phrase-cancel-btn"
+                variant="outline"
+                className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+              >
                 Cancel
               </Atoms.Button>
             </Atoms.DialogClose>
             <Atoms.Button
+              id="backup-recovery-phrase-reveal-btn"
               className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
               onClick={() => {
                 setIsHidden(!isHidden);
@@ -119,7 +128,11 @@ function RecoveryStep1({
               <Libs.EyeOff className="mr-2 h-4 w-4" />
               Hide recovery phrase
             </Atoms.Button>
-            <Atoms.Button className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6" onClick={() => setStep(2)}>
+            <Atoms.Button
+              id="backup-recovery-phrase-confirm-btn"
+              className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+              onClick={() => setStep(2)}
+            >
               <Libs.ArrowRight className="mr-2 h-4 w-4" />
               Confirm recovery phrase
             </Atoms.Button>
@@ -220,6 +233,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
             const isUsed = userWords.includes(word);
             return (
               <Atoms.Button
+                id={`backup-recovery-phrase-word-${word}-${index + 1}`}
                 key={`${word}-${index}`}
                 variant={isUsed ? 'secondary' : 'outline'}
                 size="sm"
@@ -267,6 +281,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           Back
         </Atoms.Button>
         <Atoms.Button
+          id="backup-recovery-phrase-validate-btn"
           className="rounded-full flex-1"
           size={isLargeScreen ? 'lg' : 'default'}
           onClick={validateWords}
@@ -305,7 +320,11 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
-          <Atoms.Button className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
+          <Atoms.Button
+            id="backup-recovery-phrase-finish-btn"
+            className="rounded-full lg:h-[60px] lg:px-8 flex-1"
+            onClick={handleClose}
+          >
             <Libs.ArrowRight className="mr-2 h-4 w-4" />
             Finish
           </Atoms.Button>

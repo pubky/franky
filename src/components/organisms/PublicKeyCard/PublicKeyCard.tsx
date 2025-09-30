@@ -78,6 +78,7 @@ export function PublicKeyCard() {
       <Molecules.ActionSection
         actions={[
           {
+            id: 'copy-to-clipboard-action-btn',
             label: 'Copy to clipboard',
             icon: <Libs.Copy className="mr-2 h-4 w-4" />,
             onClick: handleCopyToClipboard,
