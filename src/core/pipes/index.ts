@@ -5,5 +5,6 @@
 export * from './pipes.builder';
 export * from './file';
 export * from './post';
+export * from './tag';
 export * from './user';
 export * from './pipes.types';

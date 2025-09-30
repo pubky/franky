@@ -211,7 +211,9 @@ export class PostController {
         return false;
       }
 
-      const normalizedLabel = label.toLowerCase().trim();
+      // Normalize tag before processing
+      const normalizedTag = await Core.TagNormalizer.to(postDetails.uri, label.trim(), taggerId);
+      const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
       // Check if tags exist first
       const existingTags = await Core.PostTagsModel.getById(postId);
@@ -268,7 +270,16 @@ export class PostController {
     await this.initialize();
 
     try {
-      const normalizedLabel = label.toLowerCase().trim();
+      // Check if post exists
+      const postDetails = await Core.PostDetailsModel.getById(postId);
+      if (!postDetails) {
+        Logger.debug('Post not found for removeTag', { postId });
+        return false;
+      }
+
+      // Normalize tag before processing
+      const normalizedTag = await Core.TagNormalizer.to(postDetails.uri, label.trim(), taggerId);
+      const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
       // Check if tags exist first
       const existingTags = await Core.PostTagsModel.getById(postId);
@@ -427,19 +438,31 @@ export class PostController {
         return null;
       }
 
+      // Normalize post content before creating reply
+      const normalizedPost = await Core.PostNormalizer.to(
+        {
+          content: content.trim(),
+          indexed_at: Date.now(),
+          author: authorId,
+          kind: 'short',
+          attachments: null,
+        },
+        authorId,
+      );
+
       // Generate reply ID
-      const replyId = `reply-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const replyId = `reply-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
       const now = Date.now();
 
       // Create reply post details
       const replyDetails: Core.PostDetailsModelSchema = {
         id: replyId,
-        content: content.trim(),
+        content: normalizedPost.post.content,
         indexed_at: now,
         author: authorId,
-        kind: 'short',
-        uri: `post://${authorId}/${replyId}`,
-        attachments: null,
+        kind: normalizedPost.post.kind === 'Short' ? 'short' : 'long',
+        uri: normalizedPost.meta.url,
+        attachments: normalizedPost.post.attachments || null,
       };
 
       // Create reply relationships
