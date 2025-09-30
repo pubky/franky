@@ -173,11 +173,11 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="gap-4 sm:gap-3 flex-row justify-between">
+      <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
         <DialogClose asChild>
           <Atoms.Button
             variant="outline"
-            className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+            className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={() => {
               setStep(1);
             }}
@@ -188,7 +188,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         </DialogClose>
         <Atoms.Button
           id="download-file-btn"
-          className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+          className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={handleDownload}
           disabled={!password || !passwordsMatch}
         >

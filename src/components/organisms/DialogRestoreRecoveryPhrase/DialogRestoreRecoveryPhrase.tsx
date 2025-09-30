@@ -182,14 +182,13 @@ function RestoreForm({
 
       <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" className="rounded-full flex-1" size="lg">
+          <Atoms.Button variant="outline" className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6">
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
           id="recovery-phrase-restore-btn"
-          size="lg"
-          className="rounded-full flex-1"
+          className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={onRestore}
           disabled={userWords.some((word) => word === '') || errors.some((error) => error) || isRestoring}
         >
