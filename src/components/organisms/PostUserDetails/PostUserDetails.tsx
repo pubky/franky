@@ -10,32 +10,34 @@ interface PostUserDetailsProps {
 }
 
 export function PostUserDetails({ postId }: PostUserDetailsProps) {
-  const postDetails = useLiveQuery(() => Core.db.post_details.get(postId).then((details) => details), [postId]);
-
-  if (!postDetails) return null;
-
-  const author = postDetails.author;
-  const indexedAt = postDetails.indexed_at;
+  // TODO: postId will be in format <authorId>:<postId> so we will need to fix
+  // this after https://github.com/pubky/franky/pull/196 is merged
+  const fetchedDetails = useLiveQuery(() => Core.db.user_details.get(postId).then((details) => details), [postId]);
+  const userDetails = fetchedDetails || {
+    name: 'Anonymous User',
+    indexed_at: Date.now(),
+    image: null,
+  };
 
   return (
     <Atoms.Container className="flex items-center gap-3">
       <Atoms.Container className="flex flex-row gap-4">
         <Atoms.Avatar className="w-12 h-12">
-          <Atoms.AvatarImage src="/images/default-avatar.png" />
-          <Atoms.AvatarFallback>{author.charAt(0).toUpperCase()}</Atoms.AvatarFallback>
+          <Atoms.AvatarImage src={userDetails.image || '/images/default-avatar.png'} />
+          <Atoms.AvatarFallback>{userDetails.name.charAt(0).toUpperCase()}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <Atoms.Container className="flex flex-col">
           <Atoms.Typography size="md" className="font-bold">
-            {author}
+            {userDetails.name}
           </Atoms.Typography>
           <Atoms.Container className="flex flex-row gap-2">
             <Atoms.Typography size="sm" className="text-muted-foreground">
-              {shorten(author).toUpperCase()}
+              {shorten(userDetails.name).toUpperCase()}
             </Atoms.Typography>
             <Atoms.Container className="flex flex-row gap-1 items-center">
               <Libs.Clock className="h-4 w-4 text-muted-foreground" />
               <Atoms.Typography size="sm" className="text-muted-foreground">
-                {timeAgo(new Date(indexedAt))}
+                {timeAgo(new Date(userDetails.indexed_at))}
               </Atoms.Typography>
             </Atoms.Container>
           </Atoms.Container>

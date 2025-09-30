@@ -2,22 +2,16 @@
 
 import { useRef, useEffect, useState } from 'react';
 import * as Atoms from '@/atoms';
-import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 
 interface PostWideProps {
-  post: Core.NexusPost;
+  postId: string;
   clickable?: boolean;
   showReplyConnector?: boolean;
-  replyConnectorVariant?: 'default' | 'terminal';
+  isLast?: boolean;
 }
 
-export function PostWide({
-  post,
-  clickable = false,
-  showReplyConnector = false,
-  replyConnectorVariant = 'default',
-}: PostWideProps) {
+export function PostWide({ postId, clickable = false, showReplyConnector = false, isLast = false }: PostWideProps) {
   const [postHeight, setPostHeight] = useState(100);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +37,7 @@ export function PostWide({
     };
   }, [showReplyConnector]);
 
-  const { path, tailPath, width, height } = createReplyConnectorPath(postHeight, replyConnectorVariant);
+  const { path, tailPath, width, height } = createReplyConnectorPath(postHeight, isLast);
 
   return (
     <div className="relative">
@@ -75,23 +69,23 @@ export function PostWide({
       >
         <Atoms.Container className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <Atoms.Container className="flex flex-col lg:col-span-2 gap-4">
-            <Organisms.PostUserDetails postId={post.details.id} />
+            <Organisms.PostUserDetails postId={postId} />
 
             <Atoms.Container className="flex flex-col gap-4">
-              <Organisms.PostContent postId={post.details.id} />
+              <Organisms.PostContent postId={postId} />
 
               {/* Tags on mobile - between content and buttons */}
               <Atoms.Container className="block lg:hidden">
-                <Organisms.PostTags postId={post.details.id} />
+                <Organisms.PostTags postId={postId} />
               </Atoms.Container>
 
-              <Organisms.PostCounts postId={post.details.id} />
+              <Organisms.PostCounts postId={postId} />
             </Atoms.Container>
           </Atoms.Container>
 
           {/* Tags on desktop - right column */}
           <Atoms.Container className="hidden lg:block">
-            <Organisms.PostTags postId={post.details.id} />
+            <Organisms.PostTags postId={postId} />
           </Atoms.Container>
         </Atoms.Container>
       </Atoms.Card>
@@ -99,7 +93,7 @@ export function PostWide({
   );
 }
 
-function createReplyConnectorPath(postHeight: number, variant: 'default' | 'terminal' = 'default') {
+function createReplyConnectorPath(postHeight: number, isLast: boolean = false) {
   const x = 16;
   const y = 0;
   const safePostHeight = Math.max(postHeight || 100, 100);
@@ -111,7 +105,7 @@ function createReplyConnectorPath(postHeight: number, variant: 'default' | 'term
   const validH = Math.max(H, R);
   const path = `M ${x} ${y} v ${validH - R} a ${R} ${R} 0 0 0 ${R} ${R} h ${W}`;
 
-  const hasTail = variant !== 'terminal';
+  const hasTail = !isLast;
   const tailHeight = hasTail ? safePostHeight / 2 - R + gapSpacing : 0;
   const vbW = x + R + W;
   const vbH = validH + R + tailHeight;

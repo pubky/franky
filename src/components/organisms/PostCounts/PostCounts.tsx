@@ -10,24 +10,11 @@ interface PostCountsProps {
 }
 
 export function PostCounts({ postId }: PostCountsProps) {
-  const countsData = useLiveQuery(
-    () =>
-      Promise.all([
-        Core.db.post_tags.get(postId),
-        Core.db.post_relationships.where('replied').equals(postId).count(),
-        Core.db.post_counts.get(postId),
-      ]).then(([tagsData, repliesCount, countsRecord]) => ({
-        tagsCount: tagsData?.tags.length ?? 0,
-        repliesCount,
-        repostsCount: countsRecord?.reposts ?? 0,
-      })),
-    [postId],
-    null,
-  );
+  const countsData = useLiveQuery(() => Core.db.post_counts.get(postId), [postId], null);
 
-  const tagsCount = countsData?.tagsCount ?? 0;
-  const repliesCount = countsData?.repliesCount ?? 0;
-  const repostsCount = countsData?.repostsCount ?? 0;
+  const tagsCount = countsData?.tags ?? 0;
+  const repliesCount = countsData?.replies ?? 0;
+  const repostsCount = countsData?.reposts ?? 0;
 
   return (
     <Atoms.Container className="flex flex-row gap-2">

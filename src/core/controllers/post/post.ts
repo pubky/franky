@@ -344,6 +344,26 @@ export class PostController {
   }
 
   /**
+   * Get reply IDs for a specific post
+   * @param postId - ID of the post to get reply IDs for
+   * @returns Array of reply post IDs
+   */
+  static async getReplyIds(postId: string): Promise<string[]> {
+    await this.initialize();
+
+    try {
+      const replyRelationships = await Core.db.post_relationships.where('replied').equals(postId).toArray();
+
+      return replyRelationships.map((rel) => rel.id);
+    } catch (error) {
+      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to fetch reply IDs', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
    * Get replies to a specific post
    * @param postId - ID of the post to get replies for
    * @returns Array of NexusPost objects that are replies to the given post
