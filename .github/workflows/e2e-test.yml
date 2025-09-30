@@ -14,7 +14,7 @@ jobs:
       PUBKY_STACK_REF: ce44db8342d7e0673eba8f6862ba11e163a1ff9b
     strategy:
       matrix:
-        browser: [chrome] # [chrome, firefox]
+        browser: [chrome, firefox, safari]
 
     steps:
       - name: Checkout this repository
