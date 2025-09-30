@@ -121,11 +121,12 @@ jobs:
           NEXT_PUBLIC_TESTNET=true
           NEXT_PUBLIC_DEFAULT_HTTP_RELAY=http://localhost:15412/link/
           NEXT_PUBLIC_HOMESERVER_ADMIN_URL=http://localhost:6288/generate_signup_token
-          NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD='admin';
+          NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD=admin
           BASE_URL_SUPPORT=${{ secrets.BASE_URL_SUPPORT }}
           SUPPORT_API_ACCESS_TOKEN=${{ secrets.SUPPORT_API_ACCESS_TOKEN }}
           SUPPORT_ACCOUNT_ID=1" > .env
           npm ci
+          npm run build
 
       - name: Run e2e tests (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
@@ -139,7 +140,7 @@ jobs:
           headed: false
           summary-title: ${{ matrix.browser }}
           install: false
-          start: npm run build && npm run start
+          start: npm run start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 180
 
