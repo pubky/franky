@@ -233,7 +233,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
             const isUsed = userWords.includes(word);
             return (
               <Atoms.Button
-                id={`backup-recovery-phrase-word-${word}`}
+                id={`backup-recovery-phrase-word-${word}-${index + 1}`}
                 key={`${word}-${index}`}
                 variant={isUsed ? 'secondary' : 'outline'}
                 size="sm"

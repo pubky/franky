@@ -1,7 +1,10 @@
 import { defineConfig } from 'cypress';
+import { config } from 'dotenv';
 
-import { readdirSync, rmdir, unlink, rename } from 'fs';
+import { readdirSync, rmdir, unlink, rename, appendFileSync } from 'fs';
 import { defaultMs } from './support/slow-down';
+
+config({ path: '../.env' });
 
 export default defineConfig({
   e2e: {
@@ -19,7 +22,9 @@ export default defineConfig({
     env: {
       // slow down execution more in CI to avoid flaky tests
       commandDelay: defaultMs,
-      ci: process.env['CI']
+      ci: process.env['CI'],
+      homeserverAdminUrl: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_URL']|| 'http://localhost:6288/generate_signup_token',
+      homeserverAdminPassword: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD'] || 'admin'
     },
 
     // Plugins
@@ -100,7 +105,7 @@ export default defineConfig({
         },
 
         logToFile({ testName, message }) {
-          require('fs').appendFileSync(
+          appendFileSync(
             'cypress.log',
             `\nTest: ${testName}\nTime: ${new Date().toISOString()}\n${message}`
           );

@@ -79,9 +79,9 @@ Cypress.Commands.add(
     // request invite code from homeserver and input it
     cy.request({
       method: 'GET',
-      url: 'http://localhost:6288/generate_signup_token',
+      url: Cypress.env('homeserverAdminUrl'),
       headers: {
-        'X-Admin-Password': 'admin'
+        'X-Admin-Password': Cypress.env('homeserverAdminPassword')
       }
     }).then((response) => {
       const inviteCode = response.body;
@@ -107,8 +107,11 @@ Cypress.Commands.add(
 // Confirm recovery phrase by clicking each word in order
 function confirmRecoveryPhrase(recoveryPhrase: string): void {
   const words = recoveryPhrase.split(' ');
+  const sortedWords = [...words].sort();
   words.forEach((word) => {
-    cy.get(`#backup-recovery-phrase-word-${word}`).click();
+    // Find the index of the current word in the sorted list
+    const alphaIndex = sortedWords.indexOf(word);
+    cy.get(`#backup-recovery-phrase-word-${word}-${alphaIndex + 1}`).click();
   });
   cy.get('#backup-recovery-phrase-validate-btn').click();
   cy.get('#backup-recovery-phrase-finish-btn').click();
