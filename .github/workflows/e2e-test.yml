@@ -35,6 +35,35 @@ jobs:
           # limitation where only a single key can be used per repo checkout
           # see https://github.com/actions/checkout/issues/183
 
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            franky/node_modules
+            franky/.next/cache
+          key: ${{ runner.os }}-node-${{ hashFiles('franky/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Cache Playwright browsers
+        if: ${{ matrix.browser == 'webkit' }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('franky/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            franky/.next
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('franky/package-lock.json', 'franky/src/**/*.{js,jsx,ts,tsx}', 'franky/public/**', 'franky/next.config.ts', 'franky/tailwind.config.*', 'franky/postcss.config.*') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
       # reduce neo4j memory to prevent
       # ERROR Invalid memory configuration - exceeds physical memory. Check the configured values for server.memory.pagecache.size and server.memory.heap.max_size
       - name: Modify neo4j.env
@@ -111,7 +140,7 @@ jobs:
           npm run build
 
       - name: Install WebKit for Safari testing
-        if: ${{ matrix.browser == 'safari' }}
+        if: ${{ matrix.browser == 'webkit' }}
         run: |
           npm install playwright-webkit --save-dev
           npx playwright install-deps webkit
