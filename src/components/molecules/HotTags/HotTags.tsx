@@ -30,11 +30,10 @@ export function HotTags({ tags, onTagClick, onSeeAll, maxTags = 5, ...props }: H
       </Atoms.Heading>
 
       {/* Tags List */}
-      <Atoms.Container className="flex flex-col gap-2">
-        {displayTags.map((tag, index) => (
-          <Atoms.Tag key={index} name={tag.name} count={tag.count} onClick={onTagClick} data-testid={`tag-${index}`} />
-        ))}
-      </Atoms.Container>
+
+      {displayTags.map((tag, index) => (
+        <Atoms.Tag key={tag.name} name={tag.name} count={tag.count} onClick={onTagClick} data-testid={`tag-${index}`} />
+      ))}
 
       {/* See All Button */}
       {tags.length > maxTags && (

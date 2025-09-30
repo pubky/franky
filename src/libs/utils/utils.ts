@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-type ExtractInitialsProps = { name: string; maxLength: number };
+type ExtractInitialsProps = { name: string; maxLength?: number };
 type CopyToClipboardProps = { text: string };
 type FormatPublicKeyProps = { key: string; length: number };
 

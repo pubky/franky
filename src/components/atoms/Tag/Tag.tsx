@@ -13,7 +13,7 @@ interface TagProps {
   'data-testid'?: string;
 }
 
-export function Tag({
+export const Tag = ({
   name,
   count,
   clicked = false,
@@ -21,11 +21,16 @@ export function Tag({
   className,
   'data-testid': dataTestId,
   ...props
-}: TagProps) {
+}: TagProps) => {
   const [isHovered, setIsHovered] = React.useState(false);
-  const baseColor = Libs.generateRandomColor(name);
-  const backgroundColor = Libs.hexToRgba(baseColor, 0.3);
-  const borderColor = Libs.hexToRgba(baseColor, 1);
+
+  const { backgroundColor, borderColor } = React.useMemo(() => {
+    const base = Libs.generateRandomColor(name);
+    return {
+      backgroundColor: Libs.hexToRgba(base, 0.3),
+      borderColor: Libs.hexToRgba(base, 1),
+    };
+  }, [name]);
 
   const handleClick = () => {
     onClick?.(name);
@@ -67,4 +72,4 @@ export function Tag({
       )}
     </div>
   );
-}
+};
