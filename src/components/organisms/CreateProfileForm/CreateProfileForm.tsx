@@ -172,6 +172,7 @@ export const CreateProfileForm = () => {
             <Atoms.Container className="gap-2">
               <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">NAME*</Atoms.Label>
               <Molecules.InputField
+                id="profile-name-input"
                 placeholder="Blue-Rabbit-Hat"
                 variant="dashed"
                 value={name}
@@ -190,6 +191,7 @@ export const CreateProfileForm = () => {
             <Atoms.Container className="gap-2">
               <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">BIO</Atoms.Label>
               <Molecules.TextareaField
+                id="profile-bio-input"
                 placeholder="Tell a bit about yourself."
                 value={bio}
                 variant="dashed"
@@ -215,6 +217,7 @@ export const CreateProfileForm = () => {
                   {link.label}
                 </Atoms.Label>
                 <Molecules.InputField
+                  id="profile-links-input-${index}"
                   placeholder={link.label.toUpperCase().includes('TWITTER') ? '@user' : 'https://'}
                   value={link.url}
                   variant="dashed"

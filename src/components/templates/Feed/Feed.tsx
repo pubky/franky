@@ -21,7 +21,7 @@ export function Feed() {
         </Atoms.Heading>
 
         {/* Logout button */}
-        <Atoms.Button variant="secondary" size="lg" onClick={handleLogout}>
+        <Atoms.Button id="feed-logout-btn" variant="secondary" size="lg" onClick={handleLogout}>
           Logout
         </Atoms.Button>
       </Atoms.Container>
