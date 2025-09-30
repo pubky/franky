@@ -11,7 +11,6 @@ export class PostDetailsModel
 
   content: string;
   indexed_at: number;
-  author: Core.Pubky;
   kind: Core.NexusPostKind;
   uri: string;
   attachments: string[] | null;
@@ -20,7 +19,6 @@ export class PostDetailsModel
     super(postDetails);
     this.content = postDetails.content;
     this.indexed_at = postDetails.indexed_at;
-    this.author = postDetails.author;
     this.kind = postDetails.kind;
     this.uri = postDetails.uri;
     this.attachments = postDetails.attachments;

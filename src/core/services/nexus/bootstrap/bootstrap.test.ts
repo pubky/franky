@@ -212,24 +212,26 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
+      // Create composite ID as done in bootstrap service
+      const compositePostId = `${pubky}:${testPostId}`;
+
       // Verify post details were persisted to database
-      const savedPostDetails = await Core.PostDetailsModel.findById(testPostId);
+      const savedPostDetails = await Core.PostDetailsModel.findById(compositePostId);
       expect(savedPostDetails).toBeTruthy();
-      expect(savedPostDetails.id).toBe(testPostId);
+      expect(savedPostDetails.id).toBe(compositePostId);
       expect(savedPostDetails.content).toBe('Bootstrap post content');
-      expect(savedPostDetails.author).toBe(pubky);
 
       // Verify post counts were persisted to database
-      const savedPostCounts = await Core.PostCountsModel.findById(testPostId);
+      const savedPostCounts = await Core.PostCountsModel.findById(compositePostId);
       expect(savedPostCounts).toBeTruthy();
-      expect(savedPostCounts.id).toBe(testPostId);
+      expect(savedPostCounts.id).toBe(compositePostId);
       expect(savedPostCounts.replies).toBe(0);
       expect(savedPostCounts.reposts).toBe(0);
 
       // Verify post tags were persisted to database
-      const savedPostTags = await Core.PostTagsModel.findById(testPostId);
+      const savedPostTags = await Core.PostTagsModel.findById(compositePostId);
       expect(savedPostTags).toBeTruthy();
-      expect(savedPostTags.id).toBe(testPostId);
+      expect(savedPostTags.id).toBe(compositePostId);
       expect(savedPostTags.tags).toHaveLength(2);
       expect(savedPostTags.tags[0].label).toBe('tech');
       expect(savedPostTags.tags[0].taggers_count).toBe(1);
@@ -285,16 +287,17 @@ describe('NexusService', () => {
       expect(savedUserTags).toBeTruthy();
 
       // Verify post details were persisted
-      const savedPostDetails = await Core.PostDetailsModel.findById(testPostId);
+      const compositePostId = `${testUserId}:${testPostId}`;
+      const savedPostDetails = await Core.PostDetailsModel.findById(compositePostId);
       expect(savedPostDetails).toBeTruthy();
       expect(savedPostDetails.content).toBe('Bootstrap post content');
 
       // Verify post counts were persisted
-      const savedPostCounts = await Core.PostCountsModel.findById(testPostId);
+      const savedPostCounts = await Core.PostCountsModel.findById(compositePostId);
       expect(savedPostCounts).toBeTruthy();
 
       // Verify post tags were persisted
-      const savedPostTags = await Core.PostTagsModel.findById(testPostId);
+      const savedPostTags = await Core.PostTagsModel.findById(compositePostId);
       expect(savedPostTags).toBeTruthy();
 
       const savedStream = await Core.StreamModel.findById(Core.StreamTypes.TIMELINE_ALL);
