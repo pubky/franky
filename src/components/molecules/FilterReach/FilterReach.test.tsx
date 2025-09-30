@@ -1,27 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { Toaster } from './Toaster';
+import { FilterReach, type ReachTab } from './FilterReach';
 
-// Mock next-themes
-vi.mock('next-themes', () => ({
-  useTheme: () => ({
-    theme: 'light',
-    setTheme: vi.fn(),
-  }),
-}));
-
-// Mock sonner
-vi.mock('sonner', () => ({
-  Toaster: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
-    <div data-testid="sonner-toaster" {...props}>
-      {children}
-    </div>
-  ),
-}));
-
-// Mock @/libs to intercept any icons and utilities
 vi.mock('@/libs', () => ({
-  X: () => <svg data-testid="x-icon" />,
+  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
   Radio: ({ className }: { className?: string }) => (
     <div data-testid="radio-icon" className={className}>
       Radio
@@ -102,34 +84,66 @@ vi.mock('@/libs', () => ({
       Download
     </div>
   ),
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
 }));
 
-describe('Toaster', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+describe('FilterReach', () => {
+  it('renders with default selected tab', () => {
+    render(<FilterReach />);
+
+    expect(screen.getByText('Reach')).toBeInTheDocument();
+    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
   });
 
-  it('should render Sonner toaster', () => {
-    const { container } = render(<Toaster />);
+  it('renders with custom selected tab', () => {
+    render(<FilterReach selectedTab="following" />);
 
-    // Should render Sonner toaster
-    expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
-    expect(container.firstChild).toBeTruthy();
+    const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
+    expect(followingItem).toMatchSnapshot();
   });
 
-  it('should render with correct props', () => {
-    render(<Toaster />);
+  it('calls onTabChange when tab is clicked', () => {
+    const mockOnTabChange = vi.fn();
+    render(<FilterReach onTabChange={mockOnTabChange} />);
 
-    const sonnerToaster = screen.getByTestId('sonner-toaster');
-    expect(sonnerToaster).toBeInTheDocument();
-    expect(sonnerToaster).toHaveAttribute('class', 'toaster group');
+    const friendsElement = screen.getByText('Friends');
+    fireEvent.click(friendsElement);
+
+    expect(mockOnTabChange).toHaveBeenCalledWith('friends');
   });
-});
 
-describe('Toaster - Snapshots', () => {
-  it('matches snapshot for Toaster', () => {
-    const { container } = render(<Toaster />);
-    expect(container.firstChild).toMatchSnapshot();
+  it('shows correct visual state for selected and unselected tabs', () => {
+    render(<FilterReach selectedTab="me" />);
+
+    const meItem = screen.getByText('Me').closest('[data-testid="filter-item"]');
+    const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
+
+    expect(meItem).toMatchSnapshot();
+    expect(allItem).toMatchSnapshot();
+  });
+
+  it('handles all tab types correctly', () => {
+    const mockOnTabChange = vi.fn();
+    render(<FilterReach onTabChange={mockOnTabChange} />);
+
+    const tabs: ReachTab[] = ['all', 'following', 'friends', 'me'];
+
+    tabs.forEach((tab) => {
+      const element = screen.getByText(
+        tab === 'all' ? 'All' : tab === 'following' ? 'Following' : tab === 'friends' ? 'Friends' : 'Me',
+      );
+
+      fireEvent.click(element);
+      expect(mockOnTabChange).toHaveBeenCalledWith(tab);
+    });
+  });
+
+  it('applies correct styling classes', () => {
+    render(<FilterReach selectedTab="all" />);
+
+    const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
+    const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
+
+    expect(allItem).toMatchSnapshot();
+    expect(followingItem).toMatchSnapshot();
   });
 });

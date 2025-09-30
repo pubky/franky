@@ -27,57 +27,61 @@ vi.mock('@/core', () => ({
   }),
 }));
 
-// Mock identity library
-vi.mock('@/libs', () => ({
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-  FileText: ({ className }: { className?: string }) => (
-    <div data-testid="file-text-icon" className={className}>
-      FileText
-    </div>
-  ),
-  ArrowLeft: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-left-icon" className={className}>
-      ArrowLeft
-    </div>
-  ),
-  ArrowRight: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-right-icon" className={className}>
-      ArrowRight
-    </div>
-  ),
-  Eye: ({ className }: { className?: string }) => (
-    <div data-testid="eye-icon" className={className}>
-      Eye
-    </div>
-  ),
-  EyeOff: ({ className }: { className?: string }) => (
-    <div data-testid="eye-off-icon" className={className}>
-      EyeOff
-    </div>
-  ),
-  Copy: ({ className }: { className?: string }) => (
-    <div data-testid="copy-icon" className={className}>
-      Copy
-    </div>
-  ),
-  Identity: {
-    generateSeedWords: vi.fn(() => [
-      'word1',
-      'word2',
-      'word3',
-      'word4',
-      'word5',
-      'word6',
-      'word7',
-      'word8',
-      'word9',
-      'word10',
-      'word11',
-      'word12',
-    ]),
-  },
-  copyToClipboard: vi.fn(),
-}));
+// Mock libs partially, preserving real exports and overriding only what's needed
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
+    FileText: ({ className }: { className?: string }) => (
+      <div data-testid="file-text-icon" className={className}>
+        FileText
+      </div>
+    ),
+    ArrowLeft: ({ className }: { className?: string }) => (
+      <div data-testid="arrow-left-icon" className={className}>
+        ArrowLeft
+      </div>
+    ),
+    ArrowRight: ({ className }: { className?: string }) => (
+      <div data-testid="arrow-right-icon" className={className}>
+        ArrowRight
+      </div>
+    ),
+    Eye: ({ className }: { className?: string }) => (
+      <div data-testid="eye-icon" className={className}>
+        Eye
+      </div>
+    ),
+    EyeOff: ({ className }: { className?: string }) => (
+      <div data-testid="eye-off-icon" className={className}>
+        EyeOff
+      </div>
+    ),
+    Copy: ({ className }: { className?: string }) => (
+      <div data-testid="copy-icon" className={className}>
+        Copy
+      </div>
+    ),
+    Identity: {
+      generateSeedWords: vi.fn(() => [
+        'word1',
+        'word2',
+        'word3',
+        'word4',
+        'word5',
+        'word6',
+        'word7',
+        'word8',
+        'word9',
+        'word10',
+        'word11',
+        'word12',
+      ]),
+    },
+    copyToClipboard: vi.fn(),
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
