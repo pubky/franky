@@ -9,9 +9,9 @@ interface PostContentProps {
 }
 
 export function PostContent({ postId }: PostContentProps) {
-  const post = useLiveQuery(() => Core.PostController.findById(postId).then((post) => post), [postId]);
+  const postDetails = useLiveQuery(() => Core.db.post_details.get(postId).then((details) => details), [postId]);
 
-  if (!post) return null;
+  if (!postDetails) return null;
 
-  return <Atoms.Typography className="whitespace-pre-line">{post.details.content}</Atoms.Typography>;
+  return <Atoms.Typography className="whitespace-pre-line">{postDetails.content}</Atoms.Typography>;
 }

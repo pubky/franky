@@ -10,12 +10,12 @@ interface PostUserDetailsProps {
 }
 
 export function PostUserDetails({ postId }: PostUserDetailsProps) {
-  const post = useLiveQuery(() => Core.PostController.findById(postId).then((post) => post), [postId]);
+  const postDetails = useLiveQuery(() => Core.db.post_details.get(postId).then((details) => details), [postId]);
 
-  if (!post) return null;
+  if (!postDetails) return null;
 
-  const author = post.details.author;
-  const indexedAt = post.details.indexed_at;
+  const author = postDetails.author;
+  const indexedAt = postDetails.indexed_at;
 
   return (
     <Atoms.Container className="flex items-center gap-3">

@@ -18,10 +18,7 @@ export const PostTags = ({ postId }: PostTagsProps) => {
   const [isAdding, setIsAdding] = useState(false);
 
   const tags = useLiveQuery(
-    () =>
-      Core.db.post_tags
-        .get(postId)
-        .then((tagsData) => (tagsData ? (tagsData.tags as Core.NexusTag[]) : [])),
+    () => Core.db.post_tags.get(postId).then((tagsData) => (tagsData ? (tagsData.tags as Core.NexusTag[]) : [])),
     [postId],
     [],
   );

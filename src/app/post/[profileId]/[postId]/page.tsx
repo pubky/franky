@@ -26,7 +26,50 @@ export default function PostPage({ params }: PostPageParams) {
   const postData = useLiveQuery(
     () => {
       if (!postId) return Promise.resolve(null);
-      return Core.PostController.findById(postId);
+
+      return Promise.all([
+        Core.db.post_details.get(postId),
+        Core.db.post_counts.get(postId),
+        Core.db.post_tags.get(postId),
+        Core.db.post_relationships.get(postId),
+        Core.db.post_relationships.where('replied').equals(postId).count(),
+      ]).then(([details, counts, tags, relationships, replyCount]) => {
+        if (!details) return null;
+
+        const baseCounts = counts || {
+          id: details.id,
+          tags: 0,
+          unique_tags: 0,
+          replies: 0,
+          reposts: 0,
+        };
+
+        const post: Core.NexusPost = {
+          details: {
+            id: details.id,
+            content: details.content,
+            indexed_at: details.indexed_at,
+            author: details.author,
+            kind: details.kind,
+            uri: details.uri,
+            attachments: details.attachments,
+          },
+          counts: {
+            ...baseCounts,
+            replies: replyCount,
+          },
+          tags: tags?.tags.map((t) => new Core.TagModel(t)) || [],
+          relationships: relationships || {
+            id: details.id,
+            replied: null,
+            reposted: null,
+            mentioned: [],
+          },
+          bookmark: null,
+        };
+
+        return post;
+      });
     },
     [postId],
     null,

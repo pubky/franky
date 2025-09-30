@@ -39,13 +39,15 @@ export function PostReplies({ postId }: PostRepliesProps) {
             });
 
             // Combine into NexusPost objects
-            return postDetails.map((details): Core.NexusPost => ({
-              details,
-              counts: countsMap.get(details.id)!,
-              tags: tagsMap.get(details.id) || [],
-              relationships: relationshipsMap.get(details.id)!,
-              bookmark: null,
-            }));
+            return postDetails.map(
+              (details): Core.NexusPost => ({
+                details,
+                counts: countsMap.get(details.id)!,
+                tags: tagsMap.get(details.id) || [],
+                relationships: relationshipsMap.get(details.id)!,
+                bookmark: null,
+              }),
+            );
           });
         }),
     [postId],
