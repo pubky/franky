@@ -263,10 +263,9 @@ describe('HomeHeader', () => {
 
     expect(links[0]).toHaveAttribute('href', App.FEED_ROUTES.FEED);
     expect(links[1]).toHaveAttribute('href', '/search');
-    expect(links[2]).toHaveAttribute('href', '/hot');
-    expect(links[3]).toHaveAttribute('href', '/bookmarks');
-    expect(links[4]).toHaveAttribute('href', '/settings');
-    expect(links[5]).toHaveAttribute('href', '/profile');
+    expect(links[2]).toHaveAttribute('href', '/bookmarks');
+    expect(links[3]).toHaveAttribute('href', '/settings');
+    expect(links[4]).toHaveAttribute('href', '/profile');
   });
 
   it('renders exact counter when counter is 21 or less', () => {
