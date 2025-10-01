@@ -48,12 +48,14 @@ export class LocalDbPostService {
           reposts: 0,
         };
 
+        const author = details.id.split(':')[0] as Core.Pubky;
+
         return {
           details: {
             id: details.id,
             content: details.content,
             indexed_at: details.indexed_at,
-            author: details.author,
+            author,
             kind: details.kind,
             uri: details.uri,
             attachments: details.attachments,
@@ -111,12 +113,14 @@ export class LocalDbPostService {
         reposts: 0,
       };
 
+      const author = details.id.split(':')[0] as Core.Pubky;
+
       const post: Core.NexusPost = {
         details: {
           id: details.id,
           content: details.content,
           indexed_at: details.indexed_at,
-          author: details.author,
+          author,
           kind: details.kind,
           uri: details.uri,
           attachments: details.attachments,
@@ -206,30 +210,33 @@ export class LocalDbPostService {
       const countsMap = new Map(countsData.map((c) => [c.id, c]));
       const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
       const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
-      const replies: Core.NexusPost[] = postDetails.map((details) => ({
-        details: {
-          id: details.id,
-          content: details.content,
-          indexed_at: details.indexed_at,
-          author: details.author,
-          kind: details.kind,
-          uri: details.uri,
-          attachments: details.attachments,
-        },
-        counts: countsMap.get(details.id) || {
-          tags: 0,
-          unique_tags: 0,
-          replies: 0,
-          reposts: 0,
-        },
-        tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
-        relationships: relationshipsMap.get(details.id) || {
-          replied: null,
-          reposted: null,
-          mentioned: [],
-        },
-        bookmark: null,
-      }));
+      const replies: Core.NexusPost[] = postDetails.map((details) => {
+        const author = details.id.split(':')[0] as Core.Pubky;
+        return {
+          details: {
+            id: details.id,
+            content: details.content,
+            indexed_at: details.indexed_at,
+            author,
+            kind: details.kind,
+            uri: details.uri,
+            attachments: details.attachments,
+          },
+          counts: countsMap.get(details.id) || {
+            tags: 0,
+            unique_tags: 0,
+            replies: 0,
+            reposts: 0,
+          },
+          tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
+          relationships: relationshipsMap.get(details.id) || {
+            replied: null,
+            reposted: null,
+            mentioned: [],
+          },
+          bookmark: null,
+        };
+      });
 
       replies.sort((a, b) => a.details.indexed_at - b.details.indexed_at);
 
@@ -292,8 +299,14 @@ export class LocalDbPostService {
           replies: parentCounts.replies + 1,
         });
       }
+
+      const author = replyDetails.id.split(':')[0] as Core.Pubky;
+
       const createdReply: Core.NexusPost = {
-        details: replyDetails,
+        details: {
+          ...replyDetails,
+          author,
+        },
         counts: replyCounts,
         tags: [],
         relationships: replyRelationships,

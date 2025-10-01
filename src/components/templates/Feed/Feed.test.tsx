@@ -105,7 +105,7 @@ describe('Feed', () => {
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toBeInTheDocument();
     expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
-    expect(logoutButton).toHaveAttribute('data-size', 'sm');
+    expect(logoutButton).toHaveAttribute('data-size', 'lg');
   });
 
   it('navigates to logout page when logout button is clicked', async () => {

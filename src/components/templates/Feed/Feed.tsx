@@ -95,8 +95,7 @@ export function Feed() {
   });
 
   const handlePostClick = (post: Core.NexusPost) => {
-    const profileId = post.details.author;
-    router.push(`/post/${profileId}/${post.details.id}`);
+    router.push(`/post/${post.details.id}`);
   };
 
   return (

@@ -11,14 +11,11 @@ interface PostUserDetailsProps {
 
 export function PostUserDetails({ postId }: PostUserDetailsProps) {
   const authorId = postId.split(':')[0];
-  const fetchedDetails = useLiveQuery(() => Core.db.user_details.get(authorId).then((details) => details), [authorId]);
+  const userDetails = useLiveQuery(() => Core.db.user_details.get(authorId).then((details) => details), [authorId]);
 
-  // TODO: remove this default when https://github.com/pubky/franky/pull/196 is merged
-  const userDetails = fetchedDetails || {
-    name: 'Anonymous User',
-    indexed_at: Date.now(),
-    image: null,
-  };
+  if (!userDetails) {
+    return null;
+  }
 
   return (
     <Atoms.Container className="flex items-center gap-3">

@@ -86,14 +86,12 @@ export class PostController {
       authorId,
     );
 
-    const replyId = `reply-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-    const now = Date.now();
+    const replyId = `${authorId}:${normalizedPost.meta.id}`;
 
     const replyDetails: Core.PostDetailsModelSchema = {
       id: replyId,
       content: normalizedPost.post.content,
-      indexed_at: now,
-      author: authorId,
+      indexed_at: Date.now(),
       kind: normalizedPost.post.kind === 'Short' ? 'short' : 'long',
       uri: normalizedPost.meta.url,
       attachments: normalizedPost.post.attachments || null,
