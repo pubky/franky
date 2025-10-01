@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 interface PostReplyInputProps {
   postId: string;
@@ -11,6 +12,7 @@ interface PostReplyInputProps {
 export function PostReplyInput({ postId }: PostReplyInputProps) {
   const [replyContent, setReplyContent] = useState('');
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+  const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
 
   const handleReplySubmit = async () => {
     if (!replyContent.trim() || !postId) return;
@@ -38,9 +40,9 @@ export function PostReplyInput({ postId }: PostReplyInputProps) {
   return (
     <div className="flex gap-4">
       <div className="w-8 flex-shrink-0">
-        <Atoms.ReplyLine path="M 16 0 v 42 a 8 8 0 0 0 8 8 h 24" />
+        <Atoms.ReplyLine height={containerHeight} isLast={true} />
       </div>
-      <div className="flex-1">
+      <div ref={containerRef} className="flex-1">
         <Atoms.Textarea
           placeholder="Write a reply..."
           className="min-h-20"

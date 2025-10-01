@@ -1,4 +1,4 @@
-export function createReplyConnectorPath(postHeight: number) {
+export function createReplyConnectorPath(postHeight: number, isLast: boolean = false) {
   const x = 16;
   const y = 0;
   const safePostHeight = Math.max(postHeight || 100, 100);
@@ -13,11 +13,11 @@ export function createReplyConnectorPath(postHeight: number) {
 
   const tailHeight = safePostHeight / 2 + R + gapSpacing;
   const vbW = x + R + W;
-  const vbH = curveStartY + tailHeight;
+  const vbH = isLast ? curveStartY + R : curveStartY + tailHeight;
 
   return {
     path,
-    tailPath: `M ${x} ${curveStartY} v ${tailHeight}`,
+    tailPath: isLast ? null : `M ${x} ${curveStartY} v ${tailHeight}`,
     width: vbW,
     height: vbH,
   };

@@ -18,7 +18,7 @@ export function PostWide({ postId, clickable = false, isReply = false, onClick }
     <div className="relative">
       {isReply && (
         <div className="absolute -left-12 top-0">
-          <Atoms.ReplyLine postHeight={postHeight} />
+          <Atoms.ReplyLine height={postHeight} />
         </div>
       )}
       <Atoms.Card
