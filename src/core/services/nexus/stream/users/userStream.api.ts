@@ -10,7 +10,7 @@ enum USER_STREAM_PREFIX {
   USERS_BY_IDS = 'stream/users/by_ids',
 }
 
-export function buildUserStreamUrl(
+function buildUserStreamUrl(
   params: Record<string, unknown>,
   source: Core.UserStreamSource | null,
   prefix: USER_STREAM_PREFIX,
@@ -33,7 +33,8 @@ export function buildUserStreamUrl(
     }
   });
 
-  return `${prefix}${queryParams.toString()}`;
+  const relativeUrl = `${prefix}${queryParams.toString()}`;
+  return Core.buildNexusUrl(relativeUrl);
 }
 
 /**
@@ -76,7 +77,7 @@ export const USERS_STREAM_API = {
 
   // Users by IDs (POST request)
   usersByIds: (params: Core.TUserStreamUsersByIdsParams) => {
-    return { body: buildUserStreamBodyUrl(params), url: USER_STREAM_PREFIX.USERS_BY_IDS };
+    return { body: buildUserStreamBodyUrl(params), url: Core.buildNexusUrl(USER_STREAM_PREFIX.USERS_BY_IDS) };
   },
 };
 

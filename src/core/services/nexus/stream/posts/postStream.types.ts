@@ -11,11 +11,6 @@ export enum StreamSource {
   AUTHOR_REPLIES = 'author_replies',
 }
 
-export enum StreamSorting {
-  TIMELINE = 'timeline',
-  ENGAGEMENT = 'total_engagement',
-}
-
 export enum StreamKind {
   SHORT = 'short',
   LONG = 'long',
@@ -34,7 +29,7 @@ export enum StreamOrder {
 export type TStreamBase = {
   // The content viewer (for personalization like bookmarks, relationships)
   viewer_id?: Core.Pubky;
-  sorting?: StreamSorting;
+  sorting?: Core.StreamSorting;
   order?: StreamOrder;
   tags?: string[]; // Max 5 tags
   kind?: StreamKind;

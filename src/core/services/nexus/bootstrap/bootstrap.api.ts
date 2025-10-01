@@ -1,3 +1,5 @@
+import * as Core from '@/core';
+
 /**
  * Bootstrap API Endpoints
  * All API endpoints related to bootstrap operations
@@ -10,7 +12,7 @@ export type TBootstrapParams = {
 };
 
 export const BOOTSTRAP_API = {
-  GET: (pubky: string) => `${PREFIX}/${pubky}`,
+  GET: (pubky: string) => Core.buildNexusUrl(`${PREFIX}/${pubky}`),
 };
 
 export type BootstrapApiEndpoint = keyof typeof BOOTSTRAP_API;

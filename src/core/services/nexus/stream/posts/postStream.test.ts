@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
+import * as Core from '@/core';
 import { POSTS_STREAM_API } from './postStream.api';
-import { StreamSorting, StreamKind, StreamOrder } from './postStream.types';
+import { StreamKind, StreamOrder } from './postStream.types';
 
 describe('Stream API URL Generation', () => {
   const mockObserverId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
@@ -13,7 +14,7 @@ describe('Stream API URL Generation', () => {
       const url = POSTS_STREAM_API.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
         limit: 10,
       });
 
@@ -28,7 +29,7 @@ describe('Stream API URL Generation', () => {
     it('should generate correct followers URL', () => {
       const url = POSTS_STREAM_API.followers({
         observer_id: mockObserverId,
-        sorting: StreamSorting.ENGAGEMENT,
+        sorting: Core.StreamSorting.ENGAGEMENT,
       });
 
       expect(url).toContain('source=followers');
@@ -86,7 +87,7 @@ describe('Stream API URL Generation', () => {
     it('should generate correct author URL', () => {
       const url = POSTS_STREAM_API.author({
         author_id: mockAuthorId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
         kind: StreamKind.IMAGE,
       });
 
@@ -114,7 +115,7 @@ describe('Stream API URL Generation', () => {
     it('should generate correct all posts URL', () => {
       const url = POSTS_STREAM_API.all({
         viewer_id: mockViewerId,
-        sorting: StreamSorting.ENGAGEMENT,
+        sorting: Core.StreamSorting.ENGAGEMENT,
         kind: StreamKind.VIDEO,
         limit: 50,
       });
@@ -154,7 +155,7 @@ describe('Stream API URL Generation', () => {
       const url = POSTS_STREAM_API.following({
         observer_id: mockObserverId,
         viewer_id: undefined,
-        sorting: null as unknown as StreamSorting,
+        sorting: null as unknown as Core.StreamSorting,
         limit: undefined,
       });
 
@@ -187,14 +188,14 @@ describe('Stream API URL Generation', () => {
         observer_id: mockObserverId,
       });
 
-      expect(url).toMatch(/^stream\/posts\?/);
+      expect(url).toMatch(/stream\/posts\?/);
     });
 
     it('should have proper query parameter format', () => {
       const url = POSTS_STREAM_API.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
       });
 
       // Should have proper key=value&key=value format
@@ -221,7 +222,7 @@ describe('Stream API URL Generation', () => {
       const url = POSTS_STREAM_API.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
         order: StreamOrder.DESCENDING,
         tags: ['dev', 'test'],
         kind: StreamKind.SHORT,
@@ -254,11 +255,9 @@ describe('Stream API URL Generation', () => {
         post_ids: mockPostIds,
       });
 
-      expect(request).toEqual({
-        url: 'stream/posts/by_ids',
-        body: {
-          post_ids: mockPostIds,
-        },
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
+      expect(request.body).toEqual({
+        post_ids: mockPostIds,
       });
     });
 
@@ -268,12 +267,10 @@ describe('Stream API URL Generation', () => {
         viewer_id: mockViewerId,
       });
 
-      expect(request).toEqual({
-        url: 'stream/posts/by_ids',
-        body: {
-          post_ids: mockPostIds,
-          viewer_id: mockViewerId,
-        },
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
+      expect(request.body).toEqual({
+        post_ids: mockPostIds,
+        viewer_id: mockViewerId,
       });
     });
 
@@ -282,7 +279,7 @@ describe('Stream API URL Generation', () => {
         post_ids: [],
       });
 
-      expect(request.url).toBe('stream/posts/by_ids');
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
       expect(request.body.post_ids).toEqual([]);
     });
 
@@ -293,7 +290,7 @@ describe('Stream API URL Generation', () => {
         viewer_id: mockViewerId,
       });
 
-      expect(request.url).toBe('stream/posts/by_ids');
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
       expect(request.body.post_ids).toHaveLength(100);
       expect(request.body.viewer_id).toBe(mockViewerId);
     });

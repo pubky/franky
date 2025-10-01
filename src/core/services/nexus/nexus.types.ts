@@ -2,6 +2,21 @@ import { type Pubky, type Timestamp, type TagModel } from '@/core';
 
 export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
 
+export enum StreamSorting {
+  TIMELINE = 'timeline',
+  ENGAGEMENT = 'total_engagement',
+}
+
+export type TPaginationParams = {
+  skip?: number;
+  limit?: number;
+};
+
+export type TTagsPaginationParams = {
+  limit_tags?: number;
+  limit_taggers?: number;
+};
+
 export interface NexusBookmark {
   created_at: number;
   updated_at: number;

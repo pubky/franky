@@ -86,7 +86,7 @@ describe('Users Stream API - Error Control', () => {
         user_ids: [],
       });
 
-      expect(request.url).toBe('stream/users/by_ids');
+      expect(request.url).toMatch('stream/users/by_ids');
       expect(request.body.user_ids).toEqual([]);
       expect(request.body).not.toHaveProperty('viewer_id');
       expect(request.body).not.toHaveProperty('depth');
@@ -100,7 +100,7 @@ describe('Users Stream API - Error Control', () => {
         depth: 3,
       });
 
-      expect(request.url).toBe('stream/users/by_ids');
+      expect(request.url).toMatch('stream/users/by_ids');
       expect(request.body.user_ids).toHaveLength(1000);
       expect(request.body.viewer_id).toBe(mockViewerId);
       expect(request.body.depth).toBe(3);
@@ -140,9 +140,9 @@ describe('Users Stream API - Error Control', () => {
       const usernameUrl = USERS_STREAM_API.username({ username: mockUsername });
       const usersByIdsRequest = USERS_STREAM_API.usersByIds({ user_ids: mockUserIds });
 
-      expect(followersUrl).toMatch(/^stream\/users\?/);
-      expect(usernameUrl).toMatch(/^stream\/users\/username\?/);
-      expect(usersByIdsRequest.url).toBe('stream/users/by_ids');
+      expect(followersUrl).toMatch(/stream\/users\?/);
+      expect(usernameUrl).toMatch(/stream\/users\/username\?/);
+      expect(usersByIdsRequest.url).toMatch(/stream\/users\/by_ids$/);
     });
 
     it('should handle special characters in parameters', () => {
