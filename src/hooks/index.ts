@@ -1,3 +1,4 @@
-export * from './useCopyToClipboard/useCopyToClipboard';
+export * from './useCopyToClipboard';
+export * from './useIsTouchDevice';
 export * from './useAuthStatus';
 export * from './useAuthActions';
