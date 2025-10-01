@@ -16,7 +16,6 @@ vi.mock('next/navigation', () => ({
 vi.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) => (
-    // eslint-disable-next-line @next/next/no-img-element
     <img data-testid="next-image" src={src} alt={alt} width={width} height={height} />
   ),
 }));
@@ -31,7 +30,6 @@ interface ImageProps {
 vi.mock('@/molecules', () => ({
   ContentCard: ({ children, image }: { children: React.ReactNode; image?: ImageProps }) => (
     <div data-testid="content-card">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       {image && <img data-testid="content-card-image" src={image.src} alt={image.alt} data-size={image.size} />}
       {children}
     </div>
