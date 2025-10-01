@@ -98,6 +98,29 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
     }
   }
 
+  static async findByIds<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
+    this: { table: Table<TSchema> },
+    ids: TId[],
+  ): Promise<TSchema[]> {
+    try {
+      return await this.table
+        .where('id')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .anyOf(ids as any)
+        .toArray();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to find tags in ${this.table.name}`,
+        500,
+        {
+          error,
+          ids,
+        },
+      );
+    }
+  }
+
   static async bulkSave<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
     this: { table: Table<TSchema> },
     tuples: Core.NexusModelTuple<Core.NexusTag[]>[],

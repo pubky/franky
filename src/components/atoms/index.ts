@@ -15,6 +15,7 @@ export * from './List';
 export * from './PageHeader';
 export * from './PageSubtitle';
 export * from './Popover';
+export * from './ReplyLine';
 export * from './Textarea';
 export * from './Toast';
 export * from './Toggle';

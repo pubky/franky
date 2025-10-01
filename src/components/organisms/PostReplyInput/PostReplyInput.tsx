@@ -34,15 +34,7 @@ export function PostReplyInput({ postId }: PostReplyInputProps) {
   return (
     <div className="flex gap-4">
       <div className="w-8 flex-shrink-0">
-        <svg width="48" height="50" viewBox="0 0 48 50" preserveAspectRatio="xMinYMin meet">
-          <path
-            d="M 16 0 v 42 a 8 8 0 0 0 8 8 h 24"
-            fill="none"
-            stroke="rgba(255,255,255,0.25)"
-            strokeWidth="2"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
+        <Atoms.ReplyLine path="M 16 0 v 42 a 8 8 0 0 0 8 8 h 24" />
       </div>
       <div className="flex-1">
         <Atoms.Textarea

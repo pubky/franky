@@ -26,13 +26,4 @@ export class PostCountsModel
   static toSchema(data: Core.NexusModelTuple<Core.NexusPostCounts>): Core.PostCountsModelSchema {
     return { id: data[0], ...data[1] };
   }
-
-  // Query methods
-  static async getByIds(ids: string[]) {
-    return this.table.where('id').anyOf(ids).toArray();
-  }
-
-  static async getById(id: string) {
-    return this.table.get(id);
-  }
 }

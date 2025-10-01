@@ -12,13 +12,4 @@ export class PostTagsModel
   constructor(data: TagCollectionModelSchema<string>) {
     super(data);
   }
-
-  // Query methods
-  static async getByIds(ids: string[]) {
-    return this.table.where('id').anyOf(ids).toArray();
-  }
-
-  static async getById(id: string) {
-    return this.table.get(id);
-  }
 }

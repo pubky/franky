@@ -137,9 +137,12 @@ export function Feed() {
             {/* Posts List */}
             <div className="w-full space-y-4">
               {posts.map((post) => (
-                <div key={post.details.id} onClick={() => handlePostClick(post)}>
-                  <Templates.PostWide postId={post.details.id} clickable={true} />
-                </div>
+                <Templates.PostWide
+                  key={post.details.id}
+                  postId={post.details.id}
+                  clickable={true}
+                  onClick={() => handlePostClick(post)}
+                />
               ))}
 
               {/* Loading More Indicator */}

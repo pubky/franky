@@ -28,16 +28,4 @@ export class PostDetailsModel
   static async fetchPaginated(limit: number = 30, offset: number = 0) {
     return this.table.orderBy('indexed_at').reverse().offset(offset).limit(limit).toArray();
   }
-
-  static async getById(id: string) {
-    return this.table.get(id);
-  }
-
-  static async getByIds(ids: string[]) {
-    return this.table.where('id').anyOf(ids).toArray();
-  }
-
-  static async getCount() {
-    return this.table.count();
-  }
 }

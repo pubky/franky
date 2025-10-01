@@ -60,6 +60,44 @@ export abstract class TupleModelBase<Id, Schema extends { id: Id }> {
     }
   }
 
+  static async findByIds<TId, TSchema extends { id: TId }>(
+    this: { table: Table<TSchema> },
+    ids: TId[],
+  ): Promise<TSchema[]> {
+    try {
+      return await this.table
+        .where('id')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .anyOf(ids as any)
+        .toArray();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to find records in ${this.table.name}`,
+        500,
+        {
+          error,
+          ids,
+        },
+      );
+    }
+  }
+
+  static async count<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }) {
+    try {
+      return await this.table.count();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to count records in ${this.table.name}`,
+        500,
+        {
+          error,
+        },
+      );
+    }
+  }
+
   static async bulkSave<TId, TTupleData extends object, TSchema extends { id: TId }>(
     this: { table: Table<TSchema>; toSchema(tuple: NexusModelTuple<TTupleData>): TSchema },
     records: NexusModelTuple<TTupleData>[],

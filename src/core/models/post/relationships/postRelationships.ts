@@ -26,14 +26,6 @@ export class PostRelationshipsModel
   }
 
   // Query methods
-  static async getByIds(ids: string[]) {
-    return this.table.where('id').anyOf(ids).toArray();
-  }
-
-  static async getById(id: string) {
-    return this.table.get(id);
-  }
-
   static async getReplies(postId: string) {
     return this.table.where('replied').equals(postId).toArray();
   }

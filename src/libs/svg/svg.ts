@@ -8,15 +8,16 @@ export function createReplyConnectorPath(postHeight: number) {
   const gapSpacing = 16; // gap-4 = 16px
 
   const validH = Math.max(H, R);
-  const path = `M ${x} ${y} v ${validH - R} a ${R} ${R} 0 0 0 ${R} ${R} h ${W}`;
+  const curveStartY = validH - R;
+  const path = `M ${x} ${y} v ${curveStartY} a ${R} ${R} 0 0 0 ${R} ${R} h ${W}`;
 
-  const tailHeight = safePostHeight / 2 - R + gapSpacing;
+  const tailHeight = safePostHeight / 2 + R + gapSpacing;
   const vbW = x + R + W;
-  const vbH = validH + R + tailHeight;
+  const vbH = curveStartY + tailHeight;
 
   return {
     path,
-    tailPath: `M ${x} ${validH + R} v ${tailHeight}`,
+    tailPath: `M ${x} ${curveStartY} v ${tailHeight}`,
     width: vbW,
     height: vbH,
   };

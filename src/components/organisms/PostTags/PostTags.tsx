@@ -28,7 +28,7 @@ export const PostTags = ({ postId }: PostTagsProps) => {
       if (!inputValue.trim() || isAdding) return;
       setIsAdding(true);
 
-      await Core.PostController.addTag(postId, inputValue.trim(), currentUserId);
+      await Core.TagController.add(postId, inputValue.trim(), currentUserId);
       // useLiveQuery will automatically update tags
       setInputValue('');
     } catch (error) {
@@ -43,13 +43,12 @@ export const PostTags = ({ postId }: PostTagsProps) => {
       const tag = tags?.find((t) => t.label === tagLabel);
       if (!tag) return;
 
-      const isCurrentlyTagged = tag.taggers.includes(currentUserId);
+      const isCurrentlyTagged = tag.relationship;
       if (isCurrentlyTagged) {
-        await Core.PostController.removeTag(postId, tagLabel, currentUserId);
+        await Core.TagController.remove(postId, tagLabel, currentUserId);
       } else {
-        await Core.PostController.addTag(postId, tagLabel, currentUserId);
+        await Core.TagController.add(postId, tagLabel, currentUserId);
       }
-      // useLiveQuery will automatically update tags
     } catch (error) {
       console.error('Failed to toggle tagger:', error);
     }
@@ -80,7 +79,7 @@ export const PostTags = ({ postId }: PostTagsProps) => {
         {tags?.map((tag, tagIndex) => {
           const visibleTaggers = tag.taggers.slice(0, MAX_VISIBLE_USERS);
           const remainingCount = Math.max(0, tag.taggers.length - MAX_VISIBLE_USERS);
-          const isCurrentUserTagger = tag.taggers.includes(currentUserId);
+          const isCurrentUserTagger = tag.relationship;
 
           return (
             <div key={`${tag.label}-${tagIndex}`} className="flex flex-row gap-2 items-center">
