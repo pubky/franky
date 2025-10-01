@@ -108,10 +108,10 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Label>
 
             <Atoms.Container
-              className="relative border-2 border-dashed border-border rounded-lg p-6 flex items-center justify-between bg-card/50 hover:bg-card/80 transition-colors cursor-pointer flex-row"
+              className="relative border-2 border-dashed border-border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-card/80 transition-colors cursor-pointer flex-row"
               onClick={handleFileSelect}
             >
-              <span className="text-foreground font-medium">
+              <span className={`font-medium ${selectedFile?.name ? 'text-foreground' : 'text-muted-foreground'}`}>
                 {selectedFile ? selectedFile.name : 'encryptedfile.pkarr'}
               </span>
               <Atoms.Button
