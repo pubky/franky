@@ -55,7 +55,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none">
+        <Atoms.Button id="restore-recovery-phrase-btn" variant="outline" className="rounded-full w-auto md:flex-none">
           <Libs.FileText className="mr-2 h-4 w-4" />
           Use recovery phrase
         </Atoms.Button>
@@ -182,13 +182,13 @@ function RestoreForm({
 
       <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" className="rounded-full flex-1" size="lg">
+          <Atoms.Button variant="outline" className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6">
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
-          size="lg"
-          className="rounded-full flex-1"
+          id="recovery-phrase-restore-btn"
+          className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={onRestore}
           disabled={userWords.some((word) => word === '') || errors.some((error) => error) || isRestoring}
         >

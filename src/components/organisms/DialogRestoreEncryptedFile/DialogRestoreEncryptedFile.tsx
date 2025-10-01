@@ -85,9 +85,9 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="outline" className="rounded-full w-auto md:flex-none">
-          <Libs.Upload className="h-4 w-4" />
-          <span>Restore from file</span>
+        <Atoms.Button id="restore-encrypted-file-btn" variant="outline" className="rounded-full w-auto md:flex-none">
+          <Libs.FileUp className="mr-2 h-4 w-4" />
+          <span>Use encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="gap-6 p-8 !max-w-[576px]">
@@ -130,6 +130,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Container>
 
             <input
+              id="encrypted-file-input"
               ref={fileInputRef}
               type="file"
               accept=".pkarr"
@@ -170,11 +171,11 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
         </Atoms.Container>
 
         {/* Action Buttons */}
-        <Atoms.Container className="gap-4 sm:gap-3 flex-row justify-between">
+        <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
           <DialogClose asChild>
             <Atoms.Button
               variant="outline"
-              className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+              className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               onClick={handleReset}
               disabled={isRestoring}
             >
@@ -182,7 +183,8 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Button>
           </DialogClose>
           <Atoms.Button
-            className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+            id="encrypted-file-restore-btn"
+            className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={handleRestore}
             disabled={!selectedFile || !password || isRestoring}
           >

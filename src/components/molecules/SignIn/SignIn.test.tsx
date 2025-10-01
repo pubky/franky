@@ -15,7 +15,6 @@ vi.mock('next/navigation', () => ({
 vi.mock('next/image', () => ({
   __esModule: true,
   default: ({ src, alt, width, height }: { src: string; alt: string; width: number; height: number }) => (
-    // eslint-disable-next-line @next/next/no-img-element
     <img data-testid="next-image" src={src} alt={alt} width={width} height={height} />
   ),
 }));
@@ -23,7 +22,6 @@ vi.mock('next/image', () => ({
 // Mock QRCodeSVG
 vi.mock('qrcode.react', () => ({
   QRCodeSVG: ({ size }: { size: number }) => (
-    // eslint-disable-next-line @next/next/no-img-element
     <img data-testid="next-image" src="/images/pubky-ring-qr-example.png" alt="Pubky Ring" width={size} height={size} />
   ),
 }));

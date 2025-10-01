@@ -19,6 +19,7 @@ export const BackupNavigation = () => {
 
   return (
     <Molecules.ButtonsNavigation
+      id="backup-navigation"
       className="py-6"
       onHandleBackButton={onHandleBackButton}
       onHandleContinueButton={onHandleContinueButton}

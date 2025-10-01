@@ -79,13 +79,18 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
   return (
     <Atoms.Container className={Libs.cn('flex-col-reverse md:flex-row gap-3 lg:gap-6', props.className)}>
       <Atoms.Container className="items-center gap-1 flex-row">
-        <Atoms.Button variant="outline" className="rounded-full flex-1 md:flex-none" onClick={handleCreate}>
+        <Atoms.Button
+          id="create-keys-in-browser-btn"
+          variant="outline"
+          className="rounded-full flex-1 md:flex-none"
+          onClick={handleCreate}
+        >
           <Libs.AppWindow className="mr-2 h-4 w-4" />
           Create keys in browser
         </Atoms.Button>
         <Molecules.PopoverTradeoffs />
       </Atoms.Container>
-      <Atoms.Button size="lg" className="rounded-full" onClick={handleContinue}>
+      <Atoms.Button id="continue-with-pubky-ring-btn" size="lg" className="rounded-full" onClick={handleContinue}>
         <Libs.ArrowRight className="mr-2 h-4 w-4" />
         Continue with Pubky Ring
       </Atoms.Button>

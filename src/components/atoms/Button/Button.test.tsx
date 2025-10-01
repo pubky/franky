@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Button } from './Button';
+import { Button, ButtonVariant } from './Button';
 
 describe('Button', () => {
   it('renders with default props', () => {
@@ -15,19 +15,19 @@ describe('Button', () => {
   });
 
   it('renders different variants correctly', () => {
-    const { rerender } = render(<Button variant="secondary">Secondary</Button>);
+    const { rerender } = render(<Button variant={ButtonVariant.SECONDARY}>Secondary</Button>);
     let button = screen.getByRole('button');
     expect(button).toHaveClass('bg-secondary', 'text-secondary-foreground');
 
-    rerender(<Button variant="outline">Outline</Button>);
+    rerender(<Button variant={ButtonVariant.OUTLINE}>Outline</Button>);
     button = screen.getByRole('button');
     expect(button).toHaveClass('bg-background');
 
-    rerender(<Button variant="ghost">Ghost</Button>);
+    rerender(<Button variant={ButtonVariant.GHOST}>Ghost</Button>);
     button = screen.getByRole('button');
     expect(button).toHaveClass('hover:bg-accent');
 
-    rerender(<Button variant="brand">Brand</Button>);
+    rerender(<Button variant={ButtonVariant.BRAND}>Brand</Button>);
     button = screen.getByRole('button');
     expect(button).toHaveClass('bg-brand', 'text-background');
 

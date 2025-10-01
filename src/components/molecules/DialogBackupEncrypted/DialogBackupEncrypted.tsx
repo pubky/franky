@@ -22,7 +22,7 @@ export function DialogBackupEncrypted() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="secondary" className="gap-2">
+        <Atoms.Button id="backup-encrypted-file-btn" variant="secondary" className="gap-2">
           <Libs.FileText className="h-4 w-4" />
           <span>Encrypted file</span>
         </Atoms.Button>
@@ -173,11 +173,11 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="gap-4 sm:gap-3 flex-row justify-between">
+      <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
         <DialogClose asChild>
           <Atoms.Button
             variant="outline"
-            className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+            className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={() => {
               setStep(1);
             }}
@@ -187,7 +187,8 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
           </Atoms.Button>
         </DialogClose>
         <Atoms.Button
-          className="h-[60px] flex-1 rounded-full sm:h-10 px-12 py-6"
+          id="download-file-btn"
+          className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={handleDownload}
           disabled={!password || !passwordsMatch}
         >
@@ -222,7 +223,11 @@ function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
-          <Atoms.Button className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
+          <Atoms.Button
+            id="backup-successful-ok-btn"
+            className="rounded-full lg:h-[60px] lg:px-8 flex-1"
+            onClick={handleClose}
+          >
             <Libs.ArrowRight className="mr-2 h-4 w-4" />
             Finish
           </Atoms.Button>

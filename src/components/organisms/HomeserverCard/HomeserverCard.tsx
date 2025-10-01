@@ -91,6 +91,7 @@ export function HomeserverCard() {
         <Atoms.Container className="gap-3 w-full flex-col mt-3">
           <Atoms.Container className="flex-col items-start gap-3 justify-start w-full">
             <Molecules.InputField
+              id="invite-code-input"
               value={inviteCode}
               variant="dashed"
               onClick={() => setInviteCode(inviteCode)}
@@ -125,6 +126,7 @@ export function HomeserverCard() {
           Back
         </Atoms.Button>
         <Atoms.Button
+          id="continue-btn"
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           onClick={onHandleContinueButton}

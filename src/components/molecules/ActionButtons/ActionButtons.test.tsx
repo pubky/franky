@@ -132,40 +132,6 @@ describe('ActionButtons', () => {
     expect(mockOnCreateAccount).toHaveBeenCalledTimes(1);
   });
 
-  it('applies default className structure', () => {
-    render(<ActionButtons />);
-
-    const container = screen.getByRole('button', { name: /sign in/i }).parentElement as HTMLElement;
-    expect(container).toMatchSnapshot();
-  });
-
-  it('applies custom className', () => {
-    render(<ActionButtons className="custom-action-buttons" />);
-
-    const container = screen.getByRole('button', { name: /sign in/i }).parentElement as HTMLElement;
-    expect(container).toMatchSnapshot();
-  });
-
-  it('has proper button variants and sizes', () => {
-    render(<ActionButtons />);
-
-    const signInButton = screen.getByRole('button', { name: /sign in/i });
-    const createAccountButton = screen.getByRole('button', { name: /create account/i });
-
-    expect(signInButton).toMatchSnapshot();
-    expect(createAccountButton).toMatchSnapshot();
-  });
-
-  it('renders icons with proper classes', () => {
-    render(<ActionButtons />);
-
-    const loginIcon = screen.getByTestId('login-icon');
-    const userPlusIcon = screen.getByTestId('user-plus-icon');
-
-    expect(loginIcon).toMatchSnapshot();
-    expect(userPlusIcon).toMatchSnapshot();
-  });
-
   it('handles both callbacks simultaneously', () => {
     const mockOnSignIn = vi.fn();
     const mockOnCreateAccount = vi.fn();

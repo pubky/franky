@@ -9,7 +9,7 @@ exports[`Dialog - Snapshots > matched snapshot for DialogContent with default pr
     data-testid="dialog-overlay"
   />
   <div
-    class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
+    class="max-h-[80vh] overflow-y-auto bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
     data-testid="dialog-content"
   >
     <div>
@@ -54,7 +54,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with close butt
     data-testid="dialog-overlay"
   />
   <div
-    class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
+    class="max-h-[80vh] overflow-y-auto bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
     data-testid="dialog-content"
   >
     <div>
@@ -89,7 +89,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
     data-testid="dialog-overlay"
   />
   <div
-    class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
+    class="max-h-[80vh] overflow-y-auto bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
     data-testid="dialog-content"
   >
     <div>
@@ -115,7 +115,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 
 exports[`Dialog - Snapshots > matches snapshot for DialogHeader 1`] = `
 <div
-  class="flex flex-col gap-2 text-center sm:text-left"
+  class="flex flex-col gap-2"
   data-slot="dialog-header"
   data-testid="dialog-header"
 >
@@ -174,11 +174,11 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
       data-testid="dialog-overlay"
     />
     <div
-      class="bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
+      class="max-h-[80vh] overflow-y-auto bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg"
       data-testid="dialog-content"
     >
       <div
-        class="flex flex-col gap-2 text-center sm:text-left"
+        class="flex flex-col gap-2"
         data-slot="dialog-header"
         data-testid="dialog-header"
       >
