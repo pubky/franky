@@ -5,6 +5,7 @@ export * from './Backup';
 export * from './Breadcrumb';
 export * from './ContainerRoot';
 export * from './Homeserver';
+export * from './HotTags';
 export * from './ButtonsNavigation';
 export * from './Content';
 export * from './DialogAddLink';
