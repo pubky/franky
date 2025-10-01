@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ContentLayout } from './ContentLayout';
-import * as Core from '@/core';
 
 // Mock the filters store
 vi.mock('@/core', () => ({
@@ -51,30 +50,22 @@ vi.mock('@/molecules', () => ({
       {children}
     </div>
   ),
-  FilterReach: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterReach: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-reach">
       <button onClick={() => onTabChange?.('all')}>All</button>
     </div>
   ),
-  FilterSort: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterSort: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-sort">
       <button onClick={() => onTabChange?.('recent')}>Recent</button>
     </div>
   ),
-  FilterContent: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterContent: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-content">
       <button onClick={() => onTabChange?.('all')}>All</button>
     </div>
   ),
-  FilterLayout: ({
-    selectedTab,
-    onTabChange,
-    onClose,
-  }: {
-    selectedTab?: string;
-    onTabChange?: (tab: string) => void;
-    onClose?: () => void;
-  }) => (
+  FilterLayout: ({ onTabChange, onClose }: { onTabChange?: (tab: string) => void; onClose?: () => void }) => (
     <div data-testid="filter-layout">
       <button
         onClick={() => {

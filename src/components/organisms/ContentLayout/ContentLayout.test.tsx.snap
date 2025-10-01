@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ContentLayout - Snapshots > matches snapshot with both sidebars hidden 1`] = `
+<div
+  data-testid="mobile-header"
+>
+  <button>
+    Filter
+  </button>
+</div>
+`;
+
+exports[`ContentLayout - Snapshots > matches snapshot with complex children 1`] = `
+<div
+  data-testid="mobile-header"
+>
+  <button>
+    Filter
+  </button>
+</div>
+`;
+
+exports[`ContentLayout - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  data-testid="mobile-header"
+>
+  <button>
+    Filter
+  </button>
+</div>
+`;
+
+exports[`ContentLayout - Snapshots > matches snapshot with default props 1`] = `
+<div
+  data-testid="mobile-header"
+>
+  <button>
+    Filter
+  </button>
+</div>
+`;
+
+exports[`ContentLayout - Snapshots > matches snapshot with showLeftSidebar false 1`] = `
+<div
+  data-testid="mobile-header"
+>
+  <button>
+    Filter
+  </button>
+</div>
+`;
+
+exports[`ContentLayout - Snapshots > matches snapshot with showRightSidebar false 1`] = `
+<div
+  data-testid="mobile-header"
+>
+  <button>
+    Filter
+  </button>
+</div>
+`;

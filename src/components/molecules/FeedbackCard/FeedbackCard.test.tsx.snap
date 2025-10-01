@@ -1,0 +1,119 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FeedbackCard - Snapshots > matches snapshot for feedback form 1`] = `
+<div
+  class="text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors leading-snug"
+>
+  What do you think about Pubky?
+</div>
+`;
+
+exports[`FeedbackCard - Snapshots > matches snapshot for user info section 1`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  Your Name
+</div>
+`;
+
+exports[`FeedbackCard - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="flex flex-col gap-4 custom-feedback"
+  data-testid="feedback-card"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+  >
+    Feedback
+  </h2>
+  <div
+    class="flex flex-col gap-3 p-5 rounded-lg border-dashed border border-border/50"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="User"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=68"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          <div
+            class="w-5 h-5"
+            data-testid="user-icon"
+          >
+            User
+          </div>
+        </div>
+      </div>
+      <div
+        class="text-base font-bold text-foreground"
+      >
+        Your Name
+      </div>
+    </div>
+    <div
+      class="text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors leading-snug"
+    >
+      What do you think about Pubky?
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex flex-col gap-4"
+  data-testid="feedback-card"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+  >
+    Feedback
+  </h2>
+  <div
+    class="flex flex-col gap-3 p-5 rounded-lg border-dashed border border-border/50"
+  >
+    <div
+      class="flex items-center gap-2"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="User"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=68"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          <div
+            class="w-5 h-5"
+            data-testid="user-icon"
+          >
+            User
+          </div>
+        </div>
+      </div>
+      <div
+        class="text-base font-bold text-foreground"
+      >
+        Your Name
+      </div>
+    </div>
+    <div
+      class="text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors leading-snug"
+    >
+      What do you think about Pubky?
+    </div>
+  </div>
+</div>
+`;

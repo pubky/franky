@@ -1,0 +1,159 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MobileHeader - Snapshots > matches snapshot for left button 1`] = `
+<button
+  class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+>
+  <div
+    class="h-6 w-6"
+    data-testid="sliders-horizontal-icon"
+  >
+    SlidersHorizontal
+  </div>
+</button>
+`;
+
+exports[`MobileHeader - Snapshots > matches snapshot for logo 1`] = `
+<span
+  class="font-bold"
+  data-size="md"
+>
+  Pubky
+</span>
+`;
+
+exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
+<button
+  class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+>
+  <div
+    class="h-6 w-6"
+    data-testid="users-icon"
+  >
+    Users
+  </div>
+</button>
+`;
+
+exports[`MobileHeader - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20 custom-header"
+>
+  <div
+    class="flex items-center justify-between px-4 h-16"
+  >
+    <button
+      class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="sliders-horizontal-icon"
+      >
+        SlidersHorizontal
+      </div>
+    </button>
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="font-bold"
+        data-size="md"
+      >
+        Pubky
+      </span>
+    </div>
+    <button
+      class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="users-icon"
+      >
+        Users
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick 1`] = `
+<div
+  class="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20"
+>
+  <div
+    class="flex items-center justify-between px-4 h-16"
+  >
+    <button
+      class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="sliders-horizontal-icon"
+      >
+        SlidersHorizontal
+      </div>
+    </button>
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="font-bold"
+        data-size="md"
+      >
+        Pubky
+      </span>
+    </div>
+    <button
+      class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="users-icon"
+      >
+        Users
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20"
+>
+  <div
+    class="flex items-center justify-between px-4 h-16"
+  >
+    <button
+      class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="sliders-horizontal-icon"
+      >
+        SlidersHorizontal
+      </div>
+    </button>
+    <div
+      class="flex items-center gap-2"
+    >
+      <span
+        class="font-bold"
+        data-size="md"
+      >
+        Pubky
+      </span>
+    </div>
+    <button
+      class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="users-icon"
+      >
+        Users
+      </div>
+    </button>
+  </div>
+</div>
+`;

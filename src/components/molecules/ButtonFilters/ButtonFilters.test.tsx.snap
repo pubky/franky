@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ButtonFilters - Snapshots > matches snapshot for button element 1`] = `
+<button
+  class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full"
+  data-size="icon"
+  data-variant="secondary"
+>
+  <div
+    class="h-6 w-6"
+    data-testid="sliders-horizontal-icon"
+  >
+    SlidersHorizontal
+  </div>
+</button>
+`;
+
+exports[`ButtonFilters - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="z-10 fixed top-[150px] left-0"
+>
+  <button
+    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full custom-filters"
+    data-size="icon"
+    data-variant="secondary"
+  >
+    <div
+      class="h-6 w-6"
+      data-testid="sliders-horizontal-icon"
+    >
+      SlidersHorizontal
+    </div>
+  </button>
+</div>
+`;
+
+exports[`ButtonFilters - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="z-10 fixed top-[150px] left-0"
+>
+  <button
+    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full"
+    data-size="icon"
+    data-variant="secondary"
+  >
+    <div
+      class="h-6 w-6"
+      data-testid="sliders-horizontal-icon"
+    >
+      SlidersHorizontal
+    </div>
+  </button>
+</div>
+`;
+
+exports[`ButtonFilters - Snapshots > matches snapshot with left position 1`] = `
+<div
+  class="z-10 fixed top-[150px] left-0"
+>
+  <button
+    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full"
+    data-size="icon"
+    data-variant="secondary"
+  >
+    <div
+      class="h-6 w-6"
+      data-testid="sliders-horizontal-icon"
+    >
+      SlidersHorizontal
+    </div>
+  </button>
+</div>
+`;
+
+exports[`ButtonFilters - Snapshots > matches snapshot with right position 1`] = `
+<div
+  class="z-10 fixed top-[150px] right-0"
+>
+  <button
+    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-r-none rounded-l-full"
+    data-size="icon"
+    data-variant="secondary"
+  >
+    <div
+      class="h-6 w-6"
+      data-testid="users-icon"
+    >
+      Users
+    </div>
+  </button>
+</div>
+`;

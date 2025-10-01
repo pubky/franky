@@ -19,12 +19,42 @@ vi.mock('next/navigation', () => ({
 
 // Mock the components
 vi.mock('@/components', () => ({
-  Button: ({ children, onClick, className, variant, size, ...props }: any) => (
+  Button: ({
+    children,
+    onClick,
+    className,
+    variant,
+    size,
+    ...props
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    className?: string;
+    variant?: string;
+    size?: string;
+    [key: string]: unknown;
+  }) => (
     <button onClick={onClick} className={className} data-variant={variant} data-size={size} {...props}>
       {children}
     </button>
   ),
-  Link: ({ children, href, target, variant, size, className, ...props }: any) => (
+  Link: ({
+    children,
+    href,
+    target,
+    variant,
+    size,
+    className,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href?: string;
+    target?: string;
+    variant?: string;
+    size?: string;
+    className?: string;
+    [key: string]: unknown;
+  }) => (
     <a href={href} target={target} className={className} data-variant={variant} data-size={size} {...props}>
       {children}
     </a>
@@ -34,7 +64,7 @@ vi.mock('@/components', () => ({
       {children}
     </div>
   ),
-  AvatarImage: ({ src }: { src?: string }) => <img data-testid="avatar-image" src={src} />,
+  AvatarImage: ({ src }: { src?: string }) => <img data-testid="avatar-image" src={src} alt="User avatar" />,
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
   Badge: ({ children, className, variant }: { children: React.ReactNode; className?: string; variant?: string }) => (
     <div className={className} data-variant={variant}>
@@ -135,7 +165,7 @@ describe('Header Components', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(useRouter).mockReturnValue(mockRouter as any);
+    vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
   });
 
   afterEach(() => {
@@ -387,7 +417,7 @@ describe('Header Components - Snapshots', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(useRouter).mockReturnValue(mockRouter as any);
+    vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
   });
 
   it('matches snapshot for HeaderContainer', () => {

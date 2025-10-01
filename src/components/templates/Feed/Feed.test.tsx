@@ -10,22 +10,50 @@ vi.mock('next/navigation', () => ({
 
 // Mock the components
 vi.mock('@/components', () => ({
-  Button: ({ children, onClick, className, ...props }: any) => (
+  Button: ({
+    children,
+    onClick,
+    className,
+    ...props
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    className?: string;
+    [key: string]: unknown;
+  }) => (
     <button onClick={onClick} className={className} {...props}>
       {children}
     </button>
   ),
-  Heading: ({ children, level, size, className }: any) => (
+  Heading: ({
+    children,
+    level,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    level?: string;
+    size?: string;
+    className?: string;
+  }) => (
     <h1 className={className} data-level={level} data-size={size}>
       {children}
     </h1>
   ),
-  Typography: ({ children, size, className }: any) => (
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
     <p className={className} data-size={size}>
       {children}
     </p>
   ),
-  Card: ({ children, className, ...props }: any) => (
+  Card: ({
+    children,
+    className,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    [key: string]: unknown;
+  }) => (
     <div className={className} {...props}>
       {children}
     </div>
@@ -56,7 +84,7 @@ describe('Feed', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(useRouter).mockReturnValue(mockRouter as any);
+    vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
   });
 
   afterEach(() => {
@@ -188,7 +216,7 @@ describe('Feed - Snapshots', () => {
   };
 
   beforeEach(() => {
-    vi.mocked(useRouter).mockReturnValue(mockRouter as any);
+    vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
   });
 
   it('matches snapshot with default props', () => {
@@ -197,25 +225,25 @@ describe('Feed - Snapshots', () => {
   });
 
   it('matches snapshot for heading structure', () => {
-    const { container } = render(<Feed />);
+    render(<Feed />);
     const heading = screen.getByText('Feed');
     expect(heading).toMatchSnapshot();
   });
 
   it('matches snapshot for placeholder content', () => {
-    const { container } = render(<Feed />);
+    render(<Feed />);
     const contentContainer = screen.getByText('Post 1').closest('div')?.parentElement;
     expect(contentContainer).toMatchSnapshot();
   });
 
   it('matches snapshot for logout button', () => {
-    const { container } = render(<Feed />);
+    render(<Feed />);
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toMatchSnapshot();
   });
 
   it('matches snapshot for individual post', () => {
-    const { container } = render(<Feed />);
+    render(<Feed />);
     const post1 = screen.getByText('Post 1').closest('div');
     expect(post1).toMatchSnapshot();
   });

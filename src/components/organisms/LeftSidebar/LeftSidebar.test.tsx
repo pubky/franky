@@ -19,22 +19,22 @@ vi.mock('@/core', () => ({
 
 // Mock the molecules
 vi.mock('@/molecules', () => ({
-  FilterReach: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterReach: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-reach">
       <button onClick={() => onTabChange?.('all')}>All</button>
     </div>
   ),
-  FilterSort: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterSort: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-sort">
       <button onClick={() => onTabChange?.('recent')}>Recent</button>
     </div>
   ),
-  FilterContent: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterContent: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-content">
       <button onClick={() => onTabChange?.('all')}>All</button>
     </div>
   ),
-  FilterLayout: ({ selectedTab, onTabChange }: { selectedTab?: string; onTabChange?: (tab: string) => void }) => (
+  FilterLayout: ({ onTabChange }: { onTabChange?: (tab: string) => void }) => (
     <div data-testid="filter-layout">
       <button onClick={() => onTabChange?.('columns')}>Columns</button>
     </div>

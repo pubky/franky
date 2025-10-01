@@ -1,0 +1,389 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WhoToFollow - Snapshots > matches snapshot for See All button 1`] = `
+<button
+  class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+>
+  <div
+    class="h-4 w-4"
+    data-testid="users-icon"
+  >
+    Users
+  </div>
+  <span
+    class="text-sm font-medium"
+  >
+    See all
+  </span>
+</button>
+`;
+
+exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 1`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  Anna Pleb
+</div>
+`;
+
+exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 2`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  Carl Smith
+</div>
+`;
+
+exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 3`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  Mi Lei
+</div>
+`;
+
+exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="flex flex-col gap-4 custom-follow"
+  data-testid="who-to-follow"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+  >
+    Who to follow
+  </h2>
+  <div
+    class="flex flex-col gap-2"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-3"
+      >
+        <div
+          class="h-12 w-12"
+          data-testid="avatar"
+        >
+          <img
+            alt="Anna Pleb"
+            data-testid="avatar-image"
+            src="https://i.pravatar.cc/150?img=1"
+          />
+          <div
+            data-testid="avatar-fallback"
+          >
+            A
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-0.5"
+        >
+          <div
+            class="text-base font-bold text-foreground"
+          >
+            Anna Pleb
+          </div>
+          <div
+            class="text-sm text-muted-foreground opacity-50"
+          >
+            7SL4...98V5
+          </div>
+        </div>
+      </div>
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
+      >
+        <div
+          class="h-5 w-5"
+          data-testid="user-plus-icon"
+        >
+          UserPlus
+        </div>
+      </button>
+    </div>
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-3"
+      >
+        <div
+          class="h-12 w-12"
+          data-testid="avatar"
+        >
+          <img
+            alt="Carl Smith"
+            data-testid="avatar-image"
+            src="https://i.pravatar.cc/150?img=12"
+          />
+          <div
+            data-testid="avatar-fallback"
+          >
+            C
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-0.5"
+        >
+          <div
+            class="text-base font-bold text-foreground"
+          >
+            Carl Smith
+          </div>
+          <div
+            class="text-sm text-muted-foreground opacity-50"
+          >
+            327F...2YM4
+          </div>
+        </div>
+      </div>
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
+      >
+        <div
+          class="h-5 w-5"
+          data-testid="user-plus-icon"
+        >
+          UserPlus
+        </div>
+      </button>
+    </div>
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-3"
+      >
+        <div
+          class="h-12 w-12"
+          data-testid="avatar"
+        >
+          <img
+            alt="Mi Lei"
+            data-testid="avatar-image"
+            src="https://i.pravatar.cc/150?img=5"
+          />
+          <div
+            data-testid="avatar-fallback"
+          >
+            M
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-0.5"
+        >
+          <div
+            class="text-base font-bold text-foreground"
+          >
+            Mi Lei
+          </div>
+          <div
+            class="text-sm text-muted-foreground opacity-50"
+          >
+            PL5Z...2JSL
+          </div>
+        </div>
+      </div>
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
+      >
+        <div
+          class="h-5 w-5"
+          data-testid="user-plus-icon"
+        >
+          UserPlus
+        </div>
+      </button>
+    </div>
+  </div>
+  <button
+    class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+  >
+    <div
+      class="h-4 w-4"
+      data-testid="users-icon"
+    >
+      Users
+    </div>
+    <span
+      class="text-sm font-medium"
+    >
+      See all
+    </span>
+  </button>
+</div>
+`;
+
+exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex flex-col gap-4"
+  data-testid="who-to-follow"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+  >
+    Who to follow
+  </h2>
+  <div
+    class="flex flex-col gap-2"
+  >
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-3"
+      >
+        <div
+          class="h-12 w-12"
+          data-testid="avatar"
+        >
+          <img
+            alt="Anna Pleb"
+            data-testid="avatar-image"
+            src="https://i.pravatar.cc/150?img=1"
+          />
+          <div
+            data-testid="avatar-fallback"
+          >
+            A
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-0.5"
+        >
+          <div
+            class="text-base font-bold text-foreground"
+          >
+            Anna Pleb
+          </div>
+          <div
+            class="text-sm text-muted-foreground opacity-50"
+          >
+            7SL4...98V5
+          </div>
+        </div>
+      </div>
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
+      >
+        <div
+          class="h-5 w-5"
+          data-testid="user-plus-icon"
+        >
+          UserPlus
+        </div>
+      </button>
+    </div>
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-3"
+      >
+        <div
+          class="h-12 w-12"
+          data-testid="avatar"
+        >
+          <img
+            alt="Carl Smith"
+            data-testid="avatar-image"
+            src="https://i.pravatar.cc/150?img=12"
+          />
+          <div
+            data-testid="avatar-fallback"
+          >
+            C
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-0.5"
+        >
+          <div
+            class="text-base font-bold text-foreground"
+          >
+            Carl Smith
+          </div>
+          <div
+            class="text-sm text-muted-foreground opacity-50"
+          >
+            327F...2YM4
+          </div>
+        </div>
+      </div>
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
+      >
+        <div
+          class="h-5 w-5"
+          data-testid="user-plus-icon"
+        >
+          UserPlus
+        </div>
+      </button>
+    </div>
+    <div
+      class="flex items-center justify-between"
+    >
+      <div
+        class="flex items-center gap-3"
+      >
+        <div
+          class="h-12 w-12"
+          data-testid="avatar"
+        >
+          <img
+            alt="Mi Lei"
+            data-testid="avatar-image"
+            src="https://i.pravatar.cc/150?img=5"
+          />
+          <div
+            data-testid="avatar-fallback"
+          >
+            M
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-0.5"
+        >
+          <div
+            class="text-base font-bold text-foreground"
+          >
+            Mi Lei
+          </div>
+          <div
+            class="text-sm text-muted-foreground opacity-50"
+          >
+            PL5Z...2JSL
+          </div>
+        </div>
+      </div>
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
+      >
+        <div
+          class="h-5 w-5"
+          data-testid="user-plus-icon"
+        >
+          UserPlus
+        </div>
+      </button>
+    </div>
+  </div>
+  <button
+    class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+  >
+    <div
+      class="h-4 w-4"
+      data-testid="users-icon"
+    >
+      Users
+    </div>
+    <span
+      class="text-sm font-medium"
+    >
+      See all
+    </span>
+  </button>
+</div>
+`;
