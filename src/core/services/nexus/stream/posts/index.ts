@@ -1,2 +1,2 @@
-export * from './stream.api';
-export * from './stream.types';
+export * from './postStream.api';
+export * from './postStream.types';

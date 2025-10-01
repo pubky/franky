@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { USERS_STREAM_API, buildUserStreamBodyUrl } from './stream.api';
-import { UserStreamReach, UserStreamTimeframe } from './stream.types';
+import { USERS_STREAM_API, buildUserStreamBodyUrl } from './userStream.api';
+import { UserStreamReach, UserStreamTimeframe } from './userStream.types';
 
 describe('Users Stream API - Error Control', () => {
   const mockUserId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';

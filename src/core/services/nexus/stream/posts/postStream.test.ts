@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { POSTS_STREAM_API } from './stream.api';
-import { StreamSorting, StreamKind, StreamOrder } from './stream.types';
+import { POSTS_STREAM_API } from './postStream.api';
+import { StreamSorting, StreamKind, StreamOrder } from './postStream.types';
 
 describe('Stream API URL Generation', () => {
   const mockObserverId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
