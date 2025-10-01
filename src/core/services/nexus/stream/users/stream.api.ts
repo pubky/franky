@@ -1,13 +1,4 @@
-import {
-  UserStreamSource,
-  TUserStreamWithUserIdParams,
-  TUserStreamInfluencersParams,
-  TUserStreamPostRepliesParams,
-  TUserStreamWithDepthParams,
-  TUserStreamUsernameParams,
-  TUserStreamUsersByIdsParams,
-  TUserStreamBase,
-} from './stream.types';
+import * as Core from '@/core';
 
 /**
  * Users Stream API Endpoints
@@ -21,7 +12,7 @@ enum USER_STREAM_PREFIX {
 
 export function buildUserStreamUrl(
   params: Record<string, unknown>,
-  source: UserStreamSource | null,
+  source: Core.UserStreamSource | null,
   prefix: USER_STREAM_PREFIX,
 ): string {
   const queryParams = new URLSearchParams();
@@ -50,41 +41,41 @@ export function buildUserStreamUrl(
  */
 export const USERS_STREAM_API = {
   // Sources requiring user_id
-  followers: (params: TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, UserStreamSource.FOLLOWERS, USER_STREAM_PREFIX.USERS),
+  followers: (params: Core.TUserStreamWithUserIdParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWERS, USER_STREAM_PREFIX.USERS),
 
-  following: (params: TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, UserStreamSource.FOLLOWING, USER_STREAM_PREFIX.USERS),
+  following: (params: Core.TUserStreamWithUserIdParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWING, USER_STREAM_PREFIX.USERS),
 
-  friends: (params: TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, UserStreamSource.FRIENDS, USER_STREAM_PREFIX.USERS),
+  friends: (params: Core.TUserStreamWithUserIdParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, USER_STREAM_PREFIX.USERS),
 
-  muted: (params: TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, UserStreamSource.MUTED, USER_STREAM_PREFIX.USERS),
+  muted: (params: Core.TUserStreamWithUserIdParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.MUTED, USER_STREAM_PREFIX.USERS),
 
-  recommended: (params: TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, UserStreamSource.RECOMMENDED, USER_STREAM_PREFIX.USERS),
+  recommended: (params: Core.TUserStreamWithUserIdParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.RECOMMENDED, USER_STREAM_PREFIX.USERS),
 
   // Influencers with additional parameters
-  influencers: (params: TUserStreamInfluencersParams) =>
-    buildUserStreamUrl(params, UserStreamSource.INFLUENCERS, USER_STREAM_PREFIX.USERS),
+  influencers: (params: Core.TUserStreamInfluencersParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.INFLUENCERS, USER_STREAM_PREFIX.USERS),
 
   // Post replies requiring author_id and post_id
-  postReplies: (params: TUserStreamPostRepliesParams) =>
-    buildUserStreamUrl(params, UserStreamSource.POST_REPLIES, USER_STREAM_PREFIX.USERS),
+  postReplies: (params: Core.TUserStreamPostRepliesParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.POST_REPLIES, USER_STREAM_PREFIX.USERS),
 
   // Sources with depth parameter
-  friendsWithDepth: (params: TUserStreamWithDepthParams) =>
-    buildUserStreamUrl(params, UserStreamSource.FRIENDS, USER_STREAM_PREFIX.USERS),
+  friendsWithDepth: (params: Core.TUserStreamWithDepthParams) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, USER_STREAM_PREFIX.USERS),
 
-  mostFollowed: (params: TUserStreamBase) =>
-    buildUserStreamUrl(params, UserStreamSource.MOST_FOLLOWED, USER_STREAM_PREFIX.USERS),
+  mostFollowed: (params: Core.TUserStreamBase) =>
+    buildUserStreamUrl(params, Core.UserStreamSource.MOST_FOLLOWED, USER_STREAM_PREFIX.USERS),
 
   // Username search
-  username: (params: TUserStreamUsernameParams) => buildUserStreamUrl(params, null, USER_STREAM_PREFIX.USERNAME),
+  username: (params: Core.TUserStreamUsernameParams) => buildUserStreamUrl(params, null, USER_STREAM_PREFIX.USERNAME),
 
   // Users by IDs (POST request)
-  usersByIds: (params: TUserStreamUsersByIdsParams) => {
+  usersByIds: (params: Core.TUserStreamUsersByIdsParams) => {
     return { body: buildUserStreamBodyUrl(params), url: USER_STREAM_PREFIX.USERS_BY_IDS };
   },
 };
@@ -93,7 +84,7 @@ export const USERS_STREAM_API = {
  * Users by IDs endpoint (POST request)
  * Returns both the URL and the request body for the POST request
  */
-export function buildUserStreamBodyUrl(params: TUserStreamUsersByIdsParams) {
+export function buildUserStreamBodyUrl(params: Core.TUserStreamUsersByIdsParams) {
   // Build request body
   const body: { user_ids: string[]; viewer_id?: string; depth?: number } = {
     user_ids: params.user_ids,
