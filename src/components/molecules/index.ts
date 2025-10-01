@@ -8,6 +8,7 @@ export * from './ContainerRoot';
 export * from './FeedbackCard';
 export * from './Homeserver';
 export * from './ButtonFilters';
+export * from './HotTags';
 export * from './ButtonsNavigation';
 export * from './Content';
 export * from './DialogAddLink';
