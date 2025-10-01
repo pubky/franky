@@ -19,6 +19,8 @@ export default defineConfig({
     video: true,
     viewportWidth: 1920,
     viewportHeight: 1080,
+    // Safari support
+    experimentalWebKitSupport: true,
     env: {
       // slow down execution more in CI to avoid flaky tests
       commandDelay: defaultMs,
