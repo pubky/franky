@@ -17,21 +17,23 @@ export class PostController {
 
   /**
    * Fetch posts with optional pagination
-   * @param limit - Number of posts to fetch (default: 30)
-   * @param offset - Number of posts to skip (default: 0)
+   * @param params - Parameters object
+   * @param params.limit - Number of posts to fetch (default: 30)
+   * @param params.offset - Number of posts to skip (default: 0)
    * @returns Array of NexusPost objects
    */
-  static async fetch(limit: number = 30, offset: number = 0): Promise<Core.NexusPost[]> {
+  static async fetch({ limit = 30, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<Core.NexusPost[]> {
     await this.initialize();
     return Core.LocalDb.Post.fetch({ limit, offset });
   }
 
   /**
    * Get a specific post by ID
-   * @param id - Post ID to find
+   * @param params - Parameters object
+   * @param params.id - Post ID to find
    * @returns NexusPost if found, null otherwise
    */
-  static async findById(id: string): Promise<Core.NexusPost | null> {
+  static async findById({ id }: { id: string }): Promise<Core.NexusPost | null> {
     await this.initialize();
     return Core.LocalDb.Post.findById({ id });
   }
@@ -47,32 +49,43 @@ export class PostController {
 
   /**
    * Get reply IDs for a specific post
-   * @param postId - ID of the post to get reply IDs for
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get reply IDs for
    * @returns Array of reply post IDs
    */
-  static async getReplyIds(postId: string): Promise<string[]> {
+  static async getReplyIds({ postId }: { postId: string }): Promise<string[]> {
     await this.initialize();
     return Core.LocalDb.Post.replyIds({ postId });
   }
 
   /**
    * Get replies to a specific post
-   * @param postId - ID of the post to get replies for
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get replies for
    * @returns Array of NexusPost objects that are replies to the given post
    */
-  static async getReplies(postId: string): Promise<Core.NexusPost[]> {
+  static async getReplies({ postId }: { postId: string }): Promise<Core.NexusPost[]> {
     await this.initialize();
     return Core.LocalDb.Post.replies({ postId });
   }
 
   /**
    * Add a reply to a post
-   * @param parentPostId - ID of the post being replied to
-   * @param content - Reply content
-   * @param authorId - ID of the user creating the reply
+   * @param params - Parameters object
+   * @param params.parentPostId - ID of the post being replied to
+   * @param params.content - Reply content
+   * @param params.authorId - ID of the user creating the reply
    * @returns The created reply post or null if failed
    */
-  static async addReply(parentPostId: string, content: string, authorId: Core.Pubky): Promise<Core.NexusPost | null> {
+  static async addReply({
+    parentPostId,
+    content,
+    authorId,
+  }: {
+    parentPostId: string;
+    content: string;
+    authorId: Core.Pubky;
+  }): Promise<Core.NexusPost | null> {
     await this.initialize();
 
     const normalizedPost = await Core.PostNormalizer.to(

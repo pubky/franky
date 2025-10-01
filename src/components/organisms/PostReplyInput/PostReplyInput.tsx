@@ -16,7 +16,11 @@ export function PostReplyInput({ postId }: PostReplyInputProps) {
 
     try {
       const currentUserId = Core.useAuthStore.getState().selectCurrentUserPubky();
-      await Core.PostController.addReply(postId, replyContent.trim(), currentUserId);
+      await Core.PostController.addReply({
+        parentPostId: postId,
+        content: replyContent.trim(),
+        authorId: currentUserId,
+      });
       // useLiveQuery in PostReplies will automatically update the replies list
       setReplyContent('');
     } catch (error) {

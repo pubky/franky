@@ -15,12 +15,21 @@ export class TagController {
 
   /**
    * Add a tag
-   * @param targetId - ID of the post or user to tag
-   * @param label - Tag label
-   * @param taggerId - ID of the user adding the tag
+   * @param params - Parameters object
+   * @param params.targetId - ID of the post or user to tag
+   * @param params.label - Tag label
+   * @param params.taggerId - ID of the user adding the tag
    * @returns true if tag was added, false if it already exists
    */
-  static async add(targetId: string, label: string, taggerId: Core.Pubky): Promise<boolean> {
+  static async add({
+    targetId,
+    label,
+    taggerId,
+  }: {
+    targetId: string;
+    label: string;
+    taggerId: Core.Pubky;
+  }): Promise<boolean> {
     await this.initialize();
 
     const postDetails = await Core.PostDetailsModel.table.get(targetId);
@@ -37,12 +46,21 @@ export class TagController {
 
   /**
    * Remove a tag
-   * @param targetId - ID of the post or user
-   * @param label - Tag label to remove
-   * @param taggerId - ID of the user removing the tag
+   * @param params - Parameters object
+   * @param params.targetId - ID of the post or user
+   * @param params.label - Tag label to remove
+   * @param params.taggerId - ID of the user removing the tag
    * @returns true if tag was removed, false if not found
    */
-  static async remove(targetId: string, label: string, taggerId: Core.Pubky): Promise<boolean> {
+  static async remove({
+    targetId,
+    label,
+    taggerId,
+  }: {
+    targetId: string;
+    label: string;
+    taggerId: Core.Pubky;
+  }): Promise<boolean> {
     await this.initialize();
 
     const postDetails = await Core.PostDetailsModel.table.get(targetId);
@@ -59,10 +77,11 @@ export class TagController {
 
   /**
    * Get all tags
-   * @param targetId - ID of the post or user
+   * @param params - Parameters object
+   * @param params.targetId - ID of the post or user
    * @returns Array of TagModel objects
    */
-  static async get(targetId: string): Promise<Core.TagModel[]> {
+  static async get({ targetId }: { targetId: string }): Promise<Core.TagModel[]> {
     await this.initialize();
     return Core.LocalDb.Tag.get({ postId: targetId });
   }
