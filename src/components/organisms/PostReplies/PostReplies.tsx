@@ -29,7 +29,7 @@ export function PostReplies({ postId }: PostRepliesProps) {
         <div key={replyId} className="flex gap-4">
           <div className="w-8 flex-shrink-0">{/* Reply connector SVG will go here */}</div>
           <div className="flex-1">
-            <Templates.PostWide postId={replyId} showReplyConnector={true} />
+            <Templates.PostWide postId={replyId} isReply={true} />
           </div>
         </div>
       ))}

@@ -1,20 +1,22 @@
+import * as Libs from '@/libs';
+
 interface ReplyLineProps {
-  width?: number;
-  height?: number;
-  path: string;
-  tailPath?: string | null;
+  postHeight?: number;
+  path?: string;
   strokeColor?: string;
   strokeWidth?: number;
 }
 
 export const ReplyLine = ({
-  width = 48,
-  height = 50,
-  path,
-  tailPath,
+  postHeight,
+  path: customPath,
   strokeColor = 'rgb(96,96,96)',
   strokeWidth = 2,
 }: ReplyLineProps) => {
+  const { path, tailPath, width, height } = postHeight
+    ? Libs.createReplyConnectorPath(postHeight)
+    : { path: customPath || '', tailPath: null, width: 48, height: 50 };
+
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMinYMin meet">
       <path d={path} fill="none" stroke={strokeColor} strokeWidth={strokeWidth} vectorEffect="non-scaling-stroke" />

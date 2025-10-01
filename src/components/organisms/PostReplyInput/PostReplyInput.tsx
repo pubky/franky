@@ -10,12 +10,12 @@ interface PostReplyInputProps {
 
 export function PostReplyInput({ postId }: PostReplyInputProps) {
   const [replyContent, setReplyContent] = useState('');
+  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
 
   const handleReplySubmit = async () => {
     if (!replyContent.trim() || !postId) return;
 
     try {
-      const currentUserId = Core.useAuthStore.getState().selectCurrentUserPubky();
       await Core.PostController.addReply({
         parentPostId: postId,
         content: replyContent.trim(),

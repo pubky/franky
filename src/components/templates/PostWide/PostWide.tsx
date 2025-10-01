@@ -2,28 +2,23 @@
 
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
-import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 
 interface PostWideProps {
   postId: string;
   clickable?: boolean;
-  showReplyConnector?: boolean;
+  isReply?: boolean;
   onClick?: () => void;
 }
 
-export function PostWide({ postId, clickable = false, showReplyConnector = false, onClick }: PostWideProps) {
+export function PostWide({ postId, clickable = false, isReply = false, onClick }: PostWideProps) {
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
-
-  const { path, tailPath, width, height } = showReplyConnector
-    ? Libs.createReplyConnectorPath(postHeight)
-    : { path: '', tailPath: null, width: 0, height: 0 };
 
   return (
     <div className="relative">
-      {showReplyConnector && (
+      {isReply && (
         <div className="absolute -left-12 top-0">
-          <Atoms.ReplyLine width={width} height={height} path={path} tailPath={tailPath} />
+          <Atoms.ReplyLine postHeight={postHeight} />
         </div>
       )}
       <Atoms.Card
