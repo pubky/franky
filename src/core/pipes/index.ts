@@ -8,3 +8,6 @@ export * from './post';
 export * from './tag';
 export * from './user';
 export * from './pipes.types';
+
+// Re-export pubky-app-specs types
+export { PubkyAppPostKind } from 'pubky-app-specs';

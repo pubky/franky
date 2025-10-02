@@ -1,4 +1,4 @@
-import { Logger } from '@/libs';
+import { postUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
 
 export class TagController {
@@ -19,7 +19,6 @@ export class TagController {
    * @param params.targetId - ID of the post or user to tag
    * @param params.label - Tag label
    * @param params.taggerId - ID of the user adding the tag
-   * @returns true if tag was added, false if it already exists
    */
   static async add({
     targetId,
@@ -29,19 +28,16 @@ export class TagController {
     targetId: string;
     label: string;
     taggerId: Core.Pubky;
-  }): Promise<boolean> {
+  }): Promise<void> {
     await this.initialize();
 
-    const postDetails = await Core.PostDetailsModel.table.get(targetId);
-    if (!postDetails) {
-      Logger.debug('Post not found for addTag', { targetId });
-      return false;
-    }
+    const target = targetId.split(':');
+    const postUri = postUriBuilder(target[0], target[1]);
 
-    const normalizedTag = await Core.TagNormalizer.to(postDetails.uri, label.trim(), taggerId);
+    const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    return Core.Local.Tag.save({ postId: targetId, label: normalizedLabel, taggerId });
+    await Core.Local.Tag.save({ postId: targetId, label: normalizedLabel, taggerId });
   }
 
   /**
@@ -50,7 +46,6 @@ export class TagController {
    * @param params.targetId - ID of the post or user
    * @param params.label - Tag label to remove
    * @param params.taggerId - ID of the user removing the tag
-   * @returns true if tag was removed, false if not found
    */
   static async remove({
     targetId,
@@ -60,29 +55,15 @@ export class TagController {
     targetId: string;
     label: string;
     taggerId: Core.Pubky;
-  }): Promise<boolean> {
+  }): Promise<void> {
     await this.initialize();
 
-    const postDetails = await Core.PostDetailsModel.table.get(targetId);
-    if (!postDetails) {
-      Logger.debug('Post not found for removeTag', { targetId });
-      return false;
-    }
+    const target = targetId.split(':');
+    const postUri = postUriBuilder(target[0], target[1]);
 
-    const normalizedTag = await Core.TagNormalizer.to(postDetails.uri, label.trim(), taggerId);
+    const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    return Core.Local.Tag.remove({ postId: targetId, label: normalizedLabel, taggerId });
-  }
-
-  /**
-   * Get all tags
-   * @param params - Parameters object
-   * @param params.targetId - ID of the post or user
-   * @returns Array of TagModel objects
-   */
-  static async get({ targetId }: { targetId: string }): Promise<Core.TagModel[]> {
-    await this.initialize();
-    return Core.Local.Tag.get({ postId: targetId });
+    await Core.Local.Tag.remove({ postId: targetId, label: normalizedLabel, taggerId });
   }
 }

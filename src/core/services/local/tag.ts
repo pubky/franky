@@ -8,7 +8,6 @@ export class LocalTagService {
    * @param params.postId - ID of the post to tag
    * @param params.label - Normalized tag label (should already be normalized by caller)
    * @param params.taggerId - ID of the user adding the tag
-   * @returns true if tag was added, false if it already exists
    */
   static async save({
     postId,
@@ -18,7 +17,7 @@ export class LocalTagService {
     postId: string;
     label: string;
     taggerId: Core.Pubky;
-  }): Promise<boolean> {
+  }): Promise<void> {
     try {
       const tagsData = await Core.PostTagsModel.table.get(postId);
 
@@ -27,13 +26,21 @@ export class LocalTagService {
 
         const existingTag = postTagsModel.tags.find((t) => t.label === label);
         if (existingTag?.relationship) {
-          Logger.debug('User already tagged this post with this label', { postId, label, taggerId });
-          return false;
+          throw createDatabaseError(
+            DatabaseErrorType.SAVE_FAILED,
+            'User already tagged this post with this label',
+            400,
+            { postId, label, taggerId },
+          );
         }
 
         const added = postTagsModel.addTagger(label, taggerId);
         if (!added) {
-          return false;
+          throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tagger', 500, {
+            postId,
+            label,
+            taggerId,
+          });
         }
 
         const updatedTag = postTagsModel.tags.find((t) => t.label === label);
@@ -56,7 +63,7 @@ export class LocalTagService {
         }
 
         Logger.debug('Added tagger using existing PostTagsModel', { postId, label, taggerId });
-        return true;
+        return;
       }
 
       const newPostTags = new Core.PostTagsModel({
@@ -66,7 +73,11 @@ export class LocalTagService {
 
       const added = newPostTags.addTagger(label, taggerId);
       if (!added) {
-        return false;
+        throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tagger', 500, {
+          postId,
+          label,
+          taggerId,
+        });
       }
 
       const newTag = newPostTags.tags.find((t) => t.label === label);
@@ -89,7 +100,6 @@ export class LocalTagService {
       }
 
       Logger.debug('Created new PostTagsModel and added tag', { postId, label, taggerId });
-      return true;
     } catch (error) {
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tag to post', 500, {
         error,
@@ -106,7 +116,6 @@ export class LocalTagService {
    * @param params.postId - ID of the post
    * @param params.label - Normalized tag label (should already be normalized by caller)
    * @param params.taggerId - ID of the user removing the tag
-   * @returns true if tag was removed, false if not found
    */
   static async remove({
     postId,
@@ -116,26 +125,33 @@ export class LocalTagService {
     postId: string;
     label: string;
     taggerId: Core.Pubky;
-  }): Promise<boolean> {
+  }): Promise<void> {
     try {
       const tagsData = await Core.PostTagsModel.table.get(postId);
 
       if (!tagsData) {
-        Logger.debug('Post has no tags', { postId });
-        return false;
+        throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Post has no tags', 404, { postId });
       }
 
       const postTagsModel = new Core.PostTagsModel(tagsData);
 
       const existingTag = postTagsModel.tags.find((t) => t.label === label);
       if (!existingTag?.relationship) {
-        Logger.debug('User has not tagged this post with this label', { postId, label, taggerId });
-        return false;
+        throw createDatabaseError(
+          DatabaseErrorType.DELETE_FAILED,
+          'User has not tagged this post with this label',
+          404,
+          { postId, label, taggerId },
+        );
       }
 
       const removed = postTagsModel.removeTagger(label, taggerId);
       if (!removed) {
-        return false;
+        throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tagger', 500, {
+          postId,
+          label,
+          taggerId,
+        });
       }
 
       const updatedTag = postTagsModel.tags.find((t) => t.label === label);
@@ -160,38 +176,12 @@ export class LocalTagService {
       }
 
       Logger.debug('Removed tagger using PostTagsModel', { postId, label, taggerId });
-      return true;
     } catch (error) {
-      Logger.error('Error in removeTag', { error, postId, label, taggerId });
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tag from post', 500, {
         error,
         postId,
         label,
         taggerId,
-      });
-    }
-  }
-
-  /**
-   * Get all tags for a post
-   * @param params - Parameters object
-   * @param params.postId - ID of the post
-   * @returns Array of TagModel objects
-   */
-  static async get({ postId }: { postId: string }): Promise<Core.TagModel[]> {
-    try {
-      const existingTags = await Core.PostTagsModel.table.get(postId);
-
-      if (!existingTags) {
-        return [];
-      }
-
-      const postTagsModel = new Core.PostTagsModel(existingTags);
-      return postTagsModel.tags;
-    } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to get post tags', 500, {
-        error,
-        postId,
       });
     }
   }

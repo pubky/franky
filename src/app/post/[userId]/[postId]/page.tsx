@@ -2,9 +2,10 @@ import * as Atoms from '@/atoms';
 import * as Templates from '@/templates';
 import * as Organisms from '@/organisms';
 
-export default async function PostPage({ params }: { params: Promise<{ postId: string }> }) {
-  const { postId: encodedPostId } = await params;
-  const postId = decodeURIComponent(encodedPostId);
+export default async function PostPage({ params }: { params: Promise<{ userId: string; postId: string }> }) {
+  const { userId: encodedUserId, postId: encodedPostId } = await params;
+  const userId = decodeURIComponent(encodedUserId);
+  const postId = `${userId}:${decodeURIComponent(encodedPostId)}`;
 
   return (
     <Atoms.Container className="flex flex-col">
