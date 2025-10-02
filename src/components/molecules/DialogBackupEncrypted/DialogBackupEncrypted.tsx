@@ -27,7 +27,7 @@ export function DialogBackupEncrypted() {
           <span>Encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8 !max-w-[576px]">
+      <Atoms.DialogContent className="gap-6 p-8">
         {step === 1 && <RecoveryStep1 setStep={setStep} />}
         {step === 2 && <RecoveryStep2 handleClose={handleClose} />}
       </Atoms.DialogContent>
