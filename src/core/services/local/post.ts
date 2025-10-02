@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import type { LocalFetchPostsParams, LocalReplyToPostParams } from './post.types';
 
 export class LocalPostService {
   /**
@@ -9,7 +10,7 @@ export class LocalPostService {
    * @param params.offset - Number of posts to skip (default: 0)
    * @returns Array of NexusPost objects
    */
-  static async fetch({ limit = 30, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<Core.NexusPost[]> {
+  static async fetch({ limit = 30, offset = 0 }: LocalFetchPostsParams = {}): Promise<Core.NexusPost[]> {
     try {
       const allRelationships = await Core.PostRelationshipsModel.table.toArray();
       const replyPostIds = new Set(allRelationships.filter((rel) => rel.replied).map((rel) => rel.id));
@@ -91,15 +92,8 @@ export class LocalPostService {
    * @param params - Parameters object
    * @param params.parentPostId - ID of the post being replied to
    * @param params.replyDetails - Normalized reply details (should already be normalized by caller)
-   * @returns The created reply post or null if failed
    */
-  static async reply({
-    parentPostId,
-    replyDetails,
-  }: {
-    parentPostId: string;
-    replyDetails: Core.PostDetailsModelSchema;
-  }): Promise<Core.NexusPost | null> {
+  static async reply({ parentPostId, replyDetails }: LocalReplyToPostParams): Promise<Core.NexusPost | null> {
     try {
       const parentPost = await Core.PostDetailsModel.table.get(parentPostId);
       if (!parentPost) {

@@ -1,12 +1,13 @@
 import { postUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
+import type { AddTagParams, RemoveTagParams } from './tag.types';
 
 export class TagController {
   private static isInitialized = false;
 
   private constructor() {}
 
-  private static async initialize(): Promise<void> {
+  private static async initialize() {
     if (!this.isInitialized) {
       await Core.db.initialize();
       this.isInitialized = true;
@@ -20,15 +21,7 @@ export class TagController {
    * @param params.label - Tag label
    * @param params.taggerId - ID of the user adding the tag
    */
-  static async add({
-    targetId,
-    label,
-    taggerId,
-  }: {
-    targetId: string;
-    label: string;
-    taggerId: Core.Pubky;
-  }): Promise<void> {
+  static async add({ targetId, label, taggerId }: AddTagParams) {
     await this.initialize();
 
     const target = targetId.split(':');
@@ -47,15 +40,7 @@ export class TagController {
    * @param params.label - Tag label to remove
    * @param params.taggerId - ID of the user removing the tag
    */
-  static async remove({
-    targetId,
-    label,
-    taggerId,
-  }: {
-    targetId: string;
-    label: string;
-    taggerId: Core.Pubky;
-  }): Promise<void> {
+  static async remove({ targetId, label, taggerId }: RemoveTagParams) {
     await this.initialize();
 
     const target = targetId.split(':');

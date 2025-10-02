@@ -5,3 +5,6 @@ export const Local = {
   Post: LocalPostService,
   Tag: LocalTagService,
 };
+
+export * from './post.types';
+export * from './tag.types';
