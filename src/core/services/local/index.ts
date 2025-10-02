@@ -1,10 +1,10 @@
-import { LocalPostService } from './post';
-import { LocalTagService } from './tag';
+import { LocalPostService } from './post/post';
+import { LocalTagService } from './tag/tag';
 
 export const Local = {
   Post: LocalPostService,
   Tag: LocalTagService,
 };
 
-export * from './post.types';
-export * from './tag.types';
+export * from './post';
+export * from './tag';
