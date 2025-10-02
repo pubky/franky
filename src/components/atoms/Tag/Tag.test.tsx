@@ -4,13 +4,6 @@ import { Tag } from './Tag';
 import * as Libs from '@/libs';
 
 describe('Tag', () => {
-  it('renders tag name correctly', () => {
-    render(<Tag name="bitcoin" />);
-
-    expect(screen.getByText('bitcoin')).toBeInTheDocument();
-    expect(screen.getByTestId('tag-name')).toBeInTheDocument();
-  });
-
   it('renders tag with count', () => {
     render(<Tag name="bitcoin" count={16} />);
 
@@ -34,19 +27,6 @@ describe('Tag', () => {
     fireEvent.click(tag);
 
     expect(mockOnClick).toHaveBeenCalledWith('bitcoin');
-  });
-
-  it('applies custom className', () => {
-    const customClass = 'custom-class';
-    const { container } = render(<Tag name="bitcoin" className={customClass} />);
-
-    expect(container.firstChild).toHaveClass(customClass);
-  });
-
-  it('renders with custom data-testid', () => {
-    render(<Tag name="bitcoin" data-testid="custom-tag" />);
-
-    expect(screen.getByTestId('custom-tag')).toBeInTheDocument();
   });
 
   it('generates consistent colors for same tag name', () => {
@@ -75,81 +55,6 @@ describe('Tag', () => {
 
     const expectedColor = Libs.hexToRgba(Libs.generateRandomColor('bitcoin'), 0.3);
     expect(style.style.backgroundColor).toBe(expectedColor);
-  });
-
-  it('uses custom color for pubky tag with opacity', () => {
-    const { container } = render(<Tag name="pubky" />);
-    const style = container.firstChild as HTMLElement;
-
-    const expectedColor = Libs.hexToRgba(Libs.generateRandomColor('pubky'), 0.3);
-    expect(style.style.backgroundColor).toBe(expectedColor);
-  });
-
-  it('has correct base styles', () => {
-    const { container } = render(<Tag name="bitcoin" />);
-    const tag = container.firstChild as HTMLElement;
-
-    expect(tag).toHaveClass('w-fit');
-    expect(tag).toHaveClass('flex');
-    expect(tag).toHaveClass('items-center');
-    expect(tag).toHaveClass('justify-between');
-    expect(tag).toHaveClass('px-3');
-    expect(tag).toHaveClass('h-8');
-    expect(tag).toHaveClass('rounded-md');
-    expect(tag).toHaveClass('cursor-pointer');
-    expect(tag).toHaveClass('transition-all');
-    expect(tag).toHaveClass('duration-200');
-  });
-
-  it('renders tag name with correct typography', () => {
-    render(<Tag name="bitcoin" />);
-
-    const tagName = screen.getByTestId('tag-name');
-    expect(tagName).toHaveClass('text-sm');
-    expect(tagName).toHaveClass('font-semibold');
-    expect(tagName).toHaveClass('text-foreground');
-  });
-
-  it('renders count with correct typography', () => {
-    render(<Tag name="bitcoin" count={16} />);
-
-    const tagCount = screen.getByTestId('tag-count');
-    expect(tagCount).toHaveClass('text-sm');
-    expect(tagCount).toHaveClass('ml-1.5');
-    expect(tagCount).toHaveClass('text-foreground/50');
-    expect(tagCount).toHaveClass('font-medium');
-  });
-
-  it('handles zero count', () => {
-    render(<Tag name="bitcoin" count={0} />);
-
-    expect(screen.getByText('0')).toBeInTheDocument();
-    expect(screen.getByTestId('tag-count')).toBeInTheDocument();
-  });
-
-  it('handles large count numbers', () => {
-    render(<Tag name="bitcoin" count={999999} />);
-
-    expect(screen.getByText('999999')).toBeInTheDocument();
-  });
-
-  it('shows border when clicked prop is true', () => {
-    const { container } = render(<Tag name="bitcoin" clicked={true} />);
-    const tag = container.firstChild as HTMLElement;
-
-    // Should have border when clicked
-    const expectedBorderColor = Libs.hexToRgba(Libs.generateRandomColor('bitcoin'), 1);
-    // Convert rgba to rgb for comparison (browser converts rgba(255,153,0,1) to rgb(255,153,0))
-    const rgbColor = expectedBorderColor.replace('rgba', 'rgb').replace(', 1)', ')');
-    expect(tag.style.border).toBe(`1px solid ${rgbColor}`);
-  });
-
-  it('does not show border when clicked prop is false', () => {
-    const { container } = render(<Tag name="bitcoin" clicked={false} />);
-    const tag = container.firstChild as HTMLElement;
-
-    // Should have transparent border when not clicked
-    expect(tag.style.border).toBe('1px solid transparent');
   });
 
   it('maintains background color regardless of clicked state', () => {
@@ -222,5 +127,54 @@ describe('Tag', () => {
 
     // Should still have border
     expect(tag.style.border).toBe(`1px solid ${rgbColor}`);
+  });
+});
+
+describe('Tag - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<Tag name="default props" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with count', () => {
+    const { container } = render(<Tag name="sixteen count" count={16} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with zero count', () => {
+    const { container } = render(<Tag name="zero count" count={0} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with large count', () => {
+    const { container } = render(<Tag name="large count" count={999999} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot when clicked', () => {
+    const { container } = render(<Tag name="been clicked" clicked={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot without clicked', () => {
+    const { container } = render(<Tag name="clicked false" clicked={false} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Tag name="custom-class" className="custom-tag" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with all props combined', () => {
+    const { container } = render(
+      <Tag name="defi" count={123} clicked={true} className="combined-tag" data-testid="combined-test" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for long tag name', () => {
+    const { container } = render(<Tag name="very-long-tag-name-example" count={7} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
