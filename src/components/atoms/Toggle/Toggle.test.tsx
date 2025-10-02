@@ -21,52 +21,66 @@ describe('Toggle', () => {
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
 
-  it('applies variant classes correctly', () => {
-    const { rerender } = render(<Toggle variant="default">Default</Toggle>);
-    let toggle = screen.getByRole('button');
-    expect(toggle).toHaveClass('bg-transparent');
-
-    rerender(<Toggle variant="outline">Outline</Toggle>);
-    toggle = screen.getByRole('button');
-    expect(toggle).toHaveClass('border', 'border-input', 'bg-transparent');
-  });
-
-  it('applies size classes correctly', () => {
-    const { rerender } = render(<Toggle size="sm">Small</Toggle>);
-    let toggle = screen.getByRole('button');
-    expect(toggle).toHaveClass('h-8', 'px-1.5', 'min-w-8');
-
-    rerender(<Toggle size="lg">Large</Toggle>);
-    toggle = screen.getByRole('button');
-    expect(toggle).toHaveClass('h-10', 'px-2.5', 'min-w-10');
-  });
-
-  it('can be disabled', () => {
-    render(<Toggle disabled>Disabled</Toggle>);
-
-    const toggle = screen.getByRole('button');
-    expect(toggle).toBeDisabled();
-    expect(toggle).toHaveClass('disabled:pointer-events-none', 'disabled:opacity-50');
-  });
-
   it('forwards ref correctly', () => {
     const ref = vi.fn();
     render(<Toggle ref={ref}>Toggle</Toggle>);
 
     expect(ref).toHaveBeenCalled();
   });
+});
 
-  it('accepts custom className', () => {
-    render(<Toggle className="custom-class">Toggle</Toggle>);
-
-    const toggle = screen.getByRole('button');
-    expect(toggle).toHaveClass('custom-class');
+describe('Toggle - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<Toggle>Default Toggle</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('renders with pressed state', () => {
-    render(<Toggle pressed>Pressed</Toggle>);
+  it('matches snapshot for default variant', () => {
+    const { container } = render(<Toggle variant="default">Default</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const toggle = screen.getByRole('button');
-    expect(toggle).toHaveAttribute('data-state', 'on');
+  it('matches snapshot for outline variant', () => {
+    const { container } = render(<Toggle variant="outline">Outline</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for small size', () => {
+    const { container } = render(<Toggle size="sm">Small</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for default size', () => {
+    const { container } = render(<Toggle>Default Size</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for large size', () => {
+    const { container } = render(<Toggle size="lg">Large</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for pressed state', () => {
+    const { container } = render(<Toggle pressed>Pressed</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for disabled state', () => {
+    const { container } = render(<Toggle disabled>Disabled</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with custom className', () => {
+    const { container } = render(<Toggle className="custom-class">Custom</Toggle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with all props combined', () => {
+    const { container } = render(
+      <Toggle variant="outline" size="lg" pressed className="custom-toggle">
+        Combined Props
+      </Toggle>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
