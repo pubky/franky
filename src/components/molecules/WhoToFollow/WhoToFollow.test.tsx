@@ -153,12 +153,12 @@ describe('WhoToFollow', () => {
   it('applies correct user item classes', () => {
     render(<WhoToFollow />);
 
-    const userItems = screen.getAllByText(/7SL4|327F|PL5Z/);
+    // Find user items by data-testid
+    const userItems = screen.getAllByTestId(/user-item-/);
     expect(userItems).toHaveLength(3);
 
     userItems.forEach((item) => {
-      const userContainer = item.closest('div');
-      expect(userContainer).toHaveClass('flex', 'items-center', 'justify-between');
+      expect(item).toHaveClass('flex', 'items-center', 'justify-between');
     });
   });
 
@@ -188,9 +188,10 @@ describe('WhoToFollow', () => {
   it('applies correct user info container classes', () => {
     render(<WhoToFollow />);
 
-    const userInfoContainers = screen.getAllByText(/Anna Pleb|Carl Smith|Mi Lei/);
-    userInfoContainers.forEach((name) => {
-      const userInfo = name.closest('div');
+    const userInfoContainers = screen.getAllByTestId(/user-info-/);
+    expect(userInfoContainers).toHaveLength(3);
+
+    userInfoContainers.forEach((userInfo) => {
       expect(userInfo).toHaveClass('flex', 'items-center', 'gap-3');
     });
   });
@@ -198,9 +199,10 @@ describe('WhoToFollow', () => {
   it('applies correct user details classes', () => {
     render(<WhoToFollow />);
 
-    const userDetails = screen.getAllByText(/Anna Pleb|Carl Smith|Mi Lei/);
-    userDetails.forEach((name) => {
-      const details = name.closest('div')?.nextElementSibling;
+    const userDetails = screen.getAllByTestId(/user-details-/);
+    expect(userDetails).toHaveLength(3);
+
+    userDetails.forEach((details) => {
       expect(details).toHaveClass('flex', 'flex-col', 'gap-0.5');
     });
   });

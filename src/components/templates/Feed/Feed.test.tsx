@@ -162,8 +162,8 @@ describe('Feed', () => {
     expect(post1).toHaveClass('p-6');
 
     // Check for Lorem ipsum content
-    expect(screen.getByText(/Lorem ipsum dolor sit amet/)).toBeInTheDocument();
-    expect(screen.getByText(/Duis aute irure dolor in reprehenderit/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Lorem ipsum dolor sit amet/)).toHaveLength(5);
+    expect(screen.getAllByText(/Duis aute irure dolor in reprehenderit/)).toHaveLength(5);
   });
 
   it('applies correct styling to content container', () => {

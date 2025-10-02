@@ -130,7 +130,7 @@ describe('ActiveUsers', () => {
     expect(userItems).toHaveLength(3);
 
     userItems.forEach((item) => {
-      const userContainer = item.closest('div');
+      const userContainer = item.closest('div')?.parentElement?.parentElement;
       expect(userContainer).toHaveClass('flex', 'items-center', 'gap-3');
     });
   });

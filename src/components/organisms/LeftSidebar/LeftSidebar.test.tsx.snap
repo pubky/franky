@@ -1,5 +1,45 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`LeftSidebar - Snapshots > matches snapshot with all filters in different states 1`] = `
+<div
+  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start"
+  data-testid="left-sidebar"
+>
+  <div
+    data-testid="filter-reach"
+  >
+    <button>
+      All
+    </button>
+  </div>
+  <div
+    data-testid="filter-sort"
+  >
+    <button>
+      Recent
+    </button>
+  </div>
+  <div
+    class="self-start sticky top-[100px] flex flex-col gap-6"
+  >
+    <div
+      data-testid="filter-root"
+    >
+      <button>
+        All
+      </button>
+    </div>
+    <div
+      data-testid="filter-root"
+    >
+      <button>
+        Columns
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`LeftSidebar - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start custom-sidebar"
@@ -23,14 +63,14 @@ exports[`LeftSidebar - Snapshots > matches snapshot with custom className 1`] = 
     class="self-start sticky top-[100px] flex flex-col gap-6"
   >
     <div
-      data-testid="filter-content"
+      data-testid="filter-root"
     >
       <button>
         All
       </button>
     </div>
     <div
-      data-testid="filter-layout"
+      data-testid="filter-root"
     >
       <button>
         Columns
@@ -63,14 +103,54 @@ exports[`LeftSidebar - Snapshots > matches snapshot with default props 1`] = `
     class="self-start sticky top-[100px] flex flex-col gap-6"
   >
     <div
-      data-testid="filter-content"
+      data-testid="filter-root"
     >
       <button>
         All
       </button>
     </div>
     <div
-      data-testid="filter-layout"
+      data-testid="filter-root"
+    >
+      <button>
+        Columns
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`LeftSidebar - Snapshots > matches snapshot with different filter states 1`] = `
+<div
+  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start"
+  data-testid="left-sidebar"
+>
+  <div
+    data-testid="filter-reach"
+  >
+    <button>
+      All
+    </button>
+  </div>
+  <div
+    data-testid="filter-sort"
+  >
+    <button>
+      Recent
+    </button>
+  </div>
+  <div
+    class="self-start sticky top-[100px] flex flex-col gap-6"
+  >
+    <div
+      data-testid="filter-root"
+    >
+      <button>
+        All
+      </button>
+    </div>
+    <div
+      data-testid="filter-root"
     >
       <button>
         Columns

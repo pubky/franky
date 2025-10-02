@@ -21,13 +21,13 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
 
       <div className="flex flex-col gap-2">
         {users.map((user) => (
-          <div key={user.id} className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div key={user.id} data-testid={`user-item-${user.id}`} className="flex items-center justify-between">
+            <div data-testid={`user-info-${user.id}`} className="flex items-center gap-3">
               <Atoms.Avatar className="h-12 w-12">
                 <Atoms.AvatarImage src={user.avatar} alt={user.name} />
                 <Atoms.AvatarFallback>{user.name[0]}</Atoms.AvatarFallback>
               </Atoms.Avatar>
-              <div className="flex flex-col gap-0.5">
+              <div data-testid={`user-details-${user.id}`} className="flex flex-col gap-0.5">
                 <div className="text-base font-bold text-foreground">{user.name}</div>
                 <div className="text-sm text-muted-foreground opacity-50">{user.pubky}</div>
               </div>

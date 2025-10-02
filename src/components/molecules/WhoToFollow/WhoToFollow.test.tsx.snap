@@ -57,9 +57,11 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
   >
     <div
       class="flex items-center justify-between"
+      data-testid="user-item-1"
     >
       <div
         class="flex items-center gap-3"
+        data-testid="user-info-1"
       >
         <div
           class="h-12 w-12"
@@ -78,6 +80,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
         </div>
         <div
           class="flex flex-col gap-0.5"
+          data-testid="user-details-1"
         >
           <div
             class="text-base font-bold text-foreground"
@@ -104,9 +107,11 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
     </div>
     <div
       class="flex items-center justify-between"
+      data-testid="user-item-2"
     >
       <div
         class="flex items-center gap-3"
+        data-testid="user-info-2"
       >
         <div
           class="h-12 w-12"
@@ -125,6 +130,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
         </div>
         <div
           class="flex flex-col gap-0.5"
+          data-testid="user-details-2"
         >
           <div
             class="text-base font-bold text-foreground"
@@ -151,9 +157,11 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
     </div>
     <div
       class="flex items-center justify-between"
+      data-testid="user-item-3"
     >
       <div
         class="flex items-center gap-3"
+        data-testid="user-info-3"
       >
         <div
           class="h-12 w-12"
@@ -172,6 +180,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
         </div>
         <div
           class="flex flex-col gap-0.5"
+          data-testid="user-details-3"
         >
           <div
             class="text-base font-bold text-foreground"
@@ -230,9 +239,11 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
   >
     <div
       class="flex items-center justify-between"
+      data-testid="user-item-1"
     >
       <div
         class="flex items-center gap-3"
+        data-testid="user-info-1"
       >
         <div
           class="h-12 w-12"
@@ -251,6 +262,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
         </div>
         <div
           class="flex flex-col gap-0.5"
+          data-testid="user-details-1"
         >
           <div
             class="text-base font-bold text-foreground"
@@ -277,9 +289,11 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
     </div>
     <div
       class="flex items-center justify-between"
+      data-testid="user-item-2"
     >
       <div
         class="flex items-center gap-3"
+        data-testid="user-info-2"
       >
         <div
           class="h-12 w-12"
@@ -298,6 +312,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
         </div>
         <div
           class="flex flex-col gap-0.5"
+          data-testid="user-details-2"
         >
           <div
             class="text-base font-bold text-foreground"
@@ -324,9 +339,11 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
     </div>
     <div
       class="flex items-center justify-between"
+      data-testid="user-item-3"
     >
       <div
         class="flex items-center gap-3"
+        data-testid="user-info-3"
       >
         <div
           class="h-12 w-12"
@@ -345,6 +362,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
         </div>
         <div
           class="flex flex-col gap-0.5"
+          data-testid="user-details-3"
         >
           <div
             class="text-base font-bold text-foreground"

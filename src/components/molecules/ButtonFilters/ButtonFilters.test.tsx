@@ -102,6 +102,7 @@ describe('ButtonFilters', () => {
   it('applies correct positioning classes for left position', () => {
     render(<ButtonFilters position="left" />);
 
+    const button = screen.getByRole('button');
     const container = button.closest('div');
     expect(container).toHaveClass('z-10', 'fixed', 'top-[150px]', 'left-0');
   });
@@ -109,6 +110,7 @@ describe('ButtonFilters', () => {
   it('applies correct positioning classes for right position', () => {
     render(<ButtonFilters position="right" />);
 
+    const button = screen.getByRole('button');
     const container = button.closest('div');
     expect(container).toHaveClass('z-10', 'fixed', 'top-[150px]', 'right-0');
   });

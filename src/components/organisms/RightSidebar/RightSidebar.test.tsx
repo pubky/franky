@@ -46,13 +46,13 @@ describe('RightSidebar', () => {
 
     expect(children[0]).toHaveAttribute('data-testid', 'who-to-follow');
     expect(children[1]).toHaveAttribute('data-testid', 'active-users');
-    expect(children[2]).toHaveAttribute('data-testid', 'feedback-card');
+    expect(children[2]).toHaveClass('self-start', 'sticky', 'top-[100px]');
   });
 
   it('has sticky positioning for feedback card', () => {
     render(<RightSidebar />);
 
-    const stickyContainer = screen.getByTestId('feedback-card').closest('div');
+    const stickyContainer = screen.getByTestId('feedback-card').parentElement;
     expect(stickyContainer).toHaveClass('self-start', 'sticky', 'top-[100px]');
   });
 
