@@ -59,6 +59,21 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   ),
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <span data-size={size} className={className}>
+      {children}
+    </span>
+  ),
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div className={className} data-testid="card">
+      {children}
+    </div>
+  ),
+}));
+
+// Mock the molecules
+vi.mock('@/molecules', () => ({
+  Posts: () => <div data-testid="posts">Mocked Posts Component</div>,
 }));
 
 describe('Feed', () => {
