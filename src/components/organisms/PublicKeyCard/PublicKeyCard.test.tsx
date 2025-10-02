@@ -37,7 +37,6 @@ vi.mock('@/molecules', () => ({
   toast: mockToast,
   ContentCard: ({ children, image }: { children: React.ReactNode; image?: ImageProps }) => (
     <div data-testid="content-card">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
       {image && <img data-testid="content-card-image" src={image.src} alt={image.alt} data-size={image.size} />}
       {children}
     </div>
