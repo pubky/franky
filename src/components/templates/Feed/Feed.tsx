@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
-import * as Templates from '@/templates';
+import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 import * as App from '@/app';
@@ -137,7 +137,7 @@ export function Feed() {
             {/* Posts List */}
             <div className="w-full space-y-4">
               {posts.map((post) => (
-                <Templates.PostWide
+                <Organisms.Post
                   key={post.details.id}
                   postId={post.details.id}
                   clickable={true}

@@ -3,7 +3,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
-import * as Templates from '@/templates';
+import * as Organisms from '@/organisms';
 
 interface PostRepliesProps {
   postId: string;
@@ -29,7 +29,7 @@ export function PostReplies({ postId }: PostRepliesProps) {
         <div key={replyId} className="flex gap-4">
           <div className="w-8 flex-shrink-0">{/* Reply connector SVG will go here */}</div>
           <div className="flex-1">
-            <Templates.PostWide postId={replyId} isReply={true} />
+            <Organisms.Post postId={replyId} isReply={true} />
           </div>
         </div>
       ))}

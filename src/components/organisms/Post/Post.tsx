@@ -4,14 +4,14 @@ import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Organisms from '@/organisms';
 
-interface PostWideProps {
+interface PostProps {
   postId: string;
   clickable?: boolean;
   isReply?: boolean;
   onClick?: () => void;
 }
 
-export function PostWide({ postId, clickable = false, isReply = false, onClick }: PostWideProps) {
+export function Post({ postId, clickable = false, isReply = false, onClick }: PostProps) {
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
   return (

@@ -5,6 +5,7 @@ export * from './DialogRestoreEncryptedFile';
 export * from './DialogRestoreRecoveryPhrase';
 export * from './Header';
 export * from './HomeserverCard';
+export * from './Post';
 export * from './PostContent';
 export * from './PostCounts';
 export * from './PostReplies';
