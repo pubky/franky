@@ -24,7 +24,7 @@ exports[`AlertBackup > matches snapshot for default AlertBackup 1`] = `
       <span
         class="hidden md:inline"
       >
-        to avoid losing your account!
+         to avoid losing your account!
       </span>
     </p>
   </div>
@@ -65,7 +65,7 @@ exports[`AlertBackup > matches snapshot for warning icon 1`] = `
       <span
         class="hidden md:inline"
       >
-        to avoid losing your account!
+         to avoid losing your account!
       </span>
     </p>
   </div>
@@ -106,7 +106,7 @@ exports[`AlertBackup > matches snapshot for warning message 1`] = `
       <span
         class="hidden md:inline"
       >
-        to avoid losing your account!
+         to avoid losing your account!
       </span>
     </p>
   </div>

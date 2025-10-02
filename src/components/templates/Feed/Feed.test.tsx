@@ -15,10 +15,29 @@ vi.mock('next/navigation', () => ({
   })),
 }));
 
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(() => null),
+}));
+
 // Mock the Core module
 vi.mock('@/core', () => ({
   AuthController: {
     logout: vi.fn(),
+  },
+  useAuthStore: vi.fn(() => ({
+    currentUserPubky: null,
+  })),
+  useOnboardingStore: vi.fn(() => ({
+    secretKey: '',
+  })),
+  PostController: {
+    fetch: vi.fn(() => Promise.resolve([])),
+  },
+  db: {
+    user_details: {
+      get: vi.fn(() => Promise.resolve(null)),
+    },
   },
 }));
 
@@ -74,6 +93,20 @@ vi.mock('@/atoms', () => ({
 // Mock the molecules
 vi.mock('@/molecules', () => ({
   Posts: () => <div data-testid="posts">Mocked Posts Component</div>,
+  DialogWelcome: () => <div data-testid="dialog-welcome">Mocked DialogWelcome</div>,
+  AlertBackup: () => <div data-testid="alert-backup">Mocked AlertBackup</div>,
+}));
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  Post: () => <div data-testid="post">Mocked Post</div>,
+}));
+
+// Mock hooks
+vi.mock('@/hooks', () => ({
+  useInfiniteScroll: vi.fn(() => ({
+    sentinelRef: { current: null },
+  })),
 }));
 
 describe('Feed', () => {

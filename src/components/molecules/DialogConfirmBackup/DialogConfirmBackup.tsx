@@ -1,9 +1,26 @@
+'use client';
+
+import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 
-export function DialogConfirmBackup() {
+interface DialogConfirmBackupProps {
+  onConfirm?: () => void;
+}
+
+export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const { clearSecretKey } = Core.useOnboardingStore();
+
+  const handleConfirm = () => {
+    clearSecretKey();
+    setIsOpen(false);
+    onConfirm?.();
+  };
+
   return (
-    <Atoms.Dialog>
+    <Atoms.Dialog open={isOpen} onOpenChange={setIsOpen}>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button variant="secondary" className="bg-card">
           Done
@@ -27,11 +44,13 @@ export function DialogConfirmBackup() {
               </Atoms.Typography>
             </Atoms.Container>
             <Atoms.Container className="flex md:flex-row flex-col gap-4">
-              <Atoms.Button size="lg" variant="outline">
-                <Libs.ShieldCheck className="h-4 w-4" />
-                Backup methods
-              </Atoms.Button>
-              <Atoms.Button size="lg">
+              <Atoms.DialogClose asChild>
+                <Atoms.Button size="lg" variant="outline">
+                  <Libs.ShieldCheck className="h-4 w-4" />
+                  Backup methods
+                </Atoms.Button>
+              </Atoms.DialogClose>
+              <Atoms.Button size="lg" onClick={handleConfirm}>
                 <Libs.Check className="h-4 w-4" />
                 Confirm (delete seed)
               </Atoms.Button>

@@ -2,8 +2,10 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
@@ -19,6 +21,38 @@ export function Feed() {
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+  const [showBackupAlert, setShowBackupAlert] = useState(false);
+
+  const { currentUserPubky } = Core.useAuthStore();
+  const { secretKey } = Core.useOnboardingStore();
+
+  // Fetch current user details from database
+  const userDetails = useLiveQuery(async () => {
+    if (!currentUserPubky) return null;
+    const details = await Core.db.user_details.get(currentUserPubky);
+    return details || null;
+  }, [currentUserPubky]);
+
+  // Check if user just completed onboarding (has secretKey)
+  useEffect(() => {
+    if (secretKey && !showWelcomeDialog && !showBackupAlert) {
+      // Show welcome dialog on first load after onboarding
+      setShowWelcomeDialog(true);
+    }
+  }, [secretKey, showWelcomeDialog, showBackupAlert]);
+
+  const handleWelcomeClose = () => {
+    setShowWelcomeDialog(false);
+    // Show backup alert after closing welcome dialog
+    if (secretKey) {
+      setShowBackupAlert(true);
+    }
+  };
+
+  const handleBackupDismiss = () => {
+    setShowBackupAlert(false);
+  };
 
   const handleLogout = () => {
     // Just navigate to logout page - logout logic will happen there
@@ -100,84 +134,101 @@ export function Feed() {
   };
 
   return (
-    <Atoms.Container size="container" className="px-6">
-      <Atoms.Container size="default" className="items-start mx-0 flex flex-col gap-6">
-        <Atoms.Container className="flex items-center justify-between w-full">
-          <Atoms.Heading level={1} size="xl" className="text-2xl">
-            Feed
-          </Atoms.Heading>
+    <>
+      {/* Welcome Dialog */}
+      {userDetails && currentUserPubky && (
+        <Molecules.DialogWelcome
+          isOpen={showWelcomeDialog}
+          onOpenChange={handleWelcomeClose}
+          name={userDetails.name}
+          pubky={currentUserPubky}
+          image={userDetails.image || undefined}
+          bio={userDetails.bio}
+        />
+      )}
 
-          {/* Logout button */}
-          <Atoms.Button id="feed-logout-btn" variant="secondary" size="lg" onClick={handleLogout}>
-            Logout
-          </Atoms.Button>
+      <Atoms.Container size="container" className="px-6">
+        <Atoms.Container size="default" className="items-start mx-0 flex flex-col gap-6">
+          {/* Backup Alert */}
+          {showBackupAlert && <Molecules.AlertBackup onDismiss={handleBackupDismiss} />}
+
+          <Atoms.Container className="flex items-center justify-between w-full">
+            <Atoms.Heading level={1} size="xl" className="text-2xl">
+              Feed
+            </Atoms.Heading>
+
+            {/* Logout button */}
+            <Atoms.Button id="feed-logout-btn" variant="secondary" size="lg" onClick={handleLogout}>
+              Logout
+            </Atoms.Button>
+          </Atoms.Container>
+
+          {/* Posts */}
+          {loading ? (
+            <Atoms.Container className="flex justify-center items-center py-8">
+              <Atoms.Typography size="md" className="text-muted-foreground">
+                Loading posts...
+              </Atoms.Typography>
+            </Atoms.Container>
+          ) : error && posts.length === 0 ? (
+            <Atoms.Container className="flex justify-center items-center py-8">
+              <Atoms.Typography size="md" className="text-destructive">
+                Error: {error}
+              </Atoms.Typography>
+            </Atoms.Container>
+          ) : posts.length === 0 ? (
+            <Atoms.Container className="flex justify-center items-center py-8">
+              <Atoms.Typography size="md" className="text-muted-foreground">
+                No posts found
+              </Atoms.Typography>
+            </Atoms.Container>
+          ) : (
+            <Atoms.Container className="w-full max-w-2xl mx-auto">
+              {/* Posts List */}
+              <div className="w-full space-y-4">
+                {posts.map((post) => (
+                  <Organisms.Post
+                    key={post.details.id}
+                    postId={post.details.id}
+                    clickable={true}
+                    onClick={() => handlePostClick(post)}
+                  />
+                ))}
+
+                {/* Loading More Indicator */}
+                {loadingMore && (
+                  <Atoms.Container className="flex justify-center items-center py-8">
+                    <Atoms.Typography size="md" className="text-muted-foreground">
+                      Loading more posts...
+                    </Atoms.Typography>
+                  </Atoms.Container>
+                )}
+
+                {/* Error on loading more */}
+                {error && posts.length > 0 && (
+                  <Atoms.Container className="flex justify-center items-center py-4">
+                    <Atoms.Typography size="sm" className="text-destructive">
+                      Error loading more posts: {error}
+                    </Atoms.Typography>
+                  </Atoms.Container>
+                )}
+
+                {/* End of posts message */}
+                {!hasMore && !loadingMore && posts.length > 0 && (
+                  <Atoms.Container className="flex justify-center items-center py-8">
+                    <Atoms.Typography size="md" className="text-muted-foreground">
+                      You&apos;ve reached the end! 🎉
+                    </Atoms.Typography>
+                  </Atoms.Container>
+                )}
+
+                {/* Infinite scroll sentinel */}
+                <div ref={sentinelRef} style={{ height: '20px' }} />
+              </div>
+            </Atoms.Container>
+          )}
         </Atoms.Container>
-
-        {/* Posts */}
-        {loading ? (
-          <Atoms.Container className="flex justify-center items-center py-8">
-            <Atoms.Typography size="md" className="text-muted-foreground">
-              Loading posts...
-            </Atoms.Typography>
-          </Atoms.Container>
-        ) : error && posts.length === 0 ? (
-          <Atoms.Container className="flex justify-center items-center py-8">
-            <Atoms.Typography size="md" className="text-destructive">
-              Error: {error}
-            </Atoms.Typography>
-          </Atoms.Container>
-        ) : posts.length === 0 ? (
-          <Atoms.Container className="flex justify-center items-center py-8">
-            <Atoms.Typography size="md" className="text-muted-foreground">
-              No posts found
-            </Atoms.Typography>
-          </Atoms.Container>
-        ) : (
-          <Atoms.Container className="w-full max-w-2xl mx-auto">
-            {/* Posts List */}
-            <div className="w-full space-y-4">
-              {posts.map((post) => (
-                <Organisms.Post
-                  key={post.details.id}
-                  postId={post.details.id}
-                  clickable={true}
-                  onClick={() => handlePostClick(post)}
-                />
-              ))}
-
-              {/* Loading More Indicator */}
-              {loadingMore && (
-                <Atoms.Container className="flex justify-center items-center py-8">
-                  <Atoms.Typography size="md" className="text-muted-foreground">
-                    Loading more posts...
-                  </Atoms.Typography>
-                </Atoms.Container>
-              )}
-
-              {/* Error on loading more */}
-              {error && posts.length > 0 && (
-                <Atoms.Container className="flex justify-center items-center py-4">
-                  <Atoms.Typography size="sm" className="text-destructive">
-                    Error loading more posts: {error}
-                  </Atoms.Typography>
-                </Atoms.Container>
-              )}
-
-              {/* End of posts message */}
-              {!hasMore && !loadingMore && posts.length > 0 && (
-                <Atoms.Container className="flex justify-center items-center py-8">
-                  <Atoms.Typography size="md" className="text-muted-foreground">
-                    You&apos;ve reached the end! 🎉
-                  </Atoms.Typography>
-                </Atoms.Container>
-              )}
-
-              {/* Infinite scroll sentinel */}
-              <div ref={sentinelRef} style={{ height: '20px' }} />
-            </div>
-          </Atoms.Container>
-        )}
       </Atoms.Container>
-    </Atoms.Container>
+    </>
   );
 }

@@ -12,6 +12,7 @@ export interface OnboardingActions {
   reset: () => void;
   setPubky: (pubky: Core.Pubky) => void;
   setSecretKey: (secretKey: string) => void;
+  clearSecretKey: () => void;
   setMnemonic: (mnemonic: string) => void;
   setKeypair: (pubky: Core.Pubky, secretKey: string) => void;
   setKeypairFromMnemonic: (mnemonic: string) => void;

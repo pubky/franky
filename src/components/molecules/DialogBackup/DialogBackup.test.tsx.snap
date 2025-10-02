@@ -17,7 +17,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="sm:max-w-5xl gap-0 max-h-[90vh]"
     data-testid="dialog-content"
   >
     <div
@@ -31,7 +31,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
+      class="h-full pr-4"
       data-testid="container"
     >
       <div
@@ -71,11 +71,11 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -99,11 +99,11 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -127,11 +127,11 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -157,7 +157,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="sm:max-w-5xl gap-0 max-h-[90vh]"
     data-testid="dialog-content"
   >
     <div
@@ -171,7 +171,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
+      class="h-full pr-4"
       data-testid="container"
     >
       <div
@@ -211,11 +211,11 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -239,11 +239,11 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -267,11 +267,11 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -297,7 +297,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="sm:max-w-5xl gap-0 max-h-[90vh]"
     data-testid="dialog-content"
   >
     <div
@@ -311,7 +311,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
+      class="h-full pr-4"
       data-testid="container"
     >
       <div
@@ -351,11 +351,11 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -379,11 +379,11 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -407,11 +407,11 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -437,7 +437,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="sm:max-w-5xl gap-0 max-h-[90vh]"
     data-testid="dialog-content"
   >
     <div
@@ -451,7 +451,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
+      class="h-full pr-4"
       data-testid="container"
     >
       <div
@@ -491,11 +491,11 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -519,11 +519,11 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -547,11 +547,11 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -577,7 +577,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="sm:max-w-5xl gap-0 max-h-[90vh]"
     data-testid="dialog-content"
   >
     <div
@@ -591,7 +591,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
+      class="h-full pr-4"
       data-testid="container"
     >
       <div
@@ -631,11 +631,11 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -659,11 +659,11 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -687,11 +687,11 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -717,7 +717,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="sm:max-w-5xl gap-0 max-h-[90vh]"
     data-testid="dialog-content"
   >
     <div
@@ -731,7 +731,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
+      class="h-full pr-4"
       data-testid="container"
     >
       <div
@@ -771,11 +771,11 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -799,11 +799,11 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
             class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
@@ -827,11 +827,11 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>

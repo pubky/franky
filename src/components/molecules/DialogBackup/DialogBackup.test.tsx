@@ -2,6 +2,20 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { DialogBackup } from './DialogBackup';
 
+// Mock Core module
+vi.mock('@/core', () => ({
+  useOnboardingStore: vi.fn(() => ({
+    mnemonic: 'test mnemonic phrase',
+  })),
+}));
+
+// Mock Molecules
+vi.mock('@/molecules', () => ({
+  DialogBackupPhrase: () => <div data-testid="dialog-backup-phrase">DialogBackupPhrase</div>,
+  DialogBackupEncrypted: () => <div data-testid="dialog-backup-encrypted">DialogBackupEncrypted</div>,
+  DialogExport: () => <div data-testid="dialog-export">DialogExport</div>,
+}));
+
 // Mock atoms
 vi.mock('@/atoms', () => ({
   Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
@@ -121,7 +135,7 @@ describe('DialogBackup', () => {
     render(<DialogBackup />);
 
     expect(screen.getByText('Recovery phrase')).toBeInTheDocument();
-    expect(screen.getAllByText('Continue')).toHaveLength(3);
+    expect(screen.getByTestId('dialog-backup-phrase')).toBeInTheDocument();
 
     const images = screen.getAllByTestId('image');
     const noteImage = images.find((img) => img.getAttribute('data-alt') === 'Note');
@@ -132,6 +146,7 @@ describe('DialogBackup', () => {
     render(<DialogBackup />);
 
     expect(screen.getByText('Download encrypted file')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-backup-encrypted')).toBeInTheDocument();
 
     const images = screen.getAllByTestId('image');
     const folderImage = images.find((img) => img.getAttribute('data-alt') === 'Folder');
@@ -142,6 +157,7 @@ describe('DialogBackup', () => {
     render(<DialogBackup />);
 
     expect(screen.getByText('Export to Pubky Ring')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-export')).toBeInTheDocument();
 
     const images = screen.getAllByTestId('image');
     const keyringImage = images.find((img) => img.getAttribute('data-alt') === 'Keys');
@@ -183,6 +199,8 @@ describe('DialogBackup', () => {
     expect(screen.getByTestId('dialog-title')).toBeInTheDocument();
     expect(screen.getAllByTestId('card')).toHaveLength(3);
     expect(screen.getAllByTestId('image')).toHaveLength(3);
-    expect(screen.getAllByText('Continue')).toHaveLength(3);
+    expect(screen.getByTestId('dialog-backup-phrase')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-backup-encrypted')).toBeInTheDocument();
+    expect(screen.getByTestId('dialog-export')).toBeInTheDocument();
   });
 });

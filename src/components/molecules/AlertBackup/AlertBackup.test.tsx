@@ -2,6 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { AlertBackup } from './AlertBackup';
 
+// Mock Core module
+vi.mock('@/core', () => ({
+  useOnboardingStore: vi.fn(() => ({
+    secretKey: 'test-secret-key',
+  })),
+}));
+
 // Mock atoms
 vi.mock('@/atoms', () => ({
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
