@@ -8,7 +8,7 @@ interface PopoverInviteHomeserverProps {
 
 export function PopoverInviteHomeserver({ className = 'hover:bg-brand/10' }: PopoverInviteHomeserverProps) {
   return (
-    <Atoms.Popover>
+    <Atoms.Popover hover>
       <Atoms.PopoverTrigger asChild>
         <Atoms.Button variant="ghost" size="icon" className={className}>
           <Libs.CircleHelp className="h-4 w-4 text-white" data-testid="circle-help-icon" />
