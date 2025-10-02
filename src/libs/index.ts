@@ -4,4 +4,5 @@ export * from './icons';
 export * from './identity';
 export * from './logger';
 export * from './share';
+export * from './svg';
 export * from './utils';

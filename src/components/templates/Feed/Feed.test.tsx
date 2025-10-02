@@ -1,7 +1,8 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Feed } from './Feed';
 import { useRouter } from 'next/navigation';
+import * as Core from '@/core';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
@@ -58,19 +59,44 @@ vi.mock('@/components', () => ({
       {children}
     </div>
   ),
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div className={className} data-testid="container">
+      {children}
+    </div>
+  ),
 }));
 
 // Mock the organisms
 vi.mock('@/organisms', () => ({
-  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
+  Post: ({ postId, clickable, onClick }: { postId: string; clickable?: boolean; onClick?: () => void }) => (
+    <div data-testid="post" data-post-id={postId} onClick={onClick} data-clickable={clickable}>
+      Post: {postId}
+    </div>
+  ),
+}));
+
+// Mock the core
+vi.mock('@/core', () => ({
+  PostController: {
+    fetch: vi.fn(),
+  },
+}));
+
+// Mock the hooks
+vi.mock('@/hooks', () => ({
+  useInfiniteScroll: vi.fn(() => ({ sentinelRef: { current: null } })),
 }));
 
 // Mock the app routes
-vi.mock('@/app', () => ({
-  AUTH_ROUTES: {
-    LOGOUT: '/logout',
-  },
-}));
+vi.mock('@/app', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    AUTH_ROUTES: {
+      LOGOUT: '/logout',
+    },
+  };
+});
 
 describe('Feed', () => {
   const mockPush = vi.fn();
@@ -85,30 +111,55 @@ describe('Feed', () => {
 
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
+    vi.mocked(Core.PostController.fetch).mockResolvedValue([]);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders with correct heading and description', () => {
+  it('renders with correct heading', async () => {
     render(<Feed />);
 
     expect(screen.getByText('Feed')).toBeInTheDocument();
-    expect(
-      screen.getByText("Welcome to your feed. This is where you'll see posts from people you follow."),
-    ).toBeInTheDocument();
   });
 
-  it('renders placeholder content with correct number of posts', () => {
+  it('shows loading state initially', () => {
     render(<Feed />);
 
-    // Should render 5 placeholder posts
-    expect(screen.getByText('Post 1')).toBeInTheDocument();
-    expect(screen.getByText('Post 2')).toBeInTheDocument();
-    expect(screen.getByText('Post 3')).toBeInTheDocument();
-    expect(screen.getByText('Post 4')).toBeInTheDocument();
-    expect(screen.getByText('Post 5')).toBeInTheDocument();
+    expect(screen.getByText('Loading posts...')).toBeInTheDocument();
+  });
+
+  it('renders posts when data is loaded', async () => {
+    const mockPosts = [
+      {
+        details: { id: 'user1:post1' },
+      },
+      {
+        details: { id: 'user2:post2' },
+      },
+    ];
+    vi.mocked(Core.PostController.fetch).mockResolvedValue(mockPosts);
+
+    render(<Feed />);
+
+    await waitFor(() => {
+      const posts = screen.queryAllByTestId('post');
+      expect(posts.length).toBe(2);
+    });
+
+    const posts = screen.getAllByTestId('post');
+    expect(posts).toHaveLength(2);
+  });
+
+  it('shows no posts message when no posts are available', async () => {
+    vi.mocked(Core.PostController.fetch).mockResolvedValue([]);
+
+    render(<Feed />);
+
+    await waitFor(() => {
+      expect(screen.getByText('No posts found')).toBeInTheDocument();
+    });
   });
 
   it('renders logout button with correct attributes', () => {
@@ -129,66 +180,6 @@ describe('Feed', () => {
     expect(mockPush).toHaveBeenCalledTimes(1);
   });
 
-  it('renders within ContentLayout', () => {
-    render(<Feed />);
-
-    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
-  });
-
-  it('applies correct heading attributes', () => {
-    render(<Feed />);
-
-    const heading = screen.getByText('Feed');
-    expect(heading).toHaveAttribute('data-level', '1');
-    expect(heading).toHaveAttribute('data-size', 'xl');
-    expect(heading).toHaveClass('text-2xl');
-  });
-
-  it('applies correct typography attributes', () => {
-    render(<Feed />);
-
-    const description = screen.getByText(
-      "Welcome to your feed. This is where you'll see posts from people you follow.",
-    );
-    expect(description).toHaveAttribute('data-size', 'md');
-    expect(description).toHaveClass('text-muted-foreground');
-  });
-
-  it('renders placeholder posts with correct content', () => {
-    render(<Feed />);
-
-    // Check that each post has the expected content structure
-    const post1 = screen.getByText('Post 1').closest('div');
-    expect(post1).toHaveClass('p-6');
-
-    // Check for Lorem ipsum content
-    expect(screen.getAllByText(/Lorem ipsum dolor sit amet/)).toHaveLength(5);
-    expect(screen.getAllByText(/Duis aute irure dolor in reprehenderit/)).toHaveLength(5);
-  });
-
-  it('applies correct styling to content container', () => {
-    render(<Feed />);
-
-    const contentContainer = screen.getByText('Post 1').closest('div')?.parentElement;
-    expect(contentContainer).toHaveClass('flex', 'flex-col', 'gap-4', 'mt-4');
-  });
-
-  it('applies correct styling to logout button', () => {
-    render(<Feed />);
-
-    const logoutButton = screen.getByText('Logout');
-    expect(logoutButton).toHaveClass('mt-6');
-  });
-
-  it('renders all placeholder posts with unique keys', () => {
-    render(<Feed />);
-
-    // Verify that all 5 posts are rendered
-    for (let i = 1; i <= 5; i++) {
-      expect(screen.getByText(`Post ${i}`)).toBeInTheDocument();
-    }
-  });
-
   it('handles multiple logout clicks correctly', () => {
     render(<Feed />);
 
@@ -201,6 +192,44 @@ describe('Feed', () => {
 
     expect(mockPush).toHaveBeenCalledWith('/logout');
     expect(mockPush).toHaveBeenCalledTimes(3);
+  });
+
+  it('fetches posts on mount', async () => {
+    render(<Feed />);
+
+    await waitFor(() => {
+      expect(Core.PostController.fetch).toHaveBeenCalledWith({ limit: 20, offset: 0 });
+    });
+  });
+
+  it('handles post click and navigates to post page', async () => {
+    const mockPosts = [
+      {
+        details: { id: 'user1:post1' },
+      },
+    ];
+    vi.mocked(Core.PostController.fetch).mockResolvedValue(mockPosts);
+
+    render(<Feed />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('post')).toBeInTheDocument();
+    });
+
+    const post = screen.getByTestId('post');
+    fireEvent.click(post);
+
+    expect(mockPush).toHaveBeenCalledWith('/post/user1/post1');
+  });
+
+  it('shows error message when fetch fails', async () => {
+    vi.mocked(Core.PostController.fetch).mockRejectedValue(new Error('Failed to fetch'));
+
+    render(<Feed />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error:/)).toBeInTheDocument();
+    });
   });
 });
 
@@ -217,6 +246,7 @@ describe('Feed - Snapshots', () => {
 
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
+    vi.mocked(Core.PostController.fetch).mockResolvedValue([]);
   });
 
   it('matches snapshot with default props', () => {
@@ -230,21 +260,9 @@ describe('Feed - Snapshots', () => {
     expect(heading).toMatchSnapshot();
   });
 
-  it('matches snapshot for placeholder content', () => {
-    render(<Feed />);
-    const contentContainer = screen.getByText('Post 1').closest('div')?.parentElement;
-    expect(contentContainer).toMatchSnapshot();
-  });
-
   it('matches snapshot for logout button', () => {
     render(<Feed />);
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toMatchSnapshot();
-  });
-
-  it('matches snapshot for individual post', () => {
-    render(<Feed />);
-    const post1 = screen.getByText('Post 1').closest('div');
-    expect(post1).toMatchSnapshot();
   });
 });

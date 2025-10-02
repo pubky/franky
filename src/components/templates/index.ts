@@ -4,6 +4,7 @@ export * from './Home';
 export * from './Install';
 export * from './Homeserver';
 export * from './Logout';
+export * from './SinglePost';
 export * from './Profile';
 export * from './PublicKey';
 export * from './Scan';

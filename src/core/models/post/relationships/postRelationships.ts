@@ -24,4 +24,9 @@ export class PostRelationshipsModel
   static toSchema(data: Core.NexusModelTuple<Core.NexusPostRelationships>): Core.PostRelationshipsModelSchema {
     return { ...data[1], id: data[0] };
   }
+
+  // Query methods
+  static async getReplies(postId: string) {
+    return this.table.where('replied').equals(postId).toArray();
+  }
 }

@@ -142,14 +142,18 @@ vi.mock('@/config', () => ({
 }));
 
 // Mock the app routes
-vi.mock('@/app', () => ({
-  AUTH_ROUTES: {
-    SIGN_IN: '/sign-in',
-  },
-  FEED_ROUTES: {
-    FEED: '/feed',
-  },
-}));
+vi.mock('@/app', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    AUTH_ROUTES: {
+      SIGN_IN: '/sign-in',
+    },
+    FEED_ROUTES: {
+      FEED: '/feed',
+    },
+  };
+});
 
 describe('Header Components', () => {
   const mockPush = vi.fn();
