@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import type { AddReplyParams, FetchPostsParams } from './post.types';
+import type { TAddReplyParams, TFetchPostsParams } from './post.types';
 
 export class PostController {
   private static isInitialized = false;
@@ -23,7 +23,7 @@ export class PostController {
    * @param params.offset - Number of posts to skip (default: 0)
    * @returns Array of NexusPost objects
    */
-  static async fetch({ limit = 30, offset = 0 }: FetchPostsParams = {}): Promise<Core.NexusPost[]> {
+  static async fetch({ limit = 30, offset = 0 }: TFetchPostsParams = {}): Promise<Core.NexusPost[]> {
     await this.initialize();
     return Core.Local.Post.fetch({ limit, offset });
   }
@@ -35,7 +35,7 @@ export class PostController {
    * @param params.content - Reply content
    * @param params.authorId - ID of the user creating the reply
    */
-  static async addReply({ parentPostId, content, authorId }: AddReplyParams) {
+  static async addReply({ parentPostId, content, authorId }: TAddReplyParams) {
     await this.initialize();
 
     const parentPost = await Core.PostDetailsModel.table.get(parentPostId);

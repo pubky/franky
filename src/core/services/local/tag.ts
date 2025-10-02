@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import type { LocalSaveTagParams, LocalRemoveTagParams } from './tag.types';
+import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
 
 export class LocalTagService {
   /**
@@ -10,7 +10,7 @@ export class LocalTagService {
    * @param params.label - Normalized tag label (should already be normalized by caller)
    * @param params.taggerId - ID of the user adding the tag
    */
-  static async save({ postId, label, taggerId }: LocalSaveTagParams) {
+  static async save({ postId, label, taggerId }: TLocalSaveTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.table.get(postId);
 
@@ -110,7 +110,7 @@ export class LocalTagService {
    * @param params.label - Normalized tag label (should already be normalized by caller)
    * @param params.taggerId - ID of the user removing the tag
    */
-  static async remove({ postId, label, taggerId }: LocalRemoveTagParams) {
+  static async remove({ postId, label, taggerId }: TLocalRemoveTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.table.get(postId);
 

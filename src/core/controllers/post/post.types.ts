@@ -1,12 +1,12 @@
 import * as Core from '@/core';
 
-export type AddReplyParams = {
+export type TAddReplyParams = {
   parentPostId: string;
   content: string;
   authorId: Core.Pubky;
 };
 
-export type FetchPostsParams = {
+export type TFetchPostsParams = {
   limit?: number;
   offset?: number;
 };

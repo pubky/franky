@@ -1,12 +1,12 @@
 import * as Core from '@/core';
 
-export type AddTagParams = {
+export type TAddTagParams = {
   targetId: string;
   label: string;
   taggerId: Core.Pubky;
 };
 
-export type RemoveTagParams = {
+export type TRemoveTagParams = {
   targetId: string;
   label: string;
   taggerId: Core.Pubky;

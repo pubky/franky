@@ -1,6 +1,6 @@
 import { postUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
-import type { AddTagParams, RemoveTagParams } from './tag.types';
+import type { TAddTagParams, TRemoveTagParams } from './tag.types';
 
 export class TagController {
   private static isInitialized = false;
@@ -21,7 +21,7 @@ export class TagController {
    * @param params.label - Tag label
    * @param params.taggerId - ID of the user adding the tag
    */
-  static async add({ targetId, label, taggerId }: AddTagParams) {
+  static async add({ targetId, label, taggerId }: TAddTagParams) {
     await this.initialize();
 
     const target = targetId.split(':');
@@ -40,7 +40,7 @@ export class TagController {
    * @param params.label - Tag label to remove
    * @param params.taggerId - ID of the user removing the tag
    */
-  static async remove({ targetId, label, taggerId }: RemoveTagParams) {
+  static async remove({ targetId, label, taggerId }: TRemoveTagParams) {
     await this.initialize();
 
     const target = targetId.split(':');

@@ -1,12 +1,12 @@
 import * as Core from '@/core';
 
-export type LocalSaveTagParams = {
+export type TLocalSaveTagParams = {
   postId: string;
   label: string;
   taggerId: Core.Pubky;
 };
 
-export type LocalRemoveTagParams = {
+export type TLocalRemoveTagParams = {
   postId: string;
   label: string;
   taggerId: Core.Pubky;
