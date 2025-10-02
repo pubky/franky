@@ -17,7 +17,10 @@ export function FilterDrawer({ open, onOpenChangeAction, children, position = 'l
   useEffect(() => {
     if (open) {
       setIsVisible(true);
-      setTimeout(() => setAnimateIn(true), 10);
+      // Use requestAnimationFrame for reliable timing
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setAnimateIn(true));
+      });
       document.body.style.overflow = 'hidden';
     } else {
       setAnimateIn(false);

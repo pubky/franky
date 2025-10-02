@@ -28,14 +28,14 @@ vi.mock('@/atoms', () => ({
 // Mock the libs
 vi.mock('@/libs', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  SlidersHorizontal: ({ className }: { className?: string }) => (
-    <div data-testid="sliders-horizontal-icon" className={className}>
-      SlidersHorizontal
+  Settings2: ({ className }: { className?: string }) => (
+    <div data-testid="settings2-icon" className={className}>
+      Settings2
     </div>
   ),
-  Users: ({ className }: { className?: string }) => (
-    <div data-testid="users-icon" className={className}>
-      Users
+  Lightbulb: ({ className }: { className?: string }) => (
+    <div data-testid="lightbulb-icon" className={className}>
+      Lightbulb
     </div>
   ),
 }));
@@ -44,7 +44,7 @@ describe('ButtonFilters', () => {
   it('renders with default props', () => {
     render(<ButtonFilters />);
 
-    expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('settings2-icon')).toBeInTheDocument();
   });
 
   it('renders with custom className', () => {
@@ -78,15 +78,15 @@ describe('ButtonFilters', () => {
   it('shows correct icon for left position', () => {
     render(<ButtonFilters position="left" />);
 
-    expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('users-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('settings2-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('lightbulb-icon')).not.toBeInTheDocument();
   });
 
   it('shows correct icon for right position', () => {
     render(<ButtonFilters position="right" />);
 
-    expect(screen.getByTestId('users-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('sliders-horizontal-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('lightbulb-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('settings2-icon')).not.toBeInTheDocument();
   });
 
   it('handles click events', () => {
@@ -140,7 +140,7 @@ describe('ButtonFilters', () => {
   it('applies correct icon classes', () => {
     render(<ButtonFilters />);
 
-    const icon = screen.getByTestId('sliders-horizontal-icon');
+    const icon = screen.getByTestId('settings2-icon');
     expect(icon).toHaveClass('h-6', 'w-6');
   });
 
@@ -168,13 +168,13 @@ describe('ButtonFilters', () => {
   it('renders with different positions correctly', () => {
     const { rerender } = render(<ButtonFilters position="left" />);
 
-    expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('users-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('settings2-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('lightbulb-icon')).not.toBeInTheDocument();
 
     rerender(<ButtonFilters position="right" />);
 
-    expect(screen.getByTestId('users-icon')).toBeInTheDocument();
-    expect(screen.queryByTestId('sliders-horizontal-icon')).not.toBeInTheDocument();
+    expect(screen.getByTestId('lightbulb-icon')).toBeInTheDocument();
+    expect(screen.queryByTestId('settings2-icon')).not.toBeInTheDocument();
   });
 });
 

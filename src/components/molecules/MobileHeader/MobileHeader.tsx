@@ -39,7 +39,7 @@ export function MobileHeader({ onLeftIconClick, className }: MobileHeaderProps) 
             onClick={() => setDrawerSidebarOpen(true)}
             className="p-2 hover:bg-secondary/10 rounded-full transition-colors"
           >
-            <Libs.Users className="h-6 w-6" />
+            <Libs.Activity className="h-6 w-6" />
           </button>
         </div>
       </div>

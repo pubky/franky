@@ -13,7 +13,7 @@ export function ButtonFilters({ onClick, className, position = 'left' }: ButtonF
   const isLeft = position === 'left';
   const positionClasses = isLeft ? 'left-0' : 'right-0';
   const roundedClasses = isLeft ? 'rounded-l-none rounded-r-full' : 'rounded-r-none rounded-l-full';
-  const Icon = isLeft ? Libs.SlidersHorizontal : Libs.Users;
+  const Icon = isLeft ? Libs.Settings2 : Libs.Lightbulb;
 
   return (
     <div className={Libs.cn('z-10 fixed top-[150px]', positionClasses)}>

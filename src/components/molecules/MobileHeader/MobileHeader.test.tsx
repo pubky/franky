@@ -42,9 +42,9 @@ vi.mock('@/libs', () => ({
       SlidersHorizontal
     </div>
   ),
-  Users: ({ className }: { className?: string }) => (
-    <div data-testid="users-icon" className={className}>
-      Users
+  Activity: ({ className }: { className?: string }) => (
+    <div data-testid="activity-icon" className={className}>
+      Activity
     </div>
   ),
 }));
@@ -55,7 +55,7 @@ describe('MobileHeader', () => {
 
     expect(screen.getByText('Pubky')).toBeInTheDocument();
     expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('users-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('activity-icon')).toBeInTheDocument();
   });
 
   it('renders with custom className', () => {
@@ -97,7 +97,7 @@ describe('MobileHeader', () => {
   it('applies correct classes to right button', () => {
     render(<MobileHeader />);
 
-    const rightButton = screen.getByTestId('users-icon').closest('button');
+    const rightButton = screen.getByTestId('activity-icon').closest('button');
     expect(rightButton).toHaveClass('p-2', 'hover:bg-secondary/10', 'rounded-full', 'transition-colors');
   });
 
@@ -127,7 +127,7 @@ describe('MobileHeader', () => {
   it('handles right button click to open drawer', () => {
     render(<MobileHeader />);
 
-    const rightButton = screen.getByTestId('users-icon').closest('button');
+    const rightButton = screen.getByTestId('activity-icon').closest('button');
     fireEvent.click(rightButton!);
 
     // The drawer should be open (this is handled by the mocked component)
@@ -138,7 +138,7 @@ describe('MobileHeader', () => {
     render(<MobileHeader />);
 
     const leftIcon = screen.getByTestId('sliders-horizontal-icon');
-    const rightIcon = screen.getByTestId('users-icon');
+    const rightIcon = screen.getByTestId('activity-icon');
 
     expect(leftIcon).toHaveClass('h-6', 'w-6');
     expect(rightIcon).toHaveClass('h-6', 'w-6');
@@ -154,7 +154,7 @@ describe('MobileHeader', () => {
     render(<MobileHeader />);
 
     const leftButton = screen.getByTestId('sliders-horizontal-icon').closest('button');
-    const rightButton = screen.getByTestId('users-icon').closest('button');
+    const rightButton = screen.getByTestId('activity-icon').closest('button');
 
     expect(leftButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
     expect(rightButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
@@ -173,7 +173,7 @@ describe('MobileHeader', () => {
     // Check that all main elements are present
     expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
     expect(screen.getByText('Pubky')).toBeInTheDocument();
-    expect(screen.getByTestId('users-icon')).toBeInTheDocument();
+    expect(screen.getByTestId('activity-icon')).toBeInTheDocument();
   });
 });
 
@@ -204,7 +204,7 @@ describe('MobileHeader - Snapshots', () => {
   it('matches snapshot for right button', () => {
     render(<MobileHeader />);
 
-    const rightButton = screen.getByTestId('users-icon').closest('button');
+    const rightButton = screen.getByTestId('activity-icon').closest('button');
     expect(rightButton).toMatchSnapshot();
   });
 

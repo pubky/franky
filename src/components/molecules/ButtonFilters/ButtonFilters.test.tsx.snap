@@ -8,9 +8,9 @@ exports[`ButtonFilters - Snapshots > matches snapshot for button element 1`] = `
 >
   <div
     class="h-6 w-6"
-    data-testid="sliders-horizontal-icon"
+    data-testid="settings2-icon"
   >
-    SlidersHorizontal
+    Settings2
   </div>
 </button>
 `;
@@ -26,9 +26,9 @@ exports[`ButtonFilters - Snapshots > matches snapshot with custom className 1`] 
   >
     <div
       class="h-6 w-6"
-      data-testid="sliders-horizontal-icon"
+      data-testid="settings2-icon"
     >
-      SlidersHorizontal
+      Settings2
     </div>
   </button>
 </div>
@@ -45,9 +45,9 @@ exports[`ButtonFilters - Snapshots > matches snapshot with default props 1`] = `
   >
     <div
       class="h-6 w-6"
-      data-testid="sliders-horizontal-icon"
+      data-testid="settings2-icon"
     >
-      SlidersHorizontal
+      Settings2
     </div>
   </button>
 </div>
@@ -64,9 +64,9 @@ exports[`ButtonFilters - Snapshots > matches snapshot with left position 1`] = `
   >
     <div
       class="h-6 w-6"
-      data-testid="sliders-horizontal-icon"
+      data-testid="settings2-icon"
     >
-      SlidersHorizontal
+      Settings2
     </div>
   </button>
 </div>
@@ -83,9 +83,9 @@ exports[`ButtonFilters - Snapshots > matches snapshot with right position 1`] = 
   >
     <div
       class="h-6 w-6"
-      data-testid="users-icon"
+      data-testid="lightbulb-icon"
     >
-      Users
+      Lightbulb
     </div>
   </button>
 </div>
