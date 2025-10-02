@@ -1,22 +1,21 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Toaster } from './Toaster';
 
 // Mock next-themes
 vi.mock('next-themes', () => ({
-  useTheme: () => ({
-    theme: 'light',
-    setTheme: vi.fn(),
-  }),
+  useTheme: vi.fn(),
 }));
 
 // Mock sonner
 vi.mock('sonner', () => ({
-  Toaster: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => (
-    <div data-testid="sonner-toaster" {...props}>
-      {children}
-    </div>
-  ),
+  Toaster: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => {
+    return (
+      <div data-testid="sonner-toaster" {...props}>
+        {children}
+      </div>
+    );
+  },
 }));
 
 // Mock @/libs to intercept any icons and utilities
@@ -106,29 +105,154 @@ vi.mock('@/libs', () => ({
 }));
 
 describe('Toaster', () => {
-  beforeEach(() => {
+  let mockUseTheme: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    // Get the mocked useTheme function
+    const nextThemes = await vi.importMock('next-themes');
+    mockUseTheme = vi.mocked(nextThemes.useTheme) as ReturnType<typeof vi.fn>;
+
+    // Default theme mock
+    mockUseTheme.mockReturnValue({
+      theme: 'light',
+      setTheme: vi.fn(),
+    });
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should render Sonner toaster', () => {
-    const { container } = render(<Toaster />);
+  describe('Basic Rendering', () => {
+    it('should render Sonner toaster', () => {
+      const { container } = render(<Toaster />);
 
-    // Should render Sonner toaster
-    expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
-    expect(container.firstChild).toBeTruthy();
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
+      expect(container.firstChild).toBeTruthy();
+    });
+
+    it('should render with correct props', () => {
+      render(<Toaster />);
+
+      const sonnerToaster = screen.getByTestId('sonner-toaster');
+      expect(sonnerToaster).toBeInTheDocument();
+      expect(sonnerToaster).toHaveAttribute('theme', 'light');
+      expect(sonnerToaster).toHaveAttribute('position', 'bottom-center');
+      expect(sonnerToaster).toHaveAttribute('class', 'toaster group');
+    });
   });
 
-  it('should render with correct props', () => {
-    render(<Toaster />);
+  describe('Error Handling', () => {
+    it('should handle useTheme throwing an error', () => {
+      mockUseTheme.mockImplementation(() => {
+        throw new Error('Theme provider error');
+      });
 
-    const sonnerToaster = screen.getByTestId('sonner-toaster');
-    expect(sonnerToaster).toBeInTheDocument();
-    expect(sonnerToaster).toHaveAttribute('class', 'toaster group');
+      expect(() => render(<Toaster />)).toThrow('Theme provider error');
+    });
+
+    it('should handle useTheme returning undefined', () => {
+      mockUseTheme.mockReturnValue(undefined);
+
+      expect(() => render(<Toaster />)).toThrow();
+    });
+  });
+
+  describe('Multiple Renders', () => {
+    it('should handle multiple renders consistently', () => {
+      const { rerender } = render(<Toaster />);
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
+
+      rerender(<Toaster />);
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
+    });
+
+    it('should maintain consistent props across renders', () => {
+      const { rerender } = render(<Toaster />);
+      const firstRender = screen.getByTestId('sonner-toaster');
+
+      rerender(<Toaster />);
+      const secondRender = screen.getByTestId('sonner-toaster');
+
+      expect(firstRender.getAttribute('theme')).toBe(secondRender.getAttribute('theme'));
+      expect(firstRender.getAttribute('position')).toBe(secondRender.getAttribute('position'));
+      expect(firstRender.getAttribute('class')).toBe(secondRender.getAttribute('class'));
+    });
+  });
+
+  describe('Toast Interaction Scenarios', () => {
+    it('should handle theme changes during component lifecycle', () => {
+      const { rerender } = render(<Toaster />);
+
+      // Change theme
+      mockUseTheme.mockReturnValue({
+        theme: 'dark',
+        setTheme: vi.fn(),
+      });
+
+      rerender(<Toaster />);
+
+      const sonnerToaster = screen.getByTestId('sonner-toaster');
+      expect(sonnerToaster).toHaveAttribute('theme', 'dark');
+    });
+  });
+
+  describe('Performance and Memory', () => {
+    it('should not create memory leaks with multiple renders', () => {
+      const { rerender, unmount } = render(<Toaster />);
+
+      // Multiple renders
+      for (let i = 0; i < 10; i++) {
+        rerender(<Toaster />);
+      }
+
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
+
+      // Should clean up properly
+      expect(() => unmount()).not.toThrow();
+    });
   });
 });
 
 describe('Toaster - Snapshots', () => {
-  it('matches snapshot for Toaster', () => {
+  let mockUseTheme: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    // Get the mocked useTheme function
+    const nextThemes = await vi.importMock('next-themes');
+    mockUseTheme = vi.mocked(nextThemes.useTheme) as ReturnType<typeof vi.fn>;
+
+    mockUseTheme.mockReturnValue({
+      theme: 'light',
+      setTheme: vi.fn(),
+    });
+  });
+
+  it('matches snapshot for Toaster with light theme', () => {
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with dark theme', () => {
+    mockUseTheme.mockReturnValue({
+      theme: 'dark',
+      setTheme: vi.fn(),
+    });
+
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with system theme', () => {
+    mockUseTheme.mockReturnValue({
+      theme: 'system',
+      setTheme: vi.fn(),
+    });
+
     const { container } = render(<Toaster />);
     expect(container.firstChild).toMatchSnapshot();
   });
