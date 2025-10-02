@@ -4,7 +4,7 @@ import * as Core from '@/core';
 export class NexusBootstrapService {
   static async retrieveAndPersist(pubky: Core.Pubky) {
     try {
-      const url = Core.BOOTSTRAP_API.GET(pubky);
+      const url = Core.bootstrapApi.get(pubky);
       const { users, posts, list } = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
 
       // Persist fetched data in the database

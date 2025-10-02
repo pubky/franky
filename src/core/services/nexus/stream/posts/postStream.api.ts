@@ -1,16 +1,15 @@
 import * as Core from '@/core';
 
 /**
- * Feed API Endpoints
+ * Post stream API Endpoints
  * All API endpoints related to feed operations
  */
-enum STREAM_PREFIX {
-  POSTS = 'stream/posts?',
-  USERS = 'stream/users?',
-  POSTS_BY_IDS = 'stream/posts/by_ids',
-}
 
-function buildPostStreamUrl(params: Record<string, unknown>, source: Core.StreamSource, prefix: STREAM_PREFIX): string {
+function buildPostStreamUrl(
+  params: Core.TStreamQueryParams,
+  source: Core.StreamSource,
+  prefix: Core.STREAM_PREFIX,
+): string {
   const queryParams = new URLSearchParams();
 
   // Add source parameter
@@ -31,45 +30,45 @@ function buildPostStreamUrl(params: Record<string, unknown>, source: Core.Stream
     }
   });
 
-  const relativeUrl = `${prefix}${queryParams.toString()}`;
+  const relativeUrl = `${prefix}?${queryParams.toString()}`;
   return Core.buildNexusUrl(relativeUrl);
 }
 
 /**
  * Type-safe stream URL generators
  */
-export const POSTS_STREAM_API = {
+export const postStreamApi = {
+  // All posts (no additional required parameters)
+  all: (params: Core.TStreamAllParams) => buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS),
+
   // Sources requiring observer_id
   following: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, Core.STREAM_PREFIX.POSTS),
 
   followers: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, Core.STREAM_PREFIX.POSTS),
 
   friends: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FRIENDS, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FRIENDS, Core.STREAM_PREFIX.POSTS),
 
   bookmarks: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, Core.STREAM_PREFIX.POSTS),
 
   // Post replies requiring author_id and post_id
   postReplies: (params: Core.TStreamPostRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.REPLIES, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS),
 
   // Author posts requiring author_id
   author: (params: Core.TStreamAuthorParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS),
 
   // Author replies requiring author_id
   authorReplies: (params: Core.TStreamAuthorRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, STREAM_PREFIX.POSTS),
-
-  // All posts (no additional required parameters)
-  all: (params: Core.TStreamAllParams) => buildPostStreamUrl(params, Core.StreamSource.ALL, STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS),
 
   // Posts by IDs (POST request)
   postsByIds: (params: Core.TStreamPostsByIdsParams) => {
-    return { body: buildPostStreamBodyUrl(params), url: Core.buildNexusUrl(STREAM_PREFIX.POSTS_BY_IDS) };
+    return { body: buildPostStreamBodyUrl(params), url: Core.buildNexusUrl(Core.STREAM_PREFIX.POSTS_BY_IDS) };
   },
 };
 
@@ -90,4 +89,4 @@ export function buildPostStreamBodyUrl(params: Core.TStreamPostsByIdsParams) {
   return body;
 }
 
-export type PostStreamApiEndpoint = keyof typeof POSTS_STREAM_API;
+export type PostStreamApiEndpoint = keyof typeof postStreamApi;

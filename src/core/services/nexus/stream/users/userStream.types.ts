@@ -1,5 +1,11 @@
 import * as Core from '@/core';
 
+export enum USER_STREAM_PREFIX {
+  USERS = 'stream/users',
+  USERNAME = 'stream/users/username',
+  USERS_BY_IDS = 'stream/users/by_ids',
+}
+
 export enum UserStreamSource {
   FOLLOWERS = 'followers',
   FOLLOWING = 'following',
@@ -46,7 +52,7 @@ export type TUserStreamInfluencersParams = TUserStreamBase & {
 
 export type TUserStreamPostRepliesParams = TUserStreamBase & {
   author_id: Core.Pubky;
-  post_id: Core.Pubky;
+  post_id: string;
 };
 
 export type TUserStreamWithDepthParams = TUserStreamBase & {

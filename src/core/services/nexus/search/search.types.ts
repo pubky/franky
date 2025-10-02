@@ -13,3 +13,8 @@ export type TTagSearchParams = TTagParams & {
 export type TPrefixSearchParams = Core.TPaginationParams & {
   prefix: string;
 };
+
+export type TSearchQueryParams = Core.TTagSearchParams | Core.TPrefixSearchParams;
+
+// Path parameters that should NOT be added to query string
+export const SEARCH_PATH_PARAMS = ['tag', 'prefix'] as const;

@@ -27,8 +27,13 @@ export type TUserTaggersParams = TUserParams &
     label: string;
   };
 
-export type TUserTagsParams = TUserParams &
-  Core.TTagsPaginationParams &
-  TUserDepthParams & {
-    skip_tags?: number;
-  };
+export type TUserTagsParams = TUserParams & Core.TTagsPaginationParams & TUserDepthParams & Core.TSkipTagsParams;
+
+export type TUserQueryParams =
+  | Core.TUserViewParams
+  | Core.TUserPaginationParams
+  | Core.TUserTaggersParams
+  | Core.TUserTagsParams;
+
+// Path parameters that should NOT be added to query string
+export const USER_PATH_PARAMS = ['user_id', 'label'] as const;

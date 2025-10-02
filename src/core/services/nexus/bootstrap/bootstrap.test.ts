@@ -151,7 +151,7 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      expect(mockFetch).toHaveBeenCalledWith(Core.BOOTSTRAP_API.GET(pubky), {
+      expect(mockFetch).toHaveBeenCalledWith(Core.bootstrapApi.get(pubky), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -305,7 +305,7 @@ describe('NexusService', () => {
       expect(savedStream!.posts).toEqual([testPostId, 'random-post-id']);
 
       // Verify fetch was called correctly
-      expect(mockFetch).toHaveBeenCalledWith(Core.BOOTSTRAP_API.GET(pubky), {
+      expect(mockFetch).toHaveBeenCalledWith(Core.bootstrapApi.get(pubky), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

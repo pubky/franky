@@ -1,5 +1,10 @@
 import * as Core from '@/core';
 
+export enum STREAM_PREFIX {
+  POSTS = 'stream/posts',
+  POSTS_BY_IDS = 'stream/posts/by_ids',
+}
+
 export enum StreamSource {
   ALL = 'all',
   FOLLOWING = 'following',
@@ -47,7 +52,7 @@ export type TStreamWithObserverParams = TStreamBase & {
 
 export type TStreamPostRepliesParams = TStreamBase & {
   author_id: Core.Pubky;
-  post_id: Core.Pubky;
+  post_id: string;
 };
 
 export type TStreamAuthorParams = TStreamBase & {
@@ -65,3 +70,11 @@ export type TStreamPostsByIdsParams = {
   post_ids: string[]; // Required array of post IDs
   viewer_id?: Core.Pubky; // Optional viewer ID
 };
+
+export type TStreamQueryParams =
+  | Core.TStreamWithObserverParams
+  | Core.TStreamPostRepliesParams
+  | Core.TStreamAuthorParams
+  | Core.TStreamAuthorRepliesParams
+  | Core.TStreamAllParams
+  | Core.TStreamPostsByIdsParams;

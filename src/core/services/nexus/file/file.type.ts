@@ -11,7 +11,7 @@ export enum FileVariant {
 }
 
 export type TImageParams = {
-  pubky: string;
+  pubky: Core.Pubky;
   file_id: string;
   variant: FileVariant;
 };

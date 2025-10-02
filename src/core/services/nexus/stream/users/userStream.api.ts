@@ -4,16 +4,11 @@ import * as Core from '@/core';
  * Users Stream API Endpoints
  * All API endpoints related to user stream operations
  */
-enum USER_STREAM_PREFIX {
-  USERS = 'stream/users?',
-  USERNAME = 'stream/users/username?',
-  USERS_BY_IDS = 'stream/users/by_ids',
-}
 
 function buildUserStreamUrl(
   params: Record<string, unknown>,
   source: Core.UserStreamSource | null,
-  prefix: USER_STREAM_PREFIX,
+  prefix: Core.USER_STREAM_PREFIX,
 ): string {
   const queryParams = new URLSearchParams();
 
@@ -33,51 +28,52 @@ function buildUserStreamUrl(
     }
   });
 
-  const relativeUrl = `${prefix}${queryParams.toString()}`;
+  const relativeUrl = `${prefix}?${queryParams.toString()}`;
   return Core.buildNexusUrl(relativeUrl);
 }
 
 /**
  * Type-safe user stream URL generators
  */
-export const USERS_STREAM_API = {
+export const userStreamApi = {
   // Sources requiring user_id
   followers: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWERS, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWERS, Core.USER_STREAM_PREFIX.USERS),
 
   following: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWING, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWING, Core.USER_STREAM_PREFIX.USERS),
 
   friends: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, Core.USER_STREAM_PREFIX.USERS),
 
   muted: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.MUTED, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.MUTED, Core.USER_STREAM_PREFIX.USERS),
 
   recommended: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.RECOMMENDED, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.RECOMMENDED, Core.USER_STREAM_PREFIX.USERS),
 
   // Influencers with additional parameters
   influencers: (params: Core.TUserStreamInfluencersParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.INFLUENCERS, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.INFLUENCERS, Core.USER_STREAM_PREFIX.USERS),
 
   // Post replies requiring author_id and post_id
   postReplies: (params: Core.TUserStreamPostRepliesParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.POST_REPLIES, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.POST_REPLIES, Core.USER_STREAM_PREFIX.USERS),
 
   // Sources with depth parameter
   friendsWithDepth: (params: Core.TUserStreamWithDepthParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, Core.USER_STREAM_PREFIX.USERS),
 
   mostFollowed: (params: Core.TUserStreamBase) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.MOST_FOLLOWED, USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.MOST_FOLLOWED, Core.USER_STREAM_PREFIX.USERS),
 
   // Username search
-  username: (params: Core.TUserStreamUsernameParams) => buildUserStreamUrl(params, null, USER_STREAM_PREFIX.USERNAME),
+  username: (params: Core.TUserStreamUsernameParams) =>
+    buildUserStreamUrl(params, null, Core.USER_STREAM_PREFIX.USERNAME),
 
   // Users by IDs (POST request)
   usersByIds: (params: Core.TUserStreamUsersByIdsParams) => {
-    return { body: buildUserStreamBodyUrl(params), url: Core.buildNexusUrl(USER_STREAM_PREFIX.USERS_BY_IDS) };
+    return { body: buildUserStreamBodyUrl(params), url: Core.buildNexusUrl(Core.USER_STREAM_PREFIX.USERS_BY_IDS) };
   },
 };
 
@@ -102,4 +98,4 @@ export function buildUserStreamBodyUrl(params: Core.TUserStreamUsersByIdsParams)
   return body;
 }
 
-export type UserStreamApiEndpoint = keyof typeof USERS_STREAM_API;
+export type UserStreamApiEndpoint = keyof typeof userStreamApi;

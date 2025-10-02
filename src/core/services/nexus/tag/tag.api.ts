@@ -7,12 +7,12 @@ import * as Core from '@/core';
  */
 
 export type TTagViewParams = {
-  taggerId: string;
+  taggerId: Core.Pubky;
   tagId: string;
 };
 
 const PREFIX = 'tags';
 
-export const TAG_API = {
+export const tagApi = {
   view: (params: TTagViewParams) => Core.buildNexusUrl(`${PREFIX}/${params.taggerId}/${params.tagId}`),
 };

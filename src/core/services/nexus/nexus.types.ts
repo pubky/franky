@@ -12,6 +12,10 @@ export type TPaginationParams = {
   limit?: number;
 };
 
+export type TSkipTagsParams = {
+  skip_tags?: number;
+};
+
 export type TTagsPaginationParams = {
   limit_tags?: number;
   limit_taggers?: number;

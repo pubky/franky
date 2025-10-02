@@ -7,24 +7,23 @@ import * as Core from '@/core';
 
 const PREFIX = 'user';
 
-export function buildUserBaseUrlWithParams(
-  optParams: Omit<Record<string, unknown>, 'user_id'>,
-  baseRoute: string,
-): string {
+export function buildUserBaseUrlWithParams(optParams: Core.TUserQueryParams, baseRoute: string): string {
   const queryParams = new URLSearchParams();
 
   // Add all parameters that exist (much simpler!)
   Object.entries(optParams).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
+    if (value !== undefined && value !== null && !(Core.USER_PATH_PARAMS as readonly string[]).includes(key)) {
       queryParams.append(key, String(value));
     }
   });
 
-  const relativeUrl = `${baseRoute}?${queryParams.toString()}`;
+  const queryString = queryParams.toString();
+  const relativeUrl = queryString ? `${baseRoute}?${queryString}` : baseRoute;
+
   return Core.buildNexusUrl(relativeUrl);
 }
 
-export const USER_API = {
+export const userApi = {
   view: (params: Core.TUserViewParams) => buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}`),
   counts: (params: Core.TUserParams) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/counts`),
   details: (params: Core.TUserParams) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/details`),
