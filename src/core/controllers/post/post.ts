@@ -24,7 +24,7 @@ export class PostController {
    */
   static async fetch({ limit = 30, offset = 0 }: { limit?: number; offset?: number } = {}): Promise<Core.NexusPost[]> {
     await this.initialize();
-    return Core.LocalDb.Post.fetch({ limit, offset });
+    return Core.Local.Post.fetch({ limit, offset });
   }
 
   /**
@@ -35,7 +35,7 @@ export class PostController {
    */
   static async findById({ id }: { id: string }): Promise<Core.NexusPost | null> {
     await this.initialize();
-    return Core.LocalDb.Post.findById({ id });
+    return Core.Local.Post.findById({ id });
   }
 
   /**
@@ -44,7 +44,7 @@ export class PostController {
    */
   static async count(): Promise<number> {
     await this.initialize();
-    return Core.LocalDb.Post.count();
+    return Core.Local.Post.count();
   }
 
   /**
@@ -55,7 +55,7 @@ export class PostController {
    */
   static async getReplyIds({ postId }: { postId: string }): Promise<string[]> {
     await this.initialize();
-    return Core.LocalDb.Post.replyIds({ postId });
+    return Core.Local.Post.replyIds({ postId });
   }
 
   /**
@@ -66,7 +66,7 @@ export class PostController {
    */
   static async getReplies({ postId }: { postId: string }): Promise<Core.NexusPost[]> {
     await this.initialize();
-    return Core.LocalDb.Post.replies({ postId });
+    return Core.Local.Post.replies({ postId });
   }
 
   /**
@@ -110,6 +110,6 @@ export class PostController {
       attachments: normalizedPost.post.attachments || null,
     };
 
-    return Core.LocalDb.Post.reply({ parentPostId, replyDetails });
+    return Core.Local.Post.reply({ parentPostId, replyDetails });
   }
 }

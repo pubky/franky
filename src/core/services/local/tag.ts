@@ -1,7 +1,7 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 
-export class LocalDbTagService {
+export class LocalTagService {
   /**
    * Add a tag to a post
    * @param params - Parameters object

@@ -41,7 +41,7 @@ export class TagController {
     const normalizedTag = await Core.TagNormalizer.to(postDetails.uri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    return Core.LocalDb.Tag.save({ postId: targetId, label: normalizedLabel, taggerId });
+    return Core.Local.Tag.save({ postId: targetId, label: normalizedLabel, taggerId });
   }
 
   /**
@@ -72,7 +72,7 @@ export class TagController {
     const normalizedTag = await Core.TagNormalizer.to(postDetails.uri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    return Core.LocalDb.Tag.remove({ postId: targetId, label: normalizedLabel, taggerId });
+    return Core.Local.Tag.remove({ postId: targetId, label: normalizedLabel, taggerId });
   }
 
   /**
@@ -83,6 +83,6 @@ export class TagController {
    */
   static async get({ targetId }: { targetId: string }): Promise<Core.TagModel[]> {
     await this.initialize();
-    return Core.LocalDb.Tag.get({ postId: targetId });
+    return Core.Local.Tag.get({ postId: targetId });
   }
 }

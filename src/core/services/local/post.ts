@@ -1,7 +1,7 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 
-export class LocalDbPostService {
+export class LocalPostService {
   /**
    * Fetch posts with optional pagination
    * @param params - Parameters object

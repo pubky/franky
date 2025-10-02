@@ -1,3 +1,3 @@
 export * from './nexus';
 export * from './homeserver';
-export * from './localdb';
+export * from './local';
