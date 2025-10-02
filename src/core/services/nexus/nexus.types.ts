@@ -7,9 +7,18 @@ export enum StreamSorting {
   ENGAGEMENT = 'total_engagement',
 }
 
+export type TUserId = {
+  user_id: Pubky;
+};
+
 export type TPaginationParams = {
   skip?: number;
   limit?: number;
+};
+
+export type TPaginationRangeParams = {
+  start?: number;
+  end?: number;
 };
 
 export type TSkipTagsParams = {

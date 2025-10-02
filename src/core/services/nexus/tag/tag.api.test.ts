@@ -27,4 +27,12 @@ describe('Tag API', () => {
       expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/tags/${testTaggerId}/differentTag`);
     });
   });
+
+  describe('TagApiEndpoint type', () => {
+    it('should have exactly 1 endpoint', () => {
+      const endpointKeys = Object.keys(tagApi);
+      expect(endpointKeys).toHaveLength(1);
+      expect(endpointKeys).toContain('view');
+    });
+  });
 });

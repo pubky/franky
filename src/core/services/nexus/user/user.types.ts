@@ -5,29 +5,21 @@ export type TUserDepthParams = {
   viewer_id?: Core.Pubky;
 };
 
-export type TUserParams = {
-  user_id: Core.Pubky;
-};
+export type TUserViewParams = TUserDepthParams & Core.TUserId;
 
-export type TUserViewParams = TUserDepthParams & TUserParams;
+export type TUserPaginationParams = Core.TUserId & Core.TPaginationParams & Core.TPaginationRangeParams;
 
-export type TUserPaginationParams = TUserParams &
-  Core.TPaginationParams & {
-    start: number;
-    end: number;
-  };
-
-export type TUserRelationshipParams = TUserParams & {
+export type TUserRelationshipParams = Core.TUserId & {
   viewer_id: Core.Pubky;
 };
 
-export type TUserTaggersParams = TUserParams &
+export type TUserTaggersParams = Core.TUserId &
   Core.TPaginationParams &
   TUserDepthParams & {
     label: string;
   };
 
-export type TUserTagsParams = TUserParams & Core.TTagsPaginationParams & TUserDepthParams & Core.TSkipTagsParams;
+export type TUserTagsParams = Core.TUserId & Core.TTagsPaginationParams & TUserDepthParams & Core.TSkipTagsParams;
 
 export type TUserQueryParams =
   | Core.TUserViewParams

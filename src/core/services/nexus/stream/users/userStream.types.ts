@@ -32,33 +32,29 @@ export enum UserStreamTimeframe {
   ALL_TIME = 'all_time',
 }
 
-export type TUserStreamBase = {
+export type TUserStreamBase = Core.TPaginationParams & {
   viewer_id?: Core.Pubky;
-  skip?: number;
-  limit?: number;
   // Provide a random selection of size 3 for sources supporting preview. Passing 'preview', ignores skip and limit parameters
   preview?: boolean;
 };
 
-export type TUserStreamWithUserIdParams = TUserStreamBase & {
-  user_id: Core.Pubky;
-};
+export type TUserStreamWithUserIdParams = Core.TUserId & TUserStreamBase;
 
-export type TUserStreamInfluencersParams = TUserStreamBase & {
-  user_id: Core.Pubky;
-  reach?: UserStreamReach;
-  timeframe?: UserStreamTimeframe;
-};
+export type TUserStreamInfluencersParams = TUserStreamBase &
+  Core.TUserId & {
+    reach?: UserStreamReach;
+    timeframe?: UserStreamTimeframe;
+  };
 
 export type TUserStreamPostRepliesParams = TUserStreamBase & {
   author_id: Core.Pubky;
   post_id: string;
 };
 
-export type TUserStreamWithDepthParams = TUserStreamBase & {
-  user_id: Core.Pubky;
-  depth?: number;
-};
+export type TUserStreamWithDepthParams = TUserStreamBase &
+  Core.TUserId & {
+    depth?: number;
+  };
 
 export type TUserStreamUsernameParams = Omit<TUserStreamBase, 'preview'> & {
   username: string;

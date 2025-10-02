@@ -176,4 +176,17 @@ describe('Post API', () => {
       );
     });
   });
+
+  describe('PostApiEndpoint type', () => {
+    it('should have exactly 6 endpoints', () => {
+      const endpointKeys = Object.keys(postApi);
+      expect(endpointKeys).toHaveLength(6);
+      expect(endpointKeys).toContain('view');
+      expect(endpointKeys).toContain('bookmarks');
+      expect(endpointKeys).toContain('counts');
+      expect(endpointKeys).toContain('details');
+      expect(endpointKeys).toContain('taggers');
+      expect(endpointKeys).toContain('tags');
+    });
+  });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filesApi, buildFileBodyUrl, type FilesApiEndpoint } from './file.api';
+import { filesApi, buildFileBodyUrl } from './file.api';
 import { FileVariant, type TImageParams, type TFileBody } from './file.type';
 import * as Config from '@/config';
 
@@ -99,13 +99,12 @@ describe('File API', () => {
   });
 
   describe('FilesApiEndpoint type', () => {
-    it('should have correct endpoint keys and methods', () => {
-      const expectedKeys: FilesApiEndpoint[] = ['getAvatar', 'getImage', 'getFiles'];
-
-      expectedKeys.forEach((key) => {
-        expect(filesApi).toHaveProperty(key);
-        expect(typeof filesApi[key]).toBe('function');
-      });
+    it('should have exactly 3 endpoints', () => {
+      const endpointKeys = Object.keys(filesApi);
+      expect(endpointKeys).toHaveLength(3);
+      expect(endpointKeys).toContain('getAvatar');
+      expect(endpointKeys).toContain('getImage');
+      expect(endpointKeys).toContain('getFiles');
     });
   });
 });

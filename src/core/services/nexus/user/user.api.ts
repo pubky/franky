@@ -25,8 +25,8 @@ export function buildUserBaseUrlWithParams(optParams: Core.TUserQueryParams, bas
 
 export const userApi = {
   view: (params: Core.TUserViewParams) => buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}`),
-  counts: (params: Core.TUserParams) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/counts`),
-  details: (params: Core.TUserParams) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/details`),
+  counts: (params: Core.TUserId) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/counts`),
+  details: (params: Core.TUserId) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/details`),
   followers: (params: Core.TUserViewParams) =>
     buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/followers`),
   following: (params: Core.TUserViewParams) =>

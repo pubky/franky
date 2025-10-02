@@ -295,4 +295,20 @@ describe('Stream API URL Generation', () => {
       expect(request.body.viewer_id).toBe(mockViewerId);
     });
   });
+
+  describe('PostStreamApiEndpoint type', () => {
+    it('should have exactly 9 endpoints', () => {
+      const endpointKeys = Object.keys(postStreamApi);
+      expect(endpointKeys).toHaveLength(9);
+      expect(endpointKeys).toContain('following');
+      expect(endpointKeys).toContain('followers');
+      expect(endpointKeys).toContain('friends');
+      expect(endpointKeys).toContain('bookmarks');
+      expect(endpointKeys).toContain('postReplies');
+      expect(endpointKeys).toContain('author');
+      expect(endpointKeys).toContain('authorReplies');
+      expect(endpointKeys).toContain('postsByIds');
+      expect(endpointKeys).toContain('all');
+    });
+  });
 });

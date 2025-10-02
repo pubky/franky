@@ -4,11 +4,10 @@ export type TTagParams = Core.TPaginationParams & {
   tag: string;
 };
 
-export type TTagSearchParams = TTagParams & {
-  sorting?: Core.StreamSorting;
-  start?: number;
-  end?: number;
-};
+export type TTagSearchParams = TTagParams &
+  Core.TPaginationRangeParams & {
+    sorting?: Core.StreamSorting;
+  };
 
 export type TPrefixSearchParams = Core.TPaginationParams & {
   prefix: string;

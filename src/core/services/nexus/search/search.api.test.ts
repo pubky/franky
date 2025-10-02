@@ -149,4 +149,15 @@ describe('Search API', () => {
       );
     });
   });
+
+  describe('SearchApiEndpoint type', () => {
+    it('should have exactly 4 endpoints', () => {
+      const endpointKeys = Object.keys(searchApi);
+      expect(endpointKeys).toHaveLength(4);
+      expect(endpointKeys).toContain('byTag');
+      expect(endpointKeys).toContain('byPrefix');
+      expect(endpointKeys).toContain('byUser');
+      expect(endpointKeys).toContain('byUsername');
+    });
+  });
 });

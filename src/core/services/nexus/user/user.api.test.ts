@@ -2,12 +2,12 @@ import { describe, it, expect } from 'vitest';
 import { userApi, buildUserBaseUrlWithParams } from './user.api';
 import {
   TUserViewParams,
-  TUserParams,
   TUserPaginationParams,
   TUserRelationshipParams,
   TUserTaggersParams,
   TUserTagsParams,
 } from './user.types';
+import * as Core from '@/core';
 import * as Config from '@/config';
 
 const testUserId = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry';
@@ -42,7 +42,7 @@ describe('User API', () => {
 
   describe('USER_API endpoints', () => {
     it('should generate correct URLs for basic endpoints', () => {
-      const params: TUserParams = { user_id: testUserId };
+      const params: Core.TUserId = { user_id: testUserId };
 
       expect(userApi.counts(params)).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/counts`);
       expect(userApi.details(params)).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/details`);
@@ -138,6 +138,24 @@ describe('User API', () => {
       expect(userApi.tags(params)).toBe(
         `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/tags?skip_tags=0&limit_tags=10`,
       );
+    });
+  });
+
+  describe('UserApiEndpoint type', () => {
+    it('should have exactly 11 endpoints', () => {
+      const endpointKeys = Object.keys(userApi);
+      expect(endpointKeys).toHaveLength(11);
+      expect(endpointKeys).toContain('view');
+      expect(endpointKeys).toContain('counts');
+      expect(endpointKeys).toContain('details');
+      expect(endpointKeys).toContain('followers');
+      expect(endpointKeys).toContain('following');
+      expect(endpointKeys).toContain('friends');
+      expect(endpointKeys).toContain('muted');
+      expect(endpointKeys).toContain('notifications');
+      expect(endpointKeys).toContain('relationship');
+      expect(endpointKeys).toContain('taggers');
+      expect(endpointKeys).toContain('tags');
     });
   });
 });

@@ -250,4 +250,22 @@ describe('Users Stream API - Error Control', () => {
       expect(body.depth).toBe(0);
     });
   });
+
+  describe('UserStreamApiEndpoint type', () => {
+    it('should have exactly 11 endpoints', () => {
+      const endpointKeys = Object.keys(userStreamApi);
+      expect(endpointKeys).toHaveLength(11);
+      expect(endpointKeys).toContain('followers');
+      expect(endpointKeys).toContain('following');
+      expect(endpointKeys).toContain('friends');
+      expect(endpointKeys).toContain('muted');
+      expect(endpointKeys).toContain('recommended');
+      expect(endpointKeys).toContain('influencers');
+      expect(endpointKeys).toContain('postReplies');
+      expect(endpointKeys).toContain('friendsWithDepth');
+      expect(endpointKeys).toContain('mostFollowed');
+      expect(endpointKeys).toContain('username');
+      expect(endpointKeys).toContain('usersByIds');
+    });
+  });
 });
