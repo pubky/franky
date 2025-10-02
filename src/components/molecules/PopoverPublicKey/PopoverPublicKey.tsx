@@ -3,7 +3,7 @@ import * as Libs from '@/libs';
 
 export function PopoverPublicKey({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Atoms.Popover>
+    <Atoms.Popover hover>
       <Atoms.PopoverTrigger asChild>
         <Atoms.Button variant="ghost" size="icon" className={Libs.cn('hover:bg-white/10', props.className)}>
           <Libs.CircleHelp className="h-4 w-4 text-white" data-testid="circle-help-icon" />

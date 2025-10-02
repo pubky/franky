@@ -21,7 +21,6 @@ exports[`PopoverTradeoffs - Snapshots > matches snapshot for default PopoverTrad
     </button>
   </div>
   <div
-    class="w-full"
     data-testid="popover-content"
   >
     <div
