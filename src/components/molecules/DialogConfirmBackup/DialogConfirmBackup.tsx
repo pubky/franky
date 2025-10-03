@@ -26,12 +26,12 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
           Done
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-xl gap-0">
-        <Atoms.DialogHeader className="pr-6">
-          <Atoms.DialogTitle>All backed up?</Atoms.DialogTitle>
+      <Atoms.DialogContent className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 p-6 md:p-8">
+        <Atoms.DialogHeader>
+          <Atoms.DialogTitle className="leading-[1.25] pb-2">All backed up?</Atoms.DialogTitle>
         </Atoms.DialogHeader>
-        <Atoms.Container className="h-full pr-4 overflow-y-auto">
-          <Atoms.Container className="gap-4">
+        <Atoms.Container>
+          <Atoms.Container className="gap-6">
             <Atoms.Typography size="sm" className="text-muted-foreground font-medium">
               Please confirm if you have completed your preferred backup methods. For your security, the secret seed
               will be be deleted from your browser. You can restore access to your account using your recovery phrase or
@@ -43,7 +43,7 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
                 After confirming, your seed will be deleted from the browser (!)
               </Atoms.Typography>
             </Atoms.Container>
-            <Atoms.Container className="flex md:flex-row flex-col gap-4">
+            <Atoms.Container className="flex md:flex-row flex-col gap-4 md:justify-between">
               <Atoms.DialogClose asChild>
                 <Atoms.Button size="lg" variant="outline">
                   <Libs.ShieldCheck className="h-4 w-4" />
