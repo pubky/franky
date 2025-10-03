@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 
 import * as Atoms from '@/atoms';
-import * as Libs from '@/libs';
 import * as Config from '@/config';
 
 interface DialogExportProps {
@@ -21,8 +20,7 @@ export function DialogExport({ mnemonic }: DialogExportProps) {
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
         <Atoms.Button className="gap-2">
-          <Libs.Scan className="h-4 w-4" />
-          <span>{mnemonic ? 'Export recovery phrase' : 'Export to Pubky Ring'}</span>
+          <span>Continue</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="p-8 rounded-xl flex flex-col w-[430px]">

@@ -17,11 +17,10 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-5xl gap-0 max-h-[90vh]"
+    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -31,11 +30,10 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-4 md:gap-6"
         data-testid="container"
       >
         <p
@@ -50,7 +48,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -58,10 +56,14 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -78,7 +80,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -89,7 +91,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -106,7 +108,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -117,7 +119,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -157,11 +159,10 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-5xl gap-0 max-h-[90vh]"
+    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -171,11 +172,10 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-4 md:gap-6"
         data-testid="container"
       >
         <p
@@ -190,7 +190,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -198,10 +198,14 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -218,7 +222,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -229,7 +233,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -246,7 +250,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -257,7 +261,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -297,11 +301,10 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-5xl gap-0 max-h-[90vh]"
+    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -311,11 +314,10 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-4 md:gap-6"
         data-testid="container"
       >
         <p
@@ -330,7 +332,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -338,10 +340,14 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -358,7 +364,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -369,7 +375,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -386,7 +392,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -397,7 +403,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -437,11 +443,10 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-5xl gap-0 max-h-[90vh]"
+    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -451,11 +456,10 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-4 md:gap-6"
         data-testid="container"
       >
         <p
@@ -470,7 +474,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -478,10 +482,14 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -498,7 +506,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -509,7 +517,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -526,7 +534,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -537,7 +545,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -577,11 +585,10 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-5xl gap-0 max-h-[90vh]"
+    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -591,11 +598,10 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-4 md:gap-6"
         data-testid="container"
       >
         <p
@@ -610,7 +616,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -618,10 +624,14 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -638,7 +648,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -649,7 +659,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -666,7 +676,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -677,7 +687,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -717,11 +727,10 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-5xl gap-0 max-h-[90vh]"
+    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -731,11 +740,10 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-4 md:gap-6"
         data-testid="container"
       >
         <p
@@ -750,7 +758,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -758,10 +766,14 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -778,7 +790,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -789,7 +801,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -806,7 +818,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
             </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -817,7 +829,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"

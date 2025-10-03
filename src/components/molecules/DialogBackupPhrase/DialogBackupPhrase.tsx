@@ -29,9 +29,8 @@ export function DialogBackupPhrase() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button id="backup-recovery-phrase-btn" variant="secondary" className="gap-2">
-          <Libs.FileText className="h-4 w-4" />
-          <span>Recovery phrase</span>
+        <Atoms.Button id="backup-recovery-phrase-btn" className="gap-2">
+          <span>Continue</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="gap-6 p-8">

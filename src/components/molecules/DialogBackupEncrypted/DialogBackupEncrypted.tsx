@@ -22,9 +22,8 @@ export function DialogBackupEncrypted() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button id="backup-encrypted-file-btn" variant="secondary" className="gap-2">
-          <Libs.FileText className="h-4 w-4" />
-          <span>Encrypted file</span>
+        <Atoms.Button id="backup-encrypted-file-btn" className="gap-2">
+          <span>Continue</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="gap-6 p-8">

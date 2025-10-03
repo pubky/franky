@@ -10,16 +10,10 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
   >
     <button
       class="gap-2"
-      data-testid="button-secondary"
+      data-testid="button-default"
     >
-      <div
-        class="h-4 w-4"
-        data-testid="file-text-icon"
-      >
-        FileText
-      </div>
       <span>
-        Recovery phrase
+        Continue
       </span>
     </button>
   </div>
