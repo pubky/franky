@@ -5,7 +5,7 @@ import { DialogConfirmBackup } from './DialogConfirmBackup';
 // Mock Core module
 vi.mock('@/core', () => ({
   useOnboardingStore: vi.fn(() => ({
-    clearSecretKey: vi.fn(),
+    clearSecrets: vi.fn(),
   })),
 }));
 

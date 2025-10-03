@@ -13,10 +13,10 @@ interface DialogConfirmBackupProps {
 export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isBackupOpen, setIsBackupOpen] = useState(false);
-  const { clearSecretKey } = Core.useOnboardingStore();
+  const { clearSecrets } = Core.useOnboardingStore();
 
   const handleConfirm = () => {
-    clearSecretKey();
+    clearSecrets();
     setIsOpen(false);
     onConfirm?.();
   };

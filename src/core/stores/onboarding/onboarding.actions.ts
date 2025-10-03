@@ -58,6 +58,10 @@ export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): Onboa
     }
   },
 
+  clearSecrets: () => {
+    set({ secretKey: '', mnemonic: '' }, false, OnboardingActionTypes.CLEAR_SECRETS);
+  },
+
   setHydrated: (hasHydrated: boolean) => {
     set({ hasHydrated }, false, OnboardingActionTypes.SET_HYDRATED);
   },

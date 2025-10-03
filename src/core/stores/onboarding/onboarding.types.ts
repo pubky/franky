@@ -16,6 +16,7 @@ export interface OnboardingActions {
   setMnemonic: (mnemonic: string) => void;
   setKeypair: (pubky: Core.Pubky, secretKey: string) => void;
   setKeypairFromMnemonic: (mnemonic: string) => void;
+  clearSecrets: () => void;
   setHydrated: (hasHydrated: boolean) => void;
 }
 
@@ -32,6 +33,7 @@ export const onboardingInitialState: OnboardingState = {
 export enum OnboardingActionTypes {
   RESET = 'RESET',
   CLEAR_SECRET_KEY = 'CLEAR_SECRET_KEY',
+  CLEAR_SECRETS = 'CLEAR_SECRETS',
   SET_SECRET_KEY = 'SET_SECRET_KEY',
   SET_PUBKY = 'SET_PUBKY',
   SET_MNEMONIC = 'SET_MNEMONIC',
