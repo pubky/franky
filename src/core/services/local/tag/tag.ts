@@ -24,10 +24,12 @@ export class LocalTagService {
       tags: postTagsModel.tags as Core.NexusTag[],
     });
 
-    const counts = await Core.PostCountsModel.table.get(postId);
-    if (counts) {
+    // Check if counts exist using count() instead of fetching entire object
+    const countsExist = (await Core.PostCountsModel.table.where('id').equals(postId).count()) > 0;
+    if (countsExist) {
+      const counts = await Core.PostCountsModel.table.get(postId);
       await Core.PostCountsModel.insert({
-        ...counts,
+        ...counts!,
         tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
         unique_tags: postTagsModel.tags.length,
       });
@@ -59,10 +61,12 @@ export class LocalTagService {
       tags: postTagsModel.tags as Core.NexusTag[],
     });
 
-    const counts = await Core.PostCountsModel.table.get(postId);
-    if (counts) {
+    // Check if counts exist using count() instead of fetching entire object
+    const countsExist = (await Core.PostCountsModel.table.where('id').equals(postId).count()) > 0;
+    if (countsExist) {
+      const counts = await Core.PostCountsModel.table.get(postId);
       await Core.PostCountsModel.insert({
-        ...counts,
+        ...counts!,
         tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
         unique_tags: postTagsModel.tags.length,
       });
