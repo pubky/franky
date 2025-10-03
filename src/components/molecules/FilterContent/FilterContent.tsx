@@ -2,8 +2,9 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import { CONTENT, type ContentType } from '@/core/stores/filters/filters.types';
 
-export type ContentTab = 'all' | 'posts' | 'articles' | 'images' | 'videos' | 'links' | 'files';
+export type ContentTab = ContentType;
 
 interface ContentProps {
   selectedTab?: ContentTab;
@@ -11,16 +12,16 @@ interface ContentProps {
 }
 
 const tabs: { key: ContentTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'all', label: 'All', icon: Libs.Layers },
-  { key: 'posts', label: 'Posts', icon: Libs.StickyNote },
-  { key: 'articles', label: 'Articles', icon: Libs.Newspaper },
-  { key: 'images', label: 'Images', icon: Libs.Image },
-  { key: 'videos', label: 'Videos', icon: Libs.CirclePlay },
-  { key: 'links', label: 'Links', icon: Libs.Link },
-  { key: 'files', label: 'Files', icon: Libs.Download },
+  { key: CONTENT.ALL, label: 'All', icon: Libs.Layers },
+  { key: CONTENT.POSTS, label: 'Posts', icon: Libs.StickyNote },
+  { key: CONTENT.ARTICLES, label: 'Articles', icon: Libs.Newspaper },
+  { key: CONTENT.IMAGES, label: 'Images', icon: Libs.Image },
+  { key: CONTENT.VIDEOS, label: 'Videos', icon: Libs.CirclePlay },
+  { key: CONTENT.LINKS, label: 'Links', icon: Libs.Link },
+  { key: CONTENT.FILES, label: 'Files', icon: Libs.Download },
 ];
 
-export function FilterContent({ selectedTab = 'all', onTabChange }: ContentProps) {
+export function FilterContent({ selectedTab = CONTENT.ALL, onTabChange }: ContentProps) {
   const handleTabClick = (tab: ContentTab) => {
     onTabChange?.(tab);
   };

@@ -68,13 +68,17 @@ vi.mock('@/atoms', () => ({
     variant,
     size,
     onClick,
+    id,
+    className,
   }: {
     children: React.ReactNode;
     variant?: string;
     size?: string;
     onClick?: () => void;
+    id?: string;
+    className?: string;
   }) => (
-    <button onClick={onClick} data-variant={variant} data-size={size}>
+    <button onClick={onClick} data-variant={variant} data-size={size} id={id} className={className}>
       {children}
     </button>
   ),
@@ -92,7 +96,6 @@ vi.mock('@/atoms', () => ({
 
 // Mock the molecules
 vi.mock('@/molecules', () => ({
-  Posts: () => <div data-testid="posts">Mocked Posts Component</div>,
   DialogWelcome: () => <div data-testid="dialog-welcome">Mocked DialogWelcome</div>,
   AlertBackup: () => <div data-testid="alert-backup">Mocked AlertBackup</div>,
 }));
@@ -100,6 +103,7 @@ vi.mock('@/molecules', () => ({
 // Mock organisms
 vi.mock('@/organisms', () => ({
   Post: () => <div data-testid="post">Mocked Post</div>,
+  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
 }));
 
 // Mock hooks
@@ -133,12 +137,21 @@ describe('Feed', () => {
     expect(heading).toHaveClass('text-2xl');
   });
 
+  it('displays welcome message', () => {
+    render(<Feed />);
+    expect(
+      screen.getByText("Welcome to your feed. This is where you'll see posts from people you follow."),
+    ).toBeInTheDocument();
+  });
+
   it('renders logout button with correct props', () => {
     render(<Feed />);
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toBeInTheDocument();
     expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
     expect(logoutButton).toHaveAttribute('data-size', 'lg');
+    expect(logoutButton).toHaveAttribute('id', 'feed-logout-btn');
+    expect(logoutButton).toHaveClass('mt-6');
   });
 
   it('navigates to logout page when logout button is clicked', async () => {
@@ -156,13 +169,20 @@ describe('Feed', () => {
 
   it('renders container structure correctly', () => {
     render(<Feed />);
-    const containers = screen.getAllByRole('generic');
-    const outerContainer = containers.find(
-      (container) => container.getAttribute('data-size') === 'container' && container.classList.contains('px-6'),
-    );
-    const innerContainer = containers.find((container) => container.getAttribute('data-size') === 'default');
+    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
+  });
 
-    expect(outerContainer).toBeInTheDocument();
-    expect(innerContainer).toBeInTheDocument();
+  it('renders 5 placeholder cards', () => {
+    render(<Feed />);
+    const cards = screen.getAllByTestId('card');
+    expect(cards).toHaveLength(5);
+  });
+
+  it('applies correct styling to cards', () => {
+    render(<Feed />);
+    const cards = screen.getAllByTestId('card');
+    cards.forEach((card) => {
+      expect(card).toHaveClass('p-6');
+    });
   });
 });

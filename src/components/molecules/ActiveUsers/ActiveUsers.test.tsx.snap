@@ -1,0 +1,323 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ActiveUsers - Snapshots > matches snapshot for See All button 1`] = `
+<button
+  class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+>
+  <div
+    class="h-4 w-4"
+    data-testid="users-icon"
+  >
+    Users
+  </div>
+  <span
+    class="text-sm font-medium"
+  >
+    See All
+  </span>
+</button>
+`;
+
+exports[`ActiveUsers - Snapshots > matches snapshot for individual user items 1`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  David
+</div>
+`;
+
+exports[`ActiveUsers - Snapshots > matches snapshot for individual user items 2`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  Emma
+</div>
+`;
+
+exports[`ActiveUsers - Snapshots > matches snapshot for individual user items 3`] = `
+<div
+  class="text-base font-bold text-foreground"
+>
+  Frank
+</div>
+`;
+
+exports[`ActiveUsers - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="flex flex-col gap-4 custom-active-users"
+  data-testid="active-users"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+  >
+    Active Users
+  </h2>
+  <div
+    class="flex flex-col gap-2"
+  >
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="David"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=33"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          D
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-0.5"
+      >
+        <div
+          class="text-base font-bold text-foreground"
+        >
+          David
+        </div>
+        <div
+          class="text-sm text-muted-foreground opacity-50"
+        >
+          42
+           posts • 
+          12
+           tags
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Emma"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=9"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          E
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-0.5"
+      >
+        <div
+          class="text-base font-bold text-foreground"
+        >
+          Emma
+        </div>
+        <div
+          class="text-sm text-muted-foreground opacity-50"
+        >
+          38
+           posts • 
+          8
+           tags
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Frank"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=13"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          F
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-0.5"
+      >
+        <div
+          class="text-base font-bold text-foreground"
+        >
+          Frank
+        </div>
+        <div
+          class="text-sm text-muted-foreground opacity-50"
+        >
+          35
+           posts • 
+          15
+           tags
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+  >
+    <div
+      class="h-4 w-4"
+      data-testid="users-icon"
+    >
+      Users
+    </div>
+    <span
+      class="text-sm font-medium"
+    >
+      See All
+    </span>
+  </button>
+</div>
+`;
+
+exports[`ActiveUsers - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex flex-col gap-4"
+  data-testid="active-users"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+  >
+    Active Users
+  </h2>
+  <div
+    class="flex flex-col gap-2"
+  >
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="David"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=33"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          D
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-0.5"
+      >
+        <div
+          class="text-base font-bold text-foreground"
+        >
+          David
+        </div>
+        <div
+          class="text-sm text-muted-foreground opacity-50"
+        >
+          42
+           posts • 
+          12
+           tags
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Emma"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=9"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          E
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-0.5"
+      >
+        <div
+          class="text-base font-bold text-foreground"
+        >
+          Emma
+        </div>
+        <div
+          class="text-sm text-muted-foreground opacity-50"
+        >
+          38
+           posts • 
+          8
+           tags
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex items-center gap-3"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Frank"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=13"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          F
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-0.5"
+      >
+        <div
+          class="text-base font-bold text-foreground"
+        >
+          Frank
+        </div>
+        <div
+          class="text-sm text-muted-foreground opacity-50"
+        >
+          35
+           posts • 
+          15
+           tags
+        </div>
+      </div>
+    </div>
+  </div>
+  <button
+    class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+  >
+    <div
+      class="h-4 w-4"
+      data-testid="users-icon"
+    >
+      Users
+    </div>
+    <span
+      class="text-sm font-medium"
+    >
+      See All
+    </span>
+  </button>
+</div>
+`;

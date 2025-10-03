@@ -7,7 +7,7 @@ exports[`FilterLayout > applies correct icon classes 1`] = `
   data-testid="filter-list"
 >
   <p
-    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -25,7 +25,7 @@ exports[`FilterLayout > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -43,7 +43,7 @@ exports[`FilterLayout > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -65,7 +65,7 @@ exports[`FilterLayout > applies correct icon classes 1`] = `
 
 exports[`FilterLayout > applies correct styling classes 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -86,7 +86,7 @@ exports[`FilterLayout > applies correct styling classes 1`] = `
 
 exports[`FilterLayout > applies correct styling classes 2`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -112,7 +112,7 @@ exports[`FilterLayout > renders with correct icons 1`] = `
   data-testid="filter-list"
 >
   <p
-    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -130,7 +130,7 @@ exports[`FilterLayout > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -148,7 +148,7 @@ exports[`FilterLayout > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+    class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -170,7 +170,7 @@ exports[`FilterLayout > renders with correct icons 1`] = `
 
 exports[`FilterLayout > renders with custom selected tab 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -212,7 +212,7 @@ exports[`FilterLayout > renders with default selected tab 1`] = `
     data-testid="filter-list"
   >
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -230,7 +230,7 @@ exports[`FilterLayout > renders with default selected tab 1`] = `
       </span>
     </p>
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -248,7 +248,7 @@ exports[`FilterLayout > renders with default selected tab 1`] = `
       </span>
     </p>
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -271,7 +271,7 @@ exports[`FilterLayout > renders with default selected tab 1`] = `
 
 exports[`FilterLayout > rerenders with different selected tabs 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -292,7 +292,7 @@ exports[`FilterLayout > rerenders with different selected tabs 1`] = `
 
 exports[`FilterLayout > rerenders with different selected tabs 2`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -313,7 +313,7 @@ exports[`FilterLayout > rerenders with different selected tabs 2`] = `
 
 exports[`FilterLayout > rerenders with different selected tabs 3`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -334,7 +334,7 @@ exports[`FilterLayout > rerenders with different selected tabs 3`] = `
 
 exports[`FilterLayout > rerenders with different selected tabs 4`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground opacity-20 cursor-default"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -355,7 +355,7 @@ exports[`FilterLayout > rerenders with different selected tabs 4`] = `
 
 exports[`FilterLayout > shows correct visual state for selected and unselected tabs 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -376,7 +376,7 @@ exports[`FilterLayout > shows correct visual state for selected and unselected t
 
 exports[`FilterLayout > shows correct visual state for selected and unselected tabs 2`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
