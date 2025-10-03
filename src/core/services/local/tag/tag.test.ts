@@ -1,11 +1,61 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
+
+// Test data
+const testData = {
+  authorPubky: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky,
+  taggerPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
+  anotherTaggerPubky: 'y4euc88xboik1ev3axy9m9ajuedo8gx1mh1n7ms8zoxm5s1b1h9y' as Core.Pubky,
+  postId: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy:abc123xyz',
+};
+
+// Helper functions
+const createTagParams = (label: string): TLocalSaveTagParams => ({
+  postId: testData.postId,
+  label,
+  taggerId: testData.taggerPubky,
+});
+
+const createRemoveParams = (label: string): TLocalRemoveTagParams => ({
+  postId: testData.postId,
+  label,
+  taggerId: testData.taggerPubky,
+});
+
+const getSavedTags = async () => {
+  return await Core.PostTagsModel.table.get(testData.postId);
+};
+
+const getSavedCounts = async () => {
+  return await Core.PostCountsModel.table.get(testData.postId);
+};
+
+const createTagRecord = (label: string, taggers: Core.Pubky[], relationship: boolean) => ({
+  label,
+  taggers,
+  taggers_count: taggers.length,
+  relationship,
+});
+
+const setupExistingTag = async (label: string, taggers: Core.Pubky[], relationship: boolean) => {
+  await Core.PostTagsModel.insert({
+    id: testData.postId,
+    tags: [createTagRecord(label, taggers, relationship)],
+  });
+};
+
+const setupPostCounts = async (tags: number, uniqueTags: number) => {
+  await Core.PostCountsModel.insert({
+    id: testData.postId,
+    replies: 0,
+    tags,
+    unique_tags: uniqueTags,
+    reposts: 0,
+  });
+};
 
 describe('LocalTagService', () => {
-  const validAuthorPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky;
-  const validTaggerPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky;
-  const validPostId = `${validAuthorPubky}:abc123xyz`;
-
   beforeEach(async () => {
     await Core.db.initialize();
     await Core.db.transaction('rw', [Core.PostTagsModel.table, Core.PostCountsModel.table], async () => {
@@ -16,13 +66,9 @@ describe('LocalTagService', () => {
 
   describe('save', () => {
     it('should save a new tag to a post', async () => {
-      await Core.Local.Tag.save({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
+      await Core.Local.Tag.save(createTagParams('javascript'));
 
-      const savedTags = await Core.PostTagsModel.table.get(validPostId);
+      const savedTags = await getSavedTags();
       expect(savedTags).toBeTruthy();
       expect(savedTags!.tags).toHaveLength(1);
       expect(savedTags!.tags[0].label).toBe('javascript');
@@ -31,93 +77,42 @@ describe('LocalTagService', () => {
     });
 
     it('should add tagger to existing tag', async () => {
-      const anotherTaggerPubky = 'y4euc88xboik1ev3axy9m9ajuedo8gx1mh1n7ms8zoxm5s1b1h9y' as Core.Pubky;
+      await Core.Local.Tag.save(createTagParams('javascript'));
+      await setupExistingTag('javascript', [testData.taggerPubky], false);
 
       await Core.Local.Tag.save({
-        postId: validPostId,
+        postId: testData.postId,
         label: 'javascript',
-        taggerId: validTaggerPubky,
+        taggerId: testData.anotherTaggerPubky,
       });
 
-      await Core.PostTagsModel.insert({
-        id: validPostId,
-        tags: [
-          {
-            label: 'javascript',
-            taggers: [validTaggerPubky],
-            taggers_count: 1,
-            relationship: false,
-          },
-        ],
-      });
-
-      await Core.Local.Tag.save({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: anotherTaggerPubky,
-      });
-
-      const savedTags = await Core.PostTagsModel.table.get(validPostId);
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags[0].taggers_count).toBe(2);
       expect(savedTags!.tags[0].relationship).toBe(true);
     });
 
     it('should throw error if user already tagged post with this label', async () => {
-      await Core.PostTagsModel.insert({
-        id: validPostId,
-        tags: [
-          {
-            label: 'javascript',
-            taggers: [validTaggerPubky],
-            taggers_count: 1,
-            relationship: true,
-          },
-        ],
-      });
+      await setupExistingTag('javascript', [testData.taggerPubky], true);
 
-      await expect(
-        Core.Local.Tag.save({
-          postId: validPostId,
-          label: 'javascript',
-          taggerId: validTaggerPubky,
-        }),
-      ).rejects.toThrow('User already tagged this post with this label');
+      await expect(Core.Local.Tag.save(createTagParams('javascript'))).rejects.toThrow(
+        'User already tagged this post with this label',
+      );
     });
 
     it('should update post counts when adding tag', async () => {
-      await Core.PostCountsModel.insert({
-        id: validPostId,
-        replies: 0,
-        tags: 0,
-        unique_tags: 0,
-        reposts: 0,
-      });
+      await setupPostCounts(0, 0);
+      await Core.Local.Tag.save(createTagParams('javascript'));
 
-      await Core.Local.Tag.save({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
-
-      const savedCounts = await Core.PostCountsModel.table.get(validPostId);
+      const savedCounts = await getSavedCounts();
       expect(savedCounts!.tags).toBe(1);
       expect(savedCounts!.unique_tags).toBe(1);
     });
 
     it('should add multiple different tags to a post', async () => {
-      await Core.Local.Tag.save({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
+      await Core.Local.Tag.save(createTagParams('javascript'));
+      await Core.Local.Tag.save(createTagParams('react'));
 
-      await Core.Local.Tag.save({
-        postId: validPostId,
-        label: 'react',
-        taggerId: validTaggerPubky,
-      });
-
-      const savedTags = await Core.PostTagsModel.table.get(validPostId);
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(2);
       expect(savedTags!.tags.map((t) => t.label)).toContain('javascript');
       expect(savedTags!.tags.map((t) => t.label)).toContain('react');
@@ -126,46 +121,21 @@ describe('LocalTagService', () => {
 
   describe('remove', () => {
     beforeEach(async () => {
-      await Core.PostTagsModel.insert({
-        id: validPostId,
-        tags: [
-          {
-            label: 'javascript',
-            taggers: [validTaggerPubky],
-            taggers_count: 1,
-            relationship: true,
-          },
-        ],
-      });
-
-      await Core.PostCountsModel.insert({
-        id: validPostId,
-        replies: 0,
-        tags: 1,
-        unique_tags: 1,
-        reposts: 0,
-      });
+      await setupExistingTag('javascript', [testData.taggerPubky], true);
+      await setupPostCounts(1, 1);
     });
 
     it('should remove tag from post', async () => {
-      await Core.Local.Tag.remove({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
+      await Core.Local.Tag.remove(createRemoveParams('javascript'));
 
-      const savedTags = await Core.PostTagsModel.table.get(validPostId);
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(0);
     });
 
     it('should update post counts when removing tag', async () => {
-      await Core.Local.Tag.remove({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
+      await Core.Local.Tag.remove(createRemoveParams('javascript'));
 
-      const savedCounts = await Core.PostCountsModel.table.get(validPostId);
+      const savedCounts = await getSavedCounts();
       expect(savedCounts!.tags).toBe(0);
       expect(savedCounts!.unique_tags).toBe(0);
     });
@@ -173,64 +143,28 @@ describe('LocalTagService', () => {
     it('should throw error if post has no tags', async () => {
       await Core.PostTagsModel.table.clear();
 
-      await expect(
-        Core.Local.Tag.remove({
-          postId: validPostId,
-          label: 'javascript',
-          taggerId: validTaggerPubky,
-        }),
-      ).rejects.toThrow('Post has no tags');
+      await expect(Core.Local.Tag.remove(createRemoveParams('javascript'))).rejects.toThrow('Post has no tags');
     });
 
     it('should throw error if user has not tagged post with this label', async () => {
-      await Core.PostTagsModel.insert({
-        id: validPostId,
-        tags: [
-          {
-            label: 'javascript',
-            taggers: [validTaggerPubky],
-            taggers_count: 1,
-            relationship: false,
-          },
-        ],
-      });
+      await setupExistingTag('javascript', [testData.taggerPubky], false);
 
-      await expect(
-        Core.Local.Tag.remove({
-          postId: validPostId,
-          label: 'javascript',
-          taggerId: validTaggerPubky,
-        }),
-      ).rejects.toThrow('User has not tagged this post with this label');
+      await expect(Core.Local.Tag.remove(createRemoveParams('javascript'))).rejects.toThrow(
+        'User has not tagged this post with this label',
+      );
     });
 
     it('should remove only the tagger but keep tag if other taggers exist', async () => {
-      const anotherTaggerPubky = 'y4euc88xboik1ev3axy9m9ajuedo8gx1mh1n7ms8zoxm5s1b1h9y' as Core.Pubky;
+      await setupExistingTag('javascript', [testData.taggerPubky, testData.anotherTaggerPubky], true);
 
-      await Core.PostTagsModel.insert({
-        id: validPostId,
-        tags: [
-          {
-            label: 'javascript',
-            taggers: [validTaggerPubky, anotherTaggerPubky],
-            taggers_count: 2,
-            relationship: true,
-          },
-        ],
-      });
+      await Core.Local.Tag.remove(createRemoveParams('javascript'));
 
-      await Core.Local.Tag.remove({
-        postId: validPostId,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
-
-      const savedTags = await Core.PostTagsModel.table.get(validPostId);
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(1);
       expect(savedTags!.tags[0].taggers_count).toBe(1);
       expect(savedTags!.tags[0].relationship).toBe(false);
-      expect(savedTags!.tags[0].taggers).toContain(anotherTaggerPubky);
-      expect(savedTags!.tags[0].taggers).not.toContain(validTaggerPubky);
+      expect(savedTags!.tags[0].taggers).toContain(testData.anotherTaggerPubky);
+      expect(savedTags!.tags[0].taggers).not.toContain(testData.taggerPubky);
     });
   });
 });

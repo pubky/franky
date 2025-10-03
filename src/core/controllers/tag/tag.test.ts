@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import type { TCreateTagParams, TDeleteTagParams } from './tag.types';
 
+// Mock homeserver
 const mockHomeserver = {
   fetch: vi.fn().mockResolvedValue({ ok: true }),
 };
 
+// Mock pubky-app-specs
 vi.mock('pubky-app-specs', () => ({
   PubkySpecsBuilder: class {
     createTag(_uri: string, label: string) {
@@ -17,17 +20,54 @@ vi.mock('pubky-app-specs', () => ({
   postUriBuilder: (authorId: string, postId: string) => `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
 }));
 
-describe('TagController', () => {
-  const validAuthorPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky;
-  const validTaggerPubky = 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky;
-  const validPostId = 'abc123xyz';
+// Test data
+const testData = {
+  authorPubky: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky,
+  taggerPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
+  postId: 'abc123xyz',
+  get targetId() {
+    return `${this.authorPubky}:${this.postId}`;
+  },
+};
 
+// Helper functions
+const createTagParams = (label: string): TCreateTagParams => ({
+  targetId: testData.targetId,
+  label,
+  taggerId: testData.taggerPubky,
+});
+
+const deleteTagParams = (label: string): TDeleteTagParams => ({
+  targetId: testData.targetId,
+  label,
+  taggerId: testData.taggerPubky,
+});
+
+const getSavedTags = async () => {
+  return await Core.PostTagsModel.table.get(testData.targetId);
+};
+
+const setupExistingTag = async () => {
+  await Core.PostTagsModel.insert({
+    id: testData.targetId,
+    tags: [
+      {
+        label: 'javascript',
+        taggers: [testData.taggerPubky],
+        taggers_count: 1,
+        relationship: true,
+      },
+    ],
+  });
+};
+
+describe('TagController', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
-
     mockHomeserver.fetch.mockClear();
 
+    // Mock Core module
     vi.doMock('@/core', async () => {
       const actual = await vi.importActual('@/core');
       return {
@@ -39,6 +79,7 @@ describe('TagController', () => {
       };
     });
 
+    // Initialize database and clear tables
     await Core.db.initialize();
     await Core.db.transaction('rw', [Core.PostTagsModel.table, Core.PostCountsModel.table], async () => {
       await Core.PostTagsModel.table.clear();
@@ -47,22 +88,18 @@ describe('TagController', () => {
   });
 
   describe('create', () => {
-    it('exists and is callable', async () => {
+    it('should be callable', async () => {
       const { TagController } = await import('./tag');
       expect(TagController.create).toBeTypeOf('function');
     });
 
-    it('saves tag to database and syncs to homeserver', async () => {
+    it('should save tag and sync to homeserver', async () => {
       mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
-
       const { TagController } = await import('./tag');
-      await TagController.create({
-        targetId: `${validAuthorPubky}:${validPostId}`,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
 
-      const savedTags = await Core.PostTagsModel.table.get(`${validAuthorPubky}:${validPostId}`);
+      await TagController.create(createTagParams('javascript'));
+
+      const savedTags = await getSavedTags();
       expect(savedTags).toBeTruthy();
       expect(savedTags!.tags).toHaveLength(1);
       expect(savedTags!.tags[0].label).toBe('javascript');
@@ -70,66 +107,44 @@ describe('TagController', () => {
       expect(savedTags!.tags[0].relationship).toBe(true);
     });
 
-    it('trims whitespace and converts to lowercase', async () => {
+    it('should normalize label (trim and lowercase)', async () => {
       mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
-
       const { TagController } = await import('./tag');
-      await TagController.create({
-        targetId: `${validAuthorPubky}:${validPostId}`,
-        label: '  JavaScript  ',
-        taggerId: validTaggerPubky,
-      });
 
-      const savedTags = await Core.PostTagsModel.table.get(`${validAuthorPubky}:${validPostId}`);
+      await TagController.create(createTagParams('  JavaScript  '));
+
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags[0].label).toBe('javascript');
     });
   });
 
   describe('delete', () => {
     beforeEach(async () => {
-      await Core.PostTagsModel.insert({
-        id: `${validAuthorPubky}:${validPostId}`,
-        tags: [
-          {
-            label: 'javascript',
-            taggers: [validTaggerPubky],
-            taggers_count: 1,
-            relationship: true,
-          },
-        ],
-      });
+      await setupExistingTag();
     });
 
-    it('exists and is callable', async () => {
+    it('should be callable', async () => {
       const { TagController } = await import('./tag');
       expect(TagController.delete).toBeTypeOf('function');
     });
 
-    it('removes tag from database and syncs to homeserver', async () => {
+    it('should remove tag and sync to homeserver', async () => {
       mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
-
       const { TagController } = await import('./tag');
-      await TagController.delete({
-        targetId: `${validAuthorPubky}:${validPostId}`,
-        label: 'javascript',
-        taggerId: validTaggerPubky,
-      });
 
-      const savedTags = await Core.PostTagsModel.table.get(`${validAuthorPubky}:${validPostId}`);
+      await TagController.delete(deleteTagParams('javascript'));
+
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(0);
     });
 
-    it('trims whitespace and converts to lowercase', async () => {
+    it('should normalize label (trim and lowercase)', async () => {
       mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
-
       const { TagController } = await import('./tag');
-      await TagController.delete({
-        targetId: `${validAuthorPubky}:${validPostId}`,
-        label: '  JavaScript  ',
-        taggerId: validTaggerPubky,
-      });
 
-      const savedTags = await Core.PostTagsModel.table.get(`${validAuthorPubky}:${validPostId}`);
+      await TagController.delete(deleteTagParams('  JavaScript  '));
+
+      const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(0);
     });
   });

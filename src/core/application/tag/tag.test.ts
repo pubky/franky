@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Tag } from './tag';
 import * as Core from '@/core';
+import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 
 // Mock the Local.Tag service
 vi.mock('@/core/services/local/tag', () => ({
@@ -18,154 +19,114 @@ vi.mock('@/core/services/homeserver', () => ({
 }));
 
 describe('Tag Application', () => {
+  // Test data factory
+  const createMockTagData = (): TCreateTagInput => ({
+    postId: 'author:post123',
+    label: 'test-tag',
+    taggerId: 'tagger123' as Core.Pubky,
+    tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
+    tagJson: { label: 'test-tag' },
+  });
+
+  const createMockDeleteData = (): TDeleteTagInput => ({
+    postId: 'author:post123',
+    label: 'test-tag',
+    taggerId: 'tagger123' as Core.Pubky,
+    tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
+  });
+
+  // Helper functions
+  const setupMocks = () => ({
+    saveSpy: vi.spyOn(Core.Local.Tag, 'save'),
+    removeSpy: vi.spyOn(Core.Local.Tag, 'remove'),
+    requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   describe('create', () => {
-    it('should save tag locally and sync to homeserver', async () => {
-      const mockParams = {
-        postId: 'author:post123',
-        label: 'test-tag',
-        taggerId: 'tagger123' as Core.Pubky,
-        tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
-        tagJson: { label: 'test-tag' },
-      };
+    it('should save locally and sync to homeserver successfully', async () => {
+      const mockData = createMockTagData();
+      const { saveSpy, requestSpy } = setupMocks();
 
-      const saveSpy = vi.spyOn(Core.Local.Tag, 'save').mockResolvedValue(undefined);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+      saveSpy.mockResolvedValue(undefined);
+      requestSpy.mockResolvedValue(undefined);
 
-      await Tag.create(mockParams);
+      await Tag.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
-        postId: mockParams.postId,
-        label: mockParams.label,
-        taggerId: mockParams.taggerId,
+        postId: mockData.postId,
+        label: mockData.label,
+        taggerId: mockData.taggerId,
       });
-
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockParams.tagUrl, mockParams.tagJson);
-
-      saveSpy.mockRestore();
-      requestSpy.mockRestore();
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.tagUrl, mockData.tagJson);
     });
 
-    it('should throw error if local save fails', async () => {
-      const mockParams = {
-        postId: 'author:post123',
-        label: 'test-tag',
-        taggerId: 'tagger123' as Core.Pubky,
-        tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
-        tagJson: { label: 'test-tag' },
-      };
+    it('should throw when local save fails', async () => {
+      const mockData = createMockTagData();
+      const { saveSpy, requestSpy } = setupMocks();
 
-      const saveSpy = vi.spyOn(Core.Local.Tag, 'save').mockRejectedValue(new Error('Database error'));
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
+      saveSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(Tag.create(mockParams)).rejects.toThrow('Database error');
-
+      await expect(Tag.create(mockData)).rejects.toThrow('Database error');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
-
-      saveSpy.mockRestore();
-      requestSpy.mockRestore();
     });
 
-    it('should throw error if homeserver sync fails', async () => {
-      const mockParams = {
-        postId: 'author:post123',
-        label: 'test-tag',
-        taggerId: 'tagger123' as Core.Pubky,
-        tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
-        tagJson: { label: 'test-tag' },
-      };
+    it('should throw when homeserver sync fails', async () => {
+      const mockData = createMockTagData();
+      const { saveSpy, requestSpy } = setupMocks();
 
-      const saveSpy = vi.spyOn(Core.Local.Tag, 'save').mockResolvedValue(undefined);
-      const requestSpy = vi
-        .spyOn(Core.HomeserverService, 'request')
-        .mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
+      saveSpy.mockResolvedValue(undefined);
+      requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(Tag.create(mockParams)).rejects.toThrow('Failed to PUT to homeserver: 500');
-
+      await expect(Tag.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
-
-      saveSpy.mockRestore();
-      requestSpy.mockRestore();
     });
   });
 
   describe('delete', () => {
-    it('should remove tag locally and sync to homeserver', async () => {
-      const mockParams = {
-        postId: 'author:post123',
-        label: 'test-tag',
-        taggerId: 'tagger123' as Core.Pubky,
-        tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
-      };
+    it('should remove locally and sync to homeserver successfully', async () => {
+      const mockData = createMockDeleteData();
+      const { removeSpy, requestSpy } = setupMocks();
 
-      const removeSpy = vi.spyOn(Core.Local.Tag, 'remove').mockResolvedValue(undefined);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+      removeSpy.mockResolvedValue(undefined);
+      requestSpy.mockResolvedValue(undefined);
 
-      await Tag.delete(mockParams);
+      await Tag.delete(mockData);
 
       expect(removeSpy).toHaveBeenCalledWith({
-        postId: mockParams.postId,
-        label: mockParams.label,
-        taggerId: mockParams.taggerId,
+        postId: mockData.postId,
+        label: mockData.label,
+        taggerId: mockData.taggerId,
       });
-
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockParams.tagUrl);
-
-      removeSpy.mockRestore();
-      requestSpy.mockRestore();
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.tagUrl);
     });
 
-    it('should throw error if local remove fails', async () => {
-      const mockParams = {
-        postId: 'author:post123',
-        label: 'test-tag',
-        taggerId: 'tagger123' as Core.Pubky,
-        tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
-      };
+    it('should throw when local remove fails', async () => {
+      const mockData = createMockDeleteData();
+      const { removeSpy, requestSpy } = setupMocks();
 
-      const removeSpy = vi
-        .spyOn(Core.Local.Tag, 'remove')
-        .mockRejectedValue(new Error('User has not tagged this post with this label'));
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
+      removeSpy.mockRejectedValue(new Error('User has not tagged this post with this label'));
 
-      await expect(Tag.delete(mockParams)).rejects.toThrow('User has not tagged this post with this label');
-
+      await expect(Tag.delete(mockData)).rejects.toThrow('User has not tagged this post with this label');
       expect(removeSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
-
-      removeSpy.mockRestore();
-      requestSpy.mockRestore();
     });
 
-    it('should throw error if homeserver sync fails', async () => {
-      const mockParams = {
-        postId: 'author:post123',
-        label: 'test-tag',
-        taggerId: 'tagger123' as Core.Pubky,
-        tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
-      };
+    it('should throw when homeserver sync fails', async () => {
+      const mockData = createMockDeleteData();
+      const { removeSpy, requestSpy } = setupMocks();
 
-      const removeSpy = vi.spyOn(Core.Local.Tag, 'remove').mockResolvedValue(undefined);
-      const requestSpy = vi
-        .spyOn(Core.HomeserverService, 'request')
-        .mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
+      removeSpy.mockResolvedValue(undefined);
+      requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(Tag.delete(mockParams)).rejects.toThrow('Failed to DELETE from homeserver: 404');
-
+      await expect(Tag.delete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 404');
       expect(removeSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
-
-      removeSpy.mockRestore();
-      requestSpy.mockRestore();
     });
   });
 });
