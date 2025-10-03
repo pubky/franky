@@ -7,6 +7,26 @@ import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
 import { db } from '@/core';
 
+// Polyfill IntersectionObserver for jsdom
+class MockIntersectionObserver implements IntersectionObserver {
+  constructor() {}
+  readonly root: Element | Document | null = null;
+  readonly rootMargin: string = '0px';
+  readonly thresholds: ReadonlyArray<number> = [0];
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+}
+// Assign to globals for jsdom
+(globalThis as unknown as { IntersectionObserver: typeof MockIntersectionObserver }).IntersectionObserver =
+  MockIntersectionObserver;
+if (typeof window !== 'undefined')
+  (window as unknown as { IntersectionObserver: typeof MockIntersectionObserver }).IntersectionObserver =
+    MockIntersectionObserver;
+
 // Suppress specific WebAssembly and navigation warnings
 const originalConsoleError = console.error;
 const originalConsoleWarn = console.warn;

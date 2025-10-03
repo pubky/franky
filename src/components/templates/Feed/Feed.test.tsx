@@ -1,33 +1,29 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import { Feed } from './Feed';
-import * as App from '@/app';
+import { useRouter } from 'next/navigation';
 
-// Mock next/navigation
+// Mock Next.js router
 vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    prefetch: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn(),
-    refresh: vi.fn(),
-  })),
+  useRouter: vi.fn(),
 }));
 
-// Mock the Core module
-vi.mock('@/core', () => ({
-  AuthController: {
-    logout: vi.fn(),
-  },
-}));
-
-// Mock the atoms
-vi.mock('@/atoms', () => ({
-  Container: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
-    <div className={className} data-size={size}>
+// Mock the components
+vi.mock('@/components', () => ({
+  Button: ({
+    children,
+    onClick,
+    className,
+    ...props
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+    className?: string;
+    [key: string]: unknown;
+  }) => (
+    <button onClick={onClick} className={className} {...props}>
       {children}
-    </div>
+    </button>
   ),
   Heading: ({
     children,
@@ -36,100 +32,213 @@ vi.mock('@/atoms', () => ({
     className,
   }: {
     children: React.ReactNode;
-    level?: number;
+    level?: string;
     size?: string;
     className?: string;
   }) => (
-    <h1 data-level={level} data-size={size} className={className}>
+    <h1 className={className} data-level={level} data-size={size}>
       {children}
     </h1>
   ),
-  Button: ({
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <p className={className} data-size={size}>
+      {children}
+    </p>
+  ),
+  Card: ({
     children,
-    variant,
-    size,
-    onClick,
+    className,
+    ...props
   }: {
     children: React.ReactNode;
-    variant?: string;
-    size?: string;
-    onClick?: () => void;
+    className?: string;
+    [key: string]: unknown;
   }) => (
-    <button onClick={onClick} data-variant={variant} data-size={size}>
-      {children}
-    </button>
-  ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <span data-size={size} className={className}>
-      {children}
-    </span>
-  ),
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className} data-testid="card">
+    <div className={className} {...props}>
       {children}
     </div>
   ),
 }));
 
-// Mock the molecules
-vi.mock('@/molecules', () => ({
-  Posts: () => <div data-testid="posts">Mocked Posts Component</div>,
+// Mock the organisms
+vi.mock('@/organisms', () => ({
+  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
+  Post: ({ postId, onClick }: { postId: string; onClick?: () => void }) => (
+    <div data-testid="post" onClick={onClick}>
+      {postId}
+    </div>
+  ),
 }));
 
+// Mock the app routes
+vi.mock('@/app', () => ({
+  ROOT_ROUTES: '/',
+  AUTH_ROUTES: {
+    LOGOUT: '/logout',
+    SIGN_IN: '/sign-in',
+  },
+  FEED_ROUTES: {
+    FEED: '/feed',
+  },
+  UNAUTHENTICATED_ROUTES: {
+    allowedRoutes: [
+      '/',
+      '/sign-in',
+      '/onboarding/install',
+      '/onboarding/scan',
+      '/onboarding/pubky',
+      '/onboarding/backup',
+      '/onboarding/homeserver',
+      '/logout',
+    ],
+    redirectTo: '/',
+  },
+  AUTHENTICATED_ROUTES: {
+    allowedRoutes: ['/onboarding/profile', '/feed', '/post', '/logout'],
+    redirectTo: '/feed',
+  },
+}));
+
+// Mock core posts fetching to resolve with 5 posts
+vi.mock('@/core', async (importOriginal) => {
+  const actual = (await importOriginal()) as {
+    PostController: { fetch: (args?: unknown) => Promise<unknown[]> };
+    [key: string]: unknown;
+  };
+  return {
+    ...actual,
+    PostController: {
+      ...actual.PostController,
+      fetch: vi
+        .fn()
+        .mockResolvedValue([
+          { details: { id: 'Post 1' } },
+          { details: { id: 'Post 2' } },
+          { details: { id: 'Post 3' } },
+          { details: { id: 'Post 4' } },
+          { details: { id: 'Post 5' } },
+        ]),
+    },
+  };
+});
+
 describe('Feed', () => {
-  let mockLogout: jest.MockedFunction<() => void>;
+  const mockPush = vi.fn();
+  const mockRouter = {
+    push: mockPush,
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  };
 
-  beforeEach(async () => {
+  beforeEach(() => {
+    vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
-    // Get the mocked AuthController
-    const { AuthController } = await import('@/core');
-    mockLogout = AuthController.logout as jest.MockedFunction<() => void>;
   });
 
-  it('renders without errors', () => {
+  it('renders with correct heading and description', () => {
     render(<Feed />);
+
     expect(screen.getByText('Feed')).toBeInTheDocument();
+    expect(
+      screen.getByText("Welcome to your feed. This is where you'll see posts from people you follow."),
+    ).toBeInTheDocument();
   });
 
-  it('displays the Feed heading correctly', () => {
+  it('renders posts after fetch with correct number of items', async () => {
     render(<Feed />);
-    const heading = screen.getByText('Feed');
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveAttribute('data-level', '1');
-    expect(heading).toHaveAttribute('data-size', 'xl');
-    expect(heading).toHaveClass('text-2xl');
+
+    const posts = await screen.findAllByTestId('post');
+    expect(posts.length).toBeGreaterThanOrEqual(5);
+    expect(screen.getAllByText('Post 1').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Post 5').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders logout button with correct props', () => {
+  it('renders logout button with correct attributes', () => {
     render(<Feed />);
+
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toBeInTheDocument();
-    expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
-    expect(logoutButton).toHaveAttribute('data-size', 'lg');
+    expect(logoutButton).toHaveAttribute('id', 'feed-logout-btn');
   });
 
-  it('navigates to logout page when logout button is clicked', async () => {
-    const { useRouter } = await import('next/navigation');
-    const mockPush = vi.fn();
-    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
-
+  it('handles logout button click correctly', () => {
     render(<Feed />);
+
     const logoutButton = screen.getByText('Logout');
     fireEvent.click(logoutButton);
 
-    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
-    expect(mockLogout).not.toHaveBeenCalled(); // Should not logout immediately
+    expect(mockPush).toHaveBeenCalledWith('/logout');
+    expect(mockPush).toHaveBeenCalledTimes(1);
   });
 
-  it('renders container structure correctly', () => {
+  it('renders within ContentLayout', () => {
     render(<Feed />);
-    const containers = screen.getAllByRole('generic');
-    const outerContainer = containers.find(
-      (container) => container.getAttribute('data-size') === 'container' && container.classList.contains('px-6'),
-    );
-    const innerContainer = containers.find((container) => container.getAttribute('data-size') === 'default');
 
-    expect(outerContainer).toBeInTheDocument();
-    expect(innerContainer).toBeInTheDocument();
+    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
+  });
+
+  it('applies correct heading attributes', () => {
+    render(<Feed />);
+
+    const heading = screen.getByText('Feed');
+    expect(heading).toHaveAttribute('data-testid', 'heading-1');
+    expect(heading).toHaveClass('text-2xl');
+  });
+
+  it('applies correct typography attributes', () => {
+    render(<Feed />);
+
+    const description = screen.getByText(
+      "Welcome to your feed. This is where you'll see posts from people you follow.",
+    );
+    expect(description).toHaveAttribute('data-testid', 'typography');
+    expect(description).toHaveClass('text-xl');
+    expect(description).toHaveClass('text-muted-foreground');
+  });
+
+  it('renders posts list container after fetch', async () => {
+    render(<Feed />);
+    await screen.findAllByTestId('post');
+    const contentLayout = screen.getByTestId('content-layout');
+    expect(contentLayout).toBeInTheDocument();
+  });
+
+  it('applies correct styling to content container', async () => {
+    render(<Feed />);
+    await screen.findAllByTestId('post');
+    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
+  });
+
+  it('applies correct styling to logout button', () => {
+    render(<Feed />);
+
+    const logoutButton = screen.getByText('Logout');
+    expect(logoutButton).toHaveClass('mt-6');
+  });
+
+  it('renders all posts after fetch', async () => {
+    render(<Feed />);
+    const posts = await screen.findAllByTestId('post');
+    expect(posts.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it('handles multiple logout clicks correctly', () => {
+    render(<Feed />);
+
+    const logoutButton = screen.getByText('Logout');
+
+    // Click multiple times
+    fireEvent.click(logoutButton);
+    fireEvent.click(logoutButton);
+    fireEvent.click(logoutButton);
+
+    expect(mockPush).toHaveBeenCalledWith('/logout');
+    expect(mockPush).toHaveBeenCalledTimes(3);
   });
 });

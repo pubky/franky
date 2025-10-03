@@ -2,8 +2,9 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import { REACH, type ReachType } from '@/core/stores/filters/filters.types';
 
-export type ReachTab = 'all' | 'following' | 'friends' | 'me';
+export type ReachTab = ReachType;
 
 interface ReachProps {
   selectedTab?: ReachTab;
@@ -11,13 +12,13 @@ interface ReachProps {
 }
 
 const tabs: { key: ReachTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'all', label: 'All', icon: Libs.Radio },
-  { key: 'following', label: 'Following', icon: Libs.UsersRound2 },
-  { key: 'friends', label: 'Friends', icon: Libs.HeartHandshake },
-  { key: 'me', label: 'Me', icon: Libs.UserRound },
+  { key: REACH.ALL, label: 'All', icon: Libs.Radio },
+  { key: REACH.FOLLOWING, label: 'Following', icon: Libs.UsersRound2 },
+  { key: REACH.FRIENDS, label: 'Friends', icon: Libs.HeartHandshake },
+  { key: REACH.ME, label: 'Me', icon: Libs.UserRound },
 ];
 
-export function FilterReach({ selectedTab = 'all', onTabChange }: ReachProps) {
+export function FilterReach({ selectedTab = REACH.ALL, onTabChange }: ReachProps) {
   const handleTabClick = (tab: ReachTab) => {
     onTabChange?.(tab);
   };

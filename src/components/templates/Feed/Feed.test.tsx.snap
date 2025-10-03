@@ -1,0 +1,315 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Feed - Snapshots > matches snapshot for heading structure 1`] = `
+<h1
+  class="text-2xl"
+  data-level="1"
+  data-size="xl"
+>
+  Feed
+</h1>
+`;
+
+exports[`Feed - Snapshots > matches snapshot for individual post 1`] = `
+<div
+  class="p-6"
+>
+  <p
+    class="font-semibold mb-2"
+    data-size="md"
+  >
+    Post 
+    1
+  </p>
+  <p
+    class="text-muted-foreground"
+    data-size="sm"
+  >
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  </p>
+  <p
+    class="text-muted-foreground mt-4"
+    data-size="sm"
+  >
+    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </p>
+</div>
+`;
+
+exports[`Feed - Snapshots > matches snapshot for logout button 1`] = `
+<button
+  class="mt-6"
+  id="feed-logout-btn"
+  variant="secondary"
+>
+  Logout
+</button>
+`;
+
+exports[`Feed - Snapshots > matches snapshot for placeholder content 1`] = `
+<div
+  class="flex flex-col gap-4 mt-4"
+>
+  <div
+    class="p-6"
+  >
+    <p
+      class="font-semibold mb-2"
+      data-size="md"
+    >
+      Post 
+      1
+    </p>
+    <p
+      class="text-muted-foreground"
+      data-size="sm"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    </p>
+    <p
+      class="text-muted-foreground mt-4"
+      data-size="sm"
+    >
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </div>
+  <div
+    class="p-6"
+  >
+    <p
+      class="font-semibold mb-2"
+      data-size="md"
+    >
+      Post 
+      2
+    </p>
+    <p
+      class="text-muted-foreground"
+      data-size="sm"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    </p>
+    <p
+      class="text-muted-foreground mt-4"
+      data-size="sm"
+    >
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </div>
+  <div
+    class="p-6"
+  >
+    <p
+      class="font-semibold mb-2"
+      data-size="md"
+    >
+      Post 
+      3
+    </p>
+    <p
+      class="text-muted-foreground"
+      data-size="sm"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    </p>
+    <p
+      class="text-muted-foreground mt-4"
+      data-size="sm"
+    >
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </div>
+  <div
+    class="p-6"
+  >
+    <p
+      class="font-semibold mb-2"
+      data-size="md"
+    >
+      Post 
+      4
+    </p>
+    <p
+      class="text-muted-foreground"
+      data-size="sm"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    </p>
+    <p
+      class="text-muted-foreground mt-4"
+      data-size="sm"
+    >
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </div>
+  <div
+    class="p-6"
+  >
+    <p
+      class="font-semibold mb-2"
+      data-size="md"
+    >
+      Post 
+      5
+    </p>
+    <p
+      class="text-muted-foreground"
+      data-size="sm"
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    </p>
+    <p
+      class="text-muted-foreground mt-4"
+      data-size="sm"
+    >
+      Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+  </div>
+</div>
+`;
+
+exports[`Feed - Snapshots > matches snapshot with default props 1`] = `
+<div
+  data-testid="content-layout"
+>
+  <h1
+    class="text-2xl"
+    data-level="1"
+    data-size="xl"
+  >
+    Feed
+  </h1>
+  <p
+    class="text-muted-foreground"
+    data-size="md"
+  >
+    Welcome to your feed. This is where you'll see posts from people you follow.
+  </p>
+  <div
+    class="flex flex-col gap-4 mt-4"
+  >
+    <div
+      class="p-6"
+    >
+      <p
+        class="font-semibold mb-2"
+        data-size="md"
+      >
+        Post 
+        1
+      </p>
+      <p
+        class="text-muted-foreground"
+        data-size="sm"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+      <p
+        class="text-muted-foreground mt-4"
+        data-size="sm"
+      >
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+    </div>
+    <div
+      class="p-6"
+    >
+      <p
+        class="font-semibold mb-2"
+        data-size="md"
+      >
+        Post 
+        2
+      </p>
+      <p
+        class="text-muted-foreground"
+        data-size="sm"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+      <p
+        class="text-muted-foreground mt-4"
+        data-size="sm"
+      >
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+    </div>
+    <div
+      class="p-6"
+    >
+      <p
+        class="font-semibold mb-2"
+        data-size="md"
+      >
+        Post 
+        3
+      </p>
+      <p
+        class="text-muted-foreground"
+        data-size="sm"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+      <p
+        class="text-muted-foreground mt-4"
+        data-size="sm"
+      >
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+    </div>
+    <div
+      class="p-6"
+    >
+      <p
+        class="font-semibold mb-2"
+        data-size="md"
+      >
+        Post 
+        4
+      </p>
+      <p
+        class="text-muted-foreground"
+        data-size="sm"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+      <p
+        class="text-muted-foreground mt-4"
+        data-size="sm"
+      >
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+    </div>
+    <div
+      class="p-6"
+    >
+      <p
+        class="font-semibold mb-2"
+        data-size="md"
+      >
+        Post 
+        5
+      </p>
+      <p
+        class="text-muted-foreground"
+        data-size="sm"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      </p>
+      <p
+        class="text-muted-foreground mt-4"
+        data-size="sm"
+      >
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+    </div>
+  </div>
+  <button
+    class="mt-6"
+    id="feed-logout-btn"
+    variant="secondary"
+  >
+    Logout
+  </button>
+</div>
+`;

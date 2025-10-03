@@ -2,7 +2,7 @@
 
 exports[`FilterReach > applies correct styling classes 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -23,7 +23,7 @@ exports[`FilterReach > applies correct styling classes 1`] = `
 
 exports[`FilterReach > applies correct styling classes 2`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -44,7 +44,7 @@ exports[`FilterReach > applies correct styling classes 2`] = `
 
 exports[`FilterReach > renders with custom selected tab 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -86,7 +86,7 @@ exports[`FilterReach > renders with default selected tab 1`] = `
     data-testid="filter-list"
   >
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -104,7 +104,7 @@ exports[`FilterReach > renders with default selected tab 1`] = `
       </span>
     </p>
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -122,7 +122,7 @@ exports[`FilterReach > renders with default selected tab 1`] = `
       </span>
     </p>
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -140,7 +140,7 @@ exports[`FilterReach > renders with default selected tab 1`] = `
       </span>
     </p>
     <p
-      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+      class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -163,7 +163,7 @@ exports[`FilterReach > renders with default selected tab 1`] = `
 
 exports[`FilterReach > shows correct visual state for selected and unselected tabs 1`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -184,7 +184,7 @@ exports[`FilterReach > shows correct visual state for selected and unselected ta
 
 exports[`FilterReach > shows correct visual state for selected and unselected tabs 2`] = `
 <p
-  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="text-sm font-semibold text-foreground cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
