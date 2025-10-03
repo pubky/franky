@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { userStreamApi, buildUserStreamBodyUrl } from './userStream.api';
-import { UserStreamReach, UserStreamTimeframe } from './userStream.types';
+import * as Core from '@/core';
 
 describe('Users Stream API - Error Control', () => {
   const mockUserId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
@@ -205,8 +205,8 @@ describe('Users Stream API - Error Control', () => {
     it('should handle enum values correctly', () => {
       const url = userStreamApi.influencers({
         user_id: mockUserId,
-        reach: UserStreamReach.FOLLOWERS,
-        timeframe: UserStreamTimeframe.THIS_MONTH,
+        reach: Core.UserStreamReach.FOLLOWERS,
+        timeframe: Core.UserStreamTimeframe.THIS_MONTH,
       });
 
       expect(url).toContain('reach=followers');

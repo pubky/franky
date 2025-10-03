@@ -17,21 +17,6 @@ export enum UserStreamSource {
   MOST_FOLLOWED = 'most_followed',
 }
 
-// The target reach of the source. Supported just for 'influencers' source
-// e.g. "source=influencers&reach=followers" will return influencers with followers reach
-export enum UserStreamReach {
-  FOLLOWERS = 'followers',
-  FOLLOWING = 'following',
-  FRIENDS = 'friends',
-  WOT = 'wot',
-}
-
-export enum UserStreamTimeframe {
-  TODAY = 'today',
-  THIS_MONTH = 'this_month',
-  ALL_TIME = 'all_time',
-}
-
 export type TUserStreamBase = Core.TPaginationParams & {
   viewer_id?: Core.Pubky;
   // Provide a random selection of size 3 for sources supporting preview. Passing 'preview', ignores skip and limit parameters
@@ -42,8 +27,8 @@ export type TUserStreamWithUserIdParams = Core.TUserId & TUserStreamBase;
 
 export type TUserStreamInfluencersParams = TUserStreamBase &
   Core.TUserId & {
-    reach?: UserStreamReach;
-    timeframe?: UserStreamTimeframe;
+    reach?: Core.UserStreamReach;
+    timeframe?: Core.UserStreamTimeframe;
   };
 
 export type TUserStreamPostRepliesParams = TUserStreamBase & {
