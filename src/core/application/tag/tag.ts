@@ -1,37 +1,14 @@
 import * as Core from '@/core';
-import type { TCreateTagInput, TCreateTagOutput, TDeleteTagInput, TDeleteTagOutput } from './tag.types';
+import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 
-async function create({ postId, label, taggerId, tagUrl, tagJson }: TCreateTagInput): Promise<TCreateTagOutput> {
+async function create({ postId, label, taggerId, tagUrl, tagJson }: TCreateTagInput) {
   await Core.Local.Tag.save({ postId, label, taggerId });
-
-  const homeserver = Core.HomeserverService.getInstance();
-
-  const response = await homeserver.fetch(tagUrl, {
-    method: 'PUT',
-    body: JSON.stringify(tagJson),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to create tag: ${response.statusText}`);
-  }
-
-  return { success: true };
+  await Core.HomeserverService.put(tagUrl, tagJson);
 }
 
-async function deleteTag({ postId, label, taggerId, tagUrl }: TDeleteTagInput): Promise<TDeleteTagOutput> {
+async function deleteTag({ postId, label, taggerId, tagUrl }: TDeleteTagInput) {
   await Core.Local.Tag.remove({ postId, label, taggerId });
-
-  const homeserver = Core.HomeserverService.getInstance();
-
-  const response = await homeserver.fetch(tagUrl, {
-    method: 'DELETE',
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to delete tag: ${response.statusText}`);
-  }
-
-  return { success: true };
+  await Core.HomeserverService.delete(tagUrl);
 }
 
 export const Tag = {

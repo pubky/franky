@@ -1,2 +1,2 @@
 export { Tag } from './tag';
-export type { TCreateTagInput, TCreateTagOutput, TDeleteTagInput, TDeleteTagOutput } from './tag.types';
+export type { TCreateTagInput, TDeleteTagInput } from './tag.types';

@@ -2,6 +2,7 @@ import * as Pubky from '@synonymdev/pubky';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import { HomeserverAction } from './homeserver.types';
 
 export class HomeserverService {
   private defaultKeypair = {
@@ -163,6 +164,29 @@ export class HomeserverService {
       return response;
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
+    }
+  }
+
+  static async put(url: string, bodyJson: object) {
+    const homeserver = this.getInstance();
+    const response = await homeserver.fetch(url, {
+      method: HomeserverAction.PUT,
+      body: JSON.stringify(bodyJson),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to PUT to homeserver: ${response.statusText}`);
+    }
+  }
+
+  static async delete(url: string) {
+    const homeserver = this.getInstance();
+    const response = await homeserver.fetch(url, {
+      method: HomeserverAction.DELETE,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to DELETE from homeserver: ${response.statusText}`);
     }
   }
 
