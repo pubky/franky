@@ -14,7 +14,7 @@ export class HomeserverService {
   private testnet = Config.TESTNET.toString() === 'true';
   private pkarrRelays = Config.PKARR_RELAYS.split(',');
 
-  private constructor(secretKey: string) {
+  private constructor(secretKey: string = '') {
     this.client = this.testnet
       ? Pubky.Client.testnet()
       : new Pubky.Client({
@@ -31,7 +31,7 @@ export class HomeserverService {
     }
   }
 
-  public static getInstance(secretKey: string): HomeserverService {
+  public static getInstance(secretKey: string = ''): HomeserverService {
     try {
       if (!HomeserverService.instance) {
         HomeserverService.instance = new HomeserverService(secretKey);

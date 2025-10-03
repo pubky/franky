@@ -4,9 +4,7 @@ import type { TCreateTagInput, TCreateTagOutput, TDeleteTagInput, TDeleteTagOutp
 async function create({ postId, label, taggerId, tagUrl, tagJson }: TCreateTagInput): Promise<TCreateTagOutput> {
   await Core.Local.Tag.save({ postId, label, taggerId });
 
-  const onboardingStore = Core.useOnboardingStore.getState();
-  const secretKey = onboardingStore.secretKey || '';
-  const homeserver = Core.HomeserverService.getInstance(secretKey);
+  const homeserver = Core.HomeserverService.getInstance();
 
   const response = await homeserver.fetch(tagUrl, {
     method: 'PUT',
@@ -23,9 +21,7 @@ async function create({ postId, label, taggerId, tagUrl, tagJson }: TCreateTagIn
 async function deleteTag({ postId, label, taggerId, tagUrl }: TDeleteTagInput): Promise<TDeleteTagOutput> {
   await Core.Local.Tag.remove({ postId, label, taggerId });
 
-  const onboardingStore = Core.useOnboardingStore.getState();
-  const secretKey = onboardingStore.secretKey || '';
-  const homeserver = Core.HomeserverService.getInstance(secretKey);
+  const homeserver = Core.HomeserverService.getInstance();
 
   const response = await homeserver.fetch(tagUrl, {
     method: 'DELETE',
