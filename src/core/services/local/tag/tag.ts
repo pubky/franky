@@ -13,66 +13,27 @@ export class LocalTagService {
   static async save({ postId, label, taggerId }: TLocalSaveTagParams) {
     const tagsData = await Core.PostTagsModel.table.get(postId);
 
-    if (tagsData) {
-      const postTagsModel = new Core.PostTagsModel(tagsData);
+    const postTagsModel = tagsData
+      ? new Core.PostTagsModel(tagsData)
+      : new Core.PostTagsModel({ id: postId, tags: [] });
 
-      const existingTag = postTagsModel.tags.find((t) => t.label === label);
-      if (existingTag?.relationship) {
-        throw new Error('User already tagged this post with this label');
-      }
-
-      postTagsModel.addTagger(label, taggerId);
-
-      const updatedTag = postTagsModel.tags.find((t) => t.label === label);
-      if (updatedTag) {
-        updatedTag.relationship = true;
-      }
-
-      await Core.PostTagsModel.insert({
-        id: postId,
-        tags: postTagsModel.tags as Core.NexusTag[],
-      });
-
-      const counts = await Core.PostCountsModel.table.get(postId);
-      if (counts) {
-        await Core.PostCountsModel.insert({
-          ...counts,
-          tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-          unique_tags: postTagsModel.tags.length,
-        });
-      }
-
-      Logger.debug('Added tagger using existing PostTagsModel', { postId, label, taggerId });
-      return;
-    }
-
-    const newPostTags = new Core.PostTagsModel({
-      id: postId,
-      tags: [],
-    });
-
-    newPostTags.addTagger(label, taggerId);
-
-    const newTag = newPostTags.tags.find((t) => t.label === label);
-    if (newTag) {
-      newTag.relationship = true;
-    }
+    postTagsModel.saveTag(label, taggerId);
 
     await Core.PostTagsModel.insert({
       id: postId,
-      tags: newPostTags.tags as Core.NexusTag[],
+      tags: postTagsModel.tags as Core.NexusTag[],
     });
 
     const counts = await Core.PostCountsModel.table.get(postId);
     if (counts) {
       await Core.PostCountsModel.insert({
         ...counts,
-        tags: newPostTags.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-        unique_tags: newPostTags.tags.length,
+        tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+        unique_tags: postTagsModel.tags.length,
       });
     }
 
-    Logger.debug('Created new PostTagsModel and added tag', { postId, label, taggerId });
+    Logger.debug('Tag saved', { postId, label, taggerId });
   }
 
   /**
@@ -91,19 +52,7 @@ export class LocalTagService {
 
     const postTagsModel = new Core.PostTagsModel(tagsData);
 
-    const existingTag = postTagsModel.tags.find((t) => t.label === label);
-    if (!existingTag?.relationship) {
-      throw new Error('User has not tagged this post with this label');
-    }
-
-    postTagsModel.removeTagger(label, taggerId);
-
-    const updatedTag = postTagsModel.tags.find((t) => t.label === label);
-    if (updatedTag) {
-      updatedTag.relationship = false;
-    }
-
-    postTagsModel.tags = postTagsModel.tags.filter((tag) => tag.taggers_count > 0);
+    postTagsModel.removeTag(label, taggerId);
 
     await Core.PostTagsModel.insert({
       id: postId,
@@ -119,6 +68,6 @@ export class LocalTagService {
       });
     }
 
-    Logger.debug('Removed tagger using PostTagsModel', { postId, label, taggerId });
+    Logger.debug('Tag removed', { postId, label, taggerId });
   }
 }
