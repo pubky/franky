@@ -39,8 +39,8 @@ export function ContentLayout({
       {/* Main content grid with responsive max-widths */}
       <div
         className={Libs.cn(
-          'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-6xl',
-          'w-full pb-12 m-auto px-3',
+          'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
+          'w-full pb-12 m-auto px-6 xl:px-0',
           'pt-16 lg:pt-0', // Add top padding on mobile for fixed header
           className,
         )}
