@@ -24,10 +24,6 @@ export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): Onboa
     set({ secretKey }, false, OnboardingActionTypes.SET_SECRET_KEY);
   },
 
-  clearSecretKey: () => {
-    set({ secretKey: '' }, false, OnboardingActionTypes.CLEAR_SECRET_KEY);
-  },
-
   setPubky: (pubky: Core.Pubky) => {
     set({ pubky }, false, OnboardingActionTypes.SET_PUBKY);
   },

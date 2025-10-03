@@ -28,7 +28,6 @@ describe('OnboardingStore', () => {
       secretKey: '',
       pubky: '',
       mnemonic: '',
-      isBackedUp: false,
       hasHydrated: false,
     });
   });
@@ -44,7 +43,6 @@ describe('OnboardingStore', () => {
       expect(state.secretKey).toEqual('');
       expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
-      expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(false);
     });
   });
@@ -56,7 +54,6 @@ describe('OnboardingStore', () => {
         secretKey: localStorageMock.secretKey,
         pubky: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
-        isBackedUp: true,
         hasHydrated: true,
       });
 
@@ -67,7 +64,6 @@ describe('OnboardingStore', () => {
       expect(state.secretKey).toEqual('');
       expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
-      expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(true); // Should preserve hydration state
     });
 
@@ -77,7 +73,6 @@ describe('OnboardingStore', () => {
         secretKey: localStorageMock.secretKey,
         pubky: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
-        isBackedUp: true,
         hasHydrated: false,
       });
 
@@ -88,7 +83,6 @@ describe('OnboardingStore', () => {
       expect(state.secretKey).toEqual('');
       expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
-      expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(false); // Should preserve hydration state even when false
     });
 
@@ -428,7 +422,6 @@ describe('OnboardingStore', () => {
         pubky: 'test-public-key-123',
         secretKey: 'test-secret-key-456',
         mnemonic: 'test mnemonic phrase with twelve words for key generation',
-        isBackedUp: true,
       };
 
       // Set all data using setState (which would trigger persistence)
@@ -439,7 +432,6 @@ describe('OnboardingStore', () => {
       expect(state.pubky).toBe(testData.pubky);
       expect(state.secretKey).toBe(testData.secretKey);
       expect(state.mnemonic).toBe(testData.mnemonic);
-      expect(state.isBackedUp).toBe(testData.isBackedUp);
     });
 
     it('should exclude action functions from persistence', () => {
@@ -541,7 +533,6 @@ describe('OnboardingStore', () => {
         pubky: 'persistence-test-public',
         secretKey: 'persistence-test-secret',
         mnemonic: 'test mnemonic for persistence verification',
-        isBackedUp: true,
       };
 
       useOnboardingStore.setState(testData);
@@ -551,7 +542,6 @@ describe('OnboardingStore', () => {
       expect(state.pubky).toBe(testData.pubky);
       expect(state.secretKey).toBe(testData.secretKey);
       expect(state.mnemonic).toBe(testData.mnemonic);
-      expect(state.isBackedUp).toBe(testData.isBackedUp);
     });
   });
 });

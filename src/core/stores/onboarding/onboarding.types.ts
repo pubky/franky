@@ -1,7 +1,6 @@
 import * as Core from '@/core';
 
 export interface OnboardingState {
-  isBackedUp: boolean;
   pubky: Core.Pubky;
   secretKey: string;
   mnemonic: string;
@@ -12,7 +11,6 @@ export interface OnboardingActions {
   reset: () => void;
   setPubky: (pubky: Core.Pubky) => void;
   setSecretKey: (secretKey: string) => void;
-  clearSecretKey: () => void;
   setMnemonic: (mnemonic: string) => void;
   setKeypair: (pubky: Core.Pubky, secretKey: string) => void;
   setKeypairFromMnemonic: (mnemonic: string) => void;
@@ -23,7 +21,6 @@ export interface OnboardingActions {
 export type OnboardingStore = OnboardingState & OnboardingActions;
 
 export const onboardingInitialState: OnboardingState = {
-  isBackedUp: false,
   pubky: '' as Core.Pubky,
   secretKey: '',
   mnemonic: '',

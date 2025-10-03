@@ -219,7 +219,6 @@ describe('BackupMethodCard', () => {
       mnemonic: testMnemonic,
       pubky: 'test-public-key',
       secretKey: 'test-secret-key',
-      isBackedUp: false,
       hasHydrated: true,
     });
 
