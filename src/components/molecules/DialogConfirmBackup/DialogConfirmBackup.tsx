@@ -22,7 +22,7 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
   return (
     <Atoms.Dialog open={isOpen} onOpenChange={setIsOpen}>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="secondary" className="bg-card">
+        <Atoms.Button variant="secondary" className="bg-card text-xs font-bold border shadow-sm">
           Done
         </Atoms.Button>
       </Atoms.DialogTrigger>

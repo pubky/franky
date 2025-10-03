@@ -11,7 +11,10 @@ export function DialogBackup() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button variant="outline" className="text-primary-foreground hover:text-primary-foreground">
+        <Atoms.Button
+          variant="outline"
+          className="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
+        >
           Backup
         </Atoms.Button>
       </Atoms.DialogTrigger>
