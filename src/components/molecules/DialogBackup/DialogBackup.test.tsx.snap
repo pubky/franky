@@ -17,7 +17,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -33,7 +33,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
       data-testid="container"
     >
       <div
-        class="gap-4 md:gap-6"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -159,7 +159,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -175,7 +175,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
       data-testid="container"
     >
       <div
-        class="gap-4 md:gap-6"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -301,7 +301,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -317,7 +317,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
       data-testid="container"
     >
       <div
-        class="gap-4 md:gap-6"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -443,7 +443,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -459,7 +459,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
       data-testid="container"
     >
       <div
-        class="gap-4 md:gap-6"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -585,7 +585,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -601,7 +601,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
       data-testid="container"
     >
       <div
-        class="gap-4 md:gap-6"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -727,7 +727,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -743,7 +743,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
       data-testid="container"
     >
       <div
-        class="gap-4 md:gap-6"
+        class="gap-6"
         data-testid="container"
       >
         <p

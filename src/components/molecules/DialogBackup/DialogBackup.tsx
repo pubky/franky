@@ -18,12 +18,12 @@ export function DialogBackup() {
           Backup
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8">
+      <Atoms.DialogContent className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8">
         <Atoms.DialogHeader>
           <Atoms.DialogTitle className="leading-[1.25] pb-2">Back up your pubky</Atoms.DialogTitle>
         </Atoms.DialogHeader>
         <Atoms.Container>
-          <Atoms.Container className="gap-4 md:gap-6">
+          <Atoms.Container className="gap-6">
             <Atoms.Typography size="sm" className="text-muted-foreground font-medium">
               Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose
               multiple backup methods if you wish.
