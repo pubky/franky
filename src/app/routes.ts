@@ -22,9 +22,13 @@ export enum POST_ROUTES {
   POST = '/post',
 }
 
-export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
+export enum PROFILE_ROUTES {
+  PROFILE = '/profile',
+}
 
 export const ALLOWED_ROUTES = [ONBOARDING_ROUTES.PROFILE, FEED_ROUTES.FEED, POST_ROUTES.POST, AUTH_ROUTES.LOGOUT];
+
+export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
 
 // Route guard configurations for different authentication states
 export const UNAUTHENTICATED_ROUTES = {
@@ -42,6 +46,6 @@ export const UNAUTHENTICATED_ROUTES = {
 };
 
 export const AUTHENTICATED_ROUTES = {
-  allowedRoutes: ALLOWED_ROUTES,
+  allowedRoutes: [ONBOARDING_ROUTES.PROFILE, FEED_ROUTES.FEED, AUTH_ROUTES.LOGOUT, PROFILE_ROUTES.PROFILE],
   redirectTo: FEED_ROUTES.FEED,
 };
