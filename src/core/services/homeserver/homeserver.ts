@@ -167,26 +167,15 @@ export class HomeserverService {
     }
   }
 
-  static async put(url: string, bodyJson: object) {
+  static async request(method: HomeserverAction, url: string, bodyJson?: object) {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
-      method: HomeserverAction.PUT,
-      body: JSON.stringify(bodyJson),
+      method,
+      body: bodyJson ? JSON.stringify(bodyJson) : undefined,
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to PUT to homeserver: ${response.statusText}`);
-    }
-  }
-
-  static async delete(url: string) {
-    const homeserver = this.getInstance();
-    const response = await homeserver.fetch(url, {
-      method: HomeserverAction.DELETE,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to DELETE from homeserver: ${response.statusText}`);
+      throw new Error(`Failed to ${method} to homeserver: ${response.statusText}`);
     }
   }
 
