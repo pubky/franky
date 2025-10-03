@@ -10,16 +10,17 @@ interface PostRepliesProps {
 }
 
 export function PostReplies({ postId }: PostRepliesProps) {
-  // useLiveQuery is required here instead of useEffect because when
-  // someone post a reply through PostReplyInput we need this to rerender
+  const postDetails = useLiveQuery(() => Core.db.post_details.get(postId), [postId]);
+
   const replyIds = useLiveQuery(
-    () =>
-      Core.db.post_relationships
-        .where('replied')
-        .equals(postId)
-        .toArray()
-        .then((replyRelationships) => replyRelationships.map((rel) => rel.id)),
-    [postId],
+    async () => {
+      if (!postDetails?.uri) return [];
+
+      const replyRelationships = await Core.db.post_relationships.where('replied').equals(postDetails.uri).toArray();
+
+      return replyRelationships.map((rel) => rel.id);
+    },
+    [postDetails?.uri],
     [],
   );
 
