@@ -1,9 +1,12 @@
 'use client';
 
+import * as React from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import * as Core from '@/core';
 import { useRouter } from 'next/navigation';
 import * as App from '@/app';
 
@@ -84,8 +87,14 @@ export const HeaderSignIn = () => {
   );
 };
 
-export function HeaderNavigationButtons({ image, counter = 0 }: { image?: string; counter?: number }) {
+export function HeaderNavigationButtons({ counter = 0 }: { counter?: number }) {
   const counterString = counter > 21 ? '21+' : counter.toString();
+
+  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
+  const userDetails = useLiveQuery(
+    () => (currentUserPubky ? Core.db.user_details.get(currentUserPubky) : undefined),
+    [currentUserPubky],
+  );
 
   return (
     <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
@@ -111,8 +120,8 @@ export function HeaderNavigationButtons({ image, counter = 0 }: { image?: string
       </Atoms.Link>
       <Atoms.Link className="relative" href="/profile">
         <Atoms.Avatar className="w-12 h-12">
-          <Atoms.AvatarImage src={image} />
-          <Atoms.AvatarFallback>SN</Atoms.AvatarFallback>
+          <Atoms.AvatarImage src={userDetails?.image || '/images/default-avatar.png'} />
+          <Atoms.AvatarFallback>{userDetails?.name.charAt(0).toUpperCase() || 'SN'}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (
           <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">

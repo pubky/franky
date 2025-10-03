@@ -68,11 +68,11 @@ export const HeaderNavigationButtonsStory: Story = {
 };
 
 export const HeaderNavigationButtonsWithCounter: Story = {
-  render: () => <HeaderNavigationButtons image="https://i.pravatar.cc/150?img=68" counter={5} />,
+  render: () => <HeaderNavigationButtons counter={5} />,
 };
 
 export const HeaderNavigationButtonsWithHighCounter: Story = {
-  render: () => <HeaderNavigationButtons image="https://i.pravatar.cc/150?img=68" counter={25} />,
+  render: () => <HeaderNavigationButtons counter={25} />,
 };
 
 export const CompleteHeader: Story = {
