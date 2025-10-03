@@ -61,4 +61,8 @@ export const createOnboardingActions = (set: ZustandSet<OnboardingStore>): Onboa
   setHydrated: (hasHydrated: boolean) => {
     set({ hasHydrated }, false, OnboardingActionTypes.SET_HYDRATED);
   },
+
+  setShowWelcomeDialog: (showWelcomeDialog: boolean) => {
+    set({ showWelcomeDialog }, false, OnboardingActionTypes.SET_SHOW_WELCOME_DIALOG);
+  },
 });

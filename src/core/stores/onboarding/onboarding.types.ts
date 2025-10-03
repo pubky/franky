@@ -5,6 +5,7 @@ export interface OnboardingState {
   secretKey: string;
   mnemonic: string;
   hasHydrated: boolean;
+  showWelcomeDialog: boolean;
 }
 
 export interface OnboardingActions {
@@ -16,6 +17,7 @@ export interface OnboardingActions {
   setKeypairFromMnemonic: (mnemonic: string) => void;
   clearSecrets: () => void;
   setHydrated: (hasHydrated: boolean) => void;
+  setShowWelcomeDialog: (show: boolean) => void;
 }
 
 export type OnboardingStore = OnboardingState & OnboardingActions;
@@ -25,6 +27,7 @@ export const onboardingInitialState: OnboardingState = {
   secretKey: '',
   mnemonic: '',
   hasHydrated: false,
+  showWelcomeDialog: false,
 };
 
 export enum OnboardingActionTypes {
@@ -36,4 +39,5 @@ export enum OnboardingActionTypes {
   SET_KEYPAIR = 'SET_KEYPAIR',
   SET_KEYPAIR_FROM_MNEMONIC = 'SET_KEYPAIR_FROM_MNEMONIC',
   SET_HYDRATED = 'SET_HYDRATED',
+  SET_SHOW_WELCOME_DIALOG = 'SET_SHOW_WELCOME_DIALOG',
 }

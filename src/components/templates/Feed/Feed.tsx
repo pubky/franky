@@ -22,11 +22,16 @@ export function Feed() {
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const router = useRouter();
-  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
   const [showBackupAlert, setShowBackupAlert] = useState(false);
 
   const { currentUserPubky } = Core.useAuthStore();
-  const { secretKey } = Core.useOnboardingStore();
+  const { secretKey, showWelcomeDialog, setShowWelcomeDialog } = Core.useOnboardingStore();
+
+  useEffect(() => {
+    if (secretKey) {
+      setShowBackupAlert(true);
+    }
+  }, [secretKey]);
 
   // Fetch current user details from database
   const userDetails = useLiveQuery(async () => {
@@ -35,20 +40,9 @@ export function Feed() {
     return details || null;
   }, [currentUserPubky]);
 
-  // Check if user just completed onboarding (has secretKey)
-  useEffect(() => {
-    if (secretKey && !showWelcomeDialog && !showBackupAlert) {
-      // Show welcome dialog on first load after onboarding
-      setShowWelcomeDialog(true);
-    }
-  }, [secretKey, showWelcomeDialog, showBackupAlert]);
-
   const handleWelcomeClose = () => {
+    // Set welcome dialog to false permanently - it will never show again for this user
     setShowWelcomeDialog(false);
-    // Show backup alert after closing welcome dialog
-    if (secretKey) {
-      setShowBackupAlert(true);
-    }
   };
 
   const handleBackupDismiss = () => {
