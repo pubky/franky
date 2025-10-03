@@ -167,7 +167,7 @@ export class HomeserverService {
     }
   }
 
-  static async request(method: HomeserverAction, url: string, bodyJson?: object) {
+  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
       method,

@@ -5,7 +5,7 @@ export type TCreateTagInput = {
   label: string;
   taggerId: Core.Pubky;
   tagUrl: string;
-  tagJson: object;
+  tagJson: Record<string, unknown>;
 };
 
 export type TDeleteTagInput = {
