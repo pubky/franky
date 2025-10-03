@@ -81,6 +81,13 @@ vi.mock('@/libs', () => ({
   ),
 }));
 
+// Mock molecules
+vi.mock('@/molecules', () => ({
+  DialogBackup: ({ open }: { open?: boolean; onOpenChange?: (open: boolean) => void }) => (
+    <div data-testid="dialog-backup" data-open={open} />
+  ),
+}));
+
 describe('DialogConfirmBackup', () => {
   it('renders with correct structure', () => {
     render(<DialogConfirmBackup />);

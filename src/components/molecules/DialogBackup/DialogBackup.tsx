@@ -5,19 +5,26 @@ import * as Core from '@/core';
 import Image from 'next/image';
 import * as Molecules from '@/molecules';
 
-export function DialogBackup() {
+interface DialogBackupProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
   const { mnemonic } = Core.useOnboardingStore();
 
   return (
-    <Atoms.Dialog>
-      <Atoms.DialogTrigger asChild>
-        <Atoms.Button
-          variant="outline"
-          className="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
-        >
-          Backup
-        </Atoms.Button>
-      </Atoms.DialogTrigger>
+    <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
+      {open === undefined && (
+        <Atoms.DialogTrigger asChild>
+          <Atoms.Button
+            variant="outline"
+            className="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
+          >
+            Backup
+          </Atoms.Button>
+        </Atoms.DialogTrigger>
+      )}
       <Atoms.DialogContent className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8">
         <Atoms.DialogHeader>
           <Atoms.DialogTitle className="leading-[1.25] pb-2">Back up your pubky</Atoms.DialogTitle>
