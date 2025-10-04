@@ -51,7 +51,212 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
       <div
         class="grid-cols-2 md:grid-cols-3 gap-3"
         data-testid="container"
-      />
+      >
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            1
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            tube
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            2
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            tube
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            3
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            resource
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            4
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            mass
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            5
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            door
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            6
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            firm
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            7
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            genius
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            8
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            parrot
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            9
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            girl
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            10
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            orphan
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            11
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            window
+          </span>
+        </div>
+        <div
+          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          data-testid="container"
+        >
+          <span
+            class="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+            data-testid="badge"
+            data-variant="outline"
+          >
+            12
+          </span>
+          <span
+            class="text-base font-medium"
+          >
+            world
+          </span>
+        </div>
+      </div>
     </div>
     <div
       class="gap-4 sm:gap-3 md:flex-row justify-between"
