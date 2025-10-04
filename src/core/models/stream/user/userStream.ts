@@ -1,26 +1,28 @@
 import { Table } from 'dexie';
-import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { UserStreamModelSchema } from './userStream.schema';
+import { db } from '@/core/database';
+import { createDefaultUserStream } from './userStream.helper';
+import { Pubky } from '@/core';
+import { UserStreamTypes } from './userStream.types';
 
-export class StreamModel implements Core.StreamModelSchema {
-  private static table: Table<Core.StreamModelSchema> = Core.db.table('streams');
+export class UserStreamModel implements UserStreamModelSchema {
+  private static table: Table<UserStreamModelSchema> = db.table('user_streams');
 
   // Stream ID pattern: colon-separated segments (e.g., "timeframe:all:all", "timeframe:following:all", "timeframe:all:short:pubky_dev")
   // Can have 1 or more segments separated by colons
-  id: string;
-  posts: string[];
-  name: string | null;
+  id: UserStreamTypes;
+  users: Pubky[];
 
-  constructor(stream: Core.StreamModelSchema) {
+  constructor(stream: UserStreamModelSchema) {
     this.id = stream.id;
-    this.posts = stream.posts || [];
-    this.name = stream.name;
+    this.users = stream.users || [];
   }
 
   // Database operations
   async save(): Promise<void> {
     try {
-      await Core.StreamModel.table.put(this);
+      await UserStreamModel.table.put(this);
       Libs.Logger.debug('Stream saved successfully', { streamId: this.id });
     } catch (error) {
       throw Libs.createDatabaseError(
@@ -34,7 +36,7 @@ export class StreamModel implements Core.StreamModelSchema {
 
   async delete(): Promise<void> {
     try {
-      await Core.StreamModel.table.delete(this.id);
+      await UserStreamModel.table.delete(this.id);
       Libs.Logger.debug('Stream deleted successfully', { streamId: this.id });
     } catch (error) {
       throw Libs.createDatabaseError(
@@ -47,17 +49,17 @@ export class StreamModel implements Core.StreamModelSchema {
   }
 
   // Instance methods
-  addPosts(postIds: string[]): void {
+  addUsers(users: Pubky[]): void {
     // Filter out posts that already exist and add new ones to beginning
-    const newPosts = postIds.filter((postId) => !this.posts.includes(postId));
-    this.posts.unshift(...newPosts); // Add to beginning for chronological order
+    const newPosts = users.filter((userId) => !this.users.includes(userId));
+    this.users.unshift(...newPosts); // Add to beginning for chronological order
   }
 
   // Static methods
-  static async findById(id: string): Promise<Core.StreamModel | null> {
+  static async findById(id: UserStreamTypes): Promise<UserStreamModel | null> {
     try {
-      const stream = await Core.StreamModel.table.get(id);
-      return stream ? new Core.StreamModel(stream) : null;
+      const stream = await UserStreamModel.table.get(id);
+      return stream ? new UserStreamModel(stream) : null;
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.FIND_FAILED, `Failed to find stream with ID: ${id}`, 500, {
         error,
@@ -66,27 +68,27 @@ export class StreamModel implements Core.StreamModelSchema {
     }
   }
 
-  static async create(id: string, name: string | null = null, posts: string[] = []): Promise<Core.StreamModel> {
+  static async create(id: UserStreamTypes, users: Pubky[] = []): Promise<UserStreamModel> {
     try {
-      const streamData = Core.createDefaultStream(id, name, posts);
-      const stream = new Core.StreamModel(streamData);
+      const streamData = createDefaultUserStream(id, users);
+      const stream = new UserStreamModel(streamData);
       await stream.save();
 
-      Libs.Logger.debug('Stream created successfully', { streamId: id, name });
+      Libs.Logger.debug('Stream created successfully', { streamId: id, users });
       return stream;
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.CREATE_FAILED,
         `Failed to create stream with ID: ${id}`,
         500,
-        { error, streamId: id, name },
+        { error, streamId: id, users },
       );
     }
   }
 
-  static async deleteById(id: string): Promise<void> {
+  static async deleteById(id: UserStreamTypes): Promise<void> {
     try {
-      await Core.StreamModel.table.delete(id);
+      await UserStreamModel.table.delete(id);
       Libs.Logger.debug('Stream deleted by ID', { streamId: id });
     } catch (error) {
       throw Libs.createDatabaseError(
