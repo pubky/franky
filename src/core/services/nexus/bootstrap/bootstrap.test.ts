@@ -153,7 +153,7 @@ describe('NexusService', () => {
 
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
-      expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {
+      expect(mockFetch).toHaveBeenCalledWith(Core.bootstrapApi.get(pubky), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -339,7 +339,7 @@ describe('NexusService', () => {
       expect(savedRecommendedStream!.users).toEqual(['recommended-user-1', 'recommended-user-2', 'recommended-user-3']);
 
       // Verify fetch was called correctly
-      expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {
+      expect(mockFetch).toHaveBeenCalledWith(Core.bootstrapApi.get(pubky), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
