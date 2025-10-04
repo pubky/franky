@@ -17,3 +17,5 @@ export const bootstrapApi = {
     return Core.buildNexusUrl(`${PREFIX}/${encodedPubky}`);
   },
 };
+
+export type BootstrapApiEndpoint = keyof typeof bootstrapApi;

@@ -25,3 +25,5 @@ export const searchApi = {
     return Core.buildUrlWithQuery(`${PREFIX}/users/by_name/${prefix}`, params, Core.SEARCH_PATH_PARAMS);
   },
 };
+
+export type SearchApiEndpoint = keyof typeof searchApi;

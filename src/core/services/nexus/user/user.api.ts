@@ -55,3 +55,5 @@ export const userApi = {
     return Core.buildUrlWithQuery(`${PREFIX}/${userId}/tags`, params, Core.USER_PATH_PARAMS);
   },
 };
+
+export type UserApiEndpoint = keyof typeof userApi;

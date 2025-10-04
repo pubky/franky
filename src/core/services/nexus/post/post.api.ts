@@ -41,3 +41,5 @@ export const postApi = {
     return Core.buildUrlWithQuery(`${PREFIX}/${author}/${post}/tags`, params, Core.POST_PATH_PARAMS);
   },
 };
+
+export type PostApiEndpoint = keyof typeof postApi;

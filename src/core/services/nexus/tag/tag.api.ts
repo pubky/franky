@@ -20,3 +20,5 @@ export const tagApi = {
     return Core.buildUrlWithQuery(`${PREFIX}/taggers/${label}`, params, Core.TAGS_PATH_PARAMS);
   },
 };
+
+export type TagApiEndpoint = keyof typeof tagApi;
