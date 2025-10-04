@@ -81,8 +81,8 @@ vi.mock('@/libs', () => ({
   ),
 }));
 
-// Mock molecules
-vi.mock('@/molecules', () => ({
+// Mock organisms
+vi.mock('@/organisms', () => ({
   DialogBackup: ({ open }: { open?: boolean; onOpenChange?: (open: boolean) => void }) => (
     <div data-testid="dialog-backup" data-open={open} />
   ),

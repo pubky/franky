@@ -140,7 +140,7 @@ export function Feed() {
         />
       )}
       <Organisms.ContentLayout>
-        {showBackupAlert && <Molecules.AlertBackup onDismiss={handleBackupDismiss} />}
+        {showBackupAlert && <Organisms.AlertBackup onDismiss={handleBackupDismiss} />}
         <Atoms.Heading level={1} size="xl" className="text-2xl">
           Feed
         </Atoms.Heading>

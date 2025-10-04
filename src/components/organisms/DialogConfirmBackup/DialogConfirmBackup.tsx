@@ -4,7 +4,7 @@ import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 
 interface DialogConfirmBackupProps {
   onConfirm?: () => void;
@@ -28,7 +28,7 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
 
   return (
     <>
-      <Molecules.DialogBackup open={isBackupOpen} onOpenChange={setIsBackupOpen} />
+      <Organisms.DialogBackup open={isBackupOpen} onOpenChange={setIsBackupOpen} />
       <Atoms.Dialog open={isOpen} onOpenChange={setIsOpen}>
         <Atoms.DialogTrigger asChild>
           <Atoms.Button variant="secondary" className="bg-card text-xs font-bold border shadow-sm">

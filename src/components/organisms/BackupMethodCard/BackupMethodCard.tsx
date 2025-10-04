@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Stores from '@/core';
+import * as Organisms from '@/organisms';
 
 export const BackupMethodCard = () => {
   const { mnemonic } = Stores.useOnboardingStore();
@@ -28,7 +29,7 @@ export const BackupMethodCard = () => {
         </Atoms.Typography>
         <Atoms.Container className="flex-row mt-6 gap-3 flex-wrap">
           <Molecules.DialogBackupPhrase />
-          <Molecules.DialogBackupEncrypted />
+          <Organisms.DialogBackupEncrypted />
           <Molecules.DialogExport mnemonic={mnemonic} />
         </Atoms.Container>
       </Atoms.Container>

@@ -5,7 +5,6 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
@@ -147,7 +146,6 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
@@ -289,7 +287,6 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
@@ -431,7 +428,6 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
@@ -573,7 +569,6 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
@@ -715,7 +710,6 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button

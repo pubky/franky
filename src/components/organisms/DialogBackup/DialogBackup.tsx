@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import Image from 'next/image';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 
 interface DialogBackupProps {
   open?: boolean;
@@ -61,7 +62,7 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
                   height={112}
                   className="self-center w-16 h-16 md:w-28 md:h-28"
                 />
-                <Molecules.DialogBackupEncrypted />
+                <Organisms.DialogBackupEncrypted />
               </Atoms.Card>
               <Atoms.Card className="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6">
                 <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">

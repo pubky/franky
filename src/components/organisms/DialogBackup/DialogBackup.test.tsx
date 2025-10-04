@@ -12,13 +12,17 @@ vi.mock('@/core', () => ({
 // Mock Molecules
 vi.mock('@/molecules', () => ({
   DialogBackupPhrase: () => <div data-testid="dialog-backup-phrase">DialogBackupPhrase</div>,
-  DialogBackupEncrypted: () => <div data-testid="dialog-backup-encrypted">DialogBackupEncrypted</div>,
   DialogExport: () => <div data-testid="dialog-export">DialogExport</div>,
+}));
+
+// Mock Organisms
+vi.mock('@/organisms', () => ({
+  DialogBackupEncrypted: () => <div data-testid="dialog-backup-encrypted">DialogBackupEncrypted</div>,
 }));
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
+  Dialog: vi.fn(({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>),
   DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="dialog-content" className={className}>
       {children}
@@ -30,11 +34,15 @@ vi.mock('@/atoms', () => ({
     </div>
   ),
   DialogTitle: ({ children }: { children: React.ReactNode }) => <h2 data-testid="dialog-title">{children}</h2>,
-  DialogTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-trigger" data-as-child={asChild}>
+  DialogDescription: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-description" className={className}>
       {children}
     </div>
   ),
+  DialogTrigger: vi.fn(({ children }: { children: React.ReactNode }) => (
+    <div data-testid="dialog-trigger">{children}</div>
+  )),
+  DialogClose: vi.fn(({ children }: { children: React.ReactNode }) => <div data-testid="dialog-close">{children}</div>),
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="container" className={className}>
       {children}
@@ -50,10 +58,94 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Button: ({ children, variant, className }: { children: React.ReactNode; variant?: string; className?: string }) => (
-    <button data-testid="button" data-variant={variant} className={className}>
+  Button: ({
+    children,
+    variant,
+    className,
+    onClick,
+  }: {
+    children: React.ReactNode;
+    variant?: string;
+    className?: string;
+    onClick?: () => void;
+  }) => (
+    <button data-testid="button" data-variant={variant} className={className} onClick={onClick}>
       {children}
     </button>
+  ),
+  Label: ({ children, htmlFor, className }: { children: React.ReactNode; htmlFor?: string; className?: string }) => (
+    <label data-testid="label" htmlFor={htmlFor} className={className}>
+      {children}
+    </label>
+  ),
+  Input: ({
+    type,
+    id,
+    placeholder,
+    value,
+    onChange,
+    className,
+  }: {
+    type?: string;
+    id?: string;
+    placeholder?: string;
+    value?: string;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: string;
+  }) => (
+    <input
+      data-testid="input"
+      type={type}
+      id={id}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      className={className}
+    />
+  ),
+}));
+
+// Mock libs
+vi.mock('@/libs', () => ({
+  ArrowLeft: ({ className }: { className?: string }) => (
+    <div data-testid="arrow-left" className={className}>
+      ArrowLeft
+    </div>
+  ),
+  Download: ({ className }: { className?: string }) => (
+    <div data-testid="download" className={className}>
+      Download
+    </div>
+  ),
+  Eye: ({ className }: { className?: string }) => (
+    <div data-testid="eye" className={className}>
+      Eye
+    </div>
+  ),
+  EyeOff: ({ className }: { className?: string }) => (
+    <div data-testid="eye-off" className={className}>
+      EyeOff
+    </div>
+  ),
+  Copy: ({ className }: { className?: string }) => (
+    <div data-testid="copy" className={className}>
+      Copy
+    </div>
+  ),
+  Check: ({ className }: { className?: string }) => (
+    <div data-testid="check" className={className}>
+      Check
+    </div>
+  ),
+  TriangleAlert: ({ className }: { className?: string }) => (
+    <div data-testid="triangle-alert" className={className}>
+      TriangleAlert
+    </div>
+  ),
+  ShieldCheck: ({ className }: { className?: string }) => (
+    <div data-testid="shield-check" className={className}>
+      ShieldCheck
+    </div>
   ),
 }));
 

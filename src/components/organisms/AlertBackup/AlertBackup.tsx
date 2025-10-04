@@ -2,8 +2,8 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import * as Molecules from '@/molecules';
 import * as Core from '@/core';
+import * as Organisms from '@/organisms';
 
 interface AlertBackupProps {
   onDismiss?: () => void;
@@ -25,8 +25,8 @@ export const AlertBackup = ({ onDismiss }: AlertBackupProps) => {
           Back up now<span className="hidden md:inline"> to avoid losing your account!</span>
         </Atoms.Typography>
       </Atoms.Container>
-      <Molecules.DialogBackup />
-      <Molecules.DialogConfirmBackup onConfirm={onDismiss} />
+      <Organisms.DialogBackup />
+      <Organisms.DialogConfirmBackup onConfirm={onDismiss} />
     </Atoms.Container>
   );
 };
