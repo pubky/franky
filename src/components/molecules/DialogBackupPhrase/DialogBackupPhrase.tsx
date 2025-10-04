@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
@@ -157,6 +157,16 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
   const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
+  const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
+
+  // Precompute word counts for better performance
+  const wordCountMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const w of recoveryWords) {
+      map[w] = (map[w] || 0) + 1;
+    }
+    return map;
+  }, [recoveryWords]);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -178,7 +188,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   };
 
   const handleWordClick = (word: string, wordIndex: number) => {
-    const wordCountInPhrase = recoveryWords.filter((w) => w === word).length;
+    const wordCountInPhrase = wordCountMap[word] ?? 0;
     const currentUsageCount = usedWordCounts[word] || 0;
 
     if (currentUsageCount >= wordCountInPhrase) {
@@ -201,6 +211,13 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
         [word]: currentUsageCount + 1,
       }));
       setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
+
+      // Track slot to instance mapping
+      setSlotToInstance((prev) => {
+        const next = [...prev];
+        next[emptyIndex] = wordIndex;
+        return next;
+      });
 
       // Validate this specific word immediately
       validateSingleWord(emptyIndex, word);
@@ -235,15 +252,18 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
         [word]: Math.max(0, (prev[word] || 0) - 1),
       }));
 
-      // Find and remove the first used instance of this word
-      const wordInstances = availableWords.map((w, i) => (w === word ? i : -1)).filter((i) => i !== -1);
-      const usedInstances = wordInstances.filter((i) => usedWordInstances.has(i));
-      if (usedInstances.length > 0) {
-        const instanceToRemove = usedInstances[0]; // Remove the first used instance
+      // Use the exact instance that was used in this slot
+      const instanceIndex = slotToInstance[index];
+      if (instanceIndex !== null) {
         setUsedWordInstances((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(instanceToRemove);
-          return newSet;
+          const next = new Set(prev);
+          next.delete(instanceIndex);
+          return next;
+        });
+        setSlotToInstance((prev) => {
+          const next = [...prev];
+          next[index] = null;
+          return next;
         });
       }
 

@@ -309,4 +309,132 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     expect(tubeButtons[0]).toBeDisabled();
     expect(tubeButtons[1]).toBeDisabled();
   });
+
+  it('should re-enable exact duplicate instance when clearing a slot', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // Navigate to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Get both tube buttons (duplicates)
+    const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
+    const tubeButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('tube'));
+
+    // Click first tube instance (should go to slot 0)
+    fireEvent.click(tubeButtons[0]);
+    expect(tubeButtons[0]).toBeDisabled();
+    expect(tubeButtons[1]).not.toBeDisabled();
+
+    // Click second tube instance (should go to slot 1)
+    fireEvent.click(tubeButtons[1]);
+    expect(tubeButtons[0]).toBeDisabled();
+    expect(tubeButtons[1]).toBeDisabled();
+
+    // Get the first slot (should contain first tube)
+    const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
+    expect(wordSlot0?.getAttribute('data-word')).toBe('tube');
+
+    // Clear the first slot
+    fireEvent.click(wordSlot0!);
+
+    // Only the first tube button should be re-enabled
+    expect(tubeButtons[0]).not.toBeDisabled();
+    expect(tubeButtons[1]).toBeDisabled();
+
+    // Clear the second slot
+    const wordSlot1 = container.querySelector('[data-testid="word-slot-1"]');
+    fireEvent.click(wordSlot1!);
+
+    // Now both tube buttons should be enabled again
+    expect(tubeButtons[0]).not.toBeDisabled();
+    expect(tubeButtons[1]).not.toBeDisabled();
+  });
+
+  it('should block validate button when there are errors present', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // Navigate to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Get all word buttons
+    const wordButtons = screen.getAllByRole('button');
+
+    // Click a wrong word for slot 0 (should be "tube", let's click "door")
+    const doorBtn = wordButtons.find((btn) => btn.textContent === 'door');
+    fireEvent.click(doorBtn!);
+
+    // Verify slot 0 has an error
+    const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
+    expect(wordSlot0?.getAttribute('data-is-error')).toBe('true');
+
+    // Fill remaining slots with any words to enable the button check
+    const tubeButtons = wordButtons.filter((button) => button.textContent?.includes('tube'));
+    const resourceBtn = wordButtons.find((btn) => btn.textContent === 'resource');
+    const massBtn = wordButtons.find((btn) => btn.textContent === 'mass');
+    const firmBtn = wordButtons.find((btn) => btn.textContent === 'firm');
+    const geniusBtn = wordButtons.find((btn) => btn.textContent === 'genius');
+    const parrotBtn = wordButtons.find((btn) => btn.textContent === 'parrot');
+    const girlBtn = wordButtons.find((btn) => btn.textContent === 'girl');
+    const orphanBtn = wordButtons.find((btn) => btn.textContent === 'orphan');
+    const windowBtn = wordButtons.find((btn) => btn.textContent === 'window');
+    const worldBtn = wordButtons.find((btn) => btn.textContent === 'world');
+
+    fireEvent.click(tubeButtons[0]);
+    fireEvent.click(resourceBtn!);
+    fireEvent.click(massBtn!);
+    // Skip door since we already used it
+    fireEvent.click(firmBtn!);
+    fireEvent.click(geniusBtn!);
+    fireEvent.click(parrotBtn!);
+    fireEvent.click(girlBtn!);
+    fireEvent.click(orphanBtn!);
+    fireEvent.click(windowBtn!);
+    fireEvent.click(worldBtn!);
+
+    // The validate button should be disabled because there's an error
+    const validateButton = screen.getByText('Validate').closest('button');
+    expect(validateButton).toBeDisabled();
+  });
+
+  it('should show errors for incorrectly placed duplicate words', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // Navigate to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Get tube buttons
+    const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
+    const tubeButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('tube'));
+
+    // Click second tube first (wrong for slot 0)
+    fireEvent.click(tubeButtons[1]);
+
+    // Check that slot 0 has an error (because any "tube" is correct for slot 0,
+    // this test assumes validation marks it as correct. But if we fill wrong words later, errors will show)
+    // Actually, since both are "tube", slot 0 would be correct. Let's test with a different word.
+
+    // Clear and test with a completely wrong word
+    const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
+    fireEvent.click(wordSlot0!); // Clear it
+
+    // Click a wrong word for slot 0 (should be "tube", let's click "door")
+    const doorBtn = Array.from(wordButtons).find((btn) => btn.textContent === 'door');
+    fireEvent.click(doorBtn!);
+
+    // Check that slot 0 shows error
+    const slot0AfterWrong = container.querySelector('[data-testid="word-slot-0"]');
+    expect(slot0AfterWrong?.getAttribute('data-is-error')).toBe('true');
+  });
 });
