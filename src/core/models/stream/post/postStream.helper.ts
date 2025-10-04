@@ -1,10 +1,10 @@
-import * as Core from '@/core';
+import { PostStreamModelSchema } from './postStream.schema';
 
 export const createDefaultStream = (
   id: string,
   name: string | null = null,
   posts: string[] = [],
-): Core.StreamModelSchema => {
+): PostStreamModelSchema => {
   return {
     id,
     posts,

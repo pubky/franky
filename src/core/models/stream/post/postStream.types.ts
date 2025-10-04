@@ -1,4 +1,4 @@
-export enum StreamTypes {
+export enum PostStreamTypes {
   TIMELINE_ALL = 'timeline:all:all',
   TIMELINE_FOLLOWING = 'timeline:following:all',
   TIMELINE_FRIENDS = 'timeline:friends:all',

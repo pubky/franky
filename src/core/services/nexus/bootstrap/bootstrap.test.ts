@@ -252,9 +252,9 @@ describe('NexusService', () => {
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
       // Verify stream was created in database
-      const savedStream = await Core.StreamModel.findById(Core.StreamTypes.TIMELINE_ALL);
+      const savedStream = await Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_ALL);
       expect(savedStream).toBeTruthy();
-      expect(savedStream!.id).toBe(Core.StreamTypes.TIMELINE_ALL);
+      expect(savedStream!.id).toBe(Core.PostStreamTypes.TIMELINE_ALL);
       expect(savedStream!.posts).toEqual([headPostId, randomPostId]);
       expect(savedStream!.name).toBeNull(); // Stream name should be null as per the service call
     });
@@ -300,7 +300,7 @@ describe('NexusService', () => {
       const savedPostTags = await Core.PostTagsModel.findById(compositePostId);
       expect(savedPostTags).toBeTruthy();
 
-      const savedStream = await Core.StreamModel.findById(Core.StreamTypes.TIMELINE_ALL);
+      const savedStream = await Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_ALL);
       expect(savedStream).toBeTruthy();
       expect(savedStream!.posts).toEqual([testPostId, 'random-post-id']);
 

@@ -3,7 +3,7 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as Core from '@/core';
 
-import { StreamModelSchema, streamTableSchema } from '@/core/models/stream/stream.schema';
+import { PostStreamModelSchema, postStreamTableSchema } from '@/core/models/stream/post/postStream.schema';
 import { userDetailsTableSchema } from '@/core/models/user/details/userDetails.schema';
 import { userCountsTableSchema } from '@/core/models/user/counts/userCounts.schema';
 import { userRelationshipsTableSchema } from '@/core/models/user/relationships/userRelationships.schema';
@@ -30,7 +30,7 @@ class AppDatabase extends Dexie {
   post_tags!: Dexie.Table<Core.TagCollectionModelSchema<string>>;
   post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
   // Streams
-  streams!: Dexie.Table<StreamModelSchema>;
+  post_streams!: Dexie.Table<PostStreamModelSchema>;
 
   constructor() {
     super(Config.DB_NAME);
@@ -51,7 +51,7 @@ class AppDatabase extends Dexie {
         post_tags: tagCollectionTableSchema,
         post_ttl: postTtlTableSchema,
         // Streams
-        streams: streamTableSchema,
+        post_streams: postStreamTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(
