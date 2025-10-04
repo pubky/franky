@@ -1,13 +1,8 @@
 import { db } from '@/core/database';
 import { describe, it, expect, beforeEach } from 'vitest';
-<<<<<<< HEAD
 import { createDefaultPostStream } from './postStream.helper';
 import { PostStreamModel } from './postStream';
 import { PostStreamTypes } from './postStream.types';
-=======
-import { createDefaultStream } from './postStream.helper';
-import { PostStreamModel } from './postStream';
->>>>>>> 8f93f84 (rename stream table to post_stream)
 
 describe('PostStreamModel', () => {
   beforeEach(async () => {
