@@ -132,6 +132,8 @@ describe('NexusService', () => {
     ],
     list: {
       stream: [testPostId, 'random-post-id'],
+      influencers: ['influencer-user-1', 'influencer-user-2'],
+      recommended: ['recommended-user-1', 'recommended-user-2', 'recommended-user-3'],
     },
   });
 
@@ -259,6 +261,29 @@ describe('NexusService', () => {
       expect(savedStream!.name).toBeNull(); // Stream name should be null as per the service call
     });
 
+    it('should create user streams for influencers and recommended users', async () => {
+      const mockResponse = generateMockResponse(pubky, 'test-post-id');
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+      });
+
+      await Core.NexusBootstrapService.retrieveAndPersist(pubky);
+
+      // Verify influencers stream was created
+      const savedInfluencersStream = await Core.UserStreamModel.findById(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
+      expect(savedInfluencersStream).toBeTruthy();
+      expect(savedInfluencersStream!.id).toBe(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
+      expect(savedInfluencersStream!.users).toEqual(['influencer-user-1', 'influencer-user-2']);
+
+      // Verify recommended stream was created
+      const savedRecommendedStream = await Core.UserStreamModel.findById(Core.UserStreamTypes.RECOMMENDED);
+      expect(savedRecommendedStream).toBeTruthy();
+      expect(savedRecommendedStream!.id).toBe(Core.UserStreamTypes.RECOMMENDED);
+      expect(savedRecommendedStream!.users).toEqual(['recommended-user-1', 'recommended-user-2', 'recommended-user-3']);
+    });
+
     it('should persist complete bootstrap data with users, posts, and stream', async () => {
       const testUserId = 'user-123';
       const testPostId = 'post-456';
@@ -303,6 +328,15 @@ describe('NexusService', () => {
       const savedStream = await Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_ALL);
       expect(savedStream).toBeTruthy();
       expect(savedStream!.posts).toEqual([testPostId, 'random-post-id']);
+
+      // Verify user streams were created
+      const savedInfluencersStream = await Core.UserStreamModel.findById(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
+      expect(savedInfluencersStream).toBeTruthy();
+      expect(savedInfluencersStream!.users).toEqual(['influencer-user-1', 'influencer-user-2']);
+
+      const savedRecommendedStream = await Core.UserStreamModel.findById(Core.UserStreamTypes.RECOMMENDED);
+      expect(savedRecommendedStream).toBeTruthy();
+      expect(savedRecommendedStream!.users).toEqual(['recommended-user-1', 'recommended-user-2', 'recommended-user-3']);
 
       // Verify fetch was called correctly
       expect(mockFetch).toHaveBeenCalledWith(Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky)), {

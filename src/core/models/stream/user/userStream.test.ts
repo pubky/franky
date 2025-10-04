@@ -14,7 +14,7 @@ describe('UserStreamModel', () => {
       const streamData = createDefaultUserStream(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
       const stream = new UserStreamModel(streamData);
 
-      expect(stream.id).toBe('today:followers:all');
+      expect(stream.id).toBe(UserStreamTypes.TODAY_FOLLOWERS_ALL);
       expect(stream.users).toEqual(['user1', 'user2']);
     });
 
