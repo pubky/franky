@@ -6,7 +6,7 @@ import * as Core from '@/core';
  */
 
 function buildUserStreamUrl(
-  params: Record<string, unknown>,
+  params: Core.TUserStreamQueryParams,
   source: Core.UserStreamSource | null,
   prefix: Core.USER_STREAM_PREFIX,
 ): string {
@@ -17,7 +17,7 @@ function buildUserStreamUrl(
     queryParams.append('source', source);
   }
 
-  // Add all parameters that exist (much simpler!)
+  // Add all parameters that exist
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       // Filter out negative values for skip and limit

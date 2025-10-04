@@ -50,3 +50,15 @@ export type TUserStreamUsersByIdsParams = {
   viewer_id?: Core.Pubky;
   depth?: number;
 };
+
+/**
+ * Union type of all supported user stream parameter shapes
+ * Provides type safety for buildUserStreamUrl function
+ */
+export type TUserStreamQueryParams =
+  | TUserStreamWithUserIdParams
+  | TUserStreamInfluencersParams
+  | TUserStreamPostRepliesParams
+  | TUserStreamWithDepthParams
+  | TUserStreamBase
+  | TUserStreamUsernameParams;
