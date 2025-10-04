@@ -9,7 +9,11 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import { Identity } from '@/libs';
 import { useOnboardingStore } from '@/core';
 
-export function DialogBackupEncrypted() {
+interface DialogBackupEncryptedProps {
+  children?: React.ReactNode;
+}
+
+export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) {
   const [step, setStep] = useState(1);
 
   const handleClose = () => {
@@ -21,12 +25,15 @@ export function DialogBackupEncrypted() {
 
   return (
     <Atoms.Dialog>
-      <Atoms.DialogTrigger asChild>
-        <Atoms.Button id="backup-encrypted-file-btn" variant="secondary" className="gap-2">
-          <Libs.FileText className="h-4 w-4" />
-          <span>Encrypted file</span>
-        </Atoms.Button>
-      </Atoms.DialogTrigger>
+      {children ? (
+        <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
+      ) : (
+        <Atoms.DialogTrigger asChild>
+          <Atoms.Button id="backup-encrypted-file-btn" className="gap-2">
+            <span>Continue</span>
+          </Atoms.Button>
+        </Atoms.DialogTrigger>
+      )}
       <Atoms.DialogContent className="gap-6 p-8">
         {step === 1 && <RecoveryStep1 setStep={setStep} />}
         {step === 2 && <RecoveryStep2 handleClose={handleClose} />}
