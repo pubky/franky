@@ -5,11 +5,10 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
-      class="text-primary-foreground hover:text-primary-foreground"
+      class="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
       data-testid="button"
       data-variant="outline"
     >
@@ -17,11 +16,10 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -31,11 +29,10 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -50,7 +47,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -58,10 +55,14 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -71,14 +72,14 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -89,7 +90,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -99,14 +100,14 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -117,7 +118,7 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -127,11 +128,11 @@ exports[`DialogBackup > matches snapshot for card titles 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -145,11 +146,10 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
-      class="text-primary-foreground hover:text-primary-foreground"
+      class="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
       data-testid="button"
       data-variant="outline"
     >
@@ -157,11 +157,10 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -171,11 +170,10 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -190,7 +188,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -198,10 +196,14 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -211,14 +213,14 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -229,7 +231,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -239,14 +241,14 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -257,7 +259,7 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -267,11 +269,11 @@ exports[`DialogBackup > matches snapshot for cards 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -285,11 +287,10 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
-      class="text-primary-foreground hover:text-primary-foreground"
+      class="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
       data-testid="button"
       data-variant="outline"
     >
@@ -297,11 +298,10 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -311,11 +311,10 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -330,7 +329,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -338,10 +337,14 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -351,14 +354,14 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -369,7 +372,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -379,14 +382,14 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -397,7 +400,7 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -407,11 +410,11 @@ exports[`DialogBackup > matches snapshot for dialog content 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -425,11 +428,10 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
-      class="text-primary-foreground hover:text-primary-foreground"
+      class="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
       data-testid="button"
       data-variant="outline"
     >
@@ -437,11 +439,10 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -451,11 +452,10 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -470,7 +470,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -478,10 +478,14 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -491,14 +495,14 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -509,7 +513,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -519,14 +523,14 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -537,7 +541,7 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -547,11 +551,11 @@ exports[`DialogBackup > matches snapshot for dialog header 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -565,11 +569,10 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
-      class="text-primary-foreground hover:text-primary-foreground"
+      class="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
       data-testid="button"
       data-variant="outline"
     >
@@ -577,11 +580,10 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -591,11 +593,10 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -610,7 +611,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -618,10 +619,14 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -631,14 +636,14 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -649,7 +654,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -659,14 +664,14 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -677,7 +682,7 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -687,11 +692,11 @@ exports[`DialogBackup > matches snapshot for images 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>
@@ -705,11 +710,10 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
   data-testid="dialog"
 >
   <div
-    data-as-child="true"
     data-testid="dialog-trigger"
   >
     <button
-      class="text-primary-foreground hover:text-primary-foreground"
+      class="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
       data-testid="button"
       data-variant="outline"
     >
@@ -717,11 +721,10 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
     </button>
   </div>
   <div
-    class="sm:max-w-xl gap-0"
+    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
-      class="pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -731,11 +734,10 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
       </h2>
     </div>
     <div
-      class="h-full pr-4 overflow-y-auto"
       data-testid="container"
     >
       <div
-        class="gap-4"
+        class="gap-6"
         data-testid="container"
       >
         <p
@@ -750,7 +752,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
           data-testid="container"
         >
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -758,10 +760,14 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               data-size="md"
               data-testid="typography"
             >
-              Recovery phrase
+              Recovery
+              <br
+                class="hidden md:inline"
+              />
+               phrase
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Note"
               data-height="112"
               data-src="/images/note.png"
@@ -771,14 +777,14 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Next.js Image: 
               Note
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-phrase"
             >
-              Continue
-            </button>
+              DialogBackupPhrase
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -789,7 +795,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Download encrypted file
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Folder"
               data-height="112"
               data-src="/images/folder.png"
@@ -799,14 +805,14 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Next.js Image: 
               Folder
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-backup-encrypted"
             >
-              Continue
-            </button>
+              DialogBackupEncrypted
+            </div>
           </div>
           <div
-            class="w-full p-6 bg-card rounded-lg flex flex-col gap-6"
+            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
             data-testid="card"
           >
             <p
@@ -817,7 +823,7 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Export to Pubky Ring
             </p>
             <div
-              class="self-center"
+              class="self-center w-16 h-16 md:w-28 md:h-28"
               data-alt="Keys"
               data-height="112"
               data-src="/images/keyring.png"
@@ -827,11 +833,11 @@ exports[`DialogBackup > matches snapshot for trigger button 1`] = `
               Next.js Image: 
               Keys
             </div>
-            <button
-              data-testid="button"
+            <div
+              data-testid="dialog-export"
             >
-              Continue
-            </button>
+              DialogExport
+            </div>
           </div>
         </div>
       </div>

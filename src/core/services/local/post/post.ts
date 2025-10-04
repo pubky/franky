@@ -103,7 +103,7 @@ export class LocalPostService {
 
       const replyRelationships: Core.PostRelationshipsModelSchema = {
         id: replyDetails.id,
-        replied: parentPostId,
+        replied: parentPost.uri,
         reposted: null,
         mentioned: [],
       };

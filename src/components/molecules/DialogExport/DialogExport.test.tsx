@@ -155,7 +155,7 @@ describe('DialogExport', () => {
       render(<DialogExport mnemonic={testMnemonic} />);
 
       const title = screen.getByTestId('dialog-title');
-      const triggerText = screen.getByText('Export recovery phrase');
+      const triggerText = screen.getByText('Continue');
 
       expect(title).toHaveTextContent('Import recovery phrase');
       expect(triggerText).toBeInTheDocument();

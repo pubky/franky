@@ -13,7 +13,7 @@ import * as App from '@/app';
 export const CreateProfileForm = () => {
   const router = useRouter();
   const { toast } = Molecules.useToast();
-  const { pubky } = Core.useOnboardingStore();
+  const { pubky, setShowWelcomeDialog } = Core.useOnboardingStore();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
   const [continueText, setContinueText] = useState('Finish');
@@ -143,6 +143,10 @@ export const CreateProfileForm = () => {
     // setIsSaving(false);
     try {
       await Core.AuthController.authorizeAndBootstrap();
+
+      // Set welcome dialog to show for new users
+      setShowWelcomeDialog(true);
+
       router.push(App.FEED_ROUTES.FEED);
     } catch {
       setContinueText('Try again!');
