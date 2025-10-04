@@ -11,13 +11,19 @@ vi.mock('@/core', () => ({
 
 // Mock Molecules
 vi.mock('@/molecules', () => ({
-  DialogBackupPhrase: () => <div data-testid="dialog-backup-phrase">DialogBackupPhrase</div>,
-  DialogExport: () => <div data-testid="dialog-export">DialogExport</div>,
+  DialogBackupPhrase: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-backup-phrase">{children || 'DialogBackupPhrase'}</div>
+  ),
+  DialogExport: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-export">{children || 'DialogExport'}</div>
+  ),
 }));
 
 // Mock Organisms
 vi.mock('@/organisms', () => ({
-  DialogBackupEncrypted: () => <div data-testid="dialog-backup-encrypted">DialogBackupEncrypted</div>,
+  DialogBackupEncrypted: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-backup-encrypted">{children || 'DialogBackupEncrypted'}</div>
+  ),
 }));
 
 // Mock atoms
@@ -147,6 +153,16 @@ vi.mock('@/libs', () => ({
       ShieldCheck
     </div>
   ),
+  FileText: ({ className }: { className?: string }) => (
+    <div data-testid="file-text" className={className}>
+      FileText
+    </div>
+  ),
+  Scan: ({ className }: { className?: string }) => (
+    <div data-testid="scan" className={className}>
+      Scan
+    </div>
+  ),
 }));
 
 // Mock Next.js Image
@@ -226,7 +242,8 @@ describe('DialogBackup', () => {
   it('renders recovery phrase card with correct content', () => {
     render(<DialogBackup />);
 
-    expect(screen.getByText('Recovery phrase')).toBeInTheDocument();
+    const recoveryPhraseTexts = screen.getAllByText('Recovery phrase');
+    expect(recoveryPhraseTexts.length).toBeGreaterThanOrEqual(1);
     expect(screen.getByTestId('dialog-backup-phrase')).toBeInTheDocument();
 
     const images = screen.getAllByTestId('image');

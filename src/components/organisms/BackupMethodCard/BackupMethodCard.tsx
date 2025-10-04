@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Stores from '@/core';
 import * as Organisms from '@/organisms';
+import * as Libs from '@/libs';
 
 export const BackupMethodCard = () => {
   const { mnemonic } = Stores.useOnboardingStore();
@@ -28,9 +29,24 @@ export const BackupMethodCard = () => {
           choose to do this later.
         </Atoms.Typography>
         <Atoms.Container className="flex-row mt-6 gap-3 flex-wrap">
-          <Molecules.DialogBackupPhrase />
-          <Organisms.DialogBackupEncrypted />
-          <Molecules.DialogExport mnemonic={mnemonic} />
+          <Molecules.DialogBackupPhrase>
+            <Atoms.Button id="backup-recovery-phrase-btn" variant="secondary" className="gap-2">
+              <Libs.FileText className="h-4 w-4" />
+              <span>Recovery phrase</span>
+            </Atoms.Button>
+          </Molecules.DialogBackupPhrase>
+          <Organisms.DialogBackupEncrypted>
+            <Atoms.Button id="backup-encrypted-file-btn" variant="secondary" className="gap-2">
+              <Libs.FileText className="h-4 w-4" />
+              <span>Encrypted file</span>
+            </Atoms.Button>
+          </Organisms.DialogBackupEncrypted>
+          <Molecules.DialogExport mnemonic={mnemonic}>
+            <Atoms.Button className="gap-2">
+              <Libs.Scan className="h-4 w-4" />
+              <span>{mnemonic ? 'Export recovery phrase' : 'Export to Pubky Ring'}</span>
+            </Atoms.Button>
+          </Molecules.DialogExport>
         </Atoms.Container>
       </Atoms.Container>
     </Molecules.ContentCard>

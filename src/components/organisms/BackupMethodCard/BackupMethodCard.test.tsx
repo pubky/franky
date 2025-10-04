@@ -143,6 +143,16 @@ vi.mock('@/libs', () => ({
       ShieldCheck
     </div>
   ),
+  FileText: ({ className }: { className?: string }) => (
+    <div data-testid="file-text" className={className}>
+      FileText
+    </div>
+  ),
+  Scan: ({ className }: { className?: string }) => (
+    <div data-testid="scan" className={className}>
+      Scan
+    </div>
+  ),
 }));
 
 // Mock molecules
@@ -159,17 +169,21 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   PopoverBackup: () => <div data-testid="popover-backup">Backup Info</div>,
-  DialogBackupPhrase: () => <div data-testid="dialog-backup-phrase">Backup Phrase</div>,
-  DialogExport: ({ mnemonic }: { mnemonic?: string }) => (
+  DialogBackupPhrase: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-backup-phrase">{children || 'Backup Phrase'}</div>
+  ),
+  DialogExport: ({ mnemonic, children }: { mnemonic?: string; children?: React.ReactNode }) => (
     <div data-testid="dialog-export" data-mnemonic={mnemonic || ''}>
-      Export {mnemonic ? 'with mnemonic' : 'without mnemonic'}
+      {children || `Export ${mnemonic ? 'with mnemonic' : 'without mnemonic'}`}
     </div>
   ),
 }));
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
-  DialogBackupEncrypted: () => <div data-testid="dialog-backup-encrypted">Backup Encrypted</div>,
+  DialogBackupEncrypted: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-backup-encrypted">{children || 'Backup Encrypted'}</div>
+  ),
 }));
 
 describe('BackupMethodCard', () => {
@@ -199,7 +213,7 @@ describe('BackupMethodCard', () => {
 
     const dialogExport = screen.getByTestId('dialog-export');
     expect(dialogExport).toHaveAttribute('data-mnemonic', testMnemonic);
-    expect(dialogExport).toHaveTextContent('Export with mnemonic');
+    expect(dialogExport).toHaveTextContent('Export recovery phrase');
   });
 
   it('renders all backup options', () => {
@@ -303,11 +317,11 @@ describe('BackupMethodCard', () => {
 
   it('passes mnemonic correctly to DialogExport based on store state', () => {
     const testCases = [
-      { mnemonic: '', expectedDisplay: 'Export without mnemonic' },
-      { mnemonic: 'test phrase', expectedDisplay: 'Export with mnemonic' },
+      { mnemonic: '', expectedDisplay: 'Export to Pubky Ring' },
+      { mnemonic: 'test phrase', expectedDisplay: 'Export recovery phrase' },
       {
         mnemonic: 'wood fox silver drive march fee palace flame earn door case almost',
-        expectedDisplay: 'Export with mnemonic',
+        expectedDisplay: 'Export recovery phrase',
       },
     ];
 
@@ -354,7 +368,7 @@ describe('BackupMethodCard', () => {
       const dialogExport = screen.getByTestId('dialog-export');
       // When mnemonic is undefined, it should be treated as empty string
       expect(dialogExport).toHaveAttribute('data-mnemonic', '');
-      expect(dialogExport).toHaveTextContent('Export without mnemonic');
+      expect(dialogExport).toHaveTextContent('Export to Pubky Ring');
     });
 
     it('handles null mnemonic gracefully', () => {
@@ -367,7 +381,7 @@ describe('BackupMethodCard', () => {
       const dialogExport = screen.getByTestId('dialog-export');
       // When mnemonic is null, it should be treated as empty string
       expect(dialogExport).toHaveAttribute('data-mnemonic', '');
-      expect(dialogExport).toHaveTextContent('Export without mnemonic');
+      expect(dialogExport).toHaveTextContent('Export to Pubky Ring');
     });
 
     it('maintains component structure regardless of store state', () => {
