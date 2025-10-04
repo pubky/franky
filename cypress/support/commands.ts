@@ -97,10 +97,13 @@ Cypress.Commands.add(
     cy.get('#profile-bio-input').type(profileBio);
     //cy.get('#profile-links-input').type(profileLinks);
 
-    // todo: finish onboarding
     cy.get('#profile-finish-btn').click();
 
     cy.location('pathname').should('eq', '/feed');
+
+    // confirm welcome message is shown and dismiss it
+    cy.get('#welcome-title').should('exist');
+    cy.get('#welcome-explore-pubky-btn').click();
   }
 );
 
