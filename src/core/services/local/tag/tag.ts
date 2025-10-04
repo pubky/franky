@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import { Logger } from '@/libs';
 import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
 
 export class LocalTagService {
@@ -11,96 +11,31 @@ export class LocalTagService {
    * @param params.taggerId - ID of the user adding the tag
    */
   static async save({ postId, label, taggerId }: TLocalSaveTagParams) {
-    try {
-      const tagsData = await Core.PostTagsModel.table.get(postId);
+    const tagsData = await Core.PostTagsModel.table.get(postId);
 
-      if (tagsData) {
-        const postTagsModel = new Core.PostTagsModel(tagsData);
+    const postTagsModel = tagsData
+      ? new Core.PostTagsModel(tagsData)
+      : new Core.PostTagsModel({ id: postId, tags: [] });
 
-        const existingTag = postTagsModel.tags.find((t) => t.label === label);
-        if (existingTag?.relationship) {
-          throw createDatabaseError(
-            DatabaseErrorType.SAVE_FAILED,
-            'User already tagged this post with this label',
-            400,
-            { postId, label, taggerId },
-          );
-        }
+    postTagsModel.saveTag(label, taggerId);
 
-        const added = postTagsModel.addTagger(label, taggerId);
-        if (!added) {
-          throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tagger', 500, {
-            postId,
-            label,
-            taggerId,
-          });
-        }
+    await Core.PostTagsModel.insert({
+      id: postId,
+      tags: postTagsModel.tags as Core.NexusTag[],
+    });
 
-        const updatedTag = postTagsModel.tags.find((t) => t.label === label);
-        if (updatedTag) {
-          updatedTag.relationship = true;
-        }
-
-        await Core.PostTagsModel.insert({
-          id: postId,
-          tags: postTagsModel.tags as Core.NexusTag[],
-        });
-
-        const counts = await Core.PostCountsModel.table.get(postId);
-        if (counts) {
-          await Core.PostCountsModel.insert({
-            ...counts,
-            tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-            unique_tags: postTagsModel.tags.length,
-          });
-        }
-
-        Logger.debug('Added tagger using existing PostTagsModel', { postId, label, taggerId });
-        return;
-      }
-
-      const newPostTags = new Core.PostTagsModel({
-        id: postId,
-        tags: [],
-      });
-
-      const added = newPostTags.addTagger(label, taggerId);
-      if (!added) {
-        throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tagger', 500, {
-          postId,
-          label,
-          taggerId,
-        });
-      }
-
-      const newTag = newPostTags.tags.find((t) => t.label === label);
-      if (newTag) {
-        newTag.relationship = true;
-      }
-
-      await Core.PostTagsModel.insert({
-        id: postId,
-        tags: newPostTags.tags as Core.NexusTag[],
-      });
-
+    // Check if counts exist using count() instead of fetching entire object
+    const countsExist = (await Core.PostCountsModel.table.where('id').equals(postId).count()) > 0;
+    if (countsExist) {
       const counts = await Core.PostCountsModel.table.get(postId);
-      if (counts) {
-        await Core.PostCountsModel.insert({
-          ...counts,
-          tags: newPostTags.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-          unique_tags: newPostTags.tags.length,
-        });
-      }
-
-      Logger.debug('Created new PostTagsModel and added tag', { postId, label, taggerId });
-    } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tag to post', 500, {
-        error,
-        postId,
-        label,
-        taggerId,
+      await Core.PostCountsModel.insert({
+        ...counts!,
+        tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+        unique_tags: postTagsModel.tags.length,
       });
     }
+
+    Logger.debug('Tag saved', { postId, label, taggerId });
   }
 
   /**
@@ -111,63 +46,32 @@ export class LocalTagService {
    * @param params.taggerId - ID of the user removing the tag
    */
   static async remove({ postId, label, taggerId }: TLocalRemoveTagParams) {
-    try {
-      const tagsData = await Core.PostTagsModel.table.get(postId);
+    const tagsData = await Core.PostTagsModel.table.get(postId);
 
-      if (!tagsData) {
-        throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Post has no tags', 404, { postId });
-      }
+    if (!tagsData) {
+      throw new Error('Post has no tags');
+    }
 
-      const postTagsModel = new Core.PostTagsModel(tagsData);
+    const postTagsModel = new Core.PostTagsModel(tagsData);
 
-      const existingTag = postTagsModel.tags.find((t) => t.label === label);
-      if (!existingTag?.relationship) {
-        throw createDatabaseError(
-          DatabaseErrorType.DELETE_FAILED,
-          'User has not tagged this post with this label',
-          404,
-          { postId, label, taggerId },
-        );
-      }
+    postTagsModel.removeTag(label, taggerId);
 
-      const removed = postTagsModel.removeTagger(label, taggerId);
-      if (!removed) {
-        throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tagger', 500, {
-          postId,
-          label,
-          taggerId,
-        });
-      }
+    await Core.PostTagsModel.insert({
+      id: postId,
+      tags: postTagsModel.tags as Core.NexusTag[],
+    });
 
-      const updatedTag = postTagsModel.tags.find((t) => t.label === label);
-      if (updatedTag) {
-        updatedTag.relationship = false;
-      }
-
-      postTagsModel.tags = postTagsModel.tags.filter((tag) => tag.taggers_count > 0);
-
-      await Core.PostTagsModel.insert({
-        id: postId,
-        tags: postTagsModel.tags as Core.NexusTag[],
-      });
-
+    // Check if counts exist using count() instead of fetching entire object
+    const countsExist = (await Core.PostCountsModel.table.where('id').equals(postId).count()) > 0;
+    if (countsExist) {
       const counts = await Core.PostCountsModel.table.get(postId);
-      if (counts) {
-        await Core.PostCountsModel.insert({
-          ...counts,
-          tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-          unique_tags: postTagsModel.tags.length,
-        });
-      }
-
-      Logger.debug('Removed tagger using PostTagsModel', { postId, label, taggerId });
-    } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tag from post', 500, {
-        error,
-        postId,
-        label,
-        taggerId,
+      await Core.PostCountsModel.insert({
+        ...counts!,
+        tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
+        unique_tags: postTagsModel.tags.length,
       });
     }
+
+    Logger.debug('Tag removed', { postId, label, taggerId });
   }
 }

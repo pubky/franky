@@ -14,3 +14,10 @@ export type TKeyPair = {
   pubky: Core.Pubky;
   secretKey: string;
 };
+
+export enum HomeserverAction {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
+}

@@ -1,6 +1,7 @@
 import { postUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
-import type { TAddTagParams, TRemoveTagParams } from './tag.types';
+import * as Application from '@/core/application';
+import type { TCreateTagParams, TDeleteTagParams } from './tag.types';
 
 export class TagController {
   private static isInitialized = false;
@@ -15,13 +16,13 @@ export class TagController {
   }
 
   /**
-   * Add a tag
+   * Create a tag
    * @param params - Parameters object
    * @param params.targetId - ID of the post or user to tag
    * @param params.label - Tag label
    * @param params.taggerId - ID of the user adding the tag
    */
-  static async add({ targetId, label, taggerId }: TAddTagParams) {
+  static async create({ targetId, label, taggerId }: TCreateTagParams) {
     await this.initialize();
 
     const target = targetId.split(':');
@@ -30,17 +31,23 @@ export class TagController {
     const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    await Core.Local.Tag.save({ postId: targetId, label: normalizedLabel, taggerId });
+    await Application.Tag.create({
+      postId: targetId,
+      label: normalizedLabel,
+      taggerId,
+      tagUrl: normalizedTag.meta.url,
+      tagJson: normalizedTag.tag.toJson(),
+    });
   }
 
   /**
-   * Remove a tag
+   * Delete a tag
    * @param params - Parameters object
    * @param params.targetId - ID of the post or user
    * @param params.label - Tag label to remove
    * @param params.taggerId - ID of the user removing the tag
    */
-  static async remove({ targetId, label, taggerId }: TRemoveTagParams) {
+  static async delete({ targetId, label, taggerId }: TDeleteTagParams) {
     await this.initialize();
 
     const target = targetId.split(':');
@@ -49,6 +56,11 @@ export class TagController {
     const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    await Core.Local.Tag.remove({ postId: targetId, label: normalizedLabel, taggerId });
+    await Application.Tag.delete({
+      postId: targetId,
+      label: normalizedLabel,
+      taggerId,
+      tagUrl: normalizedTag.meta.url,
+    });
   }
 }
