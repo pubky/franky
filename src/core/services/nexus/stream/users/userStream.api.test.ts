@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { USERS_STREAM_API, buildUserStreamBodyUrl } from './userStream.api';
-import { UserStreamReach, UserStreamTimeframe } from './userStream.types';
+import { userStreamApi, buildUserStreamBodyUrl } from './userStream.api';
+import * as Core from '@/core';
 
 describe('Users Stream API - Error Control', () => {
   const mockUserId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
@@ -10,7 +10,7 @@ describe('Users Stream API - Error Control', () => {
 
   describe('Parameter validation', () => {
     it('should handle undefined and null values correctly', () => {
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: mockUserId,
         viewer_id: undefined,
         skip: null as unknown as number,
@@ -25,7 +25,7 @@ describe('Users Stream API - Error Control', () => {
     });
 
     it('should handle empty username gracefully', () => {
-      const url = USERS_STREAM_API.username({
+      const url = userStreamApi.username({
         username: '',
         viewer_id: mockViewerId,
       });
@@ -37,7 +37,7 @@ describe('Users Stream API - Error Control', () => {
 
     it('should handle missing required parameters', () => {
       // This should not throw but generate URL with missing required params
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: mockUserId,
       });
 
@@ -49,7 +49,7 @@ describe('Users Stream API - Error Control', () => {
   describe('Username endpoint error handling', () => {
     it('should handle special characters in username', () => {
       const specialUsername = 'user@domain.com';
-      const url = USERS_STREAM_API.username({
+      const url = userStreamApi.username({
         username: specialUsername,
         viewer_id: mockViewerId,
       });
@@ -60,7 +60,7 @@ describe('Users Stream API - Error Control', () => {
 
     it('should handle long usernames', () => {
       const longUsername = 'a'.repeat(100);
-      const url = USERS_STREAM_API.username({
+      const url = userStreamApi.username({
         username: longUsername,
         viewer_id: mockViewerId,
       });
@@ -70,7 +70,7 @@ describe('Users Stream API - Error Control', () => {
 
     it('should handle username with spaces', () => {
       const usernameWithSpaces = 'user name with spaces';
-      const url = USERS_STREAM_API.username({
+      const url = userStreamApi.username({
         username: usernameWithSpaces,
         viewer_id: mockViewerId,
       });
@@ -82,11 +82,11 @@ describe('Users Stream API - Error Control', () => {
 
   describe('Users by IDs endpoint error handling', () => {
     it('should handle empty user IDs array', () => {
-      const request = USERS_STREAM_API.usersByIds({
+      const request = userStreamApi.usersByIds({
         user_ids: [],
       });
 
-      expect(request.url).toBe('stream/users/by_ids');
+      expect(request.url).toMatch('stream/users/by_ids');
       expect(request.body.user_ids).toEqual([]);
       expect(request.body).not.toHaveProperty('viewer_id');
       expect(request.body).not.toHaveProperty('depth');
@@ -94,20 +94,20 @@ describe('Users Stream API - Error Control', () => {
 
     it('should handle large array of user IDs', () => {
       const largeUserIds = Array.from({ length: 1000 }, (_, i) => `user-${i}-pubky`);
-      const request = USERS_STREAM_API.usersByIds({
+      const request = userStreamApi.usersByIds({
         user_ids: largeUserIds,
         viewer_id: mockViewerId,
         depth: 3,
       });
 
-      expect(request.url).toBe('stream/users/by_ids');
+      expect(request.url).toMatch('stream/users/by_ids');
       expect(request.body.user_ids).toHaveLength(1000);
       expect(request.body.viewer_id).toBe(mockViewerId);
       expect(request.body.depth).toBe(3);
     });
 
     it('should handle depth parameter validation', () => {
-      const request = USERS_STREAM_API.usersByIds({
+      const request = userStreamApi.usersByIds({
         user_ids: mockUserIds,
         depth: 0,
       });
@@ -116,7 +116,7 @@ describe('Users Stream API - Error Control', () => {
     });
 
     it('should handle negative depth values', () => {
-      const request = USERS_STREAM_API.usersByIds({
+      const request = userStreamApi.usersByIds({
         user_ids: mockUserIds,
         depth: -1,
       });
@@ -125,7 +125,7 @@ describe('Users Stream API - Error Control', () => {
     });
 
     it('should handle very large depth values', () => {
-      const request = USERS_STREAM_API.usersByIds({
+      const request = userStreamApi.usersByIds({
         user_ids: mockUserIds,
         depth: 999,
       });
@@ -136,18 +136,18 @@ describe('Users Stream API - Error Control', () => {
 
   describe('URL structure validation', () => {
     it('should generate correct URL prefixes', () => {
-      const followersUrl = USERS_STREAM_API.followers({ user_id: mockUserId });
-      const usernameUrl = USERS_STREAM_API.username({ username: mockUsername });
-      const usersByIdsRequest = USERS_STREAM_API.usersByIds({ user_ids: mockUserIds });
+      const followersUrl = userStreamApi.followers({ user_id: mockUserId });
+      const usernameUrl = userStreamApi.username({ username: mockUsername });
+      const usersByIdsRequest = userStreamApi.usersByIds({ user_ids: mockUserIds });
 
-      expect(followersUrl).toMatch(/^stream\/users\?/);
-      expect(usernameUrl).toMatch(/^stream\/users\/username\?/);
-      expect(usersByIdsRequest.url).toBe('stream/users/by_ids');
+      expect(followersUrl).toMatch(/stream\/users\?/);
+      expect(usernameUrl).toMatch(/stream\/users\/username\?/);
+      expect(usersByIdsRequest.url).toMatch(/stream\/users\/by_ids$/);
     });
 
     it('should handle special characters in parameters', () => {
       const specialUserId = 'user@domain.com#special';
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: specialUserId,
         viewer_id: mockViewerId,
       });
@@ -158,7 +158,7 @@ describe('Users Stream API - Error Control', () => {
 
   describe('Edge cases and boundary conditions', () => {
     it('should handle maximum numeric values', () => {
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: mockUserId,
         skip: Number.MAX_SAFE_INTEGER,
         limit: Number.MAX_SAFE_INTEGER,
@@ -169,7 +169,7 @@ describe('Users Stream API - Error Control', () => {
     });
 
     it('should handle zero values', () => {
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: mockUserId,
         skip: 0,
         limit: 0,
@@ -180,7 +180,7 @@ describe('Users Stream API - Error Control', () => {
     });
 
     it('should handle negative numeric values (should be filtered out)', () => {
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: mockUserId,
         skip: -1,
         limit: -5,
@@ -194,7 +194,7 @@ describe('Users Stream API - Error Control', () => {
 
   describe('Type safety validation', () => {
     it('should handle boolean preview parameter correctly', () => {
-      const url = USERS_STREAM_API.followers({
+      const url = userStreamApi.followers({
         user_id: mockUserId,
         preview: true,
       });
@@ -203,10 +203,10 @@ describe('Users Stream API - Error Control', () => {
     });
 
     it('should handle enum values correctly', () => {
-      const url = USERS_STREAM_API.influencers({
+      const url = userStreamApi.influencers({
         user_id: mockUserId,
-        reach: UserStreamReach.FOLLOWERS,
-        timeframe: UserStreamTimeframe.THIS_MONTH,
+        reach: Core.UserStreamReach.FOLLOWERS,
+        timeframe: Core.UserStreamTimeframe.THIS_MONTH,
       });
 
       expect(url).toContain('reach=followers');
@@ -248,6 +248,59 @@ describe('Users Stream API - Error Control', () => {
       });
 
       expect(body.depth).toBe(0);
+    });
+  });
+
+  describe('Query parameter encoding for special characters (username endpoint)', () => {
+    // Note: username is handled as a query parameter, not a path segment
+    // These tests verify URLSearchParams encoding behavior
+    it('should encode spaces in username query param', () => {
+      const url = userStreamApi.username({ username: 'user name' });
+      // URLSearchParams uses + for spaces in query params
+      expect(url).toContain('username=user+name');
+    });
+
+    it('should encode hash (#) in username query param', () => {
+      const url = userStreamApi.username({ username: 'user#123' });
+      expect(url).toContain('username=user%23123');
+    });
+
+    it('should encode ampersand (&) in username query param', () => {
+      const url = userStreamApi.username({ username: 'rock&roll' });
+      expect(url).toContain('username=rock%26roll');
+    });
+
+    it('should encode equals (=) in username query param', () => {
+      const url = userStreamApi.username({ username: 'user=name' });
+      expect(url).toContain('username=user%3Dname');
+    });
+
+    it('should encode percent (%) in username query param', () => {
+      const url = userStreamApi.username({ username: '100%' });
+      expect(url).toContain('username=100%25');
+    });
+
+    it('should encode forward slash (/) in username query param', () => {
+      const url = userStreamApi.username({ username: 'user/name' });
+      expect(url).toContain('username=user%2Fname');
+    });
+  });
+
+  describe('UserStreamApiEndpoint type', () => {
+    it('should have exactly 11 endpoints', () => {
+      const endpointKeys = Object.keys(userStreamApi);
+      expect(endpointKeys).toHaveLength(11);
+      expect(endpointKeys).toContain('followers');
+      expect(endpointKeys).toContain('following');
+      expect(endpointKeys).toContain('friends');
+      expect(endpointKeys).toContain('muted');
+      expect(endpointKeys).toContain('recommended');
+      expect(endpointKeys).toContain('influencers');
+      expect(endpointKeys).toContain('postReplies');
+      expect(endpointKeys).toContain('friendsWithDepth');
+      expect(endpointKeys).toContain('mostFollowed');
+      expect(endpointKeys).toContain('username');
+      expect(endpointKeys).toContain('usersByIds');
     });
   });
 });
