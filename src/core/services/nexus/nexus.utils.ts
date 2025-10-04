@@ -20,6 +20,42 @@ export function buildNexusStaticUrl(endpoint: string): string {
 }
 
 /**
+ * Encodes a path segment to ensure safe URL construction
+ * @param segment - The path segment to encode
+ * @returns Encoded path segment safe for URL interpolation
+ */
+export function encodePathSegment(segment: string): string {
+  return encodeURIComponent(segment);
+}
+
+/**
+ * Builds a Nexus URL with query parameters, excluding specified path parameter keys
+ * @param baseRoute - The base route path (e.g., 'post/123/details')
+ * @param params - Object containing all parameters
+ * @param excludeKeys - Array of keys that are path parameters and should be excluded from query string
+ * @returns Full Nexus URL with query parameters appended
+ */
+export function buildUrlWithQuery(
+  baseRoute: string,
+  params: Record<string, unknown>,
+  excludeKeys: readonly string[] = [],
+): string {
+  const queryParams = new URLSearchParams();
+
+  // Add only query parameters (exclude path params)
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && !excludeKeys.includes(key)) {
+      queryParams.append(key, String(value));
+    }
+  });
+
+  const queryString = queryParams.toString();
+  const relativeUrl = queryString ? `${baseRoute}?${queryString}` : baseRoute;
+
+  return buildNexusUrl(relativeUrl);
+}
+
+/**
  * Utility function to create fetch options with common headers
  */
 export function createFetchOptions(method: HttpMethod = 'GET', body?: BodyInit | null): RequestInit {

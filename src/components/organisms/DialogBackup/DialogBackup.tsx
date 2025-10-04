@@ -19,6 +19,7 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
       {open === undefined && (
         <Atoms.DialogTrigger asChild>
           <Atoms.Button
+            id="backup-btn"
             variant="outline"
             className="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
           >
@@ -28,7 +29,9 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
       )}
       <Atoms.DialogContent className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8">
         <Atoms.DialogHeader>
-          <Atoms.DialogTitle className="leading-[1.25] pb-2">Back up your pubky</Atoms.DialogTitle>
+          <Atoms.DialogTitle id="backup-dialog-title" className="leading-[1.25] pb-2">
+            Back up your pubky
+          </Atoms.DialogTitle>
         </Atoms.DialogHeader>
         <Atoms.Container>
           <Atoms.Container className="gap-6">

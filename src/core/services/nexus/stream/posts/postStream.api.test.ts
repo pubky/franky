@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { POSTS_STREAM_API } from './postStream.api';
-import { StreamSorting, StreamKind, StreamOrder } from './postStream.types';
+import * as Core from '@/core';
+import { postStreamApi } from './postStream.api';
+import { StreamKind, StreamOrder } from './postStream.types';
 
 describe('Stream API URL Generation', () => {
   const mockObserverId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
@@ -10,10 +11,10 @@ describe('Stream API URL Generation', () => {
 
   describe('Sources requiring observer_id', () => {
     it('should generate correct following URL', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
         limit: 10,
       });
 
@@ -26,9 +27,9 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should generate correct followers URL', () => {
-      const url = POSTS_STREAM_API.followers({
+      const url = postStreamApi.followers({
         observer_id: mockObserverId,
-        sorting: StreamSorting.ENGAGEMENT,
+        sorting: Core.StreamSorting.ENGAGEMENT,
       });
 
       expect(url).toContain('source=followers');
@@ -37,7 +38,7 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should generate correct friends URL', () => {
-      const url = POSTS_STREAM_API.friends({
+      const url = postStreamApi.friends({
         observer_id: mockObserverId,
         tags: ['dev', 'opensource'],
         kind: StreamKind.SHORT,
@@ -50,7 +51,7 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should generate correct bookmarks URL', () => {
-      const url = POSTS_STREAM_API.bookmarks({
+      const url = postStreamApi.bookmarks({
         observer_id: mockObserverId,
         order: StreamOrder.ASCENDING,
         start: 1759289451314,
@@ -67,7 +68,7 @@ describe('Stream API URL Generation', () => {
 
   describe('Post replies requiring author_id and post_id', () => {
     it('should generate correct post replies URL', () => {
-      const url = POSTS_STREAM_API.postReplies({
+      const url = postStreamApi.postReplies({
         author_id: mockAuthorId,
         post_id: mockPostId,
         viewer_id: mockViewerId,
@@ -84,9 +85,9 @@ describe('Stream API URL Generation', () => {
 
   describe('Author posts requiring author_id', () => {
     it('should generate correct author URL', () => {
-      const url = POSTS_STREAM_API.author({
+      const url = postStreamApi.author({
         author_id: mockAuthorId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
         kind: StreamKind.IMAGE,
       });
 
@@ -97,7 +98,7 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should generate correct author replies URL', () => {
-      const url = POSTS_STREAM_API.authorReplies({
+      const url = postStreamApi.authorReplies({
         author_id: mockAuthorId,
         tags: ['tech', 'ai', 'machine-learning'],
         order: StreamOrder.DESCENDING,
@@ -112,9 +113,9 @@ describe('Stream API URL Generation', () => {
 
   describe('All posts (no additional required parameters)', () => {
     it('should generate correct all posts URL', () => {
-      const url = POSTS_STREAM_API.all({
+      const url = postStreamApi.all({
         viewer_id: mockViewerId,
-        sorting: StreamSorting.ENGAGEMENT,
+        sorting: Core.StreamSorting.ENGAGEMENT,
         kind: StreamKind.VIDEO,
         limit: 50,
       });
@@ -129,7 +130,7 @@ describe('Stream API URL Generation', () => {
 
   describe('Tags validation', () => {
     it('should limit tags to maximum 5', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7'], // 7 tags
       });
@@ -140,7 +141,7 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should handle empty tags array', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         tags: [],
       });
@@ -151,10 +152,10 @@ describe('Stream API URL Generation', () => {
 
   describe('Parameter handling', () => {
     it('should handle undefined and null values correctly', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         viewer_id: undefined,
-        sorting: null as unknown as StreamSorting,
+        sorting: null as unknown as Core.StreamSorting,
         limit: undefined,
       });
 
@@ -166,7 +167,7 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should convert numbers to strings', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         limit: 10,
         skip: 5,
@@ -183,18 +184,18 @@ describe('Stream API URL Generation', () => {
 
   describe('URL structure validation', () => {
     it('should always start with stream/posts?', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
       });
 
-      expect(url).toMatch(/^stream\/posts\?/);
+      expect(url).toMatch(/stream\/posts\?/);
     });
 
     it('should have proper query parameter format', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
       });
 
       // Should have proper key=value&key=value format
@@ -207,7 +208,7 @@ describe('Stream API URL Generation', () => {
 
   describe('Edge cases', () => {
     it('should handle minimal parameters', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
       });
 
@@ -218,10 +219,10 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should handle all optional parameters', () => {
-      const url = POSTS_STREAM_API.following({
+      const url = postStreamApi.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
-        sorting: StreamSorting.TIMELINE,
+        sorting: Core.StreamSorting.TIMELINE,
         order: StreamOrder.DESCENDING,
         tags: ['dev', 'test'],
         kind: StreamKind.SHORT,
@@ -250,52 +251,64 @@ describe('Stream API URL Generation', () => {
     const mockViewerId = 'viewer-pubky-id';
 
     it('should generate correct POST request with post IDs only', () => {
-      const request = POSTS_STREAM_API.postsByIds({
+      const request = postStreamApi.postsByIds({
         post_ids: mockPostIds,
       });
 
-      expect(request).toEqual({
-        url: 'stream/posts/by_ids',
-        body: {
-          post_ids: mockPostIds,
-        },
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
+      expect(request.body).toEqual({
+        post_ids: mockPostIds,
       });
     });
 
     it('should generate correct POST request with post IDs and viewer_id', () => {
-      const request = POSTS_STREAM_API.postsByIds({
+      const request = postStreamApi.postsByIds({
         post_ids: mockPostIds,
         viewer_id: mockViewerId,
       });
 
-      expect(request).toEqual({
-        url: 'stream/posts/by_ids',
-        body: {
-          post_ids: mockPostIds,
-          viewer_id: mockViewerId,
-        },
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
+      expect(request.body).toEqual({
+        post_ids: mockPostIds,
+        viewer_id: mockViewerId,
       });
     });
 
     it('should handle empty post IDs array', () => {
-      const request = POSTS_STREAM_API.postsByIds({
+      const request = postStreamApi.postsByIds({
         post_ids: [],
       });
 
-      expect(request.url).toBe('stream/posts/by_ids');
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
       expect(request.body.post_ids).toEqual([]);
     });
 
     it('should handle large array of post IDs', () => {
       const largePostIds = Array.from({ length: 100 }, (_, i) => `post-id-${i}`);
-      const request = POSTS_STREAM_API.postsByIds({
+      const request = postStreamApi.postsByIds({
         post_ids: largePostIds,
         viewer_id: mockViewerId,
       });
 
-      expect(request.url).toBe('stream/posts/by_ids');
+      expect(request.url).toMatch(/\/stream\/posts\/by_ids$/);
       expect(request.body.post_ids).toHaveLength(100);
       expect(request.body.viewer_id).toBe(mockViewerId);
+    });
+  });
+
+  describe('PostStreamApiEndpoint type', () => {
+    it('should have exactly 9 endpoints', () => {
+      const endpointKeys = Object.keys(postStreamApi);
+      expect(endpointKeys).toHaveLength(9);
+      expect(endpointKeys).toContain('following');
+      expect(endpointKeys).toContain('followers');
+      expect(endpointKeys).toContain('friends');
+      expect(endpointKeys).toContain('bookmarks');
+      expect(endpointKeys).toContain('postReplies');
+      expect(endpointKeys).toContain('author');
+      expect(endpointKeys).toContain('authorReplies');
+      expect(endpointKeys).toContain('postsByIds');
+      expect(endpointKeys).toContain('all');
     });
   });
 });

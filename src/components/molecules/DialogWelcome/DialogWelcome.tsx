@@ -29,7 +29,7 @@ export function DialogWelcome({ isOpen, onOpenChange, name, image, pubky, bio }:
     <Atoms.Dialog open={isOpen} onOpenChange={onOpenChange}>
       <Atoms.DialogContent className="sm:max-w-xl">
         <Atoms.DialogHeader className="text-left pr-6 gap-0">
-          <Atoms.DialogTitle>Welcome to Pubky!</Atoms.DialogTitle>
+          <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
           <Atoms.DialogDescription className="font-medium">
             Your keys, your content, your rules.
           </Atoms.DialogDescription>
@@ -56,7 +56,7 @@ export function DialogWelcome({ isOpen, onOpenChange, name, image, pubky, bio }:
                 </Atoms.Button>
               </Atoms.Container>
             </Atoms.Card>
-            <Atoms.Button className="w-auto" size="lg" onClick={handleExplorePubky}>
+            <Atoms.Button id="welcome-explore-pubky-btn" className="w-auto" size="lg" onClick={handleExplorePubky}>
               <Libs.ArrowRight className="mr-2 h-4 w-4" />
               Explore Pubky
             </Atoms.Button>

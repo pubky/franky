@@ -2,18 +2,66 @@ import { type Pubky, type Timestamp, type TagModel } from '@/core';
 
 export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
 
-export interface NexusBookmark {
+export enum StreamSorting {
+  TIMELINE = 'timeline',
+  ENGAGEMENT = 'total_engagement',
+}
+
+export type TUserId = {
+  user_id: Pubky;
+};
+
+export type TPaginationParams = {
+  skip?: number;
+  limit?: number;
+};
+
+export type TPaginationRangeParams = {
+  start?: number;
+  end?: number;
+};
+
+export type TSkipTagsParams = {
+  skip_tags?: number;
+};
+
+export type TTagsPaginationParams = {
+  limit_tags?: number;
+  limit_taggers?: number;
+};
+
+// The target reach of the source. Supported just for 'influencers' source
+// e.g. "source=influencers&reach=followers" will return influencers with followers reach
+export enum UserStreamReach {
+  FOLLOWERS = 'followers',
+  FOLLOWING = 'following',
+  FRIENDS = 'friends',
+  WOT = 'wot',
+}
+
+export enum UserStreamTimeframe {
+  TODAY = 'today',
+  THIS_MONTH = 'this_month',
+  ALL_TIME = 'all_time',
+}
+
+export type TUserStreamReachParams = {
+  reach?: UserStreamReach;
+  timeframe?: UserStreamTimeframe;
+};
+
+export type NexusBookmark = {
   created_at: number;
   updated_at: number;
-}
+};
 
-export interface NexusUserLink {
+export type NexusUserLink = {
   title: string;
   url: string;
-}
+};
 
 // User types
-export interface NexusUserDetails {
+export type NexusUserDetails = {
   name: string;
   bio: string;
   id: Pubky;
@@ -21,9 +69,9 @@ export interface NexusUserDetails {
   status: string | null;
   image: string | null;
   indexed_at: Timestamp;
-}
+};
 
-export interface NexusUserCounts {
+export type NexusUserCounts = {
   tagged: number; // the number of tags assign by this user to other entities ('users' or 'posts')
   tags: number; // the number of tags received by this user from other users
   unique_tags: number; // the number of unique tags received by this user from other users (distinct)
@@ -33,30 +81,30 @@ export interface NexusUserCounts {
   followers: number;
   friends: number;
   bookmarks: number;
-}
+};
 
-export interface NexusUserRelationship {
+export type NexusUserRelationship = {
   following: boolean;
   followed_by: boolean;
   muted: boolean;
-}
+};
 
-export interface NexusTag {
+export type NexusTag = {
   label: string;
   taggers: Pubky[];
   taggers_count: number;
   relationship: boolean;
-}
+};
 
-export interface NexusUser {
+export type NexusUser = {
   details: NexusUserDetails;
   counts: NexusUserCounts;
   tags: NexusTag[];
   relationship: NexusUserRelationship;
-}
+};
 
 // Post types
-export interface NexusPostDetails {
+export type NexusPostDetails = {
   id: string;
   content: string;
   indexed_at: number;
@@ -64,31 +112,31 @@ export interface NexusPostDetails {
   kind: NexusPostKind;
   uri: string;
   attachments: string[] | null;
-}
+};
 
-export interface NexusPostCounts {
+export type NexusPostCounts = {
   tags: number;
   unique_tags: number;
   replies: number;
   reposts: number;
-}
+};
 
-export interface NexusPostRelationships {
+export type NexusPostRelationships = {
   replied: string | null;
   reposted: string | null;
   mentioned: Pubky[];
-}
+};
 
-export interface NexusPost {
+export type NexusPost = {
   details: NexusPostDetails;
   counts: NexusPostCounts;
   tags: TagModel[];
   relationships: NexusPostRelationships;
   bookmark: NexusBookmark | null;
-}
+};
 
-export interface NexusBootstrapList {
+export type NexusBootstrapList = {
   stream: string[];
   influencers: Pubky[];
   recommended: Pubky[];
-}
+};
