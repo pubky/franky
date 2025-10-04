@@ -12,7 +12,7 @@ export const HeaderContainer = ({ children }: { children: React.ReactNode }) => 
     <Atoms.Container
       as="header"
       size="container"
-      className="hidden lg:flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
+      className="flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
     >
       <Atoms.Container as="nav" className="flex-row items-center py-0 md:py-6 gap-6 w-full h-full">
         {children}

@@ -18,7 +18,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`] = `
 <header
-  class="mx-auto w-full flex-col flex container hidden lg:flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
+  class="mx-auto w-full flex-col flex container flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
   data-testid="container"
 >
   <nav

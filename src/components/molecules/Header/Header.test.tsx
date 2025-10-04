@@ -194,8 +194,7 @@ describe('Header Components', () => {
 
       const container = screen.getByText('Test Content').closest('header');
       expect(container).toHaveClass(
-        'hidden',
-        'lg:flex',
+        'flex',
         'py-6',
         'items-center',
         'px-6',
