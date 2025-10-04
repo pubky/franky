@@ -19,7 +19,7 @@ export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
 }
 
 export const filesApi = {
-  getAvatar: (pubky: string) => {
+  getAvatar: (pubky: Core.Pubky) => {
     const encodedPubky = Core.encodePathSegment(pubky);
     return Core.buildNexusUrl(`avatar/${encodedPubky}`);
   },

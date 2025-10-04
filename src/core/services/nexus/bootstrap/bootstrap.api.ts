@@ -7,10 +7,6 @@ import * as Core from '@/core';
 
 const PREFIX = 'bootstrap';
 
-export type TBootstrapParams = {
-  pubky: string;
-};
-
 export const bootstrapApi = {
   get: (pubky: string) => {
     const encodedPubky = Core.encodePathSegment(pubky);
