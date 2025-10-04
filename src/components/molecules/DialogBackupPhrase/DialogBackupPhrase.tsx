@@ -8,7 +8,11 @@ import * as Libs from '@/libs';
 import * as Stores from '@/core';
 import * as Molecules from '@/molecules';
 
-export function DialogBackupPhrase() {
+interface DialogBackupPhraseProps {
+  children?: React.ReactNode;
+}
+
+export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
   const [isHidden, setIsHidden] = useState(true);
   const [recoveryWords, setRecoveryWords] = useState<string[]>([]);
   const [step, setStep] = useState(1);
@@ -28,12 +32,15 @@ export function DialogBackupPhrase() {
 
   return (
     <Atoms.Dialog>
-      <Atoms.DialogTrigger asChild>
-        <Atoms.Button id="backup-recovery-phrase-btn" variant="secondary" className="gap-2">
-          <Libs.FileText className="h-4 w-4" />
-          <span>Recovery phrase</span>
-        </Atoms.Button>
-      </Atoms.DialogTrigger>
+      {children ? (
+        <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
+      ) : (
+        <Atoms.DialogTrigger asChild>
+          <Atoms.Button id="backup-recovery-phrase-btn" className="gap-2">
+            <span>Continue</span>
+          </Atoms.Button>
+        </Atoms.DialogTrigger>
+      )}
       <Atoms.DialogContent className="gap-6 p-8">
         {step === 1 && (
           <RecoveryStep1

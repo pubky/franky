@@ -4,7 +4,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { CreateProfileForm } from './CreateProfileForm';
 import * as App from '@/app';
 
-// Mock the Core modules
 vi.mock('@/core', () => ({
   useOnboardingStore: vi.fn(),
   UserController: {
@@ -670,6 +669,174 @@ describe('CreateProfileForm', () => {
       expect(Core.UserValidator.check).toHaveBeenCalled();
       expect(Core.UserController.saveProfile).toHaveBeenCalled();
       expect(Core.AuthController.authorizeAndBootstrap).toHaveBeenCalled();
+    });
+  });
+
+  describe('Welcome Dialog Integration', () => {
+    it('should call setShowWelcomeDialog(true) when profile creation is successful', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const Core = await import('@/core');
+
+      // Mock the onboarding store to return the setShowWelcomeDialog function
+      vi.mocked(Core.useOnboardingStore).mockReturnValue({
+        pubky: 'test-pubky-123',
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      });
+
+      // Mock successful validation and profile save
+      vi.mocked(Core.UserValidator.check).mockReturnValue({
+        data: {
+          name: 'Test User',
+          bio: 'Test bio',
+          links: [],
+        },
+        error: [],
+      });
+
+      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+        ok: true,
+      } as Response);
+
+      // Mock successful bootstrap
+      vi.mocked(Core.AuthController.authorizeAndBootstrap).mockResolvedValue(undefined);
+
+      render(<CreateProfileForm />);
+
+      // Fill in the name field to make form valid
+      const nameInput = screen.getAllByTestId('molecules-input')[0];
+      fireEvent.change(nameInput, { target: { value: 'Test User' } });
+
+      // Submit the form
+      const continueButton = screen.getByTestId('continue-button');
+      fireEvent.click(continueButton);
+
+      // Wait for the success handling to complete
+      await waitFor(() => {
+        // Should navigate to feed page
+        expect(mockPush).toHaveBeenCalledWith(App.FEED_ROUTES.FEED);
+      });
+
+      // Verify that setShowWelcomeDialog(true) was called
+      expect(mockSetShowWelcomeDialog).toHaveBeenCalledWith(true);
+
+      // Verify the flow was completed successfully
+      expect(Core.UserValidator.check).toHaveBeenCalled();
+      expect(Core.UserController.saveProfile).toHaveBeenCalled();
+      expect(Core.AuthController.authorizeAndBootstrap).toHaveBeenCalled();
+    });
+
+    it('should not call setShowWelcomeDialog when profile creation fails', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const Core = await import('@/core');
+
+      // Mock the onboarding store to return the setShowWelcomeDialog function
+      vi.mocked(Core.useOnboardingStore).mockReturnValue({
+        pubky: 'test-pubky-123',
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      });
+
+      // Mock successful validation but failed profile save
+      vi.mocked(Core.UserValidator.check).mockReturnValue({
+        data: {
+          name: 'Test User',
+          bio: 'Test bio',
+          links: [],
+        },
+        error: [],
+      });
+
+      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+        ok: false,
+      } as Response);
+
+      render(<CreateProfileForm />);
+
+      // Fill in the name field to make form valid
+      const nameInput = screen.getAllByTestId('molecules-input')[0];
+      fireEvent.change(nameInput, { target: { value: 'Test User' } });
+
+      // Submit the form
+      const continueButton = screen.getByTestId('continue-button');
+      fireEvent.click(continueButton);
+
+      // Wait for the error handling to complete
+      await waitFor(() => {
+        // Button text should change to "Try again!"
+        expect(continueButton).toHaveTextContent('Try again!');
+      });
+
+      // Verify that setShowWelcomeDialog was NOT called due to profile save failure
+      expect(mockSetShowWelcomeDialog).not.toHaveBeenCalled();
+
+      // Verify that bootstrap was not called due to profile save failure
+      expect(Core.AuthController.authorizeAndBootstrap).not.toHaveBeenCalled();
+    });
+
+    it('should not call setShowWelcomeDialog when bootstrap fails', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const Core = await import('@/core');
+
+      // Mock the onboarding store to return the setShowWelcomeDialog function
+      vi.mocked(Core.useOnboardingStore).mockReturnValue({
+        pubky: 'test-pubky-123',
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      });
+
+      // Mock successful validation and profile save
+      vi.mocked(Core.UserValidator.check).mockReturnValue({
+        data: {
+          name: 'Test User',
+          bio: 'Test bio',
+          links: [],
+        },
+        error: [],
+      });
+
+      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+        ok: true,
+      } as Response);
+
+      // Mock bootstrap failure
+      vi.mocked(Core.AuthController.authorizeAndBootstrap).mockRejectedValue(new Error('Bootstrap failed'));
+
+      render(<CreateProfileForm />);
+
+      // Fill in the name field to make form valid
+      const nameInput = screen.getAllByTestId('molecules-input')[0];
+      fireEvent.change(nameInput, { target: { value: 'Test User' } });
+
+      // Submit the form
+      const continueButton = screen.getByTestId('continue-button');
+      fireEvent.click(continueButton);
+
+      // Wait for the error handling to complete
+      await waitFor(() => {
+        // Button text should change to "Try again!"
+        expect(continueButton).toHaveTextContent('Try again!');
+      });
+
+      // Verify that setShowWelcomeDialog was NOT called due to bootstrap failure
+      expect(mockSetShowWelcomeDialog).not.toHaveBeenCalled();
+
+      // Verify bootstrap was attempted
+      expect(Core.AuthController.authorizeAndBootstrap).toHaveBeenCalled();
+    });
+
+    it('should have access to setShowWelcomeDialog from onboarding store', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const Core = await import('@/core');
+
+      // Mock the onboarding store
+      vi.mocked(Core.useOnboardingStore).mockReturnValue({
+        pubky: 'test-pubky-123',
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      });
+
+      render(<CreateProfileForm />);
+
+      // Verify that the component has access to the setShowWelcomeDialog function
+      // This is implicitly tested by the component rendering without errors
+      expect(screen.getByTestId('card')).toBeInTheDocument();
     });
   });
 });

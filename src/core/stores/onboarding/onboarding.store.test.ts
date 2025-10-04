@@ -28,8 +28,8 @@ describe('OnboardingStore', () => {
       secretKey: '',
       pubky: '',
       mnemonic: '',
-      isBackedUp: false,
       hasHydrated: false,
+      showWelcomeDialog: false,
     });
   });
 
@@ -44,8 +44,8 @@ describe('OnboardingStore', () => {
       expect(state.secretKey).toEqual('');
       expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
-      expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(false);
+      expect(state.showWelcomeDialog).toBe(false);
     });
   });
 
@@ -56,7 +56,6 @@ describe('OnboardingStore', () => {
         secretKey: localStorageMock.secretKey,
         pubky: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
-        isBackedUp: true,
         hasHydrated: true,
       });
 
@@ -67,7 +66,6 @@ describe('OnboardingStore', () => {
       expect(state.secretKey).toEqual('');
       expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
-      expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(true); // Should preserve hydration state
     });
 
@@ -77,7 +75,6 @@ describe('OnboardingStore', () => {
         secretKey: localStorageMock.secretKey,
         pubky: 'test-public-key',
         mnemonic: 'test mnemonic phrase',
-        isBackedUp: true,
         hasHydrated: false,
       });
 
@@ -88,7 +85,6 @@ describe('OnboardingStore', () => {
       expect(state.secretKey).toEqual('');
       expect(state.pubky).toEqual('');
       expect(state.mnemonic).toEqual('');
-      expect(state.isBackedUp).toBe(false);
       expect(state.hasHydrated).toBe(false); // Should preserve hydration state even when false
     });
 
@@ -428,7 +424,6 @@ describe('OnboardingStore', () => {
         pubky: 'test-public-key-123',
         secretKey: 'test-secret-key-456',
         mnemonic: 'test mnemonic phrase with twelve words for key generation',
-        isBackedUp: true,
       };
 
       // Set all data using setState (which would trigger persistence)
@@ -439,7 +434,6 @@ describe('OnboardingStore', () => {
       expect(state.pubky).toBe(testData.pubky);
       expect(state.secretKey).toBe(testData.secretKey);
       expect(state.mnemonic).toBe(testData.mnemonic);
-      expect(state.isBackedUp).toBe(testData.isBackedUp);
     });
 
     it('should exclude action functions from persistence', () => {
@@ -541,7 +535,6 @@ describe('OnboardingStore', () => {
         pubky: 'persistence-test-public',
         secretKey: 'persistence-test-secret',
         mnemonic: 'test mnemonic for persistence verification',
-        isBackedUp: true,
       };
 
       useOnboardingStore.setState(testData);
@@ -551,7 +544,106 @@ describe('OnboardingStore', () => {
       expect(state.pubky).toBe(testData.pubky);
       expect(state.secretKey).toBe(testData.secretKey);
       expect(state.mnemonic).toBe(testData.mnemonic);
-      expect(state.isBackedUp).toBe(testData.isBackedUp);
+    });
+  });
+
+  describe('Welcome Dialog State Management', () => {
+    it('should have showWelcomeDialog as false by default', () => {
+      const state = useOnboardingStore.getState();
+      expect(state.showWelcomeDialog).toBe(false);
+    });
+
+    it('should set showWelcomeDialog to true', () => {
+      const state = useOnboardingStore.getState();
+
+      // Initially should be false
+      expect(state.showWelcomeDialog).toBe(false);
+
+      // Set to true
+      state.setShowWelcomeDialog(true);
+
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.showWelcomeDialog).toBe(true);
+    });
+
+    it('should set showWelcomeDialog to false', () => {
+      const state = useOnboardingStore.getState();
+
+      // Set to true first
+      state.setShowWelcomeDialog(true);
+      expect(useOnboardingStore.getState().showWelcomeDialog).toBe(true);
+
+      // Set to false
+      state.setShowWelcomeDialog(false);
+
+      const updatedState = useOnboardingStore.getState();
+      expect(updatedState.showWelcomeDialog).toBe(false);
+    });
+
+    it('should toggle showWelcomeDialog state correctly', () => {
+      const state = useOnboardingStore.getState();
+
+      // Start with false
+      expect(state.showWelcomeDialog).toBe(false);
+
+      // Toggle to true
+      state.setShowWelcomeDialog(true);
+      expect(useOnboardingStore.getState().showWelcomeDialog).toBe(true);
+
+      // Toggle back to false
+      state.setShowWelcomeDialog(false);
+      expect(useOnboardingStore.getState().showWelcomeDialog).toBe(false);
+
+      // Toggle to true again
+      state.setShowWelcomeDialog(true);
+      expect(useOnboardingStore.getState().showWelcomeDialog).toBe(true);
+    });
+
+    it('should have setShowWelcomeDialog action available', () => {
+      const state = useOnboardingStore.getState();
+      expect(typeof state.setShowWelcomeDialog).toBe('function');
+    });
+
+    it('should persist showWelcomeDialog state', () => {
+      const testData = {
+        pubky: 'test-public-key-123',
+        secretKey: 'test-secret-key-456',
+        mnemonic: 'test mnemonic phrase with twelve words for key generation',
+        showWelcomeDialog: true,
+      };
+
+      // Set all data including showWelcomeDialog
+      useOnboardingStore.setState(testData);
+
+      // Verify showWelcomeDialog is persisted along with other data
+      const state = useOnboardingStore.getState();
+      expect(state.pubky).toBe(testData.pubky);
+      expect(state.secretKey).toBe(testData.secretKey);
+      expect(state.mnemonic).toBe(testData.mnemonic);
+      expect(state.showWelcomeDialog).toBe(testData.showWelcomeDialog);
+    });
+
+    it('should preserve showWelcomeDialog during reset', () => {
+      const state = useOnboardingStore.getState();
+
+      // Set some data including showWelcomeDialog
+      useOnboardingStore.setState({
+        secretKey: localStorageMock.secretKey,
+        pubky: 'test-public-key',
+        mnemonic: 'test mnemonic phrase',
+        hasHydrated: true,
+        showWelcomeDialog: true,
+      });
+
+      // Reset should clear keys but preserve showWelcomeDialog as false (reset behavior)
+      state.reset();
+
+      const resetState = useOnboardingStore.getState();
+      expect(resetState.secretKey).toEqual('');
+      expect(resetState.pubky).toEqual('');
+      expect(resetState.mnemonic).toEqual('');
+      expect(resetState.hasHydrated).toBe(true); // Preserved
+      expect(resetState.showWelcomeDialog).toBe(false); // Reset to initial state
     });
   });
 });

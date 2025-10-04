@@ -16,10 +16,10 @@ export const useOnboardingStore = create<OnboardingStore>()(
 
         // Persist keys data
         partialize: (state) => ({
-          isBackedUp: state.isBackedUp,
           pubky: state.pubky,
           secretKey: state.secretKey,
           mnemonic: state.mnemonic,
+          showWelcomeDialog: state.showWelcomeDialog,
           hasHydrated: false, // Will be set by rehydration handler
         }),
 
