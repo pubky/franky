@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import { DialogBackupPhrase } from './DialogBackupPhrase';
 
 // Mock Next.js Image
@@ -24,6 +24,7 @@ vi.mock('next/image', () => ({
 vi.mock('@/core', () => ({
   useOnboardingStore: () => ({
     secretKey: 'mock-secret-key',
+    mnemonic: 'tube tube resource mass door firm genius parrot girl orphan window world',
   }),
 }));
 
@@ -61,6 +62,11 @@ vi.mock('@/libs', async (importOriginal) => {
     Copy: ({ className }: { className?: string }) => (
       <div data-testid="copy-icon" className={className}>
         Copy
+      </div>
+    ),
+    Check: ({ className }: { className?: string }) => (
+      <div data-testid="check-icon" className={className}>
+        Check
       </div>
     ),
     Identity: {
@@ -163,9 +169,144 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
+// Mock molecules
+vi.mock('@/molecules', () => ({
+  WordSlot: ({
+    mode,
+    index,
+    word,
+    isCorrect,
+    isError,
+    onClear,
+  }: {
+    mode: string;
+    index: number;
+    word: string;
+    isCorrect: boolean;
+    isError: boolean;
+    onClear: (index: number) => void;
+  }) => (
+    <div
+      data-testid={`word-slot-${index}`}
+      data-mode={mode}
+      data-word={word}
+      data-is-correct={isCorrect}
+      data-is-error={isError}
+      onClick={() => onClear(index)}
+    >
+      {word || `Slot ${index + 1}`}
+    </div>
+  ),
+}));
+
 describe('DialogBackupPhrase - Snapshots', () => {
   it('matches snapshot for default DialogBackupPhrase', () => {
     const { container } = render(<DialogBackupPhrase />);
     expect(container.firstChild).toMatchSnapshot();
+  });
+});
+
+describe('DialogBackupPhrase - Duplicate Words', () => {
+  it('should handle duplicate words correctly in recovery phrase', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // The mnemonic contains "tube" twice, so we should see it appear twice in the recovery words grid
+    const wordContainers = container.querySelectorAll('[data-testid="container"]');
+    const recoveryGrid = Array.from(wordContainers).find((container) =>
+      container.querySelector('[data-testid="badge"]'),
+    );
+
+    const wordSpans = recoveryGrid?.querySelectorAll('span');
+    const tubeWords = Array.from(wordSpans || [])
+      .filter((span) => !span.getAttribute('data-testid')) // Filter out badges
+      .filter((span) => span.textContent === 'tube');
+
+    // Should have 2 instances of "tube" word
+    expect(tubeWords).toHaveLength(2);
+  });
+
+  it('should display all 12 words in the recovery phrase grid', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // Find the recovery words grid (step 1)
+    const wordContainers = container.querySelectorAll('[data-testid="container"]');
+    const recoveryGrid = Array.from(wordContainers).find((container) =>
+      container.querySelector('[data-testid="badge"]'),
+    );
+
+    expect(recoveryGrid).toBeTruthy();
+
+    // Should have 12 word containers
+    const badges = recoveryGrid?.querySelectorAll('[data-testid="badge"]');
+    expect(badges).toHaveLength(12);
+  });
+
+  it('should show correct word order in recovery phrase', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // The mnemonic is: "tube tube resource mass door firm genius parrot girl orphan window world"
+    const expectedWords = [
+      'tube',
+      'tube',
+      'resource',
+      'mass',
+      'door',
+      'firm',
+      'genius',
+      'parrot',
+      'girl',
+      'orphan',
+      'window',
+      'world',
+    ];
+
+    const wordContainers = container.querySelectorAll('[data-testid="container"]');
+    const recoveryGrid = Array.from(wordContainers).find((container) =>
+      container.querySelector('[data-testid="badge"]'),
+    );
+
+    const wordSpans = recoveryGrid?.querySelectorAll('span');
+    const actualWords = Array.from(wordSpans || [])
+      .filter((span) => !span.getAttribute('data-testid')) // Filter out badges
+      .map((span) => span.textContent);
+
+    expect(actualWords).toEqual(expectedWords);
+  });
+
+  it('should allow selecting duplicate words individually in step 2', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // First, reveal the recovery phrase and go to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Now we should be in step 2 with the word selection buttons
+    // The sorted words should be: door, firm, genius, girl, mass, orphan, parrot, resource, tube, tube, window, world
+    const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
+    const tubeButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('tube'));
+
+    // Should have 2 instances of "tube" button
+    expect(tubeButtons).toHaveLength(2);
+
+    // Both should be clickable initially
+    expect(tubeButtons[0]).not.toBeDisabled();
+    expect(tubeButtons[1]).not.toBeDisabled();
+
+    // Click the first tube button
+    fireEvent.click(tubeButtons[0]);
+
+    // The first button should now be disabled, but the second should still be clickable
+    expect(tubeButtons[0]).toBeDisabled();
+    expect(tubeButtons[1]).not.toBeDisabled();
+
+    // Click the second tube button
+    fireEvent.click(tubeButtons[1]);
+
+    // Now both should be disabled
+    expect(tubeButtons[0]).toBeDisabled();
+    expect(tubeButtons[1]).toBeDisabled();
   });
 });

@@ -155,6 +155,8 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [availableWords] = useState<string[]>([...recoveryWords].sort());
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
+  const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -175,11 +177,16 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
     setErrors(newErrors);
   };
 
-  const handleWordClick = (word: string) => {
-    // Check if word is already used
-    const isWordAlreadyUsed = userWords.includes(word);
+  const handleWordClick = (word: string, wordIndex: number) => {
+    const wordCountInPhrase = recoveryWords.filter((w) => w === word).length;
+    const currentUsageCount = usedWordCounts[word] || 0;
 
-    if (isWordAlreadyUsed) {
+    if (currentUsageCount >= wordCountInPhrase) {
+      return;
+    }
+
+    // Check if this specific word instance is already used
+    if (usedWordInstances.has(wordIndex)) {
       return;
     }
 
@@ -188,6 +195,12 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       const newUserWords = [...userWords];
       newUserWords[emptyIndex] = word;
       setUserWords(newUserWords);
+
+      setUsedWordCounts((prev) => ({
+        ...prev,
+        [word]: currentUsageCount + 1,
+      }));
+      setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
 
       // Validate this specific word immediately
       validateSingleWord(emptyIndex, word);
@@ -217,6 +230,22 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       const newUserWords = [...userWords];
       newUserWords[index] = '';
       setUserWords(newUserWords);
+      setUsedWordCounts((prev) => ({
+        ...prev,
+        [word]: Math.max(0, (prev[word] || 0) - 1),
+      }));
+
+      // Find and remove the first used instance of this word
+      const wordInstances = availableWords.map((w, i) => (w === word ? i : -1)).filter((i) => i !== -1);
+      const usedInstances = wordInstances.filter((i) => usedWordInstances.has(i));
+      if (usedInstances.length > 0) {
+        const instanceToRemove = usedInstances[0]; // Remove the first used instance
+        setUsedWordInstances((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(instanceToRemove);
+          return newSet;
+        });
+      }
 
       // Clear error for this specific word
       const newErrors = [...errors];
@@ -237,20 +266,21 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       <Atoms.Container className="space-y-6">
         <Atoms.Container className="flex-wrap gap-2 flex-row">
           {availableWords.map((word, index) => {
-            const isUsed = userWords.includes(word);
+            const isThisInstanceUsed = usedWordInstances.has(index);
+
             return (
               <Atoms.Button
                 id={`backup-recovery-phrase-word-${word}-${index + 1}`}
                 key={`${word}-${index}`}
-                variant={isUsed ? 'secondary' : 'outline'}
+                variant={isThisInstanceUsed ? 'secondary' : 'outline'}
                 size="sm"
                 className={`rounded-full ${
-                  isUsed
+                  isThisInstanceUsed
                     ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
                     : 'dark:border-transparent bg-secondary cursor-pointer'
                 }`}
-                onClick={() => !isUsed && handleWordClick(word)}
-                disabled={isUsed}
+                onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
+                disabled={isThisInstanceUsed}
               >
                 {word}
               </Atoms.Button>
