@@ -251,6 +251,41 @@ describe('Users Stream API - Error Control', () => {
     });
   });
 
+  describe('Query parameter encoding for special characters (username endpoint)', () => {
+    // Note: username is handled as a query parameter, not a path segment
+    // These tests verify URLSearchParams encoding behavior
+    it('should encode spaces in username query param', () => {
+      const url = userStreamApi.username({ username: 'user name' });
+      // URLSearchParams uses + for spaces in query params
+      expect(url).toContain('username=user+name');
+    });
+
+    it('should encode hash (#) in username query param', () => {
+      const url = userStreamApi.username({ username: 'user#123' });
+      expect(url).toContain('username=user%23123');
+    });
+
+    it('should encode ampersand (&) in username query param', () => {
+      const url = userStreamApi.username({ username: 'rock&roll' });
+      expect(url).toContain('username=rock%26roll');
+    });
+
+    it('should encode equals (=) in username query param', () => {
+      const url = userStreamApi.username({ username: 'user=name' });
+      expect(url).toContain('username=user%3Dname');
+    });
+
+    it('should encode percent (%) in username query param', () => {
+      const url = userStreamApi.username({ username: '100%' });
+      expect(url).toContain('username=100%25');
+    });
+
+    it('should encode forward slash (/) in username query param', () => {
+      const url = userStreamApi.username({ username: 'user/name' });
+      expect(url).toContain('username=user%2Fname');
+    });
+  });
+
   describe('UserStreamApiEndpoint type', () => {
     it('should have exactly 11 endpoints', () => {
       const endpointKeys = Object.keys(userStreamApi);

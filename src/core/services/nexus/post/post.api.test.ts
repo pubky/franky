@@ -177,6 +177,55 @@ describe('Post API', () => {
     });
   });
 
+  describe('Path segment encoding for special characters', () => {
+    describe('postApi.view', () => {
+      it('should encode spaces in author_id', () => {
+        const result = postApi.view({ author_id: 'author id', post_id: postId });
+        expect(result).toContain('/post/author%20id/');
+        expect(result).not.toContain('/post/author id/');
+      });
+
+      it('should encode hash (#) in post_id', () => {
+        const result = postApi.view({ author_id: pubky, post_id: 'post#123' });
+        expect(result).toContain('/post/' + pubky + '/post%23123');
+      });
+
+      it('should encode forward slash (/) in post_id', () => {
+        const result = postApi.view({ author_id: pubky, post_id: 'post/123' });
+        expect(result).toContain('/post/' + pubky + '/post%2F123');
+        expect(result).not.toContain('/post/' + pubky + '/post/123');
+      });
+
+      it('should encode percent (%) in post_id', () => {
+        const result = postApi.view({ author_id: pubky, post_id: '100%complete' });
+        expect(result).toContain('/post/' + pubky + '/100%25complete');
+      });
+    });
+
+    describe('postApi.taggers', () => {
+      it('should encode spaces in label', () => {
+        const result = postApi.taggers({ author_id: pubky, post_id: postId, label: 'my label' });
+        expect(result).toContain('/taggers/my%20label');
+        expect(result).not.toContain('/taggers/my label');
+      });
+
+      it('should encode hash (#) in label', () => {
+        const result = postApi.taggers({ author_id: pubky, post_id: postId, label: 'label#123' });
+        expect(result).toContain('/taggers/label%23123');
+      });
+
+      it('should encode forward slash (/) in label', () => {
+        const result = postApi.taggers({ author_id: pubky, post_id: postId, label: 'label/sub' });
+        expect(result).toContain('/taggers/label%2Fsub');
+      });
+
+      it('should encode multiple special characters', () => {
+        const result = postApi.view({ author_id: 'author/id', post_id: 'post#id' });
+        expect(result).toContain('/post/author%2Fid/post%23id');
+      });
+    });
+  });
+
   describe('PostApiEndpoint type', () => {
     it('should have exactly 6 endpoints', () => {
       const endpointKeys = Object.keys(postApi);

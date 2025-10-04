@@ -56,6 +56,55 @@ describe('Tag API', () => {
     });
   });
 
+  describe('Path segment encoding for special characters', () => {
+    describe('tagApi.view', () => {
+      it('should encode spaces in tagId', () => {
+        const result = tagApi.view({ taggerId: testTaggerId, tagId: 'my tag' });
+        expect(result).toContain('/tags/' + testTaggerId + '/my%20tag');
+        expect(result).not.toContain('my tag');
+      });
+
+      it('should encode hash (#) in tagId', () => {
+        const result = tagApi.view({ taggerId: testTaggerId, tagId: 'tag#123' });
+        expect(result).toContain('/tags/' + testTaggerId + '/tag%23123');
+      });
+
+      it('should encode forward slash (/) in tagId', () => {
+        const result = tagApi.view({ taggerId: testTaggerId, tagId: 'tag/subtag' });
+        expect(result).toContain('/tags/' + testTaggerId + '/tag%2Fsubtag');
+        expect(result).not.toContain('/tag/subtag');
+      });
+
+      it('should encode special characters in taggerId', () => {
+        const result = tagApi.view({ taggerId: 'tagger/id#123', tagId: testTagId });
+        expect(result).toContain('/tags/tagger%2Fid%23123/');
+      });
+    });
+
+    describe('tagApi.taggers', () => {
+      it('should encode spaces in label', () => {
+        const result = tagApi.taggers({ label: 'my label', limit: 10 });
+        expect(result).toContain('/taggers/my%20label?');
+        expect(result).not.toContain('/taggers/my label');
+      });
+
+      it('should encode hash (#) in label', () => {
+        const result = tagApi.taggers({ label: 'label#123', limit: 10 });
+        expect(result).toContain('/taggers/label%23123?');
+      });
+
+      it('should encode forward slash (/) in label', () => {
+        const result = tagApi.taggers({ label: 'label/sublabel', limit: 10 });
+        expect(result).toContain('/taggers/label%2Fsublabel?');
+      });
+
+      it('should encode percent (%) in label', () => {
+        const result = tagApi.taggers({ label: '100%', limit: 10 });
+        expect(result).toContain('/taggers/100%25?');
+      });
+    });
+  });
+
   describe('TagApiEndpoint type', () => {
     it('should have exactly 3 endpoints', () => {
       const endpointKeys = Object.keys(tagApi);

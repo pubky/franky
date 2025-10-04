@@ -151,6 +151,77 @@ describe('Search API', () => {
     });
   });
 
+  describe('Path segment encoding for special characters', () => {
+    describe('searchApi.byTag', () => {
+      it('should encode spaces in tag', () => {
+        const result = searchApi.byTag({ tag: 'my tag', skip: 0, limit: 10 });
+        expect(result).toContain('/by_tag/my%20tag?');
+        expect(result).not.toContain('/by_tag/my tag');
+      });
+
+      it('should encode hash (#) in tag', () => {
+        const result = searchApi.byTag({ tag: 'tag#123', skip: 0, limit: 10 });
+        expect(result).toContain('/by_tag/tag%23123?');
+        expect(result).not.toContain('/by_tag/tag#123');
+      });
+
+      it('should encode forward slash (/) in tag', () => {
+        const result = searchApi.byTag({ tag: 'tag/subtag', skip: 0, limit: 10 });
+        expect(result).toContain('/by_tag/tag%2Fsubtag?');
+        expect(result).not.toContain('/by_tag/tag/subtag?');
+      });
+
+      it('should encode percent (%) in tag', () => {
+        const result = searchApi.byTag({ tag: '100%', skip: 0, limit: 10 });
+        expect(result).toContain('/by_tag/100%25?');
+        expect(result).not.toContain('/by_tag/100%?');
+      });
+
+      it('should encode question mark (?) in tag', () => {
+        const result = searchApi.byTag({ tag: 'what?', skip: 0, limit: 10 });
+        expect(result).toContain('/by_tag/what%3F?');
+        expect(result).not.toContain('/by_tag/what??');
+      });
+
+      it('should encode ampersand (&) in tag', () => {
+        const result = searchApi.byTag({ tag: 'rock&roll', skip: 0, limit: 10 });
+        expect(result).toContain('/by_tag/rock%26roll?');
+        expect(result).not.toContain('/by_tag/rock&roll');
+      });
+    });
+
+    describe('searchApi.byPrefix', () => {
+      it('should encode spaces in prefix', () => {
+        const result = searchApi.byPrefix({ prefix: 'my prefix' });
+        expect(result).toContain('/by_prefix/my%20prefix');
+        expect(result).not.toContain('/by_prefix/my prefix');
+      });
+
+      it('should encode hash (#) in prefix', () => {
+        const result = searchApi.byPrefix({ prefix: 'prefix#123' });
+        expect(result).toContain('/by_prefix/prefix%23123');
+      });
+
+      it('should encode forward slash (/) in prefix', () => {
+        const result = searchApi.byPrefix({ prefix: 'pre/fix' });
+        expect(result).toContain('/by_prefix/pre%2Ffix');
+      });
+    });
+
+    describe('searchApi.byUsername', () => {
+      it('should encode spaces in prefix', () => {
+        const result = searchApi.byUsername({ prefix: 'user name' });
+        expect(result).toContain('/by_name/user%20name');
+        expect(result).not.toContain('/by_name/user name');
+      });
+
+      it('should encode special characters in prefix', () => {
+        const result = searchApi.byUsername({ prefix: 'user@domain' });
+        expect(result).toContain('/by_name/user%40domain');
+      });
+    });
+  });
+
   describe('SearchApiEndpoint type', () => {
     it('should have exactly 4 endpoints', () => {
       const endpointKeys = Object.keys(searchApi);
