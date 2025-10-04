@@ -1,11 +1,21 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Toaster } from './Toaster';
 
-// Mock the useToast hook
-const mockUseToast = vi.fn();
-vi.mock('./use-toast', () => ({
-  useToast: () => mockUseToast(),
+// Mock next-themes
+vi.mock('next-themes', () => ({
+  useTheme: vi.fn(),
+}));
+
+// Mock sonner
+vi.mock('sonner', () => ({
+  Toaster: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => {
+    return (
+      <div data-testid="sonner-toaster" {...props}>
+        {children}
+      </div>
+    );
+  },
 }));
 
 // Mock @/libs to intercept any icons and utilities
@@ -95,174 +105,152 @@ vi.mock('@/libs', () => ({
 }));
 
 describe('Toaster', () => {
-  beforeEach(() => {
+  let mockUseTheme: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    // Get the mocked useTheme function
+    const nextThemes = await vi.importMock('next-themes');
+    mockUseTheme = vi.mocked(nextThemes.useTheme) as ReturnType<typeof vi.fn>;
+
+    // Default theme mock
+    mockUseTheme.mockReturnValue({
+      theme: 'light',
+      setTheme: vi.fn(),
+    });
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should render empty when no toasts', () => {
-    mockUseToast.mockReturnValue({
-      toasts: [],
+  describe('Basic Rendering', () => {
+    it('should render Sonner toaster', () => {
+      const { container } = render(<Toaster />);
+
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
+      expect(container.firstChild).toBeTruthy();
     });
 
-    const { container } = render(<Toaster />);
+    it('should render with correct props', () => {
+      render(<Toaster />);
 
-    // Should render ToastProvider structure even with no toasts
-    expect(container.firstChild).toBeTruthy();
+      const sonnerToaster = screen.getByTestId('sonner-toaster');
+      expect(sonnerToaster).toBeInTheDocument();
+      expect(sonnerToaster).toHaveAttribute('theme', 'light');
+      expect(sonnerToaster).toHaveAttribute('position', 'bottom-center');
+      expect(sonnerToaster).toHaveAttribute('class', 'toaster group');
+    });
   });
 
-  it('should render toast without title when only description is provided', () => {
-    const mockToast = {
-      id: '1',
-      description: 'Just a description',
-      open: true,
-    };
+  describe('Error Handling', () => {
+    it('should handle useTheme throwing an error', () => {
+      mockUseTheme.mockImplementation(() => {
+        throw new Error('Theme provider error');
+      });
 
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
+      expect(() => render(<Toaster />)).toThrow('Theme provider error');
     });
 
-    render(<Toaster />);
+    it('should handle useTheme returning undefined', () => {
+      mockUseTheme.mockReturnValue(undefined);
 
-    expect(screen.getByText('Just a description')).toBeInTheDocument();
+      expect(() => render(<Toaster />)).toThrow();
+    });
   });
 
-  it('should handle complex toast with action button click', () => {
-    const handleActionClick = vi.fn();
-    const mockAction = (
-      <button data-testid="toast-action" onClick={handleActionClick}>
-        Retry
-      </button>
-    );
+  describe('Multiple Renders', () => {
+    it('should handle multiple renders consistently', () => {
+      const { rerender } = render(<Toaster />);
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
 
-    const mockToast = {
-      id: 'complex-toast',
-      title: 'Upload Failed',
-      description: 'There was an error uploading your file. Please try again.',
-      action: mockAction,
-      className: 'bg-red-500 border-red-600',
-      'data-testid': 'error-toast',
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
+      rerender(<Toaster />);
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
     });
 
-    render(<Toaster />);
+    it('should maintain consistent props across renders', () => {
+      const { rerender } = render(<Toaster />);
+      const firstRender = screen.getByTestId('sonner-toaster');
 
-    // Check all elements are rendered
-    expect(screen.getByText('Upload Failed')).toBeInTheDocument();
-    expect(screen.getByText('There was an error uploading your file. Please try again.')).toBeInTheDocument();
-    expect(screen.getByTestId('toast-action')).toBeInTheDocument();
-    expect(screen.getByText('Retry')).toBeInTheDocument();
+      rerender(<Toaster />);
+      const secondRender = screen.getByTestId('sonner-toaster');
 
-    // Check custom props are applied
-    const toastElement = screen.getByTestId('error-toast');
-    expect(toastElement).toBeInTheDocument();
+      expect(firstRender.getAttribute('theme')).toBe(secondRender.getAttribute('theme'));
+      expect(firstRender.getAttribute('position')).toBe(secondRender.getAttribute('position'));
+      expect(firstRender.getAttribute('class')).toBe(secondRender.getAttribute('class'));
+    });
+  });
 
-    // Test action button functionality
-    fireEvent.click(screen.getByTestId('toast-action'));
-    expect(handleActionClick).toHaveBeenCalledTimes(1);
+  describe('Toast Interaction Scenarios', () => {
+    it('should handle theme changes during component lifecycle', () => {
+      const { rerender } = render(<Toaster />);
+
+      // Change theme
+      mockUseTheme.mockReturnValue({
+        theme: 'dark',
+        setTheme: vi.fn(),
+      });
+
+      rerender(<Toaster />);
+
+      const sonnerToaster = screen.getByTestId('sonner-toaster');
+      expect(sonnerToaster).toHaveAttribute('theme', 'dark');
+    });
+  });
+
+  describe('Performance and Memory', () => {
+    it('should not create memory leaks with multiple renders', () => {
+      const { rerender, unmount } = render(<Toaster />);
+
+      // Multiple renders
+      for (let i = 0; i < 10; i++) {
+        rerender(<Toaster />);
+      }
+
+      expect(screen.getByTestId('sonner-toaster')).toBeInTheDocument();
+
+      // Should clean up properly
+      expect(() => unmount()).not.toThrow();
+    });
   });
 });
 
 describe('Toaster - Snapshots', () => {
-  it('matches snapshot for empty Toaster', () => {
-    mockUseToast.mockReturnValue({
-      toasts: [],
+  let mockUseTheme: ReturnType<typeof vi.fn>;
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+
+    // Get the mocked useTheme function
+    const nextThemes = await vi.importMock('next-themes');
+    mockUseTheme = vi.mocked(nextThemes.useTheme) as ReturnType<typeof vi.fn>;
+
+    mockUseTheme.mockReturnValue({
+      theme: 'light',
+      setTheme: vi.fn(),
+    });
+  });
+
+  it('matches snapshot for Toaster with light theme', () => {
+    const { container } = render(<Toaster />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Toaster with dark theme', () => {
+    mockUseTheme.mockReturnValue({
+      theme: 'dark',
+      setTheme: vi.fn(),
     });
 
     const { container } = render(<Toaster />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for Toaster with single toast', () => {
-    mockUseToast.mockReturnValue({
-      toasts: [
-        {
-          id: '1',
-          title: 'Test Toast',
-          description: 'This is a test toast message',
-          open: true,
-        },
-      ],
-    });
-
-    const { container } = render(<Toaster />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for Toaster with title-only toast', () => {
-    mockUseToast.mockReturnValue({
-      toasts: [
-        {
-          id: '1',
-          title: 'Simple Toast',
-          open: true,
-        },
-      ],
-    });
-
-    const { container } = render(<Toaster />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for Toaster with toast with action', () => {
-    const mockAction = (
-      <button data-testid="custom-action" onClick={() => {}}>
-        Undo
-      </button>
-    );
-
-    const mockToast = {
-      id: '1',
-      title: 'Toast with Action',
-      description: 'This toast has an action button',
-      action: mockAction,
-      open: true,
-    };
-
-    mockUseToast.mockReturnValue({
-      toasts: [mockToast],
-    });
-
-    const { container } = render(<Toaster />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for Toaster with toast action', () => {
-    mockUseToast.mockReturnValue({
-      toasts: [
-        {
-          id: '1',
-          title: 'Toast with Action',
-          description: 'This toast has an action button',
-          action: <button>Undo</button>,
-          open: true,
-        },
-      ],
-    });
-
-    const { container } = render(<Toaster />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for Toaster with multiple toasts', () => {
-    mockUseToast.mockReturnValue({
-      toasts: [
-        {
-          id: '1',
-          title: 'First Toast',
-          description: 'First description',
-          open: true,
-        },
-        {
-          id: '2',
-          title: 'Second Toast',
-          description: 'Second description',
-          open: true,
-        },
-      ],
+  it('matches snapshot for Toaster with system theme', () => {
+    mockUseTheme.mockReturnValue({
+      theme: 'system',
+      setTheme: vi.fn(),
     });
 
     const { container } = render(<Toaster />);

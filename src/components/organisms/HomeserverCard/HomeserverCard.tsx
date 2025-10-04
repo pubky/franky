@@ -12,7 +12,7 @@ import * as App from '@/app';
 export function HomeserverCard() {
   const router = useRouter();
 
-  const { toast } = Molecules.useToast();
+  const { toast, dismiss } = Molecules.useToast();
 
   const [inviteCode, setInviteCode] = useState('');
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(true);
@@ -37,18 +37,14 @@ export function HomeserverCard() {
   };
 
   const showErrorToast = () => {
-    const toastInstance = toast({
+    const toastId = toast({
       title: 'Error signing up',
       description: 'Invalid invite code or already used. Please try again.',
-      action: (
-        <Atoms.Button
-          variant="outline"
-          className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
-          onClick={() => toastInstance.dismiss()}
-        >
-          OK
-        </Atoms.Button>
-      ),
+      variant: 'error',
+      action: {
+        label: 'OK',
+        onClick: () => dismiss(String(toastId)),
+      },
     });
   };
 

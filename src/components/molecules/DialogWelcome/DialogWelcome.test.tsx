@@ -119,6 +119,10 @@ vi.mock('@/molecules', () => ({
   toast: vi.fn(() => ({
     dismiss: vi.fn(),
   })),
+  useToast: vi.fn(() => ({
+    toast: vi.fn(),
+    dismiss: vi.fn(),
+  })),
 }));
 
 describe('DialogWelcome', () => {

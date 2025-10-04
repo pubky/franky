@@ -2,6 +2,28 @@ import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Toast, ToastProvider, ToastViewport } from './Toast';
 
+// Mock next-themes
+vi.mock('next-themes', () => ({
+  useTheme: () => ({
+    theme: 'light',
+    setTheme: vi.fn(),
+  }),
+}));
+
+// Mock sonner
+vi.mock('sonner', () => ({
+  Toaster: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => {
+    // Filter out non-DOM props
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { theme, position, className, toastOptions, ...domProps } = props;
+    return (
+      <div data-testid="sonner-toaster" theme={theme} position={position} className={className} {...domProps}>
+        {children}
+      </div>
+    );
+  },
+}));
+
 // Mock @/libs to intercept Libs.X
 vi.mock('@/libs', () => ({
   X: () => <svg data-testid="x-icon" />,

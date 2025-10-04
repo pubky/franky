@@ -8,6 +8,10 @@ vi.mock('../utils/utils', () => ({
 
 vi.mock('@/molecules/Toaster/use-toast', () => ({
   toast: vi.fn(),
+  useToast: vi.fn(() => ({
+    toast: vi.fn(),
+    dismiss: vi.fn(),
+  })),
 }));
 
 vi.mock('@/atoms/Button', () => ({
