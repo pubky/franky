@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 
 import * as Atoms from '@/atoms';
@@ -155,6 +155,18 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [availableWords] = useState<string[]>([...recoveryWords].sort());
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
+  const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
+  const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
+
+  // Precompute word counts for better performance
+  const wordCountMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const w of recoveryWords) {
+      map[w] = (map[w] || 0) + 1;
+    }
+    return map;
+  }, [recoveryWords]);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -175,11 +187,16 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
     setErrors(newErrors);
   };
 
-  const handleWordClick = (word: string) => {
-    // Check if word is already used
-    const isWordAlreadyUsed = userWords.includes(word);
+  const handleWordClick = (word: string, wordIndex: number) => {
+    const wordCountInPhrase = wordCountMap[word] ?? 0;
+    const currentUsageCount = usedWordCounts[word] || 0;
 
-    if (isWordAlreadyUsed) {
+    if (currentUsageCount >= wordCountInPhrase) {
+      return;
+    }
+
+    // Check if this specific word instance is already used
+    if (usedWordInstances.has(wordIndex)) {
       return;
     }
 
@@ -188,6 +205,19 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       const newUserWords = [...userWords];
       newUserWords[emptyIndex] = word;
       setUserWords(newUserWords);
+
+      setUsedWordCounts((prev) => ({
+        ...prev,
+        [word]: currentUsageCount + 1,
+      }));
+      setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
+
+      // Track slot to instance mapping
+      setSlotToInstance((prev) => {
+        const next = [...prev];
+        next[emptyIndex] = wordIndex;
+        return next;
+      });
 
       // Validate this specific word immediately
       validateSingleWord(emptyIndex, word);
@@ -217,6 +247,25 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       const newUserWords = [...userWords];
       newUserWords[index] = '';
       setUserWords(newUserWords);
+      setUsedWordCounts((prev) => ({
+        ...prev,
+        [word]: Math.max(0, (prev[word] || 0) - 1),
+      }));
+
+      // Use the exact instance that was used in this slot
+      const instanceIndex = slotToInstance[index];
+      if (instanceIndex !== null) {
+        setUsedWordInstances((prev) => {
+          const next = new Set(prev);
+          next.delete(instanceIndex);
+          return next;
+        });
+        setSlotToInstance((prev) => {
+          const next = [...prev];
+          next[index] = null;
+          return next;
+        });
+      }
 
       // Clear error for this specific word
       const newErrors = [...errors];
@@ -237,20 +286,21 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       <Atoms.Container className="space-y-6">
         <Atoms.Container className="flex-wrap gap-2 flex-row">
           {availableWords.map((word, index) => {
-            const isUsed = userWords.includes(word);
+            const isThisInstanceUsed = usedWordInstances.has(index);
+
             return (
               <Atoms.Button
                 id={`backup-recovery-phrase-word-${word}-${index + 1}`}
                 key={`${word}-${index}`}
-                variant={isUsed ? 'secondary' : 'outline'}
+                variant={isThisInstanceUsed ? 'secondary' : 'outline'}
                 size="sm"
                 className={`rounded-full ${
-                  isUsed
+                  isThisInstanceUsed
                     ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
                     : 'dark:border-transparent bg-secondary cursor-pointer'
                 }`}
-                onClick={() => !isUsed && handleWordClick(word)}
-                disabled={isUsed}
+                onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
+                disabled={isThisInstanceUsed}
               >
                 {word}
               </Atoms.Button>
