@@ -1,5 +1,7 @@
+import { PostStreamTypes } from './postStream.types';
+
 export interface PostStreamModelSchema {
-  id: string;
+  id: PostStreamTypes;
   posts: string[];
   name: string | null;
 }

@@ -3,13 +3,14 @@ import * as Libs from '@/libs';
 import { PostStreamModelSchema } from './postStream.schema';
 import { db } from '@/core/database';
 import { createDefaultPostStream } from './postStream.helper';
+import { PostStreamTypes } from './postStream.types';
 
 export class PostStreamModel implements PostStreamModelSchema {
   private static table: Table<PostStreamModelSchema> = db.table('post_streams');
 
   // Stream ID pattern: colon-separated segments (e.g., "timeframe:all:all", "timeframe:following:all", "timeframe:all:short:pubky_dev")
   // Can have 1 or more segments separated by colons
-  id: string;
+  id: PostStreamTypes;
   posts: string[];
   name: string | null;
 
@@ -56,7 +57,7 @@ export class PostStreamModel implements PostStreamModelSchema {
   }
 
   // Static methods
-  static async findById(id: string): Promise<PostStreamModel | null> {
+  static async findById(id: PostStreamTypes): Promise<PostStreamModel | null> {
     try {
       const stream = await PostStreamModel.table.get(id);
       return stream ? new PostStreamModel(stream) : null;
@@ -68,7 +69,7 @@ export class PostStreamModel implements PostStreamModelSchema {
     }
   }
 
-  static async create(id: string, name: string | null = null, posts: string[] = []): Promise<PostStreamModel> {
+  static async create(id: PostStreamTypes, name: string | null = null, posts: string[] = []): Promise<PostStreamModel> {
     try {
       const streamData = createDefaultPostStream(id, name, posts);
       const stream = new PostStreamModel(streamData);
