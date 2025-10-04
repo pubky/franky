@@ -1,12 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { userApi, buildUserBaseUrlWithParams } from './user.api';
+import { userApi } from './user.api';
 import {
   TUserViewParams,
   TUserPaginationParams,
   TUserRelationshipParams,
   TUserTaggersParams,
   TUserTagsParams,
+  USER_PATH_PARAMS,
 } from './user.types';
+import { buildUrlWithQuery } from '../nexus.utils';
 import * as Core from '@/core';
 import * as Config from '@/config';
 
@@ -14,7 +16,7 @@ const testUserId = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry';
 const testViewerId = 'viewer123';
 
 describe('User API', () => {
-  describe('buildUserBaseUrlWithParams', () => {
+  describe('buildUrlWithQuery (used by user API)', () => {
     it('should build URL with basic parameters', () => {
       const params: TUserViewParams = {
         user_id: testUserId,
@@ -23,7 +25,7 @@ describe('User API', () => {
       };
       const baseRoute = 'user/test';
 
-      const result = buildUserBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, USER_PATH_PARAMS);
       expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/test?depth=2&viewer_id=${testViewerId}`);
     });
 
@@ -34,7 +36,7 @@ describe('User API', () => {
       };
       const baseRoute = 'user/test';
 
-      const result = buildUserBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, USER_PATH_PARAMS);
       expect(result).not.toContain('user_id=');
       expect(result).toContain('depth=1');
     });

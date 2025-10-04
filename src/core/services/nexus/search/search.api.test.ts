@@ -1,14 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { searchApi, buildTagBaseUrlWithParams } from './search.api';
-import { type TTagSearchParams, type TPrefixSearchParams } from './search.types';
+import { searchApi } from './search.api';
+import { type TTagSearchParams, type TPrefixSearchParams, SEARCH_PATH_PARAMS } from './search.types';
 import { StreamSorting } from '../nexus.types';
+import { buildUrlWithQuery } from '../nexus.utils';
 import * as Config from '@/config';
 
 const testTag = 'test-tag';
 const testPrefix = 'test-prefix';
 
 describe('Search API', () => {
-  describe('buildTagBaseUrlWithParams', () => {
+  describe('buildUrlWithQuery (used by search API)', () => {
     it('should build URL with basic parameters', () => {
       const params: TTagSearchParams = {
         tag: testTag,
@@ -17,7 +18,7 @@ describe('Search API', () => {
       };
       const baseRoute = 'search/posts/by_tag';
 
-      const result = buildTagBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag?skip=0&limit=10`);
     });
 
@@ -32,7 +33,7 @@ describe('Search API', () => {
       };
       const baseRoute = 'search/posts/by_tag';
 
-      const result = buildTagBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).toBe(
         `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag?skip=5&limit=20&sorting=timeline&start=1000&end=2000`,
       );
@@ -46,7 +47,7 @@ describe('Search API', () => {
       };
       const baseRoute = 'search/posts/by_tag';
 
-      const result = buildTagBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).not.toContain('tag=');
       expect(result).toContain('skip=0');
       expect(result).toContain('limit=10');
@@ -61,7 +62,7 @@ describe('Search API', () => {
       };
       const baseRoute = 'search/posts/by_tag';
 
-      const result = buildTagBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag?sorting=timeline`);
     });
 
@@ -71,7 +72,7 @@ describe('Search API', () => {
       };
       const baseRoute = 'search/posts/by_tag';
 
-      const result = buildTagBaseUrlWithParams(params, baseRoute);
+      const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag`);
     });
   });
