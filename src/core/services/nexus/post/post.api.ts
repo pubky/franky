@@ -25,16 +25,35 @@ export function buildPostBaseUrlWithParams(optParams: Core.TPostQueryParams, bas
 }
 
 export const postApi = {
-  view: (params: Core.TPostViewParams) =>
-    buildPostBaseUrlWithParams(params, `${PREFIX}/${params.author_id}/${params.post_id}`),
-  bookmarks: (params: Core.TPostBase) =>
-    buildPostBaseUrlWithParams(params, `${PREFIX}/${params.author_id}/${params.post_id}/bookmarks`),
-  counts: (params: Core.TPostBasePathParams) =>
-    Core.buildNexusUrl(`${PREFIX}/${params.author_id}/${params.post_id}/counts`),
-  details: (params: Core.TPostBasePathParams) =>
-    Core.buildNexusUrl(`${PREFIX}/${params.author_id}/${params.post_id}/details`),
-  taggers: (params: Core.TPostTaggersParams) =>
-    buildPostBaseUrlWithParams(params, `${PREFIX}/${params.author_id}/${params.post_id}/taggers/${params.label}`),
-  tags: (params: Core.TPostTagsParams) =>
-    buildPostBaseUrlWithParams(params, `${PREFIX}/${params.author_id}/${params.post_id}/tags`),
+  view: (params: Core.TPostViewParams) => {
+    const author = Core.encodePathSegment(params.author_id);
+    const post = Core.encodePathSegment(params.post_id);
+    return buildPostBaseUrlWithParams(params, `${PREFIX}/${author}/${post}`);
+  },
+  bookmarks: (params: Core.TPostBase) => {
+    const author = Core.encodePathSegment(params.author_id);
+    const post = Core.encodePathSegment(params.post_id);
+    return buildPostBaseUrlWithParams(params, `${PREFIX}/${author}/${post}/bookmarks`);
+  },
+  counts: (params: Core.TPostBasePathParams) => {
+    const author = Core.encodePathSegment(params.author_id);
+    const post = Core.encodePathSegment(params.post_id);
+    return Core.buildNexusUrl(`${PREFIX}/${author}/${post}/counts`);
+  },
+  details: (params: Core.TPostBasePathParams) => {
+    const author = Core.encodePathSegment(params.author_id);
+    const post = Core.encodePathSegment(params.post_id);
+    return Core.buildNexusUrl(`${PREFIX}/${author}/${post}/details`);
+  },
+  taggers: (params: Core.TPostTaggersParams) => {
+    const author = Core.encodePathSegment(params.author_id);
+    const post = Core.encodePathSegment(params.post_id);
+    const label = Core.encodePathSegment(params.label);
+    return buildPostBaseUrlWithParams(params, `${PREFIX}/${author}/${post}/taggers/${label}`);
+  },
+  tags: (params: Core.TPostTagsParams) => {
+    const author = Core.encodePathSegment(params.author_id);
+    const post = Core.encodePathSegment(params.post_id);
+    return buildPostBaseUrlWithParams(params, `${PREFIX}/${author}/${post}/tags`);
+  },
 };

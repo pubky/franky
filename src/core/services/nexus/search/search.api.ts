@@ -23,11 +23,20 @@ export function buildTagBaseUrlWithParams(optParams: Core.TSearchQueryParams, ba
 }
 
 export const searchApi = {
-  byTag: (params: Core.TTagSearchParams) => buildTagBaseUrlWithParams(params, `${PREFIX}/posts/by_tag/${params.tag}`),
-  byPrefix: (params: Core.TPrefixSearchParams) =>
-    buildTagBaseUrlWithParams(params, `${PREFIX}/tags/by_prefix/${params.prefix}`),
-  byUser: (params: Core.TPrefixSearchParams) =>
-    buildTagBaseUrlWithParams(params, `${PREFIX}/users/by_id/${params.prefix}`),
-  byUsername: (params: Core.TPrefixSearchParams) =>
-    buildTagBaseUrlWithParams(params, `${PREFIX}/users/by_name/${params.prefix}`),
+  byTag: (params: Core.TTagSearchParams) => {
+    const tag = Core.encodePathSegment(params.tag);
+    return buildTagBaseUrlWithParams(params, `${PREFIX}/posts/by_tag/${tag}`);
+  },
+  byPrefix: (params: Core.TPrefixSearchParams) => {
+    const prefix = Core.encodePathSegment(params.prefix);
+    return buildTagBaseUrlWithParams(params, `${PREFIX}/tags/by_prefix/${prefix}`);
+  },
+  byUser: (params: Core.TPrefixSearchParams) => {
+    const prefix = Core.encodePathSegment(params.prefix);
+    return buildTagBaseUrlWithParams(params, `${PREFIX}/users/by_id/${prefix}`);
+  },
+  byUsername: (params: Core.TPrefixSearchParams) => {
+    const prefix = Core.encodePathSegment(params.prefix);
+    return buildTagBaseUrlWithParams(params, `${PREFIX}/users/by_name/${prefix}`);
+  },
 };

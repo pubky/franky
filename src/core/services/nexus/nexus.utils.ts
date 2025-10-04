@@ -20,6 +20,15 @@ export function buildNexusStaticUrl(endpoint: string): string {
 }
 
 /**
+ * Encodes a path segment to ensure safe URL construction
+ * @param segment - The path segment to encode
+ * @returns Encoded path segment safe for URL interpolation
+ */
+export function encodePathSegment(segment: string): string {
+  return encodeURIComponent(segment);
+}
+
+/**
  * Utility function to create fetch options with common headers
  */
 export function createFetchOptions(method: HttpMethod = 'GET', body?: BodyInit | null): RequestInit {

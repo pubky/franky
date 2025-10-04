@@ -12,5 +12,8 @@ export type TBootstrapParams = {
 };
 
 export const bootstrapApi = {
-  get: (pubky: string) => Core.buildNexusUrl(`${PREFIX}/${pubky}`),
+  get: (pubky: string) => {
+    const encodedPubky = Core.encodePathSegment(pubky);
+    return Core.buildNexusUrl(`${PREFIX}/${encodedPubky}`);
+  },
 };

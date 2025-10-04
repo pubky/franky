@@ -24,20 +24,50 @@ export function buildUserBaseUrlWithParams(optParams: Core.TUserQueryParams, bas
 }
 
 export const userApi = {
-  view: (params: Core.TUserViewParams) => buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}`),
-  counts: (params: Core.TUserId) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/counts`),
-  details: (params: Core.TUserId) => Core.buildNexusUrl(`${PREFIX}/${params.user_id}/details`),
-  followers: (params: Core.TUserViewParams) =>
-    buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/followers`),
-  following: (params: Core.TUserViewParams) =>
-    buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/following`),
-  friends: (params: Core.TUserViewParams) => buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/friends`),
-  muted: (params: Core.TUserViewParams) => buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/muted`),
-  notifications: (params: Core.TUserPaginationParams) =>
-    buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/notifications`),
-  relationship: (params: Core.TUserRelationshipParams) =>
-    Core.buildNexusUrl(`${PREFIX}/${params.user_id}/relationship/${params.viewer_id}`),
-  taggers: (params: Core.TUserTaggersParams) =>
-    buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/taggers/${params.label}`),
-  tags: (params: Core.TUserTagsParams) => buildUserBaseUrlWithParams(params, `${PREFIX}/${params.user_id}/tags`),
+  view: (params: Core.TUserViewParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}`);
+  },
+  counts: (params: Core.TUserId) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return Core.buildNexusUrl(`${PREFIX}/${userId}/counts`);
+  },
+  details: (params: Core.TUserId) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return Core.buildNexusUrl(`${PREFIX}/${userId}/details`);
+  },
+  followers: (params: Core.TUserViewParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/followers`);
+  },
+  following: (params: Core.TUserViewParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/following`);
+  },
+  friends: (params: Core.TUserViewParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/friends`);
+  },
+  muted: (params: Core.TUserViewParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/muted`);
+  },
+  notifications: (params: Core.TUserPaginationParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/notifications`);
+  },
+  relationship: (params: Core.TUserRelationshipParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    const viewerId = Core.encodePathSegment(params.viewer_id);
+    return Core.buildNexusUrl(`${PREFIX}/${userId}/relationship/${viewerId}`);
+  },
+  taggers: (params: Core.TUserTaggersParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    const label = Core.encodePathSegment(params.label);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/taggers/${label}`);
+  },
+  tags: (params: Core.TUserTagsParams) => {
+    const userId = Core.encodePathSegment(params.user_id);
+    return buildUserBaseUrlWithParams(params, `${PREFIX}/${userId}/tags`);
+  },
 };

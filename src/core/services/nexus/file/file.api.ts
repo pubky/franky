@@ -19,9 +19,15 @@ export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
 }
 
 export const filesApi = {
-  getAvatar: (pubky: string) => Core.buildNexusUrl(`avatar/${pubky}`),
-  getImage: ({ pubky, file_id, variant }: Core.TImageParams) =>
-    Core.buildNexusUrl(`${PREFIX}/${pubky}/${file_id}/${variant}`),
+  getAvatar: (pubky: string) => {
+    const encodedPubky = Core.encodePathSegment(pubky);
+    return Core.buildNexusUrl(`avatar/${encodedPubky}`);
+  },
+  getImage: ({ pubky, file_id, variant }: Core.TImageParams) => {
+    const encodedPubky = Core.encodePathSegment(pubky);
+    const encodedFileId = Core.encodePathSegment(file_id);
+    return Core.buildNexusUrl(`${PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);
+  },
   getFiles: (fileUris: Core.Pubky[]) => ({
     body: buildFileBodyUrl(fileUris),
     url: Core.buildNexusUrl(`${PREFIX}/by_ids`),
