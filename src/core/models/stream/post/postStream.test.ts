@@ -1,6 +1,6 @@
 import { db } from '@/core/database';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createDefaultStream } from './postStream.helper';
+import { createDefaultPostStream } from './postStream.helper';
 import { PostStreamModel } from './postStream';
 
 describe('PostStreamModel', () => {
@@ -10,7 +10,7 @@ describe('PostStreamModel', () => {
 
   describe('constructor', () => {
     it('should create a post stream with all properties', () => {
-      const streamData = createDefaultStream('test-stream', 'Test Stream', ['post1', 'post2']);
+      const streamData = createDefaultPostStream('test-stream', 'Test Stream', ['post1', 'post2']);
       const stream = new PostStreamModel(streamData);
 
       expect(stream.id).toBe('test-stream');
@@ -19,7 +19,7 @@ describe('PostStreamModel', () => {
     });
 
     it('should handle null name', () => {
-      const streamData = createDefaultStream('test-stream', null);
+      const streamData = createDefaultPostStream('test-stream', null);
       const stream = new PostStreamModel(streamData);
 
       expect(stream.name).toBeNull();
@@ -28,7 +28,7 @@ describe('PostStreamModel', () => {
 
   describe('addPosts', () => {
     it('should add multiple posts to stream', () => {
-      const streamData = createDefaultStream('test-stream', 'Test Stream');
+      const streamData = createDefaultPostStream('test-stream', 'Test Stream');
       const stream = new PostStreamModel(streamData);
 
       stream.addPosts(['post1', 'post2']);
@@ -37,7 +37,7 @@ describe('PostStreamModel', () => {
     });
 
     it('should not add duplicate posts', () => {
-      const streamData = createDefaultStream('test-stream', 'Test Stream', ['post1']);
+      const streamData = createDefaultPostStream('test-stream', 'Test Stream', ['post1']);
       const stream = new PostStreamModel(streamData);
 
       stream.addPosts(['post1', 'post2']);
@@ -46,7 +46,7 @@ describe('PostStreamModel', () => {
     });
 
     it('should add posts to beginning for chronological order', () => {
-      const streamData = createDefaultStream('test-stream', 'Test Stream', ['post1']);
+      const streamData = createDefaultPostStream('test-stream', 'Test Stream', ['post1']);
       const stream = new PostStreamModel(streamData);
 
       stream.addPosts(['post2', 'post3']);
@@ -57,7 +57,7 @@ describe('PostStreamModel', () => {
 
   describe('database operations', () => {
     it('should save and retrieve stream', async () => {
-      const streamData = createDefaultStream('test-stream', 'Test Stream');
+      const streamData = createDefaultPostStream('test-stream', 'Test Stream');
       const stream = new PostStreamModel(streamData);
 
       await stream.save();

@@ -1,6 +1,6 @@
 import { PostStreamModelSchema } from './postStream.schema';
 
-export const createDefaultStream = (
+export const createDefaultPostStream = (
   id: string,
   name: string | null = null,
   posts: string[] = [],

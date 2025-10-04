@@ -14,6 +14,7 @@ import { postDetailsTableSchema } from '@/core/models/post/details/postDetails.s
 import { postRelationshipsTableSchema } from '@/core/models/post/relationships/postRelationships.schema';
 import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
+import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
 
 class AppDatabase extends Dexie {
   // User
@@ -31,7 +32,7 @@ class AppDatabase extends Dexie {
   post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
   // Streams
   post_streams!: Dexie.Table<PostStreamModelSchema>;
-
+  user_streams!: Dexie.Table<UserStreamModelSchema>;
   constructor() {
     super(Config.DB_NAME);
 
@@ -52,6 +53,7 @@ class AppDatabase extends Dexie {
         post_ttl: postTtlTableSchema,
         // Streams
         post_streams: postStreamTableSchema,
+        user_streams: userStreamTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(
