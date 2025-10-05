@@ -2,47 +2,33 @@ import { Table } from 'dexie';
 import * as Libs from '@/libs';
 import { PostStreamModelSchema } from './postStream.schema';
 import { db } from '@/core/database';
-import { createDefaultPostStream } from './postStream.helper';
 import { PostStreamTypes } from './postStream.types';
+import { BaseStreamModel } from '@/core/models/shared/stream/stream';
 
-export class PostStreamModel implements PostStreamModelSchema {
-  private static table: Table<PostStreamModelSchema> = db.table('post_streams');
+export class PostStreamModel extends BaseStreamModel<PostStreamTypes, string, PostStreamModelSchema> {
+  static table: Table<PostStreamModelSchema> = db.table('post_streams');
 
-  id: PostStreamTypes;
-  posts: string[];
-  name: string | null;
+  name: string | undefined;
 
   constructor(stream: PostStreamModelSchema) {
-    this.id = stream.id;
-    this.posts = stream.posts || [];
+    super(stream);
     this.name = stream.name;
   }
 
-  // Database operations
-  async save(): Promise<void> {
+  // Custom create method to handle name property
+  static async createWithName(id: PostStreamTypes, stream: string[], name: string): Promise<PostStreamModelSchema> {
     try {
-      await PostStreamModel.table.put(this);
-      Libs.Logger.debug('PostStream saved successfully', { streamId: this.id });
+      const streamData = { id, name, stream } as PostStreamModelSchema;
+      await PostStreamModel.table.put(streamData);
+      
+      Libs.Logger.debug('Post Stream row created successfully', { streamId: id, name, stream });
+      return streamData;
     } catch (error) {
       throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.SAVE_FAILED,
-        `Failed to save stream with ID: ${this.id}`,
+        Libs.DatabaseErrorType.CREATE_FAILED,
+        `Failed to create PostStream with ID: ${String(id)}`,
         500,
-        { error, streamId: this.id },
-      );
-    }
-  }
-
-  async delete(): Promise<void> {
-    try {
-      await PostStreamModel.table.delete(this.id);
-      Libs.Logger.debug('PostStream deleted successfully', { streamId: this.id });
-    } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        `Failed to delete stream with ID: ${this.id}`,
-        500,
-        { error, streamId: this.id },
+        { error, streamId: id, name, stream },
       );
     }
   }
@@ -50,52 +36,7 @@ export class PostStreamModel implements PostStreamModelSchema {
   // Instance methods
   addPosts(postIds: string[]): void {
     // Filter out posts that already exist and add new ones to beginning
-    const newPosts = postIds.filter((postId) => !this.posts.includes(postId));
-    this.posts.unshift(...newPosts); // Add to beginning for chronological order
-  }
-
-  // Static methods
-  static async findById(id: PostStreamTypes): Promise<PostStreamModel | null> {
-    try {
-      const stream = await PostStreamModel.table.get(id);
-      return stream ? new PostStreamModel(stream) : null;
-    } catch (error) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.FIND_FAILED, `Failed to find stream with ID: ${id}`, 500, {
-        error,
-        streamId: id,
-      });
-    }
-  }
-
-  static async create(id: PostStreamTypes, name: string | null = null, posts: string[] = []): Promise<PostStreamModel> {
-    try {
-      const streamData = createDefaultPostStream(id, name, posts);
-      const stream = new PostStreamModel(streamData);
-      await stream.save();
-
-      Libs.Logger.debug('PostStream created successfully', { streamId: id, name });
-      return stream;
-    } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.CREATE_FAILED,
-        `Failed to create stream with ID: ${id}`,
-        500,
-        { error, streamId: id, name },
-      );
-    }
-  }
-
-  static async deleteById(id: PostStreamTypes): Promise<void> {
-    try {
-      await PostStreamModel.table.delete(id);
-      Libs.Logger.debug('PostStream deleted by ID', { streamId: id });
-    } catch (error) {
-      throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.DELETE_FAILED,
-        `Failed to delete stream with ID: ${id}`,
-        500,
-        { error, streamId: id },
-      );
-    }
+    const newPosts = postIds.filter((postId) => !this.stream.includes(postId));
+    this.stream.unshift(...newPosts); // Add to beginning for chronological order
   }
 }
