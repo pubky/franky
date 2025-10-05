@@ -1,9 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Header - Snapshots > matches snapshot for HeaderButtonSignIn with custom className 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn 1`] = `
 <button
-  class="custom-signin"
-  data-testid="button-secondary"
+  class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+  data-slot="button"
   data-variant="secondary"
 >
   <div
@@ -16,69 +16,61 @@ exports[`Header - Snapshots > matches snapshot for HeaderButtonSignIn with custo
 </button>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HeaderButtonSignIn with default props 1`] = `
-<button
-  data-testid="button-secondary"
-  data-variant="secondary"
->
-  <div
-    class="mr-2 h-4 w-4"
-    data-testid="login-icon"
-  >
-    LogIn
-  </div>
-  Sign in
-</button>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderContainer with default props 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`] = `
 <header
-  class="py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
-  data-size="container"
+  class="mx-auto w-full flex-col flex container flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
   data-testid="container"
 >
   <nav
-    class="flex-row items-center py-0 md:py-6 gap-6 w-full h-full"
+    class="mx-auto w-full flex-col flex flex-row items-center py-0 md:py-6 gap-6 w-full h-full"
     data-testid="container"
   >
     <div>
-      Header content
+      Test Content
     </div>
   </nav>
 </header>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HeaderHome with default props 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
 <div
-  class="flex-1 flex-row items-center justify-end"
+  class="mx-auto w-full flex-col flex flex-1 flex-row items-center justify-end"
   data-testid="container"
 >
   <div
-    data-testid="social-links"
+    data-testid="header-social-links"
   >
     Social Links
   </div>
-  <div
-    data-testid="button-sign-in"
+  <button
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+    data-slot="button"
+    data-variant="secondary"
   >
-    Sign In Button
-  </div>
+    <div
+      class="mr-2 h-4 w-4"
+      data-testid="login-icon"
+    >
+      LogIn
+    </div>
+    Sign in
+  </button>
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with avatar only 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationButtons 1`] = `
 <div
-  class="flex flex-row w-auto justify-start items-center gap-3"
+  class="mx-auto w-full flex-col flex flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
 >
   <a
-    data-testid="link"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
     href="/feed"
   >
     <button
-      class="w-12 h-12"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -91,13 +83,12 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
   </a>
   <a
     class="sm:hidden"
-    data-testid="link"
     href="/search"
   >
     <button
-      class="w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -109,31 +100,13 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
     </button>
   </a>
   <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
     href="/bookmarks"
   >
     <button
-      class="w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -145,13 +118,13 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
     </button>
   </a>
   <a
-    data-testid="link"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
     href="/settings"
   >
     <button
-      class="w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -164,41 +137,34 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
   </a>
   <a
     class="relative"
-    data-testid="link"
     href="/profile"
   >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12"
     >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-        src="/avatar.jpg"
-      />
-      <div
-        data-testid="avatar-fallback"
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
       >
-        SN
-      </div>
-    </div>
+        TU
+      </span>
+    </span>
   </a>
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with counter 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationButtons with counter 1`] = `
 <div
-  class="flex flex-row w-auto justify-start items-center gap-3"
+  class="mx-auto w-full flex-col flex flex flex-row w-auto justify-start items-center gap-3"
   data-testid="container"
 >
   <a
-    data-testid="link"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
     href="/feed"
   >
     <button
-      class="w-12 h-12"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -211,13 +177,12 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
   </a>
   <a
     class="sm:hidden"
-    data-testid="link"
     href="/search"
   >
     <button
-      class="w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -229,31 +194,13 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
     </button>
   </a>
   <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
     href="/bookmarks"
   >
     <button
-      class="w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -265,13 +212,13 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
     </button>
   </a>
   <a
-    data-testid="link"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
     href="/settings"
   >
     <button
-      class="w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
-      data-testid="button-secondary"
+      data-slot="button"
       data-variant="secondary"
     >
       <div
@@ -284,669 +231,46 @@ exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with 
   </a>
   <a
     class="relative"
-    data-testid="link"
     href="/profile"
   >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
+    <span
+      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12"
     >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
+      <span
+        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
       >
-        SN
-      </div>
-    </div>
+        TU
+      </span>
+    </span>
     <div
-      class="absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
-      data-testid="badge"
+      class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
+      data-slot="badge"
       data-variant="secondary"
     >
-      <div
-        class="text-primary-foreground "
-        data-size="sm"
+      <p
+        class="text-sm font-semibold text-foreground text-primary-foreground "
         data-testid="typography"
       >
         5
-      </div>
+      </p>
     </div>
   </a>
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with counter and avatar 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderOnboarding 1`] = `
 <div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-        src="/avatar.jpg"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-    <div
-      class="absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
-      data-testid="badge"
-      data-variant="secondary"
-    >
-      <div
-        class="text-primary-foreground "
-        data-size="sm"
-        data-testid="typography"
-      >
-        15
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with counter zero 1`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with default props 1`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderNavigationButtons with high counter and avatar 1`] = `
-<div
-  class="flex flex-row w-auto justify-start items-center gap-3"
-  data-testid="container"
->
-  <a
-    data-testid="link"
-    href="/feed"
-  >
-    <button
-      class="w-12 h-12"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="home-icon"
-      >
-        Home
-      </div>
-    </button>
-  </a>
-  <a
-    class="sm:hidden"
-    data-testid="link"
-    href="/search"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="search-icon"
-      >
-        Search
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/hot"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="flame-icon"
-      >
-        Flame
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/bookmarks"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="bookmark-icon"
-      >
-        Bookmark
-      </div>
-    </button>
-  </a>
-  <a
-    data-testid="link"
-    href="/settings"
-  >
-    <button
-      class="w-12 h-12 border bg-transparent"
-      data-size="icon"
-      data-testid="button-secondary"
-      data-variant="secondary"
-    >
-      <div
-        class="size-6"
-        data-testid="settings-icon"
-      >
-        Settings
-      </div>
-    </button>
-  </a>
-  <a
-    class="relative"
-    data-testid="link"
-    href="/profile"
-  >
-    <div
-      class="w-12 h-12"
-      data-testid="avatar"
-    >
-      <img
-        alt="avatar"
-        data-testid="avatar-image"
-        src="/avatar.jpg"
-      />
-      <div
-        data-testid="avatar-fallback"
-      >
-        SN
-      </div>
-    </div>
-    <div
-      class="absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
-      data-testid="badge"
-      data-variant="secondary"
-    >
-      <div
-        class="text-primary-foreground text-xs"
-        data-size="sm"
-        data-testid="typography"
-      >
-        21+
-      </div>
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderSocialLinks with custom className 1`] = `
-<div
-  class="hidden md:flex flex-row justify-end gap-6 mr-6 custom-social"
-  data-testid="container"
->
-  <a
-    data-size="default"
-    data-testid="link"
-    data-variant="muted"
-    href="https://github.com/pubky"
-  >
-    <div
-      class="w-6 h-6"
-      data-testid="github-icon"
-    >
-      Github
-    </div>
-  </a>
-  <a
-    data-size="default"
-    data-testid="link"
-    data-variant="muted"
-    href="https://x.com/getpubky"
-  >
-    <div
-      class="w-6 h-6"
-      data-testid="xtwitter-icon"
-    >
-      XTwitter
-    </div>
-  </a>
-  <a
-    data-size="default"
-    data-testid="link"
-    data-variant="muted"
-    href="https://t.me/pubkychat"
-  >
-    <div
-      class="w-6 h-6"
-      data-testid="telegram-icon"
-    >
-      Telegram
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderSocialLinks with default props 1`] = `
-<div
-  class="hidden md:flex flex-row justify-end gap-6 mr-6"
-  data-testid="container"
->
-  <a
-    data-size="default"
-    data-testid="link"
-    data-variant="muted"
-    href="https://github.com/pubky"
-  >
-    <div
-      class="w-6 h-6"
-      data-testid="github-icon"
-    >
-      Github
-    </div>
-  </a>
-  <a
-    data-size="default"
-    data-testid="link"
-    data-variant="muted"
-    href="https://x.com/getpubky"
-  >
-    <div
-      class="w-6 h-6"
-      data-testid="xtwitter-icon"
-    >
-      XTwitter
-    </div>
-  </a>
-  <a
-    data-size="default"
-    data-testid="link"
-    data-variant="muted"
-    href="https://t.me/pubkychat"
-  >
-    <div
-      class="w-6 h-6"
-      data-testid="telegram-icon"
-    >
-      Telegram
-    </div>
-  </a>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for HeaderTitle with custom title 1`] = `
-<div
-  class="flex-1 hidden md:flex"
-  data-testid="container"
->
-  <div
-    class="text-muted-foreground font-normal"
-    data-size="lg"
-    data-testid="heading-2"
-  >
-    Custom Title
-  </div>
-</div>
-`;
-
-exports[`Header - Snapshots > matches snapshot for OnboardingHeader with default props 1`] = `
-<div
-  data-current="1"
+  data-current="3"
   data-testid="progress-steps"
   data-total="5"
 >
-  Progress 
-  1
-  /
-  5
+  Progress Steps
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for HeaderSignIn 1`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] = `
 <div
-  class="flex-1 flex-row items-center justify-end gap-3"
+  class="mx-auto w-full flex-col flex flex-1 flex-row items-center justify-end gap-3"
   data-testid="container"
 >
   <div
@@ -955,27 +279,153 @@ exports[`Header - Snapshots > matches snapshots for HeaderSignIn 1`] = `
     Search Input
   </div>
   <div
-    data-testid="navigation-buttons"
+    class="mx-auto w-full flex-col flex flex flex-row w-auto justify-start items-center gap-3"
+    data-testid="container"
   >
-    Navigation Buttons
+    <a
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      href="/feed"
+    >
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <div
+          class="size-6"
+          data-testid="home-icon"
+        >
+          Home
+        </div>
+      </button>
+    </a>
+    <a
+      class="sm:hidden"
+      href="/search"
+    >
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <div
+          class="size-6"
+          data-testid="search-icon"
+        >
+          Search
+        </div>
+      </button>
+    </a>
+    <a
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      href="/bookmarks"
+    >
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <div
+          class="size-6"
+          data-testid="bookmark-icon"
+        >
+          Bookmark
+        </div>
+      </button>
+    </a>
+    <a
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      href="/settings"
+    >
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <div
+          class="size-6"
+          data-testid="settings-icon"
+        >
+          Settings
+        </div>
+      </button>
+    </a>
+    <a
+      class="relative"
+      href="/profile"
+    >
+      <span
+        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12"
+      >
+        <span
+          class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        >
+          TU
+        </span>
+      </span>
+    </a>
   </div>
 </div>
 `;
 
-exports[`Header - Snapshots > matches snapshots for HeaderSignIn 2`] = `
+exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 1`] = `
 <div
-  class="flex-1 flex-row items-center justify-end gap-3"
+  class="mx-auto w-full flex-col flex hidden md:flex flex-row justify-end gap-6 mr-6"
   data-testid="container"
 >
-  <div
-    data-testid="search-input"
+  <a
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+    href="https://github.com"
+    target="_blank"
   >
-    Search Input
-  </div>
-  <div
-    data-testid="navigation-buttons"
+    <div
+      class="w-6 h-6"
+      data-testid="github-icon"
+    >
+      Github
+    </div>
+  </a>
+  <a
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+    href="https://twitter.com/getpubky"
+    target="_blank"
   >
-    Navigation Buttons
-  </div>
+    <div
+      class="w-6 h-6"
+      data-testid="twitter-icon"
+    >
+      Twitter
+    </div>
+  </a>
+  <a
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
+    href="https://t.me/getpubky"
+    target="_blank"
+  >
+    <div
+      class="w-6 h-6"
+      data-testid="telegram-icon"
+    >
+      Telegram
+    </div>
+  </a>
+</div>
+`;
+
+exports[`Header Components - Snapshots > matches snapshot for HeaderTitle 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-1 hidden md:flex"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-bold text-foreground text-muted-foreground font-normal"
+    data-testid="heading-2"
+  >
+    Test Title
+  </h2>
 </div>
 `;

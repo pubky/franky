@@ -16,7 +16,7 @@ exports[`Dialog - Snapshots > matched snapshot for DialogContent with default pr
       Dialog Content
     </div>
     <button
-      class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer"
+      class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer outline-none focus:outline-none"
       data-testid="dialog-close"
     >
       <div
@@ -61,7 +61,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with close butt
       Dialog Content
     </div>
     <button
-      class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer"
+      class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer outline-none focus:outline-none"
       data-testid="dialog-close"
     >
       <div
@@ -210,7 +210,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
         </button>
       </div>
       <button
-        class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer"
+        class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer outline-none focus:outline-none"
         data-testid="dialog-close"
       >
         <div

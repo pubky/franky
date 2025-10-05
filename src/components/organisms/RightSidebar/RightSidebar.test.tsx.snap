@@ -1,0 +1,82 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`RightSidebar - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start custom-sidebar"
+  data-testid="right-sidebar"
+>
+  <div
+    data-testid="who-to-follow"
+  >
+    Who to Follow
+  </div>
+  <div
+    data-testid="active-users"
+  >
+    Active Users
+  </div>
+  <div
+    class="self-start sticky top-[100px]"
+  >
+    <div
+      data-testid="feedback-card"
+    >
+      Feedback Card
+    </div>
+  </div>
+</div>
+`;
+
+exports[`RightSidebar - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start"
+  data-testid="right-sidebar"
+>
+  <div
+    data-testid="who-to-follow"
+  >
+    Who to Follow
+  </div>
+  <div
+    data-testid="active-users"
+  >
+    Active Users
+  </div>
+  <div
+    class="self-start sticky top-[100px]"
+  >
+    <div
+      data-testid="feedback-card"
+    >
+      Feedback Card
+    </div>
+  </div>
+</div>
+`;
+
+exports[`RightSidebar - Snapshots > matches snapshot with different styling 1`] = `
+<div
+  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start bg-secondary/10 border-l border-border"
+  data-testid="right-sidebar"
+>
+  <div
+    data-testid="who-to-follow"
+  >
+    Who to Follow
+  </div>
+  <div
+    data-testid="active-users"
+  >
+    Active Users
+  </div>
+  <div
+    class="self-start sticky top-[100px]"
+  >
+    <div
+      data-testid="feedback-card"
+    >
+      Feedback Card
+    </div>
+  </div>
+</div>
+`;

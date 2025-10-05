@@ -1,5 +1,10 @@
 import * as Core from '@/core';
 
+export enum STREAM_PREFIX {
+  POSTS = 'stream/posts',
+  POSTS_BY_IDS = 'stream/posts/by_ids',
+}
+
 export enum StreamSource {
   ALL = 'all',
   FOLLOWING = 'following',
@@ -9,11 +14,6 @@ export enum StreamSource {
   REPLIES = 'replies',
   AUTHOR = 'author',
   AUTHOR_REPLIES = 'author_replies',
-}
-
-export enum StreamSorting {
-  TIMELINE = 'timeline',
-  ENGAGEMENT = 'total_engagement',
 }
 
 export enum StreamKind {
@@ -30,19 +30,20 @@ export enum StreamOrder {
   DESCENDING = 'descending',
 }
 
-// Base parameters that are always optional
-export type TStreamBase = {
-  // The content viewer (for personalization like bookmarks, relationships)
-  viewer_id?: Core.Pubky;
-  sorting?: StreamSorting;
-  order?: StreamOrder;
-  tags?: string[]; // Max 5 tags
-  kind?: StreamKind;
-  skip?: number;
-  limit?: number;
-  start?: number;
-  end?: number;
+export type TStreamAuthorId = {
+  author_id: Core.Pubky;
 };
+
+// Base parameters that are always optional
+export type TStreamBase = Core.TPaginationParams &
+  Core.TPaginationRangeParams & {
+    // The content viewer (for personalization like bookmarks, relationships)
+    viewer_id?: Core.Pubky;
+    sorting?: Core.StreamSorting;
+    order?: StreamOrder;
+    tags?: string[]; // Max 5 tags
+    kind?: StreamKind;
+  };
 
 // Specific parameter types for each source
 export type TStreamWithObserverParams = TStreamBase & {
@@ -50,18 +51,14 @@ export type TStreamWithObserverParams = TStreamBase & {
   observer_id: Core.Pubky;
 };
 
-export type TStreamPostRepliesParams = TStreamBase & {
-  author_id: Core.Pubky;
-  post_id: Core.Pubky;
-};
+export type TStreamPostRepliesParams = TStreamBase &
+  TStreamAuthorId & {
+    post_id: string;
+  };
 
-export type TStreamAuthorParams = TStreamBase & {
-  author_id: Core.Pubky;
-};
+export type TStreamAuthorParams = TStreamBase & TStreamAuthorId;
 
-export type TStreamAuthorRepliesParams = TStreamBase & {
-  author_id: Core.Pubky;
-};
+export type TStreamAuthorRepliesParams = TStreamBase & TStreamAuthorId;
 
 export type TStreamAllParams = TStreamBase;
 
@@ -70,3 +67,11 @@ export type TStreamPostsByIdsParams = {
   post_ids: string[]; // Required array of post IDs
   viewer_id?: Core.Pubky; // Optional viewer ID
 };
+
+export type TStreamQueryParams =
+  | Core.TStreamWithObserverParams
+  | Core.TStreamPostRepliesParams
+  | Core.TStreamAuthorParams
+  | Core.TStreamAuthorRepliesParams
+  | Core.TStreamAllParams
+  | Core.TStreamPostsByIdsParams;

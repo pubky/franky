@@ -12,14 +12,8 @@ exports[`DialogExport - Snapshots > matches snapshot for DialogExport with mnemo
       class="gap-2"
       data-testid="button"
     >
-      <div
-        class="h-4 w-4"
-        data-testid="scan-icon"
-      >
-        Scan
-      </div>
       <span>
-        Export recovery phrase
+        Continue
       </span>
     </button>
   </div>
@@ -136,14 +130,8 @@ exports[`DialogExport - Snapshots > matches snapshot for DialogExport with speci
       class="gap-2"
       data-testid="button"
     >
-      <div
-        class="h-4 w-4"
-        data-testid="scan-icon"
-      >
-        Scan
-      </div>
       <span>
-        Export recovery phrase
+        Continue
       </span>
     </button>
   </div>
@@ -260,14 +248,8 @@ exports[`DialogExport - Snapshots > matches snapshot for default DialogExport 1`
       class="gap-2"
       data-testid="button"
     >
-      <div
-        class="h-4 w-4"
-        data-testid="scan-icon"
-      >
-        Scan
-      </div>
       <span>
-        Export to Pubky Ring
+        Continue
       </span>
     </button>
   </div>

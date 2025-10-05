@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterSort, type SortTab } from './FilterSort';
+import { SORT } from '@/core/stores/filters/filters.types';
 
 vi.mock('@/libs', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
@@ -95,7 +96,7 @@ describe('FilterSort', () => {
   });
 
   it('renders with custom selected tab', () => {
-    render(<FilterSort selectedTab="popularity" />);
+    render(<FilterSort selectedTab={SORT.POPULARITY} />);
 
     const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
     expect(popularityItem).toMatchSnapshot();
@@ -112,7 +113,7 @@ describe('FilterSort', () => {
   });
 
   it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterSort selectedTab="recent" />);
+    render(<FilterSort selectedTab={SORT.RECENT} />);
 
     const recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     const popularityItem2 = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
@@ -136,7 +137,7 @@ describe('FilterSort', () => {
   });
 
   it('applies correct styling classes', () => {
-    render(<FilterSort selectedTab="recent" />);
+    render(<FilterSort selectedTab={SORT.RECENT} />);
 
     const recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
@@ -159,7 +160,7 @@ describe('FilterSort', () => {
 
   it('handles tab switching correctly', () => {
     const mockOnTabChange = vi.fn();
-    render(<FilterSort selectedTab="recent" onTabChange={mockOnTabChange} />);
+    render(<FilterSort selectedTab={SORT.RECENT} onTabChange={mockOnTabChange} />);
 
     // Click on popularity tab
     const popularityElement = screen.getByText('Popularity');

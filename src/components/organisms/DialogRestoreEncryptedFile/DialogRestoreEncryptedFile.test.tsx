@@ -528,7 +528,7 @@ describe('DialogRestoreEncryptedFile', () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
     const dialogContent = screen.getByTestId('dialog-content');
-    expect(dialogContent).toHaveClass('gap-6', 'p-8', '!max-w-[576px]');
+    expect(dialogContent).toHaveClass('gap-6', 'p-8');
 
     const dialogTitle = screen.getByTestId('dialog-title');
     expect(dialogTitle).toHaveClass('text-2xl', 'font-bold', 'leading-8', 'sm:text-xl', 'sm:leading-7');

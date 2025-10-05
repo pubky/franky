@@ -1,5 +1,11 @@
 import * as Core from '@/core';
 
+export enum USER_STREAM_PREFIX {
+  USERS = 'stream/users',
+  USERNAME = 'stream/users/username',
+  USERS_BY_IDS = 'stream/users/by_ids',
+}
+
 export enum UserStreamSource {
   FOLLOWERS = 'followers',
   FOLLOWING = 'following',
@@ -11,48 +17,29 @@ export enum UserStreamSource {
   MOST_FOLLOWED = 'most_followed',
 }
 
-// The target reach of the source. Supported just for 'influencers' source
-// e.g. "source=influencers&reach=followers" will return influencers with followers reach
-export enum UserStreamReach {
-  FOLLOWERS = 'followers',
-  FOLLOWING = 'following',
-  FRIENDS = 'friends',
-  WOT = 'wot',
-}
-
-export enum UserStreamTimeframe {
-  TODAY = 'today',
-  THIS_MONTH = 'this_month',
-  ALL_TIME = 'all_time',
-}
-
-export type TUserStreamBase = {
+export type TUserStreamBase = Core.TPaginationParams & {
   viewer_id?: Core.Pubky;
-  skip?: number;
-  limit?: number;
   // Provide a random selection of size 3 for sources supporting preview. Passing 'preview', ignores skip and limit parameters
   preview?: boolean;
 };
 
-export type TUserStreamWithUserIdParams = TUserStreamBase & {
-  user_id: Core.Pubky;
-};
+export type TUserStreamWithUserIdParams = Core.TUserId & TUserStreamBase;
 
-export type TUserStreamInfluencersParams = TUserStreamBase & {
-  user_id: Core.Pubky;
-  reach?: UserStreamReach;
-  timeframe?: UserStreamTimeframe;
-};
+export type TUserStreamInfluencersParams = TUserStreamBase &
+  Core.TUserId & {
+    reach?: Core.UserStreamReach;
+    timeframe?: Core.UserStreamTimeframe;
+  };
 
 export type TUserStreamPostRepliesParams = TUserStreamBase & {
   author_id: Core.Pubky;
-  post_id: Core.Pubky;
+  post_id: string;
 };
 
-export type TUserStreamWithDepthParams = TUserStreamBase & {
-  user_id: Core.Pubky;
-  depth?: number;
-};
+export type TUserStreamWithDepthParams = TUserStreamBase &
+  Core.TUserId & {
+    depth?: number;
+  };
 
 export type TUserStreamUsernameParams = Omit<TUserStreamBase, 'preview'> & {
   username: string;
@@ -63,3 +50,15 @@ export type TUserStreamUsersByIdsParams = {
   viewer_id?: Core.Pubky;
   depth?: number;
 };
+
+/**
+ * Union type of all supported user stream parameter shapes
+ * Provides type safety for buildUserStreamUrl function
+ */
+export type TUserStreamQueryParams =
+  | TUserStreamWithUserIdParams
+  | TUserStreamInfluencersParams
+  | TUserStreamPostRepliesParams
+  | TUserStreamWithDepthParams
+  | TUserStreamBase
+  | TUserStreamUsernameParams;

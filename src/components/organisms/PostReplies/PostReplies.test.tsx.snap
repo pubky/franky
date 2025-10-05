@@ -1,0 +1,180 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostReplies > renders snapshot with malformed reply IDs 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-4"
+    data-testid="container"
+  >
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-malformed-id-without-colon"
+          style="cursor: pointer;"
+        >
+          Post 
+          malformed-id-without-colon
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-:reply1"
+          style="cursor: pointer;"
+        >
+          Post 
+          :reply1
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-author1:"
+          style="cursor: pointer;"
+        >
+          Post 
+          author1:
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostReplies > renders snapshot with multiple replies 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-4"
+    data-testid="container"
+  >
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-author1:reply1"
+          style="cursor: pointer;"
+        >
+          Post 
+          author1:reply1
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-author2:reply2"
+          style="cursor: pointer;"
+        >
+          Post 
+          author2:reply2
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-author3:reply3"
+          style="cursor: pointer;"
+        >
+          Post 
+          author3:reply3
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostReplies > renders snapshot with single reply 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-4"
+    data-testid="container"
+  >
+    <div
+      class="flex gap-4"
+    >
+      <div
+        class="w-8 flex-shrink-0"
+      />
+      <div
+        class="flex-1"
+      >
+        <div
+          data-clickable="true"
+          data-reply="true"
+          data-testid="post-author1:reply1"
+          style="cursor: pointer;"
+        >
+          Post 
+          author1:reply1
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostReplies > renders snapshot without replies 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-4"
+    data-testid="container"
+  />
+</div>
+`;

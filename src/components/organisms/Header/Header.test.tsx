@@ -5,14 +5,74 @@ import * as App from '@/app';
 
 // Mock Next.js navigation
 const mockUsePathname = vi.fn();
+const mockUseRouter = vi.fn();
 vi.mock('next/navigation', () => ({
   usePathname: () => mockUsePathname(),
+  useRouter: () => mockUseRouter(),
 }));
 
 // Mock Core
 const mockUseProfileStore = vi.fn();
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(() => ({ name: 'Test User', image: 'test-image.jpg' })),
+}));
+
+// Mock atoms, libs, config, and app
+vi.mock('@/atoms', () => ({
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div className={className}>{children}</div>
+  ),
+  Button: ({ children, onClick, variant }: { children: React.ReactNode; onClick?: () => void; variant?: string }) => (
+    <button onClick={onClick} data-variant={variant}>
+      {children}
+    </button>
+  ),
+  Link: ({ children, href }: { children: React.ReactNode; href?: string }) => <a href={href}>{children}</a>,
+  Avatar: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  AvatarImage: ({ src }: { src?: string }) => <img src={src} alt="avatar" />,
+  AvatarFallback: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+  Badge: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  Typography: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
+}));
+
+vi.mock('@/libs', () => ({
+  LogIn: () => <div>LogIn</div>,
+  extractInitials: ({ name }: { name?: string }) => (name ? name.charAt(0).toUpperCase() : 'U'),
+  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+  Home: () => <div>Home</div>,
+  Search: () => <div>Search</div>,
+  Bookmark: () => <div>Bookmark</div>,
+  Settings: () => <div>Settings</div>,
+}));
+
+vi.mock('@/config', () => ({
+  GITHUB_URL: 'https://github.com',
+  TWITTER_GETPUBKY_URL: 'https://twitter.com',
+  TELEGRAM_URL: 'https://telegram.com',
+}));
+
+vi.mock('@/app', () => ({
+  AUTH_ROUTES: { SIGN_IN: '/sign-in', LOGOUT: '/logout' },
+  FEED_ROUTES: { FEED: '/feed' },
+  ROOT_ROUTES: '/',
+  ONBOARDING_ROUTES: {
+    INSTALL: '/onboarding/install',
+    SCAN: '/onboarding/scan',
+    PUBKY: '/onboarding/pubky',
+    BACKUP: '/onboarding/backup',
+    HOMESERVER: '/onboarding/homeserver',
+    PROFILE: '/onboarding/profile',
+  },
+}));
+
 vi.mock('@/core', () => ({
   useAuthStore: () => mockUseProfileStore(),
+  db: {
+    user_details: {
+      get: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
+    },
+  },
 }));
 
 // Mock molecules
@@ -31,8 +91,13 @@ vi.mock('@/molecules', () => ({
       Onboarding Step {currentStep}
     </div>
   ),
-  HeaderHome: () => <div data-testid="home-header">Home Header</div>,
-  HeaderSignIn: () => <div data-testid="sign-in-header">Sign In Header</div>,
+  HeaderSocialLinks: () => <div data-testid="header-social-links">Social Links</div>,
+  HeaderNavigationButtons: ({ avatarImage, avatarInitial }: { avatarImage?: string; avatarInitial?: string }) => (
+    <div data-testid="header-navigation-buttons" data-avatar-image={avatarImage} data-avatar-initial={avatarInitial}>
+      Navigation Buttons
+    </div>
+  ),
+  SearchInput: () => <div data-testid="search-input">Search Input</div>,
 }));
 
 describe('Header', () => {
@@ -41,6 +106,7 @@ describe('Header', () => {
     // Default mock return values
     mockUseProfileStore.mockReturnValue({ isAuthenticated: false });
     mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
+    mockUseRouter.mockReturnValue({ push: vi.fn() });
   });
 
   it('renders header container with logo and home header', () => {
@@ -50,7 +116,9 @@ describe('Header', () => {
 
     expect(screen.getByTestId('header-container')).toBeInTheDocument();
     expect(screen.getByTestId('logo')).toBeInTheDocument();
-    expect(screen.getByTestId('home-header')).toBeInTheDocument();
+    // HeaderHome renders social links and sign in button
+    expect(screen.getByTestId('header-social-links')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
   });
 
   it('shows home header for non-onboarding paths', () => {
@@ -58,7 +126,9 @@ describe('Header', () => {
 
     render(<Header />);
 
-    expect(screen.getByTestId('home-header')).toBeInTheDocument();
+    // HeaderHome renders social links and sign in button
+    expect(screen.getByTestId('header-social-links')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
     expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
   });
 
@@ -68,7 +138,7 @@ describe('Header', () => {
     render(<Header />);
 
     expect(screen.getByTestId('onboarding-header')).toBeInTheDocument();
-    expect(screen.queryByTestId('home-header')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /sign in/i })).not.toBeInTheDocument();
   });
 
   it('displays correct step for install path', () => {
@@ -116,7 +186,7 @@ describe('Header', () => {
 
     render(<Header />);
 
-    expect(screen.getByTestId('home-header')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
@@ -133,7 +203,7 @@ describe('Header', () => {
     mockUsePathname.mockReturnValue(App.ROOT_ROUTES);
     rerender(<Header />);
 
-    expect(screen.getByTestId('home-header')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
     expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
   });
 
@@ -151,7 +221,7 @@ describe('Header', () => {
       const { rerender } = render(<Header />);
 
       expect(screen.getByTestId('onboarding-header')).toBeInTheDocument();
-      expect(screen.queryByTestId('home-header')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /sign in/i })).not.toBeInTheDocument();
 
       rerender(<></>); // Clear for next iteration
     });
@@ -166,7 +236,7 @@ describe('Header', () => {
 
       const { rerender } = render(<Header />);
 
-      expect(screen.getByTestId('home-header')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
       expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
 
       rerender(<></>); // Clear for next iteration
@@ -180,8 +250,9 @@ describe('Header', () => {
 
       render(<Header />);
 
-      expect(screen.getByTestId('sign-in-header')).toBeInTheDocument();
-      expect(screen.queryByTestId('home-header')).not.toBeInTheDocument();
+      // HeaderSignIn renders search input and navigation buttons
+      expect(screen.getByTestId('search-input')).toBeInTheDocument();
+      expect(screen.getByTestId('header-navigation-buttons')).toBeInTheDocument();
       expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
     });
 
@@ -191,8 +262,8 @@ describe('Header', () => {
 
       render(<Header />);
 
-      expect(screen.getByTestId('home-header')).toBeInTheDocument();
-      expect(screen.queryByTestId('sign-in-header')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+      expect(screen.queryByTestId('search-input')).not.toBeInTheDocument();
       expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
     });
 
@@ -211,8 +282,8 @@ describe('Header', () => {
 
       render(<Header />);
 
-      expect(screen.getByTestId('home-header')).toBeInTheDocument();
-      expect(screen.queryByTestId('sign-in-header')).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+      expect(screen.queryByTestId('search-input')).not.toBeInTheDocument();
     });
 
     it('prioritizes onboarding header over authentication state', () => {
@@ -222,8 +293,8 @@ describe('Header', () => {
       render(<Header />);
 
       expect(screen.getByTestId('onboarding-header')).toBeInTheDocument();
-      expect(screen.queryByTestId('sign-in-header')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('home-header')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('search-input')).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /sign in/i })).not.toBeInTheDocument();
     });
   });
 
@@ -253,7 +324,7 @@ describe('Header', () => {
 
       render(<Header />);
 
-      expect(screen.getByTestId('home-header')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
       expect(screen.getByTestId('logo')).toBeInTheDocument();
       expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
     });
@@ -264,7 +335,7 @@ describe('Header', () => {
       render(<Header />);
 
       // Since logout is not an onboarding path, it should show HomeHeader
-      expect(screen.getByTestId('home-header')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
       expect(screen.queryByTestId('onboarding-header')).not.toBeInTheDocument();
     });
   });
@@ -404,14 +475,14 @@ describe('Header', () => {
 
       const { rerender } = render(<Header />);
 
-      expect(screen.getByTestId('home-header')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
 
       // Change authentication state
       mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
       rerender(<Header />);
 
-      expect(screen.getByTestId('sign-in-header')).toBeInTheDocument();
-      expect(screen.queryByTestId('home-header')).not.toBeInTheDocument();
+      expect(screen.getByTestId('search-input')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /sign in/i })).not.toBeInTheDocument();
     });
 
     it('updates path configuration when pathname changes', () => {

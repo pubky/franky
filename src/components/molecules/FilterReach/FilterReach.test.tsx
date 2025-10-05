@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterReach, type ReachTab } from './FilterReach';
+import { REACH } from '@/core/stores/filters/filters.types';
 
 vi.mock('@/libs', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
@@ -95,7 +96,7 @@ describe('FilterReach', () => {
   });
 
   it('renders with custom selected tab', () => {
-    render(<FilterReach selectedTab="following" />);
+    render(<FilterReach selectedTab={REACH.FOLLOWING} />);
 
     const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
     expect(followingItem).toMatchSnapshot();
@@ -112,7 +113,7 @@ describe('FilterReach', () => {
   });
 
   it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterReach selectedTab="me" />);
+    render(<FilterReach selectedTab={REACH.ME} />);
 
     const meItem = screen.getByText('Me').closest('[data-testid="filter-item"]');
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
@@ -138,7 +139,7 @@ describe('FilterReach', () => {
   });
 
   it('applies correct styling classes', () => {
-    render(<FilterReach selectedTab="all" />);
+    render(<FilterReach selectedTab={REACH.ALL} />);
 
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
     const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');

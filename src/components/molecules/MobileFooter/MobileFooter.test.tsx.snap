@@ -1,0 +1,283 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MobileFooter - Snapshots > matches snapshot for navigation links 1`] = `
+<a
+  class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+  href="/feed"
+>
+  <div
+    class="h-6 w-6"
+    data-testid="home-icon"
+  >
+    Home
+  </div>
+</a>
+`;
+
+exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
+<a
+  class="flex-shrink-0 relative"
+  href="/profile"
+>
+  <div
+    class="h-12 w-12"
+    data-testid="avatar"
+  >
+    <img
+      alt="Profile"
+      data-testid="avatar-image"
+      src="https://i.pravatar.cc/150?img=68"
+    />
+    <div
+      data-testid="avatar-fallback"
+    >
+      <div
+        class="h-5 w-5"
+        data-testid="user-icon"
+      >
+        User
+      </div>
+    </div>
+  </div>
+</a>
+`;
+
+exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="pb-20 flex justify-center lg:hidden custom-footer"
+>
+  <div
+    class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
+  >
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+      href="/feed"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/search"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/bookmarks"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/settings"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </a>
+    <a
+      class="flex-shrink-0 relative"
+      href="/profile"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Profile"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=68"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          <div
+            class="h-5 w-5"
+            data-testid="user-icon"
+          >
+            User
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="pb-20 flex justify-center lg:hidden"
+>
+  <div
+    class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
+  >
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+      href="/feed"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/search"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/bookmarks"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/settings"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </a>
+    <a
+      class="flex-shrink-0 relative"
+      href="/profile"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Profile"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=68"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          <div
+            class="h-5 w-5"
+            data-testid="user-icon"
+          >
+            User
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`MobileFooter - Snapshots > matches snapshot with different active path 1`] = `
+<div
+  class="pb-20 flex justify-center lg:hidden"
+>
+  <div
+    class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
+  >
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/feed"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="home-icon"
+      >
+        Home
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+      href="/search"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="search-icon"
+      >
+        Search
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/bookmarks"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="bookmark-icon"
+      >
+        Bookmark
+      </div>
+    </a>
+    <a
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/settings"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="settings-icon"
+      >
+        Settings
+      </div>
+    </a>
+    <a
+      class="flex-shrink-0 relative"
+      href="/profile"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="Profile"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=68"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          <div
+            class="h-5 w-5"
+            data-testid="user-icon"
+          >
+            User
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+`;

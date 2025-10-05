@@ -22,6 +22,9 @@ export function useAuthActions() {
         authStore.setAuthenticated(true);
         authStore.setSession(null);
 
+        // Set welcome dialog to show for new users
+        onboardingStore.setShowWelcomeDialog(true);
+
         // Redirect to feed after successful profile creation
         router.push(App.FEED_ROUTES.FEED);
 
@@ -31,7 +34,7 @@ export function useAuthActions() {
         return { success: false, error };
       }
     },
-    [onboardingStore.pubky, authStore, router],
+    [authStore, router, onboardingStore],
   );
 
   // Logout user completely

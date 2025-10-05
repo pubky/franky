@@ -20,7 +20,7 @@ exports[`Filter Components > FilterHeader > renders with title 1`] = `
 
 exports[`Filter Components > FilterItem > applies custom className 1`] = `
 <p
-  class="cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground custom-item"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 custom-item"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -33,7 +33,7 @@ exports[`Filter Components > FilterItem > applies custom className 1`] = `
 
 exports[`Filter Components > FilterItem > renders as selected 1`] = `
 <p
-  class="cursor-pointer flex gap-2 text-base font-medium text-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -46,7 +46,7 @@ exports[`Filter Components > FilterItem > renders as selected 1`] = `
 
 exports[`Filter Components > FilterItem > renders as unselected 1`] = `
 <p
-  class="cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -59,7 +59,7 @@ exports[`Filter Components > FilterItem > renders as unselected 1`] = `
 
 exports[`Filter Components > FilterItem > renders with default props 1`] = `
 <p
-  class="cursor-pointer flex gap-2 text-base font-medium text-muted-foreground hover:text-secondary-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"

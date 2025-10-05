@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterContent, type ContentTab } from './FilterContent';
+import { CONTENT } from '@/core/stores/filters/filters.types';
 
 vi.mock('@/libs', () => ({
   cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
@@ -96,7 +97,7 @@ describe('FilterContent', () => {
   });
 
   it('renders with custom selected tab', () => {
-    render(<FilterContent selectedTab="videos" />);
+    render(<FilterContent selectedTab={CONTENT.VIDEOS} />);
 
     const videosItem = screen.getByText('Videos').closest('[data-testid="filter-item"]');
     expect(videosItem).toMatchSnapshot();
@@ -111,7 +112,7 @@ describe('FilterContent', () => {
   });
 
   it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterContent selectedTab="posts" />);
+    render(<FilterContent selectedTab={CONTENT.POSTS} />);
 
     const postsItem = screen.getByText('Posts').closest('[data-testid="filter-item"]');
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
@@ -148,7 +149,7 @@ describe('FilterContent', () => {
   });
 
   it('applies correct styling classes', () => {
-    render(<FilterContent selectedTab="all" />);
+    render(<FilterContent selectedTab={CONTENT.ALL} />);
 
     const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
     const postsItem = screen.getByText('Posts').closest('[data-testid="filter-item"]');
@@ -171,7 +172,7 @@ describe('FilterContent', () => {
 
   it('handles tab switching correctly', () => {
     const onTabChange = vi.fn();
-    render(<FilterContent selectedTab="all" onTabChange={onTabChange} />);
+    render(<FilterContent selectedTab={CONTENT.ALL} onTabChange={onTabChange} />);
 
     // Click on articles tab
     fireEvent.click(screen.getByText('Articles'));

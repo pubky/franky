@@ -3,7 +3,7 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as Core from '@/core';
 
-import { StreamModelSchema, streamTableSchema } from '@/core/models/stream/stream.schema';
+import { PostStreamModelSchema, postStreamTableSchema } from '@/core/models/stream/post/postStream.schema';
 import { userDetailsTableSchema } from '@/core/models/user/details/userDetails.schema';
 import { userCountsTableSchema } from '@/core/models/user/counts/userCounts.schema';
 import { userRelationshipsTableSchema } from '@/core/models/user/relationships/userRelationships.schema';
@@ -14,6 +14,8 @@ import { postDetailsTableSchema } from '@/core/models/post/details/postDetails.s
 import { postRelationshipsTableSchema } from '@/core/models/post/relationships/postRelationships.schema';
 import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
+import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
+import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
 
 class AppDatabase extends Dexie {
   // User
@@ -30,8 +32,9 @@ class AppDatabase extends Dexie {
   post_tags!: Dexie.Table<Core.TagCollectionModelSchema<string>>;
   post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
   // Streams
-  streams!: Dexie.Table<StreamModelSchema>;
-
+  post_streams!: Dexie.Table<PostStreamModelSchema>;
+  user_streams!: Dexie.Table<UserStreamModelSchema>;
+  tag_streams!: Dexie.Table<TagStreamModelSchema>;
   constructor() {
     super(Config.DB_NAME);
 
@@ -51,7 +54,9 @@ class AppDatabase extends Dexie {
         post_tags: tagCollectionTableSchema,
         post_ttl: postTtlTableSchema,
         // Streams
-        streams: streamTableSchema,
+        post_streams: postStreamTableSchema,
+        user_streams: userStreamTableSchema,
+        tag_streams: tagStreamTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(

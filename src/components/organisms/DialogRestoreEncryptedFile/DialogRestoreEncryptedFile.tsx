@@ -90,7 +90,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           <span>Use encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8 !max-w-[576px]">
+      <Atoms.DialogContent className="gap-6 p-8">
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
           <Atoms.DialogTitle className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
             Restore with encrypted file
@@ -108,10 +108,10 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Label>
 
             <Atoms.Container
-              className="relative border-2 border-dashed border-border rounded-lg p-6 flex items-center justify-between bg-card/50 hover:bg-card/80 transition-colors cursor-pointer flex-row"
+              className="relative border-2 border-dashed border-border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-card/80 transition-colors cursor-pointer flex-row"
               onClick={handleFileSelect}
             >
-              <span className="text-foreground font-medium">
+              <span className={`font-medium ${selectedFile?.name ? 'text-foreground' : 'text-muted-foreground'}`}>
                 {selectedFile ? selectedFile.name : 'encryptedfile.pkarr'}
               </span>
               <Atoms.Button
@@ -175,7 +175,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           <DialogClose asChild>
             <Atoms.Button
               variant="outline"
-              className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+              className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               onClick={handleReset}
               disabled={isRestoring}
             >
@@ -184,7 +184,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           </DialogClose>
           <Atoms.Button
             id="encrypted-file-restore-btn"
-            className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+            className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={handleRestore}
             disabled={!selectedFile || !password || isRestoring}
           >

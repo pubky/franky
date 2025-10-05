@@ -65,8 +65,8 @@ function FilterItem({
       data-testid="filter-item"
       data-selected={isSelected ? 'true' : 'false'}
       className={Libs.cn(
-        'cursor-pointer flex gap-2 text-base font-medium',
-        isSelected ? 'text-foreground' : 'text-muted-foreground hover:text-secondary-foreground',
+        'cursor-pointer flex gap-2 items-center text-base font-medium transition-colors',
+        isSelected ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80',
         className,
       )}
       size="sm"
