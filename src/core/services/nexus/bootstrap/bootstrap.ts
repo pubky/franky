@@ -10,7 +10,9 @@ export class NexusBootstrapService {
       // Persist fetched data in the database
       await this.persistUsers(users);
       await this.persistPosts(posts);
-      await Core.StreamModel.create(Core.StreamTypes.TIMELINE_ALL, null, list.stream);
+      await Core.PostStreamModel.create(Core.PostStreamTypes.TIMELINE_ALL, null, list.stream);
+      await Core.UserStreamModel.create(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, list.influencers);
+      await Core.UserStreamModel.create(Core.UserStreamTypes.RECOMMENDED, list.recommended);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
       // Handle network/fetch errors

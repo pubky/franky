@@ -19,7 +19,7 @@ const envSchema = z.object({
     .string()
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive())
-    .default('1')
+    .default('2')
     .transform((val) => (typeof val === 'string' ? parseInt(val, 10) : val)),
 
   NEXT_PUBLIC_DEBUG_MODE: z
