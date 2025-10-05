@@ -24,7 +24,7 @@ export class PostStreamModel implements PostStreamModelSchema {
   async save(): Promise<void> {
     try {
       await PostStreamModel.table.put(this);
-      Libs.Logger.debug('Stream saved successfully', { streamId: this.id });
+      Libs.Logger.debug('PostStream saved successfully', { streamId: this.id });
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.SAVE_FAILED,
@@ -38,7 +38,7 @@ export class PostStreamModel implements PostStreamModelSchema {
   async delete(): Promise<void> {
     try {
       await PostStreamModel.table.delete(this.id);
-      Libs.Logger.debug('Stream deleted successfully', { streamId: this.id });
+      Libs.Logger.debug('PostStream deleted successfully', { streamId: this.id });
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.DELETE_FAILED,
@@ -75,7 +75,7 @@ export class PostStreamModel implements PostStreamModelSchema {
       const stream = new PostStreamModel(streamData);
       await stream.save();
 
-      Libs.Logger.debug('Stream created successfully', { streamId: id, name });
+      Libs.Logger.debug('PostStream created successfully', { streamId: id, name });
       return stream;
     } catch (error) {
       throw Libs.createDatabaseError(
@@ -90,7 +90,7 @@ export class PostStreamModel implements PostStreamModelSchema {
   static async deleteById(id: PostStreamTypes): Promise<void> {
     try {
       await PostStreamModel.table.delete(id);
-      Libs.Logger.debug('Stream deleted by ID', { streamId: id });
+      Libs.Logger.debug('PostStream deleted by ID', { streamId: id });
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.DELETE_FAILED,
