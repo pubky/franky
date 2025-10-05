@@ -6,4 +6,4 @@ export interface PostStreamModelSchema extends BaseStreamModelSchema<PostStreamT
 }
 
 // Schema for Dexie table
-export const postStreamTableSchema = '&id, name, *posts';
+export const postStreamTableSchema = '&id, name, *stream';

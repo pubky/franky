@@ -4,4 +4,4 @@ import { UserStreamTypes } from './userStream.types';
 export type UserStreamModelSchema = BaseStreamModelSchema<UserStreamTypes, Pubky>;
 
 // Schema for Dexie table
-export const userStreamTableSchema = '&id, *users';
+export const userStreamTableSchema = '&id, *stream';
