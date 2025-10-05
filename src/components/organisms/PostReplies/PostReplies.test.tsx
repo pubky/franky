@@ -55,30 +55,40 @@ describe('PostReplies', () => {
     });
   });
 
-  it('renders without replies', () => {
+  it('renders snapshot without replies', () => {
     mockUseLiveQuery
       .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
       .mockReturnValueOnce([]); // replyIds
 
-    render(<PostReplies postId="test-post-id" />);
-
-    expect(screen.getByTestId('container')).toBeInTheDocument();
-    expect(screen.queryByTestId(/post-/)).not.toBeInTheDocument();
+    const { container } = render(<PostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
   });
 
-  it('renders replies when available', () => {
+  it('renders snapshot with single reply', () => {
     mockUseLiveQuery
       .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
-      .mockReturnValueOnce(['author1:reply1', 'author2:reply2']); // replyIds
+      .mockReturnValueOnce(['author1:reply1']); // replyIds
 
-    render(<PostReplies postId="test-post-id" />);
+    const { container } = render(<PostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
+  });
 
-    expect(screen.getByTestId('post-author1:reply1')).toBeInTheDocument();
-    expect(screen.getByTestId('post-author2:reply2')).toBeInTheDocument();
+  it('renders snapshot with multiple replies', () => {
+    mockUseLiveQuery
+      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
+      .mockReturnValueOnce(['author1:reply1', 'author2:reply2', 'author3:reply3']); // replyIds
 
-    // Check that replies are marked as replies and clickable
-    expect(screen.getByTestId('post-author1:reply1')).toHaveAttribute('data-reply', 'true');
-    expect(screen.getByTestId('post-author1:reply1')).toHaveAttribute('data-clickable', 'true');
+    const { container } = render(<PostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('renders snapshot with malformed reply IDs', () => {
+    mockUseLiveQuery
+      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
+      .mockReturnValueOnce(['malformed-id-without-colon', ':reply1', 'author1:']); // replyIds
+
+    const { container } = render(<PostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
   });
 
   it('navigates to reply when clicked', async () => {
@@ -130,31 +140,6 @@ describe('PostReplies', () => {
     // Should not navigate when segments are empty
     await waitFor(() => {
       expect(mockPush).not.toHaveBeenCalled();
-    });
-  });
-
-  it('maintains proper structure with reply connectors', () => {
-    mockUseLiveQuery
-      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
-      .mockReturnValueOnce(['author1:reply1', 'author2:reply2']); // replyIds
-
-    render(<PostReplies postId="test-post-id" />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-4');
-
-    // Check that each reply has the proper flex structure for connectors
-    const replyContainers = container.querySelectorAll('.flex.gap-4');
-    expect(replyContainers).toHaveLength(2);
-
-    replyContainers.forEach((replyContainer) => {
-      // Check for connector space
-      const connectorSpace = replyContainer.querySelector('.w-8.flex-shrink-0');
-      expect(connectorSpace).toBeInTheDocument();
-
-      // Check for reply content area
-      const contentArea = replyContainer.querySelector('.flex-1');
-      expect(contentArea).toBeInTheDocument();
     });
   });
 });
