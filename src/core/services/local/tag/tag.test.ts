@@ -95,7 +95,7 @@ describe('LocalTagService', () => {
       await setupExistingTag('javascript', [testData.taggerPubky], true);
 
       await expect(Core.Local.Tag.save(createTagParams('javascript'))).rejects.toThrow(
-        'User already tagged this post with this label',
+        /Failed to save tag to PostTagsModel/,
       );
     });
 
@@ -143,14 +143,16 @@ describe('LocalTagService', () => {
     it('should throw error if post has no tags', async () => {
       await Core.PostTagsModel.table.clear();
 
-      await expect(Core.Local.Tag.remove(createRemoveParams('javascript'))).rejects.toThrow('Post has no tags');
+      await expect(Core.Local.Tag.remove(createRemoveParams('javascript'))).rejects.toThrow(
+        'Failed to remove tag from PostTagsModel',
+      );
     });
 
     it('should throw error if user has not tagged post with this label', async () => {
       await setupExistingTag('javascript', [testData.taggerPubky], false);
 
       await expect(Core.Local.Tag.remove(createRemoveParams('javascript'))).rejects.toThrow(
-        'User has not tagged this post with this label',
+        'Failed to remove tag from PostTagsModel',
       );
     });
 

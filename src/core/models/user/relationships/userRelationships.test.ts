@@ -51,18 +51,18 @@ describe('UserRelationshipsModel', () => {
       await Core.UserRelationshipsModel.insert(mockUserRelationshipsData);
       const result = await Core.UserRelationshipsModel.findById(testUserId1);
 
-      expect(result).toBeInstanceOf(Core.UserRelationshipsModel);
-      expect(result.id).toBe(testUserId1);
-      expect(result.following).toBe(MOCK_NEXUS_USER_RELATIONSHIP.following);
-      expect(result.followed_by).toBe(MOCK_NEXUS_USER_RELATIONSHIP.followed_by);
-      expect(result.muted).toBe(MOCK_NEXUS_USER_RELATIONSHIP.muted);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.UserRelationshipsModel);
+      expect(result!.id).toBe(testUserId1);
+      expect(result!.following).toBe(MOCK_NEXUS_USER_RELATIONSHIP.following);
+      expect(result!.followed_by).toBe(MOCK_NEXUS_USER_RELATIONSHIP.followed_by);
+      expect(result!.muted).toBe(MOCK_NEXUS_USER_RELATIONSHIP.muted);
     });
 
-    it('should throw error for non-existent user relationships', async () => {
+    it('should return null for non-existent user relationships', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserRelationshipsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in user_relationships: ${nonExistentId}`,
-      );
+      const result = await Core.UserRelationshipsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save user relationships from tuples', async () => {
@@ -78,12 +78,14 @@ describe('UserRelationshipsModel', () => {
       const userRelationships1 = await Core.UserRelationshipsModel.findById(testUserId1);
       const userRelationships2 = await Core.UserRelationshipsModel.findById(testUserId2);
 
-      expect(userRelationships1.following).toBe(true);
-      expect(userRelationships1.followed_by).toBe(false);
-      expect(userRelationships1.muted).toBe(false);
-      expect(userRelationships2.following).toBe(false);
-      expect(userRelationships2.followed_by).toBe(true);
-      expect(userRelationships2.muted).toBe(true);
+      expect(userRelationships1).not.toBeNull();
+      expect(userRelationships2).not.toBeNull();
+      expect(userRelationships1!.following).toBe(true);
+      expect(userRelationships1!.followed_by).toBe(false);
+      expect(userRelationships1!.muted).toBe(false);
+      expect(userRelationships2!.following).toBe(false);
+      expect(userRelationships2!.followed_by).toBe(true);
+      expect(userRelationships2!.muted).toBe(true);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -104,14 +106,16 @@ describe('UserRelationshipsModel', () => {
       const userRelationships2 = await Core.UserRelationshipsModel.findById(testUserId2);
 
       // User 1: mutual following, not muted
-      expect(userRelationships1.following).toBe(true);
-      expect(userRelationships1.followed_by).toBe(true);
-      expect(userRelationships1.muted).toBe(false);
+      expect(userRelationships1).not.toBeNull();
+      expect(userRelationships1!.following).toBe(true);
+      expect(userRelationships1!.followed_by).toBe(true);
+      expect(userRelationships1!.muted).toBe(false);
 
       // User 2: no following relationship, but muted
-      expect(userRelationships2.following).toBe(false);
-      expect(userRelationships2.followed_by).toBe(false);
-      expect(userRelationships2.muted).toBe(true);
+      expect(userRelationships2).not.toBeNull();
+      expect(userRelationships2!.following).toBe(false);
+      expect(userRelationships2!.followed_by).toBe(false);
+      expect(userRelationships2!.muted).toBe(true);
     });
   });
 });

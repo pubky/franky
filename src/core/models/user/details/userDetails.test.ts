@@ -60,17 +60,17 @@ describe('UserDetailsModel', () => {
       await Core.UserDetailsModel.insert(mockUserDetailsData);
       const result = await Core.UserDetailsModel.findById(testUserId1);
 
-      expect(result).toBeInstanceOf(Core.UserDetailsModel);
-      expect(result.id).toBe(testUserId1);
-      expect(result.name).toBe(MOCK_NEXUS_USER_DETAILS.name);
-      expect(result.bio).toBe(MOCK_NEXUS_USER_DETAILS.bio);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.UserDetailsModel);
+      expect(result!.id).toBe(testUserId1);
+      expect(result!.name).toBe(MOCK_NEXUS_USER_DETAILS.name);
+      expect(result!.bio).toBe(MOCK_NEXUS_USER_DETAILS.bio);
     });
 
-    it('should throw error for non-existent user details', async () => {
+    it('should return null for non-existent user details', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserDetailsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in user_details: ${nonExistentId}`,
-      );
+      const result = await Core.UserDetailsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save user details', async () => {
@@ -91,9 +91,11 @@ describe('UserDetailsModel', () => {
       const userDetails1 = await Core.UserDetailsModel.findById(testUserId1);
       const userDetails2 = await Core.UserDetailsModel.findById(testUserId2);
 
-      expect(userDetails1.name).toBe('Test User');
-      expect(userDetails2.name).toBe('Test User 2');
-      expect(userDetails2.bio).toBe('Second test user bio');
+      expect(userDetails1).not.toBeNull();
+      expect(userDetails2).not.toBeNull();
+      expect(userDetails1!.name).toBe('Test User');
+      expect(userDetails2!.name).toBe('Test User 2');
+      expect(userDetails2!.bio).toBe('Second test user bio');
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -121,15 +123,17 @@ describe('UserDetailsModel', () => {
       const userDetails1 = await Core.UserDetailsModel.findById(testUserId1);
       const userDetails2 = await Core.UserDetailsModel.findById(testUserId2);
 
-      expect(userDetails1.name).toBe('Test User');
-      expect(userDetails1.image).toBe('https://example.com/avatar.jpg');
-      expect(userDetails1.links).toHaveLength(2);
-      expect(userDetails2.name).toBe('Another User');
-      expect(userDetails2.image).toBeNull();
-      expect(userDetails2.links).toBeNull();
-      expect(userDetails1.status).toBe('active');
-      expect(userDetails2.status).toBeNull();
-      expect(userDetails1.links).toEqual([
+      expect(userDetails1).not.toBeNull();
+      expect(userDetails2).not.toBeNull();
+      expect(userDetails1!.name).toBe('Test User');
+      expect(userDetails1!.image).toBe('https://example.com/avatar.jpg');
+      expect(userDetails1!.links).toHaveLength(2);
+      expect(userDetails2!.name).toBe('Another User');
+      expect(userDetails2!.image).toBeNull();
+      expect(userDetails2!.links).toBeNull();
+      expect(userDetails1!.status).toBe('active');
+      expect(userDetails2!.status).toBeNull();
+      expect(userDetails1!.links).toEqual([
         { title: 'Website', url: 'https://example.com' },
         { title: 'GitHub', url: 'https://github.com/testuser' },
       ]);
@@ -151,10 +155,11 @@ describe('UserDetailsModel', () => {
       expect(result).toBeDefined();
 
       const foundUser = await Core.UserDetailsModel.findById(testUserId1);
-      expect(foundUser.name).toBe('Minimal User');
-      expect(foundUser.image).toBeNull();
-      expect(foundUser.links).toBeNull();
-      expect(foundUser.status).toBeNull();
+      expect(foundUser).not.toBeNull();
+      expect(foundUser!.name).toBe('Minimal User');
+      expect(foundUser!.image).toBeNull();
+      expect(foundUser!.links).toBeNull();
+      expect(foundUser!.status).toBeNull();
     });
   });
 });

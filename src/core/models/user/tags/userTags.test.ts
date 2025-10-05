@@ -25,124 +25,42 @@ describe('UserTagsModel', () => {
       expect(model.id).toBe(testUserId1);
       expect(model.tags.length).toBe(2);
       expect(model.tags[0]).toBeInstanceOf(Core.TagModel);
-      expect(model.getUniqueLabels().sort()).toEqual(['dev', 'friend']);
+      const labels = model.tags.map((t) => t.label).sort();
+      expect(labels).toEqual(['dev', 'friend']);
     });
   });
 
   describe('Instance helpers', () => {
-    it('should add/remove taggers and query taggers', () => {
-      const model = new Core.UserTagsModel({ id: testUserId1, tags: [] });
-
-      expect(model.addTagger('dev', testUserId2)).toBe(true);
-      expect(model.addTagger('dev', testUserId2)).toBe(false); // duplicate prevented
-      expect(model.findByLabel('dev').length).toBe(1);
-      expect(model.getTaggers('dev').includes(testUserId2)).toBe(true);
-
-      expect(model.removeTagger('dev', testUserId2)).toBe(true);
-      expect(model.removeTagger('dev', testUserId2)).toBe(false);
-    });
-
-    it('should find tags by label', () => {
+    it('should add and remove taggers using TagModel', () => {
       const model = new Core.UserTagsModel({ id: testUserId1, tags: MOCK_TAGS_1 });
 
-      const devTags = model.findByLabel('dev');
-      expect(devTags.length).toBe(1);
-      expect(devTags[0].label).toBe('dev');
+      const devTag = model.findByLabel('dev');
+      expect(devTag).not.toBeNull();
+      devTag!.addTagger(testUserId1);
+      expect(devTag!.taggers).toContain(testUserId1);
+      expect(devTag!.taggers_count).toBe(2);
 
-      const friendTags = model.findByLabel('friend');
-      expect(friendTags.length).toBe(1);
-      expect(friendTags[0].label).toBe('friend');
-
-      const nonExistentTags = model.findByLabel('nonexistent');
-      expect(nonExistentTags.length).toBe(0);
+      devTag!.removeTagger(testUserId2);
+      expect(devTag!.taggers).not.toContain(testUserId2);
+      expect(devTag!.taggers_count).toBe(1);
     });
 
-    it('should find tags by tagger', () => {
+    it('should find tag by label', () => {
       const model = new Core.UserTagsModel({ id: testUserId1, tags: MOCK_TAGS_1 });
 
-      const tagsByUser2 = model.findByTagger(testUserId2);
-      expect(tagsByUser2.length).toBe(2);
-      expect(tagsByUser2.map((t) => t.label).sort()).toEqual(['dev', 'friend']);
+      const devTag = model.findByLabel('dev');
+      expect(devTag).not.toBeNull();
+      expect(devTag!.label).toBe('dev');
 
-      const tagsByNonExistent = model.findByTagger('nonexistent-user');
-      expect(tagsByNonExistent.length).toBe(0);
+      const friendTag = model.findByLabel('friend');
+      expect(friendTag).not.toBeNull();
+      expect(friendTag!.label).toBe('friend');
+
+      const nonExistentTag = model.findByLabel('nonexistent');
+      expect(nonExistentTag).toBeNull();
     });
 
-    it('should get unique labels', () => {
-      const model = new Core.UserTagsModel({ id: testUserId1, tags: MOCK_TAGS_1 });
-
-      const labels = model.getUniqueLabels();
-      expect(labels.sort()).toEqual(['dev', 'friend']);
-    });
-
-    it('should get taggers for a specific label with pagination', () => {
-      const testUserId3 = Core.generateTestUserId(3);
-      const tagsWithMultipleTaggers: Core.NexusTag[] = [
-        {
-          label: 'popular',
-          taggers: [testUserId1, testUserId2, testUserId3],
-          taggers_count: 3,
-          relationship: false,
-        },
-      ];
-
-      const model = new Core.UserTagsModel({ id: testUserId1, tags: tagsWithMultipleTaggers });
-
-      // Get all taggers
-      const allTaggers = model.getTaggers('popular');
-      expect(allTaggers.length).toBe(3);
-      expect(allTaggers).toContain(testUserId1);
-      expect(allTaggers).toContain(testUserId2);
-      expect(allTaggers).toContain(testUserId3);
-
-      // Get with pagination
-      const firstTwo = model.getTaggers('popular', { skip: 0, limit: 2 });
-      expect(firstTwo.length).toBe(2);
-
-      const lastOne = model.getTaggers('popular', { skip: 2, limit: 1 });
-      expect(lastOne.length).toBe(1);
-
-      // Non-existent label
-      const noTaggers = model.getTaggers('nonexistent');
-      expect(noTaggers.length).toBe(0);
-    });
-
-    it('should handle adding taggers to new and existing labels', () => {
-      const model = new Core.UserTagsModel({ id: testUserId1, tags: [] });
-
-      // Add to new label (creates new tag)
-      expect(model.addTagger('newlabel', testUserId1)).toBe(true);
-      expect(model.tags.length).toBe(1);
-      expect(model.tags[0].label).toBe('newlabel');
-      expect(model.tags[0].taggers).toContain(testUserId1);
-
-      // Add different user to same label
-      expect(model.addTagger('newlabel', testUserId2)).toBe(true);
-      expect(model.tags.length).toBe(1); // Still one tag
-      expect(model.tags[0].taggers).toContain(testUserId1);
-      expect(model.tags[0].taggers).toContain(testUserId2);
-      expect(model.tags[0].taggers_count).toBe(2);
-
-      // Try to add duplicate
-      expect(model.addTagger('newlabel', testUserId1)).toBe(false);
-      expect(model.tags[0].taggers_count).toBe(2); // Count unchanged
-    });
-
-    it('should handle removing taggers', () => {
-      const model = new Core.UserTagsModel({ id: testUserId1, tags: MOCK_TAGS_1 });
-
-      // Remove existing tagger
-      expect(model.removeTagger('dev', testUserId2)).toBe(true);
-      const devTag = model.findByLabel('dev')[0];
-      expect(devTag.taggers).not.toContain(testUserId2);
-      expect(devTag.taggers_count).toBe(0);
-
-      // Try to remove non-existent tagger
-      expect(model.removeTagger('dev', 'nonexistent')).toBe(false);
-
-      // Try to remove from non-existent label
-      expect(model.removeTagger('nonexistent', testUserId1)).toBe(false);
-    });
+    // Removing taggers, pagination, and find-by-tagger are not supported helpers on the collection.
   });
 
   describe('Static Methods', () => {
@@ -156,16 +74,16 @@ describe('UserTagsModel', () => {
       const rec = { id: testUserId1, tags: MOCK_TAGS_1 };
       await Core.UserTagsModel.insert(rec);
       const found = await Core.UserTagsModel.findById(testUserId1);
-      expect(found).toBeInstanceOf(Core.UserTagsModel);
-      expect(found.id).toBe(testUserId1);
-      expect(found.getUniqueLabels().sort()).toEqual(['dev', 'friend']);
+      expect(found).not.toBeNull();
+      expect(found!).toBeInstanceOf(Core.UserTagsModel);
+      expect(found!.id).toBe(testUserId1);
+      expect(found!.tags.map((t) => t.label).sort()).toEqual(['dev', 'friend']);
     });
 
-    it('should throw error for non-existent user tags', async () => {
+    it('should return null for non-existent user tags', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserTagsModel.findById(nonExistentId)).rejects.toThrow(
-        `Tags not found in user_tags: ${nonExistentId}`,
-      );
+      const result = await Core.UserTagsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save user tags from tuples', async () => {
@@ -180,8 +98,10 @@ describe('UserTagsModel', () => {
       const tags1 = await Core.UserTagsModel.findById(testUserId1);
       const tags2 = await Core.UserTagsModel.findById(testUserId2);
 
-      expect(tags1.getUniqueLabels().sort()).toEqual(['dev', 'friend']);
-      expect(tags2.getUniqueLabels()).toEqual(['artist']);
+      expect(tags1).not.toBeNull();
+      expect(tags2).not.toBeNull();
+      expect(tags1!.tags.map((t) => t.label).sort()).toEqual(['dev', 'friend']);
+      expect(tags2!.tags.map((t) => t.label)).toEqual(['artist']);
     });
 
     it('should handle empty array in bulk save', async () => {

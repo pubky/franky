@@ -79,17 +79,17 @@ describe('PostRelationshipsModel', () => {
       await Core.PostRelationshipsModel.insert(mockPostRelationshipsData);
       const result = await Core.PostRelationshipsModel.findById(testPostId1);
 
-      expect(result).toBeInstanceOf(Core.PostRelationshipsModel);
-      expect(result.id).toBe(testPostId1);
-      expect(result.replied).toBe(MOCK_NEXUS_POST_RELATIONSHIPS.replied);
-      expect(result.mentioned).toEqual(MOCK_NEXUS_POST_RELATIONSHIPS.mentioned);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.PostRelationshipsModel);
+      expect(result!.id).toBe(testPostId1);
+      expect(result!.replied).toBe(MOCK_NEXUS_POST_RELATIONSHIPS.replied);
+      expect(result!.mentioned).toEqual(MOCK_NEXUS_POST_RELATIONSHIPS.mentioned);
     });
 
-    it('should throw error for non-existent post relationships', async () => {
+    it('should return null for non-existent post relationships', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostRelationshipsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in post_relationships: ${nonExistentId}`,
-      );
+      const result = await Core.PostRelationshipsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save post relationships from tuples', async () => {
@@ -105,8 +105,10 @@ describe('PostRelationshipsModel', () => {
       const postRelationships1 = await Core.PostRelationshipsModel.findById(testPostId1);
       const postRelationships2 = await Core.PostRelationshipsModel.findById(testPostId2);
 
-      expect(postRelationships1.replied).toBe('parent-post-id');
-      expect(postRelationships2.replied).toBe('different-parent');
+      expect(postRelationships1).not.toBeNull();
+      expect(postRelationships2).not.toBeNull();
+      expect(postRelationships1!.replied).toBe('parent-post-id');
+      expect(postRelationships2!.replied).toBe('different-parent');
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -126,10 +128,12 @@ describe('PostRelationshipsModel', () => {
       const postRelationships1 = await Core.PostRelationshipsModel.findById(testPostId1);
       const postRelationships2 = await Core.PostRelationshipsModel.findById(testPostId2);
 
-      expect(postRelationships1.replied).toBe('reply-parent');
-      expect(postRelationships1.reposted).toBeNull();
-      expect(postRelationships2.replied).toBeNull();
-      expect(postRelationships2.reposted).toBe('repost-original');
+      expect(postRelationships1).not.toBeNull();
+      expect(postRelationships2).not.toBeNull();
+      expect(postRelationships1!.replied).toBe('reply-parent');
+      expect(postRelationships1!.reposted).toBeNull();
+      expect(postRelationships2!.replied).toBeNull();
+      expect(postRelationships2!.reposted).toBe('repost-original');
     });
 
     it('should handle different mentioned arrays', async () => {
@@ -143,8 +147,10 @@ describe('PostRelationshipsModel', () => {
       const postRelationships1 = await Core.PostRelationshipsModel.findById(testPostId1);
       const postRelationships2 = await Core.PostRelationshipsModel.findById(testPostId2);
 
-      expect(postRelationships1.mentioned).toEqual([testAuthor1]);
-      expect(postRelationships2.mentioned).toEqual([testAuthor1, testAuthor2]);
+      expect(postRelationships1).not.toBeNull();
+      expect(postRelationships2).not.toBeNull();
+      expect(postRelationships1!.mentioned).toEqual([testAuthor1]);
+      expect(postRelationships2!.mentioned).toEqual([testAuthor1, testAuthor2]);
     });
   });
 });

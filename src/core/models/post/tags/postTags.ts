@@ -15,32 +15,32 @@ export class PostTagsModel
   }
 
   saveTag(label: string, taggerId: Core.Pubky) {
-    const existingTag = this.tags.find((t) => t.label === label);
-    if (existingTag?.relationship) {
+    let labelTagData = this.findByLabel(label);
+    // The label does not exist, create it
+    if (!labelTagData) {
+      labelTagData = new Core.TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
+      this.tags.push(labelTagData);
+    }
+    // The label exist and the active user put a tag already
+    // This is an edge case, because that action would come directly from the UI and that one would be controlled
+    else if (labelTagData?.relationship) {
       throw new Error('User already tagged this post with this label');
     }
-
-    this.addTagger(label, taggerId);
-
-    const updatedTag = this.tags.find((t) => t.label === label);
-    if (updatedTag) {
-      updatedTag.relationship = true;
-    }
+    labelTagData.addTagger(taggerId);
+    labelTagData.setRelationship(true);
   }
 
   removeTag(label: string, taggerId: Core.Pubky) {
-    const existingTag = this.tags.find((t) => t.label === label);
-    if (!existingTag?.relationship) {
+    const labelTagData = this.findByLabel(label);
+    if (!labelTagData) {
+      throw new Error('User has not tagged this post with this label');
+    } else if (!labelTagData?.relationship) {
       throw new Error('User has not tagged this post with this label');
     }
 
-    this.removeTagger(label, taggerId);
-
-    const updatedTag = this.tags.find((t) => t.label === label);
-    if (updatedTag) {
-      updatedTag.relationship = false;
-    }
-
-    this.tags = this.tags.filter((tag) => tag.taggers_count > 0);
+    labelTagData.removeTagger(taggerId);
+    labelTagData.setRelationship(false);
+    //If there is not taggers, remove the tag
+    this.deleteTagIfNoTaggers();
   }
 }
