@@ -1,7 +1,9 @@
 'use client';
 
+import { useCallback } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useRouter } from 'next/navigation';
+
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
@@ -29,10 +31,14 @@ export function PostReplies({ postId }: PostRepliesProps) {
     [],
   );
 
-  const handleReplyClick = (combinedId: string) => {
-    const [authorId, postId] = combinedId.split(':');
-    router.push(`/post/${authorId}/${postId}`);
-  };
+  const handleReplyClick = useCallback(
+    (combinedId: string) => {
+      const [authorId, replyPostId] = combinedId.split(':');
+      if (!authorId || !replyPostId) return; // defensive guard
+      router.push(`/post/${authorId}/${replyPostId}`);
+    },
+    [router],
+  );
 
   return (
     <Atoms.Container className="flex flex-col gap-4">
