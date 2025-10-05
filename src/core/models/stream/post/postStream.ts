@@ -1,17 +1,20 @@
 import { Table } from 'dexie';
-import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { PostStreamModelSchema } from './postStream.schema';
+import { db } from '@/core/database';
+import { createDefaultPostStream } from './postStream.helper';
+import { PostStreamTypes } from './postStream.types';
 
-export class StreamModel implements Core.StreamModelSchema {
-  private static table: Table<Core.StreamModelSchema> = Core.db.table('streams');
+export class PostStreamModel implements PostStreamModelSchema {
+  private static table: Table<PostStreamModelSchema> = db.table('post_streams');
 
   // Stream ID pattern: colon-separated segments (e.g., "timeframe:all:all", "timeframe:following:all", "timeframe:all:short:pubky_dev")
   // Can have 1 or more segments separated by colons
-  id: string;
+  id: PostStreamTypes;
   posts: string[];
   name: string | null;
 
-  constructor(stream: Core.StreamModelSchema) {
+  constructor(stream: PostStreamModelSchema) {
     this.id = stream.id;
     this.posts = stream.posts || [];
     this.name = stream.name;
@@ -20,8 +23,8 @@ export class StreamModel implements Core.StreamModelSchema {
   // Database operations
   async save(): Promise<void> {
     try {
-      await Core.StreamModel.table.put(this);
-      Libs.Logger.debug('Stream saved successfully', { streamId: this.id });
+      await PostStreamModel.table.put(this);
+      Libs.Logger.debug('PostStream saved successfully', { streamId: this.id });
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.SAVE_FAILED,
@@ -34,8 +37,8 @@ export class StreamModel implements Core.StreamModelSchema {
 
   async delete(): Promise<void> {
     try {
-      await Core.StreamModel.table.delete(this.id);
-      Libs.Logger.debug('Stream deleted successfully', { streamId: this.id });
+      await PostStreamModel.table.delete(this.id);
+      Libs.Logger.debug('PostStream deleted successfully', { streamId: this.id });
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.DELETE_FAILED,
@@ -54,10 +57,10 @@ export class StreamModel implements Core.StreamModelSchema {
   }
 
   // Static methods
-  static async findById(id: string): Promise<Core.StreamModel | null> {
+  static async findById(id: PostStreamTypes): Promise<PostStreamModel | null> {
     try {
-      const stream = await Core.StreamModel.table.get(id);
-      return stream ? new Core.StreamModel(stream) : null;
+      const stream = await PostStreamModel.table.get(id);
+      return stream ? new PostStreamModel(stream) : null;
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.FIND_FAILED, `Failed to find stream with ID: ${id}`, 500, {
         error,
@@ -66,13 +69,13 @@ export class StreamModel implements Core.StreamModelSchema {
     }
   }
 
-  static async create(id: string, name: string | null = null, posts: string[] = []): Promise<Core.StreamModel> {
+  static async create(id: PostStreamTypes, name: string | null = null, posts: string[] = []): Promise<PostStreamModel> {
     try {
-      const streamData = Core.createDefaultStream(id, name, posts);
-      const stream = new Core.StreamModel(streamData);
+      const streamData = createDefaultPostStream(id, name, posts);
+      const stream = new PostStreamModel(streamData);
       await stream.save();
 
-      Libs.Logger.debug('Stream created successfully', { streamId: id, name });
+      Libs.Logger.debug('PostStream created successfully', { streamId: id, name });
       return stream;
     } catch (error) {
       throw Libs.createDatabaseError(
@@ -84,10 +87,10 @@ export class StreamModel implements Core.StreamModelSchema {
     }
   }
 
-  static async deleteById(id: string): Promise<void> {
+  static async deleteById(id: PostStreamTypes): Promise<void> {
     try {
-      await Core.StreamModel.table.delete(id);
-      Libs.Logger.debug('Stream deleted by ID', { streamId: id });
+      await PostStreamModel.table.delete(id);
+      Libs.Logger.debug('PostStream deleted by ID', { streamId: id });
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.DELETE_FAILED,
