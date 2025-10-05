@@ -1,13 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
-import * as Core from '@/core';
-import { useRouter } from 'next/navigation';
 import * as App from '@/app';
 
 export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
@@ -54,47 +51,18 @@ export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElem
   );
 }
 
-export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButtonElement>) {
-  const router = useRouter();
-
-  const handleSignIn = () => {
-    router.push(App.AUTH_ROUTES.SIGN_IN);
-  };
-
-  return (
-    <Atoms.Button variant="secondary" onClick={handleSignIn} {...props}>
-      <Libs.LogIn className="mr-2 h-4 w-4" />
-      Sign in
-    </Atoms.Button>
-  );
-}
-
-export const HeaderHome = () => {
-  return (
-    <Atoms.Container className="flex-1 flex-row items-center justify-end">
-      <Molecules.HeaderSocialLinks />
-      <Molecules.HeaderButtonSignIn />
-    </Atoms.Container>
-  );
+type HeaderNavigationButtonsProps = {
+  counter?: number;
+  avatarImage?: string;
+  avatarInitial?: string;
 };
 
-export const HeaderSignIn = () => {
-  return (
-    <Atoms.Container className="flex-1 flex-row items-center justify-end gap-3">
-      <Molecules.SearchInput />
-      <Molecules.HeaderNavigationButtons />
-    </Atoms.Container>
-  );
-};
-
-export function HeaderNavigationButtons({ counter = 0 }: { counter?: number }) {
+export function HeaderNavigationButtons({
+  counter = 0,
+  avatarImage,
+  avatarInitial = 'U',
+}: HeaderNavigationButtonsProps) {
   const counterString = counter > 21 ? '21+' : counter.toString();
-
-  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
-  const userDetails = useLiveQuery(
-    () => (currentUserPubky ? Core.db.user_details.get(currentUserPubky) : undefined),
-    [currentUserPubky],
-  );
 
   return (
     <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
@@ -120,8 +88,8 @@ export function HeaderNavigationButtons({ counter = 0 }: { counter?: number }) {
       </Atoms.Link>
       <Atoms.Link className="relative" href="/profile">
         <Atoms.Avatar className="w-12 h-12">
-          <Atoms.AvatarImage src={userDetails?.image || '/images/default-avatar.png'} />
-          <Atoms.AvatarFallback>{userDetails?.name.charAt(0).toUpperCase() || 'SN'}</Atoms.AvatarFallback>
+          <Atoms.AvatarImage src={avatarImage || '/images/default-avatar.png'} />
+          <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (
           <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">
