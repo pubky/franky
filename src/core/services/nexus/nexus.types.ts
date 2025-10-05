@@ -96,6 +96,13 @@ export type NexusTag = {
   relationship: boolean;
 };
 
+export type NexusHotTag = {
+  label: string;
+  taggers_id: Pubky[];
+  tagged_count: number;
+  taggers_count: number;
+};
+
 export type NexusUser = {
   details: NexusUserDetails;
   counts: NexusUserCounts;
@@ -133,10 +140,4 @@ export type NexusPost = {
   tags: TagModel[];
   relationships: NexusPostRelationships;
   bookmark: NexusBookmark | null;
-};
-
-export type NexusBootstrapList = {
-  stream: string[];
-  influencers: Pubky[];
-  recommended: Pubky[];
 };

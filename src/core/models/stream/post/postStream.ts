@@ -8,8 +8,6 @@ import { PostStreamTypes } from './postStream.types';
 export class PostStreamModel implements PostStreamModelSchema {
   private static table: Table<PostStreamModelSchema> = db.table('post_streams');
 
-  // Stream ID pattern: colon-separated segments (e.g., "timeframe:all:all", "timeframe:following:all", "timeframe:all:short:pubky_dev")
-  // Can have 1 or more segments separated by colons
   id: PostStreamTypes;
   posts: string[];
   name: string | null;

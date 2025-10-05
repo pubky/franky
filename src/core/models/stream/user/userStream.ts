@@ -9,8 +9,6 @@ import { UserStreamTypes } from './userStream.types';
 export class UserStreamModel implements UserStreamModelSchema {
   private static table: Table<UserStreamModelSchema> = db.table('user_streams');
 
-  // Stream ID pattern: colon-separated segments (e.g., "timeframe:all:all", "timeframe:following:all", "timeframe:all:short:pubky_dev")
-  // Can have 1 or more segments separated by colons
   id: UserStreamTypes;
   users: Pubky[];
 
