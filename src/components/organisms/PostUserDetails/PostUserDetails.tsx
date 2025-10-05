@@ -23,7 +23,7 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
       <Atoms.Container className="flex flex-row gap-4">
         <Atoms.Avatar className="w-12 h-12">
           <Atoms.AvatarImage src={userDetails.image || '/images/default-avatar.png'} />
-          <Atoms.AvatarFallback>{userDetails.name.charAt(0).toUpperCase()}</Atoms.AvatarFallback>
+          <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name || '' }) || 'U'}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <Atoms.Container className="flex flex-col">
           <Atoms.Typography size="md" className="font-bold">
