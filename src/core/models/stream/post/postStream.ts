@@ -87,7 +87,7 @@ export class PostStreamModel implements PostStreamModelSchema {
     }
   }
 
-  static async deleteById(id: string): Promise<void> {
+  static async deleteById(id: PostStreamTypes): Promise<void> {
     try {
       await PostStreamModel.table.delete(id);
       Libs.Logger.debug('Stream deleted by ID', { streamId: id });
