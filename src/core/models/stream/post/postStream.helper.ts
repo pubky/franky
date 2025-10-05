@@ -3,12 +3,12 @@ import { PostStreamTypes } from './postStream.types';
 
 export const createDefaultPostStream = (
   id: PostStreamTypes,
-  name: string | null = null,
-  posts: string[] = [],
+  stream: string[] = [],
+  name: string | undefined = undefined,
 ): PostStreamModelSchema => {
   return {
     id,
-    posts,
+    stream,
     name,
   };
 };

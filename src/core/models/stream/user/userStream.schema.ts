@@ -1,10 +1,7 @@
-import { Pubky } from '@/core';
+import { Pubky, BaseStreamModelSchema } from '@/core';
 import { UserStreamTypes } from './userStream.types';
 
-export interface UserStreamModelSchema {
-  id: UserStreamTypes;
-  users: Pubky[];
-}
+export type UserStreamModelSchema = BaseStreamModelSchema<UserStreamTypes, Pubky>;
 
 // Schema for Dexie table
-export const userStreamTableSchema = '&id, *users';
+export const userStreamTableSchema = '&id, *stream';

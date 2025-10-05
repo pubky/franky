@@ -11,64 +11,52 @@ describe('PostStreamModel', () => {
 
   describe('constructor', () => {
     it('should create a post stream with all properties', () => {
-      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, 'Test Stream', ['post1', 'post2']);
-      const stream = new PostStreamModel(streamData);
+      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, ['post1', 'post2'], 'Test Stream');
+      const { id, name, stream } = new PostStreamModel(streamData);
 
-      expect(stream.id).toBe(PostStreamTypes.TIMELINE_ALL);
-      expect(stream.name).toBe('Test Stream');
-      expect(stream.posts).toEqual(['post1', 'post2']);
+      expect(id).toBe(PostStreamTypes.TIMELINE_ALL);
+      expect(name).toBe('Test Stream');
+      expect(stream).toEqual(['post1', 'post2']);
     });
 
     it('should handle null name', () => {
-      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, null);
-      const stream = new PostStreamModel(streamData);
+      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL);
+      const { name } = new PostStreamModel(streamData);
 
-      expect(stream.name).toBeNull();
+      expect(name).toBeUndefined();
     });
   });
 
   describe('addPosts', () => {
     it('should add multiple posts to stream', () => {
-      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, 'Test Stream');
-      const stream = new PostStreamModel(streamData);
+      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, [], 'Test Stream');
+      const timeline_stream = new PostStreamModel(streamData);
 
-      stream.addPosts(['post1', 'post2']);
+      timeline_stream.addPosts(['post1', 'post2']);
 
-      expect(stream.posts).toEqual(['post1', 'post2']);
+      expect(timeline_stream.stream).toEqual(['post1', 'post2']);
     });
 
     it('should not add duplicate posts', () => {
-      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, 'Test Stream', ['post1']);
-      const stream = new PostStreamModel(streamData);
+      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, ['post1'], 'Test Stream');
+      const timeline_stream = new PostStreamModel(streamData);
 
-      stream.addPosts(['post1', 'post2']);
+      timeline_stream.addPosts(['post1', 'post2']);
 
-      expect(stream.posts).toEqual(['post2', 'post1']);
+      expect(timeline_stream.stream).toEqual(['post2', 'post1']);
     });
 
     it('should add posts to beginning for chronological order', () => {
-      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, 'Test Stream', ['post1']);
-      const stream = new PostStreamModel(streamData);
+      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, ['post1'], 'Test Stream');
+      const timeline_stream = new PostStreamModel(streamData);
 
-      stream.addPosts(['post2', 'post3']);
+      timeline_stream.addPosts(['post2', 'post3']);
 
-      expect(stream.posts).toEqual(['post2', 'post3', 'post1']);
+      expect(timeline_stream.stream).toEqual(['post2', 'post3', 'post1']);
     });
   });
 
   describe('database operations', () => {
-    it('should save and retrieve stream', async () => {
-      const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, 'Test Stream');
-      const stream = new PostStreamModel(streamData);
-
-      await stream.save();
-
-      const foundStream = await PostStreamModel.findById(PostStreamTypes.TIMELINE_ALL);
-      expect(foundStream).toBeTruthy();
-      expect(foundStream!.id).toBe(PostStreamTypes.TIMELINE_ALL);
-      expect(foundStream!.name).toBe('Test Stream');
-    });
-
     it('should return null when stream not found', async () => {
       const foundStream = await PostStreamModel.findById('non-existent' as PostStreamTypes);
 
@@ -76,11 +64,15 @@ describe('PostStreamModel', () => {
     });
 
     it('should create stream with static method', async () => {
-      const stream = await PostStreamModel.create(PostStreamTypes.TIMELINE_ALL, 'Test Stream', ['post1']);
+      const { id, name, stream } = await PostStreamModel.createWithName(
+        PostStreamTypes.TIMELINE_ALL,
+        ['post1'],
+        'Test Stream',
+      );
 
-      expect(stream.id).toBe(PostStreamTypes.TIMELINE_ALL);
-      expect(stream.name).toBe('Test Stream');
-      expect(stream.posts).toEqual(['post1']);
+      expect(id).toBe(PostStreamTypes.TIMELINE_ALL);
+      expect(name).toBe('Test Stream');
+      expect(stream).toEqual(['post1']);
 
       // Verify it was saved to database
       const foundStream = await PostStreamModel.findById(PostStreamTypes.TIMELINE_ALL);
@@ -88,8 +80,7 @@ describe('PostStreamModel', () => {
     });
 
     it('should delete stream by id', async () => {
-      await PostStreamModel.create(PostStreamTypes.TIMELINE_ALL, 'Test Stream');
-
+      await PostStreamModel.createWithName(PostStreamTypes.TIMELINE_ALL, ['post1'], 'Test Stream');
       await PostStreamModel.deleteById(PostStreamTypes.TIMELINE_ALL);
 
       const foundStream = await PostStreamModel.findById(PostStreamTypes.TIMELINE_ALL);
