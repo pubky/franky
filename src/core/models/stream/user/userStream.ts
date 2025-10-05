@@ -50,9 +50,9 @@ export class UserStreamModel implements UserStreamModelSchema {
 
   // Instance methods
   addUsers(users: Pubky[]): void {
-    // Filter out posts that already exist and add new ones to beginning
-    const newPosts = users.filter((userId) => !this.users.includes(userId));
-    this.users.unshift(...newPosts); // Add to beginning for chronological order
+    // Filter out users that already exist and add new ones to beginning
+    const newUsers = users.filter((userId) => !this.users.includes(userId));
+    this.users.unshift(...newUsers); // Add to beginning for chronological order
   }
 
   // Static methods
