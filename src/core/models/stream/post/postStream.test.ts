@@ -12,7 +12,7 @@ describe('PostStreamModel', () => {
   describe('constructor', () => {
     it('should create a post stream with all properties', () => {
       const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL, ['post1', 'post2'], 'Test Stream');
-      const {id, name, stream} = new PostStreamModel(streamData);
+      const { id, name, stream } = new PostStreamModel(streamData);
 
       expect(id).toBe(PostStreamTypes.TIMELINE_ALL);
       expect(name).toBe('Test Stream');
@@ -21,7 +21,7 @@ describe('PostStreamModel', () => {
 
     it('should handle null name', () => {
       const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL);
-      const {name} = new PostStreamModel(streamData);
+      const { name } = new PostStreamModel(streamData);
 
       expect(name).toBeUndefined();
     });
@@ -57,7 +57,6 @@ describe('PostStreamModel', () => {
   });
 
   describe('database operations', () => {
-
     it('should return null when stream not found', async () => {
       const foundStream = await PostStreamModel.findById('non-existent' as PostStreamTypes);
 
@@ -65,7 +64,11 @@ describe('PostStreamModel', () => {
     });
 
     it('should create stream with static method', async () => {
-      const {id, name, stream} = await PostStreamModel.createWithName(PostStreamTypes.TIMELINE_ALL, ['post1'], 'Test Stream');
+      const { id, name, stream } = await PostStreamModel.createWithName(
+        PostStreamTypes.TIMELINE_ALL,
+        ['post1'],
+        'Test Stream',
+      );
 
       expect(id).toBe(PostStreamTypes.TIMELINE_ALL);
       expect(name).toBe('Test Stream');

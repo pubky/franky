@@ -27,7 +27,7 @@ describe('TagStreamModel', () => {
 
   describe('constructor', () => {
     it('should create a tag stream with all properties', async () => {
-      const {id, stream} = await TagStreamModel.create(TagStreamTypes.TODAY_ALL, [mockTag1, mockTag2]);
+      const { id, stream } = await TagStreamModel.create(TagStreamTypes.TODAY_ALL, [mockTag1, mockTag2]);
 
       expect(id).toBe(TagStreamTypes.TODAY_ALL);
       expect(stream).toEqual([mockTag1, mockTag2]);

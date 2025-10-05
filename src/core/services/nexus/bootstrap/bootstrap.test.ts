@@ -281,7 +281,11 @@ describe('NexusService', () => {
       const savedRecommendedStream = await Core.UserStreamModel.findById(Core.UserStreamTypes.RECOMMENDED);
       expect(savedRecommendedStream).toBeTruthy();
       expect(savedRecommendedStream!.id).toBe(Core.UserStreamTypes.RECOMMENDED);
-      expect(savedRecommendedStream!.stream).toEqual(['recommended-user-1', 'recommended-user-2', 'recommended-user-3']);
+      expect(savedRecommendedStream!.stream).toEqual([
+        'recommended-user-1',
+        'recommended-user-2',
+        'recommended-user-3',
+      ]);
     });
 
     it('should persist complete bootstrap data with users, posts, and stream', async () => {
@@ -336,7 +340,11 @@ describe('NexusService', () => {
 
       const savedRecommendedStream = await Core.UserStreamModel.findById(Core.UserStreamTypes.RECOMMENDED);
       expect(savedRecommendedStream).toBeTruthy();
-      expect(savedRecommendedStream!.stream).toEqual(['recommended-user-1', 'recommended-user-2', 'recommended-user-3']);
+      expect(savedRecommendedStream!.stream).toEqual([
+        'recommended-user-1',
+        'recommended-user-2',
+        'recommended-user-3',
+      ]);
 
       // Verify fetch was called correctly
       expect(mockFetch).toHaveBeenCalledWith(Core.bootstrapApi.get(pubky), {

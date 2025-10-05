@@ -12,7 +12,7 @@ describe('UserStreamModel', () => {
   describe('constructor', () => {
     it('should create a user stream with all properties', () => {
       const streamData = createDefaultUserStream(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
-      const {id, stream} = new UserStreamModel(streamData);
+      const { id, stream } = new UserStreamModel(streamData);
 
       expect(id).toBe(UserStreamTypes.TODAY_FOLLOWERS_ALL);
       expect(stream).toEqual(['user1', 'user2']);
@@ -20,7 +20,7 @@ describe('UserStreamModel', () => {
 
     it('should handle empty users array', () => {
       const streamData = createDefaultUserStream(UserStreamTypes.TODAY_FOLLOWERS_ALL, []);
-      const {stream} = new UserStreamModel(streamData);
+      const { stream } = new UserStreamModel(streamData);
 
       expect(stream).toEqual([]);
     });
@@ -28,7 +28,6 @@ describe('UserStreamModel', () => {
 
   describe('create', () => {
     it('should save user stream to database', async () => {
-
       await UserStreamModel.create(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
 
       const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_FOLLOWERS_ALL);

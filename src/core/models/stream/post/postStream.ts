@@ -20,7 +20,7 @@ export class PostStreamModel extends BaseStreamModel<PostStreamTypes, string, Po
     try {
       const streamData = { id, name, stream } as PostStreamModelSchema;
       await PostStreamModel.table.put(streamData);
-      
+
       Libs.Logger.debug('Post Stream row created successfully', { streamId: id, name, stream });
       return streamData;
     } catch (error) {
