@@ -111,11 +111,7 @@ export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
  * @throws {NexusError} When response is not ok or JSON parsing fails
  */
 export async function queryNexus<T>(url: string): Promise<T> {
-  try {
-    const response = await fetch(url, createFetchOptions());
-    ensureHttpResponseOk(response);
-    return parseResponseOrThrow<T>(response);
-  } catch (error) {
-    throw error;
-  }
+  const response = await fetch(url, createFetchOptions());
+  ensureHttpResponseOk(response);
+  return parseResponseOrThrow<T>(response);
 }
