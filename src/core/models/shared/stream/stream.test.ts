@@ -37,15 +37,28 @@ describe('BaseStreamModel', () => {
     await TestStreamModel.table.clear();
   });
 
-  it('create inserts a new stream', async () => {
+  it('create inserts a new stream (strict insert)', async () => {
     const created = await TestStreamModel.create('s1', ['a', 'b']);
     expect(created).toEqual({ id: 's1', stream: ['a', 'b'] });
     const stored = await TestStreamModel.table.get('s1');
     expect(stored).toEqual({ id: 's1', stream: ['a', 'b'] });
   });
 
+  it('upsert inserts or replaces a stream', async () => {
+    // First upsert
+    const created = await TestStreamModel.upsert('s1', ['a', 'b']);
+    expect(created).toEqual({ id: 's1', stream: ['a', 'b'] });
+
+    // Second upsert on same id should replace
+    const updated = await TestStreamModel.upsert('s1', ['c', 'd']);
+    expect(updated).toEqual({ id: 's1', stream: ['c', 'd'] });
+
+    const stored = await TestStreamModel.table.get('s1');
+    expect(stored).toEqual({ id: 's1', stream: ['c', 'd'] });
+  });
+
   it('findById returns model or null', async () => {
-    await TestStreamModel.create('s2', ['x']);
+    await TestStreamModel.upsert('s2', ['x']);
     const found = await TestStreamModel.findById('s2');
     expect(found).toBeInstanceOf(TestStreamModel);
     expect(found?.id).toBe('s2');
@@ -56,7 +69,7 @@ describe('BaseStreamModel', () => {
   });
 
   it('deleteById removes the stream', async () => {
-    await TestStreamModel.create('s3', ['z']);
+    await TestStreamModel.upsert('s3', ['z']);
     await TestStreamModel.deleteById('s3');
     const stored = await TestStreamModel.table.get('s3');
     expect(stored).toBeUndefined();

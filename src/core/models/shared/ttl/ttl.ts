@@ -16,8 +16,8 @@ export abstract class Ttl<Id, Schema extends Core.TtlModelSchema<Id>> {
       return await this.table.put(data);
     } catch (error) {
       throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.SAVE_FAILED,
-        `Failed to insert TTL in ${this.table.name}`,
+        Libs.DatabaseErrorType.UPSERT_FAILED,
+        `Failed to upsert TTL in ${this.table.name}`,
         500,
         {
           error,
@@ -43,8 +43,6 @@ export abstract class Ttl<Id, Schema extends Core.TtlModelSchema<Id>> {
           },
         );
       }
-
-      Libs.Logger.debug(`Found TTL in ${this.table.name}`, { id });
 
       return new this(record);
     } catch (error) {

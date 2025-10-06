@@ -27,7 +27,7 @@ describe('TagStreamModel', () => {
 
   describe('constructor', () => {
     it('should create a tag stream with all properties', async () => {
-      const { id, stream } = await TagStreamModel.create(TagStreamTypes.TODAY_ALL, [mockTag1, mockTag2]);
+      const { id, stream } = await TagStreamModel.upsert(TagStreamTypes.TODAY_ALL, [mockTag1, mockTag2]);
 
       expect(id).toBe(TagStreamTypes.TODAY_ALL);
       expect(stream).toEqual([mockTag1, mockTag2]);
@@ -44,7 +44,7 @@ describe('TagStreamModel', () => {
   describe('static methods', () => {
     describe('findById', () => {
       it('should find existing tag stream', async () => {
-        await TagStreamModel.create(TagStreamTypes.TODAY_ALL, [mockTag1, mockTag2]);
+        await TagStreamModel.upsert(TagStreamTypes.TODAY_ALL, [mockTag1, mockTag2]);
 
         const foundStream = await TagStreamModel.findById(TagStreamTypes.TODAY_ALL);
 
@@ -62,7 +62,7 @@ describe('TagStreamModel', () => {
 
     describe('deleteById', () => {
       it('should delete tag stream by id', async () => {
-        await TagStreamModel.create(TagStreamTypes.TODAY_ALL, [mockTag1]);
+        await TagStreamModel.upsert(TagStreamTypes.TODAY_ALL, [mockTag1]);
 
         await TagStreamModel.deleteById(TagStreamTypes.TODAY_ALL);
 

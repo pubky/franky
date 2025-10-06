@@ -15,18 +15,18 @@ export class PostStreamModel extends BaseStreamModel<PostStreamTypes, string, Po
     this.name = stream.name;
   }
 
-  // Custom create method to handle name property
+  // Custom upsert method to handle name property
   static async createWithName(id: PostStreamTypes, stream: string[], name: string): Promise<PostStreamModelSchema> {
     try {
       const streamData = { id, name, stream } as PostStreamModelSchema;
       await PostStreamModel.table.put(streamData);
 
-      Libs.Logger.debug('Post Stream row created successfully', { streamId: id, name, stream });
+      Libs.Logger.debug('Post Stream row upserted successfully', { streamId: id, name, stream });
       return streamData;
     } catch (error) {
       throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.CREATE_FAILED,
-        `Failed to create PostStream with ID: ${String(id)}`,
+        Libs.DatabaseErrorType.UPSERT_FAILED,
+        `Failed to upsert PostStream with ID: ${String(id)}`,
         500,
         { error, streamId: id, name, stream },
       );

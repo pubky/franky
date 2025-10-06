@@ -30,12 +30,14 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
   }
 
   /**
-   * Creates a new stream in the database
+   * Creates a new stream in the database (strict insert).
+   * Fails if a stream with the given id already exists.
+   *
    * @param this - Context containing the table reference
    * @param id - The unique identifier for the stream
    * @param stream - Array of items to initialize the stream with (defaults to empty array)
    * @returns Promise that resolves to the created stream data
-   * @throws {DatabaseError} When creation fails
+   * @throws {DatabaseError} When creation fails (including if the stream already exists)
    *
    * @example
    * ```typescript
@@ -49,7 +51,7 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
   ): Promise<TSchema> {
     try {
       const streamData = { id, stream } as TSchema;
-      await this.table.put(streamData);
+      await this.table.add(streamData);
 
       Libs.Logger.debug(`${this.table.name} row created successfully`, { streamId: id, stream });
       return streamData;
@@ -57,6 +59,42 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.CREATE_FAILED,
         `Failed to create stream in ${this.table.name} with ID: ${String(id)}`,
+        500,
+        { error, streamId: id, stream },
+      );
+    }
+  }
+
+  /**
+   * Inserts or replaces a stream in the database (upsert operation).
+   * If a stream with the given id already exists, it will be completely replaced.
+   *
+   * @param this - Context containing the table reference
+   * @param id - The unique identifier for the stream
+   * @param stream - Array of items to initialize the stream with (defaults to empty array)
+   * @returns Promise that resolves to the upserted stream data
+   * @throws {DatabaseError} When upsert fails
+   *
+   * @example
+   * ```typescript
+   * const stream = await PostStreamModel.upsert('my-stream', ['post1', 'post2']);
+   * ```
+   */
+  static async upsert<TId, TItem, TSchema extends BaseStreamModelSchema<TId, TItem>>(
+    this: { table: Table<TSchema> },
+    id: TId,
+    stream: TItem[] = [],
+  ): Promise<TSchema> {
+    try {
+      const streamData = { id, stream } as TSchema;
+      await this.table.put(streamData);
+
+      Libs.Logger.debug(`${this.table.name} row upserted successfully`, { streamId: id, stream });
+      return streamData;
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPSERT_FAILED,
+        `Failed to upsert stream in ${this.table.name} with ID: ${String(id)}`,
         500,
         { error, streamId: id, stream },
       );
@@ -89,7 +127,6 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
       if (!stream) {
         return null;
       }
-      Libs.Logger.debug('Found stream', { id });
       return new this(stream);
     } catch (error) {
       throw Libs.createDatabaseError(

@@ -19,7 +19,7 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
       await this.table.add(data);
     } catch (error) {
       throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.SAVE_FAILED,
+        Libs.DatabaseErrorType.CREATE_FAILED,
         `Failed to create record in ${this.table.name}`,
         500,
         {
@@ -38,7 +38,7 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
       await this.table.put(data);
     } catch (error) {
       throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.SAVE_FAILED,
+        Libs.DatabaseErrorType.UPSERT_FAILED,
         `Failed to upsert record in ${this.table.name}`,
         500,
         {
@@ -61,7 +61,7 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
       return await this.table.update(id, changes);
     } catch (error) {
       throw Libs.createDatabaseError(
-        Libs.DatabaseErrorType.SAVE_FAILED,
+        Libs.DatabaseErrorType.UPDATE_FAILED,
         `Failed to update record in ${this.table.name}: ${String(id)}`,
         500,
         {
@@ -89,7 +89,6 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
       if (!record) {
         return null;
       }
-      Libs.Logger.debug('Found record', { id, table: this.table.name });
       return new this(record);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;

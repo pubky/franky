@@ -147,7 +147,7 @@ export class LocalPostService {
       return createdReply;
     } catch (error) {
       Logger.error('Failed to add reply', { error, parentPostId, replyDetails });
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add reply', 500, {
+      throw createDatabaseError(DatabaseErrorType.CREATE_FAILED, 'Failed to create reply', 500, {
         error,
         parentPostId,
         replyDetails,

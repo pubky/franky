@@ -55,9 +55,9 @@ export class NexusBootstrapService {
   }
 
   static async persistStreams(list: Core.NexusBootstrapList) {
-    await Core.PostStreamModel.create(Core.PostStreamTypes.TIMELINE_ALL, list.stream);
-    await Core.UserStreamModel.create(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, list.influencers);
-    await Core.UserStreamModel.create(Core.UserStreamTypes.RECOMMENDED, list.recommended);
-    await Core.TagStreamModel.create(Core.TagStreamTypes.TODAY_ALL, list.hot_tags);
+    await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_ALL, list.stream);
+    await Core.UserStreamModel.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, list.influencers);
+    await Core.UserStreamModel.upsert(Core.UserStreamTypes.RECOMMENDED, list.recommended);
+    await Core.TagStreamModel.upsert(Core.TagStreamTypes.TODAY_ALL, list.hot_tags);
   }
 }
