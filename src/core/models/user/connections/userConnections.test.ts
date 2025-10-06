@@ -36,15 +36,15 @@ describe('UserConnectionsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert user connections', async () => {
+    it('should create user connections', async () => {
       const mockData = { id: testUserId1, ...MOCK_CONNECTIONS_1 };
-      const result = await Core.UserConnectionsModel.insert(mockData);
-      expect(result).toBeDefined();
+      const result = await Core.UserConnectionsModel.create(mockData);
+      expect(result).toBeUndefined();
     });
 
     it('should find user connections by id', async () => {
       const mockData = { id: testUserId1, ...MOCK_CONNECTIONS_1 };
-      await Core.UserConnectionsModel.insert(mockData);
+      await Core.UserConnectionsModel.create(mockData);
       const result = await Core.UserConnectionsModel.findById(testUserId1);
 
       expect(result).not.toBeNull();

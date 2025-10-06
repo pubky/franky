@@ -44,14 +44,14 @@ describe('UserCountsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert user counts', async () => {
+    it('should create user counts', async () => {
       const mockUserCountsData = {
         id: testUserId1,
         ...MOCK_NEXUS_USER_COUNTS,
       };
 
-      const result = await Core.UserCountsModel.insert(mockUserCountsData);
-      expect(result).toBeDefined();
+      const result = await Core.UserCountsModel.create(mockUserCountsData);
+      expect(result).toBeUndefined();
     });
 
     it('should find user counts by id', async () => {
@@ -60,7 +60,7 @@ describe('UserCountsModel', () => {
         ...MOCK_NEXUS_USER_COUNTS,
       };
 
-      await Core.UserCountsModel.insert(mockUserCountsData);
+      await Core.UserCountsModel.create(mockUserCountsData);
       const result = await Core.UserCountsModel.findById(testUserId1);
 
       expect(result).not.toBeNull();

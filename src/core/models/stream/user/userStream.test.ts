@@ -26,9 +26,9 @@ describe('UserStreamModel', () => {
     });
   });
 
-  describe('create', () => {
+  describe('upsert', () => {
     it('should save user stream to database', async () => {
-      await UserStreamModel.create(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+      await UserStreamModel.upsert(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
 
       const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
       expect(foundStream).toBeTruthy();
@@ -38,7 +38,7 @@ describe('UserStreamModel', () => {
 
   describe('findById', () => {
     it('should find user stream by id', async () => {
-      await UserStreamModel.create(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+      await UserStreamModel.upsert(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
 
       const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
       expect(foundStream).toBeTruthy();
@@ -53,7 +53,7 @@ describe('UserStreamModel', () => {
 
   describe('deleteById', () => {
     it('should delete user stream by id', async () => {
-      await UserStreamModel.create(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+      await UserStreamModel.upsert(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
 
       await UserStreamModel.deleteById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
 

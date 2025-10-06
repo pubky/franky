@@ -32,14 +32,14 @@ describe('UserRelationshipsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert user relationships', async () => {
+    it('should create user relationships', async () => {
       const mockUserRelationshipsData = {
         id: testUserId1,
         ...MOCK_NEXUS_USER_RELATIONSHIP,
       };
 
-      const result = await Core.UserRelationshipsModel.insert(mockUserRelationshipsData);
-      expect(result).toBeDefined();
+      const result = await Core.UserRelationshipsModel.create(mockUserRelationshipsData);
+      expect(result).toBeUndefined();
     });
 
     it('should find user relationships by id', async () => {
@@ -48,7 +48,7 @@ describe('UserRelationshipsModel', () => {
         ...MOCK_NEXUS_USER_RELATIONSHIP,
       };
 
-      await Core.UserRelationshipsModel.insert(mockUserRelationshipsData);
+      await Core.UserRelationshipsModel.create(mockUserRelationshipsData);
       const result = await Core.UserRelationshipsModel.findById(testUserId1);
 
       expect(result).not.toBeNull();

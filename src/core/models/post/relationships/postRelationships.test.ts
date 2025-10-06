@@ -60,14 +60,14 @@ describe('PostRelationshipsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert post relationships', async () => {
+    it('should create post relationships', async () => {
       const mockPostRelationshipsData = {
         id: testPostId1,
         ...MOCK_NEXUS_POST_RELATIONSHIPS,
       };
 
-      const result = await Core.PostRelationshipsModel.insert(mockPostRelationshipsData);
-      expect(result).toBeDefined();
+      const result = await Core.PostRelationshipsModel.create(mockPostRelationshipsData);
+      expect(result).toBeUndefined();
     });
 
     it('should find post relationships by id', async () => {
@@ -76,7 +76,7 @@ describe('PostRelationshipsModel', () => {
         ...MOCK_NEXUS_POST_RELATIONSHIPS,
       };
 
-      await Core.PostRelationshipsModel.insert(mockPostRelationshipsData);
+      await Core.PostRelationshipsModel.create(mockPostRelationshipsData);
       const result = await Core.PostRelationshipsModel.findById(testPostId1);
 
       expect(result).not.toBeNull();

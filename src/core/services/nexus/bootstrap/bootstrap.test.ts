@@ -174,33 +174,33 @@ describe('NexusService', () => {
       // Verify user details were persisted to database
       const savedUserDetails = await Core.UserDetailsModel.findById(pubky);
       expect(savedUserDetails).toBeTruthy();
-      expect(savedUserDetails.id).toBe(pubky);
-      expect(savedUserDetails.name).toBe('Bootstrap User');
-      expect(savedUserDetails.bio).toBe('Bootstrap bio');
+      expect(savedUserDetails!.id).toBe(pubky);
+      expect(savedUserDetails!.name).toBe('Bootstrap User');
+      expect(savedUserDetails!.bio).toBe('Bootstrap bio');
 
       // Verify user counts were persisted to database
       const savedUserCounts = await Core.UserCountsModel.findById(pubky);
       expect(savedUserCounts).toBeTruthy();
-      expect(savedUserCounts.id).toBe(pubky);
-      expect(savedUserCounts.posts).toBe(1);
+      expect(savedUserCounts!.id).toBe(pubky);
+      expect(savedUserCounts!.posts).toBe(1);
 
       // Verify user relationships were persisted to database
       const savedUserRelationships = await Core.UserRelationshipsModel.findById(pubky);
       expect(savedUserRelationships).toBeTruthy();
-      expect(savedUserRelationships.id).toBe(pubky);
-      expect(savedUserRelationships.following).toBe(false);
-      expect(savedUserRelationships.followed_by).toBe(false);
-      expect(savedUserRelationships.muted).toBe(false);
+      expect(savedUserRelationships!.id).toBe(pubky);
+      expect(savedUserRelationships!.following).toBe(false);
+      expect(savedUserRelationships!.followed_by).toBe(false);
+      expect(savedUserRelationships!.muted).toBe(false);
 
       // Verify user tags were persisted to database
       const savedUserTags = await Core.UserTagsModel.findById(pubky);
       expect(savedUserTags).toBeTruthy();
-      expect(savedUserTags.id).toBe(pubky);
-      expect(savedUserTags.tags).toHaveLength(2);
-      expect(savedUserTags.tags[0].label).toBe('developer');
-      expect(savedUserTags.tags[0].taggers_count).toBe(2);
-      expect(savedUserTags.tags[1].label).toBe('p2p');
-      expect(savedUserTags.tags[1].taggers_count).toBe(1);
+      expect(savedUserTags!.id).toBe(pubky);
+      expect(savedUserTags!.tags).toHaveLength(2);
+      expect(savedUserTags!.tags[0].label).toBe('developer');
+      expect(savedUserTags!.tags[0].taggers_count).toBe(2);
+      expect(savedUserTags!.tags[1].label).toBe('p2p');
+      expect(savedUserTags!.tags[1].taggers_count).toBe(1);
     });
 
     it('should persist posts to the database', async () => {
@@ -220,25 +220,25 @@ describe('NexusService', () => {
       // Verify post details were persisted to database
       const savedPostDetails = await Core.PostDetailsModel.findById(compositePostId);
       expect(savedPostDetails).toBeTruthy();
-      expect(savedPostDetails.id).toBe(compositePostId);
-      expect(savedPostDetails.content).toBe('Bootstrap post content');
+      expect(savedPostDetails!.id).toBe(compositePostId);
+      expect(savedPostDetails!.content).toBe('Bootstrap post content');
 
       // Verify post counts were persisted to database
       const savedPostCounts = await Core.PostCountsModel.findById(compositePostId);
       expect(savedPostCounts).toBeTruthy();
-      expect(savedPostCounts.id).toBe(compositePostId);
-      expect(savedPostCounts.replies).toBe(0);
-      expect(savedPostCounts.reposts).toBe(0);
+      expect(savedPostCounts!.id).toBe(compositePostId);
+      expect(savedPostCounts!.replies).toBe(0);
+      expect(savedPostCounts!.reposts).toBe(0);
 
       // Verify post tags were persisted to database
       const savedPostTags = await Core.PostTagsModel.findById(compositePostId);
       expect(savedPostTags).toBeTruthy();
-      expect(savedPostTags.id).toBe(compositePostId);
-      expect(savedPostTags.tags).toHaveLength(2);
-      expect(savedPostTags.tags[0].label).toBe('tech');
-      expect(savedPostTags.tags[0].taggers_count).toBe(1);
-      expect(savedPostTags.tags[1].label).toBe('announcement');
-      expect(savedPostTags.tags[1].taggers_count).toBe(2);
+      expect(savedPostTags!.id).toBe(compositePostId);
+      expect(savedPostTags!.tags).toHaveLength(2);
+      expect(savedPostTags!.tags[0].label).toBe('tech');
+      expect(savedPostTags!.tags[0].taggers_count).toBe(1);
+      expect(savedPostTags!.tags[1].label).toBe('announcement');
+      expect(savedPostTags!.tags[1].taggers_count).toBe(2);
     });
 
     it('should create stream in the database', async () => {
@@ -304,7 +304,7 @@ describe('NexusService', () => {
       // Verify all data was persisted
       const savedUserDetails = await Core.UserDetailsModel.findById(testUserId);
       expect(savedUserDetails).toBeTruthy();
-      expect(savedUserDetails.name).toBe('Bootstrap User');
+      expect(savedUserDetails!.name).toBe('Bootstrap User');
 
       const savedUserCounts = await Core.UserCountsModel.findById(testUserId);
       expect(savedUserCounts).toBeTruthy();
@@ -319,7 +319,7 @@ describe('NexusService', () => {
       const compositePostId = `${testUserId}:${testPostId}`;
       const savedPostDetails = await Core.PostDetailsModel.findById(compositePostId);
       expect(savedPostDetails).toBeTruthy();
-      expect(savedPostDetails.content).toBe('Bootstrap post content');
+      expect(savedPostDetails!.content).toBe('Bootstrap post content');
 
       // Verify post counts were persisted
       const savedPostCounts = await Core.PostCountsModel.findById(compositePostId);
