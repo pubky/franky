@@ -53,16 +53,16 @@ describe('PostCountsModel', () => {
       await Core.PostCountsModel.insert(mockPostCountsData);
       const result = await Core.PostCountsModel.findById(testPostId1);
 
-      expect(result).toBeInstanceOf(Core.PostCountsModel);
-      expect(result.id).toBe(testPostId1);
-      expect(result.replies).toBe(MOCK_NEXUS_POST_COUNTS.replies);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.PostCountsModel);
+      expect(result!.id).toBe(testPostId1);
+      expect(result!.replies).toBe(MOCK_NEXUS_POST_COUNTS.replies);
     });
 
-    it('should throw error for non-existent post counts', async () => {
+    it('should return null for non-existent post counts', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostCountsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in post_counts: ${nonExistentId}`,
-      );
+      const result = await Core.PostCountsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save post counts from tuples', async () => {
@@ -78,8 +78,10 @@ describe('PostCountsModel', () => {
       const postCounts1 = await Core.PostCountsModel.findById(testPostId1);
       const postCounts2 = await Core.PostCountsModel.findById(testPostId2);
 
-      expect(postCounts1.replies).toBe(12);
-      expect(postCounts2.replies).toBe(25);
+      expect(postCounts1).not.toBeNull();
+      expect(postCounts2).not.toBeNull();
+      expect(postCounts1!.replies).toBe(12);
+      expect(postCounts2!.replies).toBe(25);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -99,10 +101,12 @@ describe('PostCountsModel', () => {
       const postCounts1 = await Core.PostCountsModel.findById(testPostId1);
       const postCounts2 = await Core.PostCountsModel.findById(testPostId2);
 
-      expect(postCounts1.reposts).toBe(8);
-      expect(postCounts1.tags).toBe(5);
-      expect(postCounts2.reposts).toBe(100);
-      expect(postCounts2.tags).toBe(1);
+      expect(postCounts1).not.toBeNull();
+      expect(postCounts2).not.toBeNull();
+      expect(postCounts1!.reposts).toBe(8);
+      expect(postCounts1!.tags).toBe(5);
+      expect(postCounts2!.reposts).toBe(100);
+      expect(postCounts2!.tags).toBe(1);
     });
   });
 });

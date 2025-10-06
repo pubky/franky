@@ -1,4 +1,4 @@
-import { Table } from 'dexie';
+import { IndexableType, Table } from 'dexie';
 
 import * as Libs from '@/libs';
 import { NexusModelTuple } from './baseTuple.type';
@@ -31,18 +31,11 @@ export abstract class TupleModelBase<Id, Schema extends { id: Id }> {
   static async findById<TId, TSchema extends { id: TId }, TModel extends TupleModelBase<TId, TSchema>>(
     this: { table: Table<TSchema>; new (data: TSchema): TModel },
     id: TId,
-  ): Promise<TModel> {
+  ): Promise<TModel | null> {
     try {
       const record = await this.table.get(id);
       if (!record) {
-        throw Libs.createDatabaseError(
-          Libs.DatabaseErrorType.USER_NOT_FOUND,
-          `Record not found in ${this.table.name}: ${String(id)}`,
-          404,
-          {
-            id,
-          },
-        );
+        return null;
       }
       Libs.Logger.debug(`Found record in ${this.table.name}`, { id });
       return new this(record);
@@ -78,6 +71,27 @@ export abstract class TupleModelBase<Id, Schema extends { id: Id }> {
         {
           error,
           ids,
+        },
+      );
+    }
+  }
+
+  static async exists<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }, id: TId) {
+    try {
+      return (
+        (await this.table
+          .where('id')
+          .equals(id as IndexableType)
+          .count()) > 0
+      );
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to check if record exists in ${this.table.name}`,
+        500,
+        {
+          error,
+          id,
         },
       );
     }

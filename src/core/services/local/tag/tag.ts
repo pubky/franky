@@ -1,100 +1,51 @@
 import * as Core from '@/core';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import * as Libs from '@/libs';
 import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
+import { UserCountsFields } from '@/core/models/user/counts/userCounts.schema';
 
 export class LocalTagService {
   /**
-   * Add a tag to a post
-   * @param params - Parameters object
-   * @param params.postId - ID of the post to tag
-   * @param params.label - Normalized tag label (should already be normalized by caller)
-   * @param params.taggerId - ID of the user adding the tag
+   * Adds a tag to a post and updates all related counts.
+   *
+   * - Adds the tagger to the specified tag
+   * - Updates post counts (total tags, unique tags)
+   * - Increments the tagger's tagged count
+   *
+   * @param params.postId - Unique identifier of the post to tag
+   * @param params.label - Normalized tag label (must be pre-normalized by caller)
+   * @param params.taggerId - Unique identifier of the user adding the tag
+   *
+   * @throws {AppError} When user has already tagged this post with the same label
+   * @throws {DatabaseError} When database operations fail
    */
   static async save({ postId, label, taggerId }: TLocalSaveTagParams) {
     try {
-      const tagsData = await Core.PostTagsModel.table.get(postId);
+      const tagsData = await Core.PostTagsModel.findById(postId);
 
-      if (tagsData) {
-        const postTagsModel = new Core.PostTagsModel(tagsData);
+      const postTagsModel = tagsData
+        ? new Core.PostTagsModel(tagsData)
+        : new Core.PostTagsModel({ id: postId, tags: [] });
 
-        const existingTag = postTagsModel.tags.find((t) => t.label === label);
-        if (existingTag?.relationship) {
-          throw createDatabaseError(
-            DatabaseErrorType.SAVE_FAILED,
-            'User already tagged this post with this label',
-            400,
-            { postId, label, taggerId },
-          );
-        }
-
-        const added = postTagsModel.addTagger(label, taggerId);
-        if (!added) {
-          throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tagger', 500, {
-            postId,
-            label,
-            taggerId,
-          });
-        }
-
-        const updatedTag = postTagsModel.tags.find((t) => t.label === label);
-        if (updatedTag) {
-          updatedTag.relationship = true;
-        }
-
-        await Core.PostTagsModel.insert({
-          id: postId,
-          tags: postTagsModel.tags as Core.NexusTag[],
-        });
-
-        const counts = await Core.PostCountsModel.table.get(postId);
-        if (counts) {
-          await Core.PostCountsModel.insert({
-            ...counts,
-            tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-            unique_tags: postTagsModel.tags.length,
-          });
-        }
-
-        Logger.debug('Added tagger using existing PostTagsModel', { postId, label, taggerId });
-        return;
-      }
-
-      const newPostTags = new Core.PostTagsModel({
-        id: postId,
-        tags: [],
-      });
-
-      const added = newPostTags.addTagger(label, taggerId);
-      if (!added) {
-        throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tagger', 500, {
-          postId,
-          label,
-          taggerId,
-        });
-      }
-
-      const newTag = newPostTags.tags.find((t) => t.label === label);
-      if (newTag) {
-        newTag.relationship = true;
-      }
+      postTagsModel.saveTag(label, taggerId);
 
       await Core.PostTagsModel.insert({
         id: postId,
-        tags: newPostTags.tags as Core.NexusTag[],
+        tags: postTagsModel.tags as Core.NexusTag[],
       });
 
-      const counts = await Core.PostCountsModel.table.get(postId);
-      if (counts) {
-        await Core.PostCountsModel.insert({
-          ...counts,
-          tags: newPostTags.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-          unique_tags: newPostTags.tags.length,
-        });
+      await this.updatePostCounts(postId, postTagsModel);
+
+      const tagger = await Core.UserCountsModel.findById(taggerId);
+      console.log('tagger', tagger, taggerId);
+      if (tagger) {
+        tagger.updateCount(UserCountsFields.TAGGED, Core.INCREMENT);
+        await Core.UserCountsModel.insert({ ...tagger });
+        console.log('tagger updated', tagger);
       }
 
-      Logger.debug('Created new PostTagsModel and added tag', { postId, label, taggerId });
+      Libs.Logger.debug('Tag saved', { postId, label, taggerId });
     } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add tag to post', 500, {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to save tag to PostTagsModel`, 500, {
         error,
         postId,
         label,
@@ -104,69 +55,89 @@ export class LocalTagService {
   }
 
   /**
-   * Remove a tag from a post
-   * @param params - Parameters object
-   * @param params.postId - ID of the post
-   * @param params.label - Normalized tag label (should already be normalized by caller)
-   * @param params.taggerId - ID of the user removing the tag
+   * Removes a tag from a post and updates all related counts.
+   *
+   * - Removes the tagger from the specified tag
+   * - Updates post counts (total tags, unique tags)
+   * - Decrements the tagger's tagged count
+   * - Removes the tag entirely if no taggers remain
+   *
+   * @param params.postId - Unique identifier of the post to remove tag from
+   * @param params.label - Tag label to remove
+   * @param params.taggerId - Unique identifier of the user removing the tag
+   *
+   * @throws {AppError} When post has no tags or user hasn't tagged with this label
+   * @throws {DatabaseError} When database operations fail
    */
   static async remove({ postId, label, taggerId }: TLocalRemoveTagParams) {
     try {
-      const tagsData = await Core.PostTagsModel.table.get(postId);
+      const tagsData = await Core.PostTagsModel.findById(postId);
 
       if (!tagsData) {
-        throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Post has no tags', 404, { postId });
+        throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, `Post has no tags`, 404, { postId });
       }
 
       const postTagsModel = new Core.PostTagsModel(tagsData);
 
-      const existingTag = postTagsModel.tags.find((t) => t.label === label);
-      if (!existingTag?.relationship) {
-        throw createDatabaseError(
-          DatabaseErrorType.DELETE_FAILED,
-          'User has not tagged this post with this label',
-          404,
-          { postId, label, taggerId },
-        );
-      }
-
-      const removed = postTagsModel.removeTagger(label, taggerId);
-      if (!removed) {
-        throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tagger', 500, {
-          postId,
-          label,
-          taggerId,
-        });
-      }
-
-      const updatedTag = postTagsModel.tags.find((t) => t.label === label);
-      if (updatedTag) {
-        updatedTag.relationship = false;
-      }
-
-      postTagsModel.tags = postTagsModel.tags.filter((tag) => tag.taggers_count > 0);
+      postTagsModel.removeTag(label, taggerId);
 
       await Core.PostTagsModel.insert({
         id: postId,
         tags: postTagsModel.tags as Core.NexusTag[],
       });
 
-      const counts = await Core.PostCountsModel.table.get(postId);
-      if (counts) {
-        await Core.PostCountsModel.insert({
-          ...counts,
-          tags: postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0),
-          unique_tags: postTagsModel.tags.length,
-        });
+      await this.updatePostCounts(postId, postTagsModel);
+
+      const tagger = await Core.UserCountsModel.findById(taggerId);
+      console.log('tagger', tagger);
+      if (tagger) {
+        tagger.updateCount(UserCountsFields.TAGGED, Core.DECREMENT);
+        await Core.UserCountsModel.insert({ ...tagger });
+        console.log('tagger updated', tagger);
       }
 
-      Logger.debug('Removed tagger using PostTagsModel', { postId, label, taggerId });
+      Libs.Logger.debug('Tag removed', { postId, label, taggerId });
     } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to remove tag from post', 500, {
-        error,
-        postId,
-        label,
-        taggerId,
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPDATE_FAILED,
+        `Failed to remove tag from PostTagsModel`,
+        500,
+        { error, postId, label, taggerId },
+      );
+    }
+  }
+
+  /**
+   * Updates post counts based on the current tag state.
+   *
+   * This helper method calculates and updates the total tags and unique tags
+   * for a post based on the current PostTagsModel state.
+   *
+   * @param postId - Unique identifier of the post
+   * @param postTagsModel - The PostTagsModel instance with current tag data
+   *
+   * @private
+   */
+  static async updatePostCounts(postId: Core.Pubky, postTagsModel: Core.PostTagsModel) {
+    const tags = postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0);
+    const unique_tags = postTagsModel.tags.length;
+
+    const countsExist = await Core.PostCountsModel.findById(postId);
+    if (countsExist) {
+      await Core.PostCountsModel.insert({
+        ...countsExist!,
+        tags,
+        unique_tags,
+      });
+    } else {
+      // TODO(core): Fetch counts from Nexus and reconcile local tag counts.
+      // This prevents drift between local Dexie state and the upstream source of truth.
+      await Core.PostCountsModel.insert({
+        id: postId,
+        tags,
+        unique_tags,
+        replies: 0,
+        reposts: 0,
       });
     }
   }

@@ -1,4 +1,3 @@
-import * as Libs from '@/libs';
 import * as Core from '@/core';
 
 export class TagModel implements Core.NexusTag {
@@ -14,54 +13,24 @@ export class TagModel implements Core.NexusTag {
     this.relationship = tag.relationship;
   }
 
-  static findByLabel(tags: TagModel[], label: string): TagModel[] {
-    return tags.filter((tag) => tag.label === label);
+  setRelationship(relationship: boolean) {
+    this.relationship = relationship;
   }
 
-  static findByTagger(tags: TagModel[], taggerId: Core.Pubky): TagModel[] {
-    return tags.filter((tag) => tag.taggers.includes(taggerId));
-  }
-
-  static getUniqueLabels(tags: TagModel[]): string[] {
-    return [...new Set(tags.map((tag) => tag.label))];
-  }
-
-  hasUser(userId: Core.Pubky): boolean {
-    return this.taggers.includes(userId);
-  }
-
-  addTagger(userId: Core.Pubky): boolean {
-    if (this.hasUser(userId)) return false;
+  addTagger(userId: Core.Pubky) {
+    if (this.taggers.includes(userId)) {
+      new Error('Tagger already exists');
+    }
 
     this.taggers.push(userId);
     this.taggers_count++;
-    return true;
   }
 
-  removeTagger(userId: Core.Pubky): boolean {
-    const initialLength = this.taggers.length;
+  removeTagger(userId: Core.Pubky) {
+    if (this.taggers.includes(userId)) {
+      new Error('Tagger does not exist');
+    }
     this.taggers = this.taggers.filter((id) => id !== userId);
-
-    if (this.taggers.length < initialLength) {
-      this.taggers_count--;
-      return true;
-    }
-    return false;
-  }
-
-  getTaggers(pagination: Core.PaginationParams = Core.DEFAULT_PAGINATION): Core.Pubky[] {
-    try {
-      const { skip, limit } = { ...Core.DEFAULT_PAGINATION, ...pagination };
-      Libs.Logger.debug('Getting taggers with pagination', {
-        label: this.label,
-        skip,
-        limit,
-        total: this.taggers_count,
-      });
-      return this.taggers.slice(skip ?? 0, (skip ?? 0) + (limit ?? 0));
-    } catch (error) {
-      Libs.Logger.error('Failed to get taggers', error);
-      throw error;
-    }
+    this.taggers_count--;
   }
 }
