@@ -137,7 +137,7 @@ export class LocalPostService {
         Core.PostDetailsModel.table.add(postDetails),
         Core.PostRelationshipsModel.table.add(postRelationships),
         Core.PostCountsModel.table.add(postCounts),
-        Core.PostTagsModel.insert({ id: postId, tags: [] }),
+        Core.PostTagsModel.table.add({ id: postId, tags: [] }),
       ]);
 
       // If this is a reply, update parent's reply count
