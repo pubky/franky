@@ -33,36 +33,40 @@ vi.mock('@radix-ui/react-dialog', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', () => ({
-  FileUp: ({ className }: { className?: string }) => (
-    <div data-testid="file-up-icon" className={className}>
-      FileUp
-    </div>
-  ),
-  Upload: ({ className }: { className?: string }) => (
-    <div data-testid="upload-icon" className={className}>
-      Upload
-    </div>
-  ),
-  FileText: ({ className }: { className?: string }) => (
-    <div data-testid="file-text-icon" className={className}>
-      FileText
-    </div>
-  ),
-  Loader2: ({ className }: { className?: string }) => (
-    <div data-testid="loader-icon" className={className}>
-      Loading
-    </div>
-  ),
-  RotateCcw: ({ className }: { className?: string }) => (
-    <div data-testid="rotate-icon" className={className}>
-      Rotate
-    </div>
-  ),
-  Identity: {
-    secretKeyToHex: vi.fn((key) => `hex-${key}`),
-  },
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    FileUp: ({ className }: { className?: string }) => (
+      <div data-testid="file-up-icon" className={className}>
+        FileUp
+      </div>
+    ),
+    Upload: ({ className }: { className?: string }) => (
+      <div data-testid="upload-icon" className={className}>
+        Upload
+      </div>
+    ),
+    FileText: ({ className }: { className?: string }) => (
+      <div data-testid="file-text-icon" className={className}>
+        FileText
+      </div>
+    ),
+    Loader2: ({ className }: { className?: string }) => (
+      <div data-testid="loader-icon" className={className}>
+        Loading
+      </div>
+    ),
+    RotateCcw: ({ className }: { className?: string }) => (
+      <div data-testid="rotate-icon" className={className}>
+        Rotate
+      </div>
+    ),
+    Identity: {
+      secretKeyToHex: vi.fn((key) => `hex-${key}`),
+    },
+  };
+});
 
 // Mock atoms
 vi.mock('@/components/atoms', () => ({
@@ -312,6 +316,31 @@ describe('DialogRestoreEncryptedFile', () => {
     expect(passwordInput).toHaveValue('testpassword');
   });
 
+  it('handles Enter key on password input to trigger restore', async () => {
+    mockLoginWithEncryptedFile.mockResolvedValue();
+
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const passwordInput = screen.getByTestId('input');
+    const testFile = mockFile('test.pkarr');
+
+    // Set up file and password
+    fireEvent.change(fileInput, { target: { files: [testFile] } });
+    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+
+    // Press Enter on password input
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(mockLoginWithEncryptedFile).toHaveBeenCalledWith({ encryptedFile: testFile, password: 'testpassword' });
+    });
+
+    await waitFor(() => {
+      expect(mockOnRestore).toHaveBeenCalled();
+    });
+  });
+
   it('enables restore button when both file and password are provided', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
@@ -532,5 +561,85 @@ describe('DialogRestoreEncryptedFile', () => {
 
     const dialogTitle = screen.getByTestId('dialog-title');
     expect(dialogTitle).toHaveClass('text-2xl', 'font-bold', 'leading-8', 'sm:text-xl', 'sm:leading-7');
+  });
+
+  it('handles Enter key to trigger restore when form is valid', async () => {
+    mockLoginWithEncryptedFile.mockResolvedValue({});
+
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const passwordInput = screen.getByTestId('input');
+    const testFile = mockFile('test.pkarr');
+
+    fireEvent.change(fileInput, { target: { files: [testFile] } });
+    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+
+    // Press Enter on password input
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(mockLoginWithEncryptedFile).toHaveBeenCalledWith({
+        encryptedFile: testFile,
+        password: 'testpassword',
+      });
+    });
+  });
+
+  it('does not trigger restore on Enter when form is invalid', async () => {
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const passwordInput = screen.getByTestId('input');
+
+    // No file selected, only password
+    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+
+    // Press Enter on password input
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(mockLoginWithEncryptedFile).not.toHaveBeenCalled();
+    });
+  });
+
+  it('guards against double-submit when Enter is pressed twice', async () => {
+    // Mock a slow async operation
+    mockLoginWithEncryptedFile.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const passwordInput = screen.getByTestId('input');
+    const testFile = mockFile('test.pkarr');
+
+    fireEvent.change(fileInput, { target: { files: [testFile] } });
+    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+
+    // Press Enter twice quickly
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    await waitFor(() => {
+      // Should only be called once, not twice
+      expect(mockLoginWithEncryptedFile).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('guards against IME composition on Enter key', async () => {
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const passwordInput = screen.getByTestId('input');
+    const testFile = mockFile('test.pkarr');
+
+    fireEvent.change(fileInput, { target: { files: [testFile] } });
+    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+
+    // Press Enter during IME composition
+    fireEvent.keyDown(passwordInput, { key: 'Enter', isComposing: true });
+
+    await waitFor(() => {
+      expect(mockLoginWithEncryptedFile).not.toHaveBeenCalled();
+    });
   });
 });

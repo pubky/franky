@@ -19,6 +19,7 @@ interface InputFieldProps {
   loadingIcon?: ReactNode;
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   maxLength?: number;
   iconPosition?: 'left' | 'right';
   message?: ReactNode;
@@ -42,6 +43,7 @@ export function InputField({
   loadingIcon,
   status = 'default',
   onChange,
+  onKeyDown,
   maxLength,
   iconPosition = 'left',
   message,
@@ -108,6 +110,7 @@ export function InputField({
           readOnly={readOnly}
           onClick={onClick}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           maxLength={maxLength}
           aria-invalid={status === 'error'}
         />

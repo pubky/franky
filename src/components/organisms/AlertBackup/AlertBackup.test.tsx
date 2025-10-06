@@ -148,36 +148,6 @@ vi.mock('@/organisms', () => ({
 }));
 
 describe('AlertBackup', () => {
-  it('matches snapshot for default AlertBackup', () => {
-    const { container } = render(<AlertBackup />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('renders warning icon and message', () => {
-    render(<AlertBackup />);
-
-    expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
-    expect(screen.getByText('Back up now')).toBeInTheDocument();
-    expect(screen.getByText('to avoid losing your account!')).toBeInTheDocument();
-  });
-
-  it('renders dialog components', () => {
-    render(<AlertBackup />);
-
-    expect(screen.getByTestId('dialog-backup')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-confirm-backup')).toBeInTheDocument();
-  });
-
-  it('matches snapshot for warning message', () => {
-    const { container } = render(<AlertBackup />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for warning icon', () => {
-    const { container } = render(<AlertBackup />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
   it('renders all required elements', () => {
     render(<AlertBackup />);
 
@@ -186,5 +156,12 @@ describe('AlertBackup', () => {
     expect(screen.getByText('to avoid losing your account!')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-backup')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-confirm-backup')).toBeInTheDocument();
+  });
+});
+
+describe('AlertBackup - Snapshot', () => {
+  it('matches snapshot for default AlertBackup', () => {
+    const { container } = render(<AlertBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
