@@ -18,6 +18,8 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
     return null;
   }
 
+  const indexedAt = new Date(postDetails?.indexed_at || 0);
+
   return (
     <Atoms.Container className="flex items-center gap-3">
       <Atoms.Container className="flex flex-row gap-4">
@@ -30,13 +32,13 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
             {userDetails.name}
           </Atoms.Typography>
           <Atoms.Container className="flex flex-row gap-2">
-            <Atoms.Typography size="sm" className="text-muted-foreground">
-              {shorten(userDetails.name).toUpperCase()}
+            <Atoms.Typography size="sm" className="text-muted-foreground uppercase">
+              {Libs.formatPublicKey({ key: userDetails.id, length: 4 })}
             </Atoms.Typography>
             <Atoms.Container className="flex flex-row gap-1 items-center">
               <Libs.Clock className="h-4 w-4 text-muted-foreground" />
               <Atoms.Typography size="sm" className="text-muted-foreground">
-                {timeAgo(new Date(postDetails.indexed_at))}
+                {Libs.timeAgo(indexedAt)}
               </Atoms.Typography>
             </Atoms.Container>
           </Atoms.Container>
@@ -44,29 +46,4 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
       </Atoms.Container>
     </Atoms.Container>
   );
-}
-
-// TODO: use proper helper/util
-function shorten(value: string, chars: number = 4) {
-  if (value.length <= chars * 2) {
-    return value;
-  }
-  return `${value.slice(0, chars)}...${value.slice(-chars)}`;
-}
-
-// TODO: use proper helper/util
-function timeAgo(date: Date) {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffMins < 1) return 'now';
-  if (diffMins < 60) return `${diffMins}m`;
-  if (diffHours < 24) return `${diffHours}h`;
-  if (diffDays < 7) return `${diffDays}d`;
-
-  // For older posts, show the date
-  return date.toLocaleDateString();
 }
