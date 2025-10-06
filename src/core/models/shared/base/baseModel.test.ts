@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import Dexie, { Table, UpdateSpec } from 'dexie';
 import { indexedDB, IDBKeyRange } from 'fake-indexeddb';
-import { DexieModelBase } from './baseModel';
+import { ModelBase } from './baseModel';
 
 interface TestSchema {
   id: string;
@@ -9,7 +9,7 @@ interface TestSchema {
   count?: number;
 }
 
-class TestBaseModel extends DexieModelBase<string, TestSchema> implements TestSchema {
+class TestBaseModel extends ModelBase<string, TestSchema> implements TestSchema {
   static table: Table<TestSchema>;
   id!: string;
   name!: string;

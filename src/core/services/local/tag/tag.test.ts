@@ -43,7 +43,7 @@ const createTagRecord = (label: string, taggers: Core.Pubky[], relationship: boo
 });
 
 const setupExistingTag = async (label: string, taggers: Core.Pubky[], relationship: boolean) => {
-  await Core.PostTagsModel.create({
+  await Core.PostTagsModel.upsert({
     id: testData.postId,
     tags: [createTagRecord(label, taggers, relationship)],
   });

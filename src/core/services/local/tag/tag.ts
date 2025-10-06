@@ -28,7 +28,7 @@ export class LocalTagService {
 
       postTagsModel.saveTag(label, taggerId);
 
-      await Core.PostTagsModel.create({
+      await Core.PostTagsModel.upsert({
         id: postId,
         tags: postTagsModel.tags as Core.NexusTag[],
       });
@@ -79,7 +79,7 @@ export class LocalTagService {
 
       postTagsModel.removeTag(label, taggerId);
 
-      await Core.PostTagsModel.create({
+      await Core.PostTagsModel.upsert({
         id: postId,
         tags: postTagsModel.tags as Core.NexusTag[],
       });

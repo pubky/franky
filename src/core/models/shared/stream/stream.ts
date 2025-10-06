@@ -7,6 +7,8 @@ import { BaseStreamModelSchema } from './stream.type';
  * Provides common functionality for database operations and item management
  * Follows the same pattern as RecordModelBase
  *
+ * NOTE: It cannot apply baseModel because in some scenarios has to keep the order of the items in the stream.
+ *
  * @template TId - The type of the stream ID
  * @template TItem - The type of items in the stream
  * @template TSchema - The schema type that extends BaseStreamModelSchema

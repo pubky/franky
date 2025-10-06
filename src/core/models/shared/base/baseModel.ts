@@ -4,7 +4,7 @@ import * as Libs from '@/libs';
 /**
  * Shared base class for Dexie-backed models exposing common CRUD/query helpers.
  */
-export abstract class DexieModelBase<Id, Schema extends { id: Id }> {
+export abstract class ModelBase<Id, Schema extends { id: Id }> {
   id: Id;
 
   protected constructor(data: Schema) {
@@ -74,9 +74,13 @@ export abstract class DexieModelBase<Id, Schema extends { id: Id }> {
   }
 
   /**
-   * Find a record by id and wrap it into the model. Returns null if not found.
+   * Find a single record by its id and wrap it into a model instance.
+   *
+   * Returns the concrete model (`TModel`) or `null` when not found. This method
+   * materializes a model instance so callers can immediately use instance-level
+   * behavior (methods, derived accessors, invariants), not just raw data.
    */
-  static async findById<TId, TSchema extends { id: TId }, TModel extends DexieModelBase<TId, TSchema>>(
+  static async findById<TId, TSchema extends { id: TId }, TModel extends ModelBase<TId, TSchema>>(
     this: { table: Table<TSchema>; new (data: TSchema): TModel },
     id: TId,
   ): Promise<TModel | null> {
@@ -102,7 +106,10 @@ export abstract class DexieModelBase<Id, Schema extends { id: Id }> {
   }
 
   /**
-   * Find multiple records by their ids and return raw schema objects.
+   * Find multiple records by their ids.
+   *
+   * Returns an array of raw schema objects (`TSchema`). It does not construct
+   * model instances for performance reasons when fetching many records.
    */
   static async findByIds<TId, TSchema extends { id: TId }>(
     this: { table: Table<TSchema> },
@@ -111,8 +118,7 @@ export abstract class DexieModelBase<Id, Schema extends { id: Id }> {
     try {
       return await this.table
         .where('id')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .anyOf(ids as any)
+        .anyOf(ids as IndexableType[])
         .toArray();
     } catch (error) {
       throw Libs.createDatabaseError(
@@ -128,7 +134,13 @@ export abstract class DexieModelBase<Id, Schema extends { id: Id }> {
   }
 
   /**
-   * Find multiple records by their ids, preserving input order and returning null for missing ones.
+   * Find multiple records by their ids, preserving input order.
+   *
+   * Returns an array where each element is the raw schema (`TSchema`) or `null`
+   * if the corresponding id was not found. This method is schema-oriented by
+   * design (no model construction) to keep batch lookups lightweight. If you
+   * need model instances, compose on top by mapping non-null entries to
+   * `new this(row)`.
    */
   static async findByIdsWithNulls<TId, TSchema extends { id: TId }>(
     this: { table: Table<TSchema> },
@@ -137,8 +149,7 @@ export abstract class DexieModelBase<Id, Schema extends { id: Id }> {
     try {
       const found = await this.table
         .where('id')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .anyOf(ids as any)
+        .anyOf(ids as IndexableType[])
         .toArray();
 
       const byId = new Map<TId, TSchema>(found.map((r) => [r.id, r]));

@@ -2,12 +2,12 @@ import { Table } from 'dexie';
 
 import * as Libs from '@/libs';
 import { NexusModelTuple } from './baseTuple.type';
-import { DexieModelBase } from '@/core/models/shared/base/baseModel';
+import { ModelBase } from '@/core/models/shared/base/baseModel';
 
 /**
  * Base class for tuple-oriented models, where bulk operations accept tuples [id, data].
  */
-export abstract class TupleModelBase<Id, Schema extends { id: Id }> extends DexieModelBase<Id, Schema> {
+export abstract class TupleModelBase<Id, Schema extends { id: Id }> extends ModelBase<Id, Schema> {
   /**
    * Bulk upsert many tuples at once by converting them with `toSchema` and delegating to Dexie `bulkPut`.
    */

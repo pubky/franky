@@ -1,11 +1,11 @@
 import { Table } from 'dexie';
 import * as Libs from '@/libs';
-import { DexieModelBase } from '@/core/models/shared/base/baseModel';
+import { ModelBase } from '@/core/models/shared/base/baseModel';
 
 /**
  * Base class for record-oriented models backed by a Dexie table.
  */
-export abstract class RecordModelBase<Id, Schema extends { id: Id }> extends DexieModelBase<Id, Schema> {
+export abstract class RecordModelBase<Id, Schema extends { id: Id }> extends ModelBase<Id, Schema> {
   /**
    * Bulk upsert many full records at once.
    * Delegates to Dexie `bulkPut`.
