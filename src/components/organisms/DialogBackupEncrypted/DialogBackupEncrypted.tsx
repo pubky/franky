@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import Image from 'next/image';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Identity } from '@/libs';
@@ -99,6 +100,12 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
     setStep(2);
   };
 
+  const isFormValid = () => {
+    return Boolean(password && passwordsMatch);
+  };
+
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleDownload);
+
   return (
     <>
       <Atoms.DialogHeader className="space-y-1.5 pr-6">
@@ -124,6 +131,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
                   placeholder="Enter a strong password"
                   autoComplete="new-password"
@@ -164,6 +172,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyDown={handleKeyDown}
                 className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 ${
                   confirmPassword && !passwordsMatch ? 'border-red-400' : ''
                 }`}
@@ -197,7 +206,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
           id="download-file-btn"
           className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={handleDownload}
-          disabled={!password || !passwordsMatch}
+          disabled={!isFormValid()}
         >
           <Libs.Download className="mr-2 h-4 w-4" />
           Download file
