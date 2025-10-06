@@ -52,6 +52,17 @@ export function HomeserverCard() {
     });
   };
 
+  const isFormValid = () => {
+    return !continueButtonDisabled && !isLoading;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && isFormValid()) {
+      e.preventDefault();
+      onHandleContinueButton();
+    }
+  };
+
   const onHandleContinueButton = async () => {
     try {
       setContinueButtonDisabled(true);
@@ -100,6 +111,7 @@ export function HomeserverCard() {
               variant="dashed"
               onClick={() => setInviteCode(inviteCode)}
               onChange={handleOnChange}
+              onKeyDown={handleKeyDown}
               placeholder="XXXX-XXXX-XXXX"
               maxLength={14}
               disabled={isLoading}
