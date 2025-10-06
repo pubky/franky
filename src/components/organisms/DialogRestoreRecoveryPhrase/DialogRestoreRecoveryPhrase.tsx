@@ -6,6 +6,7 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 
 interface DialogRestoreRecoveryPhraseProps {
   onRestore?: () => void;
@@ -19,6 +20,9 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
   const { toast } = Molecules.useToast();
 
   const handleRestore = async () => {
+    // Guard against double-submit race condition
+    if (isRestoring) return;
+
     setIsRestoring(true);
 
     try {
@@ -143,12 +147,7 @@ function RestoreForm({
     return allWordsFilled && noErrors && allTouched && !isRestoring;
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isFormValid()) {
-      e.preventDefault();
-      onRestore();
-    }
-  };
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onRestore);
 
   return (
     <>

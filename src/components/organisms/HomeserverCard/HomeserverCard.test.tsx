@@ -113,12 +113,16 @@ vi.mock('@/libs', () => ({
 }));
 
 // Mock app routes
-vi.mock('@/app', () => ({
-  ONBOARDING_ROUTES: {
-    PROFILE: '/onboarding/profile',
-    BACKUP: '/onboarding/backup',
-  },
-}));
+vi.mock('@/app', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/app')>();
+  return {
+    ...actual,
+    ONBOARDING_ROUTES: {
+      PROFILE: '/onboarding/profile',
+      BACKUP: '/onboarding/backup',
+    },
+  };
+});
 
 describe('HomeserverCard', () => {
   const mockPush = vi.fn();

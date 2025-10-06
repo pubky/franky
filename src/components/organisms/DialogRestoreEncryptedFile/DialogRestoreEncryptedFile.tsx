@@ -6,6 +6,7 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -32,6 +33,9 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
   };
 
   const handleRestore = async () => {
+    // Guard against double-submit race condition
+    if (isRestoring) return;
+
     if (!selectedFile || !password) {
       setError('Please select a file and enter your password');
       return;
@@ -83,15 +87,10 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
   };
 
   const isFormValid = () => {
-    return selectedFile && password && !isRestoring;
+    return Boolean(selectedFile && password && !isRestoring);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isFormValid()) {
-      e.preventDefault();
-      handleRestore();
-    }
-  };
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleRestore);
 
   return (
     <Atoms.Dialog>

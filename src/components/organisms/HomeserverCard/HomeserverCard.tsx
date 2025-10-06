@@ -8,6 +8,7 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as App from '@/app';
+import * as Hooks from '@/hooks';
 
 export function HomeserverCard() {
   const router = useRouter();
@@ -52,17 +53,6 @@ export function HomeserverCard() {
     });
   };
 
-  const isFormValid = () => {
-    return !continueButtonDisabled && !isLoading;
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isFormValid()) {
-      e.preventDefault();
-      onHandleContinueButton();
-    }
-  };
-
   const onHandleContinueButton = async () => {
     try {
       setContinueButtonDisabled(true);
@@ -82,6 +72,12 @@ export function HomeserverCard() {
       setIsLoading(false);
     }
   };
+
+  const isFormValid = () => {
+    return !continueButtonDisabled && !isLoading;
+  };
+
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onHandleContinueButton);
 
   return (
     <>
@@ -109,7 +105,6 @@ export function HomeserverCard() {
               id="invite-code-input"
               value={inviteCode}
               variant="dashed"
-              onClick={() => setInviteCode(inviteCode)}
               onChange={handleOnChange}
               onKeyDown={handleKeyDown}
               placeholder="XXXX-XXXX-XXXX"

@@ -88,6 +88,31 @@ describe('TextareaField', () => {
     const textarea = screen.getByTestId('textarea');
     expect(textarea).toBeDisabled();
   });
+
+  it('handles onKeyDown events', () => {
+    const handleKeyDown = vi.fn();
+    render(<TextareaField value="" onKeyDown={handleKeyDown} />);
+
+    const textarea = screen.getByTestId('textarea');
+    fireEvent.keyDown(textarea, { key: 'Enter' });
+
+    expect(handleKeyDown).toHaveBeenCalledTimes(1);
+    expect(handleKeyDown).toHaveBeenCalledWith(expect.objectContaining({ key: 'Enter' }));
+  });
+
+  it('passes through onKeyDown with proper event type', () => {
+    const handleKeyDown = vi.fn((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      // Verify we receive the proper event type with textarea-specific properties
+      expect(e.currentTarget).toBeInstanceOf(HTMLTextAreaElement);
+    });
+
+    render(<TextareaField value="test" onKeyDown={handleKeyDown} />);
+
+    const textarea = screen.getByTestId('textarea');
+    fireEvent.keyDown(textarea, { key: 'Escape' });
+
+    expect(handleKeyDown).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe('TextareaField - Snapshots', () => {

@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import Image from 'next/image';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Identity } from '@/libs';
@@ -100,15 +101,10 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   };
 
   const isFormValid = () => {
-    return password && passwordsMatch;
+    return Boolean(password && passwordsMatch);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isFormValid()) {
-      e.preventDefault();
-      handleDownload();
-    }
-  };
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleDownload);
 
   return (
     <>

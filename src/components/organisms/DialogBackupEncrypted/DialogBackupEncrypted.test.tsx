@@ -39,31 +39,35 @@ vi.mock('@/core', () => ({
 }));
 
 // Mock identity library
-vi.mock('@/libs', () => ({
-  FileText: ({ className }: { className?: string }) => (
-    <div data-testid="file-text-icon" className={className}>
-      FileText
-    </div>
-  ),
-  ArrowLeft: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-left-icon" className={className}>
-      ArrowLeft
-    </div>
-  ),
-  ArrowRight: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-right-icon" className={className}>
-      ArrowRight
-    </div>
-  ),
-  Download: ({ className }: { className?: string }) => (
-    <div data-testid="download-icon" className={className}>
-      Download
-    </div>
-  ),
-  Identity: {
-    createRecoveryFile: vi.fn(),
-  },
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    FileText: ({ className }: { className?: string }) => (
+      <div data-testid="file-text-icon" className={className}>
+        FileText
+      </div>
+    ),
+    ArrowLeft: ({ className }: { className?: string }) => (
+      <div data-testid="arrow-left-icon" className={className}>
+        ArrowLeft
+      </div>
+    ),
+    ArrowRight: ({ className }: { className?: string }) => (
+      <div data-testid="arrow-right-icon" className={className}>
+        ArrowRight
+      </div>
+    ),
+    Download: ({ className }: { className?: string }) => (
+      <div data-testid="download-icon" className={className}>
+        Download
+      </div>
+    ),
+    Identity: {
+      createRecoveryFile: vi.fn(),
+    },
+  };
+});
 
 // Mock atoms
 vi.mock('@/components/atoms', () => ({
@@ -217,6 +221,69 @@ describe('DialogBackupEncrypted', () => {
 
     // Press Enter on password input
     fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    expect(mockCreateRecoveryFile).not.toHaveBeenCalled();
+  });
+
+  it('handles Enter key on confirm password input when passwords match', () => {
+    const mockCreateRecoveryFile = vi.fn();
+    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
+
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+    const confirmPasswordInput = screen.getByPlaceholderText('Repeat your password');
+
+    // Set matching passwords
+    fireEvent.change(passwordInput, { target: { value: 'TestPassword123!' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'TestPassword123!' } });
+
+    // Press Enter on confirm password input
+    fireEvent.keyDown(confirmPasswordInput, { key: 'Enter' });
+
+    expect(mockCreateRecoveryFile).toHaveBeenCalledWith(
+      {
+        pubky: 'mock-public-key',
+        secretKey: 'mock-secret-key',
+      },
+      'TestPassword123!',
+    );
+  });
+
+  it('does not trigger download on Enter from confirm password when passwords do not match', () => {
+    const mockCreateRecoveryFile = vi.fn();
+    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
+
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+    const confirmPasswordInput = screen.getByPlaceholderText('Repeat your password');
+
+    // Set non-matching passwords
+    fireEvent.change(passwordInput, { target: { value: 'TestPassword123!' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'DifferentPassword!' } });
+
+    // Press Enter on confirm password input
+    fireEvent.keyDown(confirmPasswordInput, { key: 'Enter' });
+
+    expect(mockCreateRecoveryFile).not.toHaveBeenCalled();
+  });
+
+  it('guards against IME composition on Enter key', () => {
+    const mockCreateRecoveryFile = vi.fn();
+    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
+
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+    const confirmPasswordInput = screen.getByPlaceholderText('Repeat your password');
+
+    // Set matching passwords
+    fireEvent.change(passwordInput, { target: { value: 'TestPassword123!' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: 'TestPassword123!' } });
+
+    // Press Enter during IME composition
+    fireEvent.keyDown(passwordInput, { key: 'Enter', isComposing: true });
 
     expect(mockCreateRecoveryFile).not.toHaveBeenCalled();
   });
