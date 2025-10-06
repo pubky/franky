@@ -141,7 +141,7 @@ export function HomeserverCard() {
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           onClick={onHandleContinueButton}
-          disabled={continueButtonDisabled}
+          disabled={!isFormValid()}
         >
           {isLoading ? (
             <>

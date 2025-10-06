@@ -3,9 +3,14 @@ import { renderHook, act } from '@testing-library/react';
 import { useEnterSubmit } from './useEnterSubmit';
 
 describe('useEnterSubmit', () => {
-  const createKeyboardEvent = (key: string, isComposing: boolean = false): React.KeyboardEvent =>
+  const createKeyboardEvent = (
+    key: string,
+    isComposing: boolean = false,
+    shiftKey: boolean = false,
+  ): React.KeyboardEvent =>
     ({
       key,
+      shiftKey,
       nativeEvent: { isComposing } as KeyboardEvent,
       preventDefault: vi.fn(),
     }) as unknown as React.KeyboardEvent;
@@ -133,7 +138,7 @@ describe('useEnterSubmit', () => {
     expect(mockPreventDefault).not.toHaveBeenCalled();
   });
 
-  it('works with synchronous submit functions', () => {
+  it('works with synchronous submit functions', async () => {
     const mockOnSubmit = vi.fn(); // Synchronous function
     const mockIsValid = vi.fn(() => true);
 
@@ -146,7 +151,78 @@ describe('useEnterSubmit', () => {
 
     expect(mockOnSubmit).toHaveBeenCalledTimes(1);
 
-    // Second press should also work (no async lock)
+    // Wait for Promise.resolve to complete
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    // Second press should also work after promise resolves
+    act(() => {
+      result.current(createKeyboardEvent('Enter'));
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledTimes(2);
+  });
+
+  it('ignores Shift+Enter by default', () => {
+    const mockOnSubmit = vi.fn();
+    const mockIsValid = vi.fn(() => true);
+
+    const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit));
+
+    act(() => {
+      result.current(createKeyboardEvent('Enter', false, true));
+    });
+
+    expect(mockOnSubmit).not.toHaveBeenCalled();
+  });
+
+  it('allows Shift+Enter when ignoreShiftEnter is false', () => {
+    const mockOnSubmit = vi.fn();
+    const mockIsValid = vi.fn(() => true);
+
+    const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit, { ignoreShiftEnter: false }));
+
+    act(() => {
+      result.current(createKeyboardEvent('Enter', false, true));
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('allows plain Enter even when ignoreShiftEnter is true', () => {
+    const mockOnSubmit = vi.fn();
+    const mockIsValid = vi.fn(() => true);
+
+    const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit, { ignoreShiftEnter: true }));
+
+    act(() => {
+      result.current(createKeyboardEvent('Enter', false, false));
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses Promise.resolve for robust thenable detection', async () => {
+    // Test that Promise.resolve works with both sync and async returns
+    const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
+    const mockIsValid = vi.fn(() => true);
+
+    const { result } = renderHook(() => useEnterSubmit(mockIsValid, mockOnSubmit));
+
+    // First press with async return
+    act(() => {
+      result.current(createKeyboardEvent('Enter'));
+    });
+
+    expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+
+    // Wait for Promise.resolve to process
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    });
+
+    // Second press should work after promise resolves
     act(() => {
       result.current(createKeyboardEvent('Enter'));
     });
