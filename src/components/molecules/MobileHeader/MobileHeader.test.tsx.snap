@@ -76,12 +76,13 @@ exports[`MobileHeader - Snapshots > matches snapshot for left button 1`] = `
 `;
 
 exports[`MobileHeader - Snapshots > matches snapshot for logo 1`] = `
-<img
-  alt="Pubky"
-  data-height="32"
+<div
+  data-height="30"
   data-testid="logo"
-  data-width="96"
-/>
+  data-width="90"
+>
+  Logo
+</div>
 `;
 
 exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
@@ -188,14 +189,11 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom className 1`] =
       </svg>
     </button>
     <div
-      class="flex items-center gap-2"
+      data-height="30"
+      data-testid="logo"
+      data-width="90"
     >
-      <img
-        alt="Pubky"
-        data-height="32"
-        data-testid="logo"
-        data-width="96"
-      />
+      Logo
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -302,14 +300,11 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
       </svg>
     </button>
     <div
-      class="flex items-center gap-2"
+      data-height="30"
+      data-testid="logo"
+      data-width="90"
     >
-      <img
-        alt="Pubky"
-        data-height="32"
-        data-testid="logo"
-        data-width="96"
-      />
+      Logo
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -416,14 +411,11 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
       </svg>
     </button>
     <div
-      class="flex items-center gap-2"
+      data-height="30"
+      data-testid="logo"
+      data-width="90"
     >
-      <img
-        alt="Pubky"
-        data-height="32"
-        data-testid="logo"
-        data-width="96"
-      />
+      Logo
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"

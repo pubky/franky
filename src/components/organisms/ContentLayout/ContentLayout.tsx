@@ -25,8 +25,11 @@ export function ContentLayout({
 
   return (
     <>
-      {/* Mobile header with drawer icons */}
-      <Molecules.MobileHeader onLeftIconClick={() => setDrawerFilterOpen(true)} />
+      {/* Mobile header with drawer icons - hidden on desktop */}
+      <Molecules.MobileHeader
+        onLeftIconClick={() => setDrawerFilterOpen(true)}
+        onRightIconClick={() => setDrawerRightOpen(true)}
+      />
 
       {/* Buttons to open drawers - visible on desktop when in wide layout */}
       {layout === Core.LAYOUT.WIDE && showLeftSidebar && (

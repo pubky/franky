@@ -54,7 +54,7 @@ vi.mock('@/config', () => ({
 
 vi.mock('@/app', () => ({
   AUTH_ROUTES: { SIGN_IN: '/sign-in', LOGOUT: '/logout' },
-  FEED_ROUTES: { FEED: '/feed' },
+  HOME_ROUTES: { HOME: '/home' },
   ROOT_ROUTES: '/',
   ONBOARDING_ROUTES: {
     INSTALL: '/onboarding/install',

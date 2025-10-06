@@ -813,7 +813,7 @@ describe('CreateProfileForm', () => {
         expect(continueButton).toHaveTextContent('Try again!');
 
         // Should not navigate to feed page
-        expect(mockPush).not.toHaveBeenCalledWith(App.FEED_ROUTES.FEED);
+        expect(mockPush).not.toHaveBeenCalledWith(App.HOME_ROUTES.HOME);
       });
 
       // Verify the mocks were called in the correct order
@@ -864,7 +864,7 @@ describe('CreateProfileForm', () => {
       // Wait for the success handling to complete
       await waitFor(() => {
         // Should navigate to feed page
-        expect(mockPush).toHaveBeenCalledWith(App.FEED_ROUTES.FEED);
+        expect(mockPush).toHaveBeenCalledWith(App.HOME_ROUTES.HOME);
       });
 
       // Verify that setShowWelcomeDialog(true) was called

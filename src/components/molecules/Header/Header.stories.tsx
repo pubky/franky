@@ -71,7 +71,7 @@ export const CompleteHeader: Story = {
   render: () => (
     <HeaderContainer>
       <div className="flex items-center justify-between w-full">
-        <HeaderTitle currentTitle="Feed" />
+        <HeaderTitle currentTitle="Home" />
         <HeaderSignIn />
       </div>
     </HeaderContainer>

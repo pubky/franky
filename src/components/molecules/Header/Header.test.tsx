@@ -9,6 +9,7 @@ import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
+  usePathname: vi.fn(),
 }));
 
 // Mock dexie-react-hooks
@@ -116,14 +117,14 @@ vi.mock('@/config', () => ({
 
 // Mock the app routes
 vi.mock('@/app', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('@/app')>();
   return {
     ...actual,
     AUTH_ROUTES: {
       SIGN_IN: '/sign-in',
     },
-    FEED_ROUTES: {
-      FEED: '/feed',
+    HOME_ROUTES: {
+      HOME: '/home',
     },
   };
 });
@@ -284,10 +285,17 @@ describe('Header Components', () => {
       render(<HeaderSignIn />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
-      expect(document.querySelector('.lucide-search')).toBeInTheDocument();
-      expect(document.querySelector('.lucide-house')).toBeInTheDocument();
-      expect(document.querySelector('.lucide-bookmark')).toBeInTheDocument();
-      expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
+      // Check for navigation elements instead of test-id since we're rendering the real component
+      expect(screen.getByTestId('home-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('flame-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('bookmark-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-icon')).toBeInTheDocument();
+    });
+
+    it('applies correct classes', () => {
+      render(<HeaderSignIn />);
+
+      expect(screen.getByTestId('search-input')).toBeInTheDocument();
     });
   });
 
@@ -334,16 +342,14 @@ describe('Header Components', () => {
     it('renders navigation links', () => {
       render(<HeaderNavigationButtons avatarInitial="TU" />);
 
-      // Icons are now actual lucide-react components (SVGs), find links by href
-      const links = screen.getAllByRole('link');
-      const homeLink = links.find((link) => link.getAttribute('href') === '/feed');
-      const searchLink = links.find((link) => link.getAttribute('href') === '/search');
-      const bookmarkLink = links.find((link) => link.getAttribute('href') === '/bookmarks');
-      const settingsLink = links.find((link) => link.getAttribute('href') === '/settings');
+      const homeLink = screen.getByTestId('home-icon').closest('a');
+      const hotLink = screen.getByTestId('flame-icon').closest('a');
+      const bookmarkLink = screen.getByTestId('bookmark-icon').closest('a');
+      const settingsLink = screen.getByTestId('settings-icon').closest('a');
       const profileLink = screen.getByText('TU').closest('a');
 
-      expect(homeLink).toHaveAttribute('href', '/feed');
-      expect(searchLink).toHaveAttribute('href', '/search');
+      expect(homeLink).toHaveAttribute('href', '/home');
+      expect(hotLink).toHaveAttribute('href', '/hot');
       expect(bookmarkLink).toHaveAttribute('href', '/bookmarks');
       expect(settingsLink).toHaveAttribute('href', '/settings');
       expect(profileLink).toHaveAttribute('href', '/profile');

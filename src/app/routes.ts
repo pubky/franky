@@ -14,8 +14,13 @@ export enum AUTH_ROUTES {
   LOGOUT = '/logout',
 }
 
-export enum FEED_ROUTES {
-  FEED = '/feed',
+export enum APP_ROUTES {
+  HOME = '/home',
+  SEARCH = '/search',
+  HOT = '/hot',
+  BOOKMARKS = '/bookmarks',
+  SETTINGS = '/settings',
+  PROFILE = '/profile',
 }
 
 export enum POST_ROUTES {
@@ -24,7 +29,17 @@ export enum POST_ROUTES {
 
 export const PUBLIC_ROUTES: string[] = [AUTH_ROUTES.LOGOUT];
 
-export const ALLOWED_ROUTES = [ONBOARDING_ROUTES.PROFILE, FEED_ROUTES.FEED, POST_ROUTES.POST, AUTH_ROUTES.LOGOUT];
+export const ALLOWED_ROUTES = [
+  ONBOARDING_ROUTES.PROFILE,
+  APP_ROUTES.HOME,
+  APP_ROUTES.SEARCH,
+  APP_ROUTES.HOT,
+  APP_ROUTES.BOOKMARKS,
+  APP_ROUTES.SETTINGS,
+  APP_ROUTES.PROFILE,
+  POST_ROUTES.POST,
+  AUTH_ROUTES.LOGOUT,
+];
 
 // Route guard configurations for different authentication states
 export const UNAUTHENTICATED_ROUTES = {
@@ -43,5 +58,10 @@ export const UNAUTHENTICATED_ROUTES = {
 
 export const AUTHENTICATED_ROUTES = {
   allowedRoutes: ALLOWED_ROUTES,
-  redirectTo: FEED_ROUTES.FEED,
+  redirectTo: APP_ROUTES.HOME,
+};
+
+// Backwards compatibility
+export const HOME_ROUTES = {
+  HOME: APP_ROUTES.HOME,
 };

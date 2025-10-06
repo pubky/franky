@@ -1,5 +1,49 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`MobileFooter - Snapshots > matches snapshot for navigation links 1`] = `
+<a
+  aria-label="Home"
+  class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+  href="/home"
+>
+  <div
+    class="h-6 w-6"
+    data-testid="home-icon"
+  >
+    Home
+  </div>
+</a>
+`;
+
+exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
+<a
+  aria-label="Profile"
+  class="flex-shrink-0 relative"
+  href="/profile"
+>
+  <div
+    class="h-12 w-12"
+    data-testid="avatar"
+  >
+    <img
+      alt="Profile"
+      data-testid="avatar-image"
+      src="https://i.pravatar.cc/150?img=68"
+    />
+    <div
+      data-testid="avatar-fallback"
+    >
+      <div
+        class="h-5 w-5"
+        data-testid="user-icon"
+      >
+        User
+      </div>
+    </div>
+  </div>
+</a>
+`;
+
 exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="pb-20 flex justify-center lg:hidden custom-footer"
@@ -8,8 +52,9 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
     class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
   >
     <a
+      aria-label="Home"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
-      href="/feed"
+      href="/home"
     >
       <svg
         aria-hidden="true"
@@ -33,6 +78,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
       </svg>
     </a>
     <a
+      aria-label="Search"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/search"
     >
@@ -60,6 +106,19 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
       </svg>
     </a>
     <a
+      aria-label="Hot"
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/hot"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </a>
+    <a
+      aria-label="Bookmarks"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/bookmarks"
     >
@@ -82,6 +141,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
       </svg>
     </a>
     <a
+      aria-label="Settings"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/settings"
     >
@@ -109,6 +169,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
       </svg>
     </a>
     <a
+      aria-label="Profile"
       class="flex-shrink-0 relative"
       href="/profile"
     >
@@ -161,8 +222,9 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
     class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
   >
     <a
+      aria-label="Home"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
-      href="/feed"
+      href="/home"
     >
       <svg
         aria-hidden="true"
@@ -186,6 +248,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
       </svg>
     </a>
     <a
+      aria-label="Search"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/search"
     >
@@ -213,6 +276,19 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
       </svg>
     </a>
     <a
+      aria-label="Hot"
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/hot"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </a>
+    <a
+      aria-label="Bookmarks"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/bookmarks"
     >
@@ -235,6 +311,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
       </svg>
     </a>
     <a
+      aria-label="Settings"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/settings"
     >
@@ -262,6 +339,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
       </svg>
     </a>
     <a
+      aria-label="Profile"
       class="flex-shrink-0 relative"
       href="/profile"
     >
@@ -314,8 +392,9 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
     class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
   >
     <a
+      aria-label="Home"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
-      href="/feed"
+      href="/home"
     >
       <svg
         aria-hidden="true"
@@ -339,6 +418,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
       </svg>
     </a>
     <a
+      aria-label="Search"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
       href="/search"
     >
@@ -366,6 +446,19 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
       </svg>
     </a>
     <a
+      aria-label="Hot"
+      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      href="/hot"
+    >
+      <div
+        class="h-6 w-6"
+        data-testid="flame-icon"
+      >
+        Flame
+      </div>
+    </a>
+    <a
+      aria-label="Bookmarks"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/bookmarks"
     >
@@ -388,6 +481,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
       </svg>
     </a>
     <a
+      aria-label="Settings"
       class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/settings"
     >
@@ -415,6 +509,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
       </svg>
     </a>
     <a
+      aria-label="Profile"
       class="flex-shrink-0 relative"
       href="/profile"
     >

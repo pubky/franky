@@ -35,7 +35,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`] = `
 <header
-  class="mx-auto w-full flex-col container flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
+  class="mx-auto w-full flex-col flex container hidden lg:flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
   data-testid="container"
 >
   <nav
@@ -98,11 +98,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   data-testid="container"
 >
   <a
-    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-    href="/feed"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
+    href="/home"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -130,8 +131,9 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="sm:hidden"
-    href="/search"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
+    href="/hot"
   >
     <button
       class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
@@ -139,32 +141,17 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
       data-slot="button"
       data-variant="secondary"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-search size-6"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
+      <div
+        class="size-6"
+        data-testid="flame-icon"
       >
-        <path
-          d="m21 21-4.34-4.34"
-        />
-        <circle
-          cx="11"
-          cy="11"
-          r="8"
-        />
-      </svg>
+        Flame
+      </div>
     </button>
   </a>
   <a
-    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
     href="/bookmarks"
   >
     <button
@@ -193,7 +180,8 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
     href="/settings"
   >
     <button
@@ -228,10 +216,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="relative"
+    data-state="closed"
     href="/profile"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
     >
       <span
         class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -249,11 +238,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   data-testid="container"
 >
   <a
-    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-    href="/feed"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
+    href="/home"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -281,8 +271,9 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="sm:hidden"
-    href="/search"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
+    href="/hot"
   >
     <button
       class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
@@ -290,32 +281,17 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
       data-slot="button"
       data-variant="secondary"
     >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-search size-6"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
+      <div
+        class="size-6"
+        data-testid="flame-icon"
       >
-        <path
-          d="m21 21-4.34-4.34"
-        />
-        <circle
-          cx="11"
-          cy="11"
-          r="8"
-        />
-      </svg>
+        Flame
+      </div>
     </button>
   </a>
   <a
-    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
     href="/bookmarks"
   >
     <button
@@ -344,7 +320,8 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+    data-state="closed"
     href="/settings"
   >
     <button
@@ -379,10 +356,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="relative"
+    data-state="closed"
     href="/profile"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
     >
       <span
         class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -431,11 +409,12 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     data-testid="container"
   >
     <a
-      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
-      href="/feed"
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      data-state="closed"
+      href="/home"
     >
       <button
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -463,8 +442,9 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="sm:hidden"
-      href="/search"
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      data-state="closed"
+      href="/hot"
     >
       <button
         class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
@@ -472,32 +452,17 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
         data-slot="button"
         data-variant="secondary"
       >
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-search size-6"
-          fill="none"
-          height="24"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="24"
-          xmlns="http://www.w3.org/2000/svg"
+        <div
+          class="size-6"
+          data-testid="flame-icon"
         >
-          <path
-            d="m21 21-4.34-4.34"
-          />
-          <circle
-            cx="11"
-            cy="11"
-            r="8"
-          />
-        </svg>
+          Flame
+        </div>
       </button>
     </a>
     <a
-      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      data-state="closed"
       href="/bookmarks"
     >
       <button
@@ -526,7 +491,8 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
+      data-state="closed"
       href="/settings"
     >
       <button
@@ -561,10 +527,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     </a>
     <a
       class="relative"
+      data-state="closed"
       href="/profile"
     >
       <span
-        class="relative flex shrink-0 overflow-hidden rounded-full w-12 h-12"
+        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
       >
         <span
           class="flex h-full w-full items-center justify-center rounded-full bg-muted"
