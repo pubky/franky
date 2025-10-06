@@ -18,7 +18,7 @@ export class LocalTagService {
    * @throws {AppError} When user has already tagged this post with the same label
    * @throws {DatabaseError} When database operations fail
    */
-  static async save({ postId, label, taggerId }: TLocalSaveTagParams) {
+  static async create({ postId, label, taggerId }: TLocalSaveTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.findById(postId);
 
@@ -28,7 +28,7 @@ export class LocalTagService {
 
       postTagsModel.saveTag(label, taggerId);
 
-      await Core.PostTagsModel.insert({
+      await Core.PostTagsModel.create({
         id: postId,
         tags: postTagsModel.tags as Core.NexusTag[],
       });
@@ -36,11 +36,9 @@ export class LocalTagService {
       await this.updatePostCounts(postId, postTagsModel);
 
       const tagger = await Core.UserCountsModel.findById(taggerId);
-      console.log('tagger', tagger, taggerId);
       if (tagger) {
         tagger.updateCount(UserCountsFields.TAGGED, Core.INCREMENT);
-        await Core.UserCountsModel.insert({ ...tagger });
-        console.log('tagger updated', tagger);
+        await Core.UserCountsModel.upsert({ ...tagger });
       }
 
       Libs.Logger.debug('Tag saved', { postId, label, taggerId });
@@ -69,7 +67,7 @@ export class LocalTagService {
    * @throws {AppError} When post has no tags or user hasn't tagged with this label
    * @throws {DatabaseError} When database operations fail
    */
-  static async remove({ postId, label, taggerId }: TLocalRemoveTagParams) {
+  static async delete({ postId, label, taggerId }: TLocalRemoveTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.findById(postId);
 
@@ -81,7 +79,7 @@ export class LocalTagService {
 
       postTagsModel.removeTag(label, taggerId);
 
-      await Core.PostTagsModel.insert({
+      await Core.PostTagsModel.create({
         id: postId,
         tags: postTagsModel.tags as Core.NexusTag[],
       });
@@ -89,11 +87,9 @@ export class LocalTagService {
       await this.updatePostCounts(postId, postTagsModel);
 
       const tagger = await Core.UserCountsModel.findById(taggerId);
-      console.log('tagger', tagger);
       if (tagger) {
         tagger.updateCount(UserCountsFields.TAGGED, Core.DECREMENT);
-        await Core.UserCountsModel.insert({ ...tagger });
-        console.log('tagger updated', tagger);
+        await Core.UserCountsModel.upsert({ ...tagger });
       }
 
       Libs.Logger.debug('Tag removed', { postId, label, taggerId });
@@ -124,7 +120,7 @@ export class LocalTagService {
 
     const countsExist = await Core.PostCountsModel.findById(postId);
     if (countsExist) {
-      await Core.PostCountsModel.insert({
+      await Core.PostCountsModel.upsert({
         ...countsExist!,
         tags,
         unique_tags,
@@ -132,7 +128,7 @@ export class LocalTagService {
     } else {
       // TODO(core): Fetch counts from Nexus and reconcile local tag counts.
       // This prevents drift between local Dexie state and the upstream source of truth.
-      await Core.PostCountsModel.insert({
+      await Core.PostCountsModel.upsert({
         id: postId,
         tags,
         unique_tags,

@@ -64,15 +64,15 @@ describe('UserTagsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert user tags', async () => {
+    it('should create user tags', async () => {
       const rec = { id: testUserId1, tags: MOCK_TAGS_1 };
-      const result = await Core.UserTagsModel.insert(rec);
+      const result = await Core.UserTagsModel.create(rec);
       expect(result).toBeDefined();
     });
 
     it('should find user tags by id', async () => {
       const rec = { id: testUserId1, tags: MOCK_TAGS_1 };
-      await Core.UserTagsModel.insert(rec);
+      await Core.UserTagsModel.create(rec);
       const found = await Core.UserTagsModel.findById(testUserId1);
       expect(found).not.toBeNull();
       expect(found!).toBeInstanceOf(Core.UserTagsModel);

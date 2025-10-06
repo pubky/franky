@@ -56,18 +56,18 @@ describe('PostDetailsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert post details', async () => {
+    it('should create post details', async () => {
       const mockPostDetailsData = createPostDetailsData(testPostId1, MOCK_NEXUS_POST_DETAILS);
 
-      const result = await Core.PostDetailsModel.insert(mockPostDetailsData);
-      expect(result).toBeDefined();
+      const result = await Core.PostDetailsModel.create(mockPostDetailsData);
+      expect(result).toBeUndefined();
     });
 
     it('should find post details by id', async () => {
       const mockPostDetailsData = createPostDetailsData(testPostId1, MOCK_NEXUS_POST_DETAILS);
       const compositeId = `${testAuthor}:${testPostId1}`;
 
-      await Core.PostDetailsModel.insert(mockPostDetailsData);
+      await Core.PostDetailsModel.create(mockPostDetailsData);
       const result = await Core.PostDetailsModel.findById(compositeId);
 
       expect(result).not.toBeNull();

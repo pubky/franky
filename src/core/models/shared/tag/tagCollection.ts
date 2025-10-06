@@ -28,7 +28,7 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
 
   // -------- Static CRUD (inherited by subclasses) --------
   // Note: subclasses MUST set their own static "table" field. TS cannot enforce abstract static.
-  static async insert<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
+  static async create<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
     this: { table: Table<TSchema> },
     data: TSchema,
   ) {

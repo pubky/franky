@@ -124,7 +124,7 @@ export class LocalPostService {
 
       const parentCounts = await Core.PostCountsModel.table.get(parentPostId);
       if (parentCounts) {
-        await Core.PostCountsModel.insert({
+        await Core.PostCountsModel.upsert({
           ...parentCounts,
           replies: parentCounts.replies + 1,
         });

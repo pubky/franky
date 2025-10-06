@@ -34,14 +34,14 @@ describe('PostCountsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert post counts', async () => {
+    it('should create post counts', async () => {
       const mockPostCountsData = {
         id: testPostId1,
         ...MOCK_NEXUS_POST_COUNTS,
       };
 
-      const result = await Core.PostCountsModel.insert(mockPostCountsData);
-      expect(result).toBeDefined();
+      const result = await Core.PostCountsModel.create(mockPostCountsData);
+      expect(result).toBeUndefined();
     });
 
     it('should find post counts by id', async () => {
@@ -50,7 +50,7 @@ describe('PostCountsModel', () => {
         ...MOCK_NEXUS_POST_COUNTS,
       };
 
-      await Core.PostCountsModel.insert(mockPostCountsData);
+      await Core.PostCountsModel.create(mockPostCountsData);
       const result = await Core.PostCountsModel.findById(testPostId1);
 
       expect(result).not.toBeNull();

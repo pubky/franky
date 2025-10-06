@@ -48,7 +48,7 @@ const getSavedTags = async () => {
 };
 
 const setupExistingTag = async () => {
-  await Core.PostTagsModel.insert({
+  await Core.PostTagsModel.create({
     id: testData.targetId,
     tags: [
       {

@@ -81,13 +81,13 @@ describe('PostTagsModel', () => {
   describe('Static Methods', () => {
     it('should insert post tags', async () => {
       const rec = { id: testPostId1, tags: MOCK_TAGS_1 };
-      const result = await Core.PostTagsModel.insert(rec);
+      const result = await Core.PostTagsModel.create(rec);
       expect(result).toBeDefined();
     });
 
     it('should find post tags by id', async () => {
       const rec = { id: testPostId1, tags: MOCK_TAGS_1 };
-      await Core.PostTagsModel.insert(rec);
+      await Core.PostTagsModel.create(rec);
       const found = await Core.PostTagsModel.findById(testPostId1);
       expect(found).not.toBeNull();
       expect(found!).toBeInstanceOf(Core.PostTagsModel);
@@ -134,7 +134,7 @@ describe('PostTagsModel', () => {
         ] as Core.NexusTag[],
       };
 
-      await Core.PostTagsModel.insert(postWithMultipleTaggers);
+      await Core.PostTagsModel.create(postWithMultipleTaggers);
       const found = await Core.PostTagsModel.findById(testPostId1);
       expect(found).not.toBeNull();
 
