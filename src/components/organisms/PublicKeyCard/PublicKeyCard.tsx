@@ -11,6 +11,7 @@ import * as Hooks from '@/hooks';
 export function PublicKeyCard() {
   const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const isTouchDevice = Hooks.useIsTouchDevice();
 
   useEffect(() => {
     if (pubky === '') {
@@ -60,6 +61,26 @@ export function PublicKeyCard() {
     }
   };
 
+  const actions = [
+    {
+      id: 'copy-to-clipboard-action-btn',
+      label: 'Copy to clipboard',
+      icon: <Libs.Copy className="mr-2 h-4 w-4" />,
+      onClick: handleCopyToClipboard,
+      variant: 'secondary' as const,
+    },
+    ...(isTouchDevice
+      ? [
+          {
+            label: 'Share',
+            icon: <Libs.Share className="mr-2 h-4 w-4" />,
+            onClick: handleShare,
+            variant: 'secondary' as const,
+          },
+        ]
+      : []),
+  ];
+
   return (
     <Molecules.ContentCard
       image={{
@@ -75,24 +96,7 @@ export function PublicKeyCard() {
         </Atoms.Heading>
         <Molecules.PopoverPublicKey />
       </Atoms.Container>
-      <Molecules.ActionSection
-        actions={[
-          {
-            id: 'copy-to-clipboard-action-btn',
-            label: 'Copy to clipboard',
-            icon: <Libs.Copy className="mr-2 h-4 w-4" />,
-            onClick: handleCopyToClipboard,
-            variant: 'secondary',
-          },
-          {
-            label: 'Share',
-            icon: <Libs.Share className="mr-2 h-4 w-4" />,
-            onClick: handleShare,
-            variant: 'secondary',
-          },
-        ]}
-        className="flex-col items-start gap-3 justify-start w-full"
-      >
+      <Molecules.ActionSection actions={actions} className="flex-col items-start gap-3 justify-start w-full">
         <Molecules.InputField
           value={pubky}
           variant="dashed"
