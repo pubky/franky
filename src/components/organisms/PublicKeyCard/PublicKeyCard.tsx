@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -26,10 +26,14 @@ export function PublicKeyCard() {
   }, [pubky, setKeypair, setMnemonic]);
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(pubky);
+    if (pubky) {
+      copyToClipboard(pubky);
+    }
   };
 
   const handleShare = async () => {
+    if (!pubky) return;
+
     try {
       await Libs.shareWithFallback(
         {
@@ -57,29 +61,35 @@ export function PublicKeyCard() {
     } catch (error) {
       // Error handling is done in the onError callback
       // This catch block is here for any unexpected errors
-      console.error('Unexpected share error:', error);
+      Libs.Logger.error('Unexpected share error', { error });
     }
   };
 
-  const actions = [
-    {
-      id: 'copy-to-clipboard-action-btn',
-      label: 'Copy to clipboard',
-      icon: <Libs.Copy className="mr-2 h-4 w-4" />,
-      onClick: handleCopyToClipboard,
-      variant: 'secondary' as const,
-    },
-    ...(isTouchDevice
-      ? [
-          {
-            label: 'Share',
-            icon: <Libs.Share className="mr-2 h-4 w-4" />,
-            onClick: handleShare,
-            variant: 'secondary' as const,
-          },
-        ]
-      : []),
-  ];
+  const actions = useMemo(
+    () => [
+      {
+        id: 'copy-to-clipboard-action-btn',
+        label: 'Copy to clipboard',
+        icon: <Libs.Copy className="mr-2 h-4 w-4" />,
+        onClick: handleCopyToClipboard,
+        variant: 'secondary' as const,
+        disabled: !pubky,
+      },
+      ...(isTouchDevice
+        ? [
+            {
+              label: 'Share',
+              icon: <Libs.Share className="mr-2 h-4 w-4" />,
+              onClick: handleShare,
+              variant: 'secondary' as const,
+              disabled: !pubky,
+            },
+          ]
+        : []),
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isTouchDevice, pubky],
+  );
 
   return (
     <Molecules.ContentCard
