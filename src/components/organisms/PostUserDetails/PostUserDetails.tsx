@@ -31,7 +31,7 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
           </Atoms.Typography>
           <Atoms.Container className="flex flex-row gap-2">
             <Atoms.Typography size="sm" className="text-muted-foreground">
-              {shorten(userDetails.name).toUpperCase()}
+              {shorten(userDetails.id).toUpperCase()}
             </Atoms.Typography>
             <Atoms.Container className="flex flex-row gap-1 items-center">
               <Libs.Clock className="h-4 w-4 text-muted-foreground" />
