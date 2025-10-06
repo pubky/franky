@@ -4,14 +4,13 @@ import * as Core from '@/core';
 export class NexusBootstrapService {
   static async retrieveAndPersist(pubky: Core.Pubky) {
     try {
-      const url = Core.buildNexusUrl(Core.BOOTSTRAP_API.GET(pubky));
-
+      const url = Core.bootstrapApi.get(pubky);
       const { users, posts, list } = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
 
       // Persist fetched data in the database
       await this.persistUsers(users);
       await this.persistPosts(posts);
-      await Core.StreamModel.create(Core.StreamTypes.TIMELINE_ALL, null, list.stream);
+      await this.persistStreams(list);
     } catch (error) {
       if (error instanceof Error && error.name === 'AppError') throw error;
       // Handle network/fetch errors
@@ -53,5 +52,12 @@ export class NexusBootstrapService {
     await Core.PostCountsModel.bulkSave(postCounts);
     await Core.PostTagsModel.bulkSave(postTags);
     await Core.PostRelationshipsModel.bulkSave(postRelationships);
+  }
+
+  static async persistStreams(list: Core.NexusBootstrapList) {
+    await Core.PostStreamModel.create(Core.PostStreamTypes.TIMELINE_ALL, list.stream);
+    await Core.UserStreamModel.create(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, list.influencers);
+    await Core.UserStreamModel.create(Core.UserStreamTypes.RECOMMENDED, list.recommended);
+    await Core.TagStreamModel.create(Core.TagStreamTypes.TODAY_ALL, list.hot_tags);
   }
 }

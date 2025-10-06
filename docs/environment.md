@@ -15,7 +15,7 @@ All environment variables are validated in `src/lib/env.ts` using Zod schemas. T
 
 ### Database Configuration
 
-- `NEXT_PUBLIC_DB_VERSION` (default: `1`)
+- `NEXT_PUBLIC_DB_VERSION` (default: `2`)
   - Controls the IndexedDB database version
   - Must be a positive integer
   - Changing this will trigger database recreation

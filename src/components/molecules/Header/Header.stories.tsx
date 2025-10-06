@@ -1,14 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import {
-  HeaderContainer,
-  HeaderTitle,
-  HeaderOnboarding,
-  HeaderSocialLinks,
-  HeaderButtonSignIn,
-  HeaderHome,
-  HeaderSignIn,
-  HeaderNavigationButtons,
-} from './Header';
+import { HeaderContainer, HeaderTitle, HeaderOnboarding, HeaderSocialLinks, HeaderNavigationButtons } from './Header';
+import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
 
 const meta: Meta<typeof HeaderContainer> = {
   title: 'Molecules/Header',
@@ -68,11 +60,11 @@ export const HeaderNavigationButtonsStory: Story = {
 };
 
 export const HeaderNavigationButtonsWithCounter: Story = {
-  render: () => <HeaderNavigationButtons image="https://i.pravatar.cc/150?img=68" counter={5} />,
+  render: () => <HeaderNavigationButtons counter={5} />,
 };
 
 export const HeaderNavigationButtonsWithHighCounter: Story = {
-  render: () => <HeaderNavigationButtons image="https://i.pravatar.cc/150?img=68" counter={25} />,
+  render: () => <HeaderNavigationButtons counter={25} />,
 };
 
 export const CompleteHeader: Story = {

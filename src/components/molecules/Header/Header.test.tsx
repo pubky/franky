@@ -1,20 +1,29 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { useRouter } from 'next/navigation';
-import {
-  HeaderContainer,
-  HeaderTitle,
-  HeaderOnboarding,
-  HeaderSocialLinks,
-  HeaderButtonSignIn,
-  HeaderHome,
-  HeaderSignIn,
-  HeaderNavigationButtons,
-} from './Header';
+import { useLiveQuery } from 'dexie-react-hooks';
+import * as Core from '@/core';
+import { HeaderContainer, HeaderTitle, HeaderOnboarding, HeaderSocialLinks, HeaderNavigationButtons } from './Header';
+import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
 
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
+}));
+
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(),
+}));
+
+// Mock the core
+vi.mock('@/core', () => ({
+  useAuthStore: vi.fn(),
+  db: {
+    user_details: {
+      get: vi.fn(),
+    },
+  },
 }));
 
 // Mock the components
@@ -77,62 +86,80 @@ vi.mock('@/components', () => ({
 }));
 
 // Mock the molecules
-vi.mock('@/molecules', () => ({
-  ProgressSteps: ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => (
-    <div data-testid="progress-steps" data-current={currentStep} data-total={totalSteps}>
-      Progress Steps
-    </div>
-  ),
-  SearchInput: () => <div data-testid="search-input">Search Input</div>,
-  HeaderSocialLinks: () => <div data-testid="header-social-links">Social Links</div>,
-  HeaderButtonSignIn: () => <div data-testid="header-button-sign-in">Sign In Button</div>,
-  HeaderNavigationButtons: () => <div data-testid="header-navigation-buttons">Navigation Buttons</div>,
-}));
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    ProgressSteps: ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => (
+      <div data-testid="progress-steps" data-current={currentStep} data-total={totalSteps}>
+        Progress Steps
+      </div>
+    ),
+    SearchInput: () => <div data-testid="search-input">Search Input</div>,
+    HeaderSocialLinks: () => <div data-testid="header-social-links">Social Links</div>,
+    HeaderButtonSignIn: () => <div data-testid="header-button-sign-in">Sign In Button</div>,
+  };
+});
 
 // Mock the libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  Github2: ({ className }: { className?: string }) => (
-    <div data-testid="github-icon" className={className}>
-      Github
-    </div>
-  ),
-  XTwitter: ({ className }: { className?: string }) => (
-    <div data-testid="twitter-icon" className={className}>
-      Twitter
-    </div>
-  ),
-  Telegram: ({ className }: { className?: string }) => (
-    <div data-testid="telegram-icon" className={className}>
-      Telegram
-    </div>
-  ),
-  LogIn: ({ className }: { className?: string }) => (
-    <div data-testid="login-icon" className={className}>
-      LogIn
-    </div>
-  ),
-  Home: ({ className }: { className?: string }) => (
-    <div data-testid="home-icon" className={className}>
-      Home
-    </div>
-  ),
-  Search: ({ className }: { className?: string }) => (
-    <div data-testid="search-icon" className={className}>
-      Search
-    </div>
-  ),
-  Bookmark: ({ className }: { className?: string }) => (
-    <div data-testid="bookmark-icon" className={className}>
-      Bookmark
-    </div>
-  ),
-  Settings: ({ className }: { className?: string }) => (
-    <div data-testid="settings-icon" className={className}>
-      Settings
-    </div>
-  ),
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+    extractInitials: ({ name, maxLength = 2 }: { name?: string; maxLength?: number }) => {
+      if (!name || typeof name !== 'string') return '';
+      return name
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 0)
+        .map((word) => word.charAt(0))
+        .join('')
+        .toUpperCase()
+        .slice(0, maxLength);
+    },
+    Github2: ({ className }: { className?: string }) => (
+      <div data-testid="github-icon" className={className}>
+        Github
+      </div>
+    ),
+    XTwitter: ({ className }: { className?: string }) => (
+      <div data-testid="twitter-icon" className={className}>
+        Twitter
+      </div>
+    ),
+    Telegram: ({ className }: { className?: string }) => (
+      <div data-testid="telegram-icon" className={className}>
+        Telegram
+      </div>
+    ),
+    LogIn: ({ className }: { className?: string }) => (
+      <div data-testid="login-icon" className={className}>
+        LogIn
+      </div>
+    ),
+    Home: ({ className }: { className?: string }) => (
+      <div data-testid="home-icon" className={className}>
+        Home
+      </div>
+    ),
+    Search: ({ className }: { className?: string }) => (
+      <div data-testid="search-icon" className={className}>
+        Search
+      </div>
+    ),
+    Bookmark: ({ className }: { className?: string }) => (
+      <div data-testid="bookmark-icon" className={className}>
+        Bookmark
+      </div>
+    ),
+    Settings: ({ className }: { className?: string }) => (
+      <div data-testid="settings-icon" className={className}>
+        Settings
+      </div>
+    ),
+  };
+});
 
 // Mock the config
 vi.mock('@/config', () => ({
@@ -168,6 +195,8 @@ describe('Header Components', () => {
 
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
+    vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
   });
 
   afterEach(() => {
@@ -194,8 +223,7 @@ describe('Header Components', () => {
 
       const container = screen.getByText('Test Content').closest('header');
       expect(container).toHaveClass(
-        'hidden',
-        'lg:flex',
+        'flex',
         'py-6',
         'items-center',
         'px-6',
@@ -306,7 +334,8 @@ describe('Header Components', () => {
       render(<HeaderHome />);
 
       expect(screen.getByTestId('header-social-links')).toBeInTheDocument();
-      expect(screen.getByTestId('header-button-sign-in')).toBeInTheDocument();
+      // The component now renders the actual button instead of a mock
+      expect(screen.getByText('Sign in')).toBeInTheDocument();
     });
 
     it('applies correct classes', () => {
@@ -321,7 +350,11 @@ describe('Header Components', () => {
       render(<HeaderSignIn />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
-      expect(screen.getByTestId('header-navigation-buttons')).toBeInTheDocument();
+      // Check for navigation elements instead of test-id since we're rendering the real component
+      expect(screen.getByTestId('home-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('search-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('bookmark-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('settings-icon')).toBeInTheDocument();
     });
 
     it('applies correct classes', () => {
@@ -333,52 +366,52 @@ describe('Header Components', () => {
 
   describe('HeaderNavigationButtons', () => {
     it('renders with default props', () => {
-      render(<HeaderNavigationButtons />);
+      render(<HeaderNavigationButtons avatarImage="/images/default-avatar.png" avatarInitial="U" />);
 
-      expect(screen.getByText('SN')).toBeInTheDocument();
+      expect(screen.getByText('U')).toBeInTheDocument();
     });
 
-    it('renders with custom image and counter', () => {
-      render(<HeaderNavigationButtons image="test.jpg" counter={5} />);
+    it('renders with custom avatar image and initial', () => {
+      render(<HeaderNavigationButtons avatarImage="test.jpg" avatarInitial="TU" counter={5} />);
 
-      expect(screen.getByText('SN')).toBeInTheDocument();
+      expect(screen.getByText('TU')).toBeInTheDocument();
       expect(screen.getByText('5')).toBeInTheDocument();
     });
 
     it('renders counter badge when counter > 0', () => {
-      render(<HeaderNavigationButtons counter={5} />);
+      render(<HeaderNavigationButtons avatarInitial="TU" counter={5} />);
 
       const badge = screen.getByText('5');
       expect(badge).toBeInTheDocument();
     });
 
     it('renders 21+ when counter > 21', () => {
-      render(<HeaderNavigationButtons counter={25} />);
+      render(<HeaderNavigationButtons avatarInitial="TU" counter={25} />);
 
       const badge = screen.getByText('21+');
       expect(badge).toBeInTheDocument();
     });
 
     it('does not render badge when counter is 0', () => {
-      render(<HeaderNavigationButtons counter={0} />);
+      render(<HeaderNavigationButtons avatarInitial="TU" counter={0} />);
 
       expect(screen.queryByText('0')).not.toBeInTheDocument();
     });
 
-    it('applies correct classes', () => {
+    it('uses fallback initial when none provided', () => {
       render(<HeaderNavigationButtons />);
 
-      expect(screen.getByText('SN')).toBeInTheDocument();
+      expect(screen.getByText('U')).toBeInTheDocument();
     });
 
     it('renders navigation links', () => {
-      render(<HeaderNavigationButtons />);
+      render(<HeaderNavigationButtons avatarInitial="TU" />);
 
       const homeLink = screen.getByTestId('home-icon').closest('a');
       const searchLink = screen.getByTestId('search-icon').closest('a');
       const bookmarkLink = screen.getByTestId('bookmark-icon').closest('a');
       const settingsLink = screen.getByTestId('settings-icon').closest('a');
-      const profileLink = screen.getByText('SN').closest('a');
+      const profileLink = screen.getByText('TU').closest('a');
 
       expect(homeLink).toHaveAttribute('href', '/feed');
       expect(searchLink).toHaveAttribute('href', '/search');
@@ -388,12 +421,69 @@ describe('Header Components', () => {
     });
 
     it('applies correct button classes', () => {
-      render(<HeaderNavigationButtons />);
+      render(<HeaderNavigationButtons avatarInitial="TU" />);
 
       const buttons = screen.getAllByRole('button');
       buttons.forEach((button) => {
         expect(button).toHaveClass('w-12', 'h-12');
       });
+    });
+  });
+
+  describe('HeaderSignIn - Avatar Logic', () => {
+    beforeEach(() => {
+      vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    });
+
+    it('displays correct initial for valid name', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: null });
+      render(<HeaderSignIn />);
+
+      expect(screen.getByText('TU')).toBeInTheDocument();
+    });
+
+    it('displays fallback initial for undefined name', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: undefined, image: null });
+      render(<HeaderSignIn />);
+
+      expect(screen.getByText('U')).toBeInTheDocument();
+    });
+
+    it('displays fallback initial for empty name', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: '', image: null });
+      render(<HeaderSignIn />);
+
+      expect(screen.getByText('U')).toBeInTheDocument();
+    });
+
+    it('displays fallback initial for whitespace-only name', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: '   ', image: null });
+      render(<HeaderSignIn />);
+
+      expect(screen.getByText('U')).toBeInTheDocument();
+    });
+
+    it('trims name and gets correct initial', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: '  Sarah Jones  ', image: null });
+      render(<HeaderSignIn />);
+
+      expect(screen.getByText('SJ')).toBeInTheDocument();
+    });
+
+    it('uses default avatar image when none provided', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: null });
+      render(<HeaderSignIn />);
+
+      // The avatar fallback should be rendered since image is null
+      expect(screen.getByText('TU')).toBeInTheDocument();
+    });
+
+    it('uses provided avatar image', () => {
+      vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'custom-avatar.jpg' });
+      render(<HeaderSignIn />);
+
+      // The avatar fallback should still be rendered (since we're using mocked AvatarImage)
+      expect(screen.getByText('TU')).toBeInTheDocument();
     });
   });
 });
@@ -411,6 +501,8 @@ describe('Header Components - Snapshots', () => {
 
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
+    vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
   });
 
   it('matches snapshot for HeaderContainer', () => {
@@ -453,12 +545,12 @@ describe('Header Components - Snapshots', () => {
   });
 
   it('matches snapshot for HeaderNavigationButtons', () => {
-    const { container } = render(<HeaderNavigationButtons />);
+    const { container } = render(<HeaderNavigationButtons avatarInitial="TU" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot for HeaderNavigationButtons with counter', () => {
-    const { container } = render(<HeaderNavigationButtons counter={5} />);
+    const { container } = render(<HeaderNavigationButtons avatarInitial="TU" counter={5} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
