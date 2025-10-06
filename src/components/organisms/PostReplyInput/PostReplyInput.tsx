@@ -18,7 +18,7 @@ export function PostReplyInput({ postId }: PostReplyInputProps) {
     if (!replyContent.trim() || !postId) return;
 
     try {
-      await Core.PostController.addReply({
+      await Core.PostController.create({
         parentPostId: postId,
         content: replyContent.trim(),
         authorId: currentUserId,

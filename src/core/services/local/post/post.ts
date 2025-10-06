@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import type { TLocalFetchPostsParams, TLocalReplyToPostParams } from './post.types';
+import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
 
 export class LocalPostService {
   /**
@@ -88,28 +88,45 @@ export class LocalPostService {
   }
 
   /**
-   * Add a reply to a post
-   * @param params - Parameters object
-   * @param params.parentPostId - ID of the post being replied to
-   * @param params.replyDetails - Normalized reply details (should already be normalized by caller)
+   * Save a new post to the local database.
+   *
+   * Creates a new post with all its related records:
+   * - Post details (content, kind, URI, etc.)
+   * - Post counts (initialized to zero)
+   * - Post relationships (parent URI if reply)
+   * - Post tags (empty array)
+   *
+   * If the post is a reply, also updates the parent post's reply count.
+   *
+   * @param params.postId - Unique identifier for the post (format: "authorId:postId")
+   * @param params.content - Post content
+   * @param params.kind - Post kind ('short' or 'long')
+   * @param params.authorId - Unique identifier of the post author
+   * @param params.parentUri - URI of parent post if this is a reply
+   * @param params.attachments - Optional array of attachment objects
+   *
+   * @throws {DatabaseError} When database operations fail
    */
-  static async reply({ parentPostId, replyDetails }: TLocalReplyToPostParams): Promise<Core.NexusPost | null> {
+  static async save({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
     try {
-      const parentPost = await Core.PostDetailsModel.table.get(parentPostId);
-      if (!parentPost) {
-        Logger.debug('Parent post not found for reply', { parentPostId });
-        return null;
-      }
+      const postDetails: Core.PostDetailsModelSchema = {
+        id: postId,
+        content,
+        indexed_at: Date.now(),
+        kind,
+        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId.split(':')[1]}`,
+        attachments: attachments ?? null,
+      };
 
-      const replyRelationships: Core.PostRelationshipsModelSchema = {
-        id: replyDetails.id,
-        replied: parentPost.uri,
+      const postRelationships: Core.PostRelationshipsModelSchema = {
+        id: postId,
+        replied: parentUri ?? null,
         reposted: null,
         mentioned: [],
       };
 
-      const replyCounts: Core.PostCountsModelSchema = {
-        id: replyDetails.id,
+      const postCounts: Core.PostCountsModelSchema = {
+        id: postId,
         tags: 0,
         unique_tags: 0,
         replies: 0,
@@ -117,40 +134,33 @@ export class LocalPostService {
       };
 
       await Promise.all([
-        Core.PostDetailsModel.table.add(replyDetails),
-        Core.PostRelationshipsModel.table.add(replyRelationships),
-        Core.PostCountsModel.table.add(replyCounts),
+        Core.PostDetailsModel.table.add(postDetails),
+        Core.PostRelationshipsModel.table.add(postRelationships),
+        Core.PostCountsModel.table.add(postCounts),
+        Core.PostTagsModel.insert({ id: postId, tags: [] }),
       ]);
 
-      const parentCounts = await Core.PostCountsModel.table.get(parentPostId);
-      if (parentCounts) {
-        await Core.PostCountsModel.insert({
-          ...parentCounts,
-          replies: parentCounts.replies + 1,
-        });
+      // If this is a reply, update parent's reply count
+      if (parentUri) {
+        const parentPostId = parentUri.split('/posts/')[1];
+        const fullParentId = `${parentUri.split('/')[2]}:${parentPostId}`;
+        const parentCounts = await Core.PostCountsModel.table.get(fullParentId);
+        if (parentCounts) {
+          await Core.PostCountsModel.insert({
+            ...parentCounts,
+            replies: parentCounts.replies + 1,
+          });
+        }
       }
 
-      const author = replyDetails.id.split(':')[0] as Core.Pubky;
-
-      const createdReply: Core.NexusPost = {
-        details: {
-          ...replyDetails,
-          author,
-        },
-        counts: replyCounts,
-        tags: [],
-        relationships: replyRelationships,
-        bookmark: null,
-      };
-
-      Logger.debug('Reply created successfully', { replyId: replyDetails.id, parentPostId });
-      return createdReply;
+      Logger.debug('Post saved successfully', { postId, kind, parentUri });
     } catch (error) {
-      Logger.error('Failed to add reply', { error, parentPostId, replyDetails });
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to add reply', 500, {
+      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
         error,
-        parentPostId,
-        replyDetails,
+        postId,
+        content,
+        kind,
+        authorId,
       });
     }
   }
