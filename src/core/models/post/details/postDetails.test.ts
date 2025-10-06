@@ -70,16 +70,16 @@ describe('PostDetailsModel', () => {
       await Core.PostDetailsModel.insert(mockPostDetailsData);
       const result = await Core.PostDetailsModel.findById(compositeId);
 
-      expect(result).toBeInstanceOf(Core.PostDetailsModel);
-      expect(result.id).toBe(compositeId);
-      expect(result.content).toBe(MOCK_NEXUS_POST_DETAILS.content);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.PostDetailsModel);
+      expect(result!.id).toBe(compositeId);
+      expect(result!.content).toBe(MOCK_NEXUS_POST_DETAILS.content);
     });
 
-    it('should throw error for non-existent post details', async () => {
+    it('should return null for non-existent post details', async () => {
       const nonExistentId = 'non-existent-post-999';
-      await expect(Core.PostDetailsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in post_details: ${nonExistentId}`,
-      );
+      const result = await Core.PostDetailsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save post details from tuples', async () => {
@@ -97,8 +97,10 @@ describe('PostDetailsModel', () => {
       const postDetails1 = await Core.PostDetailsModel.findById(compositeId1);
       const postDetails2 = await Core.PostDetailsModel.findById(compositeId2);
 
-      expect(postDetails1.content).toBe('This is a test post content');
-      expect(postDetails2.content).toBe('Second post content');
+      expect(postDetails1).not.toBeNull();
+      expect(postDetails2).not.toBeNull();
+      expect(postDetails1!.content).toBe('This is a test post content');
+      expect(postDetails2!.content).toBe('Second post content');
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -120,8 +122,10 @@ describe('PostDetailsModel', () => {
       const postDetails1 = await Core.PostDetailsModel.findById(compositeId1);
       const postDetails2 = await Core.PostDetailsModel.findById(compositeId2);
 
-      expect(postDetails1.kind).toBe('short');
-      expect(postDetails2.kind).toBe('long');
+      expect(postDetails1).not.toBeNull();
+      expect(postDetails2).not.toBeNull();
+      expect(postDetails1!.kind).toBe('short');
+      expect(postDetails2!.kind).toBe('long');
     });
 
     it('should handle posts with and without attachments', async () => {
@@ -137,8 +141,10 @@ describe('PostDetailsModel', () => {
       const postDetails1 = await Core.PostDetailsModel.findById(compositeId1);
       const postDetails2 = await Core.PostDetailsModel.findById(compositeId2);
 
-      expect(postDetails1.attachments).toEqual(['file1.jpg']);
-      expect(postDetails2.attachments).toBeNull();
+      expect(postDetails1).not.toBeNull();
+      expect(postDetails2).not.toBeNull();
+      expect(postDetails1!.attachments).toEqual(['file1.jpg']);
+      expect(postDetails2!.attachments).toBeNull();
     });
   });
 });

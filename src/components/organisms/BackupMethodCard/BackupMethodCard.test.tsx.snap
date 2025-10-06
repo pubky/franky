@@ -1,0 +1,100 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`BackupMethodCard - Snapshots > matches snapshot for default BackupMethodCard 1`] = `
+<div
+  data-image-alt="Shield"
+  data-image-src="/images/shield.png"
+  data-testid="content-card"
+>
+  <div
+    class="items-center gap-1 flex-row"
+    data-testid="container"
+  >
+    <div
+      data-size="lg"
+      data-testid="heading-2"
+    >
+      Choose backup method
+    </div>
+    <div
+      data-testid="popover-backup"
+    >
+      Backup Info
+    </div>
+  </div>
+  <div
+    class="max-w-[576px] mx-0"
+    data-testid="container"
+  >
+    <div
+      class="text-secondary-foreground opacity-80 font-medium text-base"
+      data-size="sm"
+      data-testid="typography"
+    >
+      Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can also choose to do this later.
+    </div>
+    <div
+      class="flex-row mt-6 gap-3 flex-wrap"
+      data-testid="container"
+    >
+      <div
+        data-testid="dialog-backup-phrase"
+      >
+        <button
+          class="gap-2"
+          data-testid="button"
+          data-variant="secondary"
+        >
+          <div
+            class="h-4 w-4"
+            data-testid="file-text"
+          >
+            FileText
+          </div>
+          <span>
+            Recovery phrase
+          </span>
+        </button>
+      </div>
+      <div
+        data-testid="dialog-backup-encrypted"
+      >
+        <button
+          class="gap-2"
+          data-testid="button"
+          data-variant="secondary"
+        >
+          <div
+            class="h-4 w-4"
+            data-testid="file-text"
+          >
+            FileText
+          </div>
+          <span>
+            Encrypted file
+          </span>
+        </button>
+      </div>
+      <div
+        data-mnemonic=""
+        data-testid="dialog-export"
+      >
+        <button
+          class="gap-2"
+          data-testid="button"
+        >
+          <div
+            class="h-4 w-4"
+            data-testid="scan"
+          >
+            Scan
+          </div>
+          <span>
+            Export to Pubky Ring
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

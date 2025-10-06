@@ -13,35 +13,17 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
   }
 
   // -------- Instance helpers (shared) --------
-  findByLabel(label: string): Core.TagModel[] {
-    return Core.TagModel.findByLabel(this.tags, label);
-  }
 
-  findByTagger(taggerId: Core.Pubky): Core.TagModel[] {
-    return Core.TagModel.findByTagger(this.tags, taggerId);
-  }
-
-  getUniqueLabels(): string[] {
-    return Core.TagModel.getUniqueLabels(this.tags);
-  }
-
-  getTaggers(label: string, pagination?: Core.PaginationParams): Core.Pubky[] {
-    const tag = this.tags.find((t) => t.label === label);
-    return tag ? tag.getTaggers(pagination ?? Core.DEFAULT_PAGINATION) : [];
-  }
-
-  addTagger(label: string, userId: Core.Pubky): boolean {
-    let tag = this.tags.find((t) => t.label === label);
-    if (!tag) {
-      tag = new Core.TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
-      this.tags.push(tag);
+  findByLabel(label: string): Core.TagModel | null {
+    const labelTagData = this.tags.filter((t) => t.label === label);
+    if (labelTagData.length === 0) {
+      return null;
     }
-    return tag.addTagger(userId);
+    return labelTagData[0];
   }
 
-  removeTagger(label: string, userId: Core.Pubky): boolean {
-    const tag = this.tags.find((t) => t.label === label);
-    return tag ? tag.removeTagger(userId) : false;
+  deleteTagIfNoTaggers() {
+    this.tags = this.tags.filter((tag) => tag.taggers_count > 0);
   }
 
   // -------- Static CRUD (inherited by subclasses) --------
@@ -69,18 +51,11 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
     TId,
     TSchema extends Core.TagCollectionModelSchema<TId>,
     TModel extends TagCollection<TId, TSchema>,
-  >(this: { table: Table<TSchema>; new (data: TSchema): TModel }, id: TId): Promise<TModel> {
+  >(this: { table: Table<TSchema>; new (data: TSchema): TModel }, id: TId): Promise<TModel | null> {
     try {
       const rec = await this.table.get(id);
       if (!rec) {
-        throw Libs.createDatabaseError(
-          Libs.DatabaseErrorType.FIND_FAILED,
-          `Tags not found in ${this.table.name}: ${String(id)}`,
-          404,
-          {
-            tagsId: id,
-          },
-        );
+        return null;
       }
       Libs.Logger.debug(`Found tags in ${this.table.name}`, { id });
       return new this(rec);

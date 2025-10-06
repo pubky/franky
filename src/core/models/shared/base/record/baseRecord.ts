@@ -28,18 +28,11 @@ export abstract class RecordModelBase<Id, Schema extends { id: Id }> {
   static async findById<TId, TSchema extends { id: TId }, TModel extends RecordModelBase<TId, TSchema>>(
     this: { table: Table<TSchema>; new (data: TSchema): TModel },
     id: TId,
-  ): Promise<TModel> {
+  ): Promise<TModel | null> {
     try {
       const record = await this.table.get(id);
       if (!record) {
-        throw Libs.createDatabaseError(
-          Libs.DatabaseErrorType.USER_NOT_FOUND,
-          `Record not found in ${this.table.name}: ${String(id)}`,
-          404,
-          {
-            id,
-          },
-        );
+        return null;
       }
       Libs.Logger.debug('Found record', { id });
       return new this(record);

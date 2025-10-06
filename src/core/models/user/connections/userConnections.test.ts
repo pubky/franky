@@ -47,17 +47,17 @@ describe('UserConnectionsModel', () => {
       await Core.UserConnectionsModel.insert(mockData);
       const result = await Core.UserConnectionsModel.findById(testUserId1);
 
-      expect(result).toBeInstanceOf(Core.UserConnectionsModel);
-      expect(result.id).toBe(testUserId1);
-      expect(result.following).toEqual(MOCK_CONNECTIONS_1.following);
-      expect(result.followers).toEqual(MOCK_CONNECTIONS_1.followers);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.UserConnectionsModel);
+      expect(result!.id).toBe(testUserId1);
+      expect(result!.following).toEqual(MOCK_CONNECTIONS_1.following);
+      expect(result!.followers).toEqual(MOCK_CONNECTIONS_1.followers);
     });
 
-    it('should throw error for non-existent user connections', async () => {
+    it('should return null for non-existent user connections', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserConnectionsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in user_connections: ${nonExistentId}`,
-      );
+      const result = await Core.UserConnectionsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save user connections from tuples', async () => {
@@ -72,10 +72,12 @@ describe('UserConnectionsModel', () => {
       const c1 = await Core.UserConnectionsModel.findById(testUserId1);
       const c2 = await Core.UserConnectionsModel.findById(testUserId2);
 
-      expect(c1.following).toEqual(MOCK_CONNECTIONS_1.following);
-      expect(c1.followers).toEqual(MOCK_CONNECTIONS_1.followers);
-      expect(c2.following).toEqual(MOCK_CONNECTIONS_2.following);
-      expect(c2.followers).toEqual(MOCK_CONNECTIONS_2.followers);
+      expect(c1).not.toBeNull();
+      expect(c2).not.toBeNull();
+      expect(c1!.following).toEqual(MOCK_CONNECTIONS_1.following);
+      expect(c1!.followers).toEqual(MOCK_CONNECTIONS_1.followers);
+      expect(c2!.following).toEqual(MOCK_CONNECTIONS_2.following);
+      expect(c2!.followers).toEqual(MOCK_CONNECTIONS_2.followers);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -94,10 +96,12 @@ describe('UserConnectionsModel', () => {
       const c1 = await Core.UserConnectionsModel.findById(testUserId1);
       const c2 = await Core.UserConnectionsModel.findById(testUserId2);
 
-      expect(c1.following).toEqual([testUserId2]);
-      expect(c1.followers).toEqual([testUserId3]);
-      expect(c2.following).toEqual([]);
-      expect(c2.followers).toEqual([testUserId1]);
+      expect(c1).not.toBeNull();
+      expect(c2).not.toBeNull();
+      expect(c1!.following).toEqual([testUserId2]);
+      expect(c1!.followers).toEqual([testUserId3]);
+      expect(c2!.following).toEqual([]);
+      expect(c2!.followers).toEqual([testUserId1]);
     });
   });
 });
