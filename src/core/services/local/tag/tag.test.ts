@@ -31,6 +31,10 @@ const getSavedCounts = async () => {
   return await Core.PostCountsModel.table.get(testData.postId);
 };
 
+const getUserCounts = async (userId: Core.Pubky) => {
+  return await Core.UserCountsModel.table.get(userId);
+};
+
 const createTagRecord = (label: string, taggers: Core.Pubky[], relationship: boolean) => ({
   label,
   taggers,
@@ -55,13 +59,33 @@ const setupPostCounts = async (tags: number, uniqueTags: number) => {
   });
 };
 
+const setupUserCounts = async (userId: Core.Pubky, tagged: number = 0) => {
+  await Core.UserCountsModel.insert({
+    id: userId,
+    tagged,
+    tags: 0,
+    unique_tags: 0,
+    posts: 0,
+    replies: 0,
+    following: 0,
+    followers: 0,
+    friends: 0,
+    bookmarks: 0,
+  });
+};
+
 describe('LocalTagService', () => {
   beforeEach(async () => {
     await Core.db.initialize();
-    await Core.db.transaction('rw', [Core.PostTagsModel.table, Core.PostCountsModel.table], async () => {
-      await Core.PostTagsModel.table.clear();
-      await Core.PostCountsModel.table.clear();
-    });
+    await Core.db.transaction(
+      'rw',
+      [Core.PostTagsModel.table, Core.PostCountsModel.table, Core.UserCountsModel.table],
+      async () => {
+        await Core.PostTagsModel.table.clear();
+        await Core.PostCountsModel.table.clear();
+        await Core.UserCountsModel.table.clear();
+      },
+    );
   });
 
   describe('save', () => {
@@ -108,6 +132,22 @@ describe('LocalTagService', () => {
       expect(savedCounts!.unique_tags).toBe(1);
     });
 
+    it('should increment user tagged count when adding tag', async () => {
+      await setupUserCounts(testData.taggerPubky, 0);
+      await Core.Local.Tag.save(createTagParams('javascript'));
+
+      const userCounts = await getUserCounts(testData.taggerPubky);
+      expect(userCounts!.tagged).toBe(1);
+    });
+
+    it('should increment user tagged count from existing value', async () => {
+      await setupUserCounts(testData.taggerPubky, 5);
+      await Core.Local.Tag.save(createTagParams('javascript'));
+
+      const userCounts = await getUserCounts(testData.taggerPubky);
+      expect(userCounts!.tagged).toBe(6);
+    });
+
     it('should add multiple different tags to a post', async () => {
       await Core.Local.Tag.save(createTagParams('javascript'));
       await Core.Local.Tag.save(createTagParams('react'));
@@ -138,6 +178,22 @@ describe('LocalTagService', () => {
       const savedCounts = await getSavedCounts();
       expect(savedCounts!.tags).toBe(0);
       expect(savedCounts!.unique_tags).toBe(0);
+    });
+
+    it('should decrement user tagged count when removing tag', async () => {
+      await setupUserCounts(testData.taggerPubky, 1);
+      await Core.Local.Tag.remove(createRemoveParams('javascript'));
+
+      const userCounts = await getUserCounts(testData.taggerPubky);
+      expect(userCounts!.tagged).toBe(0);
+    });
+
+    it('should decrement user tagged count from existing value', async () => {
+      await setupUserCounts(testData.taggerPubky, 10);
+      await Core.Local.Tag.remove(createRemoveParams('javascript'));
+
+      const userCounts = await getUserCounts(testData.taggerPubky);
+      expect(userCounts!.tagged).toBe(9);
     });
 
     it('should throw error if post has no tags', async () => {

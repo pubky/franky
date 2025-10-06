@@ -155,6 +155,7 @@ export class HomeserverService {
     }
   }
 
+  //TODO: Might be a private function
   async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
       const response = await this.client.fetch(url, { ...options, credentials: 'include' });

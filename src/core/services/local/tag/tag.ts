@@ -1,14 +1,22 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
+import { UserCountsFields } from '@/core/models/user/counts/userCounts.schema';
 
 export class LocalTagService {
   /**
-   * Add a tag to a post
-   * @param params - Parameters object
-   * @param params.postId - ID of the post to tag
-   * @param params.label - Normalized tag label (should already be normalized by caller)
-   * @param params.taggerId - ID of the user adding the tag
+   * Adds a tag to a post and updates all related counts.
+   *
+   * - Adds the tagger to the specified tag
+   * - Updates post counts (total tags, unique tags)
+   * - Increments the tagger's tagged count
+   *
+   * @param params.postId - Unique identifier of the post to tag
+   * @param params.label - Normalized tag label (must be pre-normalized by caller)
+   * @param params.taggerId - Unique identifier of the user adding the tag
+   *
+   * @throws {AppError} When user has already tagged this post with the same label
+   * @throws {DatabaseError} When database operations fail
    */
   static async save({ postId, label, taggerId }: TLocalSaveTagParams) {
     try {
@@ -27,7 +35,13 @@ export class LocalTagService {
 
       await this.updatePostCounts(postId, postTagsModel);
 
-      // TODO: Search the tagger counts and add in its profileCounts + 1
+      const tagger = await Core.UserCountsModel.findById(taggerId);
+      console.log('tagger', tagger, taggerId);
+      if (tagger) {
+        tagger.updateCount(UserCountsFields.TAGGED, Core.INCREMENT);
+        await Core.UserCountsModel.insert({ ...tagger });
+        console.log('tagger updated', tagger);
+      }
 
       Libs.Logger.debug('Tag saved', { postId, label, taggerId });
     } catch (error) {
@@ -41,11 +55,19 @@ export class LocalTagService {
   }
 
   /**
-   * Remove a tag from a post
-   * @param params - Parameters object
-   * @param params.postId - ID of the post
-   * @param params.label - Normalized tag label (should already be normalized by caller)
-   * @param params.taggerId - ID of the user removing the tag
+   * Removes a tag from a post and updates all related counts.
+   *
+   * - Removes the tagger from the specified tag
+   * - Updates post counts (total tags, unique tags)
+   * - Decrements the tagger's tagged count
+   * - Removes the tag entirely if no taggers remain
+   *
+   * @param params.postId - Unique identifier of the post to remove tag from
+   * @param params.label - Tag label to remove
+   * @param params.taggerId - Unique identifier of the user removing the tag
+   *
+   * @throws {AppError} When post has no tags or user hasn't tagged with this label
+   * @throws {DatabaseError} When database operations fail
    */
   static async remove({ postId, label, taggerId }: TLocalRemoveTagParams) {
     try {
@@ -66,7 +88,13 @@ export class LocalTagService {
 
       await this.updatePostCounts(postId, postTagsModel);
 
-      // TODO: Search the tagger counts and remove in its profileCounts - 1
+      const tagger = await Core.UserCountsModel.findById(taggerId);
+      console.log('tagger', tagger);
+      if (tagger) {
+        tagger.updateCount(UserCountsFields.TAGGED, Core.DECREMENT);
+        await Core.UserCountsModel.insert({ ...tagger });
+        console.log('tagger updated', tagger);
+      }
 
       Libs.Logger.debug('Tag removed', { postId, label, taggerId });
     } catch (error) {
@@ -79,6 +107,17 @@ export class LocalTagService {
     }
   }
 
+  /**
+   * Updates post counts based on the current tag state.
+   *
+   * This helper method calculates and updates the total tags and unique tags
+   * for a post based on the current PostTagsModel state.
+   *
+   * @param postId - Unique identifier of the post
+   * @param postTagsModel - The PostTagsModel instance with current tag data
+   *
+   * @private
+   */
   static async updatePostCounts(postId: Core.Pubky, postTagsModel: Core.PostTagsModel) {
     const tags = postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0);
     const unique_tags = postTagsModel.tags.length;
