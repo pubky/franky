@@ -18,6 +18,8 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
     return null;
   }
 
+  const indexedAt = new Date(postDetails?.indexed_at || 0);
+
   return (
     <Atoms.Container className="flex items-center gap-3">
       <Atoms.Container className="flex flex-row gap-4">
@@ -36,7 +38,7 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
             <Atoms.Container className="flex flex-row gap-1 items-center">
               <Libs.Clock className="h-4 w-4 text-muted-foreground" />
               <Atoms.Typography size="sm" className="text-muted-foreground">
-                {timeAgo(new Date(postDetails.indexed_at))}
+                {Libs.timeAgo(indexedAt)}
               </Atoms.Typography>
             </Atoms.Container>
           </Atoms.Container>
@@ -44,21 +46,4 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
       </Atoms.Container>
     </Atoms.Container>
   );
-}
-
-// TODO: use proper helper/util
-function timeAgo(date: Date) {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / (1000 * 60));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffMins < 1) return 'now';
-  if (diffMins < 60) return `${diffMins}m`;
-  if (diffHours < 24) return `${diffHours}h`;
-  if (diffDays < 7) return `${diffDays}d`;
-
-  // For older posts, show the date
-  return date.toLocaleDateString();
 }
