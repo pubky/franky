@@ -2,6 +2,7 @@ import * as Pubky from '@synonymdev/pubky';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
+import { HomeserverAction } from './homeserver.types';
 
 export class HomeserverService {
   private defaultKeypair = {
@@ -14,7 +15,7 @@ export class HomeserverService {
   private testnet = Config.TESTNET.toString() === 'true';
   private pkarrRelays = Config.PKARR_RELAYS.split(',');
 
-  private constructor(secretKey: string) {
+  private constructor(secretKey: string = '') {
     this.client = this.testnet
       ? Pubky.Client.testnet()
       : new Pubky.Client({
@@ -31,7 +32,7 @@ export class HomeserverService {
     }
   }
 
-  public static getInstance(secretKey: string): HomeserverService {
+  public static getInstance(secretKey: string = ''): HomeserverService {
     try {
       if (!HomeserverService.instance) {
         HomeserverService.instance = new HomeserverService(secretKey);
@@ -154,6 +155,7 @@ export class HomeserverService {
     }
   }
 
+  //TODO: Might be a private function
   async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
       const response = await this.client.fetch(url, { ...options, credentials: 'include' });
@@ -163,6 +165,18 @@ export class HomeserverService {
       return response;
     } catch (error) {
       this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
+    }
+  }
+
+  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
+    const homeserver = this.getInstance();
+    const response = await homeserver.fetch(url, {
+      method,
+      body: bodyJson ? JSON.stringify(bodyJson) : undefined,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to ${method} to homeserver: ${response.statusText}`);
     }
   }
 

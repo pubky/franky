@@ -1,12 +1,12 @@
 import * as Core from '@/core';
 
-export type TAddTagParams = {
+export type TCreateTagParams = {
   targetId: string;
   label: string;
   taggerId: Core.Pubky;
 };
 
-export type TRemoveTagParams = {
+export type TDeleteTagParams = {
   targetId: string;
   label: string;
   taggerId: Core.Pubky;

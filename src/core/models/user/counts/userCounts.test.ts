@@ -63,16 +63,16 @@ describe('UserCountsModel', () => {
       await Core.UserCountsModel.insert(mockUserCountsData);
       const result = await Core.UserCountsModel.findById(testUserId1);
 
-      expect(result).toBeInstanceOf(Core.UserCountsModel);
-      expect(result.id).toBe(testUserId1);
-      expect(result.posts).toBe(MOCK_NEXUS_USER_COUNTS.posts);
+      expect(result).not.toBeNull();
+      expect(result!).toBeInstanceOf(Core.UserCountsModel);
+      expect(result!.id).toBe(testUserId1);
+      expect(result!.posts).toBe(MOCK_NEXUS_USER_COUNTS.posts);
     });
 
-    it('should throw error for non-existent user counts', async () => {
+    it('should return null for non-existent user counts', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserCountsModel.findById(nonExistentId)).rejects.toThrow(
-        `Record not found in user_counts: ${nonExistentId}`,
-      );
+      const result = await Core.UserCountsModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save user counts from tuples', async () => {
@@ -88,8 +88,10 @@ describe('UserCountsModel', () => {
       const userCounts1 = await Core.UserCountsModel.findById(testUserId1);
       const userCounts2 = await Core.UserCountsModel.findById(testUserId2);
 
-      expect(userCounts1.posts).toBe(15);
-      expect(userCounts2.posts).toBe(20);
+      expect(userCounts1).not.toBeNull();
+      expect(userCounts2).not.toBeNull();
+      expect(userCounts1!.posts).toBe(15);
+      expect(userCounts2!.posts).toBe(20);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -109,10 +111,12 @@ describe('UserCountsModel', () => {
       const userCounts1 = await Core.UserCountsModel.findById(testUserId1);
       const userCounts2 = await Core.UserCountsModel.findById(testUserId2);
 
-      expect(userCounts1.posts).toBe(15);
-      expect(userCounts1.followers).toBe(120);
-      expect(userCounts2.posts).toBe(999);
-      expect(userCounts2.followers).toBe(0);
+      expect(userCounts1).not.toBeNull();
+      expect(userCounts2).not.toBeNull();
+      expect(userCounts1!.posts).toBe(15);
+      expect(userCounts1!.followers).toBe(120);
+      expect(userCounts2!.posts).toBe(999);
+      expect(userCounts2!.followers).toBe(0);
     });
   });
 });
