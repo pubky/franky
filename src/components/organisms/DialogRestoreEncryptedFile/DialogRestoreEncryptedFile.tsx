@@ -82,6 +82,17 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
     }
   };
 
+  const isFormValid = () => {
+    return selectedFile && password && !isRestoring;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && isFormValid()) {
+      e.preventDefault();
+      handleRestore();
+    }
+  };
+
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
@@ -153,6 +164,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
               placeholder="Enter your password"
               autoComplete="current-password"
@@ -186,7 +198,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             id="encrypted-file-restore-btn"
             className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={handleRestore}
-            disabled={!selectedFile || !password || isRestoring}
+            disabled={!isFormValid()}
           >
             {isRestoring ? (
               <>

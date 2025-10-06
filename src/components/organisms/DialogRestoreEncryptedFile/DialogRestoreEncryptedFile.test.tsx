@@ -312,6 +312,31 @@ describe('DialogRestoreEncryptedFile', () => {
     expect(passwordInput).toHaveValue('testpassword');
   });
 
+  it('handles Enter key on password input to trigger restore', async () => {
+    mockLoginWithEncryptedFile.mockResolvedValue();
+
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const passwordInput = screen.getByTestId('input');
+    const testFile = mockFile('test.pkarr');
+
+    // Set up file and password
+    fireEvent.change(fileInput, { target: { files: [testFile] } });
+    fireEvent.change(passwordInput, { target: { value: 'testpassword' } });
+
+    // Press Enter on password input
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    await waitFor(() => {
+      expect(mockLoginWithEncryptedFile).toHaveBeenCalledWith({ encryptedFile: testFile, password: 'testpassword' });
+    });
+
+    await waitFor(() => {
+      expect(mockOnRestore).toHaveBeenCalled();
+    });
+  });
+
   it('enables restore button when both file and password are provided', async () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 

@@ -135,6 +135,21 @@ function RestoreForm({
     [errors, touched, onErrorsChange, onTouchedChange],
   );
 
+  const isFormValid = () => {
+    const allWordsFilled = userWords.every((word) => word !== '');
+    const noErrors = !errors.some((error) => error);
+    const allTouched = touched.every((t) => t);
+
+    return allWordsFilled && noErrors && allTouched && !isRestoring;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && isFormValid()) {
+      e.preventDefault();
+      onRestore();
+    }
+  };
+
   return (
     <>
       <Atoms.DialogHeader className="space-y-1.5 pr-6">
@@ -162,6 +177,7 @@ function RestoreForm({
                 isRestoring={isRestoring}
                 onChange={handleWordChange}
                 onValidate={handleWordValidate}
+                onKeyDown={handleKeyDown}
               />
             );
           })}
@@ -190,7 +206,7 @@ function RestoreForm({
           id="recovery-phrase-restore-btn"
           className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={onRestore}
-          disabled={userWords.some((word) => word === '') || errors.some((error) => error) || isRestoring}
+          disabled={!isFormValid()}
         >
           {isRestoring ? (
             <>
