@@ -147,3 +147,10 @@ export function clearCookies() {
     });
   }
 }
+
+export function formatPubky(value: string, chars: number = 4): string {
+  if (value.length <= chars * 2) {
+    return value;
+  }
+  return `${value.slice(0, chars)}...${value.slice(-chars)}`;
+}
