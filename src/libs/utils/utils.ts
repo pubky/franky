@@ -149,13 +149,6 @@ export function clearCookies() {
   }
 }
 
-export function shorten(value: string, chars: number = 4): string {
-  if (value.length <= chars * 2) {
-    return value;
-  }
-  return `${value.slice(0, chars)}...${value.slice(-chars)}`;
-}
-
 export function timeAgo(date: Date): string {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
