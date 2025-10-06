@@ -106,16 +106,6 @@ describe('ContentLayout', () => {
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
-  it('renders with custom className', () => {
-    render(
-      <ContentLayout className="custom-class">
-        <div>Test Content</div>
-      </ContentLayout>,
-    );
-
-    expect(screen.getByText('Test Content')).toBeInTheDocument();
-  });
-
   it('shows left sidebar when showLeftSidebar is true and layout is not wide', () => {
     render(
       <ContentLayout showLeftSidebar={true}>
@@ -209,26 +199,6 @@ describe('ContentLayout', () => {
   });
 
   it('applies correct responsive classes', () => {
-    render(
-      <ContentLayout>
-        <div>Test Content</div>
-      </ContentLayout>,
-    );
-
-    expect(screen.getByText('Test Content')).toBeInTheDocument();
-  });
-
-  it('applies correct padding and margin classes', () => {
-    render(
-      <ContentLayout>
-        <div>Test Content</div>
-      </ContentLayout>,
-    );
-
-    expect(screen.getByText('Test Content')).toBeInTheDocument();
-  });
-
-  it('renders main content area with correct flex classes', () => {
     render(
       <ContentLayout>
         <div>Test Content</div>
