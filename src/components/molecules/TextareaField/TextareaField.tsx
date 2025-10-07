@@ -12,6 +12,7 @@ interface TextareaFieldProps {
   variant?: 'default' | 'dashed';
   status?: 'default' | 'success' | 'error';
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   maxLength?: number;
   rows?: number;
   maxRows?: number;
@@ -30,6 +31,7 @@ export function TextareaField({
   variant = 'default',
   status = 'default',
   onChange,
+  onKeyDown,
   maxLength,
   rows = 4,
   message,
@@ -66,6 +68,7 @@ export function TextareaField({
           readOnly={readOnly}
           onClick={onClick}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           maxLength={maxLength}
           rows={rows}
           aria-invalid={status === 'error'}

@@ -6,8 +6,8 @@ import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 // Mock the Local.Tag service
 vi.mock('@/core/services/local/tag', () => ({
   LocalTagService: {
-    save: vi.fn(),
-    remove: vi.fn(),
+    create: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -37,8 +37,8 @@ describe('Tag Application', () => {
 
   // Helper functions
   const setupMocks = () => ({
-    saveSpy: vi.spyOn(Core.Local.Tag, 'save'),
-    removeSpy: vi.spyOn(Core.Local.Tag, 'remove'),
+    saveSpy: vi.spyOn(Core.Local.Tag, 'create'),
+    removeSpy: vi.spyOn(Core.Local.Tag, 'delete'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
   });
 

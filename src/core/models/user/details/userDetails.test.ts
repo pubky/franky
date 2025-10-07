@@ -41,14 +41,14 @@ describe('UserDetailsModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert user details', async () => {
+    it('should create user details', async () => {
       const mockUserDetailsData = {
         id: testUserId1,
         ...MOCK_NEXUS_USER_DETAILS,
       };
 
-      const result = await Core.UserDetailsModel.insert(mockUserDetailsData);
-      expect(result).toBeDefined();
+      const result = await Core.UserDetailsModel.create(mockUserDetailsData);
+      expect(result).toBeUndefined();
     });
 
     it('should find user details by id', async () => {
@@ -57,7 +57,7 @@ describe('UserDetailsModel', () => {
         ...MOCK_NEXUS_USER_DETAILS,
       };
 
-      await Core.UserDetailsModel.insert(mockUserDetailsData);
+      await Core.UserDetailsModel.create(mockUserDetailsData);
       const result = await Core.UserDetailsModel.findById(testUserId1);
 
       expect(result).not.toBeNull();
@@ -137,7 +137,7 @@ describe('UserDetailsModel', () => {
         { title: 'Website', url: 'https://example.com' },
         { title: 'GitHub', url: 'https://github.com/testuser' },
       ]);
-      expect(userDetails2.links).toBeNull();
+      expect(userDetails2?.links).toBeNull();
     });
 
     it('should handle user details with null values', async () => {
@@ -151,8 +151,8 @@ describe('UserDetailsModel', () => {
         status: null,
       };
 
-      const result = await Core.UserDetailsModel.insert(mockUserDetailsWithNulls);
-      expect(result).toBeDefined();
+      const result = await Core.UserDetailsModel.create(mockUserDetailsWithNulls);
+      expect(result).toBeUndefined();
 
       const foundUser = await Core.UserDetailsModel.findById(testUserId1);
       expect(foundUser).not.toBeNull();

@@ -8,6 +8,7 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as App from '@/app';
+import * as Hooks from '@/hooks';
 
 export function HomeserverCard() {
   const router = useRouter();
@@ -72,6 +73,12 @@ export function HomeserverCard() {
     }
   };
 
+  const isFormValid = () => {
+    return !continueButtonDisabled && !isLoading;
+  };
+
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onHandleContinueButton);
+
   return (
     <>
       <Molecules.ContentCard
@@ -98,8 +105,8 @@ export function HomeserverCard() {
               id="invite-code-input"
               value={inviteCode}
               variant="dashed"
-              onClick={() => setInviteCode(inviteCode)}
               onChange={handleOnChange}
+              onKeyDown={handleKeyDown}
               placeholder="XXXX-XXXX-XXXX"
               maxLength={14}
               disabled={isLoading}
@@ -134,7 +141,7 @@ export function HomeserverCard() {
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
           onClick={onHandleContinueButton}
-          disabled={continueButtonDisabled}
+          disabled={!isFormValid()}
         >
           {isLoading ? (
             <>

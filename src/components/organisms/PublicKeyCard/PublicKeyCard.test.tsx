@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterAll } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PublicKeyCard } from './PublicKeyCard';
 
@@ -138,28 +138,45 @@ vi.mock('@/atoms', () => ({
 // Mock core
 const mockSetKeypair = vi.fn();
 const mockSetMnemonic = vi.fn();
+const { mockUseOnboardingStore } = vi.hoisted(() => ({
+  mockUseOnboardingStore: vi.fn(),
+}));
+
 const mockPubky = 'pubky1234567890abcdef';
 
 vi.mock('@/core', () => ({
-  useOnboardingStore: () => ({
-    setKeypair: mockSetKeypair,
-    setMnemonic: mockSetMnemonic,
-    pubky: mockPubky,
-  }),
+  useOnboardingStore: mockUseOnboardingStore,
 }));
 
 // Mock hooks
-const mockCopyToClipboard = vi.fn();
+const { mockCopyToClipboard, mockUseCopyToClipboard, mockUseIsTouchDevice } = vi.hoisted(() => {
+  const mockCopy = vi.fn();
+  const mockUseCopy = vi.fn(() => ({
+    copyToClipboard: mockCopy,
+  }));
+  const mockTouch = vi.fn();
+
+  return {
+    mockCopyToClipboard: mockCopy,
+    mockUseCopyToClipboard: mockUseCopy,
+    mockUseIsTouchDevice: mockTouch,
+  };
+});
+
+const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 vi.mock('@/hooks', () => ({
-  useCopyToClipboard: vi.fn(() => ({
-    copyToClipboard: mockCopyToClipboard,
-  })),
+  useCopyToClipboard: mockUseCopyToClipboard,
+  useIsTouchDevice: mockUseIsTouchDevice,
 }));
 
 // Mock libs
 const { mockShareWithFallback } = vi.hoisted(() => ({
   mockShareWithFallback: vi.fn(),
+}));
+
+const { mockLoggerError } = vi.hoisted(() => ({
+  mockLoggerError: vi.fn(),
 }));
 
 vi.mock('@/libs', () => ({
@@ -171,6 +188,9 @@ vi.mock('@/libs', () => ({
     })),
   },
   shareWithFallback: mockShareWithFallback,
+  Logger: {
+    error: mockLoggerError,
+  },
   Copy: ({ className }: { className?: string }) => (
     <div data-testid="copy-icon" className={className}>
       Copy
@@ -194,6 +214,12 @@ describe('PublicKeyCard', () => {
     mockToast.mockReturnValue({ dismiss: mockDismiss });
     mockCopyToClipboard.mockResolvedValue(undefined);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
+    mockUseIsTouchDevice.mockReturnValue(true);
+    mockUseOnboardingStore.mockReturnValue({
+      setKeypair: mockSetKeypair,
+      setMnemonic: mockSetMnemonic,
+      pubky: mockPubky,
+    });
   });
 
   it('renders content card with image', () => {
@@ -214,7 +240,7 @@ describe('PublicKeyCard', () => {
     expect(screen.getByTestId('popover-public-key')).toBeInTheDocument();
   });
 
-  it('renders action section with copy and share buttons', () => {
+  it('renders action section with copy button and share button on touch devices', () => {
     render(<PublicKeyCard />);
 
     expect(screen.getByTestId('action-section')).toBeInTheDocument();
@@ -222,6 +248,16 @@ describe('PublicKeyCard', () => {
     expect(screen.getByTestId('action-button-1')).toBeInTheDocument();
     expect(screen.getByText('Copy to clipboard')).toBeInTheDocument();
     expect(screen.getByTestId('share-icon')).toBeInTheDocument();
+  });
+
+  it('does not render share button on non-touch devices', () => {
+    mockUseIsTouchDevice.mockReturnValueOnce(false);
+
+    render(<PublicKeyCard />);
+
+    expect(screen.getByTestId('action-section')).toBeInTheDocument();
+    expect(screen.getByTestId('action-button-0')).toBeInTheDocument();
+    expect(screen.queryByTestId('action-button-1')).not.toBeInTheDocument();
   });
 
   it('renders input field with public key', () => {
@@ -360,6 +396,77 @@ describe('PublicKeyCard', () => {
       description: 'Unable to share right now. Please try again.',
     });
   });
+
+  it('disables actions when pubky is empty', () => {
+    // Mock empty pubky
+    mockUseOnboardingStore.mockReturnValueOnce({
+      setKeypair: mockSetKeypair,
+      setMnemonic: mockSetMnemonic,
+      pubky: '',
+    });
+
+    render(<PublicKeyCard />);
+
+    const copyButton = screen.getByTestId('action-button-0');
+    expect(copyButton).toBeInTheDocument();
+
+    // Since our mock doesn't support the disabled attribute directly,
+    // we verify the behavior by checking that clicking doesn't trigger the action
+    fireEvent.click(copyButton);
+    expect(mockCopyToClipboard).not.toHaveBeenCalled();
+  });
+
+  it('does not call copy when pubky is empty and input is clicked', () => {
+    // Mock empty pubky
+    mockUseOnboardingStore.mockReturnValueOnce({
+      setKeypair: mockSetKeypair,
+      setMnemonic: mockSetMnemonic,
+      pubky: '',
+    });
+
+    render(<PublicKeyCard />);
+
+    const input = screen.queryByTestId('input');
+    // When loading, input is not rendered
+    expect(input).not.toBeInTheDocument();
+
+    // Verify copyToClipboard was not called
+    expect(mockCopyToClipboard).not.toHaveBeenCalled();
+  });
+
+  it('does not call share when pubky is empty', async () => {
+    // Mock empty pubky
+    mockUseOnboardingStore.mockReturnValueOnce({
+      setKeypair: mockSetKeypair,
+      setMnemonic: mockSetMnemonic,
+      pubky: '',
+    });
+
+    render(<PublicKeyCard />);
+
+    const shareButton = screen.getByTestId('action-button-1');
+    fireEvent.click(shareButton);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    // Verify shareWithFallback was not called
+    expect(mockShareWithFallback).not.toHaveBeenCalled();
+  });
+
+  it('logs unexpected share errors using Logger', async () => {
+    // Mock shareWithFallback to throw an unexpected error
+    const unexpectedError = new Error('Unexpected error');
+    mockShareWithFallback.mockRejectedValueOnce(unexpectedError);
+
+    render(<PublicKeyCard />);
+
+    const shareButton = screen.getByTestId('action-button-1');
+    fireEvent.click(shareButton);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mockLoggerError).toHaveBeenCalledWith('Unexpected share error', { error: unexpectedError });
+  });
 });
 
 describe('PublicKeyCard - Key Generation', () => {
@@ -368,6 +475,12 @@ describe('PublicKeyCard - Key Generation', () => {
     mockToast.mockReturnValue({ dismiss: mockDismiss });
     mockCopyToClipboard.mockResolvedValue(undefined);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
+    mockUseIsTouchDevice.mockReturnValue(true);
+    mockUseOnboardingStore.mockReturnValue({
+      setKeypair: mockSetKeypair,
+      setMnemonic: mockSetMnemonic,
+      pubky: mockPubky,
+    });
   });
 
   it('does not generate keypair when public key already exists', () => {
@@ -379,4 +492,8 @@ describe('PublicKeyCard - Key Generation', () => {
     expect(mockSetKeypair).not.toHaveBeenCalled();
     expect(mockSetMnemonic).not.toHaveBeenCalled();
   });
+});
+
+afterAll(() => {
+  consoleErrorSpy.mockRestore();
 });

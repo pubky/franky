@@ -14,12 +14,12 @@ exports[`MobileHeader - Snapshots > matches snapshot for left button 1`] = `
 `;
 
 exports[`MobileHeader - Snapshots > matches snapshot for logo 1`] = `
-<span
-  class="font-bold"
-  data-size="md"
->
-  Pubky
-</span>
+<img
+  alt="Pubky"
+  data-height="32"
+  data-testid="logo"
+  data-width="96"
+/>
 `;
 
 exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
@@ -55,12 +55,12 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom className 1`] =
     <div
       class="flex items-center gap-2"
     >
-      <span
-        class="font-bold"
-        data-size="md"
-      >
-        Pubky
-      </span>
+      <img
+        alt="Pubky"
+        data-height="32"
+        data-testid="logo"
+        data-width="96"
+      />
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -96,12 +96,12 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
     <div
       class="flex items-center gap-2"
     >
-      <span
-        class="font-bold"
-        data-size="md"
-      >
-        Pubky
-      </span>
+      <img
+        alt="Pubky"
+        data-height="32"
+        data-testid="logo"
+        data-width="96"
+      />
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -137,12 +137,12 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
     <div
       class="flex items-center gap-2"
     >
-      <span
-        class="font-bold"
-        data-size="md"
-      >
-        Pubky
-      </span>
+      <img
+        alt="Pubky"
+        data-height="32"
+        data-testid="logo"
+        data-width="96"
+      />
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
