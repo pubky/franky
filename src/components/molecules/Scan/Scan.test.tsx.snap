@@ -42,8 +42,7 @@ exports[`Scan Components - Snapshots > ScanContent - Snapshots > matches snapsho
         >
           <svg
             aria-hidden="true"
-            class="h-8 w-8 animate-spin text-background"
-            data-testid="loader-icon"
+            class="lucide lucide-loader-circle h-8 w-8 animate-spin text-background"
             fill="none"
             height="24"
             stroke="currentColor"

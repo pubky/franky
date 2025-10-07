@@ -13,15 +13,11 @@ vi.mock('@/atoms', () => ({
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
 }));
 
-// Mock the libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  Users: ({ className }: { className?: string }) => (
-    <div data-testid="users-icon" className={className}>
-      Users
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 describe('ActiveUsers', () => {
   it('renders with default props', () => {
@@ -105,7 +101,7 @@ describe('ActiveUsers', () => {
   it('renders See All button with correct icon', () => {
     render(<ActiveUsers />);
 
-    expect(screen.getByTestId('users-icon')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-users')).toBeInTheDocument();
     expect(screen.getByText('See All')).toBeInTheDocument();
   });
 

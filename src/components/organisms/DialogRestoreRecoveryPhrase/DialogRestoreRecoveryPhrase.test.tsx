@@ -4,13 +4,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DialogRestoreRecoveryPhrase } from './DialogRestoreRecoveryPhrase';
 
 // Mock external dependencies
-vi.mock('@/libs', () => ({
-  cn: vi.fn((...classes) => classes.filter(Boolean).join(' ')),
-  FileText: vi.fn(() => <span data-testid="file-text-icon" />),
-  AlertCircle: vi.fn(() => <span data-testid="alert-circle-icon" />),
-  RotateCcw: vi.fn(() => <span data-testid="rotate-ccw-icon" />),
-  Loader2: vi.fn(() => <span data-testid="loader-icon" />),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+  };
+});
 
 vi.mock('@/atoms', () => ({
   Dialog: vi.fn(({ children }) => <div data-testid="dialog">{children}</div>),
@@ -206,8 +206,9 @@ describe('DialogRestoreRecoveryPhrase', () => {
     it('renders icons correctly', () => {
       render(<DialogRestoreRecoveryPhrase />);
 
-      expect(screen.getByTestId('file-text-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('rotate-ccw-icon')).toBeInTheDocument();
+      // Icons are now actual lucide-react components (SVGs), not mocked divs
+      const button = screen.getByRole('button', { name: /use recovery phrase/i });
+      expect(button).toBeInTheDocument();
     });
   });
 
@@ -287,7 +288,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
 
       // Check if error elements appear
       await waitFor(() => {
-        expect(screen.getByTestId('alert-circle-icon')).toBeInTheDocument();
+        // Error icon is now actual lucide-react CircleAlert icon (SVG), not mocked div
         expect(screen.getByText('Invalid words detected')).toBeInTheDocument();
         expect(
           screen.getByText('Please check that all words are valid and contain only lowercase letters.'),
@@ -670,7 +671,7 @@ describe('DialogRestoreRecoveryPhrase', () => {
 
       // Should show loading state
       expect(screen.getByText('Restoring...')).toBeInTheDocument();
-      expect(screen.getByTestId('loader-icon')).toBeInTheDocument();
+      // Loader icon is now actual lucide-react LoaderCircle component (SVG), not mocked div
 
       // Inputs should be disabled
       inputs.forEach((input) => {

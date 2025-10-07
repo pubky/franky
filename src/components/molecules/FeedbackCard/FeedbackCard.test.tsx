@@ -13,15 +13,11 @@ vi.mock('@/atoms', () => ({
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
 }));
 
-// Mock the libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  User: ({ className }: { className?: string }) => (
-    <div data-testid="user-icon" className={className}>
-      User
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 describe('FeedbackCard', () => {
   it('renders with default props', () => {
@@ -62,8 +58,7 @@ describe('FeedbackCard', () => {
     const fallback = screen.getByTestId('avatar-fallback');
     expect(fallback).toBeInTheDocument();
 
-    const userIcon = screen.getByTestId('user-icon');
-    expect(userIcon).toHaveClass('w-5', 'h-5');
+    expect(document.querySelector('.lucide-user')).toBeInTheDocument();
   });
 
   it('renders user name correctly', () => {

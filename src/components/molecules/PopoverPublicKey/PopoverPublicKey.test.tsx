@@ -2,11 +2,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { PopoverPublicKey } from './PopoverPublicKey';
 
-// Mock @/libs to intercept Libs.CircleHelp and utilities
-vi.mock('@/libs', () => ({
-  CircleHelp: () => <svg data-testid="circle-help-icon" />,
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 // Mock atoms and molecules
 vi.mock('@/atoms', () => ({
   Button: ({

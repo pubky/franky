@@ -29,47 +29,11 @@ vi.mock('@/core', () => ({
   }),
 }));
 
-// Mock libs partially, preserving real exports and overriding only what's needed
+// Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-    FileText: ({ className }: { className?: string }) => (
-      <div data-testid="file-text-icon" className={className}>
-        FileText
-      </div>
-    ),
-    ArrowLeft: ({ className }: { className?: string }) => (
-      <div data-testid="arrow-left-icon" className={className}>
-        ArrowLeft
-      </div>
-    ),
-    ArrowRight: ({ className }: { className?: string }) => (
-      <div data-testid="arrow-right-icon" className={className}>
-        ArrowRight
-      </div>
-    ),
-    Eye: ({ className }: { className?: string }) => (
-      <div data-testid="eye-icon" className={className}>
-        Eye
-      </div>
-    ),
-    EyeOff: ({ className }: { className?: string }) => (
-      <div data-testid="eye-off-icon" className={className}>
-        EyeOff
-      </div>
-    ),
-    Copy: ({ className }: { className?: string }) => (
-      <div data-testid="copy-icon" className={className}>
-        Copy
-      </div>
-    ),
-    Check: ({ className }: { className?: string }) => (
-      <div data-testid="check-icon" className={className}>
-        Check
-      </div>
-    ),
     Identity: {
       generateSeedWords: vi.fn(() => [
         'word1',
