@@ -153,11 +153,12 @@ export const SignInContent = () => {
               size="lg"
               onClick={handleAuthorizeClick}
               disabled={isLoading}
+              aria-busy={isLoading}
             >
               {isLoading ? (
                 <>
                   <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
+                  <span aria-live="polite">Generating...</span>
                 </>
               ) : (
                 <>
