@@ -100,7 +100,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           <span>Use encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8">
+      <Atoms.DialogContent className="gap-6 p-8 max-w-full overflow-hidden">
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
           <Atoms.DialogTitle className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
             Restore with encrypted file
@@ -118,17 +118,22 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Label>
 
             <Atoms.Container
-              className="relative border-2 border-dashed border-border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-card/80 transition-colors cursor-pointer flex-row"
+              className="relative border-2 border-dashed border-border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-card/80 transition-colors cursor-pointer flex-row w-full overflow-hidden gap-3"
               onClick={handleFileSelect}
             >
-              <span className={`font-medium ${selectedFile?.name ? 'text-foreground' : 'text-muted-foreground'}`}>
+              <span
+                className={`flex-1 min-w-0 truncate font-medium ${
+                  selectedFile?.name ? 'text-foreground' : 'text-muted-foreground'
+                }`}
+              >
                 {selectedFile ? selectedFile.name : 'encryptedfile.pkarr'}
               </span>
+
               <Atoms.Button
                 type="button"
                 variant="secondary"
                 size="sm"
-                className="gap-2"
+                className="gap-2 shrink-0"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleFileSelect();
