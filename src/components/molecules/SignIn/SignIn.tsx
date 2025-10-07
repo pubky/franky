@@ -16,6 +16,7 @@ export const SignInContent = () => {
   const isMountedRef = useRef(true);
   const activeRequestRef = useRef<symbol | null>(null);
   const isGeneratingRef = useRef(false);
+  const MAX_RETRY_ATTEMPTS = 3;
 
   const fetchUrl = async (options?: { viaRetry?: boolean }) => {
     const requestId = Symbol('fetchUrl');
@@ -63,21 +64,20 @@ export const SignInContent = () => {
       if (generatedUrl) setUrl(generatedUrl);
       retryCountRef.current = 0;
     } catch (error) {
-      Libs.Logger.error('Failed to generate auth URL:', error);
       retryCountRef.current += 1;
+      const attempts = retryCountRef.current;
+      Libs.Logger.error(`Failed to generate auth URL (attempt ${attempts} of ${MAX_RETRY_ATTEMPTS}):`, error);
 
-      if (retryCountRef.current < 3) {
+      if (attempts < MAX_RETRY_ATTEMPTS) {
         willRetry = true;
         // bounded backoff: 250ms, 500ms
-        const delayMs = Math.min(1000, 250 * retryCountRef.current);
+        const delayMs = Math.min(1000, 250 * attempts);
         await new Promise((resolve) => setTimeout(resolve, delayMs));
         await fetchUrl({ viaRetry: true });
-      }
-
-      if (isMountedRef.current) {
+      } else if (isMountedRef.current) {
         Molecules.toast({
           title: 'QR code generation failed',
-          description: 'Unable to generate sign-in QR code. Please refresh the page.',
+          description: 'Unable to generate sign-in QR code. Please refresh and try again.',
         });
       }
     } finally {
@@ -115,6 +115,7 @@ export const SignInContent = () => {
     return () => {
       isMountedRef.current = false;
       activeRequestRef.current = null;
+      isGeneratingRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
