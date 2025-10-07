@@ -2,15 +2,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MobileHeader } from './MobileHeader';
 
-// Mock the atoms
-vi.mock('@/atoms', () => ({
-  Typography: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
-    <span className={className} data-size={size}>
-      {children}
-    </span>
-  ),
-}));
-
 // Mock the molecules
 vi.mock('@/molecules', () => ({
   FilterDrawer: ({
@@ -32,6 +23,9 @@ vi.mock('@/molecules', () => ({
   WhoToFollow: () => <div data-testid="who-to-follow">Who to Follow</div>,
   ActiveUsers: () => <div data-testid="active-users">Active Users</div>,
   FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
+  Logo: ({ width, height }: { width?: number; height?: number }) => (
+    <img data-testid="logo" alt="Pubky" data-width={width} data-height={height} />
+  ),
 }));
 
 // Mock the libs
@@ -53,7 +47,7 @@ describe('MobileHeader', () => {
   it('renders with default props', () => {
     render(<MobileHeader />);
 
-    expect(screen.getByText('Pubky')).toBeInTheDocument();
+    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
     expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
     expect(screen.getByTestId('activity-icon')).toBeInTheDocument();
   });
@@ -61,7 +55,7 @@ describe('MobileHeader', () => {
   it('renders with custom className', () => {
     render(<MobileHeader className="custom-header" />);
 
-    expect(screen.getByText('Pubky')).toBeInTheDocument();
+    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
   });
 
   it('renders with custom onLeftIconClick', () => {
@@ -77,13 +71,13 @@ describe('MobileHeader', () => {
   it('applies correct classes to container', () => {
     render(<MobileHeader />);
 
-    expect(screen.getByText('Pubky')).toBeInTheDocument();
+    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
   });
 
   it('applies correct classes to inner container', () => {
     render(<MobileHeader />);
 
-    const innerContainer = screen.getByText('Pubky').closest('div')?.parentElement;
+    const innerContainer = screen.getByTestId('logo').closest('div')?.parentElement;
     expect(innerContainer).toHaveClass('flex', 'items-center', 'justify-between', 'px-4', 'h-16');
   });
 
@@ -104,15 +98,16 @@ describe('MobileHeader', () => {
   it('applies correct classes to logo container', () => {
     render(<MobileHeader />);
 
-    const logoContainer = screen.getByText('Pubky').closest('div');
+    const logoContainer = screen.getByTestId('logo').closest('div');
     expect(logoContainer).toHaveClass('flex', 'items-center', 'gap-2');
   });
 
-  it('applies correct classes to logo text', () => {
+  it('renders logo with correct dimensions', () => {
     render(<MobileHeader />);
 
-    const logoText = screen.getByText('Pubky');
-    expect(logoText).toHaveClass('font-bold');
+    const logo = screen.getByTestId('logo');
+    expect(logo).toHaveAttribute('data-width', '96');
+    expect(logo).toHaveAttribute('data-height', '32');
   });
 
   it('renders right drawer with correct content', () => {
@@ -147,7 +142,7 @@ describe('MobileHeader', () => {
   it('renders with correct responsive behavior', () => {
     render(<MobileHeader />);
 
-    expect(screen.getByText('Pubky')).toBeInTheDocument();
+    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
   });
 
   it('handles hover states correctly', () => {
@@ -160,19 +155,12 @@ describe('MobileHeader', () => {
     expect(rightButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
   });
 
-  it('renders logo with correct attributes', () => {
-    render(<MobileHeader />);
-
-    const logoText = screen.getByText('Pubky');
-    expect(logoText).toHaveAttribute('data-size', 'md');
-  });
-
   it('renders with correct structure', () => {
     render(<MobileHeader />);
 
     // Check that all main elements are present
     expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
-    expect(screen.getByText('Pubky')).toBeInTheDocument();
+    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
     expect(screen.getByTestId('activity-icon')).toBeInTheDocument();
   });
 });
@@ -211,7 +199,7 @@ describe('MobileHeader - Snapshots', () => {
   it('matches snapshot for logo', () => {
     render(<MobileHeader />);
 
-    const logoText = screen.getByText('Pubky');
-    expect(logoText).toMatchSnapshot();
+    const logo = screen.getByTestId('logo');
+    expect(logo).toMatchSnapshot();
   });
 });
