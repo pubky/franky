@@ -93,6 +93,7 @@ export const SignInContent = () => {
     if (isLoading || isGeneratingRef.current) return;
 
     if (!url) {
+      if (activeRequestRef.current) return;
       fetchUrl();
       return;
     }
