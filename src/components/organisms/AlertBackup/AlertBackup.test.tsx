@@ -90,49 +90,13 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  TriangleAlert: ({ className }: { className?: string }) => (
-    <div data-testid="triangle-alert" className={className}>
-      TriangleAlert
-    </div>
-  ),
-  ArrowLeft: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-left" className={className}>
-      ArrowLeft
-    </div>
-  ),
-  Download: ({ className }: { className?: string }) => (
-    <div data-testid="download" className={className}>
-      Download
-    </div>
-  ),
-  Eye: ({ className }: { className?: string }) => (
-    <div data-testid="eye" className={className}>
-      Eye
-    </div>
-  ),
-  EyeOff: ({ className }: { className?: string }) => (
-    <div data-testid="eye-off" className={className}>
-      EyeOff
-    </div>
-  ),
-  Copy: ({ className }: { className?: string }) => (
-    <div data-testid="copy" className={className}>
-      Copy
-    </div>
-  ),
-  Check: ({ className }: { className?: string }) => (
-    <div data-testid="check" className={className}>
-      Check
-    </div>
-  ),
-  ShieldCheck: ({ className }: { className?: string }) => (
-    <div data-testid="shield-check" className={className}>
-      ShieldCheck
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+  };
+});
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
@@ -151,7 +115,7 @@ describe('AlertBackup', () => {
   it('renders all required elements', () => {
     render(<AlertBackup />);
 
-    expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
+    // TriangleAlert icon is now actual lucide-react component (SVG), not mocked div
     expect(screen.getByText('Back up now')).toBeInTheDocument();
     expect(screen.getByText('to avoid losing your account!')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-backup')).toBeInTheDocument();
