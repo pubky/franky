@@ -2,7 +2,7 @@
 
 exports[`PostActionsBar - Snapshots > matches snapshot when bookmarked 1`] = `
 <div
-  class="mx-auto w-full flex-col flex flex-row items-center justify-end gap-2"
+  class="mx-auto w-full flex-col flex flex-row flex-1 w-auto items-center justify-end gap-2"
   data-testid="container"
 >
   <button
@@ -106,7 +106,7 @@ exports[`PostActionsBar - Snapshots > matches snapshot when bookmarked 1`] = `
 
 exports[`PostActionsBar - Snapshots > matches snapshot with default state 1`] = `
 <div
-  class="mx-auto w-full flex-col flex flex-row items-center justify-end gap-2"
+  class="mx-auto w-full flex-col flex flex-row flex-1 w-auto items-center justify-end gap-2"
   data-testid="container"
 >
   <button
@@ -210,7 +210,7 @@ exports[`PostActionsBar - Snapshots > matches snapshot with default state 1`] = 
 
 exports[`PostActionsBar - Snapshots > matches snapshot with high engagement 1`] = `
 <div
-  class="mx-auto w-full flex-col flex flex-row items-center justify-end gap-2"
+  class="mx-auto w-full flex-col flex flex-row flex-1 w-auto items-center justify-end gap-2"
   data-testid="container"
 >
   <button
