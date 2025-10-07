@@ -8,7 +8,7 @@ describe('Button', () => {
     render(<Button>Default Button</Button>);
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
-    expect(button).toHaveClass('bg-brand/20', 'text-brand');
+    expect(button).toHaveClass('bg-brand/16', 'text-brand');
     expect(button).toHaveAttribute('data-slot', 'button');
     // data-variant is only set when variant prop is explicitly provided
     expect(button).not.toHaveAttribute('data-variant');
