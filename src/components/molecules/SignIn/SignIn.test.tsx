@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { SignInContent, SignInFooter } from './SignIn';
 
@@ -114,8 +114,17 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Button: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
-    <button data-testid="button" className={className} data-size={size}>
+  Button: ({
+    children,
+    className,
+    size,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    size?: string;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="button" className={className} data-size={size} {...props}>
       {children}
     </button>
   ),
@@ -144,8 +153,22 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('SignInContent', () => {
+  const originalLocation = window.location;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { href: '' },
+    });
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
+    window.location.href = '';
+  });
+
+  afterAll(() => {
+    window.location = originalLocation;
   });
 
   it('renders desktop and mobile content containers', async () => {
@@ -204,6 +227,21 @@ describe('SignInContent', () => {
     expect(logoImage).toHaveAttribute('height', '30');
 
     expect(screen.getByTestId('button')).toBeInTheDocument();
+  });
+
+  it('navigates to the Pubky Ring deeplink when mobile authorize button is tapped', async () => {
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('button')).not.toBeDisabled();
+    });
+
+    const authorizeButton = screen.getByTestId('button');
+    fireEvent.click(authorizeButton);
+
+    expect(window.location.href).toBe('mock-auth-url');
   });
 
   it('renders content cards with column layout', async () => {

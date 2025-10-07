@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
@@ -12,7 +12,7 @@ import * as Core from '@/core';
 export const SignInContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [errorCount, setErrorCount] = useState(0);
+  const retryCountRef = useRef(0);
 
   const fetchUrl = async () => {
     try {
@@ -22,6 +22,7 @@ export const SignInContent = () => {
       const { url, promise } = data;
 
       if (url) setUrl(url);
+      retryCountRef.current = 0;
 
       promise?.then(async (publicKey) => {
         try {
@@ -36,14 +37,36 @@ export const SignInContent = () => {
       });
     } catch (error) {
       Libs.Logger.error('Failed to generate auth URL:', error);
-      setErrorCount(errorCount + 1);
-      if (errorCount < 3) fetchUrl();
+      retryCountRef.current += 1;
+      if (retryCountRef.current < 3) {
+        fetchUrl();
+      }
       Molecules.toast({
         title: 'QR code generation failed',
         description: 'Unable to generate sign-in QR code. Please refresh the page.',
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAuthorizeClick = () => {
+    if (isLoading) return;
+
+    if (!url) {
+      setIsLoading(true);
+      fetchUrl();
+      return;
+    }
+
+    try {
+      window.location.href = url;
+    } catch (error) {
+      Libs.Logger.error('Failed to open Pubky Ring deeplink:', error);
+      Molecules.toast({
+        title: 'Unable to link to signer application Pubky Ring',
+        description: 'Please try again.',
+      });
     }
   };
 
@@ -81,9 +104,23 @@ export const SignInContent = () => {
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
             <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
-            <Atoms.Button className="w-full h-[60px] rounded-full" size="lg">
-              <Libs.Key className="mr-2 h-4 w-4" />
-              Authorize with Pubky Ring
+            <Atoms.Button
+              className="w-full h-[60px] rounded-full"
+              size="lg"
+              onClick={handleAuthorizeClick}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Libs.Key className="mr-2 h-4 w-4" />
+                  Authorize with Pubky Ring
+                </>
+              )}
             </Atoms.Button>
           </Atoms.Container>
         </Molecules.ContentCard>
