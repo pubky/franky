@@ -1,0 +1,313 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostActionsBar - Snapshots > matches snapshot when bookmarked 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-row items-center justify-end gap-2"
+  data-testid="container"
+>
+  <button
+    aria-label="Tag post (15)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="tag-icon"
+    >
+      Tag
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      15
+    </span>
+  </button>
+  <button
+    aria-label="Reply to post (7)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="message-circle-icon"
+    >
+      MessageCircle
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      7
+    </span>
+  </button>
+  <button
+    aria-label="Repost (3)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="repeat-icon"
+    >
+      Repeat
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      3
+    </span>
+  </button>
+  <button
+    aria-label="Remove bookmark"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 w-10 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-fill="currentColor"
+      data-stroke-width="2"
+      data-testid="bookmark-icon"
+    >
+      Bookmark
+    </div>
+  </button>
+  <button
+    aria-label="More options"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="ellipsis-icon"
+    >
+      Ellipsis
+    </div>
+  </button>
+</div>
+`;
+
+exports[`PostActionsBar - Snapshots > matches snapshot with default state 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-row items-center justify-end gap-2"
+  data-testid="container"
+>
+  <button
+    aria-label="Tag post (15)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="tag-icon"
+    >
+      Tag
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      15
+    </span>
+  </button>
+  <button
+    aria-label="Reply to post (7)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="message-circle-icon"
+    >
+      MessageCircle
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      7
+    </span>
+  </button>
+  <button
+    aria-label="Repost (3)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="repeat-icon"
+    >
+      Repeat
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      3
+    </span>
+  </button>
+  <button
+    aria-label="Add bookmark"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 w-10 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-fill="none"
+      data-stroke-width="2"
+      data-testid="bookmark-icon"
+    >
+      Bookmark
+    </div>
+  </button>
+  <button
+    aria-label="More options"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="ellipsis-icon"
+    >
+      Ellipsis
+    </div>
+  </button>
+</div>
+`;
+
+exports[`PostActionsBar - Snapshots > matches snapshot with high engagement 1`] = `
+<div
+  class="mx-auto w-full flex-col flex flex-row items-center justify-end gap-2"
+  data-testid="container"
+>
+  <button
+    aria-label="Tag post (142)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="tag-icon"
+    >
+      Tag
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      142
+    </span>
+  </button>
+  <button
+    aria-label="Reply to post (89)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="message-circle-icon"
+    >
+      MessageCircle
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      89
+    </span>
+  </button>
+  <button
+    aria-label="Repost (56)"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="repeat-icon"
+    >
+      Repeat
+    </div>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      56
+    </span>
+  </button>
+  <button
+    aria-label="Remove bookmark"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 w-10 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-fill="currentColor"
+      data-stroke-width="2"
+      data-testid="bookmark-icon"
+    >
+      Bookmark
+    </div>
+  </button>
+  <button
+    aria-label="More options"
+    class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border-none"
+    data-size="sm"
+    data-slot="button"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <div
+      class="size-4 text-secondary-foreground"
+      data-stroke-width="2"
+      data-testid="ellipsis-icon"
+    >
+      Ellipsis
+    </div>
+  </button>
+</div>
+`;

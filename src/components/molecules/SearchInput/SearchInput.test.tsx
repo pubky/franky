@@ -153,7 +153,7 @@ describe('SearchInput', () => {
 
     // With children, focus should change the styling
     fireEvent.focus(input);
-    expect(input).toHaveClass('px-6 py-6 border-border rounded-t-2xl rounded-b-none border-b-0 dark:bg-transparent');
+    expect(input).toHaveClass('px-6 py-6 border-border rounded-t-2xl rounded-b-none border-b-0 bg-transparent');
 
     fireEvent.blur(input);
     expect(input).toHaveClass(
