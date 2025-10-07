@@ -38,7 +38,7 @@ export class LocalTagService {
       const tagger = await Core.UserCountsModel.findById(taggerId);
       if (tagger) {
         tagger.updateCount(UserCountsFields.TAGGED, Core.INCREMENT);
-        await Core.UserCountsModel.upsert({ ...tagger });
+        await Core.UserCountsModel.update(taggerId, { [UserCountsFields.TAGGED]: tagger.tagged });
       }
 
       Libs.Logger.debug('Tag saved', { postId, label, taggerId });
@@ -89,7 +89,7 @@ export class LocalTagService {
       const tagger = await Core.UserCountsModel.findById(taggerId);
       if (tagger) {
         tagger.updateCount(UserCountsFields.TAGGED, Core.DECREMENT);
-        await Core.UserCountsModel.upsert({ ...tagger });
+        await Core.UserCountsModel.update(taggerId, { [UserCountsFields.TAGGED]: tagger.tagged });
       }
 
       Libs.Logger.debug('Tag removed', { postId, label, taggerId });
@@ -120,8 +120,7 @@ export class LocalTagService {
 
     const countsExist = await Core.PostCountsModel.findById(postId);
     if (countsExist) {
-      await Core.PostCountsModel.upsert({
-        ...countsExist!,
+      await Core.PostCountsModel.update(postId, {
         tags,
         unique_tags,
       });

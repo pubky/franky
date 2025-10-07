@@ -84,7 +84,7 @@ export const HeaderSignIn = () => {
     [currentUserPubky],
   );
 
-  const avatarImage = userDetails?.image || '/images/default-avatar.png';
+  const avatarImage = userDetails?.image || undefined;
   const avatarInitial = Libs.extractInitials({ name: userDetails?.name || '' }) || 'U';
 
   return (

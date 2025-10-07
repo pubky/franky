@@ -106,6 +106,12 @@ export class AuthController {
       Core.useOnboardingStore.getState().reset();
       Core.useAuthStore.getState().reset();
       Libs.clearCookies();
+
+      try {
+        await Core.clearDatabase();
+      } catch (error) {
+        Libs.Logger.warn('Failed to clear local database on logout', error);
+      }
     }
   }
 

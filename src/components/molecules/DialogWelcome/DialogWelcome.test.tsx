@@ -2,6 +2,16 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogWelcome } from './DialogWelcome';
 
+const { mockGetAvatar } = vi.hoisted(() => ({
+  mockGetAvatar: vi.fn((pubky: string) => `https://mocked.avatar/${pubky}`),
+}));
+
+vi.mock('@/core', () => ({
+  filesApi: {
+    getAvatar: mockGetAvatar,
+  },
+}));
+
 // Mock atoms
 vi.mock('@/atoms', () => ({
   Dialog: ({
@@ -97,22 +107,11 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  formatPublicKey: vi.fn(({ key, length }: { key: string; length: number }) => key.slice(0, length)),
-  useCopyToClipboard: vi.fn(() => ({
-    copyToClipboard: vi.fn(),
-  })),
-  extractInitials: vi.fn(({ name, maxLength }: { name: string; maxLength: number }) => {
-    const words = name.split(' ');
-    return words
-      .slice(0, maxLength)
-      .map((word) => word.charAt(0).toUpperCase())
-      .join('');
-  }),
-  Key: ({ className }: { className?: string }) => <div data-testid="key-icon" className={className} />,
-  ArrowRight: ({ className }: { className?: string }) => <div data-testid="arrow-right-icon" className={className} />,
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
@@ -127,12 +126,12 @@ describe('DialogWelcome', () => {
     onOpenChange: vi.fn(),
     name: 'Satoshi Nakamoto',
     pubky: 'test-public-key-12345',
-    image: 'https://example.com/avatar.jpg',
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetAvatar.mockClear();
   });
 
   it('renders with default props', () => {
@@ -168,6 +167,15 @@ describe('DialogWelcome', () => {
     // The button should be clickable and not throw any errors
     expect(copyButton).toBeInTheDocument();
   });
+
+  it('uses generated avatar url', () => {
+    render(<DialogWelcome {...defaultProps} />);
+
+    expect(mockGetAvatar).toHaveBeenCalledWith(defaultProps.pubky);
+
+    const avatarImage = screen.getByTestId('avatar-image');
+    expect(avatarImage).toHaveAttribute('src', `https://mocked.avatar/${defaultProps.pubky}`);
+  });
 });
 
 describe('DialogWelcome - Snapshots', () => {
@@ -176,7 +184,6 @@ describe('DialogWelcome - Snapshots', () => {
     onOpenChange: vi.fn(),
     name: 'Satoshi Nakamoto',
     pubky: 'test-public-key-12345',
-    image: 'https://example.com/avatar.jpg',
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
   };
 
@@ -224,8 +231,8 @@ describe('DialogWelcome - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot without image', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} image={undefined} />);
+  it('matches snapshot with generated avatar', () => {
+    const { container } = render(<DialogWelcome {...defaultProps} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

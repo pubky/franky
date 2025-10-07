@@ -3,14 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { PopoverTradeoffs } from './PopoverTradeoffs';
 
 // Mock @/libs to intercept Libs.AlertTriangle and utilities
-vi.mock('@/libs', () => ({
-  AlertTriangle: ({ className }: { className?: string }) => (
-    <div data-testid="alert-triangle-icon" className={className}>
-      AlertTriangle
-    </div>
-  ),
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock atoms and molecules
 vi.mock('@/atoms', () => ({

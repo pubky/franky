@@ -60,7 +60,7 @@ export function Feed() {
         setLoading(true);
         setError(null);
 
-        const fetchedPosts = await Core.PostController.fetch({ limit: POSTS_PER_PAGE, offset: 0 });
+        const fetchedPosts = await Core.PostController.read({ limit: POSTS_PER_PAGE, offset: 0 });
         setPosts(fetchedPosts);
         setCurrentPage(1);
 
@@ -90,7 +90,7 @@ export function Feed() {
       setError(null);
 
       const offset = currentPage * POSTS_PER_PAGE;
-      const newPosts = await Core.PostController.fetch({ limit: POSTS_PER_PAGE, offset });
+      const newPosts = await Core.PostController.read({ limit: POSTS_PER_PAGE, offset });
 
       if (newPosts.length === 0) {
         setHasMore(false);
@@ -135,7 +135,6 @@ export function Feed() {
           onOpenChange={handleWelcomeClose}
           name={userDetails.name}
           pubky={currentUserPubky}
-          image={userDetails.image || undefined}
           bio={userDetails.bio}
         />
       )}

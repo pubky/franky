@@ -31,7 +31,13 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
   }, [mnemonic]);
 
   return (
-    <Atoms.Dialog>
+    <Atoms.Dialog
+      onOpenChange={(open) => {
+        if (!open) {
+          handleClose();
+        }
+      }}
+    >
       {children ? (
         <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
       ) : (

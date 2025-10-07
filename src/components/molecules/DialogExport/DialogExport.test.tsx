@@ -29,14 +29,11 @@ vi.mock('qrcode.react', () => ({
 }));
 
 // Mock @/libs to intercept Libs.Scan
-vi.mock('@/libs', () => ({
-  Scan: ({ className }: { className?: string }) => (
-    <div data-testid="scan-icon" className={className}>
-      Scan
-    </div>
-  ),
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({

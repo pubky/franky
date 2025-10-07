@@ -99,18 +99,16 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  formatInviteCode: (code: string) => code,
-  Logger: {
-    info: vi.fn(),
-  },
-  cn: (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' '),
-  Server: () => <div data-testid="server-icon">Server</div>,
-  ArrowLeft: () => <div data-testid="arrow-left-icon">ArrowLeft</div>,
-  ArrowRight: () => <div data-testid="arrow-right-icon">ArrowRight</div>,
-  Loader2: () => <div data-testid="loader-icon">Loader</div>,
-}));
+// Mock libs - only mock Logger for test assertions, use actual utility functions and icons
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    Logger: {
+      info: vi.fn(),
+    },
+  };
+});
 
 // Mock app routes
 vi.mock('@/app', async (importOriginal) => {

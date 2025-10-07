@@ -21,12 +21,12 @@ export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
 export const filesApi = {
   getAvatar: (pubky: Core.Pubky) => {
     const encodedPubky = Core.encodePathSegment(pubky);
-    return Core.buildNexusUrl(`avatar/${encodedPubky}`);
+    return Core.buildNexusStaticUrl(`avatar/${encodedPubky}`);
   },
   getImage: ({ pubky, file_id, variant }: Core.TImageParams) => {
     const encodedPubky = Core.encodePathSegment(pubky);
     const encodedFileId = Core.encodePathSegment(file_id);
-    return Core.buildNexusUrl(`${PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);
+    return Core.buildNexusStaticUrl(`${PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);
   },
   getFiles: (fileUris: Core.Pubky[]) => ({
     body: buildFileBodyUrl(fileUris),
