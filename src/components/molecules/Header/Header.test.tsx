@@ -101,64 +101,10 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-// Mock the libs
+// Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-    extractInitials: ({ name, maxLength = 2 }: { name?: string; maxLength?: number }) => {
-      if (!name || typeof name !== 'string') return '';
-      return name
-        .trim()
-        .split(/\s+/)
-        .filter((word) => word.length > 0)
-        .map((word) => word.charAt(0))
-        .join('')
-        .toUpperCase()
-        .slice(0, maxLength);
-    },
-    Github2: ({ className }: { className?: string }) => (
-      <div data-testid="github-icon" className={className}>
-        Github
-      </div>
-    ),
-    XTwitter: ({ className }: { className?: string }) => (
-      <div data-testid="twitter-icon" className={className}>
-        Twitter
-      </div>
-    ),
-    Telegram: ({ className }: { className?: string }) => (
-      <div data-testid="telegram-icon" className={className}>
-        Telegram
-      </div>
-    ),
-    LogIn: ({ className }: { className?: string }) => (
-      <div data-testid="login-icon" className={className}>
-        LogIn
-      </div>
-    ),
-    Home: ({ className }: { className?: string }) => (
-      <div data-testid="home-icon" className={className}>
-        Home
-      </div>
-    ),
-    Search: ({ className }: { className?: string }) => (
-      <div data-testid="search-icon" className={className}>
-        Search
-      </div>
-    ),
-    Bookmark: ({ className }: { className?: string }) => (
-      <div data-testid="bookmark-icon" className={className}>
-        Bookmark
-      </div>
-    ),
-    Settings: ({ className }: { className?: string }) => (
-      <div data-testid="settings-icon" className={className}>
-        Settings
-      </div>
-    ),
-  };
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
 });
 
 // Mock the config
@@ -271,26 +217,14 @@ describe('Header Components', () => {
   });
 
   describe('HeaderSocialLinks', () => {
-    it('renders social links', () => {
-      render(<HeaderSocialLinks />);
-
-      expect(screen.getByTestId('github-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('twitter-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('telegram-icon')).toBeInTheDocument();
-    });
-
-    it('applies correct classes', () => {
-      render(<HeaderSocialLinks />);
-
-      expect(screen.getByTestId('github-icon')).toBeInTheDocument();
-    });
-
     it('renders links with correct hrefs', () => {
       render(<HeaderSocialLinks />);
 
-      const githubLink = screen.getByTestId('github-icon').closest('a');
-      const twitterLink = screen.getByTestId('twitter-icon').closest('a');
-      const telegramLink = screen.getByTestId('telegram-icon').closest('a');
+      // Icons are now actual lucide-react components (SVGs), find links by href
+      const links = screen.getAllByRole('link');
+      const githubLink = links.find((link) => link.getAttribute('href') === 'https://github.com');
+      const twitterLink = links.find((link) => link.getAttribute('href') === 'https://twitter.com/getpubky');
+      const telegramLink = links.find((link) => link.getAttribute('href') === 'https://t.me/getpubky');
 
       expect(githubLink).toHaveAttribute('href', 'https://github.com');
       expect(twitterLink).toHaveAttribute('href', 'https://twitter.com/getpubky');
@@ -325,7 +259,7 @@ describe('Header Components', () => {
     it('renders with login icon', () => {
       render(<HeaderButtonSignIn />);
 
-      expect(screen.getByTestId('login-icon')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-log-in')).toBeInTheDocument();
     });
   });
 
@@ -350,17 +284,10 @@ describe('Header Components', () => {
       render(<HeaderSignIn />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
-      // Check for navigation elements instead of test-id since we're rendering the real component
-      expect(screen.getByTestId('home-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('search-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('bookmark-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('settings-icon')).toBeInTheDocument();
-    });
-
-    it('applies correct classes', () => {
-      render(<HeaderSignIn />);
-
-      expect(screen.getByTestId('search-input')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-search')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-house')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-bookmark')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
     });
   });
 
@@ -407,10 +334,12 @@ describe('Header Components', () => {
     it('renders navigation links', () => {
       render(<HeaderNavigationButtons avatarInitial="TU" />);
 
-      const homeLink = screen.getByTestId('home-icon').closest('a');
-      const searchLink = screen.getByTestId('search-icon').closest('a');
-      const bookmarkLink = screen.getByTestId('bookmark-icon').closest('a');
-      const settingsLink = screen.getByTestId('settings-icon').closest('a');
+      // Icons are now actual lucide-react components (SVGs), find links by href
+      const links = screen.getAllByRole('link');
+      const homeLink = links.find((link) => link.getAttribute('href') === '/feed');
+      const searchLink = links.find((link) => link.getAttribute('href') === '/search');
+      const bookmarkLink = links.find((link) => link.getAttribute('href') === '/bookmarks');
+      const settingsLink = links.find((link) => link.getAttribute('href') === '/settings');
       const profileLink = screen.getByText('TU').closest('a');
 
       expect(homeLink).toHaveAttribute('href', '/feed');

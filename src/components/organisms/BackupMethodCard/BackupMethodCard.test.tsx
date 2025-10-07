@@ -101,59 +101,13 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  ArrowLeft: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-left" className={className}>
-      ArrowLeft
-    </div>
-  ),
-  Download: ({ className }: { className?: string }) => (
-    <div data-testid="download" className={className}>
-      Download
-    </div>
-  ),
-  Eye: ({ className }: { className?: string }) => (
-    <div data-testid="eye" className={className}>
-      Eye
-    </div>
-  ),
-  EyeOff: ({ className }: { className?: string }) => (
-    <div data-testid="eye-off" className={className}>
-      EyeOff
-    </div>
-  ),
-  Copy: ({ className }: { className?: string }) => (
-    <div data-testid="copy" className={className}>
-      Copy
-    </div>
-  ),
-  Check: ({ className }: { className?: string }) => (
-    <div data-testid="check" className={className}>
-      Check
-    </div>
-  ),
-  TriangleAlert: ({ className }: { className?: string }) => (
-    <div data-testid="triangle-alert" className={className}>
-      TriangleAlert
-    </div>
-  ),
-  ShieldCheck: ({ className }: { className?: string }) => (
-    <div data-testid="shield-check" className={className}>
-      ShieldCheck
-    </div>
-  ),
-  FileText: ({ className }: { className?: string }) => (
-    <div data-testid="file-text" className={className}>
-      FileText
-    </div>
-  ),
-  Scan: ({ className }: { className?: string }) => (
-    <div data-testid="scan" className={className}>
-      Scan
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+  };
+});
 
 // Mock molecules
 vi.mock('@/molecules', () => ({

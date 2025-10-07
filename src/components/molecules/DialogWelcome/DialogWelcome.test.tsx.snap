@@ -75,11 +75,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot when dialog is closed 1`] 
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -88,10 +109,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot when dialog is closed 1`] 
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -175,11 +212,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot with default props 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -188,10 +246,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with default props 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -275,11 +349,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot with different public key 
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              pk:abc123d
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              pk:ab...234yz
             </button>
           </div>
         </div>
@@ -288,10 +383,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with different public key 
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -371,11 +482,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot with empty name 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -384,10 +516,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with empty name 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -471,11 +619,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long bio 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -484,10 +653,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long bio 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -571,11 +756,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long name 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -584,10 +790,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long name 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -668,10 +890,31 @@ exports[`DialogWelcome - Snapshots > matches snapshot with minimal props 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
               test-key
             </button>
           </div>
@@ -681,10 +924,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with minimal props 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -768,11 +1027,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot with single word name 1`] 
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -781,10 +1061,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot with single word name 1`] 
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -866,11 +1162,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot without bio 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -879,10 +1196,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot without bio 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>
@@ -965,11 +1298,32 @@ exports[`DialogWelcome - Snapshots > matches snapshot without image 1`] = `
               data-testid="button-secondary"
               data-variant="secondary"
             >
-              <div
-                class="w-4 h-4"
-                data-testid="key-icon"
-              />
-              test-publi
+              <svg
+                aria-hidden="true"
+                class="lucide lucide-key w-4 h-4"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+                />
+                <path
+                  d="m21 2-9.6 9.6"
+                />
+                <circle
+                  cx="7.5"
+                  cy="15.5"
+                  r="5.5"
+                />
+              </svg>
+              test-...12345
             </button>
           </div>
         </div>
@@ -978,10 +1332,26 @@ exports[`DialogWelcome - Snapshots > matches snapshot without image 1`] = `
           data-size="lg"
           data-testid="button-default"
         >
-          <div
-            class="mr-2 h-4 w-4"
-            data-testid="arrow-right-icon"
-          />
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-arrow-right mr-2 h-4 w-4"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 12h14"
+            />
+            <path
+              d="m12 5 7 7-7 7"
+            />
+          </svg>
           Explore Pubky
         </button>
       </div>

@@ -101,20 +101,11 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-  AppWindow: ({ className }: { className?: string }) => (
-    <div data-testid="app-window-icon" className={className}>
-      AppWindow
-    </div>
-  ),
-  ArrowRight: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-right-icon" className={className}>
-      ArrowRight
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 describe('InstallCard', () => {
   it('renders content card with image', () => {

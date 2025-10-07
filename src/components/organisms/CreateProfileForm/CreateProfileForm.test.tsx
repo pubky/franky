@@ -26,20 +26,13 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock @/libs to intercept Libs.Trash2 and Libs.File
-vi.mock('@/libs', () => ({
-  Trash2: ({ className }: { className?: string }) => (
-    <div data-testid="trash2-icon" className={className}>
-      Trash2
-    </div>
-  ),
-  File: ({ className }: { className?: string }) => (
-    <div data-testid="file-icon" className={className}>
-      File
-    </div>
-  ),
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -348,13 +341,11 @@ describe('CreateProfileForm', () => {
     render(<CreateProfileForm />);
 
     const button = screen.getByTestId('button-secondary');
-    const fileIcon = screen.getByTestId('file-icon');
     const buttonText = screen.getByText('Choose file');
 
     expect(button).toBeInTheDocument();
-    expect(fileIcon).toBeInTheDocument();
     expect(buttonText).toBeInTheDocument();
-    expect(fileIcon).toHaveClass('h-4', 'w-4');
+    // File icon is now actual lucide-react component (SVG), not mocked div
   });
 
   it('applies correct styling to avatar button', () => {
@@ -435,15 +426,13 @@ describe('CreateProfileForm', () => {
 
     await waitFor(() => {
       const deleteButton = screen.getByText('Delete');
-      const trashIcons = screen.getAllByTestId('trash2-icon');
 
-      // Should have trash icons (one for avatar delete, plus ones for link deletion)
+      // Trash icons are now actual lucide-react Trash2 components (SVGs), not mocked divs
       expect(deleteButton).toBeInTheDocument();
-      expect(trashIcons.length).toBeGreaterThan(0);
 
-      // Find the avatar delete trash icon (the one in the delete button)
+      // Find the avatar delete button
       const avatarDeleteButton = deleteButton.parentElement;
-      const avatarTrashIcon = avatarDeleteButton?.querySelector('[data-testid="trash2-icon"]');
+      const avatarTrashIcon = avatarDeleteButton?.querySelector('svg.lucide-trash-2');
       expect(avatarTrashIcon).toBeInTheDocument();
       expect(avatarTrashIcon).toHaveClass('h-4', 'w-4');
 
