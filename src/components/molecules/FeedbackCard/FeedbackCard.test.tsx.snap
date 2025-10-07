@@ -44,12 +44,28 @@ exports[`FeedbackCard - Snapshots > matches snapshot with custom className 1`] =
         <div
           data-testid="avatar-fallback"
         >
-          <div
-            class="w-5 h-5"
-            data-testid="user-icon"
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-user w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            User
-          </div>
+            <path
+              d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="12"
+              cy="7"
+              r="4"
+            />
+          </svg>
         </div>
       </div>
       <div
@@ -95,12 +111,28 @@ exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
         <div
           data-testid="avatar-fallback"
         >
-          <div
-            class="w-5 h-5"
-            data-testid="user-icon"
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-user w-5 h-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            User
-          </div>
+            <path
+              d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="12"
+              cy="7"
+              r="4"
+            />
+          </svg>
         </div>
       </div>
       <div

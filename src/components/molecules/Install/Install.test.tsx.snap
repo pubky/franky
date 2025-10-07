@@ -122,12 +122,36 @@ exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matche
       data-variant="outline"
       id="create-keys-in-browser-btn"
     >
-      <div
-        class="mr-2 h-4 w-4"
-        data-testid="app-window-icon"
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-app-window mr-2 h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        AppWindow
-      </div>
+        <rect
+          height="16"
+          rx="2"
+          width="20"
+          x="2"
+          y="4"
+        />
+        <path
+          d="M10 4v4"
+        />
+        <path
+          d="M2 8h20"
+        />
+        <path
+          d="M6 4v4"
+        />
+      </svg>
       Create keys in browser
     </button>
     <div
@@ -141,12 +165,26 @@ exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matche
     data-testid="button"
     id="continue-with-pubky-ring-btn"
   >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-right-icon"
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-arrow-right mr-2 h-4 w-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      ArrowRight
-    </div>
+      <path
+        d="M5 12h14"
+      />
+      <path
+        d="m12 5 7 7-7 7"
+      />
+    </svg>
     Continue with Pubky Ring
   </button>
 </div>
@@ -167,12 +205,36 @@ exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matche
       data-variant="outline"
       id="create-keys-in-browser-btn"
     >
-      <div
-        class="mr-2 h-4 w-4"
-        data-testid="app-window-icon"
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-app-window mr-2 h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        AppWindow
-      </div>
+        <rect
+          height="16"
+          rx="2"
+          width="20"
+          x="2"
+          y="4"
+        />
+        <path
+          d="M10 4v4"
+        />
+        <path
+          d="M2 8h20"
+        />
+        <path
+          d="M6 4v4"
+        />
+      </svg>
       Create keys in browser
     </button>
     <div
@@ -186,12 +248,26 @@ exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matche
     data-testid="button"
     id="continue-with-pubky-ring-btn"
   >
-    <div
-      class="mr-2 h-4 w-4"
-      data-testid="arrow-right-icon"
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-arrow-right mr-2 h-4 w-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      ArrowRight
-    </div>
+      <path
+        d="M5 12h14"
+      />
+      <path
+        d="m12 5 7 7-7 7"
+      />
+    </svg>
     Continue with Pubky Ring
   </button>
 </div>

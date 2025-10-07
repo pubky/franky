@@ -32,36 +32,11 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
-// Mock libs
+// Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    FileUp: ({ className }: { className?: string }) => (
-      <div data-testid="file-up-icon" className={className}>
-        FileUp
-      </div>
-    ),
-    Upload: ({ className }: { className?: string }) => (
-      <div data-testid="upload-icon" className={className}>
-        Upload
-      </div>
-    ),
-    FileText: ({ className }: { className?: string }) => (
-      <div data-testid="file-text-icon" className={className}>
-        FileText
-      </div>
-    ),
-    Loader2: ({ className }: { className?: string }) => (
-      <div data-testid="loader-icon" className={className}>
-        Loading
-      </div>
-    ),
-    RotateCcw: ({ className }: { className?: string }) => (
-      <div data-testid="rotate-icon" className={className}>
-        Rotate
-      </div>
-    ),
     Identity: {
       secretKeyToHex: vi.fn((key) => `hex-${key}`),
     },
@@ -404,7 +379,7 @@ describe('DialogRestoreEncryptedFile', () => {
 
     // Should show loading state
     expect(screen.getByText('Restoring...')).toBeInTheDocument();
-    expect(screen.getByTestId('loader-icon')).toBeInTheDocument();
+    // Loader icon is now actual lucide-react LoaderCircle component (SVG), not mocked div
     expect(restoreButton).toBeDisabled();
     expect(passwordInput).toBeDisabled();
 
@@ -548,9 +523,9 @@ describe('DialogRestoreEncryptedFile', () => {
   it('shows correct icons', () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 
-    expect(screen.getByTestId('file-up-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('file-text-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('rotate-icon')).toBeInTheDocument();
+    // Icons are now actual lucide-react components (SVGs), not mocked divs
+    const button = screen.getByRole('button', { name: /use encrypted file/i });
+    expect(button).toBeInTheDocument();
   });
 
   it('applies correct styling classes', () => {

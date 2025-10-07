@@ -38,31 +38,11 @@ vi.mock('@/core', () => ({
   }),
 }));
 
-// Mock identity library
+// Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    FileText: ({ className }: { className?: string }) => (
-      <div data-testid="file-text-icon" className={className}>
-        FileText
-      </div>
-    ),
-    ArrowLeft: ({ className }: { className?: string }) => (
-      <div data-testid="arrow-left-icon" className={className}>
-        ArrowLeft
-      </div>
-    ),
-    ArrowRight: ({ className }: { className?: string }) => (
-      <div data-testid="arrow-right-icon" className={className}>
-        ArrowRight
-      </div>
-    ),
-    Download: ({ className }: { className?: string }) => (
-      <div data-testid="download-icon" className={className}>
-        Download
-      </div>
-    ),
     Identity: {
       createRecoveryFile: vi.fn(),
     },

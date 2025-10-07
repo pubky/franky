@@ -97,22 +97,11 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  formatPublicKey: vi.fn(({ key, length }: { key: string; length: number }) => key.slice(0, length)),
-  useCopyToClipboard: vi.fn(() => ({
-    copyToClipboard: vi.fn(),
-  })),
-  extractInitials: vi.fn(({ name, maxLength }: { name: string; maxLength: number }) => {
-    const words = name.split(' ');
-    return words
-      .slice(0, maxLength)
-      .map((word) => word.charAt(0).toUpperCase())
-      .join('');
-  }),
-  Key: ({ className }: { className?: string }) => <div data-testid="key-icon" className={className} />,
-  ArrowRight: ({ className }: { className?: string }) => <div data-testid="arrow-right-icon" className={className} />,
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock molecules
 vi.mock('@/molecules', () => ({

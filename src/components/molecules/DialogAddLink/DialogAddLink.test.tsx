@@ -2,20 +2,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { DialogAddLink } from './DialogAddLink';
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  Link: ({ className }: { className?: string }) => (
-    <div data-testid="link-icon" className={className}>
-      Link
-    </div>
-  ),
-  Clipboard: ({ className }: { className?: string }) => (
-    <div data-testid="clipboard-icon" className={className}>
-      Clipboard
-    </div>
-  ),
-  copyToClipboard: vi.fn(),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock molecules
 vi.mock('@/molecules', () => ({

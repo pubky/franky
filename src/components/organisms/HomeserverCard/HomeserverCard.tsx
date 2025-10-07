@@ -44,7 +44,7 @@ export function HomeserverCard() {
       action: (
         <Atoms.Button
           variant="outline"
-          className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/20"
+          className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/16"
           onClick={() => toastInstance.dismiss()}
         >
           OK
