@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, fireEvent, screen } from '@testing-library/react';
+import { useState, useEffect, useMemo } from 'react';
 import { DialogBackupPhrase } from './DialogBackupPhrase';
 
 // Mock Next.js Image
@@ -436,5 +437,396 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     // Check that slot 0 shows error
     const slot0AfterWrong = container.querySelector('[data-testid="word-slot-0"]');
     expect(slot0AfterWrong?.getAttribute('data-is-error')).toBe('true');
+  });
+});
+
+describe('DialogBackupPhrase - Identical Words Test', () => {
+  // Create a test component that uses identical words
+  const TestDialogBackupPhrase = () => {
+    const [isHidden, setIsHidden] = useState(true);
+    const [recoveryWords, setRecoveryWords] = useState<string[]>([]);
+    const [step, setStep] = useState(1);
+
+    useEffect(() => {
+      // Use 12 identical words for testing
+      setRecoveryWords([
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+        'bacon',
+      ]);
+    }, []);
+
+    return (
+      <div data-testid="dialog">
+        <div data-testid="dialog-trigger" data-as-child={true}>
+          <button data-testid="button-default" className="gap-2">
+            <span>Continue</span>
+          </button>
+        </div>
+        <div data-testid="dialog-content" className="gap-6 p-8">
+          {step === 1 && (
+            <div>
+              <div data-testid="dialog-header" className="space-y-1.5 pr-6">
+                <h2 data-testid="dialog-title" className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
+                  Backup recovery phrase
+                </h2>
+                <p data-testid="dialog-description" className="text-sm leading-5 max-w-[530px]">
+                  Use the recovery phrase below to recover your account at a later date. Write down these 12 words in
+                  the correct order and store them in a safe place.{' '}
+                  <span className="text-brand font-bold">Never share this recovery phrase with anyone.</span>
+                </p>
+              </div>
+
+              <div data-testid="container" className={isHidden ? 'blur-xs' : ''}>
+                <div data-testid="container" className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {recoveryWords.map((word, index) => (
+                    <div key={index} className="items-center gap-3 rounded-md bg-secondary p-4 flex-row">
+                      <span
+                        data-testid="badge"
+                        data-variant="outline"
+                        className="h-5 min-w-[20px] rounded-full px-1 font-semibold"
+                      >
+                        {index + 1}
+                      </span>
+                      <span className="text-base font-medium">{word}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div data-testid="container" className="gap-4 sm:gap-3 md:flex-row justify-between">
+                {isHidden ? (
+                  <>
+                    <div data-testid="dialog-close" data-as-child={true}>
+                      <button
+                        data-testid="button-outline"
+                        className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    <button
+                      data-testid="button-default"
+                      className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      onClick={() => {
+                        setIsHidden(!isHidden);
+                        setStep(1);
+                      }}
+                    >
+                      <div data-testid="eye-icon" className="mr-2 h-4 w-4">
+                        Eye
+                      </div>
+                      Reveal recovery phrase
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      data-testid="button-outline"
+                      className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      onClick={() => {
+                        setIsHidden(!isHidden);
+                        setStep(1);
+                      }}
+                    >
+                      <div data-testid="eye-off-icon" className="mr-2 h-4 w-4">
+                        EyeOff
+                      </div>
+                      Hide recovery phrase
+                    </button>
+                    <button
+                      data-testid="button-default"
+                      className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      onClick={() => setStep(2)}
+                    >
+                      <div data-testid="arrow-right-icon" className="mr-2 h-4 w-4">
+                        ArrowRight
+                      </div>
+                      Confirm recovery phrase
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+          {step === 2 && <RecoveryStep2Test recoveryWords={recoveryWords} setStep={setStep} />}
+          {step === 3 && <div>Step 3</div>}
+        </div>
+      </div>
+    );
+  };
+
+  // Test version of RecoveryStep2 with identical words
+  const RecoveryStep2Test = ({
+    recoveryWords,
+    setStep,
+  }: {
+    recoveryWords: string[];
+    setStep: (step: number) => void;
+  }) => {
+    const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
+    const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
+    const [availableWords] = useState<string[]>([...recoveryWords].sort());
+    const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
+    const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
+    const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
+
+    const wordCountMap = useMemo(() => {
+      const map: Record<string, number> = {};
+      for (const w of recoveryWords) {
+        map[w] = (map[w] || 0) + 1;
+      }
+      return map;
+    }, [recoveryWords]);
+
+    const handleWordClick = (word: string, wordIndex: number) => {
+      const wordCountInPhrase = wordCountMap[word] ?? 0;
+      const currentUsageCount = usedWordCounts[word] || 0;
+
+      if (currentUsageCount >= wordCountInPhrase) {
+        return;
+      }
+
+      if (usedWordInstances.has(wordIndex)) {
+        return;
+      }
+
+      const emptyIndex = userWords.findIndex((w) => w === '');
+      if (emptyIndex !== -1) {
+        const newUserWords = [...userWords];
+        newUserWords[emptyIndex] = word;
+        setUserWords(newUserWords);
+
+        setUsedWordCounts((prev) => ({
+          ...prev,
+          [word]: currentUsageCount + 1,
+        }));
+        setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
+
+        setSlotToInstance((prev) => {
+          const next = [...prev];
+          next[emptyIndex] = wordIndex;
+          return next;
+        });
+      }
+    };
+
+    const clearWord = (index: number) => {
+      const word = userWords[index];
+      if (word) {
+        const newUserWords = [...userWords];
+        newUserWords[index] = '';
+        setUserWords(newUserWords);
+        setUsedWordCounts((prev) => ({
+          ...prev,
+          [word]: Math.max(0, (prev[word] || 0) - 1),
+        }));
+
+        const instanceIndex = slotToInstance[index];
+        if (instanceIndex !== null) {
+          setUsedWordInstances((prev) => {
+            const next = new Set(prev);
+            next.delete(instanceIndex);
+            return next;
+          });
+          setSlotToInstance((prev) => {
+            const next = [...prev];
+            next[index] = null;
+            return next;
+          });
+        }
+
+        const newErrors = [...errors];
+        newErrors[index] = false;
+        setErrors(newErrors);
+      }
+    };
+
+    return (
+      <>
+        <div data-testid="dialog-header" className="space-y-1.5 pr-6">
+          <h2 data-testid="dialog-title" className="text-2xl sm:text-[24px] font-bold">
+            Confirm recovery phrase
+          </h2>
+          <p data-testid="dialog-description" className="text-sm text-muted-foreground">
+            Click or tap the 12 words in the correct order. Click on filled fields to remove words.
+          </p>
+        </div>
+
+        <div data-testid="container" className="space-y-6">
+          <div data-testid="container" className="flex-wrap gap-2 flex-row">
+            {availableWords.map((word, index) => {
+              const isThisInstanceUsed = usedWordInstances.has(index);
+
+              return (
+                <button
+                  data-testid={`button-${isThisInstanceUsed ? 'secondary' : 'outline'}`}
+                  key={`${word}-${index}`}
+                  className={`rounded-full ${
+                    isThisInstanceUsed
+                      ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
+                      : 'dark:border-transparent bg-secondary cursor-pointer'
+                  }`}
+                  onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
+                  disabled={isThisInstanceUsed}
+                >
+                  {word}
+                </button>
+              );
+            })}
+          </div>
+
+          <div data-testid="container" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {userWords.map((word, i) => {
+              const isCorrect = word !== '' && word === recoveryWords[i];
+              const isError = errors[i];
+              return (
+                <div
+                  key={i}
+                  data-testid={`word-slot-${i}`}
+                  data-mode="readonly"
+                  data-word={word}
+                  data-is-correct={isCorrect}
+                  data-is-error={isError}
+                  onClick={() => clearWord(i)}
+                >
+                  {word || `Slot ${i + 1}`}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div data-testid="container" className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
+          <button data-testid="button-outline" className="rounded-full flex-1" onClick={() => setStep(1)}>
+            <div data-testid="arrow-left-icon" className="mr-2 h-4 w-4">
+              ArrowLeft
+            </div>
+            Back
+          </button>
+          <button
+            data-testid="button-default"
+            className="rounded-full flex-1"
+            onClick={() => setStep(3)}
+            disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
+          >
+            <div data-testid="check-icon" className="mr-2 h-4 w-4">
+              Check
+            </div>
+            Validate
+          </button>
+        </div>
+      </>
+    );
+  };
+
+  it('should handle 12 identical words correctly', () => {
+    const { container } = render(<TestDialogBackupPhrase />);
+
+    // Navigate to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Get all bacon buttons (should be 12)
+    const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
+    const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
+
+    // Should have 12 instances of "bacon" button
+    expect(baconButtons).toHaveLength(12);
+
+    // All should be clickable initially
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
+
+    // Click the first bacon button
+    fireEvent.click(baconButtons[0]);
+
+    // Only the first button should be disabled, others should still be clickable
+    expect(baconButtons[0]).toBeDisabled();
+    baconButtons.slice(1).forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
+
+    // Click the second bacon button
+    fireEvent.click(baconButtons[1]);
+
+    // First two should be disabled, others should still be clickable
+    expect(baconButtons[0]).toBeDisabled();
+    expect(baconButtons[1]).toBeDisabled();
+    baconButtons.slice(2).forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
+
+    // Continue clicking all buttons
+    for (let i = 2; i < baconButtons.length; i++) {
+      fireEvent.click(baconButtons[i]);
+    }
+
+    // All buttons should now be disabled
+    baconButtons.forEach((button) => {
+      expect(button).toBeDisabled();
+    });
+
+    // All slots should be filled with "bacon"
+    for (let i = 0; i < 12; i++) {
+      const wordSlot = container.querySelector(`[data-testid="word-slot-${i}"]`);
+      expect(wordSlot?.getAttribute('data-word')).toBe('bacon');
+    }
+  });
+
+  it('should re-enable correct instance when clearing a slot with identical words', () => {
+    const { container } = render(<TestDialogBackupPhrase />);
+
+    // Navigate to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Get all bacon buttons
+    const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
+    const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
+
+    // Click first 3 buttons
+    fireEvent.click(baconButtons[0]);
+    fireEvent.click(baconButtons[1]);
+    fireEvent.click(baconButtons[2]);
+
+    // First 3 should be disabled
+    expect(baconButtons[0]).toBeDisabled();
+    expect(baconButtons[1]).toBeDisabled();
+    expect(baconButtons[2]).toBeDisabled();
+
+    // Clear the first slot (slot 0)
+    const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
+    fireEvent.click(wordSlot0!);
+
+    // Only the first bacon button should be re-enabled
+    expect(baconButtons[0]).not.toBeDisabled();
+    expect(baconButtons[1]).toBeDisabled();
+    expect(baconButtons[2]).toBeDisabled();
+
+    // Clear the second slot (slot 1)
+    const wordSlot1 = container.querySelector('[data-testid="word-slot-1"]');
+    fireEvent.click(wordSlot1!);
+
+    // First two buttons should be re-enabled
+    expect(baconButtons[0]).not.toBeDisabled();
+    expect(baconButtons[1]).not.toBeDisabled();
+    expect(baconButtons[2]).toBeDisabled();
   });
 });
