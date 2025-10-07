@@ -10,6 +10,7 @@ type EditableWordSlotProps = BaseWordSlotProps & {
   isRestoring: boolean;
   onChange: (index: number, value: string) => void;
   onValidate: (index: number, word: string) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 type ReadOnlyWordSlotProps = BaseWordSlotProps & {

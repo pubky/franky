@@ -6,6 +6,7 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -32,6 +33,9 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
   };
 
   const handleRestore = async () => {
+    // Guard against double-submit race condition
+    if (isRestoring) return;
+
     if (!selectedFile || !password) {
       setError('Please select a file and enter your password');
       return;
@@ -81,6 +85,12 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
       fileInputRef.current.value = '';
     }
   };
+
+  const isFormValid = () => {
+    return Boolean(selectedFile && password && !isRestoring);
+  };
+
+  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleRestore);
 
   return (
     <Atoms.Dialog>
@@ -153,6 +163,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
               placeholder="Enter your password"
               autoComplete="current-password"
@@ -186,7 +197,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             id="encrypted-file-restore-btn"
             className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={handleRestore}
-            disabled={!selectedFile || !password || isRestoring}
+            disabled={!isFormValid()}
           >
             {isRestoring ? (
               <>

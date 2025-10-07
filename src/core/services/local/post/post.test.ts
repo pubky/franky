@@ -74,7 +74,7 @@ const setupExistingPost = async (postId: string, content: string, parentUri?: st
   await Core.PostDetailsModel.table.add(postDetails);
   await Core.PostCountsModel.table.add(postCounts);
   await Core.PostRelationshipsModel.table.add(postRelationships);
-  await Core.PostTagsModel.insert({ id: postId, tags: [] });
+  await Core.PostTagsModel.create({ id: postId, tags: [] });
 };
 
 describe('LocalPostService', () => {

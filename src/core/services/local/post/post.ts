@@ -146,7 +146,7 @@ export class LocalPostService {
         const fullParentId = `${parentUri.split('/')[2]}:${parentPostId}`;
         const parentCounts = await Core.PostCountsModel.table.get(fullParentId);
         if (parentCounts) {
-          await Core.PostCountsModel.insert({
+          await Core.PostCountsModel.upsert({
             ...parentCounts,
             replies: parentCounts.replies + 1,
           });

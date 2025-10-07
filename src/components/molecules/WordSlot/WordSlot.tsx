@@ -6,7 +6,7 @@ export const WordSlot = (props: Types.WordSlotProps) => {
   const { index, word, mode } = props;
 
   if (mode === 'editable') {
-    const { isError, showError, isRestoring, onChange, onValidate } = props;
+    const { isError, showError, isRestoring, onChange, onValidate, onKeyDown } = props;
     const hasError = isError && showError;
 
     const containerClasses = Libs.cn(
@@ -37,6 +37,7 @@ export const WordSlot = (props: Types.WordSlotProps) => {
             className={inputColor}
             onChange={(e) => onChange(index, e.target.value.toLowerCase().trim())}
             onBlur={() => onValidate(index, word)}
+            onKeyDown={onKeyDown}
             disabled={isRestoring}
           />
         </Atoms.Container>

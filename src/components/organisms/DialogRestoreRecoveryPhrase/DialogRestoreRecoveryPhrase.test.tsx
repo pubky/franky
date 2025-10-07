@@ -101,29 +101,32 @@ vi.mock('@/molecules', () => ({
   useToast: vi.fn(() => ({
     toast: mockToast,
   })),
-  WordSlot: vi.fn(({ index, word, isError, showError, isRestoring, onChange, onValidate, mode, ...props }) => (
-    <div
-      data-testid="word-slot"
-      data-index={index}
-      data-mode={mode}
-      data-error={isError}
-      data-show-error={showError}
-      data-restoring={isRestoring}
-    >
-      <span data-testid="badge" data-variant="outline">
-        {index + 1}
-      </span>
-      <input
-        data-testid="word-input"
-        value={word}
-        placeholder="word"
-        onChange={(e) => onChange?.(index, e.target.value.toLowerCase().trim())}
-        onBlur={() => onValidate?.(index, word)}
-        disabled={isRestoring}
-        {...props}
-      />
-    </div>
-  )),
+  WordSlot: vi.fn(
+    ({ index, word, isError, showError, isRestoring, onChange, onValidate, onKeyDown, mode, ...props }) => (
+      <div
+        data-testid="word-slot"
+        data-index={index}
+        data-mode={mode}
+        data-error={isError}
+        data-show-error={showError}
+        data-restoring={isRestoring}
+      >
+        <span data-testid="badge" data-variant="outline">
+          {index + 1}
+        </span>
+        <input
+          data-testid="word-input"
+          value={word}
+          placeholder="word"
+          onChange={(e) => onChange?.(index, e.target.value.toLowerCase().trim())}
+          onBlur={() => onValidate?.(index, word)}
+          onKeyDown={onKeyDown}
+          disabled={isRestoring}
+          {...props}
+        />
+      </div>
+    ),
+  ),
 }));
 
 describe('DialogRestoreRecoveryPhrase', () => {
@@ -409,6 +412,31 @@ describe('DialogRestoreRecoveryPhrase', () => {
       }
 
       fireEvent.click(restoreButton!);
+
+      await waitFor(() => {
+        expect(mockOnRestore).toHaveBeenCalled();
+      });
+    });
+
+    it('handles Enter key in any word input to trigger restore', async () => {
+      mockLoginWithMnemonic.mockResolvedValue({});
+      render(<DialogRestoreRecoveryPhrase onRestore={mockOnRestore} />);
+
+      const inputs = screen.getAllByTestId('word-input');
+
+      // Fill all inputs with valid words
+      const validWords = Array(12).fill('abandon');
+
+      for (let i = 0; i < 12; i++) {
+        fireEvent.change(inputs[i], { target: { value: validWords[i] } });
+      }
+
+      // Press Enter on the first input (should trigger restore)
+      fireEvent.keyDown(inputs[0], { key: 'Enter' });
+
+      await waitFor(() => {
+        expect(mockLoginWithMnemonic).toHaveBeenCalledWith({ mnemonic: validWords.join(' ') });
+      });
 
       await waitFor(() => {
         expect(mockOnRestore).toHaveBeenCalled();
