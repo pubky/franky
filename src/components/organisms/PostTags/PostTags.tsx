@@ -121,7 +121,7 @@ export const PostTags = ({ postId }: PostTagsProps) => {
                       style={{ zIndex: 10 + index, filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
                     >
                       <Atoms.Avatar className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity">
-                        <Atoms.AvatarImage src="/images/default-avatar.png" />
+                        <Atoms.AvatarImage src={undefined} />
                         <Atoms.AvatarFallback>{fallbackInitials}</Atoms.AvatarFallback>
                       </Atoms.Avatar>
                     </Atoms.Link>

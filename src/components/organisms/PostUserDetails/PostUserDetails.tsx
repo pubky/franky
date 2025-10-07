@@ -24,7 +24,7 @@ export function PostUserDetails({ postId }: PostUserDetailsProps) {
     <Atoms.Container className="flex items-center gap-3">
       <Atoms.Container className="flex flex-row gap-4">
         <Atoms.Avatar className="w-12 h-12">
-          <Atoms.AvatarImage src={userDetails.image || '/images/default-avatar.png'} />
+          <Atoms.AvatarImage src={userDetails.image || undefined} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name || '' }) || 'U'}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <Atoms.Container className="flex flex-col">
