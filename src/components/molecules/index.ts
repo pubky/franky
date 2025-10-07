@@ -37,6 +37,7 @@ export * from './PopoverInviteHomeserver';
 export * from './PopoverPublicKey';
 export * from './PopoverTradeoffs';
 export * from './ProfileNavigation';
+export * from './PostActionsBar';
 export * from './ProgressSteps';
 export * from './PublicKey';
 export * from './FilterContent';
