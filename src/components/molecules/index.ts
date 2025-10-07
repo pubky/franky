@@ -38,6 +38,7 @@ export * from './PopoverPublicKey';
 export * from './PopoverTradeoffs';
 export * from './ProfileNavigation';
 export * from './PostActionsBar';
+export * from './PostTag';
 export * from './ProgressSteps';
 export * from './PublicKey';
 export * from './FilterContent';
