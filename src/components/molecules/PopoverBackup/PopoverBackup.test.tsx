@@ -3,14 +3,11 @@ import { render } from '@testing-library/react';
 import { PopoverBackup } from './PopoverBackup';
 
 // Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-  CircleHelp: ({ className }: { className?: string }) => (
-    <div data-testid="circle-help-icon" className={className}>
-      CircleHelp
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({

@@ -1,47 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WhoToFollow - Snapshots > matches snapshot for See All button 1`] = `
-<button
-  class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
->
-  <div
-    class="h-4 w-4"
-    data-testid="users-icon"
-  >
-    Users
-  </div>
-  <span
-    class="text-sm font-medium"
-  >
-    See all
-  </span>
-</button>
-`;
-
-exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 1`] = `
-<div
-  class="text-base font-bold text-foreground"
->
-  Anna Pleb
-</div>
-`;
-
-exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 2`] = `
-<div
-  class="text-base font-bold text-foreground"
->
-  Carl Smith
-</div>
-`;
-
-exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 3`] = `
-<div
-  class="text-base font-bold text-foreground"
->
-  Mi Lei
-</div>
-`;
-
 exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = `
 <div
   class="flex flex-col gap-4 custom-follow"
@@ -97,12 +55,40 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
       >
-        <div
-          class="h-5 w-5"
-          data-testid="user-plus-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-plus h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          UserPlus
-        </div>
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
       </button>
     </div>
     <div
@@ -147,12 +133,40 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
       >
-        <div
-          class="h-5 w-5"
-          data-testid="user-plus-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-plus h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          UserPlus
-        </div>
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
       </button>
     </div>
     <div
@@ -197,24 +211,74 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
       >
-        <div
-          class="h-5 w-5"
-          data-testid="user-plus-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-plus h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          UserPlus
-        </div>
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
       </button>
     </div>
   </div>
   <button
     class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
   >
-    <div
-      class="h-4 w-4"
-      data-testid="users-icon"
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-users h-4 w-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      Users
-    </div>
+      <path
+        d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+      />
+      <path
+        d="M16 3.128a4 4 0 0 1 0 7.744"
+      />
+      <path
+        d="M22 21v-2a4 4 0 0 0-3-3.87"
+      />
+      <circle
+        cx="9"
+        cy="7"
+        r="4"
+      />
+    </svg>
     <span
       class="text-sm font-medium"
     >
@@ -279,12 +343,40 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
       >
-        <div
-          class="h-5 w-5"
-          data-testid="user-plus-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-plus h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          UserPlus
-        </div>
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
       </button>
     </div>
     <div
@@ -329,12 +421,40 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
       >
-        <div
-          class="h-5 w-5"
-          data-testid="user-plus-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-plus h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          UserPlus
-        </div>
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
       </button>
     </div>
     <div
@@ -379,24 +499,74 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
       <button
         class="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors"
       >
-        <div
-          class="h-5 w-5"
-          data-testid="user-plus-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-plus h-5 w-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          UserPlus
-        </div>
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="19"
+            x2="19"
+            y1="8"
+            y2="14"
+          />
+          <line
+            x1="22"
+            x2="16"
+            y1="11"
+            y2="11"
+          />
+        </svg>
       </button>
     </div>
   </div>
   <button
     class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
   >
-    <div
-      class="h-4 w-4"
-      data-testid="users-icon"
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-users h-4 w-4"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      Users
-    </div>
+      <path
+        d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+      />
+      <path
+        d="M16 3.128a4 4 0 0 1 0 7.744"
+      />
+      <path
+        d="M22 21v-2a4 4 0 0 0-3-3.87"
+      />
+      <circle
+        cx="9"
+        cy="7"
+        r="4"
+      />
+    </svg>
     <span
       class="text-sm font-medium"
     >

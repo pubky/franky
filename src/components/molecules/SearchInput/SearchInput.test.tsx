@@ -64,14 +64,11 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-  Search: ({ className }: { className?: string }) => (
-    <div data-testid="search-icon" className={className}>
-      Search
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 describe('SearchInput', () => {
   beforeEach(() => {

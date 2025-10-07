@@ -277,12 +277,28 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
         class="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
         data-testid="button-default"
       >
-        <div
-          class="mr-2 h-4 w-4"
-          data-testid="eye-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-eye mr-2 h-4 w-4"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Eye
-        </div>
+          <path
+            d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+          />
+          <circle
+            cx="12"
+            cy="12"
+            r="3"
+          />
+        </svg>
         Reveal recovery phrase
       </button>
     </div>

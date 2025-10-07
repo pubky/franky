@@ -3,24 +3,11 @@ import { render } from '@testing-library/react';
 import { ProfileNavigation } from './Profile';
 
 // Mock libs
-vi.mock('@/libs', () => ({
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-  ArrowLeft: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-left-icon" className={className}>
-      ArrowLeft
-    </div>
-  ),
-  ArrowRight: ({ className }: { className?: string }) => (
-    <div data-testid="arrow-right-icon" className={className}>
-      ArrowRight
-    </div>
-  ),
-  Loader2: ({ className }: { className?: string }) => (
-    <div data-testid="loader2-icon" className={className}>
-      Loader2
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
