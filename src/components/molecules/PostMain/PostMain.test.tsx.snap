@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostMain > matches snapshot 1`] = `
+<div
+  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm w-full"
+  data-slot="card"
+  data-testid="card"
+>
+  <div
+    class="px-4 md:px-6 md:py-0"
+    data-slot="card-content"
+  >
+    <div
+      class="flex flex-col gap-4 md:gap-4 w-full"
+    >
+      <div
+        data-testid="header"
+      >
+        <div>
+          Satoshi Nakamoto
+        </div>
+        <div>
+          1YXP...7R32
+        </div>
+        <div>
+          15m
+        </div>
+      </div>
+      <div
+        data-testid="content"
+      >
+        Hello
+      </div>
+      <div
+        class="flex flex-col md:flex-row items-stretch md:items-center gap-4  flex-wrap md:flex-nowrap justify-start md:justify-start"
+      >
+        <div
+          data-testid="tags"
+        >
+          bitcoin
+        </div>
+        <div
+          data-testid="actions"
+        >
+          5-7-3
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

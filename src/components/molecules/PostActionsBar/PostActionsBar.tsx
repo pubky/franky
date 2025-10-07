@@ -30,7 +30,7 @@ export function PostActionsBar({
   onMoreClick,
 }: PostActionsBarProps) {
   return (
-    <Atoms.Container className={Libs.cn('flex-row items-center justify-end gap-2', className)}>
+    <Atoms.Container className={Libs.cn('flex-row flex-1 w-auto items-center justify-end gap-2', className)}>
       {/* Tag Button */}
       <Atoms.Button
         variant="secondary"
