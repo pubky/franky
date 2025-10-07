@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
 import { HomeserverService } from '@/core/services/homeserver';
-import { Identity } from '@/libs';
+import * as Core from '@/core';
+import { Identity, Logger } from '@/libs';
 
 const TEST_SECRET_KEY = Buffer.from(new Uint8Array(32).fill(1)).toString('hex');
 
@@ -10,18 +11,32 @@ vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
 }));
 
+const storeMocks = vi.hoisted(() => {
+  const resetAuthStore = vi.fn();
+  const resetOnboardingStore = vi.fn();
+
+  return {
+    resetAuthStore,
+    resetOnboardingStore,
+    getAuthState: vi.fn(() => ({
+      setSession: vi.fn(),
+      setCurrentUserPubky: vi.fn(),
+      setAuthenticated: vi.fn(),
+      reset: resetAuthStore,
+    })),
+    getOnboardingState: vi.fn(() => ({
+      reset: resetOnboardingStore,
+    })),
+  };
+});
+
 // Mock stores - simplified approach
 vi.mock('@/core/stores', () => ({
   useAuthStore: {
-    getState: vi.fn(() => ({
-      setSession: vi.fn(),
-      clearSession: vi.fn(),
-    })),
+    getState: storeMocks.getAuthState,
   },
   useOnboardingStore: {
-    getState: vi.fn(() => ({
-      clearKeys: vi.fn(),
-    })),
+    getState: storeMocks.getOnboardingState,
   },
 }));
 
@@ -122,11 +137,15 @@ describe('AuthController', () => {
           href: '',
         },
       });
+
+      storeMocks.resetAuthStore.mockClear();
+      storeMocks.resetOnboardingStore.mockClear();
     });
 
     it('should successfully logout user, clear stores, cookies and redirect', async () => {
       const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
 
       // Set some cookies to test clearing
       document.cookie = 'testCookie=value; path=/';
@@ -135,30 +154,36 @@ describe('AuthController', () => {
       await AuthController.logout();
 
       expect(logoutSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
       // AuthController.logout doesn't redirect, it just processes the logout
       expect(window.location.href).toBe('');
 
+      clearDatabaseSpy.mockRestore();
       logoutSpy.mockRestore();
     });
 
     it('should throw error when homeserver logout fails but still clear local state', async () => {
       const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
 
       // Should throw error when homeserver logout fails, but local state should still be cleared
       await expect(AuthController.logout()).rejects.toThrow('Network error');
       expect(logoutSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
 
       // Verify local state was cleared despite the error
       // Note: In a real scenario, you would check that stores are actually reset
       // For this test, we're just verifying the logout method was called and threw
 
+      clearDatabaseSpy.mockRestore();
       logoutSpy.mockRestore();
     });
 
     it('should clear all existing cookies', async () => {
       const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
 
       // Set multiple cookies
       document.cookie = 'session=abc123; path=/';
@@ -171,7 +196,26 @@ describe('AuthController', () => {
       // We can't easily test the exact cookie clearing behavior in jsdom
       // but we can verify the method was called
       expect(logoutSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
 
+      clearDatabaseSpy.mockRestore();
+      logoutSpy.mockRestore();
+    });
+
+    it('should log a warning if clearing the database fails', async () => {
+      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
+      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockRejectedValue(new Error('clear failed'));
+      const loggerWarnSpy = vi.spyOn(Logger, 'warn').mockImplementation(() => {});
+
+      await AuthController.logout();
+
+      expect(logoutSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
+      expect(loggerWarnSpy).toHaveBeenCalledWith('Failed to clear local database on logout', expect.any(Error));
+
+      loggerWarnSpy.mockRestore();
+      clearDatabaseSpy.mockRestore();
       logoutSpy.mockRestore();
     });
   });
