@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 
@@ -29,9 +28,7 @@ export function MobileHeader({ onLeftIconClick, className }: MobileHeaderProps) 
 
           {/* Center - Logo */}
           <div className="flex items-center gap-2">
-            <Atoms.Typography size="md" className="font-bold">
-              Pubky
-            </Atoms.Typography>
+            <Molecules.Logo noLink width={96} height={32} />
           </div>
 
           {/* Right icon - community info */}
