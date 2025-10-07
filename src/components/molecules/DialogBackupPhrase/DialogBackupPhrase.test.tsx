@@ -278,10 +278,10 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const { container } = render(<DialogBackupPhrase />);
 
     // First, reveal the recovery phrase and go to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
     // Now we should be in step 2 with the word selection buttons
@@ -315,10 +315,10 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const { container } = render(<DialogBackupPhrase />);
 
     // Navigate to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
     // Get both tube buttons (duplicates)
@@ -359,10 +359,10 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const { container } = render(<DialogBackupPhrase />);
 
     // Navigate to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
     // Get all word buttons
@@ -401,42 +401,28 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     fireEvent.click(worldBtn!);
 
     // The validate button should be disabled because there's an error
-    const validateButton = screen.getByText('Validate').closest('button');
+    const validateButton = screen.getByRole('button', { name: /validate/i });
     expect(validateButton).toBeDisabled();
   });
 
-  it('should show errors for incorrectly placed duplicate words', () => {
+  it('should show an error when a wrong word is selected for slot 0', () => {
     const { container } = render(<DialogBackupPhrase />);
 
     // Navigate to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
-    // Get tube buttons
+    // Select a wrong word for slot 0 (expected "tube")
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
-    const tubeButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('tube'));
-
-    // Click second tube first (wrong for slot 0)
-    fireEvent.click(tubeButtons[1]);
-
-    // Check that slot 0 has an error (because any "tube" is correct for slot 0,
-    // this test assumes validation marks it as correct. But if we fill wrong words later, errors will show)
-    // Actually, since both are "tube", slot 0 would be correct. Let's test with a different word.
-
-    // Clear and test with a completely wrong word
-    const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
-    fireEvent.click(wordSlot0!); // Clear it
-
-    // Click a wrong word for slot 0 (should be "tube", let's click "door")
     const doorBtn = Array.from(wordButtons).find((btn) => btn.textContent === 'door');
     fireEvent.click(doorBtn!);
 
-    // Check that slot 0 shows error
-    const slot0AfterWrong = container.querySelector('[data-testid="word-slot-0"]');
-    expect(slot0AfterWrong?.getAttribute('data-is-error')).toBe('true');
+    // Assert slot 0 shows error
+    const slot0 = container.querySelector('[data-testid="word-slot-0"]');
+    expect(slot0?.getAttribute('data-is-error')).toBe('true');
   });
 });
 
@@ -733,10 +719,10 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const { container } = render(<TestDialogBackupPhrase />);
 
     // Navigate to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons (should be 12)
@@ -785,16 +771,22 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
       const wordSlot = container.querySelector(`[data-testid="word-slot-${i}"]`);
       expect(wordSlot?.getAttribute('data-word')).toBe('bacon');
     }
+
+    // Validate should be enabled and clicking it should advance to Step 3
+    const validate = screen.getByRole('button', { name: /validate/i });
+    expect(validate).not.toBeDisabled();
+    fireEvent.click(validate);
+    expect(screen.getByText('Step 3')).toBeInTheDocument();
   });
 
   it('should re-enable correct instance when clearing a slot with identical words', () => {
     const { container } = render(<TestDialogBackupPhrase />);
 
     // Navigate to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons
@@ -834,10 +826,10 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const { container } = render(<TestDialogBackupPhrase />);
 
     // Navigate to step 2
-    const revealButton = screen.getByText('Reveal recovery phrase');
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByText('Confirm recovery phrase');
+    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons
