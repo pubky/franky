@@ -829,4 +829,54 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     expect(baconButtons[1]).not.toBeDisabled();
     expect(baconButtons[2]).toBeDisabled();
   });
+
+  it('should handle reverse-order selection with identical words', () => {
+    const { container } = render(<TestDialogBackupPhrase />);
+
+    // Navigate to step 2
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const confirmButton = screen.getByText('Confirm recovery phrase');
+    fireEvent.click(confirmButton);
+
+    // Get all bacon buttons
+    const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
+    const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
+
+    // Click from the end towards the start
+    const last = baconButtons.length - 1;
+    fireEvent.click(baconButtons[last]);
+    // Only the last should be disabled
+    expect(baconButtons[last]).toBeDisabled();
+    expect(baconButtons[last - 1]).not.toBeDisabled();
+
+    fireEvent.click(baconButtons[last - 1]);
+    // The last two should be disabled, the third-from-last enabled
+    expect(baconButtons[last]).toBeDisabled();
+    expect(baconButtons[last - 1]).toBeDisabled();
+    expect(baconButtons[last - 2]).not.toBeDisabled();
+
+    // Click a few more in reverse to ensure mapping stays correct
+    fireEvent.click(baconButtons[last - 2]);
+    fireEvent.click(baconButtons[last - 3]);
+
+    expect(baconButtons[last]).toBeDisabled();
+    expect(baconButtons[last - 1]).toBeDisabled();
+    expect(baconButtons[last - 2]).toBeDisabled();
+    expect(baconButtons[last - 3]).toBeDisabled();
+
+    // Clear slot 0 and 1, ensure only the earliest clicked instances re-enable
+    const slot0 = container.querySelector('[data-testid="word-slot-0"]');
+    const slot1 = container.querySelector('[data-testid="word-slot-1"]');
+    fireEvent.click(slot0!);
+    fireEvent.click(slot1!);
+
+    // After clearing first two slots, the last two clicked instances should re-enable,
+    // and the earlier reverse-clicked instances should remain disabled
+    expect(baconButtons[last]).not.toBeDisabled();
+    expect(baconButtons[last - 1]).not.toBeDisabled();
+    expect(baconButtons[last - 2]).toBeDisabled();
+    expect(baconButtons[last - 3]).toBeDisabled();
+  });
 });
