@@ -134,21 +134,24 @@ export class LocalPostService {
       };
 
       await Promise.all([
-        Core.PostDetailsModel.table.add(postDetails),
-        Core.PostRelationshipsModel.table.add(postRelationships),
-        Core.PostCountsModel.table.add(postCounts),
-        Core.PostTagsModel.table.add({ id: postId, tags: [] }),
+        Core.PostDetailsModel.create(postDetails),
+        Core.PostRelationshipsModel.create(postRelationships),
+        Core.PostCountsModel.create(postCounts),
+        Core.PostTagsModel.create({ id: postId, tags: [] }),
       ]);
 
       // If this is a reply, update parent's reply count
       if (parentUri) {
         const parentPostId = parentUri.split('/posts/')[1];
         const fullParentId = `${parentUri.split('/')[2]}:${parentPostId}`;
-        const parentCounts = await Core.PostCountsModel.table.get(fullParentId);
+        const parentCounts = await Core.PostCountsModel.findById(fullParentId);
         if (parentCounts) {
           await Core.PostCountsModel.upsert({
-            ...parentCounts,
+            id: parentCounts.id,
+            tags: parentCounts.tags,
+            unique_tags: parentCounts.unique_tags,
             replies: parentCounts.replies + 1,
+            reposts: parentCounts.reposts,
           });
         }
       }

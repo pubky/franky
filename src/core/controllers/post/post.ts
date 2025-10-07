@@ -41,7 +41,7 @@ export class PostController {
 
     let parentUri: string | undefined = undefined;
     if (parentPostId) {
-      const parentPost = await Core.PostDetailsModel.table.get(parentPostId);
+      const parentPost = await Core.PostDetailsModel.findById(parentPostId);
       if (!parentPost) {
         throw new Error(`Parent post not found: ${parentPostId}`);
       }
