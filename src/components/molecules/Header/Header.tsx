@@ -88,7 +88,7 @@ export function HeaderNavigationButtons({
       </Atoms.Link>
       <Atoms.Link className="relative" href="/profile">
         <Atoms.Avatar className="w-12 h-12">
-          <Atoms.AvatarImage src={avatarImage || '/images/default-avatar.png'} />
+          <Atoms.AvatarImage src={avatarImage || undefined} />
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (

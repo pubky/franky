@@ -135,7 +135,6 @@ export function Feed() {
           onOpenChange={handleWelcomeClose}
           name={userDetails.name}
           pubky={currentUserPubky}
-          image={userDetails.image || undefined}
           bio={userDetails.bio}
         />
       )}
