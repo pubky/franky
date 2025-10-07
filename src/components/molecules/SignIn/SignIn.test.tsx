@@ -1,7 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest';
+import { render, screen, waitFor, act, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { SignInContent, SignInFooter } from './SignIn';
+import * as Core from '@/core';
+import * as Molecules from '@/molecules';
+import type { PublicKey } from '@synonymdev/pubky';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -31,7 +34,7 @@ vi.mock('@/core', () => ({
   AuthController: {
     getAuthUrl: vi.fn().mockResolvedValue({
       url: 'mock-auth-url',
-      promise: Promise.resolve({ mockKeypair: true }),
+      promise: Promise.resolve({} as unknown as PublicKey),
     }),
     loginWithAuthUrl: vi.fn().mockResolvedValue({}),
   },
@@ -105,6 +108,9 @@ vi.mock('@/libs', () => ({
       <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />
     </svg>
   ),
+  Logger: {
+    error: vi.fn(),
+  },
 }));
 
 // Mock atoms
@@ -114,8 +120,17 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Button: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
-    <button data-testid="button" className={className} data-size={size}>
+  Button: ({
+    children,
+    className,
+    size,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    size?: string;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="button" className={className} data-size={size} {...props}>
       {children}
     </button>
   ),
@@ -134,8 +149,18 @@ vi.mock('@/atoms', () => ({
     return React.createElement(Tag, { 'data-testid': 'typography', className, 'data-size': size }, children);
   },
   FooterLinks: ({ children }: { children: React.ReactNode }) => <div data-testid="footer-links">{children}</div>,
-  Link: ({ children, href, target }: { children: React.ReactNode; href: string; target?: string }) => (
-    <a data-testid="link" href={href} target={target}>
+  Link: ({
+    children,
+    href,
+    target,
+    rel,
+  }: {
+    children: React.ReactNode;
+    href: string;
+    target?: string;
+    rel?: string;
+  }) => (
+    <a data-testid="link" href={href} target={target} rel={rel}>
       {children}
     </a>
   ),
@@ -144,8 +169,25 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('SignInContent', () => {
+  const originalLocation = window.location;
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: { ...(originalLocation as unknown as object), href: '' } as unknown as Location,
+    });
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
+    window.location.href = '';
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'location', {
+      configurable: true,
+      value: originalLocation,
+    });
   });
 
   it('renders desktop and mobile content containers', async () => {
@@ -206,6 +248,152 @@ describe('SignInContent', () => {
     expect(screen.getByTestId('button')).toBeInTheDocument();
   });
 
+  it('navigates to the Pubky Ring deeplink when mobile authorize button is tapped', async () => {
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('button')).not.toBeDisabled();
+    });
+
+    const authorizeButton = screen.getByTestId('button');
+    fireEvent.click(authorizeButton);
+
+    expect(window.location.href).toBe('mock-auth-url');
+  });
+
+  it('retries getAuthUrl with bounded backoff on failures', async () => {
+    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
+
+    let callCount = 0;
+    getAuthUrl.mockImplementation(async () => {
+      callCount += 1;
+      if (callCount < 3) {
+        throw new Error('transient');
+      }
+      return {
+        url: 'mock-auth-url',
+        promise: Promise.resolve({} as unknown as PublicKey),
+      };
+    });
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('button')).not.toBeDisabled();
+    });
+
+    expect(getAuthUrl).toHaveBeenCalledTimes(3);
+    getAuthUrl.mockReset();
+    getAuthUrl.mockResolvedValue({
+      url: 'mock-auth-url',
+      promise: Promise.resolve({} as unknown as PublicKey),
+    });
+  });
+
+  it('shows a toast when authorization promise rejects', async () => {
+    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
+    const toastSpy = vi.mocked(Molecules.toast);
+
+    getAuthUrl.mockResolvedValue({
+      url: 'mock-auth-url',
+      promise: Promise.reject(new Error('user declined')),
+    });
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    await waitFor(() => {
+      expect(toastSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ title: expect.stringMatching(/authorization was not completed/i) }),
+      );
+    });
+
+    getAuthUrl.mockReset();
+    getAuthUrl.mockResolvedValue({
+      url: 'mock-auth-url',
+      promise: Promise.resolve({} as unknown as PublicKey),
+    });
+  });
+
+  it('does not update or toast after unmount when promise settles', async () => {
+    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
+    const toastSpy = vi.mocked(Molecules.toast);
+
+    let rejectFn: (e: unknown) => void = () => {};
+    const latePromise: Promise<PublicKey> = new Promise((_, reject) => {
+      rejectFn = reject;
+    });
+
+    getAuthUrl.mockResolvedValue({ url: 'mock-auth-url', promise: latePromise });
+
+    let unmountFn: () => void = () => {};
+    await act(async () => {
+      const result = render(<SignInContent />);
+      unmountFn = result.unmount;
+    });
+
+    // Allow fetchUrl to await getAuthUrl and attach handlers
+    await new Promise((r) => setTimeout(r, 0));
+
+    // Now unmount the original component
+    await act(async () => {
+      unmountFn();
+    });
+
+    // Settle promise after unmount
+    await act(async () => {
+      rejectFn(new Error('late reject'));
+    });
+
+    // Give microtask queue time
+    await new Promise((r) => setTimeout(r, 0));
+    expect(toastSpy).not.toHaveBeenCalled();
+
+    getAuthUrl.mockReset();
+    getAuthUrl.mockResolvedValue({
+      url: 'mock-auth-url',
+      promise: Promise.resolve({} as unknown as PublicKey),
+    });
+  });
+
+  it('prevents duplicate fetch when tapping while generating', async () => {
+    const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
+
+    // Defer getAuthUrl resolution so that the click happens while loading
+    let resolveAuthUrl: (v: { url: string; promise: Promise<PublicKey> }) => void = () => {};
+    const deferredAuthUrl = new Promise<{ url: string; promise: Promise<PublicKey> }>((resolve) => {
+      resolveAuthUrl = resolve;
+    });
+    getAuthUrl.mockImplementationOnce(
+      () => deferredAuthUrl as unknown as ReturnType<typeof Core.AuthController.getAuthUrl>,
+    );
+
+    await act(async () => {
+      render(<SignInContent />);
+    });
+
+    const button = screen.getByTestId('button');
+    // First click while loading - should be ignored by guard
+    fireEvent.click(button);
+    // Now resolve the deferred getAuthUrl and its promise
+    await act(async () => {
+      resolveAuthUrl({ url: 'mock-auth-url', promise: Promise.resolve({} as unknown as PublicKey) });
+    });
+
+    // Ensure getAuthUrl only called once (no duplicate due to double-click)
+    expect(getAuthUrl).toHaveBeenCalledTimes(1);
+    getAuthUrl.mockReset();
+    getAuthUrl.mockResolvedValue({
+      url: 'mock-auth-url',
+      promise: Promise.resolve({} as unknown as PublicKey),
+    });
+  });
+
   it('renders content cards with column layout', async () => {
     await act(async () => {
       render(<SignInContent />);
@@ -238,6 +426,7 @@ describe('SignInFooter', () => {
 
     expect(link).toHaveAttribute('href', 'https://pubkyring.app/');
     expect(link).toHaveAttribute('target', '_blank');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     expect(link).toHaveTextContent('Pubky Ring');
   });
 });
