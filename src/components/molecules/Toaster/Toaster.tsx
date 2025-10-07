@@ -12,7 +12,7 @@ export function Toaster() {
         return (
           <Toast
             key={id}
-            className="flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/20 text-white"
+            className="flex items-center justify-between gap-4 p-6 rounded-lg bg-black-900 border border-brand/16 text-white"
             {...props}
           >
             <div className="flex items-center justify-between gap-4 w-full">
