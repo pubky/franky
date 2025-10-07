@@ -1,7 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, fireEvent, screen } from '@testing-library/react';
 import { useState, useEffect, useMemo } from 'react';
+import { render, fireEvent, screen, act } from '@testing-library/react';
 import { DialogBackupPhrase } from './DialogBackupPhrase';
+
+const dialogMockControls: {
+  onOpenChange?: (open: boolean) => void;
+} = {};
 
 // Mock Next.js Image
 vi.mock('next/image', () => ({
@@ -56,7 +60,10 @@ vi.mock('@/libs', async (importOriginal) => {
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
+  Dialog: ({ children, onOpenChange }: { children: React.ReactNode; onOpenChange?: (open: boolean) => void }) => {
+    dialogMockControls.onOpenChange = onOpenChange;
+    return <div data-testid="dialog">{children}</div>;
+  },
   DialogTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
     <div data-testid="dialog-trigger" data-as-child={asChild}>
       {children}
@@ -236,6 +243,42 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
       .map((span) => span.textContent);
 
     expect(actualWords).toEqual(expectedWords);
+  });
+
+  it('should hide recovery phrase when dialog is closed and reopened', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    const revealButton = screen.getByText('Reveal recovery phrase');
+    fireEvent.click(revealButton);
+
+    const wordBadge = container.querySelector('[data-testid="badge"]');
+    expect(wordBadge).toBeTruthy();
+
+    const wordContainer = wordBadge?.closest('[data-testid="container"]') as HTMLElement | null;
+    expect(wordContainer).not.toBeNull();
+
+    const wordsGrid = wordContainer?.parentElement as HTMLElement | null;
+    expect(wordsGrid).not.toBeNull();
+
+    const outerContainer = wordsGrid?.parentElement as HTMLElement | null;
+
+    expect(outerContainer).not.toBeNull();
+    expect(outerContainer?.className ?? '').not.toContain('blur-xs');
+    expect(screen.getByText('Hide recovery phrase')).toBeInTheDocument();
+
+    act(() => {
+      dialogMockControls.onOpenChange?.(false);
+    });
+
+    act(() => {
+      dialogMockControls.onOpenChange?.(true);
+    });
+
+    expect(screen.getByText('Reveal recovery phrase')).toBeInTheDocument();
+    expect(screen.queryByText('Hide recovery phrase')).not.toBeInTheDocument();
+    const updatedOuterContainer = wordContainer?.parentElement?.parentElement as HTMLElement | null;
+    expect(updatedOuterContainer).not.toBeNull();
+    expect(updatedOuterContainer?.className ?? '').toContain('blur-xs');
   });
 
   it('should allow selecting duplicate words individually in step 2', () => {
