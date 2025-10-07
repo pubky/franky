@@ -1,12 +1,12 @@
 import * as Core from '@/core';
 
-export type TAddReplyParams = {
-  parentPostId: string;
+export type TCreatePostParams = {
+  parentPostId?: string;
   content: string;
   authorId: Core.Pubky;
 };
 
-export type TFetchPostsParams = {
+export type TReadPostsParams = {
   limit?: number;
   offset?: number;
 };

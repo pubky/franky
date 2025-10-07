@@ -1,15 +1,12 @@
 import * as Core from '@/core';
 
-export type TLocalFetchPostsParams = {
-  limit?: number;
-  offset?: number;
-};
-
-export type TLocalSavePostParams = {
+export type TCreatePostInput = {
   postId: string;
   content: string;
   kind: Core.NexusPostKind;
   authorId: Core.Pubky;
+  postUrl: string;
+  postJson: Record<string, unknown>;
   parentUri?: string;
   attachments?: string[];
 };

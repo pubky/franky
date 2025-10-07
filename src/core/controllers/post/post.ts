@@ -1,5 +1,8 @@
 import * as Core from '@/core';
-import type { TAddReplyParams, TFetchPostsParams } from './post.types';
+import * as Application from '@/core/application';
+import type { TCreatePostParams, TReadPostsParams } from './post.types';
+import { normalizePostKind } from '@/core/services/local/post/post.helpers';
+import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostController {
   private static isInitialized = false;
@@ -17,52 +20,58 @@ export class PostController {
   }
 
   /**
-   * Fetch posts with optional pagination
+   * Read posts with optional pagination
    * @param params - Parameters object
    * @param params.limit - Number of posts to fetch (default: 30)
    * @param params.offset - Number of posts to skip (default: 0)
    * @returns Array of NexusPost objects
    */
-  static async fetch({ limit = 30, offset = 0 }: TFetchPostsParams = {}): Promise<Core.NexusPost[]> {
+  static async read({ limit = 30, offset = 0 }: TReadPostsParams = {}): Promise<Core.NexusPost[]> {
     await this.initialize();
     return Core.Local.Post.fetch({ limit, offset });
   }
 
   /**
-   * Add a reply to a post
+   * Create a post (including replies)
    * @param params - Parameters object
-   * @param params.parentPostId - ID of the post being replied to
-   * @param params.content - Reply content
-   * @param params.authorId - ID of the user creating the reply
+   * @param params.parentPostId - ID of the post being replied to (optional for root posts)
+   * @param params.content - Post content
+   * @param params.authorId - ID of the user creating the post
    */
-  static async addReply({ parentPostId, content, authorId }: TAddReplyParams) {
+  static async create({ parentPostId, content, authorId }: TCreatePostParams) {
     await this.initialize();
 
-    const parentPost = await Core.PostDetailsModel.table.get(parentPostId);
-    if (!parentPost) {
-      throw new Error(`Parent post not found: ${parentPostId}`);
+    let parentUri: string | undefined = undefined;
+    if (parentPostId) {
+      const parentPost = await Core.PostDetailsModel.findById(parentPostId);
+      if (!parentPost) {
+        throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Failed to validate parent post', 404, {
+          parentPostId,
+        });
+      }
+      parentUri = parentPost.uri;
     }
 
     const normalizedPost = await Core.PostNormalizer.to(
       {
         content: content.trim(),
         kind: Core.PubkyAppPostKind.Short,
-        parentUri: parentPost.uri,
+        parentUri,
       },
       authorId,
     );
 
-    const replyId = `${authorId}:${normalizedPost.meta.id}`;
+    const postId = `${authorId}:${normalizedPost.meta.id}`;
 
-    const replyDetails: Core.PostDetailsModelSchema = {
-      id: replyId,
+    await Application.Post.create({
+      postUrl: normalizedPost.meta.url,
+      postJson: normalizedPost.post.toJson(),
+      postId,
       content: normalizedPost.post.content,
-      indexed_at: Date.now(),
-      kind: normalizedPost.post.kind === 'Short' ? 'short' : 'long',
-      uri: normalizedPost.meta.url,
-      attachments: normalizedPost.post.attachments || null,
-    };
-
-    await Core.Local.Post.reply({ parentPostId, replyDetails });
+      kind: normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind,
+      authorId,
+      parentUri,
+      attachments: normalizedPost.post.attachments ?? undefined,
+    });
   }
 }
