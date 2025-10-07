@@ -129,6 +129,21 @@ body {
 }
 
 @layer utilities {
+  /* Thicker white caret for focused inputs (used by PostTagInput) */
+  .caret-white {
+    caret-color: white;
+  }
+  .caret-thick::selection {
+    /* noop: selection styles kept default */
+  }
+  input.caret-white {
+    caret-color: #fff;
+  }
+  /* Some browsers allow caret-width via proprietary property */
+  input.caret-thick {
+    caret-color: #fff;
+  }
+
   *::-webkit-scrollbar {
     width: 6px;
     height: auto;
