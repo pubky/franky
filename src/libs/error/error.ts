@@ -5,6 +5,7 @@ import {
   type HomeserverErrorType,
   type CommonErrorType,
   type DatabaseErrorType,
+  SanitizationErrorType,
 } from '@/libs';
 
 export class AppError extends Error {
@@ -94,6 +95,15 @@ export function createCommonError(
 // Add a helper function for database errors
 export function createDatabaseError(
   type: DatabaseErrorType,
+  message: string,
+  statusCode?: number,
+  details?: Record<string, unknown>,
+): AppError {
+  return new AppError(type, message, statusCode, details);
+}
+
+export function createSanitizationError(
+  type: SanitizationErrorType,
   message: string,
   statusCode?: number,
   details?: Record<string, unknown>,

@@ -7,7 +7,7 @@ import type { TCreatePostInput } from './post.types';
 vi.mock('@/core/services/local/post', () => ({
   LocalPostService: {
     fetch: vi.fn(),
-    save: vi.fn(),
+    create: vi.fn(),
   },
 }));
 
@@ -44,7 +44,7 @@ describe('Post Application', () => {
 
   // Helper functions
   const setupMocks = () => ({
-    saveSpy: vi.spyOn(Core.Local.Post, 'save'),
+    saveSpy: vi.spyOn(Core.Local.Post, 'create'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
   });
 

@@ -69,4 +69,13 @@ export enum CommonErrorType {
   ENV_TYPE_ERROR = 'ENV_TYPE_ERROR',
 }
 
-export type AppErrorType = NexusErrorType | DatabaseErrorType | CommonErrorType | HomeserverErrorType;
+export enum SanitizationErrorType {
+  POST_NOT_FOUND = 'POST_NOT_FOUND',
+}
+
+export type AppErrorType =
+  | NexusErrorType
+  | DatabaseErrorType
+  | CommonErrorType
+  | HomeserverErrorType
+  | SanitizationErrorType;

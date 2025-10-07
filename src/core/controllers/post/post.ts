@@ -1,6 +1,8 @@
 import * as Core from '@/core';
 import * as Application from '@/core/application';
 import type { TCreatePostParams, TReadPostsParams } from './post.types';
+import { normalizePostKind } from '@/core/services/local/post/post.helpers';
+import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostController {
   private static isInitialized = false;
@@ -43,7 +45,9 @@ export class PostController {
     if (parentPostId) {
       const parentPost = await Core.PostDetailsModel.findById(parentPostId);
       if (!parentPost) {
-        throw new Error(`Parent post not found: ${parentPostId}`);
+        throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Failed to validate parent post', 404, {
+          parentPostId,
+        });
       }
       parentUri = parentPost.uri;
     }
@@ -60,14 +64,14 @@ export class PostController {
     const postId = `${authorId}:${normalizedPost.meta.id}`;
 
     await Application.Post.create({
-      postId,
-      content: normalizedPost.post.content,
-      kind: normalizedPost.post.kind === 'Short' ? 'short' : 'long',
-      authorId,
       postUrl: normalizedPost.meta.url,
       postJson: normalizedPost.post.toJson(),
+      postId,
+      content: normalizedPost.post.content,
+      kind: normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind,
+      authorId,
       parentUri,
-      attachments: normalizedPost.post.attachments,
+      attachments: normalizedPost.post.attachments ?? undefined,
     });
   }
 }

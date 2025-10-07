@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
+import { Logger } from '@/libs';
 import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
 
 // Test data
@@ -149,7 +150,7 @@ describe('LocalPostService', () => {
 
   describe('save', () => {
     it('should save a new post', async () => {
-      await Core.Local.Post.save(createSaveParams('Hello, world!'));
+      await Core.Local.Post.create(createSaveParams('Hello, world!'));
 
       const savedPost = await getSavedPost(testData.fullPostId1);
       expect(savedPost).toBeTruthy();
@@ -158,7 +159,7 @@ describe('LocalPostService', () => {
     });
 
     it('should create all related models when saving a post', async () => {
-      await Core.Local.Post.save(createSaveParams('Test post'));
+      await Core.Local.Post.create(createSaveParams('Test post'));
 
       const [details, counts, relationships, tags] = await Promise.all([
         getSavedPost(testData.fullPostId1),
@@ -174,7 +175,7 @@ describe('LocalPostService', () => {
     });
 
     it('should initialize counts to zero', async () => {
-      await Core.Local.Post.save(createSaveParams('Test post'));
+      await Core.Local.Post.create(createSaveParams('Test post'));
 
       const savedCounts = await getSavedCounts(testData.fullPostId1);
       expect(savedCounts!.tags).toBe(0);
@@ -184,7 +185,7 @@ describe('LocalPostService', () => {
     });
 
     it('should initialize tags as empty array', async () => {
-      await Core.Local.Post.save(createSaveParams('Test post'));
+      await Core.Local.Post.create(createSaveParams('Test post'));
 
       const savedTags = await getSavedTags(testData.fullPostId1);
       expect(savedTags!.tags).toEqual([]);
@@ -197,7 +198,7 @@ describe('LocalPostService', () => {
         parentUri,
       };
 
-      await Core.Local.Post.save(saveParams);
+      await Core.Local.Post.create(saveParams);
 
       const savedRelationships = await getSavedRelationships(testData.fullPostId1);
       expect(savedRelationships!.replied).toBe(parentUri);
@@ -216,7 +217,7 @@ describe('LocalPostService', () => {
         parentUri,
       };
 
-      await Core.Local.Post.save(saveParams);
+      await Core.Local.Post.create(saveParams);
 
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(1);
@@ -228,7 +229,7 @@ describe('LocalPostService', () => {
         attachments: ['image1.jpg', 'image2.png'],
       };
 
-      await Core.Local.Post.save(saveParams);
+      await Core.Local.Post.create(saveParams);
 
       const savedPost = await getSavedPost(testData.fullPostId1);
       expect(savedPost!.attachments).toEqual(['image1.jpg', 'image2.png']);
@@ -240,14 +241,14 @@ describe('LocalPostService', () => {
         kind: 'long',
       };
 
-      await Core.Local.Post.save(saveParams);
+      await Core.Local.Post.create(saveParams);
 
       const savedPost = await getSavedPost(testData.fullPostId1);
       expect(savedPost!.kind).toBe('long');
     });
 
     it('should generate correct URI format', async () => {
-      await Core.Local.Post.save(createSaveParams('Test post'));
+      await Core.Local.Post.create(createSaveParams('Test post'));
 
       const savedPost = await getSavedPost(testData.fullPostId1);
       expect(savedPost!.uri).toBe(`pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`);
@@ -255,7 +256,7 @@ describe('LocalPostService', () => {
 
     it('should set indexed_at timestamp', async () => {
       const before = Date.now();
-      await Core.Local.Post.save(createSaveParams('Test post'));
+      await Core.Local.Post.create(createSaveParams('Test post'));
       const after = Date.now();
 
       const savedPost = await getSavedPost(testData.fullPostId1);
@@ -264,12 +265,77 @@ describe('LocalPostService', () => {
     });
 
     it('should initialize relationships with null values for non-replies', async () => {
-      await Core.Local.Post.save(createSaveParams('Test post'));
+      await Core.Local.Post.create(createSaveParams('Test post'));
 
       const savedRelationships = await getSavedRelationships(testData.fullPostId1);
       expect(savedRelationships!.replied).toBeNull();
       expect(savedRelationships!.reposted).toBeNull();
       expect(savedRelationships!.mentioned).toEqual([]);
+    });
+
+    it('should write atomically across tables (rollback on error)', async () => {
+      // Arrange: spy to throw on PostTagsModel.create
+      const originalCreate = Core.PostTagsModel.create;
+      // Force a failure inside the transaction after other writes
+      vi.spyOn(Core.PostTagsModel, 'create').mockRejectedValueOnce(new Error('Simulated failure'));
+
+      const params = createSaveParams('Atomic write test');
+
+      // Act + Assert
+      await expect(Core.Local.Post.create(params)).rejects.toThrow('Failed to save post');
+
+      // Validate no partial data remains
+      const [details, counts, relationships, tags] = await Promise.all([
+        getSavedPost(testData.fullPostId1),
+        getSavedCounts(testData.fullPostId1),
+        getSavedRelationships(testData.fullPostId1),
+        getSavedTags(testData.fullPostId1),
+      ]);
+
+      expect(details).toBeUndefined();
+      expect(counts).toBeUndefined();
+      expect(relationships).toBeUndefined();
+      expect(tags).toBeUndefined();
+
+      // Restore
+      vi.spyOn(Core.PostTagsModel, 'create').mockImplementation(originalCreate);
+    });
+
+    it('should increment parent replies via counts update when saving a reply', async () => {
+      const parentPostId = 'parent:post123';
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+
+      // Setup parent
+      await setupExistingPost(parentPostId, 'Parent post');
+
+      // Act: save reply
+      const saveParams: TLocalSavePostParams = {
+        ...createSaveParams('Reply here', testData.fullPostId1),
+        parentUri,
+      };
+      await Core.Local.Post.create(saveParams);
+
+      const parentCounts = await getSavedCounts(parentPostId);
+      expect(parentCounts!.replies).toBe(1);
+    });
+
+    it('should log an error on failure with minimal context', async () => {
+      const loggerSpy = vi.spyOn(Logger, 'error');
+
+      // Force a failure early
+      const originalCreate = Core.PostDetailsModel.create;
+      vi.spyOn(Core.PostDetailsModel, 'create').mockRejectedValueOnce(new Error('boom'));
+
+      const params = createSaveParams('Will fail');
+      await expect(Core.Local.Post.create(params)).rejects.toThrow('Failed to save post');
+
+      expect(loggerSpy).toHaveBeenCalledWith('Failed to save post', {
+        postId: params.postId,
+        authorId: params.authorId,
+      });
+
+      // Restore
+      vi.spyOn(Core.PostDetailsModel, 'create').mockImplementation(originalCreate);
     });
   });
 });

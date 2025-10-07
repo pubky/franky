@@ -29,6 +29,7 @@ vi.mock('pubky-app-specs', () => ({
     Short: 'Short',
     Long: 'Long',
   },
+  postUriBuilder: (authorId: string, postId: string) => `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
 }));
 
 // Test data
@@ -199,7 +200,39 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
 
       await expect(PostController.create(createPostParams('Reply', 'nonexistent:post'))).rejects.toThrow(
-        'Parent post not found',
+        'Failed to validate parent post',
+      );
+    });
+
+    it('should normalize kind to lowercase before saving', async () => {
+      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+
+      await PostController.create(createPostParams('Hello, world!'));
+
+      expect(createSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: 'short',
+        }),
+      );
+    });
+
+    it('should map attachments null to undefined at application layer', async () => {
+      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+
+      await PostController.create(createPostParams('Hello, world!'));
+
+      expect(createSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          attachments: undefined,
+        }),
       );
     });
   });

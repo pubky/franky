@@ -1,6 +1,8 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
+import { buildPostIdFromPubkyUri } from './post.helpers';
+import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
   /**
@@ -107,14 +109,14 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async save({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
+  static async create({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
     try {
       const postDetails: Core.PostDetailsModelSchema = {
         id: postId,
         content,
         indexed_at: Date.now(),
         kind,
-        uri: `pubky://${authorId}/pub/pubky.app/posts/${postId.split(':')[1]}`,
+        uri: postUriBuilder(authorId, postId.split(':')[1]),
         attachments: attachments ?? null,
       };
 
@@ -133,31 +135,37 @@ export class LocalPostService {
         reposts: 0,
       };
 
-      await Promise.all([
-        Core.PostDetailsModel.create(postDetails),
-        Core.PostRelationshipsModel.create(postRelationships),
-        Core.PostCountsModel.create(postCounts),
-        Core.PostTagsModel.create({ id: postId, tags: [] }),
-      ]);
+      await Core.db.transaction(
+        'rw',
+        [
+          Core.PostDetailsModel.table,
+          Core.PostRelationshipsModel.table,
+          Core.PostCountsModel.table,
+          Core.PostTagsModel.table,
+        ],
+        async () => {
+          await Promise.all([
+            Core.PostDetailsModel.create(postDetails),
+            Core.PostRelationshipsModel.create(postRelationships),
+            Core.PostCountsModel.create(postCounts),
+            Core.PostTagsModel.create({ id: postId, tags: [] }),
+          ]);
 
-      // If this is a reply, update parent's reply count
-      if (parentUri) {
-        const parentPostId = parentUri.split('/posts/')[1];
-        const fullParentId = `${parentUri.split('/')[2]}:${parentPostId}`;
-        const parentCounts = await Core.PostCountsModel.findById(fullParentId);
-        if (parentCounts) {
-          await Core.PostCountsModel.upsert({
-            id: parentCounts.id,
-            tags: parentCounts.tags,
-            unique_tags: parentCounts.unique_tags,
-            replies: parentCounts.replies + 1,
-            reposts: parentCounts.reposts,
-          });
-        }
-      }
+          if (parentUri) {
+            const fullParentId = buildPostIdFromPubkyUri(parentUri);
+            if (fullParentId) {
+              const parentCounts = await Core.PostCountsModel.findById(fullParentId);
+              if (parentCounts) {
+                await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
+              }
+            }
+          }
+        },
+      );
 
       Logger.debug('Post saved successfully', { postId, kind, parentUri });
     } catch (error) {
+      Logger.error('Failed to save post', { postId, authorId });
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
         error,
         postId,
