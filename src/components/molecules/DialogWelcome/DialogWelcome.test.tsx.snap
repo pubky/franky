@@ -44,7 +44,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot when dialog is closed 1`] 
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"
@@ -181,7 +181,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with default props 1`] = `
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"
@@ -318,7 +318,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with different public key 
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz"
             />
             <div
               class="text-4xl"
@@ -455,7 +455,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with empty name 1`] = `
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"
@@ -544,6 +544,106 @@ exports[`DialogWelcome - Snapshots > matches snapshot with empty name 1`] = `
 </div>
 `;
 
+exports[`DialogWelcome - Snapshots > matches snapshot with generated avatar 1`] = `
+<div
+  data-open="true"
+  data-testid="dialog"
+>
+  <div
+    class="sm:max-w-xl"
+    data-testid="dialog-content"
+  >
+    <div
+      class="text-left pr-6 gap-0"
+      data-testid="dialog-header"
+    >
+      <h2
+        data-testid="dialog-title"
+      >
+        Welcome to Pubky!
+      </h2>
+      <div
+        class="font-medium"
+        data-testid="dialog-description"
+      >
+        Your keys, your content, your rules.
+      </div>
+    </div>
+    <div
+      class="max-h-[420px] overflow-y-auto"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col gap-6"
+        data-testid="container"
+      >
+        <div
+          class="self-stretch p-6 bg-card rounded-lg flex flex-col sm:flex-row justify-center sm:justify-start items-center sm:items-start gap-6 overflow-hidden"
+          data-testid="card"
+        >
+          <div
+            class="w-24 h-24"
+            data-testid="avatar"
+          >
+            <img
+              alt="avatar"
+              data-testid="avatar-image"
+              src="https://mocked.avatar/test-public-key-12345"
+            />
+            <div
+              class="text-4xl"
+              data-testid="avatar-fallback"
+            >
+              SN
+            </div>
+          </div>
+          <div
+            class="flex flex-col justify-center sm:justify-start items-center sm:items-start"
+            data-testid="container"
+          >
+            <p
+              data-size="lg"
+              data-testid="typography"
+            >
+              Satoshi Nakamoto
+            </p>
+            <p
+              class="text-center sm:text-left text-muted-foreground font-medium"
+              data-size="sm"
+              data-testid="typography"
+            >
+              Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.
+            </p>
+            <button
+              class="rounded-full gap-2 w-fit h-8 mt-2"
+              data-testid="button-secondary"
+              data-variant="secondary"
+            >
+              <div
+                class="w-4 h-4"
+                data-testid="key-icon"
+              />
+              test-publi
+            </button>
+          </div>
+        </div>
+        <button
+          class="w-auto"
+          data-size="lg"
+          data-testid="button-default"
+        >
+          <div
+            class="mr-2 h-4 w-4"
+            data-testid="arrow-right-icon"
+          />
+          Explore Pubky
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`DialogWelcome - Snapshots > matches snapshot with long bio 1`] = `
 <div
   data-open="true"
@@ -588,7 +688,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long bio 1`] = `
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"
@@ -725,7 +825,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long name 1`] = `
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"
@@ -862,6 +962,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with minimal props 1`] = `
             <img
               alt="avatar"
               data-testid="avatar-image"
+              src="https://mocked.avatar/test-key"
             />
             <div
               class="text-4xl"
@@ -996,7 +1097,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with single word name 1`] 
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"
@@ -1133,7 +1234,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot without bio 1`] = `
             <img
               alt="avatar"
               data-testid="avatar-image"
-              src="https://example.com/avatar.jpg"
+              src="https://mocked.avatar/test-public-key-12345"
             />
             <div
               class="text-4xl"

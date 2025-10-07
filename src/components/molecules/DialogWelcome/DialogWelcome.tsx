@@ -8,14 +8,14 @@ interface DialogWelcomeProps {
   onOpenChange: (open: boolean) => void;
   name: string;
   pubky: Core.Pubky;
-  image?: string;
   bio?: string;
 }
 
-export function DialogWelcome({ isOpen, onOpenChange, name, image, pubky, bio }: DialogWelcomeProps) {
+export function DialogWelcome({ isOpen, onOpenChange, name, pubky, bio }: DialogWelcomeProps) {
   const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const initials = Libs.extractInitials({ name, maxLength: 2 });
+  const avatarImage = Core.filesApi.getAvatar(pubky);
 
   const handleCopyToClipboard = () => {
     copyToClipboard(pubky);
@@ -38,7 +38,7 @@ export function DialogWelcome({ isOpen, onOpenChange, name, image, pubky, bio }:
           <Atoms.Container className="flex flex-col gap-6">
             <Atoms.Card className="self-stretch p-6 bg-card rounded-lg flex flex-col sm:flex-row justify-center sm:justify-start items-center sm:items-start gap-6 overflow-hidden">
               <Atoms.Avatar className="w-24 h-24">
-                <Atoms.AvatarImage src={image} />
+                <Atoms.AvatarImage src={avatarImage} />
                 <Atoms.AvatarFallback className="text-4xl">{initials}</Atoms.AvatarFallback>
               </Atoms.Avatar>
               <Atoms.Container className="flex flex-col justify-center sm:justify-start items-center sm:items-start">

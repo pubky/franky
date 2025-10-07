@@ -4,12 +4,15 @@ import { FileVariant, type TImageParams, type TFileBody } from './file.type';
 import * as Config from '@/config';
 
 const pubky = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry';
+const encodedPubky = encodeURIComponent(pubky);
+const fileId = 'test-file';
+const encodedFileId = encodeURIComponent(fileId);
 
 describe('File API', () => {
   describe('filesApi.getAvatar', () => {
     it('should generate correct avatar URL for valid pubky', () => {
       const result = filesApi.getAvatar(pubky);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/avatar/${pubky}`);
+      expect(result).toBe(`${Config.NEXUS_URL}/static/avatar/${encodedPubky}`);
     });
   });
 
@@ -17,34 +20,34 @@ describe('File API', () => {
     it('should generate correct URL for SMALL variant', () => {
       const params: TImageParams = {
         pubky,
-        file_id: 'test-file',
+        file_id: fileId,
         variant: FileVariant.SMALL,
       };
 
       const result = filesApi.getImage(params);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/files/${pubky}/test-file/small`);
+      expect(result).toBe(`${Config.NEXUS_URL}/static/files/${encodedPubky}/${encodedFileId}/small`);
     });
 
     it('should generate correct URL for FEED variant', () => {
       const params: TImageParams = {
         pubky,
-        file_id: 'test-file',
+        file_id: fileId,
         variant: FileVariant.FEED,
       };
 
       const result = filesApi.getImage(params);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/files/${pubky}/test-file/feed`);
+      expect(result).toBe(`${Config.NEXUS_URL}/static/files/${encodedPubky}/${encodedFileId}/feed`);
     });
 
     it('should generate correct URL for MAIN variant', () => {
       const params: TImageParams = {
         pubky,
-        file_id: 'test-file',
+        file_id: fileId,
         variant: FileVariant.MAIN,
       };
 
       const result = filesApi.getImage(params);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/files/${pubky}/test-file/main`);
+      expect(result).toBe(`${Config.NEXUS_URL}/static/files/${encodedPubky}/${encodedFileId}/main`);
     });
   });
 
