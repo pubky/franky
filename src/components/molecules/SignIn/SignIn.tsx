@@ -13,48 +13,86 @@ export const SignInContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const retryCountRef = useRef(0);
+  const isMountedRef = useRef(true);
+  const activeRequestRef = useRef<symbol | null>(null);
+  const isGeneratingRef = useRef(false);
 
-  const fetchUrl = async () => {
+  const fetchUrl = async (options?: { viaRetry?: boolean }) => {
+    const requestId = Symbol('fetchUrl');
+    activeRequestRef.current = requestId;
+    isGeneratingRef.current = true;
+    if (!options?.viaRetry) setIsLoading(true);
+
+    let willRetry = false;
+
     try {
       const data = await Core.AuthController.getAuthUrl();
       if (!data) return;
 
-      const { url, promise } = data;
+      const { url: generatedUrl, promise } = data;
 
-      if (url) setUrl(url);
-      retryCountRef.current = 0;
-
-      promise?.then(async (publicKey) => {
-        try {
-          await Core.AuthController.loginWithAuthUrl({ publicKey });
-        } catch (error) {
-          Libs.Logger.error('Failed to login with auth URL:', error);
+      // Always attach handlers to avoid unhandled rejections even if unmounted
+      promise
+        ?.then(async (publicKey) => {
+          // Ignore if unmounted or superseded
+          if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
+          try {
+            await Core.AuthController.loginWithAuthUrl({ publicKey });
+          } catch (error) {
+            Libs.Logger.error('Failed to login with auth URL:', error);
+            if (!isMountedRef.current) return;
+            Molecules.toast({
+              title: 'Sign in failed',
+              description: 'Unable to complete authorization with Pubky Ring. Please try again.',
+            });
+          }
+        })
+        .catch((error: unknown) => {
+          // Rejected authorization or transport failure
+          Libs.Logger.error('Authorization promise rejected:', error);
+          if (!isMountedRef.current) return;
           Molecules.toast({
-            title: 'Sign in failed',
-            description: 'Unable to complete authorization with Pubky Ring. Please try again.',
+            title: 'Authorization was not completed',
+            description: 'The signer did not complete authorization. Please try again.',
           });
-        }
-      });
+        });
+
+      // Guard against late responses from previous calls
+      if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
+
+      if (generatedUrl) setUrl(generatedUrl);
+      retryCountRef.current = 0;
     } catch (error) {
       Libs.Logger.error('Failed to generate auth URL:', error);
       retryCountRef.current += 1;
+
       if (retryCountRef.current < 3) {
-        fetchUrl();
+        willRetry = true;
+        // bounded backoff: 250ms, 500ms
+        const delayMs = Math.min(1000, 250 * retryCountRef.current);
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        await fetchUrl({ viaRetry: true });
       }
-      Molecules.toast({
-        title: 'QR code generation failed',
-        description: 'Unable to generate sign-in QR code. Please refresh the page.',
-      });
+
+      if (isMountedRef.current) {
+        Molecules.toast({
+          title: 'QR code generation failed',
+          description: 'Unable to generate sign-in QR code. Please refresh the page.',
+        });
+      }
     } finally {
-      setIsLoading(false);
+      // Only clear loading if we are not immediately retrying and this is the latest request
+      if (!willRetry && activeRequestRef.current === requestId) {
+        isGeneratingRef.current = false;
+        if (isMountedRef.current) setIsLoading(false);
+      }
     }
   };
 
   const handleAuthorizeClick = () => {
-    if (isLoading) return;
+    if (isLoading || isGeneratingRef.current) return;
 
     if (!url) {
-      setIsLoading(true);
       fetchUrl();
       return;
     }
@@ -71,7 +109,12 @@ export const SignInContent = () => {
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
     fetchUrl();
+    return () => {
+      isMountedRef.current = false;
+      activeRequestRef.current = null;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -133,7 +176,7 @@ export const SignInFooter = () => {
   return (
     <Atoms.FooterLinks className="py-6">
       Not able to sign in with{' '}
-      <Atoms.Link href="https://pubkyring.app/" target="_blank">
+      <Atoms.Link href="https://pubkyring.app/" target="_blank" rel="noopener noreferrer">
         Pubky Ring
       </Atoms.Link>
       ? Use the recovery phrase or encrypted file to restore your account.
