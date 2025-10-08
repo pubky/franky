@@ -25,14 +25,20 @@ export class TagController {
   static async create({ targetId, label, taggerId }: TCreateTagParams) {
     await this.initialize();
 
-    const {pubky, postId} = Core.parsePostCompositeId(targetId);
+    const { pubky, postId } = Core.parsePostCompositeId(targetId);
     const postUri = postUriBuilder(pubky, postId);
 
     const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
     // Use composite targetId for local persistence to align with delete flow and tests
-    await Application.Tag.create({ postId: targetId, label: normalizedLabel, taggerId, tagUrl: normalizedTag.meta.url, tagJson: normalizedTag.tag.toJson() });
+    await Application.Tag.create({
+      postId: targetId,
+      label: normalizedLabel,
+      taggerId,
+      tagUrl: normalizedTag.meta.url,
+      tagJson: normalizedTag.tag.toJson(),
+    });
   }
 
   /**
@@ -45,12 +51,17 @@ export class TagController {
   static async delete({ targetId, label, taggerId }: TDeleteTagParams) {
     await this.initialize();
 
-    const {pubky, postId} = Core.parsePostCompositeId(targetId);
+    const { pubky, postId } = Core.parsePostCompositeId(targetId);
     const postUri = postUriBuilder(pubky, postId);
 
     const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    await Application.Tag.delete({ postId: targetId, label: normalizedLabel, taggerId, tagUrl: normalizedTag.meta.url });
+    await Application.Tag.delete({
+      postId: targetId,
+      label: normalizedLabel,
+      taggerId,
+      tagUrl: normalizedTag.meta.url,
+    });
   }
 }

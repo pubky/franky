@@ -50,7 +50,7 @@ export class LocalPostService {
           reposts: 0,
         };
 
-        const {pubky} = Core.parsePostCompositeId(details.id);
+        const { pubky } = Core.parsePostCompositeId(details.id);
 
         return {
           details: {
@@ -109,7 +109,7 @@ export class LocalPostService {
    * @throws {DatabaseError} When database operations fail
    */
   static async create({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
-    const {postId: postIdPart} = Core.parsePostCompositeId(postId);
+    const { postId: postIdPart } = Core.parsePostCompositeId(postId);
     try {
       const postDetails: Core.PostDetailsModelSchema = {
         id: postId,

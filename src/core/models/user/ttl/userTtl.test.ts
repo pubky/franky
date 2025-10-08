@@ -32,14 +32,14 @@ describe('UserTtlModel', () => {
   });
 
   describe('Static Methods', () => {
-    it('should insert user ttl', async () => {
+    it('should create user ttl', async () => {
       const mockData = {
         id: testUserId1,
         ...MOCK_TTL_1,
       };
 
-      const result = await Core.UserTtlModel.insert(mockData);
-      expect(result).toBeDefined();
+      const result = await Core.UserTtlModel.create(mockData);
+      expect(result).toBeUndefined();
     });
 
     it('should find user ttl by id', async () => {
@@ -48,19 +48,18 @@ describe('UserTtlModel', () => {
         ...MOCK_TTL_1,
       };
 
-      await Core.UserTtlModel.insert(mockData);
+      await Core.UserTtlModel.create(mockData);
       const result = await Core.UserTtlModel.findById(testUserId1);
 
       expect(result).toBeInstanceOf(Core.UserTtlModel);
-      expect(result.id).toBe(testUserId1);
-      expect(result.ttl).toBe(MOCK_TTL_1.ttl);
+      expect(result?.id).toBe(testUserId1);
+      expect(result?.ttl).toBe(MOCK_TTL_1.ttl);
     });
 
-    it('should throw error for non-existent user ttl', async () => {
+    it('should return null for non-existent user ttl', async () => {
       const nonExistentId = Core.generateTestUserId(999);
-      await expect(Core.UserTtlModel.findById(nonExistentId)).rejects.toThrow(
-        `TTL not found in user_ttl: ${nonExistentId}`,
-      );
+      const result = await Core.UserTtlModel.findById(nonExistentId);
+      expect(result).toBeNull();
     });
 
     it('should bulk save user ttl from tuples', async () => {
@@ -76,8 +75,8 @@ describe('UserTtlModel', () => {
       const userTtl1 = await Core.UserTtlModel.findById(testUserId1);
       const userTtl2 = await Core.UserTtlModel.findById(testUserId2);
 
-      expect(userTtl1.ttl).toBe(MOCK_TTL_1.ttl);
-      expect(userTtl2.ttl).toBe(MOCK_TTL_2.ttl);
+      expect(userTtl1?.ttl).toBe(MOCK_TTL_1.ttl);
+      expect(userTtl2?.ttl).toBe(MOCK_TTL_2.ttl);
     });
 
     it('should handle empty array in bulk save', async () => {
@@ -98,8 +97,8 @@ describe('UserTtlModel', () => {
       const userTtl1 = await Core.UserTtlModel.findById(testUserId1);
       const userTtl2 = await Core.UserTtlModel.findById(testUserId2);
 
-      expect(userTtl1.ttl).toBe(currentTime + 1000);
-      expect(userTtl2.ttl).toBe(currentTime + 5000);
+      expect(userTtl1?.ttl).toBe(currentTime + 1000);
+      expect(userTtl2?.ttl).toBe(currentTime + 5000);
     });
   });
 });

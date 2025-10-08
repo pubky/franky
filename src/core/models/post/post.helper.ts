@@ -5,7 +5,7 @@ export const POST_ID_DELIMITER = ':' as const;
 export type PostIdParts = {
   pubky: Pubky;
   postId: string;
-}
+};
 
 /**
  * Extracts a post ID from a Pubky URI
@@ -32,7 +32,7 @@ export function buildPostIdFromPubkyUri(uri: string): string | null {
       return null;
     }
 
-    return buildPostCompositeId({ pubky, postId })
+    return buildPostCompositeId({ pubky, postId });
   } catch {
     return null;
   }

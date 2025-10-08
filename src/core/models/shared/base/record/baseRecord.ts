@@ -20,7 +20,7 @@ export abstract class RecordModelBase<Id, Schema extends { id: Id }> extends Mod
         500,
         {
           error,
-          records,
+          rowsCount: records.length,
         },
       );
     }
