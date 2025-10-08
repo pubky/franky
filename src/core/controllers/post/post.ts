@@ -99,7 +99,7 @@ export class PostController {
 
     const postRelationships = await Core.PostRelationshipsModel.findById(postId);
 
-    await Application.Post.deletePost({
+    await Application.Post.delete({
       postId,
       userId,
       postUrl: post.uri,
