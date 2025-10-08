@@ -17,7 +17,7 @@ export class Post {
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, postJson);
   }
 
-  static async deletePost({ postId, userId, postUrl, parentUri, repostedUri }: TDeletePostInput) {
+  static async delete({ postId, userId, postUrl, parentUri, repostedUri }: TDeletePostInput) {
     await Core.Local.Post.deletePost({ postId, userId, parentUri, repostedUri });
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);
   }
