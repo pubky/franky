@@ -3,7 +3,8 @@ import * as Libs from '@/libs';
 import { PubkyAppUser } from 'pubky-app-specs';
 import { z } from 'zod';
 
-export class UserController {
+// Operations related with the profile.json file in the homeserver
+export class ProfileController {
   private constructor() {} // Prevent instantiation
 
   private static async getAuthenticatedHomeserverService() {
@@ -46,7 +47,7 @@ export class UserController {
     return fileResult.meta.url;
   }
 
-  static async saveProfile(
+  static async create(
     profile: z.infer<typeof Core.UiUserSchema>,
     image: string | null,
     pubky: Core.Pubky,
@@ -64,7 +65,7 @@ export class UserController {
         },
         pubky,
       );
-      const userJson = user.toJson() as PubkyAppUser;
+      const profileJson = user.toJson() as PubkyAppUser;
 
       // save user profile in the global store
 
@@ -72,7 +73,7 @@ export class UserController {
       const homeserver = await this.getAuthenticatedHomeserverService();
       const response = await homeserver.fetch(meta.url, {
         method: 'PUT',
-        body: JSON.stringify(userJson),
+        body: JSON.stringify(profileJson),
       });
       // if response is OK, save user to global store
       // else, throw specific error for UI to handle

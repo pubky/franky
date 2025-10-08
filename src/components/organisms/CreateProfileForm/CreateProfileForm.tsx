@@ -118,12 +118,12 @@ export const CreateProfileForm = () => {
     if (avatarFile) {
       setContinueText('Uploading avatar...');
       if (!avatarFile) return null;
-      image = await Core.UserController.uploadAvatar(avatarFile, pubky);
+      image = await Core.ProfileController.uploadAvatar(avatarFile, pubky);
       if (!image) return;
     }
 
     setContinueText('Saving profile...');
-    const response = await Core.UserController.saveProfile(user, image, pubky);
+    const response = await Core.ProfileController.create(user, image, pubky);
 
     if (!response.ok) {
       console.error('Failed to save profile', response);
