@@ -2,6 +2,7 @@ export * from './env';
 export * from './error';
 export * from './icons';
 export * from './identity';
+export * from './image';
 export * from './logger';
 export * from './share';
 export * from './svg';

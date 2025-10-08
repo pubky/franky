@@ -27,10 +27,15 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
+const { mockCropImageToBlob } = vi.hoisted(() => ({
+  mockCropImageToBlob: vi.fn(async () => new Blob(['cropped-image'], { type: 'image/png' })),
+}));
+
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
+    cropImageToBlob: mockCropImageToBlob,
   };
 });
 
@@ -175,122 +180,214 @@ vi.mock('@/atoms', () => ({
       {children}
     </label>
   ),
+  Dialog: ({ children, open }: { children: React.ReactNode; open?: boolean }) => (
+    <div data-testid="dialog" data-open={open}>
+      {children}
+    </div>
+  ),
+  DialogTrigger: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-trigger">{children}</div>,
+  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-content" className={className}>
+      {children}
+    </div>
+  ),
+  DialogHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-header" className={className}>
+      {children}
+    </div>
+  ),
+  DialogFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-footer" className={className}>
+      {children}
+    </div>
+  ),
+  DialogTitle: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <h2 data-testid="dialog-title" className={className}>
+      {children}
+    </h2>
+  ),
+  DialogDescription: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <p data-testid="dialog-description" className={className}>
+      {children}
+    </p>
+  ),
+  DialogClose: ({ children }: { children: React.ReactNode }) => <button data-testid="dialog-close">{children}</button>,
+  DialogOverlay: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-overlay">{children}</div>,
 }));
 
 // Mock molecules
 const mockToast = vi.fn();
-vi.mock('@/molecules', () => ({
-  DialogAge: () => <div data-testid="dialog-age">DialogAge</div>,
-  DialogTerms: () => <div data-testid="dialog-terms">DialogTerms</div>,
-  DialogPrivacy: () => <div data-testid="dialog-privacy">DialogPrivacy</div>,
-  useToast: () => ({
-    toast: mockToast,
-  }),
-  InputField: ({
-    placeholder,
-    value = '',
-    onChange,
-    status,
-    message,
-    messageType,
-    variant,
-    icon,
-    onClickIcon,
-    iconPosition,
-  }: {
-    placeholder?: string;
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    status?: string;
-    message?: string;
-    messageType?: string;
-    variant?: string;
-    icon?: React.ReactNode;
-    onClickIcon?: () => void;
-    iconPosition?: string;
-  }) => (
-    <div data-testid="molecules-input-field">
-      <input
-        data-testid="molecules-input"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => {
-          if (onChange && e && e.target) {
-            onChange(e);
-          }
-        }}
-        data-status={status}
-        data-variant={variant}
-      />
-      {icon && (
-        <button onClick={onClickIcon} data-position={iconPosition}>
-          {icon}
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+
+  return {
+    ...actual,
+    DialogAge: () => <div data-testid="dialog-age">DialogAge</div>,
+    DialogTerms: () => <div data-testid="dialog-terms">DialogTerms</div>,
+    DialogPrivacy: () => <div data-testid="dialog-privacy">DialogPrivacy</div>,
+    useToast: () => ({
+      toast: mockToast,
+    }),
+    InputField: ({
+      placeholder,
+      value = '',
+      onChange,
+      status,
+      message,
+      messageType,
+      variant,
+      icon,
+      onClickIcon,
+      iconPosition,
+    }: {
+      placeholder?: string;
+      value?: string;
+      onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+      status?: string;
+      message?: string;
+      messageType?: string;
+      variant?: string;
+      icon?: React.ReactNode;
+      onClickIcon?: () => void;
+      iconPosition?: string;
+    }) => (
+      <div data-testid="molecules-input-field">
+        <input
+          data-testid="molecules-input"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => {
+            if (onChange && e && e.target) {
+              onChange(e);
+            }
+          }}
+          data-status={status}
+          data-variant={variant}
+        />
+        {icon && (
+          <button onClick={onClickIcon} data-position={iconPosition}>
+            {icon}
+          </button>
+        )}
+        {message && (
+          <span data-testid="molecules-input-error" data-type={messageType}>
+            {message}
+          </span>
+        )}
+      </div>
+    ),
+    TextareaField: ({
+      placeholder,
+      value = '',
+      onChange,
+      variant,
+      rows,
+    }: {
+      placeholder?: string;
+      value?: string;
+      onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+      variant?: string;
+      rows?: number;
+    }) => (
+      <div data-testid="molecules-textarea-field">
+        <textarea
+          data-testid="molecules-textarea"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => {
+            if (onChange && e && e.target) {
+              onChange(e);
+            }
+          }}
+          data-variant={variant}
+          rows={rows}
+        />
+      </div>
+    ),
+    ProfileNavigation: ({
+      children,
+      continueButtonDisabled,
+      continueButtonLoading,
+      continueText,
+      onContinue,
+    }: {
+      children?: React.ReactNode;
+      continueButtonDisabled?: boolean;
+      continueButtonLoading?: boolean;
+      continueText?: string;
+      onContinue?: () => void;
+    }) => (
+      <div data-testid="profile-navigation">
+        {children}
+        <button
+          onClick={onContinue}
+          disabled={continueButtonDisabled || continueButtonLoading}
+          data-testid="continue-button"
+        >
+          {continueText || 'Continue'}
         </button>
-      )}
-      {message && (
-        <span data-testid="molecules-input-error" data-type={messageType}>
-          {message}
-        </span>
-      )}
-    </div>
-  ),
-  TextareaField: ({
-    placeholder,
-    value = '',
-    onChange,
-    variant,
-    rows,
+      </div>
+    ),
+    DialogAddLink: ({ onSave }: { onSave: (label: string, url: string) => void }) => (
+      <div data-testid="dialog-add-link">
+        <button onClick={() => onSave('Test Label', 'https://test.com')}>Add Link</button>
+      </div>
+    ),
+    DialogCropImage: ({
+      open,
+      onClose,
+      onBack,
+      onCrop,
+      imageSrc,
+      fileName,
+      fileType,
+    }: {
+      open: boolean;
+      onClose: () => void;
+      onBack: () => void;
+      onCrop: (file: File, previewUrl: string) => void;
+      imageSrc: string | null;
+      fileName: string;
+      fileType: string;
+    }) => {
+      if (!open) return null;
+
+      const handleDone = async () => {
+        const blob = await mockCropImageToBlob(imageSrc ?? '', { x: 0, y: 0, width: 1, height: 1 }, fileType);
+        const croppedFile = new File([blob], fileName ?? 'avatar.png', { type: blob.type || fileType });
+        onCrop(croppedFile, 'mock-object-url');
+      };
+
+      return (
+        <div data-testid="dialog" data-open={open}>
+          <div data-testid="dialog-content">
+            <button onClick={onBack}>← Back</button>
+            <button onClick={onClose}>Cancel</button>
+            <button onClick={handleDone}>Done</button>
+          </div>
+        </div>
+      );
+    },
+  };
+});
+
+vi.mock('react-easy-crop', () => ({
+  __esModule: true,
+  default: ({
+    onCropComplete,
+    onCropChange,
+    onZoomChange,
   }: {
-    placeholder?: string;
-    value?: string;
-    onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    variant?: string;
-    rows?: number;
-  }) => (
-    <div data-testid="molecules-textarea-field">
-      <textarea
-        data-testid="molecules-textarea"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => {
-          if (onChange && e && e.target) {
-            onChange(e);
-          }
-        }}
-        data-variant={variant}
-        rows={rows}
-      />
-    </div>
-  ),
-  ProfileNavigation: ({
-    children,
-    continueButtonDisabled,
-    continueButtonLoading,
-    continueText,
-    onContinue,
-  }: {
-    children?: React.ReactNode;
-    continueButtonDisabled?: boolean;
-    continueButtonLoading?: boolean;
-    continueText?: string;
-    onContinue?: () => void;
-  }) => (
-    <div data-testid="profile-navigation">
-      {children}
-      <button
-        onClick={onContinue}
-        disabled={continueButtonDisabled || continueButtonLoading}
-        data-testid="continue-button"
-      >
-        {continueText || 'Continue'}
-      </button>
-    </div>
-  ),
-  DialogAddLink: ({ onSave }: { onSave: (label: string, url: string) => void }) => (
-    <div data-testid="dialog-add-link">
-      <button onClick={() => onSave('Test Label', 'https://test.com')}>Add Link</button>
-    </div>
-  ),
+    onCropComplete?: (area: unknown, areaPixels: unknown) => void;
+    onCropChange?: (value: unknown) => void;
+    onZoomChange?: (value: unknown) => void;
+  }) => {
+    onCropChange?.({ x: 0, y: 0 });
+    onZoomChange?.(1);
+    onCropComplete?.({ x: 0, y: 0, width: 200, height: 200 }, { x: 0, y: 0, width: 200, height: 200 });
+
+    return <div data-testid="react-easy-crop" />;
+  },
 }));
 
 // Mock URL.createObjectURL and revokeObjectURL
@@ -387,6 +484,7 @@ describe('CreateProfileForm', () => {
 
     await waitFor(() => {
       expect(global.URL.createObjectURL).toHaveBeenCalledWith(mockFile);
+      expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
     });
   });
 
@@ -402,6 +500,15 @@ describe('CreateProfileForm', () => {
     });
 
     fireEvent.change(fileInput);
+
+    const doneButton = await screen.findByText('Done');
+    expect(doneButton).toBeInTheDocument();
+    await waitFor(() => expect(doneButton).not.toBeDisabled());
+    fireEvent.click(doneButton);
+
+    await waitFor(() => {
+      expect(mockCropImageToBlob).toHaveBeenCalled();
+    });
 
     await waitFor(() => {
       const avatarImage = screen.getByTestId('avatar-image');
@@ -423,6 +530,10 @@ describe('CreateProfileForm', () => {
     });
 
     fireEvent.change(fileInput);
+
+    const doneButton = await screen.findByText('Done');
+    await waitFor(() => expect(doneButton).not.toBeDisabled());
+    fireEvent.click(doneButton);
 
     await waitFor(() => {
       const deleteButton = screen.getByText('Delete');
@@ -454,6 +565,10 @@ describe('CreateProfileForm', () => {
     });
 
     fireEvent.change(fileInput);
+
+    const doneButton = await screen.findByText('Done');
+    await waitFor(() => expect(doneButton).not.toBeDisabled());
+    fireEvent.click(doneButton);
 
     await waitFor(() => {
       expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
@@ -490,6 +605,10 @@ describe('CreateProfileForm', () => {
     });
 
     fireEvent.change(fileInput);
+
+    const doneButton = await screen.findByText('Done');
+    await waitFor(() => expect(doneButton).not.toBeDisabled());
+    fireEvent.click(doneButton);
 
     await waitFor(() => {
       expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
