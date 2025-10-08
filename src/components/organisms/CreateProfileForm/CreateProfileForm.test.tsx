@@ -6,9 +6,9 @@ import * as App from '@/app';
 
 vi.mock('@/core', () => ({
   useOnboardingStore: vi.fn(),
-  UserController: {
+  ProfileController: {
     uploadAvatar: vi.fn(),
-    saveProfile: vi.fn(),
+    create: vi.fn(),
   },
   UserValidator: {
     check: vi.fn(),
@@ -312,8 +312,8 @@ describe('CreateProfileForm', () => {
     // Reset all mock functions
     mockPush.mockReset();
     mockToast.mockReset();
-    vi.mocked(Core.UserController.uploadAvatar).mockReset();
-    vi.mocked(Core.UserController.saveProfile).mockReset();
+    vi.mocked(Core.ProfileController.uploadAvatar).mockReset();
+    vi.mocked(Core.ProfileController.create).mockReset();
     vi.mocked(Core.UserValidator.check).mockReset();
     vi.mocked(Core.AuthController.authorizeAndBootstrap).mockReset();
   });
@@ -600,8 +600,8 @@ describe('CreateProfileForm', () => {
       const Core = await import('@/core');
 
       // Verify that the mocked functions exist
-      expect(typeof Core.UserController.saveProfile).toBe('function');
-      expect(typeof Core.UserController.uploadAvatar).toBe('function');
+      expect(typeof Core.ProfileController.create).toBe('function');
+      expect(typeof Core.ProfileController.uploadAvatar).toBe('function');
       expect(typeof Core.UserValidator.check).toBe('function');
       expect(typeof Core.AuthController.authorizeAndBootstrap).toBe('function');
     });
@@ -619,7 +619,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+      vi.mocked(Core.ProfileController.create).mockResolvedValue({
         ok: true,
       } as Response);
 
@@ -656,7 +656,7 @@ describe('CreateProfileForm', () => {
 
       // Verify the mocks were called in the correct order
       expect(Core.UserValidator.check).toHaveBeenCalled();
-      expect(Core.UserController.saveProfile).toHaveBeenCalled();
+      expect(Core.ProfileController.create).toHaveBeenCalled();
       expect(Core.AuthController.authorizeAndBootstrap).toHaveBeenCalled();
     });
   });
@@ -682,7 +682,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+      vi.mocked(Core.ProfileController.create).mockResolvedValue({
         ok: true,
       } as Response);
 
@@ -710,7 +710,7 @@ describe('CreateProfileForm', () => {
 
       // Verify the flow was completed successfully
       expect(Core.UserValidator.check).toHaveBeenCalled();
-      expect(Core.UserController.saveProfile).toHaveBeenCalled();
+      expect(Core.ProfileController.create).toHaveBeenCalled();
       expect(Core.AuthController.authorizeAndBootstrap).toHaveBeenCalled();
     });
 
@@ -734,7 +734,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+      vi.mocked(Core.ProfileController.create).mockResolvedValue({
         ok: false,
       } as Response);
 
@@ -781,7 +781,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.UserController.saveProfile).mockResolvedValue({
+      vi.mocked(Core.ProfileController.create).mockResolvedValue({
         ok: true,
       } as Response);
 
