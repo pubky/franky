@@ -37,7 +37,7 @@ export class NexusBootstrapService {
     for (const post of posts) {
       // post.details.id is Crockford Base32 strings derived from timestamps. If two users post at the same time, the id will be the same.
       // To avoid that, we need to use the authorId:postId format to ensure the id is unique.
-      const postId = `${post.details.author}:${post.details.id}`;
+      const postId = Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id });
 
       postCounts.push([postId, post.counts]);
       postRelationships.push([postId, post.relationships]);

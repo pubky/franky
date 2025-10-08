@@ -135,24 +135,18 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
   /**
    * Find multiple records by their ids, preserving input order.
    *
-   * Returns an array where each element is the raw schema (`TSchema`) or `null`
+   * Returns an array where each element is the raw schema (`TSchema`) or `undefined`
    * if the corresponding id was not found. This method is schema-oriented by
    * design (no model construction) to keep batch lookups lightweight. If you
    * need model instances, compose on top by mapping non-null entries to
    * `new this(row)`.
    */
-  static async findByIdsWithNulls<TId, TSchema extends { id: TId }>(
+  static async findByIdsPreserveOrder<TId, TSchema extends { id: TId }>(
     this: { table: Table<TSchema> },
     ids: TId[],
-  ): Promise<Array<TSchema | null>> {
+  ): Promise<Array<TSchema | undefined>> {
     try {
-      const found = await this.table
-        .where('id')
-        .anyOf(ids as IndexableType[])
-        .toArray();
-
-      const byId = new Map<TId, TSchema>(found.map((r) => [r.id, r]));
-      return ids.map((id) => byId.get(id) ?? null);
+      return await this.table.bulkGet(ids as IndexableType[]);
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.QUERY_FAILED,

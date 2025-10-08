@@ -1,7 +1,6 @@
 import * as Core from '@/core';
 import * as Application from '@/core/application';
 import type { TCreatePostParams, TReadPostsParams } from './post.types';
-import { normalizePostKind } from '@/core/services/local/post/post.helpers';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostController {
@@ -61,14 +60,14 @@ export class PostController {
       authorId,
     );
 
-    const postId = `${authorId}:${normalizedPost.meta.id}`;
+    const postId = Core.buildPostCompositeId({ pubky: authorId, postId: normalizedPost.meta.id });
 
     await Application.Post.create({
       postUrl: normalizedPost.meta.url,
       postJson: normalizedPost.post.toJson(),
       postId,
       content: normalizedPost.post.content,
-      kind: normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind,
+      kind: Core.normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind,
       authorId,
       parentUri,
       attachments: normalizedPost.post.attachments ?? undefined,
