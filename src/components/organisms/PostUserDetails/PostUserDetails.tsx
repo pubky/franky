@@ -10,7 +10,8 @@ interface PostUserDetailsProps {
 }
 
 export function PostUserDetails({ postId }: PostUserDetailsProps) {
-  const authorId = postId.split(':')[0];
+  // TODO: Shall we do defensive parsing here or in the component that calls this?
+  const { pubky: authorId } = Core.parsePostCompositeId(postId);
   const userDetails = useLiveQuery(() => Core.db.user_details.get(authorId).then((details) => details), [authorId]);
   const postDetails = useLiveQuery(() => Core.db.post_details.get(postId), [postId]);
 

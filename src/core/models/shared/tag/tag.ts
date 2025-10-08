@@ -17,20 +17,15 @@ export class TagModel implements Core.NexusTag {
     this.relationship = relationship;
   }
 
-  addTagger(userId: Core.Pubky) {
-    if (this.taggers.includes(userId)) {
-      new Error('Tagger already exists');
-    }
-
+  addTagger(userId: Core.Pubky): void {
+    if (this.taggers.includes(userId)) return; // idempotent
     this.taggers.push(userId);
-    this.taggers_count++;
+    this.taggers_count = this.taggers.length;
   }
 
-  removeTagger(userId: Core.Pubky) {
-    if (this.taggers.includes(userId)) {
-      new Error('Tagger does not exist');
-    }
+  removeTagger(userId: Core.Pubky): void {
+    if (!this.taggers.includes(userId)) return; // idempotent
     this.taggers = this.taggers.filter((id) => id !== userId);
-    this.taggers_count--;
+    this.taggers_count = this.taggers.length;
   }
 }

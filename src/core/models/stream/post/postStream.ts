@@ -28,7 +28,7 @@ export class PostStreamModel extends BaseStreamModel<PostStreamTypes, string, Po
         Libs.DatabaseErrorType.UPSERT_FAILED,
         `Failed to upsert PostStream with ID: ${String(id)}`,
         500,
-        { error, streamId: id, name, stream },
+        { error, streamId: id, name, streamLength: stream?.length ?? 0 },
       );
     }
   }

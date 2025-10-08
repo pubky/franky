@@ -215,7 +215,7 @@ describe('NexusService', () => {
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
 
       // Create composite ID as done in bootstrap service
-      const compositePostId = `${pubky}:${testPostId}`;
+      const compositePostId = Core.buildPostCompositeId({ pubky, postId: testPostId });
 
       // Verify post details were persisted to database
       const savedPostDetails = await Core.PostDetailsModel.findById(compositePostId);
@@ -316,7 +316,7 @@ describe('NexusService', () => {
       expect(savedUserTags).toBeTruthy();
 
       // Verify post details were persisted
-      const compositePostId = `${testUserId}:${testPostId}`;
+      const compositePostId = Core.buildPostCompositeId({ pubky: testUserId, postId: testPostId });
       const savedPostDetails = await Core.PostDetailsModel.findById(compositePostId);
       expect(savedPostDetails).toBeTruthy();
       expect(savedPostDetails!.content).toBe('Bootstrap post content');

@@ -9,10 +9,10 @@ const testData = {
   postId1: 'abc123xyz',
   postId2: 'def456uvw',
   get fullPostId1() {
-    return `${this.authorPubky}:${this.postId1}`;
+    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId1 });
   },
   get fullPostId2() {
-    return `${this.authorPubky}:${this.postId2}`;
+    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId2 });
   },
 };
 
@@ -48,12 +48,13 @@ const getSavedTags = async (postId: string) => {
 };
 
 const setupExistingPost = async (postId: string, content: string, parentUri?: string) => {
+  const { pubky, postId: postIdPart } = Core.parsePostCompositeId(postId);
   const postDetails: Core.PostDetailsModelSchema = {
     id: postId,
     content,
     indexed_at: Date.now(),
     kind: 'short',
-    uri: `pubky://${postId.split(':')[0]}/pub/pubky.app/posts/${postId.split(':')[1]}`,
+    uri: `pubky://${pubky}/pub/pubky.app/posts/${postIdPart}`,
     attachments: null,
   };
 
@@ -275,16 +276,33 @@ describe('LocalPostService', () => {
 
     it('should write atomically across tables (rollback on error)', async () => {
       // Arrange: spy to throw on PostTagsModel.create
-      const originalCreate = Core.PostTagsModel.create;
-      // Force a failure inside the transaction after other writes
-      vi.spyOn(Core.PostTagsModel, 'create').mockRejectedValueOnce(new Error('Simulated failure'));
-
+      const spy = vi.spyOn(Core.PostTagsModel, 'create').mockRejectedValueOnce(new Error('Simulated failure'));
       const params = createSaveParams('Atomic write test');
 
-      // Act + Assert
-      await expect(Core.Local.Post.create(params)).rejects.toThrow('Failed to save post');
+      try {
+        // Act + Assert
+        await expect(Core.Local.Post.create(params)).rejects.toThrow('Failed to save post');
 
-      // Validate no partial data remains
+        // Validate no partial data remains
+        const [details, counts, relationships, tags] = await Promise.all([
+          getSavedPost(testData.fullPostId1),
+          getSavedCounts(testData.fullPostId1),
+          getSavedRelationships(testData.fullPostId1),
+          getSavedTags(testData.fullPostId1),
+        ]);
+
+        expect(details).toBeUndefined();
+        expect(counts).toBeUndefined();
+        expect(relationships).toBeUndefined();
+        expect(tags).toBeUndefined();
+      } finally {
+        spy.mockRestore();
+      }
+    });
+
+    it('should commit all writes across tables on success', async () => {
+      await Core.Local.Post.create(createSaveParams('Atomic success'));
+
       const [details, counts, relationships, tags] = await Promise.all([
         getSavedPost(testData.fullPostId1),
         getSavedCounts(testData.fullPostId1),
@@ -292,13 +310,10 @@ describe('LocalPostService', () => {
         getSavedTags(testData.fullPostId1),
       ]);
 
-      expect(details).toBeUndefined();
-      expect(counts).toBeUndefined();
-      expect(relationships).toBeUndefined();
-      expect(tags).toBeUndefined();
-
-      // Restore
-      vi.spyOn(Core.PostTagsModel, 'create').mockImplementation(originalCreate);
+      expect(details).toBeTruthy();
+      expect(counts).toBeTruthy();
+      expect(relationships).toBeTruthy();
+      expect(tags).toBeTruthy();
     });
 
     it('should increment parent replies via counts update when saving a reply', async () => {
