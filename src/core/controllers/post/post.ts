@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import * as Application from '@/core/application';
-import type { TCreatePostParams, TReadPostsParams } from './post.types';
+import type { TCreatePostParams, TReadPostsParams, TDeleteParams } from './post.types';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostController {
@@ -71,6 +71,39 @@ export class PostController {
       authorId,
       parentUri,
       attachments: normalizedPost.post.attachments ?? undefined,
+    });
+  }
+
+  /**
+   * Delete a post
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to delete
+   * @param params.userId - ID of the user deleting the post
+   */
+  static async delete({ postId, userId }: TDeleteParams) {
+    await this.initialize();
+
+    const post = await Core.PostDetailsModel.findById(postId);
+    if (!post) {
+      throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, { postId });
+    }
+
+    const author = postId.split(':')[0];
+    if (author !== userId) {
+      throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'User is not the author of this post', 403, {
+        postId,
+        userId,
+      });
+    }
+
+    const postRelationships = await Core.PostRelationshipsModel.findById(postId);
+
+    await Application.Post.deletePost({
+      postId,
+      userId,
+      postUrl: post.uri,
+      parentUri: postRelationships?.replied ?? undefined,
+      repostedUri: postRelationships?.reposted ?? undefined,
     });
   }
 }
