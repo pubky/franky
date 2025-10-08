@@ -35,17 +35,21 @@ vi.mock('@/libs', async (importOriginal) => {
   return { ...actual };
 });
 
-// Mock Core
-vi.mock('@/core', () => ({
-  db: {
-    user_details: {
-      get: vi.fn(),
+// Mock Core (merge real exports so parsePostCompositeId and types remain available)
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    db: {
+      user_details: {
+        get: vi.fn(),
+      },
+      post_details: {
+        get: vi.fn(),
+      },
     },
-    post_details: {
-      get: vi.fn(),
-    },
-  },
-}));
+  };
+});
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 

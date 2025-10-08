@@ -33,9 +33,12 @@ export function PostReplies({ postId }: PostRepliesProps) {
 
   const handleReplyClick = useCallback(
     (combinedId: string) => {
-      const [authorId, replyPostId] = combinedId.split(':');
-      if (!authorId || !replyPostId) return; // defensive guard
-      router.push(`/post/${authorId}/${replyPostId}`);
+      try {
+        const { pubky: authorId, postId: replyPostId } = Core.parsePostCompositeId(combinedId);
+        router.push(`/post/${authorId}/${replyPostId}`);
+      } catch {
+        return; // defensive guard
+      }
     },
     [router],
   );

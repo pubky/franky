@@ -9,10 +9,10 @@ const testData = {
   postId1: 'abc123xyz',
   postId2: 'def456uvw',
   get fullPostId1() {
-    return `${this.authorPubky}:${this.postId1}`;
+    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId1 });
   },
   get fullPostId2() {
-    return `${this.authorPubky}:${this.postId2}`;
+    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId2 });
   },
 };
 
@@ -48,12 +48,13 @@ const getSavedTags = async (postId: string) => {
 };
 
 const setupExistingPost = async (postId: string, content: string, parentUri?: string) => {
+  const {pubky, postId: postIdPart} = Core.parsePostCompositeId(postId);
   const postDetails: Core.PostDetailsModelSchema = {
     id: postId,
     content,
     indexed_at: Date.now(),
     kind: 'short',
-    uri: `pubky://${postId.split(':')[0]}/pub/pubky.app/posts/${postId.split(':')[1]}`,
+    uri: `pubky://${pubky}/pub/pubky.app/posts/${postIdPart}`,
     attachments: null,
   };
 
