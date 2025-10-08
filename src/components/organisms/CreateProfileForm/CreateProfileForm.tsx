@@ -23,6 +23,9 @@ export const CreateProfileForm = () => {
   ]);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
+  const [pendingAvatarPreview, setPendingAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -35,8 +38,9 @@ export const CreateProfileForm = () => {
   useEffect(() => {
     return () => {
       if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+      if (pendingAvatarPreview) URL.revokeObjectURL(pendingAvatarPreview);
     };
-  }, [avatarPreview]);
+  }, [avatarPreview, pendingAvatarPreview]);
 
   const handleChooseFileClick = () => {
     fileInputRef.current?.click();
@@ -51,10 +55,13 @@ export const CreateProfileForm = () => {
       return;
     }
 
-    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    if (pendingAvatarPreview) URL.revokeObjectURL(pendingAvatarPreview);
+
     const nextPreview = URL.createObjectURL(file);
-    setAvatarFile(file);
-    setAvatarPreview(nextPreview);
+
+    setPendingAvatarFile(file);
+    setPendingAvatarPreview(nextPreview);
+    setCropDialogOpen(true);
     setAvatarError(null);
   };
 
@@ -69,6 +76,45 @@ export const CreateProfileForm = () => {
     }
     setAvatarFile(null);
     setAvatarPreview(null);
+    setAvatarError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const resetPendingAvatar = () => {
+    if (pendingAvatarPreview) {
+      URL.revokeObjectURL(pendingAvatarPreview);
+    }
+    setPendingAvatarFile(null);
+    setPendingAvatarPreview(null);
+  };
+
+  const handleCropCancel = () => {
+    resetPendingAvatar();
+    setCropDialogOpen(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleCropBack = () => {
+    resetPendingAvatar();
+    setCropDialogOpen(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleCropComplete = (file: File, previewUrl: string) => {
+    resetPendingAvatar();
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview);
+    }
+    setAvatarFile(file);
+    setAvatarPreview(previewUrl);
+    setCropDialogOpen(false);
     setAvatarError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -105,59 +151,56 @@ export const CreateProfileForm = () => {
   };
 
   const handleContinue = async () => {
-    // TODO: Maybe wrap in TRY/CATCH/FINALLY block?
     setIsSaving(true);
     setContinueText('Saving...');
-    const user = validateUser();
 
-    if (!user) return;
-
-    // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
-    //       and save the state of the avatar file and the preview image in the store
-    let image: string | null = null;
-    if (avatarFile) {
-      setContinueText('Uploading avatar...');
-      if (!avatarFile) return null;
-      image = await Core.ProfileController.uploadAvatar(avatarFile, pubky);
-      if (!image) return;
-    }
-
-    setContinueText('Saving profile...');
-    const response = await Core.ProfileController.create(user, image, pubky);
-
-    if (!response.ok) {
-      console.error('Failed to save profile', response);
-      setContinueText('Try again!');
-      setIsSaving(false);
-
-      // TODO: change to sooner toast
-      toast({
-        title: 'Failed to save profile',
-        description: 'Please try again.',
-      });
-      return;
-    }
-
-    // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
-    // TODO: navigate to profile page
-    // setIsSaving(false);
     try {
+      const user = validateUser();
+      if (!user) {
+        setContinueText('Finish');
+        return;
+      }
+
+      // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
+      //       and save the state of the avatar file and the preview image in the store
+      let image: string | null = null;
+      if (avatarFile) {
+        setContinueText('Uploading avatar...');
+        image = await Core.ProfileController.uploadAvatar(avatarFile, pubky);
+        if (!image) {
+          setContinueText('Try again!');
+          return;
+        }
+      }
+
+      setContinueText('Saving profile...');
+      const response = await Core.ProfileController.create(user, image, pubky);
+
+      if (!response.ok) {
+        Libs.Logger.error('Failed to save profile', response);
+        setContinueText('Try again!');
+        toast({
+          title: 'Failed to save profile',
+          description: 'Please try again.',
+        });
+        return;
+      }
+
       await Core.AuthController.authorizeAndBootstrap();
 
       // Set welcome dialog to show for new users
       setShowWelcomeDialog(true);
 
       router.push(App.FEED_ROUTES.FEED);
-    } catch {
+    } catch (err) {
+      Libs.Logger.error('Error during profile creation', err);
       setContinueText('Try again!');
-      setIsSaving(false);
-
-      // TODO: change to sooner toast
       toast({
         title: 'Please try again.',
         description: 'Failed to fetch the new user data. Indexing might be in progress...',
       });
-      return;
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -323,6 +366,16 @@ export const CreateProfileForm = () => {
         continueButtonLoading={isSaving}
         continueText={continueText}
         onContinue={handleContinue}
+      />
+
+      <Molecules.DialogCropImage
+        open={cropDialogOpen}
+        imageSrc={pendingAvatarPreview}
+        fileName={pendingAvatarFile?.name ?? 'avatar.png'}
+        fileType={pendingAvatarFile?.type ?? 'image/png'}
+        onClose={handleCropCancel}
+        onBack={handleCropBack}
+        onCrop={handleCropComplete}
       />
     </>
   );
