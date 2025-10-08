@@ -2,6 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Cropper, { type Area } from 'react-easy-crop';
+// NOTE: CSS import is localized here since this is currently the only component using the cropper.
+// If multiple components start using react-easy-crop, consider moving this CSS import to:
+// - app/globals.css (for global availability)
+// - A shared client layout/provider (for centralized client-side loading)
+// This prevents duplicate style inclusion and ensures consistent styling across the app.
 import 'react-easy-crop/react-easy-crop.css';
 
 import * as Atoms from '@/atoms';
@@ -52,7 +57,7 @@ export function DialogCropImage({ open, imageSrc, fileName, fileType, onClose, o
       const previewUrl = URL.createObjectURL(blob);
       onCrop(croppedFile, previewUrl);
     } catch (error) {
-      console.error('Failed to crop image', error);
+      Libs.Logger.error('Failed to crop image', error);
     } finally {
       setIsCropping(false);
     }
@@ -107,9 +112,12 @@ export function DialogCropImage({ open, imageSrc, fileName, fileType, onClose, o
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Zoom</span>
+            <span id="zoom-label" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Zoom
+            </span>
             <input
               type="range"
+              aria-labelledby="zoom-label"
               min={1}
               max={3}
               step={0.01}

@@ -7,7 +7,12 @@ function loadImage(src: string): Promise<HTMLImageElement> {
     const image = new Image();
     image.addEventListener('load', () => resolve(image));
     image.addEventListener('error', (event) => reject(event));
-    image.setAttribute('crossorigin', 'anonymous');
+
+    // Only set crossOrigin for external resources (not data: or blob: URLs)
+    if (!src.startsWith('data:') && !src.startsWith('blob:')) {
+      image.crossOrigin = 'anonymous';
+    }
+
     image.src = src;
   });
 }
@@ -53,6 +58,13 @@ export async function cropImageToBlob(
   }
 
   context.imageSmoothingQuality = 'high';
+
+  // TODO: Handle EXIF orientation for mobile photos
+  // Mobile devices often embed rotation metadata in images. Without normalizing
+  // EXIF orientation, crop coordinates can be surprising for rotated inputs.
+  // Consider reading EXIF orientation and applying appropriate canvas transforms
+  // (rotate/flip) before drawImage to ensure consistent crop results.
+  // Libraries like 'exif-js' or 'blueimp-load-image' can help extract and apply orientation.
 
   context.drawImage(image, cropArea.x, cropArea.y, cropArea.width, cropArea.height, 0, 0, outputWidth, outputHeight);
 

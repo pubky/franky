@@ -151,63 +151,56 @@ export const CreateProfileForm = () => {
   };
 
   const handleContinue = async () => {
-    // TODO: Maybe wrap in TRY/CATCH/FINALLY block?
     setIsSaving(true);
     setContinueText('Saving...');
-    const user = validateUser();
 
-    if (!user) {
-      setContinueText('Finish');
-      setIsSaving(false);
-      return;
-    }
-
-    // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
-    //       and save the state of the avatar file and the preview image in the store
-    let image: string | null = null;
-    if (avatarFile) {
-      setContinueText('Uploading avatar...');
-      if (!avatarFile) return null;
-      image = await Core.ProfileController.uploadAvatar(avatarFile, pubky);
-      if (!image) return;
-    }
-
-    setContinueText('Saving profile...');
-    const response = await Core.ProfileController.create(user, image, pubky);
-
-    if (!response.ok) {
-      console.error('Failed to save profile', response);
-      setContinueText('Try again!');
-      setIsSaving(false);
-
-      // TODO: change to sooner toast
-      toast({
-        title: 'Failed to save profile',
-        description: 'Please try again.',
-      });
-      return;
-    }
-
-    // TODO: save user to store. Not sure about that one. Maybe we populate after bootstrap endpoint?
-    // TODO: navigate to profile page
-    // setIsSaving(false);
     try {
+      const user = validateUser();
+      if (!user) {
+        setContinueText('Finish');
+        return;
+      }
+
+      // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
+      //       and save the state of the avatar file and the preview image in the store
+      let image: string | null = null;
+      if (avatarFile) {
+        setContinueText('Uploading avatar...');
+        image = await Core.ProfileController.uploadAvatar(avatarFile, pubky);
+        if (!image) {
+          setContinueText('Try again!');
+          return;
+        }
+      }
+
+      setContinueText('Saving profile...');
+      const response = await Core.ProfileController.create(user, image, pubky);
+
+      if (!response.ok) {
+        Libs.Logger.error('Failed to save profile', response);
+        setContinueText('Try again!');
+        toast({
+          title: 'Failed to save profile',
+          description: 'Please try again.',
+        });
+        return;
+      }
+
       await Core.AuthController.authorizeAndBootstrap();
 
       // Set welcome dialog to show for new users
       setShowWelcomeDialog(true);
 
       router.push(App.FEED_ROUTES.FEED);
-    } catch {
+    } catch (err) {
+      Libs.Logger.error('Error during profile creation', err);
       setContinueText('Try again!');
-      setIsSaving(false);
-
-      // TODO: change to sooner toast
       toast({
         title: 'Please try again.',
         description: 'Failed to fetch the new user data. Indexing might be in progress...',
       });
-      return;
+    } finally {
+      setIsSaving(false);
     }
   };
 

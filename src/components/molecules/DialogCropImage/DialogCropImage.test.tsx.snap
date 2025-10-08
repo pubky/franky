@@ -46,10 +46,12 @@ exports[`DialogCropImage > matches snapshot with image loaded 1`] = `
       >
         <span
           class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+          id="zoom-label"
         >
           Zoom
         </span>
         <input
+          aria-labelledby="zoom-label"
           class="w-full accent-brand"
           max="3"
           min="1"

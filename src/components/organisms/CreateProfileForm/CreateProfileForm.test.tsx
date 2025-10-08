@@ -629,6 +629,49 @@ describe('CreateProfileForm', () => {
     });
   });
 
+  it('revokes pending preview URL when crop dialog is cancelled', async () => {
+    render(<CreateProfileForm />);
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const mockFile = new File(['mock-image'], 'test-avatar.jpg', { type: 'image/jpeg' });
+
+    // Select a file to trigger the crop dialog
+    Object.defineProperty(fileInput, 'files', {
+      value: [mockFile],
+      writable: false,
+    });
+
+    // Clear previous calls
+    vi.mocked(global.URL.createObjectURL).mockClear();
+    vi.mocked(global.URL.revokeObjectURL).mockClear();
+
+    fireEvent.change(fileInput);
+
+    // Wait for crop dialog to open and object URL to be created for pending preview
+    await waitFor(() => {
+      expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
+      expect(global.URL.createObjectURL).toHaveBeenCalledWith(mockFile);
+    });
+
+    const createObjectURLCallCount = vi.mocked(global.URL.createObjectURL).mock.calls.length;
+    expect(createObjectURLCallCount).toBeGreaterThan(0);
+
+    // Click Cancel button
+    const cancelButton = screen.getByText('Cancel');
+    fireEvent.click(cancelButton);
+
+    // Verify that pending preview URL was revoked
+    await waitFor(() => {
+      expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('mock-object-url');
+    });
+
+    // Verify file input was reset
+    await waitFor(() => {
+      const updatedFileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      expect(updatedFileInput.value).toBe('');
+    });
+  });
+
   it('handles avatar click to choose file', () => {
     render(<CreateProfileForm />);
 

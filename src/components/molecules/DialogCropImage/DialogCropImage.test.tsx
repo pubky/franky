@@ -154,4 +154,16 @@ describe('DialogCropImage', () => {
 
     expect(props.onBack).toHaveBeenCalledTimes(1);
   });
+
+  it('triggers onClose when cancel button is pressed', async () => {
+    const props = createDefaultProps();
+    render(<DialogCropImage {...props} />);
+
+    triggerCropComplete();
+
+    const cancelButton = await screen.findByRole('button', { name: 'Cancel' });
+    fireEvent.click(cancelButton);
+
+    expect(props.onClose).toHaveBeenCalledTimes(1);
+  });
 });
