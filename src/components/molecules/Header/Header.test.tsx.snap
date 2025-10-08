@@ -99,7 +99,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
 >
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/home"
   >
     <button
@@ -132,7 +131,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/hot"
   >
     <button
@@ -151,7 +149,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/bookmarks"
   >
     <button
@@ -181,7 +178,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/settings"
   >
     <button
@@ -216,7 +212,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="relative"
-    data-state="closed"
     href="/profile"
   >
     <span
@@ -239,7 +234,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
 >
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/home"
   >
     <button
@@ -272,7 +266,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/hot"
   >
     <button
@@ -291,7 +284,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/bookmarks"
   >
     <button
@@ -321,7 +313,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-    data-state="closed"
     href="/settings"
   >
     <button
@@ -356,7 +347,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   </a>
   <a
     class="relative"
-    data-state="closed"
     href="/profile"
   >
     <span
@@ -410,7 +400,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
   >
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-      data-state="closed"
       href="/home"
     >
       <button
@@ -443,7 +432,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     </a>
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-      data-state="closed"
       href="/hot"
     >
       <button
@@ -462,7 +450,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     </a>
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-      data-state="closed"
       href="/bookmarks"
     >
       <button
@@ -492,7 +479,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     </a>
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm"
-      data-state="closed"
       href="/settings"
     >
       <button
@@ -527,7 +513,6 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     </a>
     <a
       class="relative"
-      data-state="closed"
       href="/profile"
     >
       <span

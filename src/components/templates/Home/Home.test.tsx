@@ -32,6 +32,16 @@ vi.mock('@/core', () => ({
     showWelcomeDialog: false,
     setShowWelcomeDialog: vi.fn(),
   })),
+  useFiltersStore: vi.fn(() => ({
+    layout: 'columns',
+    setLayout: vi.fn(),
+    reach: 'all',
+    setReach: vi.fn(),
+    sort: 'recent',
+    setSort: vi.fn(),
+    content: 'all',
+    setContent: vi.fn(),
+  })),
   PostController: {
     fetch: vi.fn(() => Promise.resolve([])),
   },

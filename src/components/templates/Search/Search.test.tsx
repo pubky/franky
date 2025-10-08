@@ -76,11 +76,46 @@ vi.mock('@/molecules', () => ({
         Mocked DialogWelcome
       </div>
     ) : null,
+  FilterReach: ({ selectedTab }: { selectedTab: string }) => (
+    <div data-testid="filter-reach">FilterReach: {selectedTab}</div>
+  ),
+  FilterSort: ({ selectedTab }: { selectedTab: string }) => (
+    <div data-testid="filter-sort">FilterSort: {selectedTab}</div>
+  ),
+  FilterContent: ({ selectedTab }: { selectedTab: string }) => (
+    <div data-testid="filter-content">FilterContent: {selectedTab}</div>
+  ),
+  FilterLayout: ({ selectedTab }: { selectedTab: string }) => (
+    <div data-testid="filter-layout">FilterLayout: {selectedTab}</div>
+  ),
+  WhoToFollow: () => <div data-testid="who-to-follow">Who to Follow</div>,
+  ActiveUsers: () => <div data-testid="active-users">Active Users</div>,
+  HotTags: ({ tags }: { tags: string[] }) => <div data-testid="hot-tags">Hot Tags: {tags.join(', ')}</div>,
+  FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
 }));
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
   ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
+}));
+
+// Mock the Core module
+vi.mock('@/core', () => ({
+  useFiltersStore: vi.fn(() => ({
+    layout: 'columns',
+    setLayout: vi.fn(),
+    reach: 'all',
+    setReach: vi.fn(),
+    sort: 'recent',
+    setSort: vi.fn(),
+    content: 'all',
+    setContent: vi.fn(),
+  })),
+}));
+
+// Mock hooks
+vi.mock('@/hooks', () => ({
+  useLayoutReset: vi.fn(),
 }));
 
 describe('Search', () => {

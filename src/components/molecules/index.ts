@@ -5,6 +5,7 @@ export * from './Backup';
 export * from './Breadcrumb';
 export * from './ContainerRoot';
 export * from './FeedbackCard';
+export * from './FeedSection';
 export * from './Homeserver';
 export * from './ButtonFilters';
 export * from './HotTags';

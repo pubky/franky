@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import * as Libs from '@/libs';
 
 export interface FilterDrawerProps {
@@ -12,19 +12,22 @@ export interface FilterDrawerProps {
 
 export function FilterDrawer({ open, onOpenChangeAction, children, position = 'left' }: FilterDrawerProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [animateIn, setAnimateIn] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (open) {
       setIsVisible(true);
-      // Use requestAnimationFrame for reliable timing
+      // Start animation on next frame
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => setAnimateIn(true));
+        setIsAnimating(true);
       });
       document.body.style.overflow = 'hidden';
     } else {
-      setAnimateIn(false);
-      const timeout = setTimeout(() => setIsVisible(false), 300);
+      setIsAnimating(false);
+      // Wait for animation to complete before unmounting
+      const timeout = setTimeout(() => {
+        setIsVisible(false);
+      }, 300); // Match transition duration
       document.body.style.overflow = '';
       return () => clearTimeout(timeout);
     }
@@ -37,12 +40,12 @@ export function FilterDrawer({ open, onOpenChangeAction, children, position = 'l
   const widthClasses =
     position === 'left' ? 'w-[228px] sm:w-[228px] md:w-[385px]' : 'w-[280px] sm:w-[280px] md:w-[385px]';
 
-  const translateClasses =
+  const slideClasses =
     position === 'left'
-      ? animateIn
+      ? isAnimating
         ? 'translate-x-0'
         : '-translate-x-full'
-      : animateIn
+      : isAnimating
         ? 'translate-x-0'
         : 'translate-x-full';
 
@@ -52,7 +55,7 @@ export function FilterDrawer({ open, onOpenChangeAction, children, position = 'l
       <div
         className={Libs.cn(
           'absolute inset-0 bg-black transition-opacity duration-300',
-          animateIn ? 'bg-opacity-50' : 'bg-opacity-0',
+          isAnimating ? 'bg-opacity-50' : 'bg-opacity-0',
         )}
         onClick={() => onOpenChangeAction(false)}
       />
@@ -65,7 +68,7 @@ export function FilterDrawer({ open, onOpenChangeAction, children, position = 'l
           'transition-transform duration-300 ease-in-out',
           widthClasses,
           positionClasses,
-          translateClasses,
+          slideClasses,
         )}
       >
         <div className="h-full overflow-y-auto">{children}</div>

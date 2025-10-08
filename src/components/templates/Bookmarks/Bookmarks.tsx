@@ -6,16 +6,64 @@ import { AUTH_ROUTES } from '@/app';
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
+import {
+  BookmarksLeftSidebar,
+  BookmarksRightSidebar,
+  BookmarksLeftDrawer,
+  BookmarksRightDrawer,
+  BookmarksLeftDrawerMobile,
+  BookmarksRightDrawerMobile,
+} from './Bookmarks.sidebars';
 
 export function Bookmarks() {
   const router = useRouter();
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
 
   const handleLogout = () => {
     router.push(AUTH_ROUTES.LOGOUT);
   };
 
   return (
-    <Organisms.ContentLayout>
+    <Organisms.ContentLayout
+      leftSidebarContent={
+        <BookmarksLeftSidebar
+          reach={reach}
+          setReach={setReach}
+          sort={sort}
+          setSort={setSort}
+          content={content}
+          setContent={setContent}
+          layout={layout}
+          setLayout={setLayout}
+        />
+      }
+      rightSidebarContent={<BookmarksRightSidebar />}
+      leftDrawerContent={
+        <BookmarksLeftDrawer
+          reach={reach}
+          setReach={setReach}
+          sort={sort}
+          setSort={setSort}
+          content={content}
+          setContent={setContent}
+          layout={layout}
+          setLayout={setLayout}
+        />
+      }
+      rightDrawerContent={<BookmarksRightDrawer />}
+      leftDrawerContentMobile={
+        <BookmarksLeftDrawerMobile
+          reach={reach}
+          setReach={setReach}
+          sort={sort}
+          setSort={setSort}
+          content={content}
+          setContent={setContent}
+        />
+      }
+      rightDrawerContentMobile={<BookmarksRightDrawerMobile />}
+    >
       <div className="flex items-center justify-between gap-4">
         <Atoms.Heading level={1} size="xl" className="text-2xl">
           Bookmarks

@@ -1,21 +1,38 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import * as React from 'react';
 
 import { AUTH_ROUTES } from '@/app';
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
+import {
+  SettingsLeftSidebar,
+  SettingsRightSidebar,
+  SettingsLeftDrawer,
+  SettingsRightDrawer,
+} from './Settings.sidebars';
 
 export function Settings() {
   const router = useRouter();
+
+  // Reset to column layout on mount (this page doesn't support wide)
+  Hooks.useLayoutReset();
 
   const handleLogout = () => {
     router.push(AUTH_ROUTES.LOGOUT);
   };
 
   return (
-    <Organisms.ContentLayout>
+    <Organisms.ContentLayout
+      showRightMobileButton={false}
+      leftSidebarContent={<SettingsLeftSidebar />}
+      rightSidebarContent={<SettingsRightSidebar />}
+      leftDrawerContent={<SettingsLeftDrawer />}
+      rightDrawerContent={<SettingsRightDrawer />}
+    >
       <div className="flex items-center justify-between gap-4">
         <Atoms.Heading level={1} size="xl" className="text-2xl">
           Settings

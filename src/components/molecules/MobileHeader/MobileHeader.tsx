@@ -6,10 +6,18 @@ import * as Libs from '@/libs';
 export interface MobileHeaderProps {
   onLeftIconClick?: () => void;
   onRightIconClick?: () => void;
+  showLeftButton?: boolean;
+  showRightButton?: boolean;
   className?: string;
 }
 
-export function MobileHeader({ onLeftIconClick, onRightIconClick, className }: MobileHeaderProps) {
+export function MobileHeader({
+  onLeftIconClick,
+  onRightIconClick,
+  showLeftButton = true,
+  showRightButton = true,
+  className,
+}: MobileHeaderProps) {
   return (
     <div
       className={Libs.cn(
@@ -17,19 +25,27 @@ export function MobileHeader({ onLeftIconClick, onRightIconClick, className }: M
         className,
       )}
     >
-      <div className="flex items-center justify-between px-4 h-16">
+      <div className="flex items-center justify-between px-4 py-4">
         {/* Left icon - filters */}
-        <button onClick={onLeftIconClick} className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
-          <Libs.SlidersHorizontal className="h-6 w-6" />
-        </button>
+        {showLeftButton ? (
+          <button onClick={onLeftIconClick} className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+            <Libs.SlidersHorizontal className="h-6 w-6" />
+          </button>
+        ) : (
+          <div className="w-10 h-10" />
+        )}
 
         {/* Center - Logo */}
-        <Molecules.Logo width={90} height={30} />
+        <Molecules.Logo />
 
         {/* Right icon - community info */}
-        <button onClick={onRightIconClick} className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
-          <Libs.Activity className="h-6 w-6" />
-        </button>
+        {showRightButton ? (
+          <button onClick={onRightIconClick} className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+            <Libs.Activity className="h-6 w-6" />
+          </button>
+        ) : (
+          <div className="w-10 h-10" />
+        )}
       </div>
     </div>
   );

@@ -69,102 +69,62 @@ export function HeaderNavigationButtons({
   const isActive = (path: string) => pathname === path;
 
   return (
-    <Atoms.TooltipProvider>
-      <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
-        <Atoms.Tooltip>
-          <Atoms.TooltipTrigger asChild>
-            <Atoms.Link href={App.APP_ROUTES.HOME}>
-              <Atoms.Button
-                className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
-                variant="secondary"
-                size="icon"
-              >
-                <Libs.Home className="size-6" />
-              </Atoms.Button>
-            </Atoms.Link>
-          </Atoms.TooltipTrigger>
-          <Atoms.TooltipContent>
-            <p>Home</p>
-          </Atoms.TooltipContent>
-        </Atoms.Tooltip>
+    <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
+      <Atoms.Link href={App.APP_ROUTES.HOME}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
+          <Libs.Home className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
 
-        <Atoms.Tooltip>
-          <Atoms.TooltipTrigger asChild>
-            <Atoms.Link href={App.APP_ROUTES.HOT}>
-              <Atoms.Button
-                className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOT) ? '' : 'border bg-transparent')}
-                variant="secondary"
-                size="icon"
-              >
-                <Libs.Flame className="size-6" />
-              </Atoms.Button>
-            </Atoms.Link>
-          </Atoms.TooltipTrigger>
-          <Atoms.TooltipContent>
-            <p>Hot</p>
-          </Atoms.TooltipContent>
-        </Atoms.Tooltip>
+      <Atoms.Link href={App.APP_ROUTES.HOT}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOT) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
+          <Libs.Flame className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
 
-        <Atoms.Tooltip>
-          <Atoms.TooltipTrigger asChild>
-            <Atoms.Link href={App.APP_ROUTES.BOOKMARKS}>
-              <Atoms.Button
-                className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.BOOKMARKS) ? '' : 'border bg-transparent')}
-                variant="secondary"
-                size="icon"
-              >
-                <Libs.Bookmark className="size-6" />
-              </Atoms.Button>
-            </Atoms.Link>
-          </Atoms.TooltipTrigger>
-          <Atoms.TooltipContent>
-            <p>Bookmarks</p>
-          </Atoms.TooltipContent>
-        </Atoms.Tooltip>
+      <Atoms.Link href={App.APP_ROUTES.BOOKMARKS}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.BOOKMARKS) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
+          <Libs.Bookmark className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
 
-        <Atoms.Tooltip>
-          <Atoms.TooltipTrigger asChild>
-            <Atoms.Link href={App.APP_ROUTES.SETTINGS}>
-              <Atoms.Button
-                className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.SETTINGS) ? '' : 'border bg-transparent')}
-                variant="secondary"
-                size="icon"
-              >
-                <Libs.Settings className="size-6" />
-              </Atoms.Button>
-            </Atoms.Link>
-          </Atoms.TooltipTrigger>
-          <Atoms.TooltipContent>
-            <p>Settings</p>
-          </Atoms.TooltipContent>
-        </Atoms.Tooltip>
+      <Atoms.Link href={App.APP_ROUTES.SETTINGS}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.SETTINGS) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
+          <Libs.Settings className="size-6" />
+        </Atoms.Button>
+      </Atoms.Link>
 
-        <Atoms.Tooltip>
-          <Atoms.TooltipTrigger asChild>
-            <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
-              <Atoms.Avatar
-                className={Libs.cn(
-                  'w-12 h-12 cursor-pointer',
-                  isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '',
-                )}
-              >
-                <Atoms.AvatarImage src={avatarImage} alt="Profile" />
-                <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
-              </Atoms.Avatar>
-              {counter > 0 && (
-                <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">
-                  <Atoms.Typography className={`text-primary-foreground ${counter > 21 ? 'text-xs' : ''}`} size="sm">
-                    {counterString}
-                  </Atoms.Typography>
-                </Atoms.Badge>
-              )}
-            </Atoms.Link>
-          </Atoms.TooltipTrigger>
-          <Atoms.TooltipContent>
-            <p>Profile</p>
-          </Atoms.TooltipContent>
-        </Atoms.Tooltip>
-      </Atoms.Container>
-    </Atoms.TooltipProvider>
+      <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
+        <Atoms.Avatar
+          className={Libs.cn('w-12 h-12 cursor-pointer', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}
+        >
+          <Atoms.AvatarImage src={avatarImage} alt="Profile" />
+          <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
+        </Atoms.Avatar>
+        {counter > 0 && (
+          <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">
+            <Atoms.Typography className={`text-primary-foreground ${counter > 21 ? 'text-xs' : ''}`} size="sm">
+              {counterString}
+            </Atoms.Typography>
+          </Atoms.Badge>
+        )}
+      </Atoms.Link>
+    </Atoms.Container>
   );
 }

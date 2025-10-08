@@ -19,17 +19,24 @@ function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTML
 
 function FilterHeader({
   title,
+  subtitle,
   className,
   ...props
 }: {
   title: string;
+  subtitle?: string;
   className?: string;
 } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <div data-slot="filter-header" data-testid="filter-header" {...props}>
+    <div data-slot="filter-header" data-testid="filter-header" className="flex flex-col gap-1" {...props}>
       <Atoms.Heading level={2} size="lg" className={Libs.cn('text-muted-foreground font-light', className)}>
         {title}
       </Atoms.Heading>
+      {subtitle && (
+        <Atoms.Typography size="sm" className="text-muted-foreground">
+          {subtitle}
+        </Atoms.Typography>
+      )}
     </div>
   );
 }

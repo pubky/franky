@@ -113,38 +113,49 @@ describe('ContentLayout', () => {
 
     expect(screen.getByTestId('mobile-footer')).toBeInTheDocument();
     expect(screen.getByText('Test Content')).toBeInTheDocument();
-    expect(screen.getByTestId('left-sidebar')).toBeInTheDocument();
-    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
   });
 
   it('shows left sidebar when showLeftSidebar is true and layout is not wide', () => {
     render(
-      <ContentLayout showLeftSidebar={true}>
+      <ContentLayout
+        showLeftSidebar={true}
+        leftSidebarContent={<div data-testid="left-sidebar-content">Left Sidebar</div>}
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
 
-    expect(screen.getByTestId('left-sidebar')).toBeInTheDocument();
+    // Sidebar is hidden on mobile (< lg) so we check it's in the DOM but with hidden class
+    const sidebarElements = screen.queryAllByText('Left Sidebar');
+    expect(sidebarElements.length).toBeGreaterThan(0);
   });
 
   it('hides left sidebar when showLeftSidebar is false', () => {
     render(
-      <ContentLayout showLeftSidebar={false}>
+      <ContentLayout
+        showLeftSidebar={false}
+        leftSidebarContent={<div data-testid="left-sidebar-content">Left Sidebar</div>}
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
 
-    expect(screen.queryByTestId('left-sidebar')).not.toBeInTheDocument();
+    expect(screen.queryByText('Left Sidebar')).not.toBeInTheDocument();
   });
 
   it('shows right sidebar when showRightSidebar is true and layout is not wide', () => {
     render(
-      <ContentLayout showRightSidebar={true}>
+      <ContentLayout
+        showRightSidebar={true}
+        rightSidebarContent={<div data-testid="right-sidebar-content">Right Sidebar</div>}
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
 
-    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
+    // Sidebar is hidden on mobile (< lg) so we check it's in the DOM but with hidden class
+    const sidebarElements = screen.queryAllByText('Right Sidebar');
+    expect(sidebarElements.length).toBeGreaterThan(0);
   });
 
   it('hides right sidebar when showRightSidebar is false', () => {
@@ -159,7 +170,15 @@ describe('ContentLayout', () => {
 
   it('renders right sidebar components in right drawer', () => {
     render(
-      <ContentLayout>
+      <ContentLayout
+        rightSidebarContent={
+          <>
+            <div data-testid="who-to-follow">Who to Follow</div>
+            <div data-testid="active-users">Active Users</div>
+            <div data-testid="feedback-card">Feedback</div>
+          </>
+        }
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );

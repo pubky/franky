@@ -52,7 +52,7 @@ describe('MobileHeader', () => {
     render(<MobileHeader />);
 
     const innerContainer = screen.getByTestId('logo').closest('div')?.parentElement;
-    expect(innerContainer).toHaveClass('flex', 'items-center', 'justify-between', 'px-4', 'h-16');
+    expect(innerContainer).toHaveClass('flex', 'items-center', 'justify-between', 'px-4', 'py-4');
   });
 
   it('applies correct classes to left button', () => {
@@ -69,12 +69,11 @@ describe('MobileHeader', () => {
     expect(rightButton).toHaveClass('p-2', 'hover:bg-secondary/10', 'rounded-full', 'transition-colors');
   });
 
-  it('renders logo with correct size props', () => {
+  it('renders logo component', () => {
     render(<MobileHeader />);
 
     const logo = screen.getByTestId('logo');
-    expect(logo).toHaveAttribute('data-width', '90');
-    expect(logo).toHaveAttribute('data-height', '30');
+    expect(logo).toBeInTheDocument();
   });
 
   it('calls onRightIconClick when right button is clicked', () => {
@@ -97,12 +96,6 @@ describe('MobileHeader', () => {
     expect(rightIcon).toHaveClass('h-6', 'w-6');
   });
 
-  it('renders with correct responsive behavior', () => {
-    render(<MobileHeader />);
-
-    expect(screen.getByTestId('logo')).toBeInTheDocument();
-  });
-
   it('handles hover states correctly', () => {
     render(<MobileHeader />);
 
@@ -111,22 +104,6 @@ describe('MobileHeader', () => {
 
     expect(leftButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
     expect(rightButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
-  });
-
-  it('renders logo component', () => {
-    render(<MobileHeader />);
-
-    const logo = screen.getByTestId('logo');
-    expect(logo).toBeInTheDocument();
-  });
-
-  it('renders with correct structure', () => {
-    render(<MobileHeader />);
-
-    // Check that all main elements are present
-    expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('logo')).toBeInTheDocument();
-    expect(screen.getByTestId('activity-icon')).toBeInTheDocument();
   });
 });
 

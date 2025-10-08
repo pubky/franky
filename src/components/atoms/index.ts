@@ -19,6 +19,5 @@ export * from './ReplyLine';
 export * from './Textarea';
 export * from './Toast';
 export * from './Toggle';
-export * from './Tooltip';
 export * from './Typography';
 export * from './Tag';

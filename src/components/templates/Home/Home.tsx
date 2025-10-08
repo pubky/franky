@@ -11,6 +11,14 @@ import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
+import {
+  HomeLeftSidebar,
+  HomeRightSidebar,
+  HomeLeftDrawer,
+  HomeRightDrawer,
+  HomeLeftDrawerMobile,
+  HomeRightDrawerMobile,
+} from './Home.sidebars';
 
 const POSTS_PER_PAGE = 20;
 
@@ -26,6 +34,7 @@ export function Home() {
 
   const { currentUserPubky } = Core.useAuthStore();
   const { secretKey, showWelcomeDialog, setShowWelcomeDialog } = Core.useOnboardingStore();
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
 
   useEffect(() => {
     if (secretKey) {
@@ -139,7 +148,45 @@ export function Home() {
           bio={userDetails.bio}
         />
       )}
-      <Organisms.ContentLayout>
+      <Organisms.ContentLayout
+        leftSidebarContent={
+          <HomeLeftSidebar
+            reach={reach}
+            setReach={setReach}
+            sort={sort}
+            setSort={setSort}
+            content={content}
+            setContent={setContent}
+            layout={layout}
+            setLayout={setLayout}
+          />
+        }
+        rightSidebarContent={<HomeRightSidebar />}
+        leftDrawerContent={
+          <HomeLeftDrawer
+            reach={reach}
+            setReach={setReach}
+            sort={sort}
+            setSort={setSort}
+            content={content}
+            setContent={setContent}
+            layout={layout}
+            setLayout={setLayout}
+          />
+        }
+        rightDrawerContent={<HomeRightDrawer />}
+        leftDrawerContentMobile={
+          <HomeLeftDrawerMobile
+            reach={reach}
+            setReach={setReach}
+            sort={sort}
+            setSort={setSort}
+            content={content}
+            setContent={setContent}
+          />
+        }
+        rightDrawerContentMobile={<HomeRightDrawerMobile />}
+      >
         {showBackupAlert && <Organisms.AlertBackup onDismiss={handleBackupDismiss} />}
 
         <div className="flex items-center justify-between gap-4">

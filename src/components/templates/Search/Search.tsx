@@ -1,13 +1,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
 import * as App from '@/app';
+import * as Hooks from '@/hooks';
 
 export function Search() {
   const router = useRouter();
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+
+  // Reset to column layout on mount (this page doesn't support wide)
+  Hooks.useLayoutReset();
 
   const handleLogout = () => {
     router.push(App.AUTH_ROUTES.LOGOUT);
@@ -16,7 +23,46 @@ export function Search() {
   return (
     <>
       <Molecules.DialogWelcome isOpen={false} onOpenChange={() => {}} name="" pubky="" bio="" />
-      <Organisms.ContentLayout>
+      <Organisms.ContentLayout
+        leftSidebarContent={
+          <>
+            <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
+            <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />
+            <div className="self-start sticky top-[100px] flex flex-col gap-6">
+              <Molecules.FilterContent selectedTab={content} onTabChange={setContent} />
+              <Molecules.FilterLayout selectedTab={layout} onTabChange={setLayout} />
+            </div>
+          </>
+        }
+        rightSidebarContent={
+          <>
+            <Molecules.WhoToFollow />
+            <Molecules.ActiveUsers />
+            <Molecules.HotTags
+              tags={[
+                { name: 'bitcoin', count: 1234 },
+                { name: 'nostr', count: 892 },
+                { name: 'decentralization', count: 567 },
+                { name: 'privacy', count: 445 },
+                { name: 'web3', count: 321 },
+                { name: 'opensource', count: 289 },
+              ]}
+            />
+            <div className="self-start sticky top-[100px]">
+              <Molecules.FeedbackCard />
+            </div>
+          </>
+        }
+        leftDrawerContent={
+          <div className="flex flex-col gap-6">
+            <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
+            <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />
+            <Molecules.FilterLayout selectedTab={layout} onTabChange={setLayout} />
+            <Molecules.FilterContent selectedTab={content} onTabChange={setContent} />
+          </div>
+        }
+        rightDrawerContent={undefined}
+      >
         <div className="flex items-center justify-between gap-4">
           <Atoms.Heading level={1} size="xl" className="text-2xl">
             Search
