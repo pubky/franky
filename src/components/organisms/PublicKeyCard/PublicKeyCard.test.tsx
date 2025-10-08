@@ -179,34 +179,24 @@ const { mockLoggerError } = vi.hoisted(() => ({
   mockLoggerError: vi.fn(),
 }));
 
-vi.mock('@/libs', () => ({
-  Identity: {
-    generateKeypair: vi.fn(() => ({
-      pubky: 'test-public-key',
-      secretKey: 'test-secret-key-64-chars-long-hex-string-for-testing-purposes',
-      mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
-    })),
-  },
-  shareWithFallback: mockShareWithFallback,
-  Logger: {
-    error: mockLoggerError,
-  },
-  Copy: ({ className }: { className?: string }) => (
-    <div data-testid="copy-icon" className={className}>
-      Copy
-    </div>
-  ),
-  Share: ({ className }: { className?: string }) => (
-    <div data-testid="share-icon" className={className}>
-      Share
-    </div>
-  ),
-  Key: ({ className }: { className?: string }) => (
-    <div data-testid="key-icon" className={className}>
-      Key
-    </div>
-  ),
-}));
+// Mock libs - use actual utility functions and icons from lucide-react
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    Identity: {
+      generateKeypair: vi.fn(() => ({
+        pubky: 'test-public-key',
+        secretKey: 'test-secret-key-64-chars-long-hex-string-for-testing-purposes',
+        mnemonic: 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about',
+      })),
+    },
+    shareWithFallback: mockShareWithFallback,
+    Logger: {
+      error: mockLoggerError,
+    },
+  };
+});
 
 describe('PublicKeyCard', () => {
   beforeEach(() => {
@@ -247,7 +237,7 @@ describe('PublicKeyCard', () => {
     expect(screen.getByTestId('action-button-0')).toBeInTheDocument();
     expect(screen.getByTestId('action-button-1')).toBeInTheDocument();
     expect(screen.getByText('Copy to clipboard')).toBeInTheDocument();
-    expect(screen.getByTestId('share-icon')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-share')).toBeInTheDocument();
   });
 
   it('does not render share button on non-touch devices', () => {

@@ -19,10 +19,13 @@ vi.mock('@/atoms', () => ({
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
 }));
 
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock the libs - keep real icons via importOriginal and only stub cn helper
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
+  return {
+    ...actual,
+    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+  };
 });
 
 // Mock the app routes
@@ -45,27 +48,29 @@ describe('MobileFooter', () => {
   it('renders with default props', () => {
     render(<MobileFooter />);
 
-    expect(screen.getByTestId('home-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('search-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('flame-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('bookmark-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('settings-icon')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-house')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-search')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-flame')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-bookmark')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
   });
 
   it('renders with custom className', () => {
     render(<MobileFooter className="custom-footer" />);
+
+    expect(document.querySelector('.lucide-house')).toBeInTheDocument();
   });
 
   it('renders all navigation items', () => {
     render(<MobileFooter />);
 
     const navItems = [
-      { href: '/home', icon: 'home-icon', label: 'Home' },
-      { href: '/search', icon: 'search-icon', label: 'Search' },
-      { href: '/hot', icon: 'flame-icon', label: 'Hot' },
-      { href: '/bookmarks', icon: 'bookmark-icon', label: 'Bookmarks' },
-      { href: '/settings', icon: 'settings-icon', label: 'Settings' },
+      { href: '/home', iconClass: '.lucide-house', label: 'Home' },
+      { href: '/search', iconClass: '.lucide-search', label: 'Search' },
+      { href: '/hot', iconClass: '.lucide-flame', label: 'Hot' },
+      { href: '/bookmarks', iconClass: '.lucide-bookmark', label: 'Bookmarks' },
+      { href: '/settings', iconClass: '.lucide-settings', label: 'Settings' },
     ];
 
     const links = screen.getAllByRole('link');
@@ -98,17 +103,16 @@ describe('MobileFooter', () => {
 
     const fallback = screen.getByTestId('avatar-fallback');
     expect(fallback).toBeInTheDocument();
-
-    const userIcon = screen.getByTestId('user-icon');
+    const userIcon = document.querySelector('.lucide-user') as HTMLElement | null;
     expect(userIcon).toHaveClass('h-5', 'w-5');
   });
 
   it('applies correct icon classes', () => {
     render(<MobileFooter />);
 
-    const icons = ['home-icon', 'search-icon', 'flame-icon', 'bookmark-icon', 'settings-icon'];
-    icons.forEach((icon) => {
-      const iconElement = screen.getByTestId(icon);
+    const iconClasses = ['.lucide-house', '.lucide-search', '.lucide-flame', '.lucide-bookmark', '.lucide-settings'];
+    iconClasses.forEach((selector) => {
+      const iconElement = document.querySelector(selector) as HTMLElement | null;
       expect(iconElement).toHaveClass('h-6', 'w-6');
     });
   });
@@ -117,7 +121,7 @@ describe('MobileFooter', () => {
     vi.mocked(usePathname).mockReturnValue('/home');
     render(<MobileFooter />);
 
-    const homeLink = screen.getByTestId('home-icon').closest('a');
+    const homeLink = document.querySelector('.lucide-house')?.closest('a');
     expect(homeLink).toHaveClass('bg-secondary/30');
   });
 
@@ -125,20 +129,20 @@ describe('MobileFooter', () => {
     vi.mocked(usePathname).mockReturnValue('/search');
     render(<MobileFooter />);
 
-    const homeLink = screen.getByTestId('home-icon').closest('a');
+    const homeLink = document.querySelector('.lucide-house')?.closest('a');
     expect(homeLink).toHaveClass('bg-secondary/20', 'hover:bg-secondary/25');
   });
 
   it('renders with correct responsive behavior', () => {
     render(<MobileFooter />);
 
-    expect(screen.getByTestId('home-icon')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-house')).toBeInTheDocument();
   });
 
   it('applies correct hover states', () => {
     render(<MobileFooter />);
 
-    expect(screen.getByTestId('home-icon')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-house')).toBeInTheDocument();
   });
 });
 
@@ -161,5 +165,19 @@ describe('MobileFooter - Snapshots', () => {
     vi.mocked(usePathname).mockReturnValue('/search');
     const { container } = render(<MobileFooter />);
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for navigation links', () => {
+    render(<MobileFooter />);
+
+    const homeLink = document.querySelector('.lucide-house')?.closest('a');
+    expect(homeLink).toMatchSnapshot();
+  });
+
+  it('matches snapshot for profile link', () => {
+    render(<MobileFooter />);
+
+    const profileLink = screen.getByTestId('avatar').closest('a');
+    expect(profileLink).toMatchSnapshot();
   });
 });

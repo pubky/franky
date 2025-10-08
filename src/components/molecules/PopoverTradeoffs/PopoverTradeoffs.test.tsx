@@ -1,9 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { PopoverTradeoffs } from './PopoverTradeoffs';
+import { PopoverTradeoffs } from '@/molecules';
 
-// Mock @/libs to intercept Libs.AlertTriangle and utilities
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock @/libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return { ...actual };
@@ -52,19 +51,23 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-vi.mock('@/components/molecules', () => ({
-  Popover: ({ children }: { children: React.ReactNode }) => <div data-testid="popover">{children}</div>,
-  PopoverContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="popover-content" className={className}>
-      {children}
-    </div>
-  ),
-  PopoverTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="popover-trigger" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-}));
+vi.mock('@/components/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/components/molecules')>();
+  return {
+    ...actual,
+    Popover: ({ children }: { children: React.ReactNode }) => <div data-testid="popover">{children}</div>,
+    PopoverContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+      <div data-testid="popover-content" className={className}>
+        {children}
+      </div>
+    ),
+    PopoverTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
+      <div data-testid="popover-trigger" data-as-child={asChild}>
+        {children}
+      </div>
+    ),
+  };
+});
 
 describe('PopoverTradeoffs', () => {
   it('renders with default props', () => {

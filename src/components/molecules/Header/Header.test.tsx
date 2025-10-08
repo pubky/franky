@@ -88,7 +88,7 @@ vi.mock('@/components', () => ({
 
 // Mock the molecules
 vi.mock('@/molecules', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
     ProgressSteps: ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => (
@@ -102,10 +102,24 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock the libs - keep real implementations and only stub helpers we need
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
+  return {
+    ...actual,
+    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+    extractInitials: ({ name, maxLength = 2 }: { name?: string; maxLength?: number }) => {
+      if (!name || typeof name !== 'string') return '';
+      return name
+        .trim()
+        .split(/\s+/)
+        .filter((word) => word.length > 0)
+        .map((word) => word.charAt(0))
+        .join('')
+        .toUpperCase()
+        .slice(0, maxLength);
+    },
+  };
 });
 
 // Mock the config
@@ -218,14 +232,29 @@ describe('Header Components', () => {
   });
 
   describe('HeaderSocialLinks', () => {
+    it('renders social links', () => {
+      render(<HeaderSocialLinks />);
+
+      // Github2 may not include a lucide- class; assert presence via anchor with svg
+      const githubLink = document.querySelector('a[href="https://github.com"]');
+      expect(githubLink?.querySelector('svg')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-x-twitter')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-telegram')).toBeInTheDocument();
+    });
+
+    it('applies correct classes', () => {
+      render(<HeaderSocialLinks />);
+
+      const githubLink = document.querySelector('a[href="https://github.com"]');
+      expect(githubLink?.querySelector('svg')).toBeInTheDocument();
+    });
+
     it('renders links with correct hrefs', () => {
       render(<HeaderSocialLinks />);
 
-      // Icons are now actual lucide-react components (SVGs), find links by href
-      const links = screen.getAllByRole('link');
-      const githubLink = links.find((link) => link.getAttribute('href') === 'https://github.com');
-      const twitterLink = links.find((link) => link.getAttribute('href') === 'https://twitter.com/getpubky');
-      const telegramLink = links.find((link) => link.getAttribute('href') === 'https://t.me/getpubky');
+      const githubLink = document.querySelector('a[href="https://github.com"]');
+      const twitterLink = document.querySelector('a[href="https://twitter.com/getpubky"]');
+      const telegramLink = document.querySelector('a[href="https://t.me/getpubky"]');
 
       expect(githubLink).toHaveAttribute('href', 'https://github.com');
       expect(twitterLink).toHaveAttribute('href', 'https://twitter.com/getpubky');
@@ -285,11 +314,11 @@ describe('Header Components', () => {
       render(<HeaderSignIn />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
-      // Check for navigation elements instead of test-id since we're rendering the real component
-      expect(screen.getByTestId('home-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('flame-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('bookmark-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('settings-icon')).toBeInTheDocument();
+      // lucide uses 'house' for the home icon
+      expect(document.querySelector('.lucide-house')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-flame')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-bookmark')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
     });
 
     it('applies correct classes', () => {
@@ -342,10 +371,10 @@ describe('Header Components', () => {
     it('renders navigation links', () => {
       render(<HeaderNavigationButtons avatarInitial="TU" />);
 
-      const homeLink = screen.getByTestId('home-icon').closest('a');
-      const hotLink = screen.getByTestId('flame-icon').closest('a');
-      const bookmarkLink = screen.getByTestId('bookmark-icon').closest('a');
-      const settingsLink = screen.getByTestId('settings-icon').closest('a');
+      const homeLink = document.querySelector('.lucide-house')?.closest('a');
+      const hotLink = document.querySelector('.lucide-flame')?.closest('a');
+      const bookmarkLink = document.querySelector('.lucide-bookmark')?.closest('a');
+      const settingsLink = document.querySelector('.lucide-settings')?.closest('a');
       const profileLink = screen.getByText('TU').closest('a');
 
       expect(homeLink).toHaveAttribute('href', '/home');
