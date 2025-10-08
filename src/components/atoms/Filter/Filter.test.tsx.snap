@@ -71,21 +71,17 @@ exports[`Filter Components > FilterItem > renders with default props 1`] = `
 `;
 
 exports[`Filter Components > FilterItemIcon > applies custom className 1`] = `
-<div
+<svg
   class="w-5 h-5 custom-icon"
   data-testid="mock-icon"
->
-  Icon
-</div>
+/>
 `;
 
 exports[`Filter Components > FilterItemIcon > renders with icon 1`] = `
-<div
+<svg
   class="w-5 h-5"
   data-testid="mock-icon"
->
-  Icon
-</div>
+/>
 `;
 
 exports[`Filter Components > FilterItemLabel > applies custom className 1`] = `

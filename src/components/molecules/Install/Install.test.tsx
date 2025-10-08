@@ -101,7 +101,7 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock libs - use actual implementations (icons are real)
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return { ...actual };
