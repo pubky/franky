@@ -108,17 +108,6 @@ vi.mock('@/libs', async (importOriginal) => {
   return {
     ...actual,
     cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-    extractInitials: ({ name, maxLength = 2 }: { name?: string; maxLength?: number }) => {
-      if (!name || typeof name !== 'string') return '';
-      return name
-        .trim()
-        .split(/\s+/)
-        .filter((word) => word.length > 0)
-        .map((word) => word.charAt(0))
-        .join('')
-        .toUpperCase()
-        .slice(0, maxLength);
-    },
   };
 });
 

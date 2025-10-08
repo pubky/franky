@@ -41,7 +41,6 @@ vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    extractInitials: ({ name }: { name?: string }) => (name ? name.charAt(0).toUpperCase() : 'U'),
     cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
   };
 });
