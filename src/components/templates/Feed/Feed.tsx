@@ -123,7 +123,7 @@ export function Feed() {
   });
 
   const handlePostClick = (post: Core.NexusPost) => {
-    const [userId, postId] = post.details.id.split(':');
+    const { pubky: userId, postId } = Core.parsePostCompositeId(post.details.id);
     router.push(`/post/${userId}/${postId}`);
   };
 

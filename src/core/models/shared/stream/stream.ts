@@ -60,7 +60,7 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
         Libs.DatabaseErrorType.CREATE_FAILED,
         `Failed to create stream in ${this.table.name} with ID: ${String(id)}`,
         500,
-        { error, streamId: id, stream },
+        { error, streamId: id, streamLength: stream?.length ?? 0 },
       );
     }
   }
@@ -96,7 +96,7 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
         Libs.DatabaseErrorType.UPSERT_FAILED,
         `Failed to upsert stream in ${this.table.name} with ID: ${String(id)}`,
         500,
-        { error, streamId: id, stream },
+        { error, streamId: id, streamLength: stream?.length ?? 0 },
       );
     }
   }

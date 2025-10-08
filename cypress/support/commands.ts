@@ -1,9 +1,8 @@
 // <reference types="cypress" />
 
 import { backupDownloadFilePath } from './common';
-import { goToProfilePageFromHeader } from './header';
 //import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
-import { HasBackedUp, BackupType } from './types/enums';
+import { BackupType } from './types/enums';
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -21,7 +20,7 @@ Cypress.Commands.add(
     profileBio: string = '',
     backup?: BackupType[],
     //skipOnboardingSlides: SkipOnboardingSlides = SkipOnboardingSlides.Yes,
-    pubkyAlias?: string
+    pubkyAlias?: string,
   ) => {
     cy.location('pathname').then((pathname) => {
       if (pathname !== '/') cy.visit('/');
@@ -50,8 +49,11 @@ Cypress.Commands.add(
       cy.get('#download-file-btn').click();
       cy.renameFile(backupDownloadFilePath(), backupDownloadFilePath(profileName));
       cy.get('#backup-successful-ok-btn').click();
-    };
-    if (backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation) || backup?.includes(BackupType.RecoveryPhraseWithConfirmation)) {
+    }
+    if (
+      backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation) ||
+      backup?.includes(BackupType.RecoveryPhraseWithConfirmation)
+    ) {
       cy.get('#backup-recovery-phrase-btn').click();
       cy.get('#backup-recovery-phrase-reveal-btn').click();
 
@@ -65,7 +67,6 @@ Cypress.Commands.add(
       // either skip phrase confirmation or confirm it
       if (backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation)) {
         cy.get('#dialog-close-btn').click();
-
       } else if (backup?.includes(BackupType.RecoveryPhraseWithConfirmation)) {
         cy.get(`@recoveryPhrase-${profileName}`).then((recoveryPhrase) => {
           confirmRecoveryPhrase(recoveryPhrase.toString());
@@ -81,8 +82,8 @@ Cypress.Commands.add(
       method: 'GET',
       url: Cypress.env('homeserverAdminUrl'),
       headers: {
-        'X-Admin-Password': Cypress.env('homeserverAdminPassword')
-      }
+        'X-Admin-Password': Cypress.env('homeserverAdminPassword'),
+      },
     }).then((response) => {
       const inviteCode = response.body;
       cy.wrap(inviteCode).as('inviteCode');
@@ -104,16 +105,32 @@ Cypress.Commands.add(
     // confirm welcome message is shown and dismiss it
     cy.get('#welcome-title').should('exist');
     cy.get('#welcome-explore-pubky-btn').click();
-  }
+  },
 );
 
 // Confirm recovery phrase by clicking each word in order
 function confirmRecoveryPhrase(recoveryPhrase: string): void {
   const words = recoveryPhrase.split(' ');
   const sortedWords = [...words].sort();
+
+  // Track which indices in sortedWords we've already used
+  const usedIndices = new Set<number>();
+
   words.forEach((word) => {
-    // Find the index of the current word in the sorted list
-    const alphaIndex = sortedWords.indexOf(word);
+    // Find the next available index of the current word in the sorted list
+    let alphaIndex = -1;
+    for (let i = 0; i < sortedWords.length; i++) {
+      if (sortedWords[i] === word && !usedIndices.has(i)) {
+        alphaIndex = i;
+        usedIndices.add(i);
+        break;
+      }
+    }
+
+    if (alphaIndex === -1) {
+      throw new Error(`Could not find available index for word: ${word}`);
+    }
+
     cy.get(`#backup-recovery-phrase-word-${word}-${alphaIndex + 1}`).click();
   });
   cy.get('#backup-recovery-phrase-validate-btn').click();
@@ -174,12 +191,12 @@ Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcod
   cy.location('pathname').should('eq', '/sign-in');
 
   cy.get('#restore-encrypted-file-btn').click();
-  
+
   cy.get('#encrypted-file-input').selectFile(
     backupFilepath,
-    { force: true } // force to bypass visibility check of hidden input field
+    { force: true }, // force to bypass visibility check of hidden input field
   );
-  
+
   cy.get('#restore-password').type(passcode);
   cy.get('#encrypted-file-restore-btn').click();
 
@@ -221,24 +238,6 @@ Cypress.Commands.add('backupRecoveryFile', (passcode = '123456') => {
 Cypress.Commands.add('deleteDownloadsFolder', () => {
   const downloadsFolder = Cypress.config('downloadsFolder');
   cy.task('deleteFolder', downloadsFolder);
-});
-
-Cypress.Commands.add('waitForFileExistsWithSuffix', (folder: string, suffix: string) => {
-  let attempts = 0;
-  const maxAttempts = 5;
-  const checkFile = () => {
-    cy.task('checkFileExistsWithSuffix', { folder, suffix }).then((exists) => {
-      if (exists) {
-        return;
-      }
-      attempts++;
-      if (attempts >= maxAttempts) {
-        throw new Error(`File with suffix ${suffix} not found after ${maxAttempts} attempts`);
-      }
-      cy.wait(1000);
-      checkFile();
-    });
-  };
 });
 
 Cypress.Commands.add('deleteFile', (filePath: string) => {
@@ -398,26 +397,26 @@ Cypress.Commands.add('findPostInBookmarks', (postIdx: number) => {
 //     })
 //     .eq(postIdx);
 
-  // TODO: this implementation is more robust when "Show n new posts" appears unexpectedly, see https://github.com/pubky/pubky-app/issues/1033
-  // cy.get('#posts-feed')
-  //   .find('#timeline')
-  //   .should('have.descendants', '*')
-  //   .children()
-  //   .then(($posts) => {
-  //     // Filter out "Show new posts" element
-  //     const actualPosts = $posts.filter((_, el) => {
-  //       const text = Cypress.$(el).text();
-  //       // Match "Show n new posts" pattern where n is a number
-  //       return !/Show\s+\d+\s+new posts/i.test(text);
-  //     });
+// TODO: this implementation is more robust when "Show n new posts" appears unexpectedly, see https://github.com/pubky/pubky-app/issues/1033
+// cy.get('#posts-feed')
+//   .find('#timeline')
+//   .should('have.descendants', '*')
+//   .children()
+//   .then(($posts) => {
+//     // Filter out "Show new posts" element
+//     const actualPosts = $posts.filter((_, el) => {
+//       const text = Cypress.$(el).text();
+//       // Match "Show n new posts" pattern where n is a number
+//       return !/Show\s+\d+\s+new posts/i.test(text);
+//     });
 
-  //     // optionally filter posts by contained text
-  //     return filterText
-  //       ? // cannot use :contains due to additional space inserted between each word in the post content
-  //         actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
-  //       : actualPosts;
-  //   })
-  //   .eq(postIdx);
+//     // optionally filter posts by contained text
+//     return filterText
+//       ? // cannot use :contains due to additional space inserted between each word in the post content
+//         actualPosts.filter((_idx, element) => element.innerText.includes(filterText))
+//       : actualPosts;
+//   })
+//   .eq(postIdx);
 // };
 
 // useful to find your latest new post
@@ -448,6 +447,6 @@ Cypress.Commands.add('findPostInSearchResults', (filterText?: string, postIdx = 
 // To prevent Cypress from failing the test when running pubky-app with dev build:
 // `Uncaught SyntaxError: Invalid or unexpected token` on Chrome, and
 // `Uncaught SyntaxError: "" literal not terminated before end of script` on firefox.
-Cypress.on('uncaught:exception', (_err, _runnable) => {
+Cypress.on('uncaught:exception', () => {
   return false;
 });

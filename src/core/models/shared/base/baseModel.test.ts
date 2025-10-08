@@ -83,13 +83,13 @@ describe('DexieModelBase (shared CRUD/query)', () => {
     expect(ids).toEqual(['10', '11']);
   });
 
-  it('findByIdsWithNulls preserves order and includes nulls for missing', async () => {
+  it('findByIdsPreserveOrder preserves order and includes nulls for missing', async () => {
     await TestBaseModel.upsert({ id: '20', name: 'x' });
     await TestBaseModel.upsert({ id: '22', name: 'z' });
-    const results = await TestBaseModel.findByIdsWithNulls(['20', '21', '22']);
+    const results = await TestBaseModel.findByIdsPreserveOrder(['20', '21', '22']);
     expect(results.length).toBe(3);
     expect(results[0]).toEqual({ id: '20', name: 'x' });
-    expect(results[1]).toBeNull();
+    expect(results[1]).toBeUndefined();
     expect(results[2]).toEqual({ id: '22', name: 'z' });
   });
 

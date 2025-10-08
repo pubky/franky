@@ -1,7 +1,6 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
-import { buildPostIdFromPubkyUri } from './post.helpers';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
@@ -51,14 +50,14 @@ export class LocalPostService {
           reposts: 0,
         };
 
-        const author = details.id.split(':')[0] as Core.Pubky;
+        const { pubky } = Core.parsePostCompositeId(details.id);
 
         return {
           details: {
             id: details.id,
             content: details.content,
             indexed_at: details.indexed_at,
-            author,
+            author: pubky,
             kind: details.kind,
             uri: details.uri,
             attachments: details.attachments,
@@ -110,13 +109,14 @@ export class LocalPostService {
    * @throws {DatabaseError} When database operations fail
    */
   static async create({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
+    const { postId: postIdPart } = Core.parsePostCompositeId(postId);
     try {
       const postDetails: Core.PostDetailsModelSchema = {
         id: postId,
         content,
         indexed_at: Date.now(),
         kind,
-        uri: postUriBuilder(authorId, postId.split(':')[1]),
+        uri: postUriBuilder(authorId, postIdPart),
         attachments: attachments ?? null,
       };
 
@@ -152,7 +152,7 @@ export class LocalPostService {
           ]);
 
           if (parentUri) {
-            const fullParentId = buildPostIdFromPubkyUri(parentUri);
+            const fullParentId = Core.buildPostIdFromPubkyUri(parentUri);
             if (fullParentId) {
               const parentCounts = await Core.PostCountsModel.findById(fullParentId);
               if (parentCounts) {

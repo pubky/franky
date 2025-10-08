@@ -1,4 +1,4 @@
-// Simplified UserController tests with minimal mocks using real Identity.generateKeypair
+// Simplified ProfileController tests with minimal mocks using real Identity.generateKeypair
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Identity } from '@/libs/identity/identity';
@@ -43,7 +43,7 @@ class MockFile extends File {
   }
 }
 
-describe('UserController', () => {
+describe('ProfileController', () => {
   let testKeypair: ReturnType<typeof Identity.generateKeypair>;
 
   beforeEach(async () => {
@@ -84,15 +84,15 @@ describe('UserController', () => {
     const mockAvatarFile = new MockFile(['test'], 'test.jpg', { type: 'image/jpeg' });
 
     it('exists and is callable', async () => {
-      const { UserController } = await import('./user');
-      expect(UserController.uploadAvatar).toBeTypeOf('function');
+      const { ProfileController } = await import('./profile');
+      expect(ProfileController.uploadAvatar).toBeTypeOf('function');
     });
 
     it('calls dependencies and returns url', async () => {
       mockHomeserver.fetch.mockResolvedValueOnce({ ok: true }).mockResolvedValueOnce({ ok: true });
 
-      const { UserController } = await import('./user');
-      const result = await UserController.uploadAvatar(mockAvatarFile, testKeypair.pubky);
+      const { ProfileController } = await import('./profile');
+      const result = await ProfileController.uploadAvatar(mockAvatarFile, testKeypair.pubky);
       expect(typeof result).toBe('string');
       expect(mockHomeserver.fetch).toHaveBeenCalledTimes(2);
       expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
@@ -101,25 +101,25 @@ describe('UserController', () => {
     it('throws on missing secretKey', async () => {
       mockOnboardingStore.secretKey = '';
 
-      const { UserController } = await import('./user');
-      await expect(UserController.uploadAvatar(mockAvatarFile, testKeypair.pubky)).rejects.toThrow('secretKey');
+      const { ProfileController } = await import('./profile');
+      await expect(ProfileController.uploadAvatar(mockAvatarFile, testKeypair.pubky)).rejects.toThrow('secretKey');
     });
   });
 
-  describe('saveProfile', () => {
+  describe('create', () => {
     const mockProfile = { name: 'Test', bio: 'Test bio' };
     const mockImage = 'test-image';
 
     it('exists and is callable', async () => {
-      const { UserController } = await import('./user');
-      expect(UserController.saveProfile).toBeTypeOf('function');
+      const { ProfileController } = await import('./profile');
+      expect(ProfileController.create).toBeTypeOf('function');
     });
 
     it('calls dependencies and returns response', async () => {
       mockHomeserver.fetch.mockResolvedValue({ ok: true });
 
-      const { UserController } = await import('./user');
-      const result = await UserController.saveProfile(mockProfile, mockImage, testKeypair.pubky);
+      const { ProfileController } = await import('./profile');
+      const result = await ProfileController.create(mockProfile, mockImage, testKeypair.pubky);
       expect(result.ok).toBe(true);
       expect(mockHomeserver.fetch).toHaveBeenCalled();
       expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
@@ -130,8 +130,8 @@ describe('UserController', () => {
     it('throws on missing secretKey', async () => {
       mockOnboardingStore.secretKey = '';
 
-      const { UserController } = await import('./user');
-      await expect(UserController.saveProfile(mockProfile, mockImage, testKeypair.pubky)).rejects.toThrow('secretKey');
+      const { ProfileController } = await import('./profile');
+      await expect(ProfileController.create(mockProfile, mockImage, testKeypair.pubky)).rejects.toThrow('secretKey');
       expect(mockAuthStore.setAuthenticated).toHaveBeenCalledWith(false);
       expect(mockAuthStore.setCurrentUserPubky).toHaveBeenCalledWith(null);
     });

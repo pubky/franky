@@ -26,7 +26,7 @@ const testData = {
   taggerPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
   postId: 'abc123xyz',
   get targetId() {
-    return `${this.authorPubky}:${this.postId}`;
+    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId });
   },
 };
 

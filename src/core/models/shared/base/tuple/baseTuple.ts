@@ -25,7 +25,7 @@ export abstract class TupleModelBase<Id, Schema extends { id: Id }> extends Mode
         500,
         {
           error,
-          records,
+          tuplesCount: records.length,
         },
       );
     }

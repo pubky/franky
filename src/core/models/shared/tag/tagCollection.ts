@@ -8,6 +8,7 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
   Id,
   Schema
 > {
+  // TODO: Consider adding multiEntry index on tag labels and if so, update Schema to use it
   tags: Core.TagModel[];
 
   constructor(data: Schema) {
@@ -18,11 +19,8 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
   // -------- Instance helpers (shared) --------
 
   findByLabel(label: string): Core.TagModel | null {
-    const labelTagData = this.tags.filter((t) => t.label === label);
-    if (labelTagData.length === 0) {
-      return null;
-    }
-    return labelTagData[0];
+    const found = this.tags.find((t) => t.label === label);
+    return found ?? null;
   }
 
   deleteTagIfNoTaggers() {
@@ -30,7 +28,6 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
   }
 
   // -------- Static CRUD (inherited from ModelBase) --------
-  // Note: subclasses MUST set their own static "table" field. TS cannot enforce abstract static.
 
   static async bulkSave<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
     this: { table: Table<TSchema> },
@@ -46,7 +43,7 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
         500,
         {
           error,
-          tuples,
+          tuplesCount: tuples.length,
         },
       );
     }

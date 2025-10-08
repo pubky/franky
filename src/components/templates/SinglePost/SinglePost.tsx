@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
 
 interface PostWideProps {
   clickable?: boolean;
@@ -13,7 +14,7 @@ interface PostWideProps {
 
 export function SinglePost({ clickable = false, isReply = false, onClick }: PostWideProps) {
   const { postId, userId } = useParams() as { postId: string; userId: string };
-  const pId = `${userId}:${postId}`;
+  const pId = Core.buildPostCompositeId({ pubky: userId, postId });
 
   return (
     <Atoms.Container className="flex flex-col">
