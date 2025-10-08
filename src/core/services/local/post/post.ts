@@ -1,6 +1,11 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
+import type {
+  TLocalFetchPostsParams,
+  TLocalSavePostParams,
+  TLocalDeleteRepostParams,
+  TLocalDeletePostParams,
+} from './post.types';
 import { buildPostIdFromPubkyUri } from './post.helpers';
 import { postUriBuilder } from 'pubky-app-specs';
 
@@ -109,7 +114,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
+  static async create({ postId, content, kind, authorId, parentUri, attachments, repostedUri }: TLocalSavePostParams) {
     try {
       const postDetails: Core.PostDetailsModelSchema = {
         id: postId,
@@ -123,7 +128,7 @@ export class LocalPostService {
       const postRelationships: Core.PostRelationshipsModelSchema = {
         id: postId,
         replied: parentUri ?? null,
-        reposted: null,
+        reposted: repostedUri ?? null,
         mentioned: [],
       };
 
@@ -151,19 +156,31 @@ export class LocalPostService {
             Core.PostTagsModel.create({ id: postId, tags: [] }),
           ]);
 
+          // Update parent reply count if this is a reply
           if (parentUri) {
             const fullParentId = buildPostIdFromPubkyUri(parentUri);
-            if (fullParentId) {
-              const parentCounts = await Core.PostCountsModel.findById(fullParentId);
-              if (parentCounts) {
-                await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
-              }
-            }
+            if (!fullParentId) return;
+
+            const parentCounts = await Core.PostCountsModel.findById(fullParentId);
+            if (!parentCounts) return;
+
+            await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
+          }
+
+          // Update original post repost count if this is a repost
+          if (repostedUri) {
+            const originalPostId = buildPostIdFromPubkyUri(repostedUri);
+            if (!originalPostId) return;
+
+            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+            if (!originalCounts) return;
+
+            await Core.PostCountsModel.update(originalCounts.id, { reposts: originalCounts.reposts + 1 });
           }
         },
       );
 
-      Logger.debug('Post saved successfully', { postId, kind, parentUri });
+      Logger.debug('Post saved successfully', { postId, kind, parentUri, repostedUri });
     } catch (error) {
       Logger.error('Failed to save post', { postId, authorId });
       throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
@@ -172,6 +189,131 @@ export class LocalPostService {
         content,
         kind,
         authorId,
+      });
+    }
+  }
+
+  /**
+   * Delete a repost from the local database.
+   *
+   * Removes the repost and updates the original post's repost count.
+   *
+   * @param params.repostId - Unique identifier for the repost to delete
+   * @param params.userId - Unique identifier of the user deleting the repost
+   * @param params.repostedUri - URI of the original post that was reposted
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async deleteRepost({ repostId, userId, repostedUri }: TLocalDeleteRepostParams) {
+    try {
+      await Core.db.transaction(
+        'rw',
+        [
+          Core.PostDetailsModel.table,
+          Core.PostRelationshipsModel.table,
+          Core.PostCountsModel.table,
+          Core.PostTagsModel.table,
+        ],
+        async () => {
+          await Promise.all([
+            Core.PostDetailsModel.deleteById(repostId),
+            Core.PostRelationshipsModel.deleteById(repostId),
+            Core.PostCountsModel.deleteById(repostId),
+            Core.PostTagsModel.deleteById(repostId),
+          ]);
+
+          // Decrement original post repost count
+          const originalPostId = buildPostIdFromPubkyUri(repostedUri);
+          if (!originalPostId) return;
+
+          const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+          if (!originalCounts) return;
+
+          await Core.PostCountsModel.update(originalCounts.id, {
+            reposts: Math.max(0, originalCounts.reposts - 1),
+          });
+        },
+      );
+
+      Logger.debug('Repost deleted successfully', { repostId, userId, repostedUri });
+    } catch (error) {
+      Logger.error('Failed to delete repost', { repostId, userId });
+      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete repost', 500, {
+        error,
+        repostId,
+        userId,
+        repostedUri,
+      });
+    }
+  }
+
+  /**
+   * Delete a post from the local database.
+   *
+   * Removes the post and all related records. If the post is a reply,
+   * decrements the parent post's reply count. If the post is a repost,
+   * decrements the original post's repost count.
+   *
+   * @param params.postId - Unique identifier for the post to delete
+   * @param params.userId - Unique identifier of the user deleting the post
+   * @param params.parentUri - URI of parent post if this is a reply
+   * @param params.repostedUri - URI of original post if this is a repost
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async deletePost({ postId, userId, parentUri, repostedUri }: TLocalDeletePostParams) {
+    try {
+      await Core.db.transaction(
+        'rw',
+        [
+          Core.PostDetailsModel.table,
+          Core.PostRelationshipsModel.table,
+          Core.PostCountsModel.table,
+          Core.PostTagsModel.table,
+        ],
+        async () => {
+          await Promise.all([
+            Core.PostDetailsModel.deleteById(postId),
+            Core.PostRelationshipsModel.deleteById(postId),
+            Core.PostCountsModel.deleteById(postId),
+            Core.PostTagsModel.deleteById(postId),
+          ]);
+
+          // Decrement parent reply count if this is a reply
+          if (parentUri) {
+            const parentPostId = buildPostIdFromPubkyUri(parentUri);
+            if (!parentPostId) return;
+
+            const parentCounts = await Core.PostCountsModel.findById(parentPostId);
+            if (!parentCounts) return;
+
+            await Core.PostCountsModel.update(parentCounts.id, {
+              replies: Math.max(0, parentCounts.replies - 1),
+            });
+          }
+
+          // Decrement original post repost count if this is a repost
+          if (repostedUri) {
+            const originalPostId = buildPostIdFromPubkyUri(repostedUri);
+            if (!originalPostId) return;
+
+            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+            if (!originalCounts) return;
+
+            await Core.PostCountsModel.update(originalCounts.id, {
+              reposts: Math.max(0, originalCounts.reposts - 1),
+            });
+          }
+        },
+      );
+
+      Logger.debug('Post deleted successfully', { postId, userId });
+    } catch (error) {
+      Logger.error('Failed to delete post', { postId, userId });
+      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
+        error,
+        postId,
+        userId,
       });
     }
   }
