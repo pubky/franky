@@ -53,8 +53,8 @@ export const WordSlot = (props: Types.WordSlotProps) => {
   const canClear = word !== '';
 
   const containerClasses = Libs.cn(
-    'flex-row px-4 py-2 rounded-md border border-dashed overflow-hidden',
-    'inline-flex justify-start items-center gap-2 bg-transparent transition-colors',
+    'flex-row px-3 py-2 rounded-md border border-dashed overflow-hidden relative',
+    'inline-flex w-full items-center bg-transparent transition-colors',
     canClear && 'cursor-pointer',
     isCorrect && 'border-brand hover:bg-brand/10',
     isError && 'border-red-500 hover:bg-red-500/20',
@@ -62,14 +62,14 @@ export const WordSlot = (props: Types.WordSlotProps) => {
   );
 
   const badgeClasses = Libs.cn(
-    'z-10 h-6 rounded-full w-6',
-    isCorrect && 'bg-brand text-black absolute left-5 top-4',
-    isError && 'bg-red-500 text-white absolute left-5 top-4',
+    'z-10 h-6 w-6 rounded-full flex-shrink-0 absolute left-3 top-1/2 -translate-y-1/2',
+    !isCorrect && !isError && 'bg-muted text-muted-foreground',
+    isCorrect && 'bg-brand text-black',
+    isError && 'bg-red-500 text-white',
   );
 
-  const inputPadding = isCorrect || isError ? '!pl-11' : '!pl-6';
   const inputColor = Libs.cn(
-    '!border-none !bg-transparent flex-row',
+    '!border-none !bg-transparent !px-0 !pl-10 !pr-3 flex-row flex-1 min-w-0',
     isCorrect && '!text-brand',
     isError && '!text-red-500',
   );
@@ -89,7 +89,7 @@ export const WordSlot = (props: Types.WordSlotProps) => {
         <Atoms.Input
           value={word}
           placeholder="word"
-          className={Libs.cn(inputPadding, inputColor)}
+          className={inputColor}
           readOnly
           onClick={(e) => {
             e.stopPropagation();
