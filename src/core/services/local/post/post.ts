@@ -159,23 +159,23 @@ export class LocalPostService {
           // Update parent reply count if this is a reply
           if (parentUri) {
             const fullParentId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (fullParentId) {
-              const parentCounts = await Core.PostCountsModel.findById(fullParentId);
-              if (parentCounts) {
-                await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
-              }
-            }
+            if (!fullParentId) return;
+
+            const parentCounts = await Core.PostCountsModel.findById(fullParentId);
+            if (!parentCounts) return;
+
+            await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
           }
 
           // Update original post repost count if this is a repost
           if (repostedUri) {
             const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-            if (originalPostId) {
-              const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-              if (originalCounts) {
-                await Core.PostCountsModel.update(originalCounts.id, { reposts: originalCounts.reposts + 1 });
-              }
-            }
+            if (!originalPostId) return;
+
+            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+            if (!originalCounts) return;
+
+            await Core.PostCountsModel.update(originalCounts.id, { reposts: originalCounts.reposts + 1 });
           }
         },
       );
@@ -224,14 +224,14 @@ export class LocalPostService {
 
           // Decrement original post repost count
           const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-          if (originalPostId) {
-            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-            if (originalCounts) {
-              await Core.PostCountsModel.update(originalCounts.id, {
-                reposts: Math.max(0, originalCounts.reposts - 1),
-              });
-            }
-          }
+          if (!originalPostId) return;
+
+          const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+          if (!originalCounts) return;
+
+          await Core.PostCountsModel.update(originalCounts.id, {
+            reposts: Math.max(0, originalCounts.reposts - 1),
+          });
         },
       );
 
@@ -282,27 +282,27 @@ export class LocalPostService {
           // Decrement parent reply count if this is a reply
           if (parentUri) {
             const parentPostId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (parentPostId) {
-              const parentCounts = await Core.PostCountsModel.findById(parentPostId);
-              if (parentCounts) {
-                await Core.PostCountsModel.update(parentCounts.id, {
-                  replies: Math.max(0, parentCounts.replies - 1),
-                });
-              }
-            }
+            if (!parentPostId) return;
+
+            const parentCounts = await Core.PostCountsModel.findById(parentPostId);
+            if (!parentCounts) return;
+
+            await Core.PostCountsModel.update(parentCounts.id, {
+              replies: Math.max(0, parentCounts.replies - 1),
+            });
           }
 
           // Decrement original post repost count if this is a repost
           if (repostedUri) {
             const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-            if (originalPostId) {
-              const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-              if (originalCounts) {
-                await Core.PostCountsModel.update(originalCounts.id, {
-                  reposts: Math.max(0, originalCounts.reposts - 1),
-                });
-              }
-            }
+            if (!originalPostId) return;
+
+            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+            if (!originalCounts) return;
+
+            await Core.PostCountsModel.update(originalCounts.id, {
+              reposts: Math.max(0, originalCounts.reposts - 1),
+            });
           }
         },
       );
