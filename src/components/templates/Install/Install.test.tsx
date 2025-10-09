@@ -4,8 +4,8 @@ import { Install } from './Install';
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
-    <div data-testid="container" className={`container ${size || ''}`}>
+  Container: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <div data-testid="container" data-size={size} className={className}>
       {children}
     </div>
   ),
@@ -35,13 +35,21 @@ describe('Install', () => {
     render(<Install />);
 
     const pageContainer = screen.getByTestId('container');
-    const children = Array.from(pageContainer.children);
+    const children = Array.from(pageContainer.children) as HTMLElement[];
 
-    expect(children).toHaveLength(4);
-    expect(children[0]).toHaveAttribute('data-testid', 'install-header');
-    expect(children[1]).toHaveAttribute('data-testid', 'install-card');
-    expect(children[2]).toHaveAttribute('data-testid', 'install-footer');
-    expect(children[3]).toHaveAttribute('data-testid', 'install-navigation');
+    expect(children).toHaveLength(2);
+    const [contentWrapper, navigationWrapper] = children;
+
+    expect(contentWrapper).toHaveAttribute('data-testid', 'install-content');
+    const contentChildren = Array.from(contentWrapper.children);
+    expect(contentChildren[0]).toHaveAttribute('data-testid', 'install-header');
+    expect(contentChildren[1]).toHaveAttribute('data-testid', 'install-card');
+    expect(contentChildren[2]).toHaveAttribute('data-testid', 'install-footer');
+    expect(contentWrapper).toHaveClass('flex-1');
+    expect(contentWrapper).toHaveClass('lg:flex-none');
+    expect(navigationWrapper).toHaveClass('mt-auto');
+    expect(navigationWrapper).toHaveClass('lg:mt-0');
+    expect(navigationWrapper.firstChild).toHaveAttribute('data-testid', 'install-navigation');
   });
 
   it('wraps all content in page container', () => {
@@ -56,6 +64,17 @@ describe('Install', () => {
     expect(pageContainer).toContainElement(screen.getByTestId('install-navigation'));
   });
 
+  it('applies onboarding layout classes to the container', () => {
+    render(<Install />);
+
+    const container = screen.getByTestId('container');
+    expect(container).toHaveClass('min-h-dvh');
+    expect(container).toHaveClass('gap-6');
+    expect(container).toHaveClass('pb-6');
+    expect(container).toHaveClass('pt-4');
+    expect(container).toHaveClass('lg:min-h-0');
+  });
+
   it('renders without crashing', () => {
     const { container } = render(<Install />);
     expect(container.firstChild).toBeInTheDocument();
@@ -68,11 +87,10 @@ describe('Install', () => {
     const pageContainer = screen.getByTestId('container');
     expect(pageContainer).toBeInTheDocument();
 
-    // Verify all expected child components exist
-    const expectedComponents = ['install-header', 'install-card', 'install-footer', 'install-navigation'];
-
-    expectedComponents.forEach((componentTestId) => {
-      expect(screen.getByTestId(componentTestId)).toBeInTheDocument();
-    });
+    // Verify the onboarding content wrapper exists and contains the main pieces
+    const contentWrapper = screen.getByTestId('install-content');
+    expect(contentWrapper).toContainElement(screen.getByTestId('install-header'));
+    expect(contentWrapper).toContainElement(screen.getByTestId('install-card'));
+    expect(contentWrapper).toContainElement(screen.getByTestId('install-footer'));
   });
 });

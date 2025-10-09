@@ -205,167 +205,170 @@ export const CreateProfileForm = () => {
 
   return (
     <>
-      <Atoms.Card className="bg-card rounded-md p-6 md:p-12 lg:flex lg:gap-12 lg:flex-row">
-        {/* Profile Section */}
-        <Atoms.Container className="gap-6 w-full">
-          <Atoms.Container className="gap-3">
-            <Atoms.Heading level={3} size="xl" className="text-2xl">
-              Profile
-            </Atoms.Heading>
-          </Atoms.Container>
-
-          <Atoms.Container className="gap-6">
-            <Atoms.Container className="gap-2">
-              <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">NAME*</Atoms.Label>
-              <Molecules.InputField
-                id="profile-name-input"
-                placeholder="Blue-Rabbit-Hat"
-                variant="dashed"
-                value={name}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setName(value);
-                  const res = z.string().trim().min(3, 'Name must be at least 3 characters').safeParse(value);
-                  setNameError(res.success ? null : (res.error.issues[0]?.message ?? 'Invalid name'));
-                }}
-                status={nameError ? 'error' : 'default'}
-                message={nameError ?? undefined}
-                messageType={nameError ? 'error' : 'default'}
-              />
+      <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="create-profile-form">
+        <Atoms.Card className="bg-card rounded-md p-6 md:p-12 lg:flex lg:gap-12 lg:flex-row">
+          {/* Profile Section */}
+          <Atoms.Container className="gap-6 w-full">
+            <Atoms.Container className="gap-3">
+              <Atoms.Heading level={3} size="xl" className="text-2xl">
+                Profile
+              </Atoms.Heading>
             </Atoms.Container>
 
-            <Atoms.Container className="gap-2">
-              <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">BIO</Atoms.Label>
-              <Molecules.TextareaField
-                id="profile-bio-input"
-                placeholder="Tell a bit about yourself."
-                value={bio}
-                variant="dashed"
-                rows={40}
-                onChange={(e) => setBio(e.target.value)}
-              />
-            </Atoms.Container>
-          </Atoms.Container>
-        </Atoms.Container>
-
-        {/* Links Section */}
-        <Atoms.Container className="gap-6 w-full mt-6 lg:mt-0">
-          <Atoms.Container className="gap-3">
-            <Atoms.Heading level={3} size="xl" className="text-2xl">
-              Links
-            </Atoms.Heading>
-          </Atoms.Container>
-
-          <Atoms.Container className="gap-6">
-            {links.map((link, index) => (
-              <Atoms.Container className="gap-2" key={`${link.label}-${index}`}>
-                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  {link.label}
-                </Atoms.Label>
+            <Atoms.Container className="gap-6">
+              <Atoms.Container className="gap-2">
+                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">NAME*</Atoms.Label>
                 <Molecules.InputField
-                  id="profile-links-input-${index}"
-                  placeholder={link.label.toUpperCase().includes('TWITTER') ? '@user' : 'https://'}
-                  value={link.url}
+                  id="profile-name-input"
+                  placeholder="Blue-Rabbit-Hat"
                   variant="dashed"
+                  value={name}
                   onChange={(e) => {
                     const value = e.target.value;
-                    setLinks(links.map((l, i) => (i === index ? { ...l, url: value } : l)));
-                    if (value.trim().length === 0) {
-                      setLinkUrlErrors((prev) => ({ ...prev, [index]: null }));
-                    } else {
-                      const res = urlSchema.safeParse(value);
-                      setLinkUrlErrors((prev) => ({
-                        ...prev,
-                        [index]: res.success ? null : (res.error.issues[0]?.message ?? 'Invalid URL'),
-                      }));
-                    }
+                    setName(value);
+                    const res = z.string().trim().min(3, 'Name must be at least 3 characters').safeParse(value);
+                    setNameError(res.success ? null : (res.error.issues[0]?.message ?? 'Invalid name'));
                   }}
-                  icon={<Libs.Trash2 className="h-4 w-4" />}
-                  onClickIcon={() => handleDeleteLink(index)}
-                  iconPosition="right"
-                  status={linkUrlErrors[index] ? 'error' : 'default'}
-                  message={linkUrlErrors[index] ?? undefined}
-                  messageType={linkUrlErrors[index] ? 'error' : 'default'}
+                  status={nameError ? 'error' : 'default'}
+                  message={nameError ?? undefined}
+                  messageType={nameError ? 'error' : 'default'}
                 />
               </Atoms.Container>
-            ))}
 
-            <Molecules.DialogAddLink
-              onSave={(label, url) => {
-                setLinks([...links, { label, url }]);
-              }}
-            />
-          </Atoms.Container>
-        </Atoms.Container>
-
-        {/* Avatar Section */}
-        <Atoms.Container className="gap-6 w-full mt-6 lg:mt-0">
-          <Atoms.Container className="gap-3 md:text-center">
-            <Atoms.Heading level={3} size="xl" className="text-2xl">
-              Avatar
-            </Atoms.Heading>
-          </Atoms.Container>
-
-          <Atoms.Container className="justify-center flex-row">
-            <Atoms.Avatar
-              key={avatarPreview ? 'with-image' : 'without-image'}
-              className="h-48 w-48 bg-muted cursor-pointer"
-              onClick={handleChooseFileClick}
-              role="button"
-              aria-label="Choose avatar image"
-            >
-              {avatarPreview ? (
-                <Atoms.AvatarImage
-                  src={avatarPreview}
-                  alt={avatarFile ? `Selected avatar preview: ${avatarFile.name}` : 'Selected avatar preview'}
+              <Atoms.Container className="gap-2">
+                <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground">BIO</Atoms.Label>
+                <Molecules.TextareaField
+                  id="profile-bio-input"
+                  placeholder="Tell a bit about yourself."
+                  value={bio}
+                  variant="dashed"
+                  rows={40}
+                  onChange={(e) => setBio(e.target.value)}
                 />
-              ) : (
-                <Atoms.AvatarFallback className="text-4xl">SN</Atoms.AvatarFallback>
-              )}
-            </Atoms.Avatar>
+              </Atoms.Container>
+            </Atoms.Container>
           </Atoms.Container>
 
-          <Atoms.Container className="justify-center">
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-            <Atoms.Button
-              variant="secondary"
-              size="sm"
-              className="rounded-full mx-auto"
-              onClick={avatarPreview ? handleDeleteAvatar : handleChooseFileClick}
-            >
-              {avatarPreview ? (
-                <>
-                  <Libs.Trash2 className="h-4 w-4" />
-                  <span>Delete</span>
-                </>
-              ) : (
-                <>
-                  <Libs.File className="h-4 w-4" />
-                  <span>Choose file</span>
-                </>
-              )}
-            </Atoms.Button>
-            {avatarError && (
-              <Atoms.Typography as="small" size="sm" className="ml-1 text-red-500">
-                {avatarError}
-              </Atoms.Typography>
-            )}
+          {/* Links Section */}
+          <Atoms.Container className="gap-6 w-full mt-6 lg:mt-0">
+            <Atoms.Container className="gap-3">
+              <Atoms.Heading level={3} size="xl" className="text-2xl">
+                Links
+              </Atoms.Heading>
+            </Atoms.Container>
+
+            <Atoms.Container className="gap-6">
+              {links.map((link, index) => (
+                <Atoms.Container className="gap-2" key={`${link.label}-${index}`}>
+                  <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                    {link.label}
+                  </Atoms.Label>
+                  <Molecules.InputField
+                    id="profile-links-input-${index}"
+                    placeholder={link.label.toUpperCase().includes('TWITTER') ? '@user' : 'https://'}
+                    value={link.url}
+                    variant="dashed"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setLinks(links.map((l, i) => (i === index ? { ...l, url: value } : l)));
+                      if (value.trim().length === 0) {
+                        setLinkUrlErrors((prev) => ({ ...prev, [index]: null }));
+                      } else {
+                        const res = urlSchema.safeParse(value);
+                        setLinkUrlErrors((prev) => ({
+                          ...prev,
+                          [index]: res.success ? null : (res.error.issues[0]?.message ?? 'Invalid URL'),
+                        }));
+                      }
+                    }}
+                    icon={<Libs.Trash2 className="h-4 w-4" />}
+                    onClickIcon={() => handleDeleteLink(index)}
+                    iconPosition="right"
+                    status={linkUrlErrors[index] ? 'error' : 'default'}
+                    message={linkUrlErrors[index] ?? undefined}
+                    messageType={linkUrlErrors[index] ? 'error' : 'default'}
+                  />
+                </Atoms.Container>
+              ))}
+
+              <Molecules.DialogAddLink
+                onSave={(label, url) => {
+                  setLinks([...links, { label, url }]);
+                }}
+              />
+            </Atoms.Container>
           </Atoms.Container>
-        </Atoms.Container>
-      </Atoms.Card>
-      <Molecules.ProfileNavigation
-        backButtonDisabled={true}
-        continueButtonDisabled={
-          !!nameError ||
-          name.trim().length < 3 ||
-          Object.values(linkUrlErrors).some((m) => !!m) ||
-          !!avatarError ||
-          isSaving
-        }
-        continueButtonLoading={isSaving}
-        continueText={continueText}
-        onContinue={handleContinue}
-      />
+
+          {/* Avatar Section */}
+          <Atoms.Container className="gap-6 w-full mt-6 lg:mt-0">
+            <Atoms.Container className="gap-3 md:text-center">
+              <Atoms.Heading level={3} size="xl" className="text-2xl">
+                Avatar
+              </Atoms.Heading>
+            </Atoms.Container>
+
+            <Atoms.Container className="justify-center flex-row">
+              <Atoms.Avatar
+                key={avatarPreview ? 'with-image' : 'without-image'}
+                className="h-48 w-48 bg-muted cursor-pointer"
+                onClick={handleChooseFileClick}
+                role="button"
+                aria-label="Choose avatar image"
+              >
+                {avatarPreview ? (
+                  <Atoms.AvatarImage
+                    src={avatarPreview}
+                    alt={avatarFile ? `Selected avatar preview: ${avatarFile.name}` : 'Selected avatar preview'}
+                  />
+                ) : (
+                  <Atoms.AvatarFallback className="text-4xl">SN</Atoms.AvatarFallback>
+                )}
+              </Atoms.Avatar>
+            </Atoms.Container>
+
+            <Atoms.Container className="justify-center">
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              <Atoms.Button
+                variant="secondary"
+                size="sm"
+                className="rounded-full mx-auto"
+                onClick={avatarPreview ? handleDeleteAvatar : handleChooseFileClick}
+              >
+                {avatarPreview ? (
+                  <>
+                    <Libs.Trash2 className="h-4 w-4" />
+                    <span>Delete</span>
+                  </>
+                ) : (
+                  <>
+                    <Libs.File className="h-4 w-4" />
+                    <span>Choose file</span>
+                  </>
+                )}
+              </Atoms.Button>
+              {avatarError && (
+                <Atoms.Typography as="small" size="sm" className="ml-1 text-red-500">
+                  {avatarError}
+                </Atoms.Typography>
+              )}
+            </Atoms.Container>
+          </Atoms.Container>
+        </Atoms.Card>
+        <Molecules.ProfileNavigation
+          className="mt-auto lg:mt-0"
+          backButtonDisabled={true}
+          continueButtonDisabled={
+            !!nameError ||
+            name.trim().length < 3 ||
+            Object.values(linkUrlErrors).some((m) => !!m) ||
+            !!avatarError ||
+            isSaving
+          }
+          continueButtonLoading={isSaving}
+          continueText={continueText}
+          onContinue={handleContinue}
+        />
+      </Atoms.Container>
 
       <Molecules.DialogCropImage
         open={cropDialogOpen}
