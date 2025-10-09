@@ -76,8 +76,10 @@ vi.mock('@/core', () => ({
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
-  HeaderContainer: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="header-container">{children}</div>
+  HeaderContainer: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="header-container" data-class-name={className}>
+      {children}
+    </div>
   ),
   Logo: ({ noLink }: { noLink?: boolean }) => (
     <div data-testid="logo" data-no-link={noLink}>
@@ -118,6 +120,26 @@ describe('Header', () => {
     // HeaderHome renders social links and sign in button
     expect(screen.getByTestId('header-social-links')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+  });
+
+  it('hides header container on mobile when signed in outside onboarding', () => {
+    mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+    mockUsePathname.mockReturnValue(App.HOME_ROUTES.HOME);
+
+    render(<Header />);
+
+    const headerContainer = screen.getByTestId('header-container');
+    expect(headerContainer).toHaveAttribute('data-class-name', 'hidden lg:block');
+  });
+
+  it('keeps header visible on mobile during onboarding when signed in', () => {
+    mockUseProfileStore.mockReturnValue({ isAuthenticated: true });
+    mockUsePathname.mockReturnValue(App.ONBOARDING_ROUTES.PROFILE);
+
+    render(<Header />);
+
+    const headerContainer = screen.getByTestId('header-container');
+    expect(headerContainer).not.toHaveAttribute('data-class-name', 'hidden lg:block');
   });
 
   it('shows home header for non-onboarding paths', () => {
