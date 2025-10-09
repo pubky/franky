@@ -1,13 +1,13 @@
-import { TFollowParams } from './fuser.type';
+import { TFollowParams } from './user.type';
 import * as Core from '@/core';
 
-export class FUserController {
+export class UserController {
   private constructor() {} // Prevent instantiation
 
-  static async follow({ follower, followee }: TFollowParams) {
+  static async follow(eventType: Core.HomeserverAction, { follower, followee }: TFollowParams) {
     const { meta, follow } = await Core.FollowNormalizer.to({ follower, followee });
     await Core.UserApplication.follow({
-      eventType: Core.HomeserverAction.PUT,
+      eventType,
       followUrl: meta.url,
       followJson: follow.toJson(),
       follower,

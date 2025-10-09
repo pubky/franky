@@ -36,7 +36,7 @@ export class UserConnectionsModel
    * @param to - The user to add to the connection list
    * @param key - The type of connection list: `following` or `followers`
    */
-  static async addConnections(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields) {
+  static async createConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields) {
     let exists = await this.findById(from);
     // Might be a case, that we did not yet download the user connections, cover that case
     if (!exists) {
@@ -53,6 +53,21 @@ export class UserConnectionsModel
             list.push(to);
           }
           row[key] = list;
+        });
+    }
+  }
+
+  static async deleteConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields) {
+    const exists = await this.findById(from);
+    if (exists) {
+      await this.table
+        .where('id')
+        .equals(from)
+        .modify((row) => {
+          const list = row[key];
+          if (list.length > 0) {
+            row[key] = list.filter((item) => item !== to);
+          }
         });
     }
   }
