@@ -4,8 +4,8 @@ import { Scan } from './Scan';
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
-    <div data-testid="container" className={`container ${size || ''}`}>
+  Container: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <div data-testid="container" data-size={size} className={className}>
       {children}
     </div>
   ),
@@ -34,12 +34,20 @@ describe('Scan', () => {
     render(<Scan />);
 
     const pageWrapper = screen.getByTestId('container');
-    const children = Array.from(pageWrapper.children);
+    const children = Array.from(pageWrapper.children) as HTMLElement[];
 
-    expect(children).toHaveLength(3);
-    expect(children[0]).toHaveAttribute('data-testid', 'scan-content');
-    expect(children[1]).toHaveAttribute('data-testid', 'scan-footer');
-    expect(children[2]).toHaveAttribute('data-testid', 'scan-navigation');
+    expect(children).toHaveLength(2);
+    const [contentWrapper, navigationWrapper] = children;
+
+    expect(contentWrapper).toHaveAttribute('data-testid', 'scan-page-content');
+    const contentChildren = Array.from(contentWrapper.children);
+    expect(contentChildren[0]).toHaveAttribute('data-testid', 'scan-content');
+    expect(contentChildren[1]).toHaveAttribute('data-testid', 'scan-footer');
+    expect(contentWrapper).toHaveClass('flex-1');
+    expect(contentWrapper).toHaveClass('lg:flex-none');
+    expect(navigationWrapper).toHaveClass('mt-auto');
+    expect(navigationWrapper).toHaveClass('lg:mt-0');
+    expect(navigationWrapper.firstChild).toHaveAttribute('data-testid', 'scan-navigation');
   });
 
   it('wraps all content in page wrapper', () => {
@@ -51,6 +59,17 @@ describe('Scan', () => {
     expect(pageWrapper).toContainElement(screen.getByTestId('scan-content'));
     expect(pageWrapper).toContainElement(screen.getByTestId('scan-footer'));
     expect(pageWrapper).toContainElement(screen.getByTestId('scan-navigation'));
+  });
+
+  it('applies onboarding layout classes to the container', () => {
+    render(<Scan />);
+
+    const container = screen.getByTestId('container');
+    expect(container).toHaveClass('min-h-dvh');
+    expect(container).toHaveClass('gap-6');
+    expect(container).toHaveClass('pb-6');
+    expect(container).toHaveClass('pt-4');
+    expect(container).toHaveClass('lg:min-h-0');
   });
 
   it('renders without crashing', () => {
@@ -65,25 +84,19 @@ describe('Scan', () => {
     const pageWrapper = screen.getByTestId('container');
     expect(pageWrapper).toBeInTheDocument();
 
-    // Verify all expected child components exist
-    const expectedComponents = ['scan-content', 'scan-footer', 'scan-navigation'];
-
-    expectedComponents.forEach((componentTestId) => {
-      expect(screen.getByTestId(componentTestId)).toBeInTheDocument();
-    });
+    // Verify the content wrapper contains the main pieces
+    const contentWrapper = screen.getByTestId('scan-page-content');
+    expect(contentWrapper).toContainElement(screen.getByTestId('scan-content'));
+    expect(contentWrapper).toContainElement(screen.getByTestId('scan-footer'));
   });
 
   it('renders scan content before navigation', () => {
     render(<Scan />);
 
     const pageWrapper = screen.getByTestId('container');
-    const scanContent = screen.getByTestId('scan-content');
-    const scanNavigation = screen.getByTestId('scan-navigation');
-
     const children = Array.from(pageWrapper.children);
-    const contentIndex = children.indexOf(scanContent);
-    const navigationIndex = children.indexOf(scanNavigation);
 
-    expect(contentIndex).toBeLessThan(navigationIndex);
+    expect(children[0]).toHaveAttribute('data-testid', 'scan-page-content');
+    expect(children[1].firstChild).toHaveAttribute('data-testid', 'scan-navigation');
   });
 });
