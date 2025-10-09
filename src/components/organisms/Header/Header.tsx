@@ -38,8 +38,10 @@ export function Header() {
     setIsSignedIn(isAuthenticated);
   }, [pathname, isAuthenticated]);
 
+  const shouldHideHeaderOnMobile = isSignedIn && !isOnboarding;
+
   return (
-    <Molecules.HeaderContainer>
+    <Molecules.HeaderContainer className={shouldHideHeaderOnMobile ? 'hidden lg:block' : undefined}>
       <Molecules.Logo noLink={currentStep === 5} />
       {(!isSignedIn || currentStep === 5) && <Molecules.HeaderTitle currentTitle={currentTitle} />}
       {isOnboarding ? (
