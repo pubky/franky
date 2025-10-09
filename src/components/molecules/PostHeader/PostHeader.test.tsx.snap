@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostHeader > matches snapshot 1`] = `
+<div
+  class="flex items-start justify-between w-full"
+>
+  <div
+    class="flex items-center gap-3"
+  >
+    <div
+      data-testid="avatar"
+    />
+    <div
+      class="flex flex-col"
+    >
+      <span
+        class="text-base leading-6 font-bold text-foreground"
+      >
+        Satoshi
+      </span>
+      <span
+        class="text-xs leading-4 font-medium tracking-[0.075em] uppercase text-muted-foreground"
+      >
+        label
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex items-center gap-1 text-xs font-medium tracking-[0.075em] text-muted-foreground"
+  >
+    <div
+      class="size-4 text-muted-foreground"
+      data-testid="clock"
+    />
+    <span>
+      15m
+    </span>
+  </div>
+</div>
+`;

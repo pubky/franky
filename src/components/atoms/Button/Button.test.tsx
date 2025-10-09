@@ -21,11 +21,11 @@ describe('Button', () => {
 
     rerender(<Button variant={ButtonVariant.OUTLINE}>Outline</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-background');
+    expect(button).toHaveClass('bg-input/30');
 
     rerender(<Button variant={ButtonVariant.GHOST}>Ghost</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('hover:bg-accent');
+    expect(button).toHaveClass('hover:bg-accent/50');
 
     rerender(<Button variant={ButtonVariant.BRAND}>Brand</Button>);
     button = screen.getByRole('button');
@@ -33,7 +33,7 @@ describe('Button', () => {
 
     rerender(<Button variant="destructive">Destructive</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-destructive', 'text-white');
+    expect(button).toHaveClass('bg-destructive/60', 'text-white');
 
     rerender(<Button variant="link">Link</Button>);
     button = screen.getByRole('button');
@@ -217,7 +217,7 @@ describe('Button - Snapshots', () => {
     render(<Button aria-invalid="true">Invalid Button</Button>);
     const button = screen.getByRole('button');
     expect(button).toHaveAttribute('aria-invalid', 'true');
-    expect(button).toHaveClass('aria-invalid:ring-destructive/20', 'aria-invalid:border-destructive');
+    expect(button).toHaveClass('aria-invalid:ring-destructive/40', 'aria-invalid:border-destructive');
   });
 
   it('renders with icons correctly', () => {

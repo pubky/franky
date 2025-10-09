@@ -112,7 +112,7 @@ describe('Badge - Snapshots', () => {
     render(<Badge aria-invalid="true">Invalid Badge</Badge>);
     const badge = screen.getByText('Invalid Badge');
     expect(badge).toHaveAttribute('aria-invalid', 'true');
-    expect(badge).toHaveClass('aria-invalid:ring-destructive/20', 'aria-invalid:border-destructive');
+    expect(badge).toHaveClass('aria-invalid:ring-destructive/40', 'aria-invalid:border-destructive');
   });
 
   it('renders with icons correctly', () => {

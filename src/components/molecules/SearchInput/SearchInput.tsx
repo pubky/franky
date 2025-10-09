@@ -53,7 +53,7 @@ export const SearchInput = ({
   const inputClassName = Libs.cn(
     'px-6 py-6  border-border',
     isFocused && children
-      ? 'rounded-t-2xl rounded-b-none border-b-0 dark:bg-transparent'
+      ? 'rounded-t-2xl rounded-b-none border-b-0 bg-transparent'
       : 'rounded-full bg-gradient-to-b from-background via-background via-60% to-transparent',
   );
   const buttonClassName = Libs.cn(
