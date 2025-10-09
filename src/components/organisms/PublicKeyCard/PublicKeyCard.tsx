@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
@@ -11,7 +11,6 @@ import * as Hooks from '@/hooks';
 export function PublicKeyCard() {
   const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
-  const isTouchDevice = Hooks.useIsTouchDevice();
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
@@ -72,31 +71,28 @@ export function PublicKeyCard() {
     }
   };
 
-  const actions = useMemo(
-    () => [
-      {
-        id: 'copy-to-clipboard-action-btn',
-        label: 'Copy to clipboard',
-        icon: <Libs.Copy className="mr-2 h-4 w-4" />,
-        onClick: handleCopyToClipboard,
-        variant: 'secondary' as const,
-        disabled: !pubky,
-      },
-      ...(isTouchDevice && canUseWebShare
-        ? [
-            {
-              label: 'Share',
-              icon: <Libs.Share className="mr-2 h-4 w-4" />,
-              onClick: handleShare,
-              variant: 'secondary' as const,
-              disabled: !pubky,
-            },
-          ]
-        : []),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [canUseWebShare, isTouchDevice, pubky],
-  );
+  const actions = [
+    {
+      id: 'copy-to-clipboard-action-btn',
+      label: 'Copy to clipboard',
+      icon: <Libs.Copy className="mr-2 h-4 w-4" />,
+      onClick: handleCopyToClipboard,
+      variant: 'secondary' as const,
+      disabled: !pubky,
+    },
+    ...(canUseWebShare
+      ? [
+          {
+            label: 'Share',
+            icon: <Libs.Share className="mr-2 h-4 w-4" />,
+            onClick: handleShare,
+            variant: 'secondary' as const,
+            disabled: !pubky,
+            className: 'md:hidden',
+          },
+        ]
+      : []),
+  ];
 
   return (
     <Molecules.ContentCard

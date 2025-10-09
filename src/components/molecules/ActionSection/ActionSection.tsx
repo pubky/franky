@@ -13,6 +13,7 @@ interface ActionSectionProps {
     onClick: () => void;
     variant?: 'default' | 'secondary' | 'outline' | 'ghost' | 'brand';
     disabled?: boolean;
+    className?: React.HTMLAttributes<HTMLButtonElement>['className'];
   }>;
 }
 
@@ -27,7 +28,7 @@ export function ActionSection({ children, className, actions = [] }: ActionSecti
               id={action.id}
               key={index}
               variant={action.variant || 'secondary'}
-              className="rounded-full"
+              className={Libs.cn('rounded-full', action.className)}
               onClick={action.onClick}
               disabled={action.disabled}
             >

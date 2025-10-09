@@ -27,6 +27,7 @@ interface ActionProps {
   variant?: string;
   icon?: React.ReactNode;
   label: string;
+  className?: string;
 }
 
 // Mock molecules
@@ -58,6 +59,7 @@ vi.mock('@/molecules', () => ({
           data-testid={`action-button-${index}`}
           onClick={action.onClick}
           data-variant={action.variant}
+          className={action.className}
         >
           {action.icon}
           {action.label}
@@ -149,17 +151,15 @@ vi.mock('@/core', () => ({
 }));
 
 // Mock hooks
-const { mockCopyToClipboard, mockUseCopyToClipboard, mockUseIsTouchDevice } = vi.hoisted(() => {
+const { mockCopyToClipboard, mockUseCopyToClipboard } = vi.hoisted(() => {
   const mockCopy = vi.fn();
   const mockUseCopy = vi.fn(() => ({
     copyToClipboard: mockCopy,
   }));
-  const mockTouch = vi.fn();
 
   return {
     mockCopyToClipboard: mockCopy,
     mockUseCopyToClipboard: mockUseCopy,
-    mockUseIsTouchDevice: mockTouch,
   };
 });
 
@@ -167,7 +167,6 @@ const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
 vi.mock('@/hooks', () => ({
   useCopyToClipboard: mockUseCopyToClipboard,
-  useIsTouchDevice: mockUseIsTouchDevice,
 }));
 
 // Mock libs
@@ -209,7 +208,6 @@ describe('PublicKeyCard', () => {
     mockToast.mockReturnValue({ dismiss: mockDismiss });
     mockCopyToClipboard.mockResolvedValue(true);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
-    mockUseIsTouchDevice.mockReturnValue(true);
     mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
       setKeypair: mockSetKeypair,
@@ -236,7 +234,7 @@ describe('PublicKeyCard', () => {
     expect(screen.getByTestId('popover-public-key')).toBeInTheDocument();
   });
 
-  it('renders action section with copy button and share button on touch devices', () => {
+  it('renders action section with copy button and share button when Web Share is available', () => {
     render(<PublicKeyCard />);
 
     expect(screen.getByTestId('action-section')).toBeInTheDocument();
@@ -256,14 +254,11 @@ describe('PublicKeyCard', () => {
     expect(screen.queryByTestId('action-button-1')).not.toBeInTheDocument();
   });
 
-  it('does not render share button on non-touch devices', () => {
-    mockUseIsTouchDevice.mockReturnValueOnce(false);
-
+  it('hides the share button on medium screens and larger via responsive classes', () => {
     render(<PublicKeyCard />);
 
-    expect(screen.getByTestId('action-section')).toBeInTheDocument();
-    expect(screen.getByTestId('action-button-0')).toBeInTheDocument();
-    expect(screen.queryByTestId('action-button-1')).not.toBeInTheDocument();
+    const shareButton = screen.getByTestId('action-button-1');
+    expect(shareButton.className).toContain('md:hidden');
   });
 
   it('renders input field with public key', () => {
@@ -481,7 +476,6 @@ describe('PublicKeyCard - Key Generation', () => {
     mockToast.mockReturnValue({ dismiss: mockDismiss });
     mockCopyToClipboard.mockResolvedValue(true);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
-    mockUseIsTouchDevice.mockReturnValue(true);
     mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
       setKeypair: mockSetKeypair,

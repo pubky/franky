@@ -37,7 +37,11 @@ describe('Backup Template', () => {
 
     const container = screen.getByTestId('container');
     expect(container).toHaveAttribute('data-size', 'container');
-    expect(container).toHaveClass('px-6');
+    expect(container).toHaveClass('min-h-dvh');
+    expect(container).toHaveClass('gap-6');
+    expect(container).toHaveClass('pb-6');
+    expect(container).toHaveClass('pt-4');
+    expect(container).toHaveClass('lg:min-h-0');
   });
 
   it('maintains correct component hierarchy', () => {
@@ -48,7 +52,7 @@ describe('Backup Template', () => {
     const methodCard = screen.getByTestId('backup-method-card');
     const navigation = screen.getByTestId('backup-navigation');
 
-    // All components should be children of the container
+    // All components should be within the container structure
     expect(container).toContainElement(header);
     expect(container).toContainElement(methodCard);
     expect(container).toContainElement(navigation);
@@ -60,9 +64,18 @@ describe('Backup Template', () => {
     const container = screen.getByTestId('container');
     const children = Array.from(container.children);
 
-    expect(children[0]).toHaveAttribute('data-testid', 'backup-page-header');
-    expect(children[1]).toHaveAttribute('data-testid', 'backup-method-card');
-    expect(children[2]).toHaveAttribute('data-testid', 'backup-navigation');
+    expect(children).toHaveLength(2);
+    const [contentWrapper, navigationWrapper] = children as HTMLElement[];
+
+    expect(contentWrapper).toHaveAttribute('data-testid', 'backup-content');
+    const contentChildren = Array.from(contentWrapper.children);
+    expect(contentChildren[0]).toHaveAttribute('data-testid', 'backup-page-header');
+    expect(contentChildren[1]).toHaveAttribute('data-testid', 'backup-method-card');
+    expect(contentWrapper).toHaveClass('flex-1');
+    expect(contentWrapper).toHaveClass('lg:flex-none');
+    expect(navigationWrapper).toHaveClass('mt-auto');
+    expect(navigationWrapper).toHaveClass('lg:mt-0');
+    expect(navigationWrapper.firstChild).toHaveAttribute('data-testid', 'backup-navigation');
   });
 
   it('follows atomic design structure correctly', () => {
@@ -89,7 +102,8 @@ describe('Backup Template', () => {
     const container = screen.getByTestId('container');
     expect(container).toBeInTheDocument();
 
-    // Should contain exactly 3 child components
-    expect(container.children).toHaveLength(3);
+    // Should expose the onboarding content wrapper and navigation wrapper
+    expect(container.children).toHaveLength(2);
+    expect(container.firstElementChild).toHaveAttribute('data-testid', 'backup-content');
   });
 });
