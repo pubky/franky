@@ -22,7 +22,10 @@ export const SignInContent = () => {
     const requestId = Symbol('fetchUrl');
     activeRequestRef.current = requestId;
     isGeneratingRef.current = true;
-    if (!options?.viaRetry) setIsLoading(true);
+    if (!options?.viaRetry) {
+      setIsLoading(true);
+      setUrl('');
+    }
 
     let willRetry = false;
 
@@ -46,6 +49,9 @@ export const SignInContent = () => {
               title: 'Sign in failed',
               description: 'Unable to complete authorization with Pubky Ring. Please try again.',
             });
+            if (activeRequestRef.current === requestId) {
+              void fetchUrl();
+            }
           }
         })
         .catch((error: unknown) => {
@@ -56,6 +62,9 @@ export const SignInContent = () => {
             title: 'Authorization was not completed',
             description: 'The signer did not complete authorization. Please try again.',
           });
+          if (activeRequestRef.current === requestId) {
+            void fetchUrl();
+          }
         });
 
       // Guard against late responses from previous calls

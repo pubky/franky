@@ -261,14 +261,19 @@ describe('SignInContent', () => {
     });
   });
 
-  it('shows a toast when authorization promise rejects', async () => {
+  it('shows a toast and regenerates QR when authorization promise rejects', async () => {
     const getAuthUrl = vi.mocked(Core.AuthController.getAuthUrl);
     const toastSpy = vi.mocked(Molecules.toast);
 
-    getAuthUrl.mockResolvedValue({
-      url: 'mock-auth-url',
-      promise: Promise.reject(new Error('user declined')),
-    });
+    getAuthUrl
+      .mockResolvedValueOnce({
+        url: 'mock-auth-url',
+        promise: Promise.reject(new Error('user declined')),
+      })
+      .mockResolvedValueOnce({
+        url: 'mock-auth-url-2',
+        promise: Promise.resolve({} as unknown as PublicKey),
+      });
 
     await act(async () => {
       render(<SignInContent />);
@@ -278,6 +283,10 @@ describe('SignInContent', () => {
       expect(toastSpy).toHaveBeenCalledWith(
         expect.objectContaining({ title: expect.stringMatching(/authorization was not completed/i) }),
       );
+    });
+
+    await waitFor(() => {
+      expect(getAuthUrl).toHaveBeenCalledTimes(2);
     });
 
     getAuthUrl.mockReset();
