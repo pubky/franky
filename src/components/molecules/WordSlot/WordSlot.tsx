@@ -10,19 +10,22 @@ export const WordSlot = (props: Types.WordSlotProps) => {
     const hasError = isError && showError;
 
     const containerClasses = Libs.cn(
-      'flex-row px-4 py-2 rounded-md border overflow-hidden',
-      'inline-flex justify-start items-center gap-2 bg-transparent transition-colors',
+      'flex-row px-3 py-2 rounded-md border overflow-hidden relative',
+      'inline-flex w-full items-center bg-transparent transition-colors',
       hasError && 'border-red-500 bg-red-500/10',
       !hasError && 'border-border hover:bg-secondary/50',
     );
 
     const badgeClasses = Libs.cn(
-      'z-10 h-6 rounded-full w-6',
+      'z-10 h-6 w-6 rounded-full flex-shrink-0 absolute left-3 top-1/2 -translate-y-1/2',
       hasError && 'bg-red-500 text-white',
       !hasError && 'bg-muted text-muted-foreground',
     );
 
-    const inputColor = Libs.cn('!border-none !bg-transparent flex-row', hasError && '!text-red-500');
+    const inputColor = Libs.cn(
+      '!border-none !bg-transparent !px-0 !pl-10 !pr-3 flex-row flex-1 min-w-0',
+      hasError && '!text-red-500',
+    );
 
     return (
       <Atoms.Container className="relative">

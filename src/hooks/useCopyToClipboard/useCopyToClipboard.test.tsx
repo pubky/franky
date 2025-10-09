@@ -2,12 +2,24 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mock the dependencies before importing the hook
-vi.mock('../utils/utils', () => ({
-  copyToClipboard: vi.fn(),
+const { mockCopyToClipboard } = vi.hoisted(() => ({
+  mockCopyToClipboard: vi.fn(),
 }));
 
+const { mockToast } = vi.hoisted(() => ({
+  mockToast: vi.fn(),
+}));
+
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    copyToClipboard: mockCopyToClipboard,
+  };
+});
+
 vi.mock('@/molecules/Toaster/use-toast', () => ({
-  toast: vi.fn(),
+  toast: mockToast,
 }));
 
 vi.mock('@/atoms/Button', () => ({
@@ -32,6 +44,8 @@ import { useCopyToClipboard } from './useCopyToClipboard';
 describe('useCopyToClipboard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockCopyToClipboard.mockResolvedValue(undefined);
+    mockToast.mockReturnValue({ dismiss: vi.fn() });
   });
 
   it('should return a copyToClipboard function', () => {
@@ -128,5 +142,25 @@ describe('useCopyToClipboard', () => {
     // Rerender with different options
     rerender({ successTitle: 'Title 2' });
     expect(result.current.copyToClipboard).not.toBe(firstFunction);
+  });
+
+  it('should resolve to true when copying succeeds', async () => {
+    const { result } = renderHook(() => useCopyToClipboard());
+
+    await expect(result.current.copyToClipboard('test text')).resolves.toBe(true);
+    expect(mockCopyToClipboard).toHaveBeenCalledWith({ text: 'test text' });
+  });
+
+  it('should resolve to false when copying fails', async () => {
+    const error = new Error('clipboard failed');
+    mockCopyToClipboard.mockRejectedValueOnce(error);
+
+    const { result } = renderHook(() => useCopyToClipboard());
+
+    await expect(result.current.copyToClipboard('test text')).resolves.toBe(false);
+    expect(mockToast).toHaveBeenCalledWith({
+      title: 'Copy failed',
+      description: 'Unable to copy to clipboard',
+    });
   });
 });

@@ -12,6 +12,7 @@ export function PublicKeyCard() {
   const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
   const { copyToClipboard } = Hooks.useCopyToClipboard();
   const isTouchDevice = Hooks.useIsTouchDevice();
+  const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {
     if (pubky === '') {
@@ -41,12 +42,18 @@ export function PublicKeyCard() {
           text: `Here is my Pubky:\n${pubky}`,
         },
         {
-          onFallback: () => copyToClipboard(pubky),
+          onFallback: async () => {
+            const copied = await copyToClipboard(pubky);
+
+            if (!copied) {
+              throw new Error('Unable to copy pubky to clipboard');
+            }
+          },
           onSuccess: (result) => {
             if (result.method === 'fallback') {
               Molecules.toast({
-                title: 'Pubky copied',
-                description: 'Paste it into your favorite app to share it.',
+                title: 'Sharing unavailable',
+                description: 'We copied your pubky so you can paste it into your favorite app.',
               });
             }
           },
@@ -75,7 +82,7 @@ export function PublicKeyCard() {
         variant: 'secondary' as const,
         disabled: !pubky,
       },
-      ...(isTouchDevice
+      ...(isTouchDevice && canUseWebShare
         ? [
             {
               label: 'Share',
@@ -88,7 +95,7 @@ export function PublicKeyCard() {
         : []),
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isTouchDevice, pubky],
+    [canUseWebShare, isTouchDevice, pubky],
   );
 
   return (
