@@ -1,38 +1,87 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as Molecules from '@/molecules';
-import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export interface ContentLayoutProps {
   children: React.ReactNode;
+  leftSidebarContent?: React.ReactNode;
+  rightSidebarContent?: React.ReactNode;
+  leftDrawerContent?: React.ReactNode;
+  rightDrawerContent?: React.ReactNode;
+  leftDrawerContentMobile?: React.ReactNode;
+  rightDrawerContentMobile?: React.ReactNode;
   showLeftSidebar?: boolean;
   showRightSidebar?: boolean;
+  showLeftMobileButton?: boolean;
+  showRightMobileButton?: boolean;
   className?: string;
 }
 
 export function ContentLayout({
   children,
+  leftSidebarContent,
+  rightSidebarContent,
+  leftDrawerContent,
+  rightDrawerContent,
+  leftDrawerContentMobile,
+  rightDrawerContentMobile,
   showLeftSidebar = true,
   showRightSidebar = true,
+  showLeftMobileButton = true,
+  showRightMobileButton = true,
   className,
 }: ContentLayoutProps) {
-  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+  const { layout } = Core.useFiltersStore();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile viewport and close drawers when switching to desktop view
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+
+      // Close drawers when viewport is >= lg breakpoint (1024px)
+      if (!mobile) {
+        setDrawerFilterOpen(false);
+        setDrawerRightOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close drawers when switching from wide to column layout
+  useEffect(() => {
+    if (layout !== Core.LAYOUT.WIDE) {
+      setDrawerFilterOpen(false);
+      setDrawerRightOpen(false);
+    }
+  }, [layout]);
 
   return (
     <>
-      {/* Mobile header with drawer icons */}
-      <Molecules.MobileHeader onLeftIconClick={() => setDrawerFilterOpen(true)} />
+      {/* Mobile header with drawer icons - hidden on desktop */}
+      <Molecules.MobileHeader
+        onLeftIconClick={showLeftMobileButton ? () => setDrawerFilterOpen(true) : undefined}
+        onRightIconClick={showRightMobileButton ? () => setDrawerRightOpen(true) : undefined}
+        showLeftButton={showLeftMobileButton}
+        showRightButton={showRightMobileButton}
+      />
 
       {/* Buttons to open drawers - visible on desktop when in wide layout */}
-      {layout === Core.LAYOUT.WIDE && showLeftSidebar && (
+      {layout === Core.LAYOUT.WIDE && showLeftSidebar && leftDrawerContent && (
         <Molecules.ButtonFilters onClick={() => setDrawerFilterOpen(true)} position="left" />
       )}
-      {layout === Core.LAYOUT.WIDE && showRightSidebar && (
+      {layout === Core.LAYOUT.WIDE && showRightSidebar && rightDrawerContent && (
         <Molecules.ButtonFilters onClick={() => setDrawerRightOpen(true)} position="right" />
       )}
 
@@ -41,19 +90,35 @@ export function ContentLayout({
         className={Libs.cn(
           'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
           'w-full pb-12 m-auto px-6 xl:px-0',
-          'pt-16 lg:pt-0', // Add top padding on mobile for fixed header
+          'pt-20 lg:pt-0', // Add top padding on mobile for fixed header
           className,
         )}
       >
         <div className="flex gap-6">
-          {/* Left sidebar - hidden on mobile (< lg) and in wide layout */}
-          {showLeftSidebar && layout !== Core.LAYOUT.WIDE && <Organisms.LeftSidebar />}
+          {/* Left sidebar - hidden on mobile (< lg) and in wide layout mode */}
+          {showLeftSidebar && layout !== Core.LAYOUT.WIDE && leftSidebarContent && (
+            <div
+              className={Libs.cn(
+                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[144px] self-start h-fit',
+              )}
+            >
+              {leftSidebarContent}
+            </div>
+          )}
 
           {/* Main content area - grows to fill space */}
           <div className="flex-1 flex flex-col gap-6">{children}</div>
 
-          {/* Right sidebar - hidden on mobile (< lg) and in wide layout */}
-          {showRightSidebar && layout !== Core.LAYOUT.WIDE && <Organisms.RightSidebar />}
+          {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
+          {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (
+            <div
+              className={Libs.cn(
+                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[144px] self-start h-fit',
+              )}
+            >
+              {rightSidebarContent}
+            </div>
+          )}
         </div>
       </div>
 
@@ -61,27 +126,18 @@ export function ContentLayout({
       <Molecules.MobileFooter />
 
       {/* Drawer for filters - slides in from left */}
-      <Molecules.FilterDrawer open={drawerFilterOpen} onOpenChangeAction={setDrawerFilterOpen} position="left">
-        <div className="flex flex-col gap-6">
-          <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
-          <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />
-          <Molecules.FilterContent selectedTab={content} onTabChange={setContent} />
-          <Molecules.FilterLayout
-            selectedTab={layout}
-            onTabChange={setLayout}
-            onClose={() => setDrawerFilterOpen(false)}
-          />
-        </div>
-      </Molecules.FilterDrawer>
+      {(leftDrawerContent || leftDrawerContentMobile) && (
+        <Molecules.FilterDrawer open={drawerFilterOpen} onOpenChangeAction={setDrawerFilterOpen} position="left">
+          {isMobile && leftDrawerContentMobile ? leftDrawerContentMobile : leftDrawerContent}
+        </Molecules.FilterDrawer>
+      )}
 
       {/* Drawer for right sidebar - slides in from right */}
-      <Molecules.FilterDrawer open={drawerRightOpen} onOpenChangeAction={setDrawerRightOpen} position="right">
-        <div className="flex flex-col gap-6">
-          <Molecules.WhoToFollow />
-          <Molecules.ActiveUsers />
-          <Molecules.FeedbackCard />
-        </div>
-      </Molecules.FilterDrawer>
+      {(rightDrawerContent || rightDrawerContentMobile) && (
+        <Molecules.FilterDrawer open={drawerRightOpen} onOpenChangeAction={setDrawerRightOpen} position="right">
+          {isMobile && rightDrawerContentMobile ? rightDrawerContentMobile : rightDrawerContent}
+        </Molecules.FilterDrawer>
+      )}
     </>
   );
 }

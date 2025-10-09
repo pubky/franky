@@ -5,7 +5,10 @@ exports[`ContentLayout - Snapshots > matches snapshot with both sidebars hidden 
   data-testid="mobile-header"
 >
   <button>
-    Filter
+    Left
+  </button>
+  <button>
+    Right
   </button>
 </div>
 `;
@@ -15,7 +18,10 @@ exports[`ContentLayout - Snapshots > matches snapshot with complex children 1`] 
   data-testid="mobile-header"
 >
   <button>
-    Filter
+    Left
+  </button>
+  <button>
+    Right
   </button>
 </div>
 `;
@@ -25,7 +31,10 @@ exports[`ContentLayout - Snapshots > matches snapshot with custom className 1`] 
   data-testid="mobile-header"
 >
   <button>
-    Filter
+    Left
+  </button>
+  <button>
+    Right
   </button>
 </div>
 `;
@@ -35,7 +44,10 @@ exports[`ContentLayout - Snapshots > matches snapshot with default props 1`] = `
   data-testid="mobile-header"
 >
   <button>
-    Filter
+    Left
+  </button>
+  <button>
+    Right
   </button>
 </div>
 `;
@@ -45,7 +57,10 @@ exports[`ContentLayout - Snapshots > matches snapshot with showLeftSidebar false
   data-testid="mobile-header"
 >
   <button>
-    Filter
+    Left
+  </button>
+  <button>
+    Right
   </button>
 </div>
 `;
@@ -55,7 +70,10 @@ exports[`ContentLayout - Snapshots > matches snapshot with showRightSidebar fals
   data-testid="mobile-header"
 >
   <button>
-    Filter
+    Left
+  </button>
+  <button>
+    Right
   </button>
 </div>
 `;

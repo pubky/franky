@@ -28,8 +28,7 @@ vi.mock('qrcode.react', () => ({
   ),
 }));
 
-// Mock @/libs to intercept Libs.Scan
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock @/libs - use actual implementations (no icon stubs)
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return { ...actual };

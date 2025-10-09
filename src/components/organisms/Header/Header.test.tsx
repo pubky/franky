@@ -36,15 +36,14 @@ vi.mock('@/atoms', () => ({
   Typography: ({ children }: { children: React.ReactNode }) => <span>{children}</span>,
 }));
 
-vi.mock('@/libs', () => ({
-  LogIn: () => <div>LogIn</div>,
-  extractInitials: ({ name }: { name?: string }) => (name ? name.charAt(0).toUpperCase() : 'U'),
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-  Home: () => <div>Home</div>,
-  Search: () => <div>Search</div>,
-  Bookmark: () => <div>Bookmark</div>,
-  Settings: () => <div>Settings</div>,
-}));
+// Keep real libs for icons and utilities; only stub helpers we rely on for deterministic tests
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+  };
+});
 
 vi.mock('@/config', () => ({
   GITHUB_URL: 'https://github.com',
@@ -54,7 +53,7 @@ vi.mock('@/config', () => ({
 
 vi.mock('@/app', () => ({
   AUTH_ROUTES: { SIGN_IN: '/sign-in', LOGOUT: '/logout' },
-  FEED_ROUTES: { FEED: '/feed' },
+  HOME_ROUTES: { HOME: '/home' },
   ROOT_ROUTES: '/',
   ONBOARDING_ROUTES: {
     INSTALL: '/onboarding/install',

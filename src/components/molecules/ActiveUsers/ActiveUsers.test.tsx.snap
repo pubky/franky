@@ -2,7 +2,7 @@
 
 exports[`ActiveUsers - Snapshots > matches snapshot for See All button 1`] = `
 <button
-  class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
 >
   <svg
     aria-hidden="true"
@@ -187,7 +187,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot with custom className 1`] = 
     </div>
   </div>
   <button
-    class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
   >
     <svg
       aria-hidden="true"
@@ -349,7 +349,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot with default props 1`] = `
     </div>
   </div>
   <button
-    class="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
   >
     <svg
       aria-hidden="true"

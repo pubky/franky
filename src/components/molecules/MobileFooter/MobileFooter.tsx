@@ -16,10 +16,11 @@ export function MobileFooter({ className }: MobileFooterProps) {
   const isActive = (path: string) => pathname === path;
 
   const navItems = [
-    { href: App.FEED_ROUTES.FEED, icon: Libs.Home, label: 'Feed' },
-    { href: '/search', icon: Libs.Search, label: 'Search' },
-    { href: '/bookmarks', icon: Libs.Bookmark, label: 'Bookmarks' },
-    { href: '/settings', icon: Libs.Settings, label: 'Settings' },
+    { href: App.APP_ROUTES.HOME, icon: Libs.Home, label: 'Home' },
+    { href: App.APP_ROUTES.SEARCH, icon: Libs.Search, label: 'Search' },
+    { href: App.APP_ROUTES.HOT, icon: Libs.Flame, label: 'Hot' },
+    { href: App.APP_ROUTES.BOOKMARKS, icon: Libs.Bookmark, label: 'Bookmarks' },
+    { href: App.APP_ROUTES.SETTINGS, icon: Libs.Settings, label: 'Settings' },
   ];
 
   return (
@@ -31,6 +32,7 @@ export function MobileFooter({ className }: MobileFooterProps) {
             <Link
               key={item.href}
               href={item.href}
+              aria-label={item.label}
               className={Libs.cn(
                 'p-3 rounded-full backdrop-blur-sm transition-all',
                 isActive(item.href) ? 'bg-secondary/30' : 'bg-secondary/20 hover:bg-secondary/25',
@@ -40,8 +42,8 @@ export function MobileFooter({ className }: MobileFooterProps) {
             </Link>
           );
         })}
-        <Link href="/profile" className="flex-shrink-0 relative">
-          <Atoms.Avatar className="h-12 w-12">
+        <Link href={App.APP_ROUTES.PROFILE} aria-label="Profile" className="flex-shrink-0 relative">
+          <Atoms.Avatar className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}>
             <Atoms.AvatarImage src="https://i.pravatar.cc/150?img=68" alt="Profile" />
             <Atoms.AvatarFallback>
               <Libs.User className="h-5 w-5" />

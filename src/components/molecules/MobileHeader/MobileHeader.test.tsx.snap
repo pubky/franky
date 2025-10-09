@@ -76,12 +76,11 @@ exports[`MobileHeader - Snapshots > matches snapshot for left button 1`] = `
 `;
 
 exports[`MobileHeader - Snapshots > matches snapshot for logo 1`] = `
-<img
-  alt="Pubky"
-  data-height="32"
+<div
   data-testid="logo"
-  data-width="96"
-/>
+>
+  Logo
+</div>
 `;
 
 exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
@@ -113,7 +112,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom className 1`] =
   class="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20 custom-header"
 >
   <div
-    class="flex items-center justify-between px-4 h-16"
+    class="flex items-center justify-between px-4 py-4"
   >
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -188,14 +187,9 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom className 1`] =
       </svg>
     </button>
     <div
-      class="flex items-center gap-2"
+      data-testid="logo"
     >
-      <img
-        alt="Pubky"
-        data-height="32"
-        data-testid="logo"
-        data-width="96"
-      />
+      Logo
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -227,7 +221,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
   class="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20"
 >
   <div
-    class="flex items-center justify-between px-4 h-16"
+    class="flex items-center justify-between px-4 py-4"
   >
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -302,14 +296,9 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
       </svg>
     </button>
     <div
-      class="flex items-center gap-2"
+      data-testid="logo"
     >
-      <img
-        alt="Pubky"
-        data-height="32"
-        data-testid="logo"
-        data-width="96"
-      />
+      Logo
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -341,7 +330,7 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
   class="lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20"
 >
   <div
-    class="flex items-center justify-between px-4 h-16"
+    class="flex items-center justify-between px-4 py-4"
   >
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"
@@ -416,14 +405,9 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
       </svg>
     </button>
     <div
-      class="flex items-center gap-2"
+      data-testid="logo"
     >
-      <img
-        alt="Pubky"
-        data-height="32"
-        data-testid="logo"
-        data-width="96"
-      />
+      Logo
     </div>
     <button
       class="p-2 hover:bg-secondary/10 rounded-full transition-colors"

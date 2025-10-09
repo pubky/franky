@@ -11,7 +11,7 @@ export class AuthController {
       authStore.setCurrentUserPubky(pubky);
       // Once we have the session, we have to bootstrap the app
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
-      // Setting that state, the guard enforces to redirect to the main page (/feed)
+      // Setting that state, the guard enforces to redirect to the main page (/home)
       authStore.setAuthenticated(true);
     } catch (error) {
       throw error;
@@ -84,7 +84,7 @@ export class AuthController {
       authStore.setCurrentUserPubky(pubky);
       // Once we have the session, we have to bootstrap the app
       await Core.NexusBootstrapService.retrieveAndPersist(pubky);
-      // Setting that state, the guard enforces to redirect to the main page (/feed)
+      // Setting that state, the guard enforces to redirect to the main page (/home)
       authStore.setAuthenticated(true);
     }
   }

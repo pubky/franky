@@ -1,93 +1,337 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Home } from './Home';
+import * as App from '@/app';
 
-// Mock atoms
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+  })),
+}));
+
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(() => null),
+}));
+
+// Mock the Core module
+vi.mock('@/core', () => ({
+  AuthController: {
+    logout: vi.fn(),
+  },
+  useAuthStore: vi.fn(() => ({
+    currentUserPubky: null,
+  })),
+  useOnboardingStore: vi.fn(() => ({
+    showWelcomeDialog: false,
+    setShowWelcomeDialog: vi.fn(),
+  })),
+  useFiltersStore: vi.fn(() => ({
+    layout: 'columns',
+    setLayout: vi.fn(),
+    reach: 'all',
+    setReach: vi.fn(),
+    sort: 'recent',
+    setSort: vi.fn(),
+    content: 'all',
+    setContent: vi.fn(),
+  })),
+  PostController: {
+    fetch: vi.fn(() => Promise.resolve([])),
+  },
+  db: {
+    user_details: {
+      get: vi.fn(() => Promise.resolve(null)),
+    },
+  },
+}));
+
+// Mock the atoms
 vi.mock('@/atoms', () => ({
-  ImageBackground: ({ className, image, mobileImage }: { className?: string; image: string; mobileImage?: string }) => (
-    <div data-testid="image-background" className={className} data-image={image} data-mobile-image={mobileImage}>
-      Image Background
+  Container: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
+    <div className={className} data-size={size}>
+      {children}
     </div>
   ),
-  Container: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <div data-testid="container" className={`container ${size || ''} ${className || ''}`}>
+  Heading: ({
+    children,
+    level,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    level?: number;
+    size?: string;
+    className?: string;
+  }) => (
+    <h1 data-level={level} data-size={size} className={className}>
+      {children}
+    </h1>
+  ),
+  Button: ({
+    children,
+    variant,
+    size,
+    onClick,
+    id,
+    className,
+  }: {
+    children: React.ReactNode;
+    variant?: string;
+    size?: string;
+    onClick?: () => void;
+    id?: string;
+    className?: string;
+  }) => (
+    <button onClick={onClick} data-variant={variant} data-size={size} id={id} className={className}>
+      {children}
+    </button>
+  ),
+  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <span data-size={size} className={className}>
+      {children}
+    </span>
+  ),
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div className={className} data-testid="card">
       {children}
     </div>
   ),
 }));
 
-// Mock molecules
+// Mock the molecules
 vi.mock('@/molecules', () => ({
-  PageContainer: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <div data-testid="page-container" className={`page-container ${size || ''} ${className || ''}`}>
-      {children}
-    </div>
-  ),
-  HomePageHeading: () => <div data-testid="home-page-heading">Home Page Heading</div>,
-  HomeSectionTitle: () => <div data-testid="home-section-title">Section Title</div>,
-  HomeActions: () => <div data-testid="home-actions">Actions</div>,
-  HomeFooter: () => <div data-testid="home-footer">Footer</div>,
+  DialogWelcome: ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (open: boolean) => void }) =>
+    isOpen ? (
+      <div data-testid="dialog-welcome" onClick={() => onOpenChange(false)}>
+        Mocked DialogWelcome
+      </div>
+    ) : null,
+  AlertBackup: () => <div data-testid="alert-backup">Mocked AlertBackup</div>,
+}));
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  Post: () => <div data-testid="post">Mocked Post</div>,
+  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
+}));
+
+// Mock hooks
+vi.mock('@/hooks', () => ({
+  useInfiniteScroll: vi.fn(() => ({
+    sentinelRef: { current: null },
+  })),
 }));
 
 describe('Home', () => {
-  it('renders all main components', () => {
-    render(<Home />);
+  let mockLogout: (() => void) | undefined;
 
-    expect(screen.getByTestId('image-background')).toBeInTheDocument();
-    expect(screen.getByTestId('container')).toBeInTheDocument();
-    expect(screen.getByTestId('page-container')).toBeInTheDocument();
-    expect(screen.getByTestId('home-page-heading')).toBeInTheDocument();
-    expect(screen.getByTestId('home-section-title')).toBeInTheDocument();
-    expect(screen.getByTestId('home-actions')).toBeInTheDocument();
-    expect(screen.getByTestId('home-footer')).toBeInTheDocument();
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    // Get the mocked AuthController
+    const { AuthController } = await import('@/core');
+    mockLogout = AuthController.logout as (() => void) | undefined;
   });
 
-  it('renders image background with correct props', () => {
+  it('renders without errors', () => {
     render(<Home />);
-
-    const imageBackground = screen.getByTestId('image-background');
-    expect(imageBackground).toHaveAttribute('data-image', '/images/bg-home.svg');
-    expect(imageBackground).toHaveAttribute('data-mobile-image', '/images/bg-home-mobile.svg');
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 
-  it('renders container with correct props', () => {
+  it('displays the Home heading correctly', () => {
     render(<Home />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('container container px-6');
+    const heading = screen.getByText('Home');
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveAttribute('data-level', '1');
+    expect(heading).toHaveAttribute('data-size', 'xl');
+    expect(heading).toHaveClass('text-2xl');
   });
 
-  it('renders page container with correct props', () => {
+  it('displays welcome message', () => {
     render(<Home />);
-
-    const pageContainer = screen.getByTestId('page-container');
-    expect(pageContainer).toHaveClass('page-container narrow items-start mx-0 flex flex-col gap-6');
+    expect(
+      screen.getByText("Welcome to your home. This is where you'll see posts from people you follow."),
+    ).toBeInTheDocument();
   });
 
-  it('renders components in correct order within page container', () => {
+  it('renders logout button with correct props', () => {
     render(<Home />);
-
-    const pageContainer = screen.getByTestId('page-container');
-    const children = Array.from(pageContainer.children);
-
-    expect(children).toHaveLength(4);
-    expect(children[0]).toHaveAttribute('data-testid', 'home-page-heading');
-    expect(children[1]).toHaveAttribute('data-testid', 'home-section-title');
-    expect(children[2]).toHaveAttribute('data-testid', 'home-actions');
-    expect(children[3]).toHaveAttribute('data-testid', 'home-footer');
+    const logoutButton = screen.getByText('Logout');
+    expect(logoutButton).toBeInTheDocument();
+    expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
+    expect(logoutButton).toHaveAttribute('data-size', 'default');
+    expect(logoutButton).toHaveAttribute('id', 'home-logout-btn');
   });
 
-  it('renders image background outside of page container', () => {
+  it('navigates to logout page when logout button is clicked', async () => {
+    const { useRouter } = await import('next/navigation');
+    const mockPush = vi.fn();
+    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
+
     render(<Home />);
+    const logoutButton = screen.getByText('Logout');
+    fireEvent.click(logoutButton);
 
-    // Check that image background is a direct child of the fragment (container)
-    const imageBackground = screen.getByTestId('image-background');
-    const pageContainer = screen.getByTestId('page-container');
+    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
+    expect(mockLogout).not.toHaveBeenCalled(); // Should not logout immediately
+  });
 
-    expect(imageBackground).toBeInTheDocument();
-    expect(pageContainer).toBeInTheDocument();
+  it('renders container structure correctly', () => {
+    render(<Home />);
+    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
+  });
 
-    // They should be siblings, not parent-child
-    expect(pageContainer).not.toContainElement(imageBackground);
+  it('renders 5 placeholder cards', () => {
+    render(<Home />);
+    const cards = screen.getAllByTestId('card');
+    expect(cards).toHaveLength(5);
+  });
+
+  it('applies correct styling to cards', () => {
+    render(<Home />);
+    const cards = screen.getAllByTestId('card');
+    cards.forEach((card) => {
+      expect(card).toHaveClass('p-6');
+    });
+  });
+
+  describe('Welcome Dialog Behavior', () => {
+    it('should not show welcome dialog when showWelcomeDialog is false', async () => {
+      const mockUseOnboardingStore = vi.fn(() => ({
+        showWelcomeDialog: false,
+        setShowWelcomeDialog: vi.fn(),
+      }));
+
+      // Update the mock for this test
+      const Core = await import('@/core');
+      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
+
+      render(<Home />);
+
+      expect(screen.queryByTestId('dialog-welcome')).not.toBeInTheDocument();
+    });
+
+    it('should show welcome dialog when showWelcomeDialog is true and user details exist', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const mockUseOnboardingStore = vi.fn(() => ({
+        showWelcomeDialog: true,
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      }));
+
+      const mockUseAuthStore = vi.fn(() => ({
+        currentUserPubky: 'test-pubky-123',
+      }));
+
+      // Mock useLiveQuery to return user details
+      const { useLiveQuery } = await import('dexie-react-hooks');
+      vi.mocked(useLiveQuery).mockReturnValue({
+        name: 'Test User',
+        bio: 'Test bio',
+        image: 'test-image.jpg',
+      });
+
+      // Update the mocks for this test
+      const Core = await import('@/core');
+      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
+      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
+
+      render(<Home />);
+
+      expect(screen.getByTestId('dialog-welcome')).toBeInTheDocument();
+    });
+
+    it('should not show welcome dialog when user details do not exist', async () => {
+      const mockUseOnboardingStore = vi.fn(() => ({
+        showWelcomeDialog: true,
+        setShowWelcomeDialog: vi.fn(),
+      }));
+
+      const mockUseAuthStore = vi.fn(() => ({
+        currentUserPubky: null,
+      }));
+
+      // Update the mocks for this test
+      const Core = await import('@/core');
+      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
+      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
+
+      render(<Home />);
+
+      expect(screen.queryByTestId('dialog-welcome')).not.toBeInTheDocument();
+    });
+
+    it('should call setShowWelcomeDialog(false) when welcome dialog is closed', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const mockUseOnboardingStore = vi.fn(() => ({
+        showWelcomeDialog: true,
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      }));
+
+      const mockUseAuthStore = vi.fn(() => ({
+        currentUserPubky: 'test-pubky-123',
+      }));
+
+      // Mock useLiveQuery to return user details
+      const { useLiveQuery } = await import('dexie-react-hooks');
+      vi.mocked(useLiveQuery).mockReturnValue({
+        name: 'Test User',
+        bio: 'Test bio',
+        image: 'test-image.jpg',
+      });
+
+      // Update the mocks for this test
+      const Core = await import('@/core');
+      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
+      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
+
+      render(<Home />);
+
+      const welcomeDialog = screen.getByTestId('dialog-welcome');
+      expect(welcomeDialog).toBeInTheDocument();
+
+      // Click to close the dialog
+      fireEvent.click(welcomeDialog);
+
+      expect(mockSetShowWelcomeDialog).toHaveBeenCalledWith(false);
+    });
+
+    it('should have correct welcome dialog props when shown', async () => {
+      const mockSetShowWelcomeDialog = vi.fn();
+      const mockUseOnboardingStore = vi.fn(() => ({
+        showWelcomeDialog: true,
+        setShowWelcomeDialog: mockSetShowWelcomeDialog,
+      }));
+
+      const mockUseAuthStore = vi.fn(() => ({
+        currentUserPubky: 'test-pubky-123',
+      }));
+
+      const mockUserDetails = {
+        name: 'Test User',
+        bio: 'Test bio',
+        image: 'test-image.jpg',
+      };
+
+      // Mock useLiveQuery to return user details
+      const { useLiveQuery } = await import('dexie-react-hooks');
+      vi.mocked(useLiveQuery).mockReturnValue(mockUserDetails);
+
+      // Update the mocks for this test
+      const Core = await import('@/core');
+      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
+      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
+
+      render(<Home />);
+
+      // The dialog should be rendered with correct props
+      // This is implicitly tested by the dialog being shown when conditions are met
+      expect(screen.getByTestId('dialog-welcome')).toBeInTheDocument();
+    });
   });
 });

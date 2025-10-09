@@ -1,0 +1,255 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsMenu > matches snapshot 1`] = `
+<div>
+  <div
+    class="mx-auto w-full flex flex-col gap-4 bg-background"
+    data-slot="filter-root"
+    data-testid="filter-root"
+  >
+    <div
+      class="flex flex-col gap-1"
+      data-slot="filter-header"
+      data-testid="filter-header"
+    >
+      <h2
+        class="text-2xl text-muted-foreground font-light"
+        data-testid="heading-2"
+      >
+        Settings
+      </h2>
+    </div>
+    <div
+      class="mx-auto w-full flex flex-col gap-2"
+      data-slot="filter-list"
+      data-testid="filter-list"
+    >
+      <p
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
+          />
+        </svg>
+        <span
+          class=""
+        >
+          Account
+        </span>
+      </p>
+      <p
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-bell w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10.268 21a2 2 0 0 0 3.464 0"
+          />
+          <path
+            d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
+          />
+        </svg>
+        <span
+          class=""
+        >
+          Notifications
+        </span>
+      </p>
+      <p
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-shield-check w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+          />
+          <path
+            d="m9 12 2 2 4-4"
+          />
+        </svg>
+        <span
+          class=""
+        >
+          Privacy and safety
+        </span>
+      </p>
+      <p
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-user-x w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+          />
+          <circle
+            cx="9"
+            cy="7"
+            r="4"
+          />
+          <line
+            x1="17"
+            x2="22"
+            y1="8"
+            y2="13"
+          />
+          <line
+            x1="22"
+            x2="17"
+            y1="8"
+            y2="13"
+          />
+        </svg>
+        <span
+          class=""
+        >
+          Muted users
+        </span>
+      </p>
+      <p
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-languages w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m5 8 6 6"
+          />
+          <path
+            d="m4 14 6-6 2-3"
+          />
+          <path
+            d="M2 5h12"
+          />
+          <path
+            d="M7 2h1"
+          />
+          <path
+            d="m22 22-5-10-5 10"
+          />
+          <path
+            d="M14 18h6"
+          />
+        </svg>
+        <span
+          class=""
+        >
+          Language
+        </span>
+      </p>
+      <p
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-circle-help w-5 h-5"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+          <path
+            d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+          />
+          <path
+            d="M12 17h.01"
+          />
+        </svg>
+        <span
+          class=""
+        >
+          Help
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+`;

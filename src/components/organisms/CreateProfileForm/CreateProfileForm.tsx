@@ -191,9 +191,8 @@ export const CreateProfileForm = () => {
       // Set welcome dialog to show for new users
       setShowWelcomeDialog(true);
 
-      router.push(App.FEED_ROUTES.FEED);
-    } catch (err) {
-      Libs.Logger.error('Error during profile creation', err);
+      router.push(App.HOME_ROUTES.HOME);
+    } catch {
       setContinueText('Try again!');
       toast({
         title: 'Please try again.',

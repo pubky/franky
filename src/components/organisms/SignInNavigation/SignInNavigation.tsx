@@ -10,7 +10,7 @@ export const SignInNavigation = () => {
   const router = useRouter();
 
   const handleRestore = () => {
-    router.push(App.FEED_ROUTES.FEED);
+    router.push(App.HOME_ROUTES.HOME);
   };
 
   return (

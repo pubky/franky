@@ -1,15 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { Feed } from './Feed';
+import { Home } from './Home';
 
-const meta: Meta<typeof Feed> = {
-  title: 'Templates/Feed',
-  component: Feed,
+const meta: Meta<typeof Home> = {
+  title: 'Templates/Home',
+  component: Home,
   parameters: {
     layout: 'fullscreen',
     docs: {
       description: {
         component:
-          'The main feed template that displays posts from users you follow. Includes placeholder content and a logout button.',
+          'The main home template that displays posts from users you follow. Includes placeholder content and a logout button.',
       },
     },
   },

@@ -62,24 +62,11 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs
-vi.mock('@/libs', () => ({
-  TriangleAlert: ({ className }: { className?: string }) => (
-    <div data-testid="triangle-alert" className={className}>
-      TriangleAlert
-    </div>
-  ),
-  ShieldCheck: ({ className }: { className?: string }) => (
-    <div data-testid="shield-check" className={className}>
-      ShieldCheck
-    </div>
-  ),
-  Check: ({ className }: { className?: string }) => (
-    <div data-testid="check" className={className}>
-      Check
-    </div>
-  ),
-}));
+// Mock libs - use actual implementations (real icons)
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return { ...actual };
+});
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
@@ -133,7 +120,7 @@ describe('DialogConfirmBackup', () => {
     render(<DialogConfirmBackup />);
 
     expect(screen.getByText('After confirming, your seed will be deleted from the browser (!)')).toBeInTheDocument();
-    expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-triangle-alert')).toBeInTheDocument();
   });
 
   it('applies correct styling to warning alert', () => {
@@ -174,8 +161,8 @@ describe('DialogConfirmBackup', () => {
   it('renders icons in buttons', () => {
     render(<DialogConfirmBackup />);
 
-    expect(screen.getByTestId('shield-check')).toBeInTheDocument();
-    expect(screen.getByTestId('check')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-shield-check')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-check')).toBeInTheDocument();
   });
 
   it('applies correct styling to dialog content', () => {
@@ -209,15 +196,15 @@ describe('DialogConfirmBackup', () => {
   it('applies correct styling to warning icon', () => {
     render(<DialogConfirmBackup />);
 
-    const warningIcon = screen.getByTestId('triangle-alert');
+    const warningIcon = document.querySelector('.lucide-triangle-alert') as HTMLElement | null;
     expect(warningIcon).toHaveClass('h-4', 'w-4', 'font-bold');
   });
 
   it('applies correct styling to button icons', () => {
     render(<DialogConfirmBackup />);
 
-    const shieldIcon = screen.getByTestId('shield-check');
-    const checkIcon = screen.getByTestId('check');
+    const shieldIcon = document.querySelector('.lucide-shield-check') as HTMLElement | null;
+    const checkIcon = document.querySelector('.lucide-check') as HTMLElement | null;
 
     expect(shieldIcon).toHaveClass('h-4', 'w-4');
     expect(checkIcon).toHaveClass('h-4', 'w-4');
@@ -235,8 +222,8 @@ describe('DialogConfirmBackup', () => {
     expect(screen.getByText('After confirming, your seed will be deleted from the browser (!)')).toBeInTheDocument();
     expect(screen.getByText('Backup methods')).toBeInTheDocument();
     expect(screen.getByText('Confirm (delete seed)')).toBeInTheDocument();
-    expect(screen.getByTestId('triangle-alert')).toBeInTheDocument();
-    expect(screen.getByTestId('shield-check')).toBeInTheDocument();
-    expect(screen.getByTestId('check')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-triangle-alert')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-shield-check')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-check')).toBeInTheDocument();
   });
 });

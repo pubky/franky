@@ -19,12 +19,26 @@ exports[`Dialog - Snapshots > matched snapshot for DialogContent with default pr
       class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer outline-none focus:outline-none"
       data-testid="dialog-close"
     >
-      <div
-        class="h-4 w-4 text-secondary-foreground opacity-70"
-        data-testid="x-icon"
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4 text-secondary-foreground opacity-70"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        X
-      </div>
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
       <span
         class="sr-only"
       >
@@ -64,12 +78,26 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with close butt
       class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer outline-none focus:outline-none"
       data-testid="dialog-close"
     >
-      <div
-        class="h-4 w-4 text-secondary-foreground opacity-70"
-        data-testid="x-icon"
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4 text-secondary-foreground opacity-70"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        X
-      </div>
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
       <span
         class="sr-only"
       >
@@ -213,12 +241,26 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
         class="absolute right-4 top-4 w-8 h-8 inline-flex items-center justify-center whitespace-nowrap text-sm transition-all duration-300 ease-in-out disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full cursor-pointer outline-none focus:outline-none"
         data-testid="dialog-close"
       >
-        <div
-          class="h-4 w-4 text-secondary-foreground opacity-70"
-          data-testid="x-icon"
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-x h-4 w-4 text-secondary-foreground opacity-70"
+          fill="none"
+          height="24"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          X
-        </div>
+          <path
+            d="M18 6 6 18"
+          />
+          <path
+            d="m6 6 12 12"
+          />
+        </svg>
         <span
           class="sr-only"
         >

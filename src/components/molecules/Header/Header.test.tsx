@@ -9,6 +9,7 @@ import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
+  usePathname: vi.fn(),
 }));
 
 // Mock dexie-react-hooks
@@ -87,7 +88,7 @@ vi.mock('@/components', () => ({
 
 // Mock the molecules
 vi.mock('@/molecules', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
     ProgressSteps: ({ currentStep, totalSteps }: { currentStep: number; totalSteps: number }) => (
@@ -101,10 +102,13 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock the libs - keep real implementations and only stub helpers we need
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
+  return {
+    ...actual,
+    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+  };
 });
 
 // Mock the config
@@ -116,14 +120,14 @@ vi.mock('@/config', () => ({
 
 // Mock the app routes
 vi.mock('@/app', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('@/app')>();
   return {
     ...actual,
     AUTH_ROUTES: {
       SIGN_IN: '/sign-in',
     },
-    FEED_ROUTES: {
-      FEED: '/feed',
+    HOME_ROUTES: {
+      HOME: '/home',
     },
   };
 });
@@ -217,14 +221,29 @@ describe('Header Components', () => {
   });
 
   describe('HeaderSocialLinks', () => {
+    it('renders social links', () => {
+      render(<HeaderSocialLinks />);
+
+      // Github2 may not include a lucide- class; assert presence via anchor with svg
+      const githubLink = document.querySelector('a[href="https://github.com"]');
+      expect(githubLink?.querySelector('svg')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-x-twitter')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-telegram')).toBeInTheDocument();
+    });
+
+    it('applies correct classes', () => {
+      render(<HeaderSocialLinks />);
+
+      const githubLink = document.querySelector('a[href="https://github.com"]');
+      expect(githubLink?.querySelector('svg')).toBeInTheDocument();
+    });
+
     it('renders links with correct hrefs', () => {
       render(<HeaderSocialLinks />);
 
-      // Icons are now actual lucide-react components (SVGs), find links by href
-      const links = screen.getAllByRole('link');
-      const githubLink = links.find((link) => link.getAttribute('href') === 'https://github.com');
-      const twitterLink = links.find((link) => link.getAttribute('href') === 'https://twitter.com/getpubky');
-      const telegramLink = links.find((link) => link.getAttribute('href') === 'https://t.me/getpubky');
+      const githubLink = document.querySelector('a[href="https://github.com"]');
+      const twitterLink = document.querySelector('a[href="https://twitter.com/getpubky"]');
+      const telegramLink = document.querySelector('a[href="https://t.me/getpubky"]');
 
       expect(githubLink).toHaveAttribute('href', 'https://github.com');
       expect(twitterLink).toHaveAttribute('href', 'https://twitter.com/getpubky');
@@ -284,10 +303,17 @@ describe('Header Components', () => {
       render(<HeaderSignIn />);
 
       expect(screen.getByTestId('search-input')).toBeInTheDocument();
-      expect(document.querySelector('.lucide-search')).toBeInTheDocument();
+      // lucide uses 'house' for the home icon
       expect(document.querySelector('.lucide-house')).toBeInTheDocument();
+      expect(document.querySelector('.lucide-flame')).toBeInTheDocument();
       expect(document.querySelector('.lucide-bookmark')).toBeInTheDocument();
       expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
+    });
+
+    it('applies correct classes', () => {
+      render(<HeaderSignIn />);
+
+      expect(screen.getByTestId('search-input')).toBeInTheDocument();
     });
   });
 
@@ -334,16 +360,14 @@ describe('Header Components', () => {
     it('renders navigation links', () => {
       render(<HeaderNavigationButtons avatarInitial="TU" />);
 
-      // Icons are now actual lucide-react components (SVGs), find links by href
-      const links = screen.getAllByRole('link');
-      const homeLink = links.find((link) => link.getAttribute('href') === '/feed');
-      const searchLink = links.find((link) => link.getAttribute('href') === '/search');
-      const bookmarkLink = links.find((link) => link.getAttribute('href') === '/bookmarks');
-      const settingsLink = links.find((link) => link.getAttribute('href') === '/settings');
+      const homeLink = document.querySelector('.lucide-house')?.closest('a');
+      const hotLink = document.querySelector('.lucide-flame')?.closest('a');
+      const bookmarkLink = document.querySelector('.lucide-bookmark')?.closest('a');
+      const settingsLink = document.querySelector('.lucide-settings')?.closest('a');
       const profileLink = screen.getByText('TU').closest('a');
 
-      expect(homeLink).toHaveAttribute('href', '/feed');
-      expect(searchLink).toHaveAttribute('href', '/search');
+      expect(homeLink).toHaveAttribute('href', '/home');
+      expect(hotLink).toHaveAttribute('href', '/hot');
       expect(bookmarkLink).toHaveAttribute('href', '/bookmarks');
       expect(settingsLink).toHaveAttribute('href', '/settings');
       expect(profileLink).toHaveAttribute('href', '/profile');

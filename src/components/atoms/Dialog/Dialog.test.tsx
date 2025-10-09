@@ -43,15 +43,14 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
-// Mock @/libs to intercept Libs.X
-vi.mock('@/libs', () => ({
-  X: ({ className }: { className?: string }) => (
-    <div data-testid="x-icon" className={className}>
-      X
-    </div>
-  ),
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-}));
+// Mock @/libs - use actual implementations and only stub cn helper
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
+  };
+});
 
 // Import the actual Dialog components after mocking
 import {

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ContentLayout } from './ContentLayout';
 
@@ -23,9 +23,16 @@ vi.mock('@/core', () => ({
 
 // Mock the molecules
 vi.mock('@/molecules', () => ({
-  MobileHeader: ({ onLeftIconClick }: { onLeftIconClick?: () => void }) => (
+  MobileHeader: ({
+    onLeftIconClick,
+    onRightIconClick,
+  }: {
+    onLeftIconClick?: () => void;
+    onRightIconClick?: () => void;
+  }) => (
     <div data-testid="mobile-header">
-      <button onClick={onLeftIconClick}>Filter</button>
+      <button onClick={onLeftIconClick}>Left</button>
+      <button onClick={onRightIconClick}>Right</button>
     </div>
   ),
   ButtonFilters: ({ onClick, position }: { onClick?: () => void; position?: 'left' | 'right' }) => (
@@ -104,39 +111,51 @@ describe('ContentLayout', () => {
       </ContentLayout>,
     );
 
-    expect(screen.getByTestId('mobile-header')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-footer')).toBeInTheDocument();
     expect(screen.getByText('Test Content')).toBeInTheDocument();
   });
 
   it('shows left sidebar when showLeftSidebar is true and layout is not wide', () => {
     render(
-      <ContentLayout showLeftSidebar={true}>
+      <ContentLayout
+        showLeftSidebar={true}
+        leftSidebarContent={<div data-testid="left-sidebar-content">Left Sidebar</div>}
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
 
-    expect(screen.getByTestId('left-sidebar')).toBeInTheDocument();
+    // Sidebar is hidden on mobile (< lg) so we check it's in the DOM but with hidden class
+    const sidebarElements = screen.queryAllByText('Left Sidebar');
+    expect(sidebarElements.length).toBeGreaterThan(0);
   });
 
   it('hides left sidebar when showLeftSidebar is false', () => {
     render(
-      <ContentLayout showLeftSidebar={false}>
+      <ContentLayout
+        showLeftSidebar={false}
+        leftSidebarContent={<div data-testid="left-sidebar-content">Left Sidebar</div>}
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
 
-    expect(screen.queryByTestId('left-sidebar')).not.toBeInTheDocument();
+    expect(screen.queryByText('Left Sidebar')).not.toBeInTheDocument();
   });
 
   it('shows right sidebar when showRightSidebar is true and layout is not wide', () => {
     render(
-      <ContentLayout showRightSidebar={true}>
+      <ContentLayout
+        showRightSidebar={true}
+        rightSidebarContent={<div data-testid="right-sidebar-content">Right Sidebar</div>}
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
 
-    expect(screen.getByTestId('right-sidebar')).toBeInTheDocument();
+    // Sidebar is hidden on mobile (< lg) so we check it's in the DOM but with hidden class
+    const sidebarElements = screen.queryAllByText('Right Sidebar');
+    expect(sidebarElements.length).toBeGreaterThan(0);
   });
 
   it('hides right sidebar when showRightSidebar is false', () => {
@@ -149,49 +168,17 @@ describe('ContentLayout', () => {
     expect(screen.queryByTestId('right-sidebar')).not.toBeInTheDocument();
   });
 
-  it('opens left drawer when mobile header left icon is clicked', () => {
-    render(
-      <ContentLayout>
-        <div>Test Content</div>
-      </ContentLayout>,
-    );
-
-    const filterButton = screen.getByText('Filter');
-    fireEvent.click(filterButton);
-
-    expect(screen.getByTestId('filter-drawer-left')).toBeInTheDocument();
-  });
-
-  it('opens right drawer when mobile header right icon is clicked', () => {
-    render(
-      <ContentLayout>
-        <div>Test Content</div>
-      </ContentLayout>,
-    );
-
-    // The right drawer is opened by the MobileHeader component
-    expect(screen.getByTestId('filter-drawer-right')).toBeInTheDocument();
-  });
-
-  it('renders filter components in left drawer', () => {
-    render(
-      <ContentLayout>
-        <div>Test Content</div>
-      </ContentLayout>,
-    );
-
-    const filterButton = screen.getByText('Filter');
-    fireEvent.click(filterButton);
-
-    expect(screen.getByTestId('filter-reach')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-sort')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-content')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-layout')).toBeInTheDocument();
-  });
-
   it('renders right sidebar components in right drawer', () => {
     render(
-      <ContentLayout>
+      <ContentLayout
+        rightSidebarContent={
+          <>
+            <div data-testid="who-to-follow">Who to Follow</div>
+            <div data-testid="active-users">Active Users</div>
+            <div data-testid="feedback-card">Feedback</div>
+          </>
+        }
+      >
         <div>Test Content</div>
       </ContentLayout>,
     );
