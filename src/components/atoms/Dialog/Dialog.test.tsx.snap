@@ -5,14 +5,14 @@ exports[`Dialog - Snapshots > matched snapshot for DialogContent with default pr
   data-testid="dialog-portal"
 >
   <div
-    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/50"
     data-testid="dialog-overlay"
   />
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:py-0"
+    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0 sm:py-0"
   >
     <div
-      class="relative z-50 grid w-full max-h-[80vh] max-w-[calc(100%-2rem)] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
+      class="relative z-50 grid w-full max-h-[80vh] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
       data-testid="dialog-content"
     >
       <div>
@@ -68,14 +68,14 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with close butt
   data-testid="dialog-portal"
 >
   <div
-    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/50"
     data-testid="dialog-overlay"
   />
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:py-0"
+    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0 sm:py-0"
   >
     <div
-      class="relative z-50 grid w-full max-h-[80vh] max-w-[calc(100%-2rem)] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
+      class="relative z-50 grid w-full max-h-[80vh] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
       data-testid="dialog-content"
     >
       <div>
@@ -121,14 +121,14 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
   data-testid="dialog-portal"
 >
   <div
-    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+    class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/50"
     data-testid="dialog-overlay"
   />
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:py-0"
+    class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0 sm:py-0"
   >
     <div
-      class="relative z-50 grid w-full max-h-[80vh] max-w-[calc(100%-2rem)] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
+      class="relative z-50 grid w-full max-h-[80vh] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
       data-testid="dialog-content"
     >
       <div>
@@ -210,14 +210,14 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
     data-testid="dialog-portal"
   >
     <div
-      class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+      class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/50"
       data-testid="dialog-overlay"
     />
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:py-0"
+      class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-0 sm:py-0"
     >
       <div
-        class="relative z-50 grid w-full max-h-[80vh] max-w-[calc(100%-2rem)] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
+        class="relative z-50 grid w-full max-h-[80vh] overflow-y-auto rounded-lg border bg-background p-6 shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg"
         data-testid="dialog-content"
       >
         <div
