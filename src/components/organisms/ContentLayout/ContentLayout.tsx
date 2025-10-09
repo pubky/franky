@@ -99,7 +99,7 @@ export function ContentLayout({
           {showLeftSidebar && layout !== Core.LAYOUT.WIDE && leftSidebarContent && (
             <div
               className={Libs.cn(
-                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[24px] self-start h-fit',
+                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[144px] self-start h-fit',
               )}
             >
               {leftSidebarContent}
@@ -113,7 +113,7 @@ export function ContentLayout({
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (
             <div
               className={Libs.cn(
-                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[24px] self-start h-fit',
+                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[144px] self-start h-fit',
               )}
             >
               {rightSidebarContent}

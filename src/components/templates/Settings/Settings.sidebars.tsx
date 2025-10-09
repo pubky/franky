@@ -3,7 +3,7 @@ import { SettingsInfo } from './SettingsInfo';
 
 export function SettingsLeftSidebar() {
   return (
-    <div className="self-start sticky top-[100px]">
+    <div className="self-start sticky top-[100px] w-full">
       <SettingsMenu />
     </div>
   );

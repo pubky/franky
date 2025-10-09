@@ -13,7 +13,7 @@ export function HotLeftSidebar({ reach, setReach, timeframe, setTimeframe }: Hot
   return (
     <>
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
-      <div className="self-start sticky top-[100px]">
+      <div className="self-start sticky top-[100px] w-full">
         <FilterTimeframe selectedTab={timeframe} onTabChange={setTimeframe} />
       </div>
     </>
