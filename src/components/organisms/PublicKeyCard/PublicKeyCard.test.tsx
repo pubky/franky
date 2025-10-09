@@ -179,6 +179,10 @@ const { mockLoggerError } = vi.hoisted(() => ({
   mockLoggerError: vi.fn(),
 }));
 
+const { mockIsWebShareSupported } = vi.hoisted(() => ({
+  mockIsWebShareSupported: vi.fn(() => true),
+}));
+
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
@@ -192,6 +196,7 @@ vi.mock('@/libs', async (importOriginal) => {
       })),
     },
     shareWithFallback: mockShareWithFallback,
+    isWebShareSupported: mockIsWebShareSupported,
     Logger: {
       error: mockLoggerError,
     },
@@ -202,9 +207,10 @@ describe('PublicKeyCard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockToast.mockReturnValue({ dismiss: mockDismiss });
-    mockCopyToClipboard.mockResolvedValue(undefined);
+    mockCopyToClipboard.mockResolvedValue(true);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
     mockUseIsTouchDevice.mockReturnValue(true);
+    mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
       setKeypair: mockSetKeypair,
       setMnemonic: mockSetMnemonic,
@@ -238,6 +244,16 @@ describe('PublicKeyCard', () => {
     expect(screen.getByTestId('action-button-1')).toBeInTheDocument();
     expect(screen.getByText('Copy to clipboard')).toBeInTheDocument();
     expect(document.querySelector('.lucide-share')).toBeInTheDocument();
+  });
+
+  it('hides the share action when Web Share API is unavailable', () => {
+    mockIsWebShareSupported.mockReturnValueOnce(false);
+
+    render(<PublicKeyCard />);
+
+    expect(screen.getByTestId('action-section')).toBeInTheDocument();
+    expect(screen.getByTestId('action-button-0')).toBeInTheDocument();
+    expect(screen.queryByTestId('action-button-1')).not.toBeInTheDocument();
   });
 
   it('does not render share button on non-touch devices', () => {
@@ -360,8 +376,8 @@ describe('PublicKeyCard', () => {
     expect(mockShareWithFallback).toHaveBeenCalled();
     expect(mockCopyToClipboard).toHaveBeenCalledWith(mockPubky);
     expect(mockToast).toHaveBeenCalledWith({
-      title: 'Pubky copied',
-      description: 'Paste it into your favorite app to share it.',
+      title: 'Sharing unavailable',
+      description: 'We copied your pubky so you can paste it into your favorite app.',
     });
   });
 
@@ -463,9 +479,10 @@ describe('PublicKeyCard - Key Generation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockToast.mockReturnValue({ dismiss: mockDismiss });
-    mockCopyToClipboard.mockResolvedValue(undefined);
+    mockCopyToClipboard.mockResolvedValue(true);
     mockShareWithFallback.mockResolvedValue({ success: true, method: 'native' });
     mockUseIsTouchDevice.mockReturnValue(true);
+    mockIsWebShareSupported.mockReturnValue(true);
     mockUseOnboardingStore.mockReturnValue({
       setKeypair: mockSetKeypair,
       setMnemonic: mockSetMnemonic,
