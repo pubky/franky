@@ -1,0 +1,290 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] = `
+<div
+  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-6 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-bell"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10.268 21a2 2 0 0 0 3.464 0"
+        />
+        <path
+          d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Platform notifications
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-secondary-foreground"
+    >
+      Please select which notifications you want to receive on Pubky.
+    </p>
+    <div
+      class="w-full p-6 bg-white/5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex"
+    >
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          New follower
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-follow"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          New friend
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-new_friend"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Lost friend
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-lost_friend"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Someone tagged your post
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-tag_post"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Someone tagged your profile
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-tag_profile"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Someone mentioned your profile
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-mention"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          New reply to your post
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-reply"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          New repost to your post
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-repost"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Someone deleted the post you interacted with
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-post_deleted"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Someone edited the post you interacted with
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="notification-switch-post_edited"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -18,12 +18,12 @@ describe('SettingsInfo', () => {
 
   it('renders subtitle for Terms section', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Read our terms carefully.')).toBeInTheDocument();
+    expect(screen.getByText('Please read our terms carefully.')).toBeInTheDocument();
   });
 
   it('renders version text', () => {
     render(<SettingsInfo />);
-    expect(screen.getByText('Pubky version v0.12 © Synonym Software Ltd')).toBeInTheDocument();
+    expect(screen.getByText('Pubky v0.12 © Synonym Software Ltd')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
