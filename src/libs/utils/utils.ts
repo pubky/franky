@@ -19,11 +19,54 @@ export function formatPublicKey({ key, length = 12 }: FormatPublicKeyProps) {
 }
 
 export async function copyToClipboard({ text }: CopyToClipboardProps) {
-  if (!navigator.clipboard) {
+  if (typeof navigator === 'undefined') {
     throw new Error('Clipboard API not supported');
   }
 
-  await navigator.clipboard.writeText(text);
+  let clipboardError: Error | null = null;
+
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return;
+    } catch (error) {
+      clipboardError = error as Error;
+    }
+  }
+
+  if (typeof document === 'undefined') {
+    throw clipboardError ?? new Error('Clipboard API not supported');
+  }
+
+  const execCommand = typeof document.execCommand === 'function' ? document.execCommand.bind(document) : null;
+
+  if (!execCommand) {
+    throw clipboardError ?? new Error('Clipboard API not supported');
+  }
+
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.top = '-9999px';
+  textarea.style.opacity = '0';
+
+  document.body.appendChild(textarea);
+
+  try {
+    textarea.focus();
+    textarea.select();
+
+    const successful = execCommand('copy');
+
+    if (!successful) {
+      throw new Error('Fallback copy command was unsuccessful');
+    }
+  } catch (error) {
+    throw clipboardError ?? (error as Error);
+  } finally {
+    document.body.removeChild(textarea);
+  }
 }
 
 // Helper function to normalize Radix UI IDs in container HTML for snapshot tests

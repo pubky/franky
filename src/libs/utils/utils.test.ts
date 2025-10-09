@@ -149,13 +149,21 @@ describe('Utils', () => {
 
   describe('copyToClipboard', () => {
     let mockClipboard: { writeText: ReturnType<typeof vi.fn> };
+    let execCommandSpy: ReturnType<typeof vi.fn>;
 
     beforeEach(() => {
       mockClipboard = {
         writeText: vi.fn(),
       };
+      execCommandSpy = vi.fn();
+
       Object.defineProperty(navigator, 'clipboard', {
         value: mockClipboard,
+        writable: true,
+      });
+
+      Object.defineProperty(document, 'execCommand', {
+        value: execCommandSpy,
         writable: true,
       });
     });
@@ -166,32 +174,64 @@ describe('Utils', () => {
 
     it('should copy text to clipboard successfully', async () => {
       mockClipboard.writeText.mockResolvedValue(undefined);
+      execCommandSpy.mockReturnValue(true);
       const testText = 'test text to copy';
 
       await copyToClipboard({ text: testText });
 
       expect(mockClipboard.writeText).toHaveBeenCalledWith(testText);
+      expect(execCommandSpy).not.toHaveBeenCalled();
     });
 
     it('should handle empty string', async () => {
       mockClipboard.writeText.mockResolvedValue(undefined);
+      execCommandSpy.mockReturnValue(true);
 
       await copyToClipboard({ text: '' });
 
       expect(mockClipboard.writeText).toHaveBeenCalledWith('');
+      expect(execCommandSpy).not.toHaveBeenCalled();
     });
 
     it('should handle special characters', async () => {
       mockClipboard.writeText.mockResolvedValue(undefined);
+      execCommandSpy.mockReturnValue(true);
       const specialText = 'Special chars: !@#$%^&*()_+{}[]|\\:";\'<>?,./';
 
       await copyToClipboard({ text: specialText });
 
       expect(mockClipboard.writeText).toHaveBeenCalledWith(specialText);
+      expect(execCommandSpy).not.toHaveBeenCalled();
     });
 
-    it('should throw error when clipboard API is not supported', async () => {
+    it('should fall back to execCommand when clipboard API is unavailable', async () => {
       Object.defineProperty(navigator, 'clipboard', {
+        value: undefined,
+        writable: true,
+      });
+      execCommandSpy.mockReturnValue(true);
+
+      await expect(copyToClipboard({ text: 'fallback text' })).resolves.toBeUndefined();
+
+      expect(execCommandSpy).toHaveBeenCalled();
+    });
+
+    it('should fall back to execCommand when clipboard API throws', async () => {
+      const clipboardError = new Error('Clipboard write failed');
+      mockClipboard.writeText.mockRejectedValue(clipboardError);
+      execCommandSpy.mockReturnValue(true);
+
+      await expect(copyToClipboard({ text: 'test' })).resolves.toBeUndefined();
+
+      expect(execCommandSpy).toHaveBeenCalled();
+    });
+
+    it('should throw error when neither clipboard nor execCommand are supported', async () => {
+      Object.defineProperty(navigator, 'clipboard', {
+        value: undefined,
+        writable: true,
+      });
+      Object.defineProperty(document, 'execCommand', {
         value: undefined,
         writable: true,
       });
@@ -199,11 +239,17 @@ describe('Utils', () => {
       await expect(copyToClipboard({ text: 'test' })).rejects.toThrow('Clipboard API not supported');
     });
 
-    it('should propagate clipboard API errors', async () => {
-      const clipboardError = new Error('Clipboard write failed');
-      mockClipboard.writeText.mockRejectedValue(clipboardError);
+    it('should propagate execCommand errors when fallback fails', async () => {
+      Object.defineProperty(navigator, 'clipboard', {
+        value: undefined,
+        writable: true,
+      });
+      const fallbackError = new Error('Fallback copy command was unsuccessful');
+      execCommandSpy.mockImplementation(() => {
+        throw fallbackError;
+      });
 
-      await expect(copyToClipboard({ text: 'test' })).rejects.toThrow('Clipboard write failed');
+      await expect(copyToClipboard({ text: 'test' })).rejects.toThrow('Fallback copy command was unsuccessful');
     });
   });
 

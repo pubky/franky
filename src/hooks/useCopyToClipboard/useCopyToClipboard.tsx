@@ -41,6 +41,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
         });
 
         onSuccess?.(text);
+        return true;
       } catch (error) {
         Molecules.toast({
           title: errorTitle,
@@ -48,6 +49,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
         });
 
         onError?.(error as Error);
+        return false;
       }
     },
     [onSuccess, onError, successTitle, errorTitle, errorDescription],
