@@ -80,7 +80,7 @@ export function HomeserverCard() {
   const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onHandleContinueButton);
 
   return (
-    <>
+    <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="homeserver-card">
       <Molecules.ContentCard
         image={{
           src: '/images/gift.png',
@@ -126,7 +126,7 @@ export function HomeserverCard() {
         </Atoms.Container>
       </Molecules.ContentCard>
       <Molecules.HomeserverFooter />
-      <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between py-6')}>
+      <Atoms.Container className={Libs.cn('mt-auto flex-row gap-3 lg:gap-6 justify-between py-6 lg:mt-0')}>
         <Atoms.Button
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
@@ -156,6 +156,6 @@ export function HomeserverCard() {
           )}
         </Atoms.Button>
       </Atoms.Container>
-    </>
+    </Atoms.Container>
   );
 }

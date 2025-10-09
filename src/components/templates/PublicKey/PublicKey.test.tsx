@@ -4,8 +4,8 @@ import { PublicKey } from './PublicKey';
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
-  Container: ({ children, size }: { children: React.ReactNode; size?: string }) => (
-    <div data-testid="container" className={`container ${size || ''}`}>
+  Container: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
+    <div data-testid="container" data-size={size} className={className}>
       {children}
     </div>
   ),
@@ -38,12 +38,22 @@ describe('PublicKey', () => {
     render(<PublicKey />);
 
     const pageWrapper = screen.getByTestId('container');
-    const children = Array.from(pageWrapper.children);
+    const children = Array.from(pageWrapper.children) as HTMLElement[];
 
-    expect(children).toHaveLength(3);
-    expect(children[0]).toHaveAttribute('data-testid', 'public-key-header');
-    expect(children[1]).toHaveAttribute('data-testid', 'public-key-card');
-    expect(children[2]).toHaveAttribute('data-testid', 'public-key-navigation');
+    expect(children).toHaveLength(2);
+
+    const [contentWrapper, navigationWrapper] = children;
+    const contentChildren = Array.from(contentWrapper.children) as HTMLElement[];
+
+    expect(contentWrapper).toHaveAttribute('data-testid', 'public-key-content');
+    expect(contentChildren).toHaveLength(2);
+    expect(contentChildren[0]).toHaveAttribute('data-testid', 'public-key-header');
+    expect(contentChildren[1]).toHaveAttribute('data-testid', 'public-key-card');
+    expect(contentWrapper).toHaveClass('flex-1');
+    expect(contentWrapper).toHaveClass('lg:flex-none');
+    expect(navigationWrapper).toHaveClass('mt-auto');
+    expect(navigationWrapper).toHaveClass('lg:mt-0');
+    expect(navigationWrapper.firstChild).toHaveAttribute('data-testid', 'public-key-navigation');
   });
 
   it('wraps all content in page wrapper', () => {
@@ -55,6 +65,17 @@ describe('PublicKey', () => {
     expect(pageWrapper).toContainElement(screen.getByTestId('public-key-header'));
     expect(pageWrapper).toContainElement(screen.getByTestId('public-key-card'));
     expect(pageWrapper).toContainElement(screen.getByTestId('public-key-navigation'));
+  });
+
+  it('applies the onboarding layout classes to the container', () => {
+    render(<PublicKey />);
+
+    const container = screen.getByTestId('container');
+    expect(container).toHaveClass('min-h-dvh');
+    expect(container).toHaveClass('gap-6');
+    expect(container).toHaveClass('pb-6');
+    expect(container).toHaveClass('pt-4');
+    expect(container).toHaveClass('lg:min-h-0');
   });
 
   it('renders without crashing', () => {
