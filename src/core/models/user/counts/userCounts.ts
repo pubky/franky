@@ -38,6 +38,27 @@ export class UserCountsModel
     return { id: data[0], ...data[1] };
   }
 
+  /**
+   * Atomically adjust a specific count field for a user by a delta value.
+   * Supports both increment (positive delta) and decrement (negative delta).
+   *
+   * @param user - The user's public key
+   * @param key - The count field to modify
+   * @param by - The amount to add (positive) or subtract (negative).
+   */
+  static async updateCount(user: Core.Pubky, key: TUserCountsFields, by: number) {
+    await this.table
+      .where('id')
+      .equals(user)
+      .modify((row) => {
+        const record = row as unknown as Record<string, number>;
+        const current = (record[key] ?? 0) as number;
+        record[key] = current + by;
+      });
+  }
+
+  // -------- Instance helpers --------
+
   updateCount(key: TUserCountsFields, value: number) {
     switch (key) {
       case UserCountsFields.TAGGED:
