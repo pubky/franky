@@ -3,10 +3,17 @@ import * as Molecules from '@/molecules';
 
 export function Scan() {
   return (
-    <Atoms.Container size="container" className="px-6">
-      <Molecules.ScanContent />
-      <Molecules.ScanFooter />
-      <Molecules.ScanNavigation />
+    <Atoms.Container
+      size="container"
+      className="min-h-dvh items-stretch gap-6 px-6 pb-6 pt-4 lg:gap-10 lg:min-h-0 lg:items-start"
+    >
+      <div data-testid="scan-page-content" className="flex w-full flex-1 flex-col gap-6 lg:gap-10 lg:flex-none">
+        <Molecules.ScanContent />
+        <Molecules.ScanFooter />
+      </div>
+      <div className="mt-auto w-full lg:mt-0">
+        <Molecules.ScanNavigation />
+      </div>
     </Atoms.Container>
   );
 }

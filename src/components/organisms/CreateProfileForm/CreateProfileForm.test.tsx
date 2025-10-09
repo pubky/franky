@@ -338,7 +338,6 @@ vi.mock('@/molecules', async (importOriginal) => {
       onClose,
       onBack,
       onCrop,
-      imageSrc,
       fileName,
       fileType,
     }: {
@@ -353,7 +352,7 @@ vi.mock('@/molecules', async (importOriginal) => {
       if (!open) return null;
 
       const handleDone = async () => {
-        const blob = await mockCropImageToBlob(imageSrc ?? '', { x: 0, y: 0, width: 1, height: 1 }, fileType);
+        const blob = await mockCropImageToBlob();
         const croppedFile = new File([blob], fileName ?? 'avatar.png', { type: blob.type || fileType });
         onCrop(croppedFile, 'mock-object-url');
       };
@@ -781,9 +780,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue({
-        ok: true,
-      } as Response);
+      vi.mocked(Core.ProfileController.create).mockResolvedValue(undefined);
 
       // Mock authorizeAndBootstrap to throw an error
       const bootstrapError = new Error('Failed to fetch user data');
@@ -844,9 +841,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue({
-        ok: true,
-      } as Response);
+      vi.mocked(Core.ProfileController.create).mockResolvedValue(undefined);
 
       // Mock successful bootstrap
       vi.mocked(Core.AuthController.authorizeAndBootstrap).mockResolvedValue(undefined);
@@ -879,6 +874,7 @@ describe('CreateProfileForm', () => {
     it('should not call setShowWelcomeDialog when profile creation fails', async () => {
       const mockSetShowWelcomeDialog = vi.fn();
       const Core = await import('@/core');
+      const Libs = await import('@/libs');
 
       // Mock the onboarding store to return the setShowWelcomeDialog function
       vi.mocked(Core.useOnboardingStore).mockReturnValue({
@@ -896,9 +892,9 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue({
-        ok: false,
-      } as Response);
+      // Mock ProfileController.create to throw a HomeserverError
+      const profileError = new Libs.AppError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to create profile', 500);
+      vi.mocked(Core.ProfileController.create).mockRejectedValue(profileError);
 
       render(<CreateProfileForm />);
 
@@ -921,6 +917,12 @@ describe('CreateProfileForm', () => {
 
       // Verify that bootstrap was not called due to profile save failure
       expect(Core.AuthController.authorizeAndBootstrap).not.toHaveBeenCalled();
+
+      // Verify error toast was shown with the component's hardcoded message
+      expect(mockToast).toHaveBeenCalledWith({
+        title: 'Failed to save profile',
+        description: 'Please try again.',
+      });
     });
 
     it('should not call setShowWelcomeDialog when bootstrap fails', async () => {
@@ -943,9 +945,7 @@ describe('CreateProfileForm', () => {
         error: [],
       });
 
-      vi.mocked(Core.ProfileController.create).mockResolvedValue({
-        ok: true,
-      } as Response);
+      vi.mocked(Core.ProfileController.create).mockResolvedValue(undefined);
 
       // Mock bootstrap failure
       vi.mocked(Core.AuthController.authorizeAndBootstrap).mockRejectedValue(new Error('Bootstrap failed'));
