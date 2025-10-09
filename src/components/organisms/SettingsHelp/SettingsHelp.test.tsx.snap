@@ -1,0 +1,1057 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex custom-help"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-6 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-circle-help"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
+        <path
+          d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+        />
+        <path
+          d="M12 17h.01"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        FAQ
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-secondary-foreground"
+    >
+      Frequently asked questions from Pubky users
+    </p>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        1. Getting Started & Onboarding
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            Why does Pubky require invite codes?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How do I use Pubky Ring with the web app?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            Why does login sometimes fail when using the PWA on Android?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        2. Backups & Account Recovery
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How can I restore my account?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            Can I restore my Pubky account on another device?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        3. Profile & Social Features
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How can I update my profile information?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How can I delete my post?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How do I mute someone?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        4. How Pubky App Works
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How is Pubky different from other social media platforms?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How does Pubky differ from Nostr?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full h-px bg-white/10 my-6"
+    />
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-file-text"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        User Guide
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-muted-foreground"
+    >
+      The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of your Pubky experience.
+    </p>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+      data-size="default"
+      data-slot="button"
+      data-variant="secondary"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-file-text"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      User Guide
+    </button>
+    <div
+      class="w-full h-px bg-white/10 my-6"
+    />
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-message-circle"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Support
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-muted-foreground"
+    >
+      Cannot find the answer you're looking for? Pubky support will help you out in no time.
+    </p>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+      data-size="default"
+      data-slot="button"
+      data-variant="secondary"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-message-circle"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
+        />
+      </svg>
+      Pubky Support (Telegram)
+    </button>
+  </div>
+</div>
+`;
+
+exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-6 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-circle-help"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="12"
+          cy="12"
+          r="10"
+        />
+        <path
+          d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+        />
+        <path
+          d="M12 17h.01"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        FAQ
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-secondary-foreground"
+    >
+      Frequently asked questions from Pubky users
+    </p>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        1. Getting Started & Onboarding
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            Why does Pubky require invite codes?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How do I use Pubky Ring with the web app?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            Why does login sometimes fail when using the PWA on Android?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        2. Backups & Account Recovery
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How can I restore my account?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            Can I restore my Pubky account on another device?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        3. Profile & Social Features
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How can I update my profile information?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How can I delete my post?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How do I mute someone?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full flex-col gap-4 flex"
+    >
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        4. How Pubky App Works
+      </h2>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How is Pubky different from other social media platforms?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+      >
+        <button
+          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        >
+          <span
+            class="text-base font-semibold text-left"
+          >
+            How does Pubky differ from Nostr?
+          </span>
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div
+      class="w-full h-px bg-white/10 my-6"
+    />
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-file-text"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        User Guide
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-muted-foreground"
+    >
+      The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of your Pubky experience.
+    </p>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+      data-size="default"
+      data-slot="button"
+      data-variant="secondary"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-file-text"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      User Guide
+    </button>
+    <div
+      class="w-full h-px bg-white/10 my-6"
+    />
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-message-circle"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Support
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-muted-foreground"
+    >
+      Cannot find the answer you're looking for? Pubky support will help you out in no time.
+    </p>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
+      data-size="default"
+      data-slot="button"
+      data-variant="secondary"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-message-circle"
+        fill="none"
+        height="16"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
+        />
+      </svg>
+      Pubky Support (Telegram)
+    </button>
+  </div>
+</div>
+`;

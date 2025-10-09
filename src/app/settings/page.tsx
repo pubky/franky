@@ -1,5 +1,6 @@
-import * as Templates from '@/templates';
+import { redirect } from 'next/navigation';
+import { SETTINGS_ROUTES } from '@/app';
 
 export default function SettingsPage() {
-  return <Templates.Settings />;
+  redirect(SETTINGS_ROUTES.ACCOUNT);
 }

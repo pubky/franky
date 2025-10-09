@@ -1,0 +1,260 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsPrivacy - Snapshots > matches snapshot after loading 1`] = `
+<div
+  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-6 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-shield-check"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"
+        />
+        <path
+          d="m9 12 2 2 4-4"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Privacy and Safety
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-secondary-foreground"
+    >
+      Privacy is not a crime. Manage your visibility and safety on Pubky.
+    </p>
+    <div
+      class="w-full p-6 bg-white/5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex"
+    >
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Show confirmation before redirecting
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="show-confirmation-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Blur censored posts or profile pictures
+        </p>
+        <button
+          aria-checked="true"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-state="checked"
+          id="blur-censored-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-state="checked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Sign me out when inactive for 5 minutes
+        </p>
+        <button
+          aria-checked="false"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-disabled=""
+          data-state="unchecked"
+          disabled=""
+          id="sign-out-inactive-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-disabled=""
+            data-state="unchecked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Require PIN when inactive for 5 minutes
+        </p>
+        <button
+          aria-checked="false"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-disabled=""
+          data-state="unchecked"
+          disabled=""
+          id="require-pin-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-disabled=""
+            data-state="unchecked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Hide your profile in 'Who to Follow'
+        </p>
+        <button
+          aria-checked="false"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-disabled=""
+          data-state="unchecked"
+          disabled=""
+          id="hide-who-to-follow-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-disabled=""
+            data-state="unchecked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Hide your profile in 'Active Friends'
+        </p>
+        <button
+          aria-checked="false"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-disabled=""
+          data-state="unchecked"
+          disabled=""
+          id="hide-active-friends-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-disabled=""
+            data-state="unchecked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Hide your profile in search results
+        </p>
+        <button
+          aria-checked="false"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-disabled=""
+          data-state="unchecked"
+          disabled=""
+          id="hide-search-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-disabled=""
+            data-state="unchecked"
+          />
+        </button>
+      </div>
+      <div
+        class="w-full h-8 justify-between items-center inline-flex"
+      >
+        <p
+          class="text-sm text-foreground font-semibold"
+          data-testid="typography"
+        >
+          Never show posts from people you don't follow
+        </p>
+        <button
+          aria-checked="false"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          data-disabled=""
+          data-state="unchecked"
+          disabled=""
+          id="never-show-posts-switch"
+          role="switch"
+          type="button"
+          value="on"
+        >
+          <span
+            class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+            data-disabled=""
+            data-state="unchecked"
+          />
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

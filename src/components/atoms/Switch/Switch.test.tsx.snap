@@ -1,0 +1,103 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Switch - Snapshots > matches snapshot when checked 1`] = `
+<button
+  aria-checked="true"
+  class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+  data-state="checked"
+  role="switch"
+  type="button"
+  value="on"
+>
+  <span
+    class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+    data-state="checked"
+  />
+</button>
+`;
+
+exports[`Switch - Snapshots > matches snapshot when disabled 1`] = `
+<button
+  aria-checked="false"
+  class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+  data-disabled=""
+  data-state="unchecked"
+  disabled=""
+  role="switch"
+  type="button"
+  value="on"
+>
+  <span
+    class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+    data-disabled=""
+    data-state="unchecked"
+  />
+</button>
+`;
+
+exports[`Switch - Snapshots > matches snapshot when disabled and checked 1`] = `
+<button
+  aria-checked="true"
+  class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+  data-disabled=""
+  data-state="checked"
+  disabled=""
+  role="switch"
+  type="button"
+  value="on"
+>
+  <span
+    class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+    data-disabled=""
+    data-state="checked"
+  />
+</button>
+`;
+
+exports[`Switch - Snapshots > matches snapshot when unchecked 1`] = `
+<button
+  aria-checked="false"
+  class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+  data-state="unchecked"
+  role="switch"
+  type="button"
+  value="on"
+>
+  <span
+    class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+    data-state="unchecked"
+  />
+</button>
+`;
+
+exports[`Switch - Snapshots > matches snapshot with custom className 1`] = `
+<button
+  aria-checked="false"
+  class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white custom-switch"
+  data-state="unchecked"
+  role="switch"
+  type="button"
+  value="on"
+>
+  <span
+    class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+    data-state="unchecked"
+  />
+</button>
+`;
+
+exports[`Switch - Snapshots > matches snapshot with default props 1`] = `
+<button
+  aria-checked="false"
+  class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+  data-state="unchecked"
+  role="switch"
+  type="button"
+  value="on"
+>
+  <span
+    class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+    data-state="unchecked"
+  />
+</button>
+`;
