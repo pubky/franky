@@ -5,7 +5,7 @@ import * as Core from '@/core';
  * All API endpoints related to search operations
  */
 
-const PREFIX = 'search';
+const PREFIX = 'v0/search';
 
 export const searchApi = {
   byTag: (params: Core.TTagSearchParams) => {
