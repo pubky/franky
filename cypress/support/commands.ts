@@ -100,7 +100,7 @@ Cypress.Commands.add(
 
     cy.get('#profile-finish-btn').click();
 
-    cy.location('pathname').should('eq', '/feed');
+    cy.location('pathname').should('eq', '/home');
 
     // confirm welcome message is shown and dismiss it
     cy.get('#welcome-title').should('exist');
@@ -155,7 +155,7 @@ function collectRecoveryPhraseWords(): Cypress.Chainable<string> {
 
 Cypress.Commands.add('signOut', () => {
   // temporary approach to sign out
-  cy.get('#feed-logout-btn').click();
+  cy.get('#home-logout-btn').click();
   cy.location('pathname').should('eq', '/logout');
   // navigate back to homepage
   cy.get('#logout-navigation-back-btn').click();
@@ -200,7 +200,7 @@ Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcod
   cy.get('#restore-password').type(passcode);
   cy.get('#encrypted-file-restore-btn').click();
 
-  cy.location('pathname').should('eq', '/feed');
+  cy.location('pathname').should('eq', '/home');
 });
 
 Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
@@ -216,7 +216,7 @@ Cypress.Commands.add('signInWithRecoveryPhrase', (recoveryPhrase: string) => {
   inputRecoveryPhraseWords(recoveryPhrase);
   cy.get('#recovery-phrase-restore-btn').click();
 
-  cy.location('pathname').should('eq', '/feed');
+  cy.location('pathname').should('eq', '/home');
 });
 
 // Input recovery phrase words into the form
