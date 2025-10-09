@@ -17,7 +17,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
   return (
     <header
       className={Libs.cn(
-        'sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] backdrop-blur-sm',
+        'sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] backdrop-blur-sm py-6',
         className,
       )}
     >

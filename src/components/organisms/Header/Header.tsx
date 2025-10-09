@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 import * as React from 'react';
@@ -23,30 +22,21 @@ const pathToStepConfig: Record<string, { step: number; title: string }> = {
 };
 
 export function Header() {
-  const { isAuthenticated } = Core.useAuthStore();
   const pathname = usePathname();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [currentTitle, setCurrentTitle] = useState('');
-  const [isOnboarding, setIsOnboarding] = useState(false);
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const { isAuthenticated } = Core.useAuthStore();
 
-  useEffect(() => {
-    const config = pathToStepConfig[pathname] || { step: 1, title: 'Sign in' };
-    setCurrentStep(config.step);
-    setCurrentTitle(config.title);
-    setIsOnboarding(pathname?.startsWith('/onboarding') || false);
-    setIsSignedIn(isAuthenticated);
-  }, [pathname, isAuthenticated]);
+  const isOnboarding = pathname?.startsWith('/onboarding') ?? false;
+  const { step: currentStep, title: currentTitle } = pathToStepConfig[pathname] ?? { step: 1, title: 'Sign in' };
 
-  const shouldHideHeaderOnMobile = isSignedIn && !isOnboarding;
+  const shouldHideHeaderOnMobile = isAuthenticated && !isOnboarding;
 
   return (
     <Molecules.HeaderContainer className={shouldHideHeaderOnMobile ? 'hidden lg:block' : undefined}>
       <Molecules.Logo noLink={currentStep === 5} />
-      {(!isSignedIn || currentStep === 5) && <Molecules.HeaderTitle currentTitle={currentTitle} />}
+      {(!isAuthenticated || currentStep === 5) && <Molecules.HeaderTitle currentTitle={currentTitle} />}
       {isOnboarding ? (
         <Molecules.HeaderOnboarding currentStep={currentStep} />
-      ) : isSignedIn ? (
+      ) : isAuthenticated ? (
         <HeaderSignIn />
       ) : (
         <HeaderHome />
