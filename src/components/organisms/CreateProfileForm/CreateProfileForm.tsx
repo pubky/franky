@@ -174,17 +174,8 @@ export const CreateProfileForm = () => {
       }
 
       setContinueText('Saving profile...');
-      const response = await Core.ProfileController.create(user, image, pubky);
 
-      if (!response.ok) {
-        Libs.Logger.error('Failed to save profile', response);
-        setContinueText('Try again!');
-        toast({
-          title: 'Failed to save profile',
-          description: 'Please try again.',
-        });
-        return;
-      }
+      await Core.ProfileController.create(user, image, pubky);
 
       await Core.AuthController.authorizeAndBootstrap();
 
@@ -192,12 +183,26 @@ export const CreateProfileForm = () => {
       setShowWelcomeDialog(true);
 
       router.push(App.HOME_ROUTES.HOME);
-    } catch {
-      setContinueText('Try again!');
-      toast({
-        title: 'Please try again.',
-        description: 'Failed to fetch the new user data. Indexing might be in progress...',
-      });
+    } catch (error) {
+      // TODO: Improve error handling, to much for UI to handle
+      if (
+        error instanceof Libs.AppError &&
+        Object.values(Libs.HomeserverErrorType).includes(error.type as Libs.HomeserverErrorType)
+      ) {
+        Libs.Logger.error('Failed to save profile in Homeserver', error);
+        setContinueText('Try again!');
+        toast({
+          title: 'Failed to save profile',
+          description: 'Please try again.',
+        });
+        return;
+      } else {
+        setContinueText('Try again!');
+        toast({
+          title: 'Please try again.',
+          description: 'Failed to fetch the new user data. Indexing might be in progress...',
+        });
+      }
     } finally {
       setIsSaving(false);
     }
