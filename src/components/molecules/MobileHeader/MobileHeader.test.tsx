@@ -22,8 +22,8 @@ describe('MobileHeader', () => {
     render(<MobileHeader />);
 
     expect(screen.getByTestId('logo')).toBeInTheDocument();
-    expect(screen.getByTestId('sliders-horizontal-icon')).toBeInTheDocument();
-    expect(screen.getByTestId('activity-icon')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-sliders-horizontal')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-activity')).toBeInTheDocument();
   });
 
   it('renders with custom className', () => {
@@ -89,8 +89,8 @@ describe('MobileHeader', () => {
   it('applies correct icon classes', () => {
     render(<MobileHeader />);
 
-    const leftIcon = screen.getByTestId('sliders-horizontal-icon');
-    const rightIcon = screen.getByTestId('activity-icon');
+    const leftIcon = document.querySelector('.lucide-sliders-horizontal');
+    const rightIcon = document.querySelector('.lucide-activity');
 
     expect(leftIcon).toHaveClass('h-6', 'w-6');
     expect(rightIcon).toHaveClass('h-6', 'w-6');
@@ -99,8 +99,8 @@ describe('MobileHeader', () => {
   it('handles hover states correctly', () => {
     render(<MobileHeader />);
 
-    const leftButton = screen.getByTestId('sliders-horizontal-icon').closest('button');
-    const rightButton = screen.getByTestId('activity-icon').closest('button');
+    const leftButton = document.querySelector('.lucide-sliders-horizontal')?.closest('button');
+    const rightButton = document.querySelector('.lucide-activity')?.closest('button');
 
     expect(leftButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
     expect(rightButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
