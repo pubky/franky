@@ -5,9 +5,10 @@ import type { BlobResult, FileResult, PubkyAppUser } from 'pubky-app-specs';
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({}));
 
-// Mock HomeserverService.request and provide enum-like HomeserverAction
+// Mock HomeserverService methods and provide enum-like HomeserverAction
 vi.mock('@/core/services/homeserver', () => ({
   HomeserverService: {
+    putBlob: vi.fn(),
     request: vi.fn(),
   },
   HomeserverAction: {
@@ -55,18 +56,17 @@ describe('ProfileApplication', () => {
         meta: { url: 'pubky://user/pub/pubky.app/files/avatar' },
       } as unknown as FileResult;
 
+      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       await ProfileApplication.uploadAvatar({ blobResult, fileResult });
 
-      expect(requestSpy).toHaveBeenNthCalledWith(
-        1,
-        Core.HomeserverAction.PUT,
-        blobResult.meta.url,
-        blobResult.blob.data,
-      );
+      expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenNthCalledWith(2, Core.HomeserverAction.PUT, fileResult.meta.url, fileJson);
+      expect(requestSpy).toHaveBeenNthCalledWith(1, Core.HomeserverAction.PUT, fileResult.meta.url, fileJson);
+
+      // Ensure blob upload happened before file record request
+      expect(putBlobSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
     });
 
     it('propagates errors if the first upload fails', async () => {
@@ -79,12 +79,14 @@ describe('ProfileApplication', () => {
         meta: { url: 'pubky://user/pub/pubky.app/files/avatar' },
       } as unknown as FileResult;
 
-      const requestSpy = vi
-        .spyOn(Core.HomeserverService, 'request')
+      const putBlobSpy = vi
+        .spyOn(Core.HomeserverService, 'putBlob')
         .mockRejectedValueOnce(new Error('blob upload failed'));
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
 
       await expect(ProfileApplication.uploadAvatar({ blobResult, fileResult })).rejects.toThrow('blob upload failed');
-      expect(requestSpy).toHaveBeenCalledTimes(1);
+      expect(putBlobSpy).toHaveBeenCalledTimes(1);
+      expect(requestSpy).not.toHaveBeenCalled();
       expect(fileResult.file.toJson).not.toHaveBeenCalled();
     });
   });

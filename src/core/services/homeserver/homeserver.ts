@@ -155,8 +155,7 @@ export class HomeserverService {
     }
   }
 
-  //TODO: Might be a private function
-  async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+  private async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
       const response = await this.client.fetch(url, { ...options, credentials: 'include' });
 
@@ -168,15 +167,48 @@ export class HomeserverService {
     }
   }
 
-  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown> | Uint8Array) {
+  /**
+   * Performs a request against the homeserver.
+   *
+   * Sends a JSON payload when provided and throws if the response is not OK.
+   * Note: Under the hood this uses `fetch` with `credentials: 'include'`.
+   *
+   * @param {HomeserverAction} method - HTTP method to use (e.g. PUT, POST, DELETE).
+   * @param {string} url - Pubky URL.
+   * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
+   */
+  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
       method,
-      body: bodyJson ? (typeof bodyJson === 'object' ? JSON.stringify(bodyJson) : bodyJson) : undefined,
+      body: bodyJson ? JSON.stringify(bodyJson) : undefined,
     });
 
     if (!response.ok) {
       throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
+        url,
+      });
+    }
+  }
+
+  /**
+   * Uploads binary data to the homeserver using PUT.
+   *
+   * Intended for blob contents (e.g., avatars). Throws if the response is not OK.
+   * Note: Uses `fetch` with `credentials: 'include'`.
+   *
+   * @param {string} url - Pubky URL.
+   * @param {Uint8Array} blob - Raw bytes of the blob to upload.
+   */
+  static async putBlob(url: string, blob: Uint8Array) {
+    const homeserver = this.getInstance();
+    const response = await homeserver.fetch(url, {
+      method: HomeserverAction.PUT,
+      body: blob,
+    });
+
+    if (!response.ok) {
+      throw Libs.createHomeserverError(Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', 500, {
         url,
       });
     }

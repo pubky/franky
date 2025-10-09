@@ -6,7 +6,7 @@ export class ProfileApplication {
 
   static async uploadAvatar({ blobResult, fileResult }: TUploadAvatarInput) {
     // 1. Upload Blob
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, blobResult.meta.url, blobResult.blob.data);
+    await Core.HomeserverService.putBlob(blobResult.meta.url, blobResult.blob.data);
     // 2. Create File Record
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
   }
