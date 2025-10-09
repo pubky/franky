@@ -168,15 +168,17 @@ export class HomeserverService {
     }
   }
 
-  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
+  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown> | Uint8Array) {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
       method,
-      body: bodyJson ? JSON.stringify(bodyJson) : undefined,
+      body: bodyJson ? (typeof bodyJson === 'object' ? JSON.stringify(bodyJson) : bodyJson) : undefined,
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to ${method} to homeserver: ${response.statusText}`);
+      throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
+        url,
+      });
     }
   }
 
