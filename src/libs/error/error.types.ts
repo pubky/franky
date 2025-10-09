@@ -26,6 +26,7 @@ export enum HomeserverErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
   USER_ALREADY_EXISTS = 'User already exists',
   AUTH_REQUEST_FAILED = 'AUTH_REQUEST_FAILED',
+  PUT_FAILED = 'PUT_FAILED',
 }
 
 export enum DatabaseErrorType {
