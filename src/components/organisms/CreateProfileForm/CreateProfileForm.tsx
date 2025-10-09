@@ -269,7 +269,7 @@ export const CreateProfileForm = () => {
                     {link.label}
                   </Atoms.Label>
                   <Molecules.InputField
-                    id="profile-links-input-${index}"
+                    id={`profile-links-input-${index}`}
                     placeholder={link.label.toUpperCase().includes('TWITTER') ? '@user' : 'https://'}
                     value={link.url}
                     variant="dashed"
