@@ -9,4 +9,13 @@ export type TCreatePostInput = {
   postJson: Record<string, unknown>;
   parentUri?: string;
   attachments?: string[];
+  repostedUri?: string;
+};
+
+export type TDeletePostInput = {
+  postId: string;
+  userId: Core.Pubky;
+  postUrl: string;
+  parentUri?: string;
+  repostedUri?: string;
 };

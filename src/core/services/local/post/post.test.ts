@@ -353,4 +353,304 @@ describe('LocalPostService', () => {
       vi.spyOn(Core.PostDetailsModel, 'create').mockImplementation(originalCreate);
     });
   });
+
+  describe('repost', () => {
+    it('should create a repost with relationship to original post', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+
+      // Setup original post
+      await setupExistingPost(originalPostId, 'Original post content');
+
+      // Create repost
+      const saveParams: TLocalSavePostParams = {
+        ...createSaveParams('', repostId),
+        kind: 'repost',
+        repostedUri: originalUri,
+      };
+
+      await Core.Local.Post.create(saveParams);
+
+      const savedRelationships = await getSavedRelationships(repostId);
+      expect(savedRelationships!.reposted).toBe(originalUri);
+    });
+
+    it('should increment original post repost count when creating repost', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+
+      // Setup original post
+      await setupExistingPost(originalPostId, 'Original post');
+
+      // Create repost
+      const saveParams: TLocalSavePostParams = {
+        ...createSaveParams('', repostId),
+        kind: 'repost',
+        repostedUri: originalUri,
+      };
+
+      await Core.Local.Post.create(saveParams);
+
+      const originalCounts = await getSavedCounts(originalPostId);
+      expect(originalCounts!.reposts).toBe(1);
+    });
+
+    it('should create repost with content for quote reposts', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+      const quoteContent = 'This is great!';
+
+      // Setup original post
+      await setupExistingPost(originalPostId, 'Original post');
+
+      // Create quote repost
+      const saveParams: TLocalSavePostParams = {
+        ...createSaveParams(quoteContent, repostId),
+        kind: 'repost',
+        repostedUri: originalUri,
+      };
+
+      await Core.Local.Post.create(saveParams);
+
+      const savedPost = await getSavedPost(repostId);
+      expect(savedPost!.content).toBe(quoteContent);
+      expect(savedPost!.kind).toBe('repost');
+
+      const savedRelationships = await getSavedRelationships(repostId);
+      expect(savedRelationships!.reposted).toBe(originalUri);
+    });
+
+    it('should handle repost of repost (chain reposts)', async () => {
+      const originalPostId = 'original:post123';
+      const firstRepostId = 'first:repost456';
+      const secondRepostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+      const firstRepostUri = `pubky://first/pub/pubky.app/posts/repost456`;
+
+      // Setup original post
+      await setupExistingPost(originalPostId, 'Original post');
+
+      // Create first repost
+      await setupExistingPost(firstRepostId, '');
+      await Core.PostRelationshipsModel.update(firstRepostId, { reposted: originalUri });
+
+      // Create second repost (repost of repost)
+      const saveParams: TLocalSavePostParams = {
+        ...createSaveParams('', secondRepostId),
+        kind: 'repost',
+        repostedUri: firstRepostUri,
+      };
+
+      await Core.Local.Post.create(saveParams);
+
+      const savedRelationships = await getSavedRelationships(secondRepostId);
+      expect(savedRelationships!.reposted).toBe(firstRepostUri);
+    });
+  });
+
+  describe('deleteRepost', () => {
+    it('should delete repost and all related records', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+
+      // Setup original post and repost
+      await setupExistingPost(originalPostId, 'Original post');
+      await setupExistingPost(repostId, '');
+      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
+      await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
+
+      // Delete repost
+      await Core.Local.Post.deleteRepost({
+        repostId,
+        userId: testData.authorPubky,
+        repostedUri: originalUri,
+      });
+
+      // Verify repost is deleted
+      const [details, counts, relationships, tags] = await Promise.all([
+        getSavedPost(repostId),
+        getSavedCounts(repostId),
+        getSavedRelationships(repostId),
+        getSavedTags(repostId),
+      ]);
+
+      expect(details).toBeUndefined();
+      expect(counts).toBeUndefined();
+      expect(relationships).toBeUndefined();
+      expect(tags).toBeUndefined();
+    });
+
+    it('should decrement original post repost count when deleting repost', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+
+      // Setup original post and repost
+      await setupExistingPost(originalPostId, 'Original post');
+      await setupExistingPost(repostId, '');
+      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
+      await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
+
+      // Delete repost
+      await Core.Local.Post.deleteRepost({
+        repostId,
+        userId: testData.authorPubky,
+        repostedUri: originalUri,
+      });
+
+      const originalCounts = await getSavedCounts(originalPostId);
+      expect(originalCounts!.reposts).toBe(0);
+    });
+
+    it('should not decrement below zero when deleting repost', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+
+      // Setup with count already at 0
+      await setupExistingPost(originalPostId, 'Original post');
+      await setupExistingPost(repostId, '');
+      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
+
+      // Delete repost
+      await Core.Local.Post.deleteRepost({
+        repostId,
+        userId: testData.authorPubky,
+        repostedUri: originalUri,
+      });
+
+      const originalCounts = await getSavedCounts(originalPostId);
+      expect(originalCounts!.reposts).toBe(0);
+    });
+  });
+
+  describe('deletePost', () => {
+    it('should delete post and all related records', async () => {
+      const postId = testData.fullPostId1;
+
+      // Setup post
+      await setupExistingPost(postId, 'Test post');
+
+      // Delete post
+      await Core.Local.Post.deletePost({
+        postId,
+        userId: testData.authorPubky,
+      });
+
+      // Verify post is deleted
+      const [details, counts, relationships, tags] = await Promise.all([
+        getSavedPost(postId),
+        getSavedCounts(postId),
+        getSavedRelationships(postId),
+        getSavedTags(postId),
+      ]);
+
+      expect(details).toBeUndefined();
+      expect(counts).toBeUndefined();
+      expect(relationships).toBeUndefined();
+      expect(tags).toBeUndefined();
+    });
+
+    it('should decrement parent reply count when deleting a reply', async () => {
+      const parentPostId = 'parent:post123';
+      const replyId = testData.fullPostId1;
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+
+      // Setup parent post
+      await setupExistingPost(parentPostId, 'Parent post');
+      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
+
+      // Setup reply
+      await setupExistingPost(replyId, 'Reply post', parentUri);
+
+      // Delete reply
+      await Core.Local.Post.deletePost({
+        postId: replyId,
+        userId: testData.authorPubky,
+        parentUri,
+      });
+
+      const parentCounts = await getSavedCounts(parentPostId);
+      expect(parentCounts!.replies).toBe(0);
+    });
+
+    it('should decrement original post repost count when deleting a repost', async () => {
+      const originalPostId = 'original:post123';
+      const repostId = testData.fullPostId1;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
+
+      // Setup original post
+      await setupExistingPost(originalPostId, 'Original post');
+      await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
+
+      // Setup repost
+      await setupExistingPost(repostId, '');
+      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
+
+      // Delete repost
+      await Core.Local.Post.deletePost({
+        postId: repostId,
+        userId: testData.authorPubky,
+        repostedUri: originalUri,
+      });
+
+      const originalCounts = await getSavedCounts(originalPostId);
+      expect(originalCounts!.reposts).toBe(0);
+    });
+
+    it('should not decrement counts below zero', async () => {
+      const parentPostId = 'parent:post123';
+      const replyId = testData.fullPostId1;
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+
+      // Setup with count already at 0
+      await setupExistingPost(parentPostId, 'Parent post');
+      await setupExistingPost(replyId, 'Reply post', parentUri);
+
+      // Delete reply
+      await Core.Local.Post.deletePost({
+        postId: replyId,
+        userId: testData.authorPubky,
+        parentUri,
+      });
+
+      const parentCounts = await getSavedCounts(parentPostId);
+      expect(parentCounts!.replies).toBe(0);
+    });
+
+    it('should handle deleting a post that is both a reply and a repost', async () => {
+      const parentPostId = 'parent:post123';
+      const originalPostId = 'original:post456';
+      const postId = testData.fullPostId1;
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+      const originalUri = `pubky://original/pub/pubky.app/posts/post456`;
+
+      // Setup parent and original posts
+      await setupExistingPost(parentPostId, 'Parent post');
+      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
+      await setupExistingPost(originalPostId, 'Original post');
+      await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
+
+      // Setup post that is both reply and repost
+      await setupExistingPost(postId, 'Quote repost as reply', parentUri);
+      await Core.PostRelationshipsModel.update(postId, { reposted: originalUri });
+
+      // Delete post
+      await Core.Local.Post.deletePost({
+        postId,
+        userId: testData.authorPubky,
+        parentUri,
+        repostedUri: originalUri,
+      });
+
+      const parentCounts = await getSavedCounts(parentPostId);
+      const originalCounts = await getSavedCounts(originalPostId);
+      expect(parentCounts!.replies).toBe(0);
+      expect(originalCounts!.reposts).toBe(0);
+    });
+  });
 });

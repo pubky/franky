@@ -10,3 +10,8 @@ export type TReadPostsParams = {
   limit?: number;
   offset?: number;
 };
+
+export type TDeleteParams = {
+  postId: string;
+  userId: Core.Pubky;
+};

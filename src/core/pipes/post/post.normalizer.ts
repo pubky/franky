@@ -1,4 +1,4 @@
-import { PostResult } from 'pubky-app-specs';
+import { PostResult, PubkyAppPostEmbed } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
@@ -8,11 +8,17 @@ export class PostNormalizer {
   static async to(post: Core.PostValidatorData, specsPubky: Core.Pubky): Promise<PostResult> {
     const builder = Core.PubkySpecsSingleton.get(specsPubky);
 
+    // Create embed object if embed URI is provided
+    let embedObject: PubkyAppPostEmbed | null = null;
+    if (post.embed) {
+      embedObject = new PubkyAppPostEmbed(post.embed, post.kind);
+    }
+
     const result = builder.createPost(
       post.content,
       post.kind,
       post.parentUri ?? null,
-      null, // embed - will be added later when needed
+      embedObject,
       null, // attachments - will be added later when needed
     );
 
