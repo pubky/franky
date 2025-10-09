@@ -4,27 +4,10 @@ import { MobileHeader } from './MobileHeader';
 
 // Mock the molecules
 vi.mock('@/molecules', () => ({
-  FilterDrawer: ({
-    open,
-    onOpenChangeAction,
-    children,
-    position,
-  }: {
-    open: boolean;
-    onOpenChangeAction: (open: boolean) => void;
-    children: React.ReactNode;
-    position?: 'left' | 'right';
-  }) => (
-    <div data-testid={`filter-drawer-${position}`} data-open={open}>
-      <button onClick={() => onOpenChangeAction(false)}>Close</button>
-      {children}
-    </div>
-  ),
-  WhoToFollow: () => <div data-testid="who-to-follow">Who to Follow</div>,
-  ActiveUsers: () => <div data-testid="active-users">Active Users</div>,
-  FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
   Logo: ({ width, height }: { width?: number; height?: number }) => (
-    <img data-testid="logo" alt="Pubky" data-width={width} data-height={height} />
+    <div data-testid="logo" data-width={width} data-height={height}>
+      Logo
+    </div>
   ),
 }));
 
@@ -38,13 +21,15 @@ describe('MobileHeader', () => {
   it('renders with default props', () => {
     render(<MobileHeader />);
 
-    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
+    expect(screen.getByTestId('logo')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-sliders-horizontal')).toBeInTheDocument();
+    expect(document.querySelector('.lucide-activity')).toBeInTheDocument();
   });
 
   it('renders with custom className', () => {
     render(<MobileHeader className="custom-header" />);
 
-    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
+    expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
   it('renders with custom onLeftIconClick', () => {
@@ -60,7 +45,14 @@ describe('MobileHeader', () => {
   it('applies correct classes to container', () => {
     render(<MobileHeader />);
 
-    expect(screen.getByAltText('Pubky')).toBeInTheDocument();
+    expect(screen.getByTestId('logo')).toBeInTheDocument();
+  });
+
+  it('applies correct classes to inner container', () => {
+    render(<MobileHeader />);
+
+    const innerContainer = screen.getByTestId('logo').closest('div')?.parentElement;
+    expect(innerContainer).toHaveClass('flex', 'items-center', 'justify-between', 'px-4', 'py-4');
   });
 
   it('applies correct classes to left button', () => {
@@ -77,30 +69,41 @@ describe('MobileHeader', () => {
     expect(rightButton).toHaveClass('p-2', 'hover:bg-secondary/10', 'rounded-full', 'transition-colors');
   });
 
-  it('applies correct classes to logo container', () => {
+  it('renders logo component', () => {
     render(<MobileHeader />);
 
-    const logoContainer = screen.getByTestId('logo').closest('div');
-    expect(logoContainer).toHaveClass('flex', 'items-center', 'gap-2');
+    const logo = screen.getByTestId('logo');
+    expect(logo).toBeInTheDocument();
   });
 
-  it('renders right drawer with correct content', () => {
-    render(<MobileHeader />);
-
-    expect(screen.getByTestId('filter-drawer-right')).toBeInTheDocument();
-    expect(screen.getByTestId('who-to-follow')).toBeInTheDocument();
-    expect(screen.getByTestId('active-users')).toBeInTheDocument();
-    expect(screen.getByTestId('feedback-card')).toBeInTheDocument();
-  });
-
-  it('handles right button click to open drawer', () => {
-    render(<MobileHeader />);
+  it('calls onRightIconClick when right button is clicked', () => {
+    const onRightIconClick = vi.fn();
+    render(<MobileHeader onRightIconClick={onRightIconClick} />);
 
     const rightButton = document.querySelector('.lucide-activity')?.closest('button');
     fireEvent.click(rightButton!);
 
-    // The drawer should be open (this is handled by the mocked component)
-    expect(screen.getByTestId('filter-drawer-right')).toBeInTheDocument();
+    expect(onRightIconClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('applies correct icon classes', () => {
+    render(<MobileHeader />);
+
+    const leftIcon = document.querySelector('.lucide-sliders-horizontal');
+    const rightIcon = document.querySelector('.lucide-activity');
+
+    expect(leftIcon).toHaveClass('h-6', 'w-6');
+    expect(rightIcon).toHaveClass('h-6', 'w-6');
+  });
+
+  it('handles hover states correctly', () => {
+    render(<MobileHeader />);
+
+    const leftButton = document.querySelector('.lucide-sliders-horizontal')?.closest('button');
+    const rightButton = document.querySelector('.lucide-activity')?.closest('button');
+
+    expect(leftButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
+    expect(rightButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
   });
 });
 

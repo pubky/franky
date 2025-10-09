@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { usePathname } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -12,7 +13,7 @@ export const HeaderContainer = ({ children }: { children: React.ReactNode }) => 
     <Atoms.Container
       as="header"
       size="container"
-      className="flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
+      className="hidden lg:flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
     >
       <Atoms.Container as="nav" className="flex-row items-center py-0 md:py-6 gap-6 w-full h-full">
         {children}
@@ -62,33 +63,58 @@ export function HeaderNavigationButtons({
   avatarImage,
   avatarInitial = 'U',
 }: HeaderNavigationButtonsProps) {
+  const pathname = usePathname();
   const counterString = counter > 21 ? '21+' : counter.toString();
+
+  const isActive = (path: string) => pathname === path;
 
   return (
     <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
-      <Atoms.Link href={App.FEED_ROUTES.FEED}>
-        <Atoms.Button className="w-12 h-12" variant="secondary" size="icon">
+      <Atoms.Link href={App.APP_ROUTES.HOME}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
           <Libs.Home className="size-6" />
         </Atoms.Button>
       </Atoms.Link>
-      <Atoms.Link className="sm:hidden" href="/search">
-        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
-          <Libs.Search className="size-6" />
+
+      <Atoms.Link href={App.APP_ROUTES.HOT}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOT) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
+          <Libs.Flame className="size-6" />
         </Atoms.Button>
       </Atoms.Link>
-      <Atoms.Link href="/bookmarks">
-        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
+
+      <Atoms.Link href={App.APP_ROUTES.BOOKMARKS}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.BOOKMARKS) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
           <Libs.Bookmark className="size-6" />
         </Atoms.Button>
       </Atoms.Link>
-      <Atoms.Link href="/settings">
-        <Atoms.Button className="w-12 h-12 border bg-transparent" variant="secondary" size="icon">
+
+      <Atoms.Link href={App.APP_ROUTES.SETTINGS}>
+        <Atoms.Button
+          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.SETTINGS) ? '' : 'border bg-transparent')}
+          variant="secondary"
+          size="icon"
+        >
           <Libs.Settings className="size-6" />
         </Atoms.Button>
       </Atoms.Link>
-      <Atoms.Link className="relative" href="/profile">
-        <Atoms.Avatar className="w-12 h-12">
-          <Atoms.AvatarImage src={avatarImage || undefined} />
+
+      <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
+        <Atoms.Avatar
+          className={Libs.cn('w-12 h-12 cursor-pointer', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}
+        >
+          <Atoms.AvatarImage src={avatarImage} alt="Profile" />
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (

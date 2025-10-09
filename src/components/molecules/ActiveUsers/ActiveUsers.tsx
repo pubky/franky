@@ -36,7 +36,7 @@ export function ActiveUsers({ className }: ActiveUsersProps) {
         ))}
       </div>
 
-      <button className="flex items-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors">
+      <button className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors">
         <Libs.Users className="h-4 w-4" />
         <span className="text-sm font-medium">See All</span>
       </button>

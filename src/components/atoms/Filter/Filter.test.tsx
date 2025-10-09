@@ -2,11 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterRoot, FilterHeader, FilterList, FilterItem, FilterItemIcon, FilterItemLabel } from './Filter';
 
-const MockIcon = ({ className }: { className?: string }) => (
-  <div data-testid="mock-icon" className={className}>
-    Icon
-  </div>
-);
+const MockIcon = ({ className }: { className?: string }) => <svg data-testid="mock-icon" className={className} />;
 
 describe('Filter Components', () => {
   describe('FilterRoot', () => {

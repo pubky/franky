@@ -25,8 +25,8 @@ export function useAuthActions() {
         // Set welcome dialog to show for new users
         onboardingStore.setShowWelcomeDialog(true);
 
-        // Redirect to feed after successful profile creation
-        router.push(App.FEED_ROUTES.FEED);
+        // Redirect to home after successful profile creation
+        router.push(App.HOME_ROUTES.HOME);
 
         return { success: true, profileData };
       } catch (error) {

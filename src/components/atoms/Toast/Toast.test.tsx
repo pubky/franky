@@ -2,11 +2,14 @@ import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { Toast, ToastProvider, ToastViewport } from './Toast';
 
-// Mock @/libs to intercept Libs.X
-vi.mock('@/libs', () => ({
-  X: () => <svg data-testid="x-icon" />,
-  cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
-}));
+// Mock @/libs - use actual implementations and only stub cn helper
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...inputs: (string | undefined | null | false)[]) => inputs.filter(Boolean).join(' '),
+  };
+});
 
 describe('Toast Components', () => {
   it('should handle Toast component imports without errors', () => {
