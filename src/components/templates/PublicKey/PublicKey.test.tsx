@@ -52,6 +52,7 @@ describe('PublicKey', () => {
     expect(contentWrapper).toHaveClass('flex-1');
     expect(contentWrapper).toHaveClass('lg:flex-none');
     expect(navigationWrapper).toHaveClass('mt-auto');
+    expect(navigationWrapper).toHaveClass('onboarding-nav');
     expect(navigationWrapper).toHaveClass('lg:mt-0');
     expect(navigationWrapper.firstChild).toHaveAttribute('data-testid', 'public-key-navigation');
   });
@@ -73,7 +74,8 @@ describe('PublicKey', () => {
     const container = screen.getByTestId('container');
     expect(container).toHaveClass('min-h-dvh');
     expect(container).toHaveClass('gap-6');
-    expect(container).toHaveClass('pb-6');
+    expect(container).toHaveClass('pb-0');
+    expect(container).toHaveClass('lg:pb-6');
     expect(container).toHaveClass('pt-4');
     expect(container).toHaveClass('lg:min-h-0');
   });
