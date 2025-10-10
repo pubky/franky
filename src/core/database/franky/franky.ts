@@ -107,10 +107,13 @@ export class AppDatabase extends Dexie {
       return null;
     }
 
-    if (version >= AppDatabase.DEXIE_VERSION_MULTIPLIER && version % AppDatabase.DEXIE_VERSION_MULTIPLIER === 0) {
+    // Dexie always multiplies the version by 10 internally
+    // If the version is >= 10, it's been multiplied by Dexie, so divide it back
+    if (version >= AppDatabase.DEXIE_VERSION_MULTIPLIER) {
       return version / AppDatabase.DEXIE_VERSION_MULTIPLIER;
     }
 
+    // If version is < 10, it's the raw user version (shouldn't happen in practice)
     return version;
   }
 
@@ -123,21 +126,21 @@ export class AppDatabase extends Dexie {
           const deleteRequest = indexedDB.deleteDatabase(this.name);
 
           deleteRequest.onblocked = () => {
-            Libs.Logger.warn('Waiting for other database connections to close before deletion', {
-              databaseName: this.name,
-            });
-
-            const closeRequest = indexedDB.open(this.name);
-            closeRequest.onsuccess = () => {
-              closeRequest.result.close();
-            };
+            Libs.Logger.warn(
+              'Database deletion is blocked by open connections. Please close all other tabs/windows using this application.',
+              {
+                databaseName: this.name,
+                hint: 'Close other browser tabs or windows that may be using this database',
+              },
+            );
           };
 
           deleteRequest.onsuccess = () => resolve();
           deleteRequest.onerror = () => reject(deleteRequest.error ?? new Error('Failed to delete database'));
         });
       } else {
-        await this.delete();
+        // Use Dexie.delete() which coordinates with other Dexie contexts
+        await Dexie.delete(this.name);
       }
     } catch (error) {
       throw Libs.createDatabaseError(

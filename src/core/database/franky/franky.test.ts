@@ -132,7 +132,9 @@ describe('Database Initialization', () => {
       ([message]) => typeof message === 'string' && message.startsWith('Database version mismatch'),
     );
 
-    expect(mismatchLog?.[0]).toBe(`Database version mismatch. Current: ${injectedVersion}, Expected: ${DB_VERSION}`);
+    // The normalized version will be injectedVersion / 10
+    const normalizedVersion = injectedVersion / 10;
+    expect(mismatchLog?.[0]).toBe(`Database version mismatch. Current: ${normalizedVersion}, Expected: ${DB_VERSION}`);
 
     expect(reproductionDb.verno).toBe(DB_VERSION);
 
@@ -144,5 +146,97 @@ describe('Database Initialization', () => {
 
     loggerInfoSpy.mockRestore();
     await reproductionDb.delete();
+  });
+
+  it('handles DB_VERSION that is a multiple of 10 correctly', async () => {
+    const testDbName = `${DB_NAME}-version-multiple-of-10`;
+    const testDb = new AppDatabase(testDbName);
+
+    await waitForDatabaseDeletion(testDbName, () => testDb.close());
+
+    const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info');
+
+    try {
+      // Initialize the database normally
+      await testDb.initialize();
+
+      const storedVersion = await readNativeDatabaseVersion(testDbName);
+
+      // Dexie multiplies the version by 10 internally
+      expect(storedVersion).toBe(DB_VERSION * 10);
+
+      // Now simulate a scenario where DB_VERSION is 10
+      // by manually setting a database with version 100 (10 * 10)
+      testDb.close();
+      await openNativeDatabase(testDbName, {
+        version: 100,
+        upgrade: (nativeDb) => {
+          // Create a dummy store if needed
+          if (!nativeDb.objectStoreNames.contains('test_store')) {
+            nativeDb.createObjectStore('test_store', { keyPath: 'id' });
+          }
+        },
+      });
+
+      const version100 = await readNativeDatabaseVersion(testDbName);
+      expect(version100).toBe(100);
+
+      // Now verify normalization: 100 / 10 = 10
+      // If DB_VERSION is not 10, this should trigger a mismatch and recreate
+      await testDb.initialize();
+
+      // If DB_VERSION is 10, no mismatch. If it's not 10, mismatch is detected
+      if (DB_VERSION === 10) {
+        // Should not have logged a mismatch
+        const mismatchLog = loggerInfoSpy.mock.calls.find(
+          ([message]) => typeof message === 'string' && message.startsWith('Database version mismatch'),
+        );
+        expect(mismatchLog).toBeUndefined();
+      } else {
+        // Should have logged a mismatch (normalized 100 -> 10, but DB_VERSION is different)
+        const mismatchLog = loggerInfoSpy.mock.calls.find(
+          ([message]) => typeof message === 'string' && message.startsWith('Database version mismatch'),
+        );
+        expect(mismatchLog?.[0]).toBe(`Database version mismatch. Current: 10, Expected: ${DB_VERSION}`);
+      }
+    } finally {
+      loggerInfoSpy.mockRestore();
+      await testDb.delete();
+    }
+  });
+
+  it('gracefully handles unavailable indexedDB', async () => {
+    const testDbName = `${DB_NAME}-no-indexeddb`;
+    const testDb = new AppDatabase(testDbName);
+
+    const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn');
+
+    // Mock indexedDB as undefined to simulate environments where it's not available
+    const originalIndexedDB = globalThis.indexedDB;
+    Object.defineProperty(globalThis, 'indexedDB', {
+      value: undefined,
+      writable: true,
+      configurable: true,
+    });
+
+    try {
+      // Should initialize without errors and log a warning
+      await testDb.initialize();
+
+      expect(loggerWarnSpy).toHaveBeenCalledWith(
+        'IndexedDB is not available in this environment. Skipping database initialization.',
+      );
+
+      // Database operations should not throw errors
+      expect(testDb.isOpen()).toBe(false);
+    } finally {
+      // Restore indexedDB
+      Object.defineProperty(globalThis, 'indexedDB', {
+        value: originalIndexedDB,
+        writable: true,
+        configurable: true,
+      });
+      loggerWarnSpy.mockRestore();
+    }
   });
 });
