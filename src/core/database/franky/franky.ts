@@ -16,6 +16,73 @@ import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
+import { benchmarkNow, isBenchmarkingEnabled } from '../../../../benchmarks/config';
+import { recordTiming } from '../../../../benchmarks/reporters/jsonReporter';
+
+const DEXIE_METHODS_TO_TRACE: Array<keyof Dexie.Table<unknown>> = [
+  'add',
+  'put',
+  'update',
+  'delete',
+  'bulkAdd',
+  'bulkPut',
+  'bulkDelete',
+  'get',
+  'toArray',
+  'count',
+];
+
+const INSTRUMENTED_SYMBOL = Symbol.for('franky.dexie.instrumented');
+
+const instrumentTable = (table: Dexie.Table<unknown>) => {
+  const tableAny = table as Dexie.Table<unknown> & { [INSTRUMENTED_SYMBOL]?: boolean };
+  if (tableAny[INSTRUMENTED_SYMBOL]) {
+    return;
+  }
+
+  tableAny[INSTRUMENTED_SYMBOL] = true;
+  const tableName = table.name ?? 'unknown';
+
+  DEXIE_METHODS_TO_TRACE.forEach((methodName) => {
+    const original = (table as any)[methodName];
+    if (typeof original !== 'function') {
+      return;
+    }
+
+    (table as any)[methodName] = function instrumentedMethod(this: Dexie.Table<unknown>, ...args: unknown[]) {
+      const start = benchmarkNow();
+      const emit = (status: 'resolved' | 'rejected') => {
+        const duration = benchmarkNow() - start;
+        recordTiming('dexie', `${tableName}.${String(methodName)}`, duration, {
+          table: tableName,
+          method: String(methodName),
+          status,
+        });
+      };
+
+      try {
+        const result = original.apply(this, args);
+        if (result && typeof (result as Promise<unknown>).then === 'function') {
+          return (result as Promise<unknown>)
+            .then((value: unknown) => {
+              emit('resolved');
+              return value;
+            })
+            .catch((error: unknown) => {
+              emit('rejected');
+              throw error;
+            });
+        }
+
+        emit('resolved');
+        return result;
+      } catch (error) {
+        emit('rejected');
+        throw error;
+      }
+    };
+  });
+};
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -60,6 +127,13 @@ export class AppDatabase extends Dexie {
         user_streams: userStreamTableSchema,
         tag_streams: tagStreamTableSchema,
       });
+
+      if (isBenchmarkingEnabled()) {
+        this.tables.forEach(instrumentTable);
+        this.on('versionchange', () => {
+          this.tables.forEach(instrumentTable);
+        });
+      }
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.DB_SCHEMA_ERROR,

@@ -48,6 +48,8 @@ next-env.d.ts
 *storybook.log
 storybook-static
 
+# Benchmark artifacts
+benchmarks/results/*.json
 # Cypress files
 cypress/download
 cypress/screenshots

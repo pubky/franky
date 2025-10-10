@@ -3,6 +3,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 import { HomeserverAction } from './homeserver.types';
+import { traceAsync } from '../../../../benchmarks/runtime';
 
 export class HomeserverService {
   private defaultKeypair = {
@@ -85,86 +86,135 @@ export class HomeserverService {
   }
 
   private async checkHomeserver(pubky: Core.Pubky) {
-    try {
-      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
-      const homeserver = await this.client.getHomeserver(pubkyPublicKey);
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.checkHomeserver',
+      async () => {
+        try {
+          const pubkyPublicKey = Pubky.PublicKey.from(pubky);
+          const homeserver = await this.client.getHomeserver(pubkyPublicKey);
 
-      if (!homeserver) {
-        throw Libs.createHomeserverError(
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Failed to get homeserver. Try again.',
-          401,
-        );
-      }
+          if (!homeserver) {
+            throw Libs.createHomeserverError(
+              Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+              'Failed to get homeserver. Try again.',
+              401,
+            );
+          }
 
-      Libs.Logger.debug('Homeserver successful', { homeserver });
-      return homeserver;
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get homeserver. Try again.', 401, {
-        error,
-      });
-    }
+          Libs.Logger.debug('Homeserver successful', { homeserver });
+          return homeserver;
+        } catch (error) {
+          this.handleError(
+            error,
+            Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+            'Failed to get homeserver. Try again.',
+            401,
+            {
+              error,
+            },
+          );
+        }
+      },
+      { pubky },
+    );
   }
 
   private async checkSession(pubky: Core.Pubky) {
-    try {
-      const pubkyPublicKey = Pubky.PublicKey.from(pubky);
-      const session = await this.client.session(pubkyPublicKey);
-      if (!session) {
-        throw Libs.createHomeserverError(
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Failed to get session. Try again.',
-          401,
-        );
-      }
-      Libs.Logger.debug('Session successful', { session });
-      return session;
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.NOT_AUTHENTICATED, 'Failed to get session. Try again.', 401, {
-        error,
-      });
-    }
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.checkSession',
+      async () => {
+        try {
+          const pubkyPublicKey = Pubky.PublicKey.from(pubky);
+          const session = await this.client.session(pubkyPublicKey);
+          if (!session) {
+            throw Libs.createHomeserverError(
+              Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+              'Failed to get session. Try again.',
+              401,
+            );
+          }
+          Libs.Logger.debug('Session successful', { session });
+          return session;
+        } catch (error) {
+          this.handleError(
+            error,
+            Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+            'Failed to get session. Try again.',
+            401,
+            {
+              error,
+            },
+          );
+        }
+      },
+      { pubky },
+    );
   }
 
   private async signin(keypair: Pubky.Keypair) {
-    try {
-      await this.client.signin(keypair);
-      Libs.Logger.debug('Signin successful', { keypair });
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.SIGNIN_FAILED, 'Failed to sign in. Try again.', 401, { error });
-    }
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.signin',
+      async () => {
+        try {
+          await this.client.signin(keypair);
+          Libs.Logger.debug('Signin successful', { keypair });
+        } catch (error) {
+          this.handleError(error, Libs.HomeserverErrorType.SIGNIN_FAILED, 'Failed to sign in. Try again.', 401, {
+            error,
+          });
+        }
+      },
+      {},
+    );
   }
 
   async signup(keypair: Core.TKeyPair, signupToken: string) {
-    try {
-      const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
-      Libs.Logger.debug('Signing up', {
-        keypair,
-        signupToken,
-        homeserverPublicKey: homeserverPublicKey,
-      });
-      const pubkyKeypair = Libs.Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
-      const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
-      this.currentKeypair = keypair;
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.signup',
+      async () => {
+        try {
+          const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
+          Libs.Logger.debug('Signing up', {
+            keypair,
+            signupToken,
+            homeserverPublicKey: homeserverPublicKey,
+          });
+          const pubkyKeypair = Libs.Identity.pubkyKeypairFromSecretKey(keypair.secretKey);
+          const session = await this.client.signup(pubkyKeypair, homeserverPublicKey, signupToken);
+          this.currentKeypair = keypair;
 
-      Libs.Logger.debug('Signup successful', { session });
+          Libs.Logger.debug('Signup successful', { session });
 
-      return { pubky: keypair.pubky, session };
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {}, true);
-    }
+          return { pubky: keypair.pubky, session };
+        } catch (error) {
+          this.handleError(error, Libs.HomeserverErrorType.SIGNUP_FAILED, 'Signup failed', 500, {}, true);
+        }
+      },
+      { pubky: keypair.pubky },
+    );
   }
 
   private async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
-    try {
-      const response = await this.client.fetch(url, { ...options, credentials: 'include' });
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.fetch',
+      async () => {
+        try {
+          const response = await this.client.fetch(url, { ...options, credentials: 'include' });
 
-      Libs.Logger.debug('Response from homeserver', { response });
+          Libs.Logger.debug('Response from homeserver', { response });
 
-      return response;
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
-    }
+          return response;
+        } catch (error) {
+          this.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, { url });
+        }
+      },
+      { url, method: options?.method ?? 'GET' },
+    );
   }
 
   /**
@@ -178,17 +228,24 @@ export class HomeserverService {
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
   static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
-    const homeserver = this.getInstance();
-    const response = await homeserver.fetch(url, {
-      method,
-      body: bodyJson ? JSON.stringify(bodyJson) : undefined,
-    });
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.request',
+      async () => {
+        const homeserver = this.getInstance();
+        const response = await homeserver.fetch(url, {
+          method,
+          body: bodyJson ? JSON.stringify(bodyJson) : undefined,
+        });
 
-    if (!response.ok) {
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
-        url,
-      });
-    }
+        if (!response.ok) {
+          throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
+            url,
+          });
+        }
+      },
+      { method, url },
+    );
   }
 
   /**
@@ -201,85 +258,113 @@ export class HomeserverService {
    * @param {Uint8Array} blob - Raw bytes of the blob to upload.
    */
   static async putBlob(url: string, blob: Uint8Array) {
-    const homeserver = this.getInstance();
-    const response = await homeserver.fetch(url, {
-      method: HomeserverAction.PUT,
-      body: blob,
-    });
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.putBlob',
+      async () => {
+        const homeserver = this.getInstance();
+        const response = await homeserver.fetch(url, {
+          method: HomeserverAction.PUT,
+          body: blob,
+        });
 
-    if (!response.ok) {
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', 500, {
-        url,
-      });
-    }
+        if (!response.ok) {
+          throw Libs.createHomeserverError(Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', 500, {
+            url,
+          });
+        }
+      },
+      { url },
+    );
   }
 
   async logout(pubky: Core.Pubky) {
-    try {
-      const pubKey = Pubky.PublicKey.from(pubky);
-      await this.client.signout(pubKey);
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.logout',
+      async () => {
+        try {
+          const pubKey = Pubky.PublicKey.from(pubky);
+          await this.client.signout(pubKey);
 
-      this.currentKeypair = this.defaultKeypair;
+          this.currentKeypair = this.defaultKeypair;
 
-      Libs.Logger.debug('Logout successful');
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500);
-    }
+          Libs.Logger.debug('Logout successful');
+        } catch (error) {
+          this.handleError(error, Libs.HomeserverErrorType.LOGOUT_FAILED, 'Failed to logout', 500);
+        }
+      },
+      { pubky },
+    );
   }
 
   async generateAuthUrl(caps?: string) {
     const capabilities = caps || '/pub/pubky.app/:rw';
 
-    try {
-      const authRequest = this.client.authRequest(Config.DEFAULT_HTTP_RELAY, capabilities);
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.generateAuthUrl',
+      async () => {
+        try {
+          const authRequest = this.client.authRequest(Config.DEFAULT_HTTP_RELAY, capabilities);
 
-      return {
-        url: String(authRequest.url()),
-        promise: authRequest.response(),
-      };
-    } catch (error) {
-      this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
-        capabilities,
-        relay: Config.DEFAULT_HTTP_RELAY,
-      });
-    }
+          return {
+            url: String(authRequest.url()),
+            promise: authRequest.response(),
+          };
+        } catch (error) {
+          this.handleError(error, Libs.HomeserverErrorType.AUTH_REQUEST_FAILED, 'Failed to generate auth URL', 500, {
+            capabilities,
+            relay: Config.DEFAULT_HTTP_RELAY,
+          });
+        }
+      },
+      { capabilities },
+    );
   }
 
   async authenticateKeypair(keypair: Pubky.Keypair) {
-    try {
-      const pubky = keypair.publicKey().z32();
-      const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());
+    return traceAsync(
+      'homeserver',
+      'HomeserverService.authenticateKeypair',
+      async () => {
+        try {
+          const pubky = keypair.publicKey().z32();
+          const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());
 
-      // get homeserver from pkarr records
-      await this.checkHomeserver(pubky);
+          // get homeserver from pkarr records
+          await this.checkHomeserver(pubky);
 
-      // sign in with keypair
-      await this.signin(keypair);
+          // sign in with keypair
+          await this.signin(keypair);
 
-      // Retrieve the session
-      const session = await this.checkSession(pubky);
+          // Retrieve the session
+          const session = await this.checkSession(pubky);
 
-      // update current keypair
-      this.currentKeypair = {
-        pubky,
-        secretKey,
-      };
+          // update current keypair
+          this.currentKeypair = {
+            pubky,
+            secretKey,
+          };
 
-      return { pubky, session };
-    } catch (error) {
-      try {
-        // try to republish homeserver
-        await this.client.republishHomeserver(keypair, Pubky.PublicKey.from(Config.HOMESERVER));
-        Libs.Logger.debug('Republish homeserver successful', { keypair });
-      } catch {
-        this.handleError(
-          error,
-          Libs.HomeserverErrorType.NOT_AUTHENTICATED,
-          'Not authenticated. Please sign up first.',
-          401,
-          { error },
-        );
-      }
-    }
+          return { pubky, session };
+        } catch (error) {
+          try {
+            // try to republish homeserver
+            await this.client.republishHomeserver(keypair, Pubky.PublicKey.from(Config.HOMESERVER));
+            Libs.Logger.debug('Republish homeserver successful', { keypair });
+          } catch {
+            this.handleError(
+              error,
+              Libs.HomeserverErrorType.NOT_AUTHENTICATED,
+              'Not authenticated. Please sign up first.',
+              401,
+              { error },
+            );
+          }
+        }
+      },
+      { pubky: keypair.publicKey().z32() },
+    );
   }
 }

@@ -1,8 +1,9 @@
 import { Table } from 'dexie';
 import { TagCollection } from '@/core/models/shared/tag/tagCollection';
 import { TagCollectionModelSchema } from '@/core/models/shared/tag/tag.schema';
+import { TagModel } from '@/core/models/shared/tag/tag';
+import type { Pubky } from '@/core/models/models.types';
 import { db } from '@/core/database/franky/franky';
-import * as Core from '@/core';
 
 export class PostTagsModel
   extends TagCollection<string, TagCollectionModelSchema<string>>
@@ -14,11 +15,11 @@ export class PostTagsModel
     super(data);
   }
 
-  saveTag(label: string, taggerId: Core.Pubky) {
+  saveTag(label: string, taggerId: Pubky) {
     let labelTagData = this.findByLabel(label);
     // The label does not exist, create it
     if (!labelTagData) {
-      labelTagData = new Core.TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
+      labelTagData = new TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
       this.tags.push(labelTagData);
     }
     // The label exist and the active user put a tag already
@@ -31,7 +32,7 @@ export class PostTagsModel
     labelTagData.setRelationship(true);
   }
 
-  removeTag(label: string, taggerId: Core.Pubky) {
+  removeTag(label: string, taggerId: Pubky) {
     const labelTagData = this.findByLabel(label);
     if (!labelTagData) {
       throw new Error('Tag not found');
