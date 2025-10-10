@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { z } from 'zod';
 
 import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
@@ -13,6 +14,8 @@ import { useOnboardingStore } from '@/core';
 interface DialogBackupEncryptedProps {
   children?: React.ReactNode;
 }
+
+const passwordSchema = z.string().min(6, 'Password must be at least 6 characters').max(100, 'Password is too long');
 
 export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) {
   const [step, setStep] = useState(1);
@@ -46,7 +49,14 @@ export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) 
 function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const { secretKey, pubky } = useOnboardingStore();
+
+  const validatePassword = (value: string) => {
+    const result = passwordSchema.safeParse(value);
+    setPasswordError(result.success ? null : (result.error.issues[0]?.message ?? 'Invalid password'));
+    return result.success;
+  };
 
   // Password strength calculation
   const calculatePasswordStrength = (password: string) => {
@@ -90,6 +100,10 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   };
 
   const handleDownload = () => {
+    if (!validatePassword(password)) {
+      return;
+    }
+
     Identity.createRecoveryFile(
       {
         pubky,
@@ -101,7 +115,9 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   };
 
   const isFormValid = () => {
-    return Boolean(password && passwordsMatch);
+    return Boolean(
+      password && confirmPassword && passwordsMatch && passwordSchema.safeParse(password).success && !passwordError,
+    );
   };
 
   const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleDownload);
@@ -130,16 +146,32 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setPassword(value);
+                    if (value.length > 0) {
+                      validatePassword(value);
+                    } else {
+                      setPasswordError(null);
+                    }
+                  }}
                   onKeyDown={handleKeyDown}
-                  className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+                  className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 ${
+                    passwordError ? 'border-red-400' : ''
+                  }`}
                   placeholder="Enter a strong password"
                   autoComplete="new-password"
                 />
               </Atoms.Container>
               <Atoms.Typography size="sm" className="text-muted-foreground text-xs font-medium leading-3">
-                We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
+                Password must be at least 6 characters. We recommend 8 or more with uppercase, lowercase, numbers, and
+                symbols.
               </Atoms.Typography>
+              {passwordError && (
+                <Atoms.Typography size="sm" className="text-red-400 text-xs font-medium leading-3">
+                  {passwordError}
+                </Atoms.Typography>
+              )}
             </Atoms.Container>
           </Atoms.Container>
 

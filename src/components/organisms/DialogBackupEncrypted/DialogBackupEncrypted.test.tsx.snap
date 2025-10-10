@@ -72,7 +72,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
             >
               <input
                 autocomplete="new-password"
-                class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+                class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 "
                 data-testid="input"
                 id="password"
                 placeholder="Enter a strong password"
@@ -85,7 +85,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
               data-size="sm"
               data-testid="typography"
             >
-              We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
+              Password must be at least 6 characters. We recommend 8 or more with uppercase, lowercase, numbers, and symbols.
             </p>
           </div>
         </div>
