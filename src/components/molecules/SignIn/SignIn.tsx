@@ -195,7 +195,7 @@ export const SignInContent = () => {
               className="w-full h-[60px] rounded-full"
               size="lg"
               onClick={handleAuthorizeClick}
-              disabled={isLoading}
+              disabled={isLoading || !url}
               aria-busy={isLoading}
             >
               {isLoading ? (
