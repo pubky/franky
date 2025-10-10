@@ -14,12 +14,12 @@ export function SettingsMenu({ className }: SettingsMenuProps) {
   const pathname = usePathname();
 
   const menuItems = [
-    { icon: Libs.User, label: 'Account', href: SETTINGS_ROUTES.ACCOUNT },
+    { icon: Libs.UserRound, label: 'Account', href: SETTINGS_ROUTES.ACCOUNT },
     { icon: Libs.Bell, label: 'Notifications', href: SETTINGS_ROUTES.NOTIFICATIONS },
-    { icon: Libs.ShieldCheck, label: 'Privacy & Safety', href: SETTINGS_ROUTES.PRIVACY_SAFETY },
-    { icon: Libs.VolumeX, label: 'Muted Users', href: SETTINGS_ROUTES.MUTED_USERS },
-    { icon: Libs.Languages, label: 'Language', href: SETTINGS_ROUTES.LANGUAGE },
-    { icon: Libs.HelpCircle, label: 'Help', href: SETTINGS_ROUTES.HELP },
+    { icon: Libs.Shield, label: 'Privacy & Safety', href: SETTINGS_ROUTES.PRIVACY_SAFETY },
+    { icon: Libs.MegaphoneOff, label: 'Muted Users', href: SETTINGS_ROUTES.MUTED_USERS },
+    { icon: Libs.Globe, label: 'Language', href: SETTINGS_ROUTES.LANGUAGE },
+    { icon: Libs.CircleHelp, label: 'Help', href: SETTINGS_ROUTES.HELP },
   ];
 
   return (

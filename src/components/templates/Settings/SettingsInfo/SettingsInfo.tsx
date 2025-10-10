@@ -24,14 +24,12 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Please read our terms carefully." />
         <Atoms.FilterList>
-          <Atoms.FilterItem isSelected={false} onClick={() => {}}>
-            <Atoms.FilterItemIcon icon={Libs.FileText} />
-            <Atoms.FilterItemLabel>Terms of service</Atoms.FilterItemLabel>
-          </Atoms.FilterItem>
-          <Atoms.FilterItem isSelected={false} onClick={() => {}}>
-            <Atoms.FilterItemIcon icon={Libs.Lock} />
-            <Atoms.FilterItemLabel>Privacy policy</Atoms.FilterItemLabel>
-          </Atoms.FilterItem>
+          <Atoms.SidebarButton icon={Libs.FileText} onClick={() => {}}>
+            Terms of service
+          </Atoms.SidebarButton>
+          <Atoms.SidebarButton icon={Libs.LockKeyhole} onClick={() => {}}>
+            Privacy policy
+          </Atoms.SidebarButton>
         </Atoms.FilterList>
       </Atoms.FilterRoot>
 
@@ -41,30 +39,29 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
         <Atoms.FilterList>
           {faqQuestions.map((faq, index) => (
             <Link key={index} href={faq.href}>
-              <div className="relative px-3 py-3 border border-border rounded-lg hover:border-opacity-30 cursor-pointer">
-                <span className="text-sm font-semibold leading-tight pr-6 block">{faq.question}</span>
+              <div className="relative p-4 border border-border rounded-lg hover:border-opacity-30 cursor-pointer">
+                <span className="text-sm font-bold leading-normal text-[var(--base-popover-foreground,#EEEEF6)] pr-6 block">
+                  {faq.question}
+                </span>
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <Libs.ChevronRight size={16} />
                 </div>
               </div>
             </Link>
           ))}
-          <Link href={SETTINGS_ROUTES.HELP}>
-            <Atoms.Button variant="secondary" size="sm" className="w-full">
-              <Libs.HelpCircle size={16} />
-              More FAQ
-            </Atoms.Button>
-          </Link>
+          <Atoms.SidebarButton icon={Libs.HelpCircle} onClick={() => {}}>
+            More FAQ
+          </Atoms.SidebarButton>
         </Atoms.FilterList>
       </Atoms.FilterRoot>
 
       {/* Version Section */}
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title="Version" />
-        <Atoms.FilterList>
-          <div className="px-3 py-2">
-            <p className="text-sm text-muted-foreground leading-snug">Pubky v0.12 © Synonym Software Ltd</p>
-          </div>
+        <Atoms.FilterList className="gap-2">
+          <p className="text-base font-medium leading-normal text-[var(--base-secondary-foreground,#D4D4DB)]">
+            Pubky v0.12 © Synonym Software Ltd
+          </p>
         </Atoms.FilterList>
       </Atoms.FilterRoot>
     </div>

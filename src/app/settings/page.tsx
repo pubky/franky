@@ -1,6 +1,16 @@
-import { redirect } from 'next/navigation';
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { SETTINGS_ROUTES } from '@/app';
+import * as Atoms from '@/atoms';
 
 export default function SettingsPage() {
-  redirect(SETTINGS_ROUTES.ACCOUNT);
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push(SETTINGS_ROUTES.ACCOUNT);
+  }, [router]);
+
+  return <Atoms.SettingsLoader />;
 }
