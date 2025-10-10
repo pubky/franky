@@ -25,7 +25,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       rightDrawerContent={<SettingsRightDrawer />}
     >
       {/* Mobile menu - visible only on mobile */}
-      <div className="lg:hidden mb-6">
+      <div className="lg:hidden">
         <Molecules.SettingsMobileMenu />
       </div>
 

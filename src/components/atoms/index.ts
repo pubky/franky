@@ -17,6 +17,7 @@ export * from './PageSubtitle';
 export * from './Popover';
 export * from './ReplyLine';
 export * from './SettingsLoader';
+export * from './SidebarButton';
 export * from './Textarea';
 export * from './Toast';
 export * from './Toggle';
