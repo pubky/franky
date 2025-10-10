@@ -126,7 +126,9 @@ export function HomeserverCard() {
         </Atoms.Container>
       </Molecules.ContentCard>
       <Molecules.HomeserverFooter />
-      <Atoms.Container className={Libs.cn('mt-auto flex-row gap-3 lg:gap-6 justify-between py-6 lg:mt-0')}>
+      <Atoms.Container
+        className={Libs.cn('onboarding-nav mt-auto flex-row gap-3 lg:gap-6 justify-between py-6 lg:mt-0')}
+      >
         <Atoms.Button
           size="lg"
           className="rounded-full flex-1 md:flex-0 w-full"
