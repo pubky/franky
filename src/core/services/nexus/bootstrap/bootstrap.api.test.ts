@@ -8,13 +8,13 @@ describe('Bootstrap API', () => {
   describe('bootstrapApi.get', () => {
     it('should generate correct URL for bootstrap', () => {
       const result = bootstrapApi.get(testPubky);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/bootstrap/${testPubky}`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/bootstrap/${testPubky}`);
     });
 
     it('should handle different pubky values', () => {
       const differentPubky = 'different-pubky-123';
       const result = bootstrapApi.get(differentPubky);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/bootstrap/${differentPubky}`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/bootstrap/${differentPubky}`);
     });
   });
 

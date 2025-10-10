@@ -5,7 +5,7 @@ import * as Core from '@/core';
  * All API endpoints related to bootstrap operations
  */
 
-const PREFIX = 'bootstrap';
+const PREFIX = 'v0/bootstrap';
 
 export const bootstrapApi = {
   get: (pubky: string) => {

@@ -30,7 +30,7 @@ describe('Users Stream API - Error Control', () => {
         viewer_id: mockViewerId,
       });
 
-      expect(url).toContain('stream/users/username?');
+      expect(url).toContain('v0/stream/users/username?');
       expect(url).toContain('username=');
       expect(url).toContain(`viewer_id=${mockViewerId}`);
     });
@@ -54,7 +54,7 @@ describe('Users Stream API - Error Control', () => {
         viewer_id: mockViewerId,
       });
 
-      expect(url).toContain('stream/users/username?');
+      expect(url).toContain('v0/stream/users/username?');
       expect(url).toContain(`username=${encodeURIComponent(specialUsername)}`);
     });
 
@@ -86,7 +86,7 @@ describe('Users Stream API - Error Control', () => {
         user_ids: [],
       });
 
-      expect(request.url).toMatch('stream/users/by_ids');
+      expect(request.url).toMatch('v0/stream/users/by_ids');
       expect(request.body.user_ids).toEqual([]);
       expect(request.body).not.toHaveProperty('viewer_id');
       expect(request.body).not.toHaveProperty('depth');
@@ -100,7 +100,7 @@ describe('Users Stream API - Error Control', () => {
         depth: 3,
       });
 
-      expect(request.url).toMatch('stream/users/by_ids');
+      expect(request.url).toMatch('v0/stream/users/by_ids');
       expect(request.body.user_ids).toHaveLength(1000);
       expect(request.body.viewer_id).toBe(mockViewerId);
       expect(request.body.depth).toBe(3);
