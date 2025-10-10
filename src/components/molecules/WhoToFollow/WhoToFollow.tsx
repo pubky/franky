@@ -16,7 +16,7 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
   ];
 
   return (
-    <div data-testid="who-to-follow" className={Libs.cn('flex flex-col gap-4', className)}>
+    <div data-testid="who-to-follow" className={Libs.cn('flex flex-col gap-2', className)}>
       <h2 className="text-2xl font-light text-muted-foreground">Who to follow</h2>
 
       <div className="flex flex-col gap-2">
@@ -39,10 +39,7 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
         ))}
       </div>
 
-      <button className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors">
-        <Libs.Users className="h-4 w-4" />
-        <span className="text-sm font-medium">See all</span>
-      </button>
+      <Atoms.SidebarButton icon={Libs.Users}>See all</Atoms.SidebarButton>
     </div>
   );
 }

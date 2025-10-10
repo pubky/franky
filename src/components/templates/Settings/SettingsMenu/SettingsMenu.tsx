@@ -1,34 +1,32 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 import * as Atoms from '@/atoms';
-import * as Libs from '@/libs';
+import { SETTINGS_MENU_ITEMS } from '../settings.config';
 
 export interface SettingsMenuProps {
   className?: string;
 }
 
 export function SettingsMenu({ className }: SettingsMenuProps) {
-  const menuItems = [
-    { icon: Libs.User, label: 'Account', href: '#' },
-    { icon: Libs.Bell, label: 'Notifications', href: '#' },
-    { icon: Libs.ShieldCheck, label: 'Privacy and safety', href: '#' },
-    { icon: Libs.UserX, label: 'Muted users', href: '#' },
-    { icon: Libs.Languages, label: 'Language', href: '#' },
-    { icon: Libs.HelpCircle, label: 'Help', href: '#' },
-  ];
+  const pathname = usePathname();
 
   return (
     <Atoms.FilterRoot className={className}>
       <Atoms.FilterHeader title="Settings" />
 
       <Atoms.FilterList>
-        {menuItems.map((item) => {
+        {SETTINGS_MENU_ITEMS.map((item) => {
           const Icon = item.icon;
+          const isSelected = pathname === item.path;
           return (
-            <Atoms.FilterItem key={item.label} isSelected={false} onClick={() => {}}>
-              <Atoms.FilterItemIcon icon={Icon} />
-              <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
-            </Atoms.FilterItem>
+            <Link key={item.label} href={item.path}>
+              <Atoms.FilterItem isSelected={isSelected} onClick={() => {}}>
+                <Atoms.FilterItemIcon icon={Icon} />
+                <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
+              </Atoms.FilterItem>
+            </Link>
           );
         })}
       </Atoms.FilterList>
