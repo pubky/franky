@@ -1,139 +1,253 @@
-// Simplified ProfileController tests with minimal mocks using real Identity.generateKeypair
-
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Identity } from '@/libs/identity/identity';
+import { TextDecoder, TextEncoder } from 'util';
+import type { Pubky } from '@/core/models/models.types';
 
-// Create mock store objects that will hold the real generated keypair
-const mockOnboardingStore = { secretKey: '' };
-const mockAuthStore = { setCurrentUserPubky: vi.fn(), setAuthenticated: vi.fn() };
-const mockHomeserver = {
-  fetch: vi.fn().mockResolvedValue({ ok: true }),
-  authenticateKeypair: vi.fn().mockResolvedValue({ ok: true }),
+const mockFileNormalizer = {
+  toBlob: vi.fn(),
+  toFile: vi.fn(),
 };
 
-// Mock pubky-app-specs to allow real normalizers to run without errors
-vi.mock('pubky-app-specs', () => ({
-  PubkySpecsBuilder: class {
-    createBlob(blob: Uint8Array) {
-      return { blob: { data: blob }, meta: { url: 'test-blob-url' } };
-    }
-    createFile(name: string, url: string, type: string, size: number) {
-      return { file: { toJson: () => ({ name, url, type, size }) }, meta: { url: 'test-file-url' } };
-    }
-    createUser(name: string, bio: string, image: string, links: Array<{ title: string; url: string }>) {
-      return { user: { toJson: () => ({ name, bio, image, links }) }, meta: { url: 'test-user-url' } };
-    }
-  },
-}));
+const mockProfileApplication = {
+  uploadAvatar: vi.fn(),
+  create: vi.fn(),
+};
 
-// Create a proper File mock with arrayBuffer method
+const mockUserNormalizer = {
+  to: vi.fn(),
+};
+
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
+  return {
+    ...actual,
+    FileNormalizer: mockFileNormalizer,
+    ProfileApplication: mockProfileApplication,
+    UserNormalizer: mockUserNormalizer,
+  };
+});
+
 class MockFile extends File {
+  private readonly rawContent: string;
+
   constructor(content: string[], filename: string, options?: FilePropertyBag) {
     super(content, filename, options);
+    this.rawContent = content.join('');
   }
 
-  arrayBuffer(): Promise<ArrayBuffer> {
-    const content = 'test';
-    const buffer = new ArrayBuffer(content.length);
-    const view = new Uint8Array(buffer);
-    for (let i = 0; i < content.length; i++) {
-      view[i] = content.charCodeAt(i);
-    }
-    return Promise.resolve(buffer);
+  async arrayBuffer(): Promise<ArrayBuffer> {
+    const encoder = new TextEncoder();
+    const view = encoder.encode(this.rawContent);
+    // @ts-expect-error - slice(0) narrows from ArrayBufferView to ArrayBuffer for test env
+    return view.buffer.slice(0);
   }
 }
 
-describe('ProfileController', () => {
-  let testKeypair: ReturnType<typeof Identity.generateKeypair>;
+const decoder = new TextDecoder();
+const testPubky = 'o4dksfbqk85ogzdb5osziw6befigbuxmuxkuxq8434q89uj56uyy' as Pubky;
 
+let ProfileController: typeof import('./profile').ProfileController;
+
+describe('ProfileController', () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
 
-    // Generate fresh keypair using real Identity.generateKeypair function
-    testKeypair = Identity.generateKeypair();
+    mockFileNormalizer.toBlob.mockReset();
+    mockFileNormalizer.toFile.mockReset();
+    mockProfileApplication.uploadAvatar.mockReset();
+    mockProfileApplication.create.mockReset();
+    mockUserNormalizer.to.mockReset();
 
-    // Set the real generated secret key in the mock store
-    mockOnboardingStore.secretKey = testKeypair.secretKey;
-
-    // Reset mock functions
-    mockAuthStore.setCurrentUserPubky.mockClear();
-    mockAuthStore.setAuthenticated.mockClear();
-    mockHomeserver.fetch.mockClear();
-    mockHomeserver.authenticateKeypair.mockClear();
-
-    // Mock @/core after resetting modules
-    vi.doMock('@/core', async () => {
-      const actual = await vi.importActual('@/core');
-      return {
-        ...actual,
-        useOnboardingStore: {
-          getState: vi.fn(() => mockOnboardingStore),
-        },
-        useAuthStore: {
-          getState: vi.fn(() => mockAuthStore),
-        },
-        HomeserverService: {
-          getInstance: vi.fn(() => mockHomeserver),
-        },
-      };
-    });
+    ({ ProfileController } = await import('./profile'));
   });
 
   describe('uploadAvatar', () => {
-    const mockAvatarFile = new MockFile(['test'], 'test.jpg', { type: 'image/jpeg' });
+    it('normalizes avatar and uploads it', async () => {
+      const avatarFile = new MockFile(['avatar'], 'avatar.png', { type: 'image/png' });
+      const blobResult = {
+        blob: { data: new Uint8Array([1, 2, 3]) },
+        meta: { url: 'blob-url' },
+      };
+      const fileResult = {
+        file: { toJson: vi.fn() },
+        meta: { url: 'file-url' },
+      };
 
-    it('exists and is callable', async () => {
-      const { ProfileController } = await import('./profile');
-      expect(ProfileController.uploadAvatar).toBeTypeOf('function');
+      mockFileNormalizer.toBlob.mockResolvedValue(blobResult);
+      mockFileNormalizer.toFile.mockResolvedValue(fileResult);
+      mockProfileApplication.uploadAvatar.mockResolvedValue(undefined);
+
+      const result = await ProfileController.uploadAvatar(avatarFile, testPubky);
+
+      expect(mockFileNormalizer.toBlob).toHaveBeenCalledTimes(1);
+      const [blobArg, pubkyArg] = mockFileNormalizer.toBlob.mock.calls[0];
+      expect(blobArg).toBeInstanceOf(Uint8Array);
+      expect(decoder.decode(blobArg as Uint8Array)).toBe('avatar');
+      expect(pubkyArg).toBe(testPubky);
+
+      expect(mockFileNormalizer.toFile).toHaveBeenCalledWith(avatarFile, blobResult.meta.url, testPubky);
+      expect(mockProfileApplication.uploadAvatar).toHaveBeenCalledWith({ blobResult, fileResult });
+      expect(result).toBe(fileResult.meta.url);
     });
 
-    it('calls dependencies and returns url', async () => {
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true }).mockResolvedValueOnce({ ok: true });
+    it('propagates errors when blob normalization fails', async () => {
+      const avatarFile = new MockFile(['avatar'], 'avatar.png', { type: 'image/png' });
+      const error = new Error('normalizer failed');
+      mockFileNormalizer.toBlob.mockRejectedValue(error);
 
-      const { ProfileController } = await import('./profile');
-      const result = await ProfileController.uploadAvatar(mockAvatarFile, testKeypair.pubky);
-      expect(typeof result).toBe('string');
-      expect(mockHomeserver.fetch).toHaveBeenCalledTimes(2);
-      expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
+      await expect(ProfileController.uploadAvatar(avatarFile, testPubky)).rejects.toThrow('normalizer failed');
+      expect(mockFileNormalizer.toFile).not.toHaveBeenCalled();
+      expect(mockProfileApplication.uploadAvatar).not.toHaveBeenCalled();
     });
 
-    it('throws on missing secretKey', async () => {
-      mockOnboardingStore.secretKey = '';
+    it('propagates errors when file normalization fails', async () => {
+      const avatarFile = new MockFile(['avatar'], 'avatar.png', { type: 'image/png' });
+      const blobResult = {
+        blob: { data: new Uint8Array([1, 2, 3]) },
+        meta: { url: 'blob-url' },
+      };
 
-      const { ProfileController } = await import('./profile');
-      await expect(ProfileController.uploadAvatar(mockAvatarFile, testKeypair.pubky)).rejects.toThrow('secretKey');
+      mockFileNormalizer.toBlob.mockResolvedValue(blobResult);
+      mockFileNormalizer.toFile.mockRejectedValue(new Error('file failed'));
+
+      await expect(ProfileController.uploadAvatar(avatarFile, testPubky)).rejects.toThrow('file failed');
+      expect(mockProfileApplication.uploadAvatar).not.toHaveBeenCalled();
+    });
+
+    it('propagates errors when homeserver upload fails', async () => {
+      const avatarFile = new MockFile(['avatar'], 'avatar.png', { type: 'image/png' });
+      const blobResult = {
+        blob: { data: new Uint8Array([1, 2, 3]) },
+        meta: { url: 'blob-url' },
+      };
+      const fileResult = {
+        file: { toJson: vi.fn() },
+        meta: { url: 'file-url' },
+      };
+
+      mockFileNormalizer.toBlob.mockResolvedValue(blobResult);
+      mockFileNormalizer.toFile.mockResolvedValue(fileResult);
+      mockProfileApplication.uploadAvatar.mockRejectedValue(new Error('upload failed'));
+
+      await expect(ProfileController.uploadAvatar(avatarFile, testPubky)).rejects.toThrow('upload failed');
     });
   });
 
   describe('create', () => {
-    const mockProfile = { name: 'Test', bio: 'Test bio' };
-    const mockImage = 'test-image';
+    it('normalizes profile data and delegates to application layer', async () => {
+      const profile = {
+        name: 'Test User',
+        bio: 'Short bio',
+        links: [{ label: 'Docs', url: 'https://example.com' }],
+      };
+      const userResult = {
+        user: { toJson: vi.fn() },
+        meta: { url: 'user-url' },
+      };
 
-    it('exists and is callable', async () => {
-      const { ProfileController } = await import('./profile');
-      expect(ProfileController.create).toBeTypeOf('function');
+      mockUserNormalizer.to.mockResolvedValue(userResult);
+      mockProfileApplication.create.mockResolvedValue(undefined);
+
+      await ProfileController.create(
+        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        'image-url',
+        testPubky,
+      );
+
+      expect(mockUserNormalizer.to).toHaveBeenCalledTimes(1);
+      expect(mockUserNormalizer.to).toHaveBeenCalledWith(
+        {
+          name: 'Test User',
+          bio: 'Short bio',
+          image: 'image-url',
+          links: [{ title: 'Docs', url: 'https://example.com' }],
+          status: '',
+        },
+        testPubky,
+      );
+
+      expect(mockProfileApplication.create).toHaveBeenCalledWith({
+        profile: userResult.user,
+        url: userResult.meta.url,
+        pubky: testPubky,
+      });
     });
 
-    it('calls dependencies and returns response', async () => {
-      mockHomeserver.fetch.mockResolvedValue({ ok: true });
+    it('defaults optional fields when not provided', async () => {
+      const profile = {
+        name: 'Test User',
+      };
+      const userResult = {
+        user: { toJson: vi.fn() },
+        meta: { url: 'user-url' },
+      };
 
-      const { ProfileController } = await import('./profile');
-      const result = await ProfileController.create(mockProfile, mockImage, testKeypair.pubky);
-      expect(result.ok).toBe(true);
-      expect(mockHomeserver.fetch).toHaveBeenCalled();
-      expect(mockHomeserver.authenticateKeypair).toHaveBeenCalled();
-      expect(mockAuthStore.setAuthenticated).toHaveBeenCalledWith(true);
-      expect(mockAuthStore.setCurrentUserPubky).toHaveBeenCalledWith(testKeypair.pubky);
+      mockUserNormalizer.to.mockResolvedValue(userResult);
+      mockProfileApplication.create.mockResolvedValue(undefined);
+
+      await ProfileController.create(
+        profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+        null,
+        testPubky,
+      );
+
+      expect(mockUserNormalizer.to).toHaveBeenCalledWith(
+        {
+          name: 'Test User',
+          bio: '',
+          image: '',
+          links: [],
+          status: '',
+        },
+        testPubky,
+      );
+
+      expect(mockProfileApplication.create).toHaveBeenCalledWith({
+        profile: userResult.user,
+        url: userResult.meta.url,
+        pubky: testPubky,
+      });
     });
 
-    it('throws on missing secretKey', async () => {
-      mockOnboardingStore.secretKey = '';
+    it('propagates errors from the user normalizer', async () => {
+      const profile = {
+        name: 'Test User',
+        bio: 'Short bio',
+      };
+      const error = new Error('validation failed');
 
-      const { ProfileController } = await import('./profile');
-      await expect(ProfileController.create(mockProfile, mockImage, testKeypair.pubky)).rejects.toThrow('secretKey');
-      expect(mockAuthStore.setAuthenticated).toHaveBeenCalledWith(false);
-      expect(mockAuthStore.setCurrentUserPubky).toHaveBeenCalledWith(null);
+      mockUserNormalizer.to.mockRejectedValue(error);
+
+      await expect(
+        ProfileController.create(
+          profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+          null,
+          testPubky,
+        ),
+      ).rejects.toThrow('validation failed');
+      expect(mockProfileApplication.create).not.toHaveBeenCalled();
+    });
+
+    it('propagates errors from the application layer', async () => {
+      const profile = {
+        name: 'Test User',
+        bio: 'Short bio',
+      };
+      const userResult = {
+        user: { toJson: vi.fn() },
+        meta: { url: 'user-url' },
+      };
+
+      mockUserNormalizer.to.mockResolvedValue(userResult);
+      mockProfileApplication.create.mockRejectedValue(new Error('create failed'));
+
+      await expect(
+        ProfileController.create(
+          profile as { name: string; bio?: string; links?: { label: string; url: string }[] },
+          null,
+          testPubky,
+        ),
+      ).rejects.toThrow('create failed');
     });
   });
 });
