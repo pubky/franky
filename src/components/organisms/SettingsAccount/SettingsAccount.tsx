@@ -1,65 +1,16 @@
 'use client';
 
-import { useState, useEffect, ComponentType } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import { AUTH_ROUTES } from '@/app';
+import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 export interface SettingsAccountProps {
   className?: string;
 }
-
-const SettingsSection = ({
-  icon: Icon,
-  title,
-  description,
-  buttonText,
-  buttonIcon: ButtonIcon,
-  buttonId,
-  buttonVariant = 'secondary',
-  buttonDisabled = false,
-  buttonOnClick,
-  titleClassName,
-  iconClassName,
-}: {
-  icon: ComponentType<{ size?: number; className?: string }>;
-  title: string;
-  description: string;
-  buttonText: string;
-  buttonIcon: ComponentType<{ size?: number }>;
-  buttonId: string;
-  buttonVariant?: 'secondary' | 'destructive';
-  buttonDisabled?: boolean;
-  buttonOnClick: () => void;
-  titleClassName?: string;
-  iconClassName?: string;
-}) => (
-  <div className="flex-col justify-start items-start flex">
-    <div className="justify-start items-center gap-2 inline-flex pb-6">
-      <Icon size={24} className={iconClassName} />
-      <Atoms.Heading level={2} size="xl" className={titleClassName}>
-        {title}
-      </Atoms.Heading>
-    </div>
-    <Atoms.Typography size="md" className="text-base-secondary-foreground text-base font-medium leading-6  pb-6">
-      {description}
-    </Atoms.Typography>
-    <Atoms.Button
-      id={buttonId}
-      variant={buttonVariant}
-      size="default"
-      disabled={buttonDisabled}
-      onClick={buttonOnClick}
-    >
-      <ButtonIcon size={16} />
-      {buttonText}
-    </Atoms.Button>
-  </div>
-);
-
-const Divider = () => <div className="w-full h-px bg-white/10 mt-6 mb-12" />;
 
 export function SettingsAccount({ className }: SettingsAccountProps) {
   const router = useRouter();
@@ -72,7 +23,7 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
     // Simulate loading account settings
     const loadSettings = async () => {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
       // TODO: Load from storage or backend
       setIsLoading(false);
     };
@@ -99,7 +50,7 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
 
   return (
     <Molecules.SettingsSectionCard icon={Libs.User} title="Account" description="" className={className}>
-      <SettingsSection
+      <Molecules.SettingsSection
         icon={Libs.LogOut}
         title="Sign out from Pubky"
         description="Sign out to protect your account from unauthorized access."
@@ -109,9 +60,9 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
         buttonOnClick={handleSignOut}
       />
 
-      <Divider />
+      <Molecules.SettingsDivider />
 
-      <SettingsSection
+      <Molecules.SettingsSection
         icon={Libs.Pencil}
         title="Edit your profile"
         description="Update your bio or user picture, so friends can find you easier."
@@ -121,9 +72,9 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
         buttonOnClick={() => {}}
       />
 
-      <Divider />
+      <Molecules.SettingsDivider />
 
-      <SettingsSection
+      <Molecules.SettingsSection
         icon={Libs.Lock}
         title="Back up your account"
         description={
@@ -138,9 +89,9 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
         buttonOnClick={() => {}}
       />
 
-      <Divider />
+      <Molecules.SettingsDivider />
 
-      <SettingsSection
+      <Molecules.SettingsSection
         icon={Libs.Download}
         title="Download your data"
         description="Your data on Pubky is yours. Export your account data to use it elsewhere. Note this is not a full pubky homeserver export, this function will export data related to pubky.app."
@@ -151,9 +102,9 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
         buttonOnClick={handleDownloadData}
       />
 
-      <Divider />
+      <Molecules.SettingsDivider />
 
-      <SettingsSection
+      <Molecules.SettingsSection
         icon={Libs.Trash2}
         title="Delete your account"
         description="Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences."

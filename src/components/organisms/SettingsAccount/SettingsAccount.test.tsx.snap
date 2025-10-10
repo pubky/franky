@@ -114,7 +114,8 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
       </button>
     </div>
     <div
-      class="w-full h-px bg-white/10 mt-6 mb-12"
+      aria-hidden="true"
+      class="w-full h-px bg-white/10 my-6"
     />
     <div
       class="flex-col justify-start items-start flex"
@@ -186,7 +187,8 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
       </button>
     </div>
     <div
-      class="w-full h-px bg-white/10 mt-6 mb-12"
+      aria-hidden="true"
+      class="w-full h-px bg-white/10 my-6"
     />
     <div
       class="flex-col justify-start items-start flex"
@@ -269,7 +271,8 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
       </button>
     </div>
     <div
-      class="w-full h-px bg-white/10 mt-6 mb-12"
+      aria-hidden="true"
+      class="w-full h-px bg-white/10 my-6"
     />
     <div
       class="flex-col justify-start items-start flex"
@@ -347,7 +350,8 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
       </button>
     </div>
     <div
-      class="w-full h-px bg-white/10 mt-6 mb-12"
+      aria-hidden="true"
+      class="w-full h-px bg-white/10 my-6"
     />
     <div
       class="flex-col justify-start items-start flex"

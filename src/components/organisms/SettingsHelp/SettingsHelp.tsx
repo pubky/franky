@@ -64,42 +64,6 @@ const SUPPORT_LINKS = {
   telegram: 'https://t.me/pubkychat',
 } as const;
 
-interface SectionProps {
-  icon: React.ComponentType<{ size?: number }>;
-  title: string;
-  description: string;
-  buttonText: string;
-  buttonIcon: React.ComponentType<{ size?: number }>;
-  onButtonClick: () => void;
-}
-
-const Section = React.memo(function Section({
-  icon: Icon,
-  title,
-  description,
-  buttonText,
-  buttonIcon: ButtonIcon,
-  onButtonClick,
-}: SectionProps) {
-  return (
-    <>
-      <div className="justify-start items-center gap-2 inline-flex">
-        <Icon size={24} />
-        <h2 className="text-2xl font-bold leading-8 text-foreground">{title}</h2>
-      </div>
-      <p className="text-base font-medium leading-6 text-foreground">{description}</p>
-      <Atoms.Button variant="secondary" size="default" onClick={onButtonClick}>
-        <ButtonIcon size={16} />
-        {buttonText}
-      </Atoms.Button>
-    </>
-  );
-});
-
-const Divider = React.memo(function Divider() {
-  return <div className="w-full h-px bg-white/10 my-6" aria-hidden="true" />;
-});
-
 export interface SettingsHelpProps {
   className?: string;
 }
@@ -123,29 +87,36 @@ export function SettingsHelp({ className }: SettingsHelpProps) {
       <p className="text-base font-medium leading-6 text-foreground">Frequently asked questions from Pubky users</p>
       <Molecules.FAQAccordion items={FAQ_QUESTIONS} />
 
-      <Divider />
+      <Molecules.SettingsDivider className="w-full h-px bg-white/10 my-6" />
 
       {/* User Guide Section */}
-      <Section
-        icon={Libs.FileText}
-        title="User Guide"
-        description="The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of your Pubky experience."
-        buttonText="User Guide"
-        buttonIcon={Libs.FileText}
-        onButtonClick={handleUserGuideClick}
-      />
+      <div className="justify-start items-center gap-2 inline-flex">
+        <Libs.FileText size={24} />
+        <h2 className="text-2xl font-bold leading-8 text-foreground">User Guide</h2>
+      </div>
+      <p className="text-base font-medium leading-6 text-foreground">
+        The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of
+        your Pubky experience.
+      </p>
+      <Atoms.Button id="user-guide-btn" variant="secondary" size="default" onClick={handleUserGuideClick}>
+        <Libs.FileText size={16} />
+        User Guide
+      </Atoms.Button>
 
-      <Divider />
+      <Molecules.SettingsDivider className="w-full h-px bg-white/10 my-6" />
 
       {/* Support Section */}
-      <Section
-        icon={Libs.MessageCircle}
-        title="Support"
-        description="Cannot find the answer you're looking for? Pubky support will help you out in no time."
-        buttonText="Support (Telegram)"
-        buttonIcon={Libs.MessageCircle}
-        onButtonClick={handleSupportClick}
-      />
+      <div className="justify-start items-center gap-2 inline-flex">
+        <Libs.MessageCircle size={24} />
+        <h2 className="text-2xl font-bold leading-8 text-foreground">Support</h2>
+      </div>
+      <p className="text-base font-medium leading-6 text-foreground">
+        Cannot find the answer you&apos;re looking for? Pubky support will help you out in no time.
+      </p>
+      <Atoms.Button id="support-btn" variant="secondary" size="default" onClick={handleSupportClick}>
+        <Libs.MessageCircle size={16} />
+        Support (Telegram)
+      </Atoms.Button>
     </Molecules.SettingsSectionCard>
   );
 }
