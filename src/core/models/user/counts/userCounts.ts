@@ -52,8 +52,9 @@ export class UserCountsModel
       .equals(user)
       .modify((row) => {
         const record = row as unknown as Record<string, number>;
-        const current = (record[key] ?? 0) as number;
-        record[key] = current + by;
+        const current = Number(record[key] ?? 0);
+        const next = current + by;
+        record[key] = next < 0 ? 0 : next;
       });
   }
 

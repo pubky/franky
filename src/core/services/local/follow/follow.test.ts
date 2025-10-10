@@ -60,50 +60,6 @@ describe('LocalFollowService.create', () => {
     expect(bConn?.followers ?? []).toContain(userA);
   });
 
-  it('increments friends when mutual relationship exists and preserves prepopulated connections', async () => {
-    // Seed relationships so that when A follows B, they are friends (mutual)
-    await Core.UserRelationshipsModel.create({ id: userB, following: true, followed_by: true, muted: false });
-
-    // Prepopulate connections with additional entries, including existing A<->B link
-    await Core.db.transaction('rw', [Core.UserConnectionsModel.table], async () => {
-      await Core.UserConnectionsModel.create({
-        id: userA,
-        following: [userC, userB, userD],
-        followers: [userD],
-      });
-      await Core.UserConnectionsModel.create({
-        id: userB,
-        following: [userA, userC],
-        followers: [userA, userD],
-      });
-    });
-
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
-
-    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
-      Core.UserCountsModel.table.get(userA),
-      Core.UserCountsModel.table.get(userB),
-      Core.UserConnectionsModel.table.get(userA),
-      Core.UserConnectionsModel.table.get(userB),
-    ]);
-
-    // Friends increments for both sides
-    expect(aCounts?.friends ?? 0).toBe(1);
-    expect(bCounts?.friends ?? 0).toBe(1);
-    // Following / followers still increment by 1
-    expect(aCounts?.following ?? 0).toBe(1);
-    expect(bCounts?.followers ?? 0).toBe(1);
-
-    // No duplicate entries added to connections lists
-    const aFollowing = aConn?.following ?? [];
-    const bFollowers = bConn?.followers ?? [];
-    expect(aFollowing.filter((x) => x === userB).length).toBe(1);
-    expect(bFollowers.filter((x) => x === userA).length).toBe(1);
-    // Other entries preserved
-    expect(aFollowing).toEqual([userC, userB, userD]);
-    expect(bFollowers).toEqual([userA, userD]);
-  });
-
   it('runs all writes atomically (rollback when a write fails)', async () => {
     const spy = vi.spyOn(Core.UserConnectionsModel, 'createConnection').mockRejectedValueOnce(new Error('fail'));
 
@@ -123,6 +79,178 @@ describe('LocalFollowService.create', () => {
     expect(bConn).toBeUndefined();
 
     spy.mockRestore();
+  });
+
+  it('does not increment counts when connection already exists (idempotent)', async () => {
+    // Prepopulate existing follow relation in connections and counts
+    await Core.db.transaction('rw', [Core.UserConnectionsModel.table, Core.UserCountsModel.table], async () => {
+      await Core.UserConnectionsModel.create({ id: userA, following: [userB], followers: [] });
+      await Core.UserConnectionsModel.create({ id: userB, following: [], followers: [userA] });
+
+      await Core.UserCountsModel.update(userA, { following: 1 });
+      await Core.UserCountsModel.update(userB, { followers: 1 });
+    });
+
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // Counts unchanged
+    expect(aCounts?.following ?? 0).toBe(1);
+    expect(bCounts?.followers ?? 0).toBe(1);
+    // No duplicate connections
+    expect((aConn?.following ?? []).filter((x) => x === userB).length).toBe(1);
+    expect((bConn?.followers ?? []).filter((x) => x === userA).length).toBe(1);
+  });
+
+  it('double follow does not increment counts twice or duplicate connections', async () => {
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // Should remain 1 if gated by mutation
+    expect(aCounts?.following ?? 0).toBe(1);
+    expect(bCounts?.followers ?? 0).toBe(1);
+    // No duplicate entries
+    expect((aConn?.following ?? []).filter((x) => x === userB).length).toBe(1);
+    expect((bConn?.followers ?? []).filter((x) => x === userA).length).toBe(1);
+  });
+
+  it('rolls back connections and counts if a counts write fails', async () => {
+    const spy = vi.spyOn(Core.UserCountsModel, 'updateCount').mockRejectedValueOnce(new Error('counts-fail'));
+
+    try {
+      await Core.Local.Follow.create({ follower: userA, followee: userB });
+      expect.unreachable('should throw');
+    } catch (err: unknown) {
+      const e = err as { message?: string; details?: { error?: { message?: string } } };
+      expect(e.message ?? '').toMatch('Failed to create follow relationship');
+      expect(e.details?.error?.message ?? '').toMatch('counts-fail');
+    }
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // Nothing should have changed due to rollback
+    expect(aCounts?.following ?? 0).toBe(0);
+    expect(bCounts?.followers ?? 0).toBe(0);
+    expect(aConn).toBeUndefined();
+    expect(bConn).toBeUndefined();
+
+    spy.mockRestore();
+  });
+
+  it('increments friends only on first follow when followed_by=true', async () => {
+    // Relationship snapshot says B follows A already
+    await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
+
+    // First follow should create following and bump friends for both
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    // Second follow should be a no-op for friends and counts
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // Friends incremented only once
+    expect(aCounts?.friends ?? 0).toBe(1);
+    expect(bCounts?.friends ?? 0).toBe(1);
+    // Following/followers only once
+    expect(aCounts?.following ?? 0).toBe(1);
+    expect(bCounts?.followers ?? 0).toBe(1);
+    // No duplicate connections
+    expect((aConn?.following ?? []).filter((x) => x === userB).length).toBe(1);
+    expect((bConn?.followers ?? []).filter((x) => x === userA).length).toBe(1);
+  });
+
+  it('does not upsert friends counts when rows are missing (still updates connections)', async () => {
+    await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
+
+    // Ensure no counts rows exist
+    await Core.db.transaction('rw', [Core.UserCountsModel.table], async () => {
+      await Core.UserCountsModel.table.clear();
+    });
+
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // No upserts for counts/friends
+    expect(aCounts).toBeUndefined();
+    expect(bCounts).toBeUndefined();
+    // Connections created
+    expect(aConn?.following ?? []).toContain(userB);
+    expect(bConn?.followers ?? []).toContain(userA);
+  });
+
+  it('upserts relationship on first follow and sets following=true', async () => {
+    // No relationship exists for userB
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const rel = await Core.UserRelationshipsModel.table.get(userB);
+    expect(rel).toBeDefined();
+    expect(rel?.following).toBe(true);
+    // followed_by should default false (or absent) unless upstream sets it later
+    expect(rel?.followed_by ?? false).toBe(false);
+  });
+
+  it('updates existing relationship to following=true without changing followed_by', async () => {
+    await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
+
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const rel = await Core.UserRelationshipsModel.table.get(userB);
+    expect(rel).toBeDefined();
+    expect(rel?.following).toBe(true);
+    // Preserve followed_by flag
+    expect(rel?.followed_by).toBe(true);
+  });
+
+  it('does not upsert counts when rows are missing; still updates connections', async () => {
+    // Ensure no counts rows exist
+    await Core.db.transaction('rw', [Core.UserCountsModel.table], async () => {
+      await Core.UserCountsModel.table.clear();
+    });
+
+    await Core.Local.Follow.create({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // Counts should remain missing (no upsert)
+    expect(aCounts).toBeUndefined();
+    expect(bCounts).toBeUndefined();
+    // Connections should reflect follow
+    expect(aConn?.following ?? []).toContain(userB);
+    expect(bConn?.followers ?? []).toContain(userA);
   });
 });
 
@@ -238,5 +366,47 @@ describe('LocalFollowService.delete', () => {
     expect(bConn?.followers ?? []).toContain(userA);
 
     spy.mockRestore();
+  });
+
+  it('clamps counts to zero on unfollow even if counts are already zero', async () => {
+    // Adjust counts to zero; connections already precreated in beforeEach
+    await Core.db.transaction('rw', [Core.UserCountsModel.table], async () => {
+      await Core.UserCountsModel.update(userA, { following: 0 });
+      await Core.UserCountsModel.update(userB, { followers: 0 });
+    });
+
+    await Core.Local.Follow.delete({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+    ]);
+
+    // Should clamp at zero, not negative
+    expect(aCounts?.following ?? 0).toBe(0);
+    expect(bCounts?.followers ?? 0).toBe(0);
+  });
+
+  it('does not upsert counts on unfollow when rows are missing', async () => {
+    // Clear counts; connections already exist from beforeEach
+    await Core.db.transaction('rw', [Core.UserCountsModel.table], async () => {
+      await Core.UserCountsModel.table.clear();
+    });
+
+    await Core.Local.Follow.delete({ follower: userA, followee: userB });
+
+    const [aCounts, bCounts, aConn, bConn] = await Promise.all([
+      Core.UserCountsModel.table.get(userA),
+      Core.UserCountsModel.table.get(userB),
+      Core.UserConnectionsModel.table.get(userA),
+      Core.UserConnectionsModel.table.get(userB),
+    ]);
+
+    // No upsert performed
+    expect(aCounts).toBeUndefined();
+    expect(bCounts).toBeUndefined();
+    // Connections removed
+    expect(aConn?.following ?? []).not.toContain(userB);
+    expect(bConn?.followers ?? []).not.toContain(userA);
   });
 });

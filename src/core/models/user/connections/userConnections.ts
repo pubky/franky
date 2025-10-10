@@ -36,39 +36,46 @@ export class UserConnectionsModel
    * @param to - The user to add to the connection list
    * @param key - The type of connection list: `following` or `followers`
    */
-  static async createConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields) {
-    let exists = await this.findById(from);
+  static async createConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields): Promise<boolean> {
+    let didChange = false;
+    const exists = await this.findById(from);
     // Might be a case, that we did not yet download the user connections, cover that case
     if (!exists) {
-      exists = new UserConnectionsModel({ id: from, following: [], followers: [] });
-      exists[key].push(to);
-      await this.create(exists);
+      const model = new UserConnectionsModel({ id: from, following: [], followers: [] });
+      model[key].push(to);
+      await this.create(model);
+      didChange = true;
     } else {
       await this.table
         .where('id')
         .equals(from)
         .modify((row) => {
-          const list = row[key];
+          const list = row[key] ?? [];
           if (!list.includes(to)) {
             list.push(to);
+            row[key] = list;
+            didChange = true;
           }
-          row[key] = list;
         });
     }
+    return didChange;
   }
 
-  static async deleteConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields) {
+  static async deleteConnection(from: Core.Pubky, to: Core.Pubky, key: UserConnectionsFields): Promise<boolean> {
+    let didChange = false;
     const exists = await this.findById(from);
-    if (exists) {
-      await this.table
-        .where('id')
-        .equals(from)
-        .modify((row) => {
-          const list = row[key];
-          if (list.length > 0) {
-            row[key] = list.filter((item) => item !== to);
-          }
-        });
-    }
+    if (!exists) return false;
+    await this.table
+      .where('id')
+      .equals(from)
+      .modify((row) => {
+        const list = row[key] ?? [];
+        const next = list.filter((item) => item !== to);
+        if (next.length !== list.length) {
+          row[key] = next;
+          didChange = true;
+        }
+      });
+    return didChange;
   }
 }

@@ -9,25 +9,39 @@ export class LocalFollowService {
         [Core.UserCountsModel.table, Core.UserConnectionsModel.table, Core.UserRelationshipsModel.table],
         async () => {
           const rel = await Core.UserRelationshipsModel.findById(followee);
-          // Check if the `followee` follows `follower`
-          const areFriends = !!rel?.followed_by;
+          // Snapshot: whether followee already follows follower
+          const isFollowedBy = !!rel?.followed_by;
 
-          const ops: Promise<unknown>[] = [
-            Core.UserCountsModel.updateCount(follower, Core.UserCountsFields.FOLLOWING, 1),
-            Core.UserCountsModel.updateCount(followee, Core.UserCountsFields.FOLLOWERS, 1),
+          // Connections first
+          const [addedFollowing, addedFollower] = await Promise.all([
             Core.UserConnectionsModel.createConnection(follower, followee, Core.UserConnectionsFields.FOLLOWING),
             Core.UserConnectionsModel.createConnection(followee, follower, Core.UserConnectionsFields.FOLLOWERS),
-          ];
+          ]);
 
-          if (areFriends) {
+          // Gate counts by actual mutations; do not upsert counts
+          const ops: Promise<unknown>[] = [];
+          if (addedFollowing) {
+            ops.push(Core.UserCountsModel.updateCount(follower, Core.UserCountsFields.FOLLOWING, 1));
+          }
+          if (addedFollower) {
+            ops.push(Core.UserCountsModel.updateCount(followee, Core.UserCountsFields.FOLLOWERS, 1));
+          }
+          if (isFollowedBy && addedFollowing) {
             ops.push(
               Core.UserCountsModel.updateCount(follower, Core.UserCountsFields.FRIENDS, 1),
               Core.UserCountsModel.updateCount(followee, Core.UserCountsFields.FRIENDS, 1),
             );
           }
 
+          // Upsert relationship (create or update)
           if (rel) {
-            ops.push(Core.UserRelationshipsModel.update(followee, { following: true }));
+            if (rel.following === false) {
+              ops.push(Core.UserRelationshipsModel.update(followee, { following: true }));
+            }
+          } else {
+            ops.push(
+              Core.UserRelationshipsModel.create({ id: followee, following: true, followed_by: false, muted: false }),
+            );
           }
 
           await Promise.all(ops);
@@ -50,32 +64,45 @@ export class LocalFollowService {
         [Core.UserCountsModel.table, Core.UserConnectionsModel.table, Core.UserRelationshipsModel.table],
         async () => {
           const rel = await Core.UserRelationshipsModel.findById(followee);
-          // Check if they are friends
-          const areFriends = !!rel?.followed_by && !!rel?.following;
+          const wasFriends = !!rel?.followed_by && !!rel?.following;
 
-          const ops: Promise<unknown>[] = [
-            Core.UserCountsModel.updateCount(follower, Core.UserCountsFields.FOLLOWING, -1),
-            Core.UserCountsModel.updateCount(followee, Core.UserCountsFields.FOLLOWERS, -1),
+          // Connections first
+          const [removedFollowing, removedFollower] = await Promise.all([
             Core.UserConnectionsModel.deleteConnection(follower, followee, Core.UserConnectionsFields.FOLLOWING),
             Core.UserConnectionsModel.deleteConnection(followee, follower, Core.UserConnectionsFields.FOLLOWERS),
-          ];
+          ]);
 
-          if (areFriends) {
+          // Gate counts by actual mutations; do not upsert counts
+          const ops: Promise<unknown>[] = [];
+          if (removedFollowing) {
+            ops.push(Core.UserCountsModel.updateCount(follower, Core.UserCountsFields.FOLLOWING, -1));
+          }
+          if (removedFollower) {
+            ops.push(Core.UserCountsModel.updateCount(followee, Core.UserCountsFields.FOLLOWERS, -1));
+          }
+          if (wasFriends && removedFollowing) {
             ops.push(
               Core.UserCountsModel.updateCount(follower, Core.UserCountsFields.FRIENDS, -1),
               Core.UserCountsModel.updateCount(followee, Core.UserCountsFields.FRIENDS, -1),
             );
           }
 
+          // Upsert relationship (create or update) with following=false
           if (rel) {
-            ops.push(Core.UserRelationshipsModel.update(followee, { following: false }));
+            if (rel.following === true) {
+              ops.push(Core.UserRelationshipsModel.update(followee, { following: false }));
+            }
+          } else {
+            ops.push(
+              Core.UserRelationshipsModel.create({ id: followee, following: false, followed_by: false, muted: false }),
+            );
           }
 
           await Promise.all(ops);
         },
       );
 
-      Logger.debug('Unfollow created successfully', { follower, followee });
+      Logger.debug('Unfollow completed successfully', { follower, followee });
     } catch (error) {
       Logger.error('Failed to unfollow a user', { follower, followee, error });
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete follow relationship', 500, {
