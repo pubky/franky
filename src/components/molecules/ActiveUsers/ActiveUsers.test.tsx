@@ -11,6 +11,24 @@ vi.mock('@/atoms', () => ({
   ),
   AvatarImage: ({ src, alt }: { src: string; alt: string }) => <img data-testid="avatar-image" src={src} alt={alt} />,
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
+  SidebarButton: ({
+    children,
+    icon: Icon,
+    ...props
+  }: {
+    children: React.ReactNode;
+    icon: React.ComponentType<{ className?: string }>;
+    [key: string]: unknown;
+  }) => (
+    <button
+      data-testid="sidebar-button"
+      className="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+      {...props}
+    >
+      <Icon data-testid="sidebar-button-icon" />
+      <span data-testid="sidebar-button-text">{children}</span>
+    </button>
+  ),
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
@@ -85,15 +103,18 @@ describe('ActiveUsers', () => {
     const seeAllButton = screen.getByText('See All');
     expect(seeAllButton).toBeInTheDocument();
     expect(seeAllButton.closest('button')).toHaveClass(
+      'w-full',
       'flex',
       'items-center',
+      'justify-center',
       'gap-2',
       'py-2',
       'px-4',
       'rounded-full',
       'border',
       'border-border',
-      'hover:bg-secondary/10',
+      'hover:bg-secondary/80',
+      'cursor-pointer',
       'transition-colors',
     );
   });
@@ -109,7 +130,7 @@ describe('ActiveUsers', () => {
     render(<ActiveUsers />);
 
     const container = screen.getByTestId('active-users');
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-4');
+    expect(container).toHaveClass('flex', 'flex-col', 'gap-2');
   });
 
   it('applies correct heading classes', () => {
@@ -158,7 +179,7 @@ describe('ActiveUsers', () => {
     render(<ActiveUsers />);
 
     const seeAllButton = screen.getByText('See All').closest('button');
-    expect(seeAllButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
+    expect(seeAllButton).toHaveClass('hover:bg-secondary/80', 'transition-colors');
   });
 
   it('renders with correct data structure', () => {

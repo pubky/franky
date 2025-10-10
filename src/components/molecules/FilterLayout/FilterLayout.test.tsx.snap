@@ -394,12 +394,12 @@ exports[`FilterLayout > renders with custom selected tab 1`] = `
 
 exports[`FilterLayout > renders with default selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-4 bg-background"
+  class="mx-auto w-full flex flex-col gap-2 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-1"
+    class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
   >

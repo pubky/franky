@@ -103,7 +103,7 @@ export const WithClickHandler: Story = {
   args: {
     icon: Settings,
     children: 'Click me',
-    onClick: () => alert('Button clicked!'),
+    onClick: fn(),
   },
 };
 
@@ -124,6 +124,10 @@ export const WithAriaLabel: Story = {
 };
 
 export const AllVariants: Story = {
+  args: {
+    icon: FileText,
+    children: 'All Variants',
+  },
   render: () => (
     <div className="space-y-4 w-64">
       <SidebarButton icon={FileText} onClick={fn()}>

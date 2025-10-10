@@ -21,7 +21,7 @@ describe('SidebarButton', () => {
       'rounded-full',
       'border',
       'border-border',
-      'hover:border-opacity-30',
+      'hover:bg-secondary/80',
       'cursor-pointer',
       'transition-colors',
     );
@@ -84,7 +84,7 @@ describe('SidebarButton', () => {
   it('has correct text styling', () => {
     render(<SidebarButton icon={FileText}>Text Test</SidebarButton>);
     const textSpan = screen.getByRole('button').querySelector('span');
-    expect(textSpan).toHaveClass('text-sm', 'font-medium');
+    expect(textSpan).toHaveClass('text-xs', 'font-bold', 'leading-normal', 'text-[var(--base-foreground,#FFF)]');
   });
 
   it('forwards additional props', () => {
