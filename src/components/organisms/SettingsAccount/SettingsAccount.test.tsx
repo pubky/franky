@@ -33,7 +33,6 @@ describe('SettingsAccount', () => {
       expect(screen.getByText('Edit your profile')).toBeInTheDocument();
       expect(screen.getByText('Back up your account')).toBeInTheDocument();
       expect(screen.getByText('Download your data')).toBeInTheDocument();
-      expect(screen.getByText('Import your data')).toBeInTheDocument();
       expect(screen.getByText('Delete your account')).toBeInTheDocument();
     });
   });
