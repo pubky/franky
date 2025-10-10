@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 const defaultPreferences = {
   follow: true,
@@ -49,7 +50,7 @@ export function SettingsNotifications({ className }: SettingsNotificationsProps)
     const loadPreferences = async () => {
       setIsLoading(true);
       // TODO: Load from actual storage
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
       setIsLoading(false);
     };
     void loadPreferences();

@@ -373,6 +373,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
       data-size="default"
       data-slot="button"
       data-variant="secondary"
+      id="user-guide-btn"
     >
       <svg
         aria-hidden="true"
@@ -445,6 +446,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
       data-size="default"
       data-slot="button"
       data-variant="secondary"
+      id="support-btn"
     >
       <svg
         aria-hidden="true"
@@ -842,6 +844,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
       data-size="default"
       data-slot="button"
       data-variant="secondary"
+      id="user-guide-btn"
     >
       <svg
         aria-hidden="true"
@@ -914,6 +917,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
       data-size="default"
       data-slot="button"
       data-variant="secondary"
+      id="support-btn"
     >
       <svg
         aria-hidden="true"

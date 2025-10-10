@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 export interface SettingsPrivacyProps {
   className?: string;
@@ -18,7 +19,7 @@ export function SettingsPrivacy({ className }: SettingsPrivacyProps) {
     // Load settings from storage
     const loadSettings = async () => {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
       const confirmSetting = localStorage.getItem('checkLink');
       const blurSetting = localStorage.getItem('blurCensored');
       if (confirmSetting !== null) setShowConfirmation(confirmSetting === 'true');

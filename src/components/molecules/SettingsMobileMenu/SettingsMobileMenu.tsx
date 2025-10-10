@@ -2,22 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import * as Libs from '@/libs';
-import { SETTINGS_ROUTES } from '@/app';
-
-interface MenuItem {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  label: string;
-  path: string;
-}
-
-const menuItems: MenuItem[] = [
-  { icon: Libs.UserRound, label: 'Account', path: SETTINGS_ROUTES.ACCOUNT },
-  { icon: Libs.Bell, label: 'Notifications', path: SETTINGS_ROUTES.NOTIFICATIONS },
-  { icon: Libs.Shield, label: 'Privacy & Safety', path: SETTINGS_ROUTES.PRIVACY_SAFETY },
-  { icon: Libs.MegaphoneOff, label: 'Muted Users', path: SETTINGS_ROUTES.MUTED_USERS },
-  { icon: Libs.Globe, label: 'Language', path: SETTINGS_ROUTES.LANGUAGE },
-  { icon: Libs.CircleHelp, label: 'Help', path: SETTINGS_ROUTES.HELP },
-];
+import { SETTINGS_MENU_ITEMS } from '@/templates/Settings/settings.config';
 
 export interface SettingsMobileMenuProps {
   className?: string;
@@ -35,7 +20,7 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
       )}
     >
       <div className="flex w-full">
-        {menuItems.map((item) => {
+        {SETTINGS_MENU_ITEMS.map((item) => {
           const Icon = item.icon;
           const isSelected = pathname === item.path;
 

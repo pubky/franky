@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 const languages = [
   { code: 'english', name: 'English', flag: '🇺🇸' },
@@ -27,7 +28,7 @@ export function SettingsLanguage({ className }: SettingsLanguageProps) {
     // Simulate loading language preference
     const loadLanguage = async () => {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
       // TODO: Load from storage
       setIsLoading(false);
     };

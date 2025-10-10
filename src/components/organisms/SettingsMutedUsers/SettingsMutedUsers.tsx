@@ -55,7 +55,7 @@ export function SettingsMutedUsers({ className }: SettingsMutedUsersProps) {
             ))}
             {mutedUsers.length > 1 && (
               <>
-                <div className="w-full h-px bg-white/10 my-6" />
+                <Molecules.SettingsDivider className="w-full h-px bg-white/10 my-6" />
                 <Atoms.Button variant="secondary" size="default" onClick={() => {}} className="w-[180px]">
                   <Libs.VolumeX size={16} />
                   Unmute all users
