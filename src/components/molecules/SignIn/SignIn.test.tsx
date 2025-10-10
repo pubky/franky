@@ -137,23 +137,42 @@ vi.mock('@/atoms', () => ({
 
 describe('SignInContent', () => {
   const originalLocation = window.location;
+  const originalOpen = window.open;
+  const clipboardMock = { writeText: vi.fn().mockResolvedValue(undefined) };
 
   beforeAll(() => {
     Object.defineProperty(window, 'location', {
       configurable: true,
       value: { ...(originalLocation as unknown as object), href: '' } as unknown as Location,
     });
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: vi.fn(() => ({ location: { href: '' } })) as typeof window.open,
+    });
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: clipboardMock,
+    });
   });
 
   beforeEach(() => {
     vi.clearAllMocks();
     window.location.href = '';
+    clipboardMock.writeText.mockClear();
   });
 
   afterAll(() => {
     Object.defineProperty(window, 'location', {
       configurable: true,
       value: originalLocation,
+    });
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: originalOpen,
+    });
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: undefined,
     });
   });
 
@@ -225,9 +244,12 @@ describe('SignInContent', () => {
     });
 
     const authorizeButton = screen.getByTestId('button');
-    fireEvent.click(authorizeButton);
+    await act(async () => {
+      fireEvent.click(authorizeButton);
+    });
 
-    expect(window.location.href).toBe('mock-auth-url');
+    expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
+    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
   });
 
   it('retries getAuthUrl with bounded backoff on failures', async () => {
