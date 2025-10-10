@@ -10,16 +10,24 @@ export interface ProfileTabMobile {
   icon?: React.ComponentType<{ className?: string; size?: number }>;
   count?: number | null;
   onClick?: () => void;
+  route?: string;
 }
 
 export interface ProfileTabsMobileProps {
   tabs: ProfileTabMobile[];
   activeTab?: string;
+  onTabChange?: (tabId: string) => void;
   className?: string;
   'data-testid'?: string;
 }
 
-export function ProfileTabsMobile({ tabs, activeTab, className, 'data-testid': dataTestId }: ProfileTabsMobileProps) {
+export function ProfileTabsMobile({
+  tabs,
+  activeTab,
+  onTabChange,
+  className,
+  'data-testid': dataTestId,
+}: ProfileTabsMobileProps) {
   return (
     <div
       className={Libs.cn('w-full lg:hidden overflow-x-auto', className)}
@@ -29,11 +37,18 @@ export function ProfileTabsMobile({ tabs, activeTab, className, 'data-testid': d
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
+          const handleClick = () => {
+            if (tab.onClick) {
+              tab.onClick();
+            } else if (onTabChange) {
+              onTabChange(tab.id);
+            }
+          };
 
           return (
             <button
               key={tab.id}
-              onClick={tab.onClick}
+              onClick={handleClick}
               className={Libs.cn(
                 'flex flex-col items-center gap-2 min-w-[60px] px-2 py-2 transition-opacity',
                 isActive ? 'opacity-100' : 'opacity-50 hover:opacity-80',

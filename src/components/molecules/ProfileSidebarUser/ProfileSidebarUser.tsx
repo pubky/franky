@@ -10,9 +10,11 @@ export interface ProfileSidebarUserProps {
   handle: string;
   bio?: string;
   avatar?: string;
+  isOwnProfile?: boolean;
   showFollowButton?: boolean;
   isFollowing?: boolean;
   onFollowClick?: () => void;
+  onEditClick?: () => void;
   onMenuClick?: () => void;
   isLoadingFollow?: boolean;
   className?: string;
@@ -24,9 +26,11 @@ export function ProfileSidebarUser({
   handle,
   bio,
   avatar,
+  isOwnProfile = false,
   showFollowButton = false,
   isFollowing = false,
   onFollowClick,
+  onEditClick,
   onMenuClick,
   isLoadingFollow = false,
   className,
@@ -68,7 +72,20 @@ export function ProfileSidebarUser({
         </Atoms.Typography>
       )}
 
-      {showFollowButton && onFollowClick && (
+      {isOwnProfile && onEditClick && (
+        <Atoms.Button
+          variant="secondary"
+          size="sm"
+          onClick={onEditClick}
+          className="w-full"
+          data-testid="profile-sidebar-user-edit"
+        >
+          <Libs.Pencil className="mr-2 h-4 w-4" />
+          Edit Profile
+        </Atoms.Button>
+      )}
+
+      {!isOwnProfile && showFollowButton && onFollowClick && (
         <Atoms.Button
           variant={isFollowing ? 'secondary' : 'default'}
           size="sm"

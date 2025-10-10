@@ -22,6 +22,13 @@ export enum APP_ROUTES {
   SETTINGS = '/settings',
   PROFILE = '/profile',
   PROFILE_EDIT = '/profile/edit',
+  PROFILE_POSTS = '/profile/posts',
+  PROFILE_REPLIES = '/profile/replies',
+  PROFILE_NOTIFICATIONS = '/profile/notifications',
+  PROFILE_FOLLOWERS = '/profile/followers',
+  PROFILE_FOLLOWING = '/profile/following',
+  PROFILE_FRIENDS = '/profile/friends',
+  PROFILE_TAGGED = '/profile/tagged',
 }
 
 export enum POST_ROUTES {
@@ -39,6 +46,13 @@ export const ALLOWED_ROUTES = [
   APP_ROUTES.SETTINGS,
   APP_ROUTES.PROFILE,
   APP_ROUTES.PROFILE_EDIT,
+  APP_ROUTES.PROFILE_POSTS,
+  APP_ROUTES.PROFILE_REPLIES,
+  APP_ROUTES.PROFILE_NOTIFICATIONS,
+  APP_ROUTES.PROFILE_FOLLOWERS,
+  APP_ROUTES.PROFILE_FOLLOWING,
+  APP_ROUTES.PROFILE_FRIENDS,
+  APP_ROUTES.PROFILE_TAGGED,
   POST_ROUTES.POST,
   AUTH_ROUTES.LOGOUT,
 ];

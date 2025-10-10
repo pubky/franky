@@ -20,14 +20,16 @@ export interface ProfileInfoLink {
 }
 
 export interface ProfileInfoProps {
-  // User info (only for other users' profiles when scrolling)
-  showUserCard?: boolean;
+  // User info
   name?: string;
   handle?: string;
   bio?: string;
   avatar?: string;
+  isOwnProfile?: boolean;
   isFollowing?: boolean;
   onFollowClick?: () => void;
+  onEditClick?: () => void;
+  onMenuClick?: () => void;
   isLoadingFollow?: boolean;
 
   // Tags
@@ -38,47 +40,52 @@ export interface ProfileInfoProps {
   // Links
   links?: ProfileInfoLink[];
 
+  showUserCard?: boolean;
   className?: string;
+  'data-testid'?: string;
 }
 
 export function ProfileInfo({
-  showUserCard = false,
   name,
   handle,
   bio,
   avatar,
-  isFollowing,
+  isOwnProfile = false,
+  isFollowing = false,
   onFollowClick,
-  isLoadingFollow,
-  tags = [],
+  onEditClick,
+  onMenuClick,
+  isLoadingFollow = false,
+  tags,
   onAddTag,
   isLoadingTags = false,
-  links = [],
+  links,
+  showUserCard = true,
   className,
+  'data-testid': dataTestId,
 }: ProfileInfoProps) {
   return (
-    <div className={Libs.cn('flex flex-col gap-6', className)}>
-      {/* User Card - shown on scroll or for other profiles */}
+    <div className={Libs.cn('flex flex-col gap-6', className)} data-testid={dataTestId || 'profile-info'}>
       {showUserCard && name && handle && (
         <Molecules.ProfileSidebarUser
           name={name}
           handle={handle}
           bio={bio}
           avatar={avatar}
-          showFollowButton={onFollowClick !== undefined}
+          isOwnProfile={isOwnProfile}
           isFollowing={isFollowing}
-          onFollowClick={onFollowClick}
           isLoadingFollow={isLoadingFollow}
+          onFollowClick={onFollowClick}
+          onEditClick={onEditClick}
+          onMenuClick={onMenuClick}
         />
       )}
 
-      {/* Tags Section */}
-      {(tags.length > 0 || onAddTag) && (
+      {tags && tags.length > 0 && (
         <Molecules.ProfileSidebarTags tags={tags} onAddTag={onAddTag} isLoading={isLoadingTags} />
       )}
 
-      {/* Links Section */}
-      {links.length > 0 && <Molecules.ProfileSidebarLinks links={links} />}
+      {links && links.length > 0 && <Molecules.ProfileSidebarLinks links={links} />}
 
       {/* Feedback/Help Card */}
       <Atoms.FilterRoot>

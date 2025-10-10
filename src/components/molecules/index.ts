@@ -52,6 +52,7 @@ export * from './FilterReach';
 export * from './FilterSort';
 export * from './Scan';
 export * from './SearchInput';
+export * from './SettingsMobileMenu';
 export * from './SignIn';
 export * from './TextareaField';
 export * from './Toaster';
