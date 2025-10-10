@@ -33,7 +33,15 @@ exports[`SettingsInfo > matches snapshot 1`] = `
         data-testid="filter-list"
       >
         <button
+          aria-controls="radix-«ro»"
+          aria-expanded="false"
+          aria-haspopup="dialog"
           class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+          data-as-child="true"
+          data-slot="dialog-trigger"
+          data-state="closed"
+          data-testid="dialog-trigger"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -71,7 +79,15 @@ exports[`SettingsInfo > matches snapshot 1`] = `
           </span>
         </button>
         <button
+          aria-controls="radix-«rr»"
+          aria-expanded="false"
+          aria-haspopup="dialog"
           class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+          data-as-child="true"
+          data-slot="dialog-trigger"
+          data-state="closed"
+          data-testid="dialog-trigger"
+          type="button"
         >
           <svg
             aria-hidden="true"

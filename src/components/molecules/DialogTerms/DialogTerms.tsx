@@ -1,4 +1,5 @@
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 
 const EMAIL_URL = 'mailto:info@synonym.to';
 const EMAIL_REPORT_URL = 'mailto:report@synonym.to';
@@ -11,9 +12,7 @@ export function DialogTerms() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
-          Terms of Service
-        </Atoms.Typography>
+        <Atoms.SidebarButton icon={Libs.FileText}>Terms of service</Atoms.SidebarButton>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="sm:max-w-xl">
         <Atoms.DialogHeader className="pr-6">

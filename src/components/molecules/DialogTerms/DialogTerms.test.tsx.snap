@@ -8,12 +8,45 @@ exports[`DialogTerms - Snapshots > matches snapshot for default DialogTerms 1`] 
     data-as-child="true"
     data-testid="dialog-trigger"
   >
-    <span
-      class="text-brand font-medium cursor-pointer"
-      data-testid="typography"
+    <button
+      data-testid="sidebar-button"
     >
-      Terms of Service
-    </span>
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-file-text"
+        data-testid="sidebar-button-icon"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+        />
+        <path
+          d="M14 2v4a2 2 0 0 0 2 2h4"
+        />
+        <path
+          d="M10 9H8"
+        />
+        <path
+          d="M16 13H8"
+        />
+        <path
+          d="M16 17H8"
+        />
+      </svg>
+      <span
+        data-testid="sidebar-button-text"
+      >
+        Terms of service
+      </span>
+    </button>
   </div>
   <div
     class="sm:max-w-xl"

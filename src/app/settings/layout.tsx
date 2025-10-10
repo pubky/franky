@@ -16,20 +16,23 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   Hooks.useLayoutReset();
 
   return (
-    <Organisms.ContentLayout
-      showLeftMobileButton={false}
-      showRightMobileButton={false}
-      leftSidebarContent={<SettingsLeftSidebar />}
-      rightSidebarContent={<SettingsRightSidebar />}
-      leftDrawerContent={<SettingsLeftDrawer />}
-      rightDrawerContent={<SettingsRightDrawer />}
-    >
-      {/* Mobile menu - visible only on mobile */}
+    <>
+      {/* Mobile menu - visible only on mobile, full width */}
       <div className="lg:hidden">
         <Molecules.SettingsMobileMenu />
       </div>
 
-      {children}
-    </Organisms.ContentLayout>
+      <Organisms.ContentLayout
+        showLeftMobileButton={false}
+        showRightMobileButton={false}
+        leftSidebarContent={<SettingsLeftSidebar />}
+        rightSidebarContent={<SettingsRightSidebar />}
+        leftDrawerContent={<SettingsLeftDrawer />}
+        rightDrawerContent={<SettingsRightDrawer />}
+        className="lg:pt-0 pt-[145px]"
+      >
+        {children}
+      </Organisms.ContentLayout>
+    </>
   );
 }
