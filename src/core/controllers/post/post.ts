@@ -31,16 +31,28 @@ export class PostController {
   }
 
   /**
-   * Create a post (including replies)
+   * Create a post (including replies and reposts)
    * @param params - Parameters object
    * @param params.parentPostId - ID of the post being replied to (optional for root posts)
-   * @param params.content - Post content
+   * @param params.originalPostId - ID of the post being reposted (optional for reposts)
+   * @param params.content - Post content (can be empty for simple reposts)
+   * @param params.kind - Post kind (default: Short, automatically set to repost in storage if originalPostId is provided)
    * @param params.authorId - ID of the user creating the post
    */
-  static async create({ parentPostId, content, authorId }: TCreatePostParams) {
+  static async create({
+    parentPostId,
+    originalPostId,
+    content,
+    kind = Core.PubkyAppPostKind.Short,
+    authorId,
+  }: TCreatePostParams) {
     await this.initialize();
 
     let parentUri: string | undefined = undefined;
+    let repostedUri: string | undefined = undefined;
+    let postKind: Core.NexusPostKind;
+
+    // Validate and set parent URI if this is a reply
     if (parentPostId) {
       const parentPost = await Core.PostDetailsModel.findById(parentPostId);
       if (!parentPost) {
@@ -51,25 +63,44 @@ export class PostController {
       parentUri = parentPost.uri;
     }
 
+    // Validate and set reposted URI if this is a repost
+    if (originalPostId) {
+      const originalPost = await Core.PostDetailsModel.findById(originalPostId);
+      if (!originalPost) {
+        throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Original post not found', 404, {
+          originalPostId,
+        });
+      }
+      repostedUri = originalPost.uri;
+    }
+
     const normalizedPost = await Core.PostNormalizer.to(
       {
         content: content.trim(),
-        kind: Core.PubkyAppPostKind.Short,
+        kind,
         parentUri,
+        embed: repostedUri,
       },
       authorId,
     );
 
     const postId = Core.buildPostCompositeId({ pubky: authorId, postId: normalizedPost.meta.id });
 
+    if (originalPostId) {
+      postKind = 'repost';
+    } else {
+      postKind = Core.normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind;
+    }
+
     await Application.Post.create({
       postUrl: normalizedPost.meta.url,
       postJson: normalizedPost.post.toJson(),
       postId,
       content: normalizedPost.post.content,
-      kind: Core.normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind,
+      kind: postKind,
       authorId,
       parentUri,
+      repostedUri,
       attachments: normalizedPost.post.attachments ?? undefined,
     });
   }

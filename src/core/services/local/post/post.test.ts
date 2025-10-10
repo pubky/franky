@@ -464,8 +464,8 @@ describe('LocalPostService', () => {
       await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
 
       // Delete repost
-      await Core.Local.Post.deleteRepost({
-        repostId,
+      await Core.Local.Post.delete({
+        postId: repostId,
         userId: testData.authorPubky,
         repostedUri: originalUri,
       });
@@ -496,8 +496,8 @@ describe('LocalPostService', () => {
       await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
 
       // Delete repost
-      await Core.Local.Post.deleteRepost({
-        repostId,
+      await Core.Local.Post.delete({
+        postId: repostId,
         userId: testData.authorPubky,
         repostedUri: originalUri,
       });
@@ -517,8 +517,8 @@ describe('LocalPostService', () => {
       await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
 
       // Delete repost
-      await Core.Local.Post.deleteRepost({
-        repostId,
+      await Core.Local.Post.delete({
+        postId: repostId,
         userId: testData.authorPubky,
         repostedUri: originalUri,
       });
@@ -536,7 +536,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(postId, 'Test post');
 
       // Delete post
-      await Core.Local.Post.deletePost({
+      await Core.Local.Post.delete({
         postId,
         userId: testData.authorPubky,
       });
@@ -568,7 +568,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(replyId, 'Reply post', parentUri);
 
       // Delete reply
-      await Core.Local.Post.deletePost({
+      await Core.Local.Post.delete({
         postId: replyId,
         userId: testData.authorPubky,
         parentUri,
@@ -592,7 +592,7 @@ describe('LocalPostService', () => {
       await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
 
       // Delete repost
-      await Core.Local.Post.deletePost({
+      await Core.Local.Post.delete({
         postId: repostId,
         userId: testData.authorPubky,
         repostedUri: originalUri,
@@ -612,7 +612,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(replyId, 'Reply post', parentUri);
 
       // Delete reply
-      await Core.Local.Post.deletePost({
+      await Core.Local.Post.delete({
         postId: replyId,
         userId: testData.authorPubky,
         parentUri,
@@ -640,7 +640,7 @@ describe('LocalPostService', () => {
       await Core.PostRelationshipsModel.update(postId, { reposted: originalUri });
 
       // Delete post
-      await Core.Local.Post.deletePost({
+      await Core.Local.Post.delete({
         postId,
         userId: testData.authorPubky,
         parentUri,

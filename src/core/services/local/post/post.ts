@@ -1,11 +1,6 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import type {
-  TLocalFetchPostsParams,
-  TLocalSavePostParams,
-  TLocalDeleteRepostParams,
-  TLocalDeletePostParams,
-} from './post.types';
+import type { TLocalFetchPostsParams, TLocalSavePostParams, TLocalDeleteParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
@@ -194,60 +189,6 @@ export class LocalPostService {
   }
 
   /**
-   * Delete a repost from the local database.
-   *
-   * Removes the repost and updates the original post's repost count.
-   *
-   * @param params.repostId - Unique identifier for the repost to delete
-   * @param params.userId - Unique identifier of the user deleting the repost
-   * @param params.repostedUri - URI of the original post that was reposted
-   *
-   * @throws {DatabaseError} When database operations fail
-   */
-  static async deleteRepost({ repostId, userId, repostedUri }: TLocalDeleteRepostParams) {
-    try {
-      await Core.db.transaction(
-        'rw',
-        [
-          Core.PostDetailsModel.table,
-          Core.PostRelationshipsModel.table,
-          Core.PostCountsModel.table,
-          Core.PostTagsModel.table,
-        ],
-        async () => {
-          await Promise.all([
-            Core.PostDetailsModel.deleteById(repostId),
-            Core.PostRelationshipsModel.deleteById(repostId),
-            Core.PostCountsModel.deleteById(repostId),
-            Core.PostTagsModel.deleteById(repostId),
-          ]);
-
-          // Decrement original post repost count
-          const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-          if (!originalPostId) return;
-
-          const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-          if (!originalCounts) return;
-
-          await Core.PostCountsModel.update(originalCounts.id, {
-            reposts: Math.max(0, originalCounts.reposts - 1),
-          });
-        },
-      );
-
-      Logger.debug('Repost deleted successfully', { repostId, userId, repostedUri });
-    } catch (error) {
-      Logger.error('Failed to delete repost', { repostId, userId });
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete repost', 500, {
-        error,
-        repostId,
-        userId,
-        repostedUri,
-      });
-    }
-  }
-
-  /**
    * Delete a post from the local database.
    *
    * Removes the post and all related records. If the post is a reply,
@@ -261,7 +202,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async deletePost({ postId, userId, parentUri, repostedUri }: TLocalDeletePostParams) {
+  static async delete({ postId, userId, parentUri, repostedUri }: TLocalDeleteParams) {
     try {
       await Core.db.transaction(
         'rw',

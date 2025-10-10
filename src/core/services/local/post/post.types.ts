@@ -15,13 +15,7 @@ export type TLocalSavePostParams = {
   repostedUri?: string;
 };
 
-export type TLocalDeleteRepostParams = {
-  repostId: string;
-  userId: Core.Pubky;
-  repostedUri: string;
-};
-
-export type TLocalDeletePostParams = {
+export type TLocalDeleteParams = {
   postId: string;
   userId: Core.Pubky;
   parentUri?: string;
