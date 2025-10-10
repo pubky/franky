@@ -1,24 +1,24 @@
 import { Table } from 'dexie';
 
 import * as Libs from '@/libs';
-import * as Core from '@/core';
 import { ModelBase } from '@/core/models/shared/base/baseModel';
+import type { TagCollectionModelSchema } from '@/core/models/shared/tag/tag.schema';
+import { TagModel } from '@/core/models/shared/tag/tag';
+import type { NexusModelTuple } from '@/core/models/shared/base/tuple/baseTuple.type';
+import type { NexusTag } from '@/core/services/nexus/nexus.types';
 
-export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSchema<Id>> extends ModelBase<
-  Id,
-  Schema
-> {
+export abstract class TagCollection<Id, Schema extends TagCollectionModelSchema<Id>> extends ModelBase<Id, Schema> {
   // TODO: Consider adding multiEntry index on tag labels and if so, update Schema to use it
-  tags: Core.TagModel[];
+  tags: TagModel[];
 
   constructor(data: Schema) {
     super(data);
-    this.tags = data.tags.map((t) => new Core.TagModel(t));
+    this.tags = data.tags.map((t) => new TagModel(t));
   }
 
   // -------- Instance helpers (shared) --------
 
-  findByLabel(label: string): Core.TagModel | null {
+  findByLabel(label: string): TagModel | null {
     const found = this.tags.find((t) => t.label === label);
     return found ?? null;
   }
@@ -29,9 +29,9 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
 
   // -------- Static CRUD (inherited from ModelBase) --------
 
-  static async bulkSave<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
+  static async bulkSave<TId, TSchema extends TagCollectionModelSchema<TId>>(
     this: { table: Table<TSchema> },
-    tuples: Core.NexusModelTuple<Core.NexusTag[]>[],
+    tuples: NexusModelTuple<NexusTag[]>[],
   ) {
     try {
       const toSave = tuples.map((t) => ({ id: t[0] as TId, tags: t[1] }) as TSchema);

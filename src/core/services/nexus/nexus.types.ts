@@ -1,4 +1,5 @@
-import { type Pubky, type Timestamp, type TagModel } from '@/core';
+import type { Pubky, Timestamp } from '@/core/models/models.types';
+import type { TagModel } from '@/core/models/shared/tag/tag';
 
 export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
 

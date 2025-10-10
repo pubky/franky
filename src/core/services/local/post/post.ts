@@ -2,6 +2,7 @@ import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
+import { traceAsync } from '../../../../../benchmarks/runtime';
 
 export class LocalPostService {
   /**
@@ -12,80 +13,87 @@ export class LocalPostService {
    * @returns Array of NexusPost objects
    */
   static async fetch({ limit = 30, offset = 0 }: TLocalFetchPostsParams = {}): Promise<Core.NexusPost[]> {
-    try {
-      const allRelationships = await Core.PostRelationshipsModel.table.toArray();
-      const replyPostIds = new Set(allRelationships.filter((rel) => rel.replied).map((rel) => rel.id));
+    return traceAsync(
+      'local-service',
+      'LocalPostService.fetch',
+      async () => {
+        try {
+          const allRelationships = await Core.PostRelationshipsModel.table.toArray();
+          const replyPostIds = new Set(allRelationships.filter((rel) => rel.replied).map((rel) => rel.id));
 
-      const allPostDetails = await Core.PostDetailsModel.fetchPaginated(limit * 2, offset);
-      const postDetails = allPostDetails.filter((post) => !replyPostIds.has(post.id)).slice(0, limit);
+          const allPostDetails = await Core.PostDetailsModel.fetchPaginated(limit * 2, offset);
+          const postDetails = allPostDetails.filter((post) => !replyPostIds.has(post.id)).slice(0, limit);
 
-      if (postDetails.length === 0) {
-        return [];
-      }
+          if (postDetails.length === 0) {
+            return [];
+          }
 
-      const postIds = postDetails.map((post) => post.id);
+          const postIds = postDetails.map((post) => post.id);
 
-      const [countsData, tagsData, relationshipsData] = await Promise.all([
-        Core.PostCountsModel.findByIds(postIds),
-        Core.PostTagsModel.findByIds(postIds),
-        Core.PostRelationshipsModel.findByIds(postIds),
-      ]);
+          const [countsData, tagsData, relationshipsData] = await Promise.all([
+            Core.PostCountsModel.findByIds(postIds),
+            Core.PostTagsModel.findByIds(postIds),
+            Core.PostRelationshipsModel.findByIds(postIds),
+          ]);
 
-      const countsMap = new Map(countsData.map((c) => [c.id, c]));
-      const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
-      const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
+          const countsMap = new Map(countsData.map((c) => [c.id, c]));
+          const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
+          const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
 
-      const replyCounts = new Map<string, number>();
-      allRelationships.forEach((rel) => {
-        if (rel.replied) {
-          replyCounts.set(rel.replied, (replyCounts.get(rel.replied) || 0) + 1);
+          const replyCounts = new Map<string, number>();
+          allRelationships.forEach((rel) => {
+            if (rel.replied) {
+              replyCounts.set(rel.replied, (replyCounts.get(rel.replied) || 0) + 1);
+            }
+          });
+          const posts: Core.NexusPost[] = postDetails.map((details) => {
+            const baseCounts = countsMap.get(details.id) || {
+              id: details.id,
+              tags: 0,
+              unique_tags: 0,
+              replies: 0,
+              reposts: 0,
+            };
+
+            const { pubky } = Core.parsePostCompositeId(details.id);
+
+            return {
+              details: {
+                id: details.id,
+                content: details.content,
+                indexed_at: details.indexed_at,
+                author: pubky,
+                kind: details.kind,
+                uri: details.uri,
+                attachments: details.attachments,
+              },
+              counts: {
+                ...baseCounts,
+                replies: replyCounts.get(details.id) || 0,
+              },
+              tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
+              relationships: relationshipsMap.get(details.id) || {
+                id: details.id,
+                replied: null,
+                reposted: null,
+                mentioned: [],
+              },
+              bookmark: null,
+            };
+          });
+
+          Logger.debug(`Fetched ${posts.length} posts from normalized tables`, { limit, offset });
+          return posts;
+        } catch (error) {
+          throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to fetch Post records', 500, {
+            error,
+            limit,
+            offset,
+          });
         }
-      });
-      const posts: Core.NexusPost[] = postDetails.map((details) => {
-        const baseCounts = countsMap.get(details.id) || {
-          id: details.id,
-          tags: 0,
-          unique_tags: 0,
-          replies: 0,
-          reposts: 0,
-        };
-
-        const { pubky } = Core.parsePostCompositeId(details.id);
-
-        return {
-          details: {
-            id: details.id,
-            content: details.content,
-            indexed_at: details.indexed_at,
-            author: pubky,
-            kind: details.kind,
-            uri: details.uri,
-            attachments: details.attachments,
-          },
-          counts: {
-            ...baseCounts,
-            replies: replyCounts.get(details.id) || 0, // Use actual reply count
-          },
-          tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
-          relationships: relationshipsMap.get(details.id) || {
-            id: details.id,
-            replied: null,
-            reposted: null,
-            mentioned: [],
-          },
-          bookmark: null, // TODO: Add bookmark support if needed
-        };
-      });
-
-      Logger.debug(`Fetched ${posts.length} posts from normalized tables`, { limit, offset });
-      return posts;
-    } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to fetch Post records', 500, {
-        error,
-        limit,
-        offset,
-      });
-    }
+      },
+      { limit, offset },
+    );
   }
 
   /**
@@ -110,69 +118,76 @@ export class LocalPostService {
    */
   static async create({ postId, content, kind, authorId, parentUri, attachments }: TLocalSavePostParams) {
     const { postId: postIdPart } = Core.parsePostCompositeId(postId);
-    try {
-      const postDetails: Core.PostDetailsModelSchema = {
-        id: postId,
-        content,
-        indexed_at: Date.now(),
-        kind,
-        uri: postUriBuilder(authorId, postIdPart),
-        attachments: attachments ?? null,
-      };
+    return traceAsync(
+      'local-service',
+      'LocalPostService.create',
+      async () => {
+        try {
+          const postDetails: Core.PostDetailsModelSchema = {
+            id: postId,
+            content,
+            indexed_at: Date.now(),
+            kind,
+            uri: postUriBuilder(authorId, postIdPart),
+            attachments: attachments ?? null,
+          };
 
-      const postRelationships: Core.PostRelationshipsModelSchema = {
-        id: postId,
-        replied: parentUri ?? null,
-        reposted: null,
-        mentioned: [],
-      };
+          const postRelationships: Core.PostRelationshipsModelSchema = {
+            id: postId,
+            replied: parentUri ?? null,
+            reposted: null,
+            mentioned: [],
+          };
 
-      const postCounts: Core.PostCountsModelSchema = {
-        id: postId,
-        tags: 0,
-        unique_tags: 0,
-        replies: 0,
-        reposts: 0,
-      };
+          const postCounts: Core.PostCountsModelSchema = {
+            id: postId,
+            tags: 0,
+            unique_tags: 0,
+            replies: 0,
+            reposts: 0,
+          };
 
-      await Core.db.transaction(
-        'rw',
-        [
-          Core.PostDetailsModel.table,
-          Core.PostRelationshipsModel.table,
-          Core.PostCountsModel.table,
-          Core.PostTagsModel.table,
-        ],
-        async () => {
-          await Promise.all([
-            Core.PostDetailsModel.create(postDetails),
-            Core.PostRelationshipsModel.create(postRelationships),
-            Core.PostCountsModel.create(postCounts),
-            Core.PostTagsModel.create({ id: postId, tags: [] }),
-          ]);
+          await Core.db.transaction(
+            'rw',
+            [
+              Core.PostDetailsModel.table,
+              Core.PostRelationshipsModel.table,
+              Core.PostCountsModel.table,
+              Core.PostTagsModel.table,
+            ],
+            async () => {
+              await Promise.all([
+                Core.PostDetailsModel.create(postDetails),
+                Core.PostRelationshipsModel.create(postRelationships),
+                Core.PostCountsModel.create(postCounts),
+                Core.PostTagsModel.create({ id: postId, tags: [] }),
+              ]);
 
-          if (parentUri) {
-            const fullParentId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (fullParentId) {
-              const parentCounts = await Core.PostCountsModel.findById(fullParentId);
-              if (parentCounts) {
-                await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
+              if (parentUri) {
+                const fullParentId = Core.buildPostIdFromPubkyUri(parentUri);
+                if (fullParentId) {
+                  const parentCounts = await Core.PostCountsModel.findById(fullParentId);
+                  if (parentCounts) {
+                    await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
+                  }
+                }
               }
-            }
-          }
-        },
-      );
+            },
+          );
 
-      Logger.debug('Post saved successfully', { postId, kind, parentUri });
-    } catch (error) {
-      Logger.error('Failed to save post', { postId, authorId });
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
-        error,
-        postId,
-        content,
-        kind,
-        authorId,
-      });
-    }
+          Logger.debug('Post saved successfully', { postId, kind, parentUri });
+        } catch (error) {
+          Logger.error('Failed to save post', { postId, authorId });
+          throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
+            error,
+            postId,
+            content,
+            kind,
+            authorId,
+          });
+        }
+      },
+      { postId, parentUri, kind },
+    );
   }
 }

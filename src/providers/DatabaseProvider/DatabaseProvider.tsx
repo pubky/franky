@@ -4,6 +4,8 @@ import { createContext, useEffect, useState, type ReactNode } from 'react';
 import { AppError, createDatabaseError, DatabaseErrorType } from '@/libs';
 import { DatabaseContextType } from '@/providers';
 import { db } from '@/core';
+import { traceAsync } from '../../../benchmarks/runtime';
+import { recordCounter } from '../../../benchmarks/reporters/jsonReporter';
 
 export const DatabaseContext = createContext<DatabaseContextType>({
   isReady: false,
@@ -18,8 +20,16 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
   const initDatabase = async () => {
     try {
       setError(null);
-      await db.initialize();
+      await traceAsync(
+        'database',
+        'db.initialize',
+        async () => {
+          await db.initialize();
+        },
+        { source: 'DatabaseProvider' },
+      );
       setIsReady(true);
+      recordCounter('database', 'DatabaseProvider.ready', 1, { ready: true });
     } catch (err) {
       setIsReady(false);
       if (err instanceof AppError) {

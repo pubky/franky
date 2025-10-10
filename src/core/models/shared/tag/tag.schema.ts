@@ -1,8 +1,8 @@
-import * as Core from '@/core';
+import type { NexusTag } from '@/core/services/nexus/nexus.types';
 
 export interface TagCollectionModelSchema<Id> {
   id: Id;
-  tags: Core.NexusTag[];
+  tags: NexusTag[];
 }
 
 // Schema for Dexie table
