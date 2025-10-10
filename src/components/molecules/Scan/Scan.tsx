@@ -15,9 +15,14 @@ import * as App from '@/app';
 export const ScanContent = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [errorCount, setErrorCount] = useState(0);
+  const [, setErrorCount] = useState(0);
+
+  const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
 
   const fetchUrl = async () => {
+    setIsLoading(true);
+    setUrl('');
     try {
       const data = await Core.AuthController.getAuthUrl();
       if (!data) return;
@@ -31,8 +36,13 @@ export const ScanContent = () => {
       });
     } catch (error) {
       console.error('Failed to generate auth URL:', error);
-      setErrorCount(errorCount + 1);
-      if (errorCount < 3) fetchUrl();
+      setErrorCount((prev) => {
+        const next = prev + 1;
+        if (next < 3) {
+          void fetchUrl();
+        }
+        return next;
+      });
       Molecules.toast({
         title: 'Error generating auth URL',
         description: 'Please try again.',
@@ -42,8 +52,52 @@ export const ScanContent = () => {
     }
   };
 
-  const handleMobileAuth = () => {
-    fetchUrl();
+  const copyAuthUrlToClipboard = async () => {
+    if (!url) return;
+
+    try {
+      await Libs.copyToClipboard({ text: url });
+    } catch (error) {
+      Libs.Logger.error('Failed to copy auth URL to clipboard:', error);
+    }
+  };
+
+  const handleMobileAuth = async () => {
+    if (isLoading) return;
+
+    if (!url) {
+      await fetchUrl();
+      return;
+    }
+
+    await copyAuthUrlToClipboard();
+
+    const deeplink = `pubkyring://${url}`;
+
+    try {
+      const openedWindow = window.open(deeplink, '_blank');
+
+      if (!openedWindow) {
+        window.location.href = deeplink;
+        return;
+      }
+
+      setTimeout(() => {
+        try {
+          openedWindow.location.href = fallbackUrl;
+        } catch (error) {
+          Libs.Logger.error('Failed to redirect to store after deeplink attempt:', error);
+          window.location.href = fallbackUrl;
+        }
+      }, 2000);
+    } catch (error) {
+      Libs.Logger.error('Failed to open Pubky Ring deeplink:', error);
+      Molecules.toast({
+        title: 'Unable to link to signer application Pubky Ring',
+        description: 'Please try again.',
+      });
+      window.location.href = fallbackUrl;
+    }
   };
 
   useEffect(() => {
@@ -84,7 +138,7 @@ export const ScanContent = () => {
               className="w-full h-[60px] rounded-full"
               size="lg"
               onClick={handleMobileAuth}
-              disabled={isLoading}
+              disabled={isLoading || !url}
             >
               {isLoading ? (
                 <>
