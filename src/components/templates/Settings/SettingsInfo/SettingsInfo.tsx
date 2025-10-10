@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
 import { SETTINGS_ROUTES } from '@/app';
 
 export interface SettingsInfoProps {
@@ -24,12 +25,8 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Please read our terms carefully." />
         <Atoms.FilterList>
-          <Atoms.SidebarButton icon={Libs.FileText} onClick={() => {}}>
-            Terms of service
-          </Atoms.SidebarButton>
-          <Atoms.SidebarButton icon={Libs.LockKeyhole} onClick={() => {}}>
-            Privacy policy
-          </Atoms.SidebarButton>
+          <Molecules.DialogTerms />
+          <Molecules.DialogPrivacy />
         </Atoms.FilterList>
       </Atoms.FilterRoot>
 

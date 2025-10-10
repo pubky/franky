@@ -1,4 +1,5 @@
 import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
 
 const EMAIL_URL = 'mailto:info@synonym.to';
 const EMAIL_PRIVACY_URL = 'mailto:privacy@synonym.to';
@@ -9,9 +10,7 @@ export function DialogPrivacy() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
-          Privacy Policy
-        </Atoms.Typography>
+        <Atoms.SidebarButton icon={Libs.LockKeyhole}>Privacy policy</Atoms.SidebarButton>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent className="sm:max-w-xl">
         <Atoms.DialogHeader className="pr-6">
