@@ -39,7 +39,7 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
         <Atoms.FilterList>
           {faqQuestions.map((faq, index) => (
             <Link key={index} href={faq.href}>
-              <div className="relative p-4 border border-border rounded-lg hover:border-opacity-30 cursor-pointer">
+              <div className="relative p-4 rounded-md border border-border hover:border-white cursor-pointer transition-colors">
                 <span className="text-sm font-bold leading-normal text-[var(--base-popover-foreground,#EEEEF6)] pr-6 block">
                   {faq.question}
                 </span>

@@ -9,7 +9,7 @@ export interface FeedbackCardProps {
 
 export function FeedbackCard({ className }: FeedbackCardProps) {
   return (
-    <div data-testid="feedback-card" className={Libs.cn('flex flex-col gap-4', className)}>
+    <div data-testid="feedback-card" className={Libs.cn('flex flex-col gap-2', className)}>
       <h2 className="text-2xl font-light text-muted-foreground">Feedback</h2>
 
       <div className="flex flex-col gap-3 p-5 rounded-lg border-dashed border border-border/50">
