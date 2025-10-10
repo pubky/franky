@@ -2,7 +2,7 @@
 
 exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] = `
 <div
-  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
     class="w-full flex-col justify-start items-start gap-6 flex"
@@ -55,7 +55,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-follow"
           role="switch"
@@ -79,7 +79,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-new_friend"
           role="switch"
@@ -103,7 +103,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-lost_friend"
           role="switch"
@@ -127,7 +127,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-tag_post"
           role="switch"
@@ -151,7 +151,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-tag_profile"
           role="switch"
@@ -175,7 +175,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-mention"
           role="switch"
@@ -199,7 +199,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-reply"
           role="switch"
@@ -223,7 +223,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-repost"
           role="switch"
@@ -247,7 +247,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-post_deleted"
           role="switch"
@@ -271,7 +271,7 @@ exports[`SettingsNotifications - Snapshots > matches snapshot after loading 1`] 
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-white/20 data-[state=checked]:border data-[state=checked]:border-white"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
           data-state="checked"
           id="notification-switch-post_edited"
           role="switch"

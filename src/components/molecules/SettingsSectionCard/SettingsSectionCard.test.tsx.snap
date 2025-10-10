@@ -2,7 +2,7 @@
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex custom-section"
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-section"
 >
   <div
     class="w-full flex-col justify-start items-start gap-6 flex"
@@ -47,7 +47,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with custom classNam
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`] = `
 <div
-  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
     class="w-full flex-col justify-start items-start gap-6 flex"
@@ -95,9 +95,9 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`]
 </div>
 `;
 
-exports[`SettingsSectionCard - Snapshots > matches snapshot with required props 1`] = `
+exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 1`] = `
 <div
-  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
     class="w-full flex-col justify-start items-start gap-6 flex"
@@ -135,6 +135,20 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with required props 
     </div>
     <div>
       Test content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsSectionCard - Snapshots > matches snapshot without icon and title 1`] = `
+<div
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-6 flex"
+  >
+    <div>
+      Test content only
     </div>
   </div>
 </div>
