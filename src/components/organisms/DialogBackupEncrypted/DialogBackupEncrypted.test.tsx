@@ -267,6 +267,74 @@ describe('DialogBackupEncrypted', () => {
 
     expect(mockCreateRecoveryFile).not.toHaveBeenCalled();
   });
+
+  it('does not trigger download when password is less than 6 characters', () => {
+    const mockCreateRecoveryFile = vi.fn();
+    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
+
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+    const confirmPasswordInput = screen.getByPlaceholderText('Repeat your password');
+
+    // Set matching passwords but less than 6 characters
+    fireEvent.change(passwordInput, { target: { value: '12345' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: '12345' } });
+
+    // Press Enter on password input
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    expect(mockCreateRecoveryFile).not.toHaveBeenCalled();
+  });
+
+  it('triggers download when password is exactly 6 characters and matches', () => {
+    const mockCreateRecoveryFile = vi.fn();
+    vi.mocked(Libs.Identity.createRecoveryFile).mockImplementation(mockCreateRecoveryFile);
+
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+    const confirmPasswordInput = screen.getByPlaceholderText('Repeat your password');
+
+    // Set matching passwords with exactly 6 characters
+    fireEvent.change(passwordInput, { target: { value: '123456' } });
+    fireEvent.change(confirmPasswordInput, { target: { value: '123456' } });
+
+    // Press Enter on password input
+    fireEvent.keyDown(passwordInput, { key: 'Enter' });
+
+    expect(mockCreateRecoveryFile).toHaveBeenCalledWith(
+      {
+        pubky: 'mock-public-key',
+        secretKey: 'mock-secret-key',
+      },
+      '123456',
+    );
+  });
+
+  it('shows error message when password is less than 6 characters', () => {
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+
+    // Set password with less than 6 characters
+    fireEvent.change(passwordInput, { target: { value: '12345' } });
+
+    // Check if error message is displayed
+    expect(screen.getByText('Password must be at least 6 characters')).toBeTruthy();
+  });
+
+  it('does not show error message when password is 6 or more characters', () => {
+    render(<DialogBackupEncrypted />);
+
+    const passwordInput = screen.getByPlaceholderText('Enter a strong password');
+
+    // Set password with 6 or more characters
+    fireEvent.change(passwordInput, { target: { value: '123456' } });
+
+    // Check if error message is not displayed
+    expect(screen.queryByText('Password must be at least 6 characters')).toBeNull();
+  });
 });
 
 describe('DialogBackupEncrypted - Snapshots', () => {
