@@ -5,8 +5,6 @@ import 'fake-indexeddb/auto';
 import { vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
-import { db } from '@/core';
-
 // Polyfill IntersectionObserver for jsdom
 class MockIntersectionObserver implements IntersectionObserver {
   constructor() {}
@@ -91,6 +89,8 @@ process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD = 'admin';
 process.env.NEXT_PUBLIC_TESTNET = 'true';
 process.env.NEXT_PUBLIC_PKARR_RELAYS = 'http://localhost:8080';
 process.env.NEXT_PUBLIC_HOMESERVER = 'test-homeserver-key';
+
+const { db } = await import('@/core');
 
 afterEach(() => {
   cleanup();

@@ -8,6 +8,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
+import * as Config from '@/config';
 
 export const SignInContent = () => {
   const [url, setUrl] = useState('');
@@ -98,23 +99,55 @@ export const SignInContent = () => {
     }
   };
 
-  const handleAuthorizeClick = () => {
+  const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
+
+  const copyAuthUrlToClipboard = async () => {
+    if (!url) return;
+
+    try {
+      await Libs.copyToClipboard({ text: url });
+    } catch (error) {
+      Libs.Logger.error('Failed to copy auth URL to clipboard:', error);
+    }
+  };
+
+  const handleAuthorizeClick = async () => {
     if (isLoading || isGeneratingRef.current) return;
 
     if (!url) {
       if (activeRequestRef.current) return;
-      fetchUrl();
+      void fetchUrl();
       return;
     }
 
+    await copyAuthUrlToClipboard();
+
+    const deeplink = `pubkyring://${url}`;
+
     try {
-      window.location.href = url;
+      const openedWindow = window.open(deeplink, '_blank');
+
+      if (!openedWindow) {
+        window.location.href = deeplink;
+        return;
+      }
+
+      setTimeout(() => {
+        try {
+          openedWindow.location.href = fallbackUrl;
+        } catch (error) {
+          Libs.Logger.error('Failed to redirect to store after deeplink attempt:', error);
+          window.location.href = fallbackUrl;
+        }
+      }, 2000);
     } catch (error) {
       Libs.Logger.error('Failed to open Pubky Ring deeplink:', error);
       Molecules.toast({
         title: 'Unable to link to signer application Pubky Ring',
         description: 'Please try again.',
       });
+      window.location.href = fallbackUrl;
     }
   };
 
@@ -162,7 +195,7 @@ export const SignInContent = () => {
               className="w-full h-[60px] rounded-full"
               size="lg"
               onClick={handleAuthorizeClick}
-              disabled={isLoading}
+              disabled={isLoading || !url}
               aria-busy={isLoading}
             >
               {isLoading ? (

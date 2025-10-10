@@ -94,8 +94,17 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Button: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
-    <button data-testid="button" className={className} data-size={size}>
+  Button: ({
+    children,
+    className,
+    size,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    size?: string;
+  } & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button data-testid="button" className={className} data-size={size} {...props}>
       {children}
     </button>
   ),
@@ -124,6 +133,36 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('ScanContent', () => {
+  const originalOpen = window.open;
+  const clipboardMock = { writeText: vi.fn().mockResolvedValue(undefined) };
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: vi.fn(() => ({ location: { href: '' } })) as typeof window.open,
+    });
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: clipboardMock,
+    });
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    clipboardMock.writeText.mockClear();
+  });
+
+  afterAll(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: originalOpen,
+    });
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: undefined,
+    });
+  });
+
   it('renders desktop and mobile content containers', async () => {
     await act(async () => {
       render(<ScanContent />);
@@ -155,6 +194,25 @@ describe('ScanContent', () => {
     const logoImage = images.find((img) => img.getAttribute('src') === '/images/logo-pubky-ring.svg');
 
     expect(logoImage).toBeInTheDocument();
+  });
+
+  it('opens the Pubky Ring deeplink when the mobile authorize button is tapped', async () => {
+    await act(async () => {
+      render(<ScanContent />);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('button')).not.toBeDisabled();
+    });
+
+    const authorizeButton = screen.getByTestId('button');
+
+    await act(async () => {
+      fireEvent.click(authorizeButton);
+    });
+
+    expect(clipboardMock.writeText).toHaveBeenCalledWith('mock-auth-url');
+    expect(window.open).toHaveBeenCalledWith('pubkyring://mock-auth-url', '_blank');
   });
 });
 

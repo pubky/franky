@@ -187,4 +187,35 @@ body {
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  .onboarding-nav {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background-color: var(--background);
+    padding-bottom: 1.5rem;
+    z-index: 10;
+  }
+
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    .onboarding-nav {
+      padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
+  }
+
+  @supports (padding-bottom: constant(safe-area-inset-bottom)) {
+    .onboarding-nav {
+      padding-bottom: max(1.5rem, constant(safe-area-inset-bottom));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .onboarding-nav {
+      position: static;
+      padding-bottom: 0;
+      background-color: transparent;
+    }
+  }
 }
