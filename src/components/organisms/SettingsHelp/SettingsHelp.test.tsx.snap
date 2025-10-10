@@ -2,7 +2,7 @@
 
 exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex custom-help"
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-help"
 >
   <div
     class="w-full flex-col justify-start items-start gap-6 flex"
@@ -42,347 +42,287 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-secondary-foreground"
+      class="text-base font-medium leading-6 text-foreground"
     >
       Frequently asked questions from Pubky users
     </p>
     <div
       class="w-full flex-col gap-4 flex"
+      data-orientation="vertical"
     >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        1. Getting Started & Onboarding
-      </h2>
       <div
         class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
       >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
         >
-          <span
-            class="text-base font-semibold text-left"
+          <button
+            aria-controls="radix-«r1t»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1s»"
+            type="button"
           >
-            Why does Pubky require invite codes?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I update my profile information?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1s»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1t»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
       </div>
       <div
         class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
       >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
         >
-          <span
-            class="text-base font-semibold text-left"
+          <button
+            aria-controls="radix-«r1v»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1u»"
+            type="button"
           >
-            How do I use Pubky Ring with the web app?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I delete my posts?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1u»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1v»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
       </div>
       <div
         class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
       >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
         >
-          <span
-            class="text-base font-semibold text-left"
+          <button
+            aria-controls="radix-«r21»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r20»"
+            type="button"
           >
-            Why does login sometimes fail when using the PWA on Android?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I mute someone?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r20»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r21»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
+      >
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
+        >
+          <button
+            aria-controls="radix-«r23»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r22»"
+            type="button"
           >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I restore my account?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r22»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r23»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
+      >
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
+        >
+          <button
+            aria-controls="radix-«r25»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r24»"
+            type="button"
+          >
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How is Pubky different from other social platforms?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r24»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r25»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
       </div>
     </div>
     <div
-      class="w-full flex-col gap-4 flex"
-    >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        2. Backups & Account Recovery
-      </h2>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How can I restore my account?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            Can I restore my Pubky account on another device?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div
-      class="w-full flex-col gap-4 flex"
-    >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        3. Profile & Social Features
-      </h2>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How can I update my profile information?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How can I delete my post?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How do I mute someone?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div
-      class="w-full flex-col gap-4 flex"
-    >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        4. How Pubky App Works
-      </h2>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How is Pubky different from other social media platforms?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How does Pubky differ from Nostr?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div
+      aria-hidden="true"
       class="w-full h-px bg-white/10 my-6"
     />
     <div
@@ -424,7 +364,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-muted-foreground"
+      class="text-base font-medium leading-6 text-foreground"
     >
       The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of your Pubky experience.
     </p>
@@ -466,6 +406,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
       User Guide
     </button>
     <div
+      aria-hidden="true"
       class="w-full h-px bg-white/10 my-6"
     />
     <div
@@ -495,7 +436,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-muted-foreground"
+      class="text-base font-medium leading-6 text-foreground"
     >
       Cannot find the answer you're looking for? Pubky support will help you out in no time.
     </p>
@@ -522,7 +463,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
           d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
         />
       </svg>
-      Pubky Support (Telegram)
+      Support (Telegram)
     </button>
   </div>
 </div>
@@ -530,7 +471,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with custom className 1`] =
 
 exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="p-8 md:p-12 bg-white/10 rounded-lg flex-col justify-start items-start gap-12 inline-flex"
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
     class="w-full flex-col justify-start items-start gap-6 flex"
@@ -570,347 +511,287 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-secondary-foreground"
+      class="text-base font-medium leading-6 text-foreground"
     >
       Frequently asked questions from Pubky users
     </p>
     <div
       class="w-full flex-col gap-4 flex"
+      data-orientation="vertical"
     >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        1. Getting Started & Onboarding
-      </h2>
       <div
         class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
       >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
         >
-          <span
-            class="text-base font-semibold text-left"
+          <button
+            aria-controls="radix-«r1j»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1i»"
+            type="button"
           >
-            Why does Pubky require invite codes?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I update my profile information?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1i»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1j»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
       </div>
       <div
         class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
       >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
         >
-          <span
-            class="text-base font-semibold text-left"
+          <button
+            aria-controls="radix-«r1l»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1k»"
+            type="button"
           >
-            How do I use Pubky Ring with the web app?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I delete my posts?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1k»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1l»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
       </div>
       <div
         class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
       >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
         >
-          <span
-            class="text-base font-semibold text-left"
+          <button
+            aria-controls="radix-«r1n»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1m»"
+            type="button"
           >
-            Why does login sometimes fail when using the PWA on Android?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I mute someone?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1m»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1n»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
+      >
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
+        >
+          <button
+            aria-controls="radix-«r1p»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1o»"
+            type="button"
           >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How can I restore my account?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1o»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1p»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
+      </div>
+      <div
+        class="w-full border border-border rounded-lg overflow-hidden"
+        data-orientation="vertical"
+        data-state="closed"
+      >
+        <h3
+          data-orientation="vertical"
+          data-state="closed"
+        >
+          <button
+            aria-controls="radix-«r1r»"
+            aria-expanded="false"
+            class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+            data-orientation="vertical"
+            data-radix-collection-item=""
+            data-state="closed"
+            id="radix-«r1q»"
+            type="button"
+          >
+            <span
+              class="text-base font-semibold text-left"
+            >
+              How is Pubky different from other social platforms?
+            </span>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+              fill="none"
+              height="20"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="m6 9 6 6 6-6"
+              />
+            </svg>
+          </button>
+        </h3>
+        <div
+          aria-labelledby="radix-«r1q»"
+          class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+          data-orientation="vertical"
+          data-state="closed"
+          hidden=""
+          id="radix-«r1r»"
+          role="region"
+          style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+        />
       </div>
     </div>
     <div
-      class="w-full flex-col gap-4 flex"
-    >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        2. Backups & Account Recovery
-      </h2>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How can I restore my account?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            Can I restore my Pubky account on another device?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div
-      class="w-full flex-col gap-4 flex"
-    >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        3. Profile & Social Features
-      </h2>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How can I update my profile information?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How can I delete my post?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How do I mute someone?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div
-      class="w-full flex-col gap-4 flex"
-    >
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        4. How Pubky App Works
-      </h2>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How is Pubky different from other social media platforms?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-      <div
-        class="w-full border border-border rounded-lg overflow-hidden"
-      >
-        <button
-          class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors"
-        >
-          <span
-            class="text-base font-semibold text-left"
-          >
-            How does Pubky differ from Nostr?
-          </span>
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4"
-            fill="none"
-            height="20"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m6 9 6 6 6-6"
-            />
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div
+      aria-hidden="true"
       class="w-full h-px bg-white/10 my-6"
     />
     <div
@@ -952,7 +833,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-muted-foreground"
+      class="text-base font-medium leading-6 text-foreground"
     >
       The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of your Pubky experience.
     </p>
@@ -994,6 +875,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
       User Guide
     </button>
     <div
+      aria-hidden="true"
       class="w-full h-px bg-white/10 my-6"
     />
     <div
@@ -1023,7 +905,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-muted-foreground"
+      class="text-base font-medium leading-6 text-foreground"
     >
       Cannot find the answer you're looking for? Pubky support will help you out in no time.
     </p>
@@ -1050,7 +932,7 @@ exports[`SettingsHelp - Snapshots > matches snapshot with default props 1`] = `
           d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
         />
       </svg>
-      Pubky Support (Telegram)
+      Support (Telegram)
     </button>
   </div>
 </div>

@@ -9,12 +9,13 @@ describe('SettingsHelp', () => {
     expect(screen.getByText('FAQ')).toBeInTheDocument();
   });
 
-  it('renders FAQ sections', () => {
+  it('renders FAQ questions', () => {
     render(<SettingsHelp />);
-    expect(screen.getByText('1. Getting Started & Onboarding')).toBeInTheDocument();
-    expect(screen.getByText('2. Backups & Account Recovery')).toBeInTheDocument();
-    expect(screen.getByText('3. Profile & Social Features')).toBeInTheDocument();
-    expect(screen.getByText('4. How Pubky App Works')).toBeInTheDocument();
+    expect(screen.getByText('How can I update my profile information?')).toBeInTheDocument();
+    expect(screen.getByText('How can I delete my posts?')).toBeInTheDocument();
+    expect(screen.getByText('How can I mute someone?')).toBeInTheDocument();
+    expect(screen.getByText('How can I restore my account?')).toBeInTheDocument();
+    expect(screen.getByText('How is Pubky different from other social platforms?')).toBeInTheDocument();
   });
 
   it('renders User Guide section', () => {

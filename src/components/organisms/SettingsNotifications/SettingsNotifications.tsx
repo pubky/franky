@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
@@ -41,10 +41,10 @@ export interface SettingsNotificationsProps {
 }
 
 export function SettingsNotifications({ className }: SettingsNotificationsProps) {
-  const [preferences, setPreferences] = React.useState(defaultPreferences);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [preferences, setPreferences] = useState(defaultPreferences);
+  const [isLoading, setIsLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Simulate loading from storage/API
     const loadPreferences = async () => {
       setIsLoading(true);
@@ -52,7 +52,7 @@ export function SettingsNotifications({ className }: SettingsNotificationsProps)
       await new Promise((resolve) => setTimeout(resolve, 500));
       setIsLoading(false);
     };
-    loadPreferences();
+    void loadPreferences();
   }, []);
 
   const handleToggle = (type: NotificationType) => {
