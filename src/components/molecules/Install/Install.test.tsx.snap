@@ -1,92 +1,128 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Install Components - Snapshots > InstallCard - Snapshots > matches snapshot for default InstallCard 1`] = `
+exports[`InstallCard > matches snapshot 1`] = `
 <div
-  data-testid="content-card"
+  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl shadow-sm p-6 md:p-12"
+  data-slot="card"
+  data-testid="card"
 >
-  <img
-    alt="Keyring"
-    data-testid="content-card-image"
-    src="/images/keyring.png"
-  />
   <div
-    class="gap-3"
+    class="mx-auto w-full flex gap-12 flex-col lg:flex-row"
     data-testid="container"
   >
     <div
-      class="flex-col items-center sm:items-start"
-      data-testid="container"
+      class="hidden lg:flex"
+      style="width: 192px; height: 192px;"
     >
       <img
-        alt="Pubky Ring"
-        data-testid="next-image"
-        height="48"
-        src="/images/logo-pubky-ring.svg"
-        width="220"
+        alt="Keyring"
+        class=""
+        data-testid="content-image"
+        height="192"
+        src="/images/keyring.png"
+        style="object-fit: contain;"
+        width="192"
       />
     </div>
-    <p
-      class="text-secondary-foreground opacity-80 font-medium text-base"
-      data-testid="typography"
-    >
-      Download and install the mobile app to start creating your account.
-    </p>
-  </div>
-  <div
-    class="flex-row gap-4 justify-around sm:justify-start"
-    data-testid="container"
-  >
     <div
-      data-store="apple"
-      data-testid="dialog-download-pubky-ring"
+      class="mx-auto flex-col flex gap-4 justify-start w-full"
+      data-testid="container"
     >
-      Download Dialog
-    </div>
-    <div
-      data-store="android"
-      data-testid="dialog-download-pubky-ring"
-    >
-      Download Dialog
+      <div
+        class="mx-auto w-full flex-col flex gap-3"
+        data-testid="container"
+      >
+        <div
+          class="mx-auto w-full flex flex-col items-center sm:items-start"
+          data-testid="container"
+        >
+          <img
+            alt="Pubky Ring"
+            class="w-[137px] sm:w-auto"
+            height="48"
+            src="/images/logo-pubky-ring.svg"
+            width="220"
+          />
+        </div>
+        <p
+          class="text-secondary-foreground opacity-80 font-medium text-base"
+          data-testid="typography"
+        >
+          Download and install the mobile app to start creating your account.
+        </p>
+      </div>
+      <div
+        class="mx-auto w-full flex flex-row gap-4 justify-around sm:justify-start"
+        data-testid="container"
+      >
+        <a
+          class="block sm:hidden"
+          href="https://apps.apple.com/app/pubky-ring/id6739356756"
+          target="_blank"
+        >
+          <img
+            alt="App Store"
+            height="40"
+            src="/images/badge-apple.png"
+            width="192"
+          />
+        </a>
+        <img
+          alt="App Store"
+          aria-controls="radix-«r0»"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          class="cursor-pointer hidden sm:block"
+          data-as-child="true"
+          data-slot="dialog-trigger"
+          data-state="closed"
+          data-testid="dialog-trigger"
+          height="40"
+          src="/images/badge-apple.png"
+          type="button"
+          width="120"
+        />
+        <a
+          class="block sm:hidden"
+          href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
+          target="_blank"
+        >
+          <img
+            alt="Google Play"
+            height="40"
+            src="/images/badge-android.png"
+            width="210"
+          />
+        </a>
+        <img
+          alt="Google Play"
+          aria-controls="radix-«r3»"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          class="cursor-pointer hidden sm:block"
+          data-as-child="true"
+          data-slot="dialog-trigger"
+          data-state="closed"
+          data-testid="dialog-trigger"
+          height="40"
+          src="/images/badge-android.png"
+          type="button"
+          width="135"
+        />
+      </div>
     </div>
   </div>
 </div>
 `;
 
-exports[`Install Components - Snapshots > InstallFooter - Snapshots > matches snapshot for default InstallFooter 1`] = `
+exports[`InstallHeader > matches snapshot 1`] = `
 <div
-  class="py-6"
-  data-testid="footer-links"
+  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  data-testid="container"
 >
-  Use
-   
-  <a
-    data-testid="link"
-    href="https://pubkyring.app/"
-    target="_blank"
-  >
-    Pubky Ring
-  </a>
-   
-  or any other
-   
-  <a
-    data-testid="link"
-    href="https://pubky.org"
-    target="_blank"
-  >
-    Pubky Core
-  </a>
-  –powered keychain, or create your keys in the browser (less secure).
-</div>
-`;
-
-exports[`Install Components - Snapshots > InstallHeader - Snapshots > matches snapshot for default InstallHeader 1`] = `
-<div
-  data-testid="page-header"
->
-  <div
-    data-size="large"
-    data-testid="page-title"
+  <h1
+    class="font-bold text-foreground text-5xl lg:text-6xl"
+    data-testid="heading-1"
   >
     Install 
     <br
@@ -98,27 +134,27 @@ exports[`Install Components - Snapshots > InstallHeader - Snapshots > matches sn
     >
       Pubky Ring.
     </span>
-  </div>
-  <div
-    data-testid="page-subtitle"
+  </h1>
+  <h2
+    class="text-xl lg:text-2xl text-muted-foreground font-light leading-normal"
   >
     Pubky Ring is a keychain for your identity keys in the Pubky ecosystem.
-  </div>
+  </h2>
 </div>
 `;
 
-exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matches snapshot for InstallNavigation with custom className 1`] = `
+exports[`InstallNavigation > matches snapshot 1`] = `
 <div
-  class="flex-col-reverse md:flex-row gap-3 lg:gap-6 custom-navigation"
+  class="mx-auto w-full flex flex-col-reverse md:flex-row gap-3 lg:gap-6"
   data-testid="container"
 >
   <div
-    class="items-center gap-1 flex-row"
+    class="mx-auto w-full flex items-center gap-1 flex-row"
     data-testid="container"
   >
     <button
-      class="rounded-full flex-1 md:flex-none"
-      data-testid="button-outline"
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-10 gap-1 px-4 py-2 has-[>svg]:px-4 rounded-full flex-1 md:flex-none"
+      data-slot="button"
       data-variant="outline"
       id="create-keys-in-browser-btn"
     >
@@ -154,60 +190,23 @@ exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matche
       </svg>
       Create keys in browser
     </button>
-    <div
-      data-testid="popover-tradeoffs"
-    >
-      Tradeoffs Popover
-    </div>
-  </div>
-  <button
-    class="rounded-full"
-    data-testid="button"
-    id="continue-with-pubky-ring-btn"
-  >
-    <svg
-      aria-hidden="true"
-      class="lucide lucide-arrow-right mr-2 h-4 w-4"
-      fill="none"
-      height="24"
-      stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
-      viewBox="0 0 24 24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M5 12h14"
-      />
-      <path
-        d="m12 5 7 7-7 7"
-      />
-    </svg>
-    Continue with Pubky Ring
-  </button>
-</div>
-`;
-
-exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matches snapshot for default InstallNavigation 1`] = `
-<div
-  class="flex-col-reverse md:flex-row gap-3 lg:gap-6"
-  data-testid="container"
->
-  <div
-    class="items-center gap-1 flex-row"
-    data-testid="container"
-  >
     <button
-      class="rounded-full flex-1 md:flex-none"
-      data-testid="button-outline"
-      data-variant="outline"
-      id="create-keys-in-browser-btn"
+      aria-controls="radix-«r6»"
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 border-none size-9 rounded-full"
+      data-as-child="true"
+      data-size="icon"
+      data-slot="popover-trigger"
+      data-state="closed"
+      data-testid="popover-trigger"
+      data-variant="ghost"
+      type="button"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-app-window mr-2 h-4 w-4"
+        class="lucide lucide-triangle-alert h-4 w-4"
+        data-testid="alert-triangle-icon"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -218,34 +217,22 @@ exports[`Install Components - Snapshots > InstallNavigation - Snapshots > matche
         width="24"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect
-          height="16"
-          rx="2"
-          width="20"
-          x="2"
-          y="4"
+        <path
+          d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"
         />
         <path
-          d="M10 4v4"
+          d="M12 9v4"
         />
         <path
-          d="M2 8h20"
-        />
-        <path
-          d="M6 4v4"
+          d="M12 17h.01"
         />
       </svg>
-      Create keys in browser
     </button>
-    <div
-      data-testid="popover-tradeoffs"
-    >
-      Tradeoffs Popover
-    </div>
   </div>
   <button
-    class="rounded-full"
-    data-testid="button"
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 rounded-full"
+    data-size="lg"
+    data-slot="button"
     id="continue-with-pubky-ring-btn"
   >
     <svg
