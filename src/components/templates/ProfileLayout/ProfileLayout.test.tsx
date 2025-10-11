@@ -1,12 +1,13 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ProfilePage } from './ProfilePage';
+import { ProfileLayout } from './ProfileLayout';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
   })),
+  usePathname: vi.fn(() => '/profile/posts'),
 }));
 
 // Mock hooks
@@ -17,13 +18,12 @@ vi.mock('@/hooks', () => ({
 // Mock organisms
 vi.mock('@/organisms', () => ({
   ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
-  ProfileHeader: ({ name }: { name: string }) => <div data-testid="profile-header">{name}</div>,
+  ProfileHeader: () => <div data-testid="profile-header">Profile Header</div>,
 }));
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
   ProfileTabsMobile: () => <div data-testid="profile-tabs-mobile">Tabs</div>,
-  EmptyState: () => <div data-testid="empty-state">Empty</div>,
   ProfileAvatar: () => <div data-testid="profile-avatar">Avatar</div>,
 }));
 
@@ -33,30 +33,41 @@ vi.mock('@/atoms', () => ({
   DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
-describe('ProfilePage', () => {
+describe('ProfileLayout', () => {
   it('renders without errors', () => {
-    render(<ProfilePage />);
+    render(
+      <ProfileLayout>
+        <div>Test content</div>
+      </ProfileLayout>,
+    );
     expect(screen.getByTestId('content-layout')).toBeInTheDocument();
   });
 
-  it('renders ProfileHeader with mock user data', () => {
-    render(<ProfilePage />);
+  it('renders ProfileHeader', () => {
+    render(
+      <ProfileLayout>
+        <div>Test content</div>
+      </ProfileLayout>,
+    );
     expect(screen.getByTestId('profile-header')).toBeInTheDocument();
-    expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
   it('renders mobile tabs', () => {
-    render(<ProfilePage />);
+    render(
+      <ProfileLayout>
+        <div>Test content</div>
+      </ProfileLayout>,
+    );
     expect(screen.getByTestId('profile-tabs-mobile')).toBeInTheDocument();
   });
 
-  it('renders empty state for default tab (posts)', () => {
-    render(<ProfilePage />);
-    expect(screen.getByTestId('empty-state')).toBeInTheDocument();
-  });
-
-  it('renders container structure correctly', () => {
-    render(<ProfilePage />);
-    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
+  it('renders children content', () => {
+    render(
+      <ProfileLayout>
+        <div data-testid="test-child">Test content</div>
+      </ProfileLayout>,
+    );
+    expect(screen.getByTestId('test-child')).toBeInTheDocument();
+    expect(screen.getByText('Test content')).toBeInTheDocument();
   });
 });
