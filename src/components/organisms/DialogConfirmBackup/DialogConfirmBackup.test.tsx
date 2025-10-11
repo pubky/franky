@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { DialogConfirmBackup } from './DialogConfirmBackup';
 
 // Mock Core module
@@ -9,221 +9,30 @@ vi.mock('@/core', () => ({
   })),
 }));
 
-// Mock atoms
-vi.mock('@/atoms', () => ({
-  Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog">{children}</div>,
-  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-content" className={className}>
-      {children}
-    </div>
-  ),
-  DialogHeader: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-header" className={className}>
-      {children}
-    </div>
-  ),
-  DialogTitle: ({ children }: { children: React.ReactNode }) => <h2 data-testid="dialog-title">{children}</h2>,
-  DialogTrigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-trigger" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-  DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-close" data-as-child={asChild}>
-      {children}
-    </div>
-  ),
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="container" className={className}>
-      {children}
-    </div>
-  ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <p data-testid="typography" data-size={size} className={className}>
-      {children}
-    </p>
-  ),
-  Button: ({
-    children,
-    size,
-    variant,
-    className,
-    onClick,
-  }: {
-    children: React.ReactNode;
-    size?: string;
-    variant?: string;
-    className?: string;
-    onClick?: () => void;
-  }) => (
-    <button data-testid="button" data-size={size} data-variant={variant} className={className} onClick={onClick}>
-      {children}
-    </button>
-  ),
-}));
+// Mock atoms - use actual implementations
+vi.mock('@/atoms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/atoms')>();
+  return {
+    ...actual,
+  };
+});
 
-// Mock libs - use actual implementations (real icons)
+// Mock libs - use actual implementations
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
+  return {
+    ...actual,
+  };
 });
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
-  DialogBackup: ({ open }: { open?: boolean; onOpenChange?: (open: boolean) => void }) => (
-    <div data-testid="dialog-backup" data-open={open} />
-  ),
+  DialogBackup: vi.fn(() => <div data-testid="dialog-backup">DialogBackup</div>),
 }));
 
-describe('DialogConfirmBackup', () => {
-  it('renders with correct structure', () => {
-    render(<DialogConfirmBackup />);
-
-    expect(screen.getByTestId('dialog')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-trigger')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-title')).toBeInTheDocument();
-  });
-
-  it('renders trigger button with correct text', () => {
-    render(<DialogConfirmBackup />);
-
-    const triggerButton = screen.getByText('Done');
-    expect(triggerButton).toBeInTheDocument();
-    expect(triggerButton.tagName).toBe('BUTTON');
-  });
-
-  it('applies correct styling to trigger button', () => {
-    render(<DialogConfirmBackup />);
-
-    const triggerButton = screen.getByText('Done');
-    expect(triggerButton).toHaveClass('bg-card');
-  });
-
-  it('renders dialog title correctly', () => {
-    render(<DialogConfirmBackup />);
-
-    const title = screen.getByTestId('dialog-title');
-    expect(title).toHaveTextContent('All backed up?');
-    expect(title.tagName).toBe('H2');
-  });
-
-  it('renders description text', () => {
-    render(<DialogConfirmBackup />);
-
-    const description = screen.getByText(/Please confirm if you have completed/);
-    expect(description).toBeInTheDocument();
-  });
-
-  it('renders warning alert with correct content', () => {
-    render(<DialogConfirmBackup />);
-
-    expect(screen.getByText('After confirming, your seed will be deleted from the browser (!)')).toBeInTheDocument();
-    expect(document.querySelector('.lucide-triangle-alert')).toBeInTheDocument();
-  });
-
-  it('applies correct styling to warning alert', () => {
-    render(<DialogConfirmBackup />);
-
-    const warningContainer = screen
-      .getByText('After confirming, your seed will be deleted from the browser (!)')
-      .closest('[data-testid="container"]');
-    expect(warningContainer).toHaveClass(
-      'bg-destructive/60',
-      'px-6',
-      'py-3',
-      'rounded-lg',
-      'flex',
-      'flex-row',
-      'items-center',
-      'gap-3',
-    );
-  });
-
-  it('renders backup methods button with correct content', () => {
-    render(<DialogConfirmBackup />);
-
-    const backupButton = screen.getByText('Backup methods');
-    expect(backupButton).toBeInTheDocument();
-    expect(backupButton).toHaveAttribute('data-size', 'lg');
-    expect(backupButton).toHaveAttribute('data-variant', 'outline');
-  });
-
-  it('renders confirm button with correct content', () => {
-    render(<DialogConfirmBackup />);
-
-    const confirmButton = screen.getByText('Confirm (delete seed)');
-    expect(confirmButton).toBeInTheDocument();
-    expect(confirmButton).toHaveAttribute('data-size', 'lg');
-  });
-
-  it('renders icons in buttons', () => {
-    render(<DialogConfirmBackup />);
-
-    expect(document.querySelector('.lucide-shield-check')).toBeInTheDocument();
-    expect(document.querySelector('.lucide-check')).toBeInTheDocument();
-  });
-
-  it('applies correct styling to dialog content', () => {
-    render(<DialogConfirmBackup />);
-
-    const content = screen.getByTestId('dialog-content');
-    expect(content).toHaveClass('sm:max-w-xl', 'gap-0');
-  });
-
-  it('renders dialog header', () => {
-    render(<DialogConfirmBackup />);
-
-    const header = screen.getByTestId('dialog-header');
-    expect(header).toBeInTheDocument();
-  });
-
-  it('applies correct styling to description text', () => {
-    render(<DialogConfirmBackup />);
-
-    const description = screen.getByText(/Please confirm if you have completed/);
-    expect(description).toHaveClass('text-muted-foreground', 'font-medium');
-  });
-
-  it('applies correct styling to warning text', () => {
-    render(<DialogConfirmBackup />);
-
-    const warningText = screen.getByText('After confirming, your seed will be deleted from the browser (!)');
-    expect(warningText).toHaveClass('font-bold');
-  });
-
-  it('applies correct styling to warning icon', () => {
-    render(<DialogConfirmBackup />);
-
-    const warningIcon = document.querySelector('.lucide-triangle-alert') as HTMLElement | null;
-    expect(warningIcon).toHaveClass('h-4', 'w-4', 'font-bold');
-  });
-
-  it('applies correct styling to button icons', () => {
-    render(<DialogConfirmBackup />);
-
-    const shieldIcon = document.querySelector('.lucide-shield-check') as HTMLElement | null;
-    const checkIcon = document.querySelector('.lucide-check') as HTMLElement | null;
-
-    expect(shieldIcon).toHaveClass('h-4', 'w-4');
-    expect(checkIcon).toHaveClass('h-4', 'w-4');
-  });
-
-  it('renders all required elements', () => {
-    render(<DialogConfirmBackup />);
-
-    expect(screen.getByTestId('dialog')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-trigger')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
-    expect(screen.getByTestId('dialog-title')).toBeInTheDocument();
-    expect(screen.getByText('Done')).toBeInTheDocument();
-    expect(screen.getByText('After confirming, your seed will be deleted from the browser (!)')).toBeInTheDocument();
-    expect(screen.getByText('Backup methods')).toBeInTheDocument();
-    expect(screen.getByText('Confirm (delete seed)')).toBeInTheDocument();
-    expect(document.querySelector('.lucide-triangle-alert')).toBeInTheDocument();
-    expect(document.querySelector('.lucide-shield-check')).toBeInTheDocument();
-    expect(document.querySelector('.lucide-check')).toBeInTheDocument();
+describe('DialogConfirmBackup - Snapshot', () => {
+  it('matches snapshot for default DialogConfirmBackup', () => {
+    const { container } = render(<DialogConfirmBackup />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

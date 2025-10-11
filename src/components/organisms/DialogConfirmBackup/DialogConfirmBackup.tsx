@@ -31,7 +31,11 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
       <Organisms.DialogBackup open={isBackupOpen} onOpenChange={setIsBackupOpen} />
       <Atoms.Dialog open={isOpen} onOpenChange={setIsOpen}>
         <Atoms.DialogTrigger asChild>
-          <Atoms.Button id="backup-done-btn" variant="secondary" className="bg-card text-xs font-bold border shadow-sm">
+          <Atoms.Button
+            id="backup-done-btn"
+            variant="secondary"
+            className="bg-card text-white text-xs font-bold border shadow-sm"
+          >
             Done
           </Atoms.Button>
         </Atoms.DialogTrigger>

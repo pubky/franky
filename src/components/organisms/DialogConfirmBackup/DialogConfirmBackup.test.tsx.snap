@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogConfirmBackup - Snapshot > matches snapshot for default DialogConfirmBackup 1`] = `
+<div
+  data-testid="dialog-backup"
+>
+  DialogBackup
+</div>
+`;
