@@ -1,19 +1,26 @@
 import * as Atoms from '@/atoms';
-import * as Libs from '@/libs';
 
 const EMAIL_URL = 'mailto:info@synonym.to';
 const EMAIL_REPORT_URL = 'mailto:report@synonym.to';
 const COPYRIGHT_URL = '/copyright';
 
-export function DialogTerms() {
+interface DialogTermsProps {
+  trigger?: React.ReactNode;
+}
+
+export function DialogTerms({ trigger }: DialogTermsProps) {
   const baseCSS = 'text-muted-foreground text-base font-normal';
   const baseCSSItalic = 'text-muted-foreground text-base font-normal italic';
 
+  const defaultTrigger = (
+    <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
+      Terms of Service
+    </Atoms.Typography>
+  );
+
   return (
     <Atoms.Dialog>
-      <Atoms.DialogTrigger asChild>
-        <Atoms.SidebarButton icon={Libs.FileText}>Terms of service</Atoms.SidebarButton>
-      </Atoms.DialogTrigger>
+      <Atoms.DialogTrigger asChild>{trigger || defaultTrigger}</Atoms.DialogTrigger>
       <Atoms.DialogContent className="sm:max-w-xl">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Terms of Service</Atoms.DialogTitle>

@@ -27,8 +27,12 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Please read our terms carefully." />
         <Atoms.FilterList>
-          <Molecules.DialogTerms />
-          <Molecules.DialogPrivacy />
+          <Molecules.DialogTerms
+            trigger={<Atoms.SidebarButton icon={Libs.FileText}>Terms of service</Atoms.SidebarButton>}
+          />
+          <Molecules.DialogPrivacy
+            trigger={<Atoms.SidebarButton icon={Libs.LockKeyhole}>Privacy policy</Atoms.SidebarButton>}
+          />
         </Atoms.FilterList>
       </Atoms.FilterRoot>
 
