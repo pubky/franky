@@ -86,7 +86,7 @@ describe('FeedbackCard', () => {
     render(<FeedbackCard />);
 
     const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-4');
+    expect(container).toHaveClass('flex', 'flex-col', 'gap-2');
   });
 
   it('applies correct feedback form classes', () => {
@@ -135,7 +135,7 @@ describe('FeedbackCard', () => {
     render(<FeedbackCard />);
 
     const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('gap-4');
+    expect(container).toHaveClass('gap-2');
 
     const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
     expect(feedbackForm).toHaveClass('gap-3', 'p-5');

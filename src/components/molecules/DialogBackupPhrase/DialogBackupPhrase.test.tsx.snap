@@ -19,8 +19,15 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
   </div>
   <div
     class="gap-6 p-8"
+    data-hidden-title="Backup recovery phrase"
     data-testid="dialog-content"
   >
+    <h2
+      class="sr-only"
+      data-testid="dialog-hidden-title"
+    >
+      Backup recovery phrase
+    </h2>
     <div
       class="space-y-1.5 pr-6"
       data-testid="dialog-header"
