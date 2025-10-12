@@ -19,8 +19,13 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   )),
-  DialogContent: vi.fn(({ children, className }) => (
-    <div data-testid="dialog-content" className={className}>
+  DialogContent: vi.fn(({ children, className, hiddenTitle }) => (
+    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
+      {hiddenTitle && (
+        <h2 className="sr-only" data-testid="dialog-hidden-title">
+          {hiddenTitle}
+        </h2>
+      )}
       {children}
     </div>
   )),

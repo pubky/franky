@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Install - Snapshots > matches snapshot 1`] = `
+<div
+  class="mx-auto w-full flex-col flex container min-h-dvh items-stretch gap-0 px-6 pb-0 pt-4 lg:min-h-0 lg:items-start lg:pb-6"
+  data-testid="container"
+>
+  <div
+    class="flex w-full flex-1 flex-col gap-0 lg:flex-none"
+    data-testid="install-content"
+  >
+    <div
+      data-testid="install-header"
+    >
+      Install Header
+    </div>
+    <div
+      data-testid="install-card"
+    >
+      Install Card
+    </div>
+    <div
+      data-testid="install-footer"
+    >
+      Install Footer
+    </div>
+  </div>
+  <div
+    class="onboarding-nav mt-auto w-full lg:mt-0"
+  >
+    <div
+      data-testid="install-navigation"
+    >
+      Install Navigation
+    </div>
+  </div>
+</div>
+`;

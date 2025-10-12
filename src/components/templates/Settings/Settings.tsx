@@ -1,85 +1,60 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import * as React from 'react';
-
-import { AUTH_ROUTES } from '@/app';
-
-import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
-import {
-  SettingsLeftSidebar,
-  SettingsRightSidebar,
-  SettingsLeftDrawer,
-  SettingsRightDrawer,
-} from './Settings.sidebars';
 
-export function Settings() {
-  const router = useRouter();
+export interface SettingsProps {
+  children: React.ReactNode;
+}
 
+export function Settings({ children }: SettingsProps) {
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
 
-  const handleLogout = () => {
-    router.push(AUTH_ROUTES.LOGOUT);
-  };
-
   return (
-    <Organisms.ContentLayout
-      showRightMobileButton={false}
-      leftSidebarContent={<SettingsLeftSidebar />}
-      rightSidebarContent={<SettingsRightSidebar />}
-      leftDrawerContent={<SettingsLeftDrawer />}
-      rightDrawerContent={<SettingsRightDrawer />}
-    >
-      <div className="flex items-center justify-between gap-4">
-        <Atoms.Heading level={1} size="xl" className="text-2xl">
-          Settings
-        </Atoms.Heading>
-        <Atoms.Button id="settings-logout-btn" variant="secondary" size="default" onClick={handleLogout}>
-          Logout
-        </Atoms.Button>
+    <>
+      {/* Mobile menu - visible only on mobile, full width */}
+      <div className="lg:hidden">
+        <Molecules.SettingsMobileMenu />
       </div>
 
-      <Atoms.Typography size="md" className="text-muted-foreground">
-        Manage your account preferences and application settings.
-      </Atoms.Typography>
-
-      {/* Lorem ipsum content */}
-      <div className="flex flex-col gap-4 mt-4">
-        <Atoms.Card className="p-6">
-          <Atoms.Heading level={3} size="lg" className="mb-4">
-            Account Settings
-          </Atoms.Heading>
-          <Atoms.Typography size="md" className="text-muted-foreground">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-            ea commodo consequat.
-          </Atoms.Typography>
-        </Atoms.Card>
-
-        <Atoms.Card className="p-6">
-          <Atoms.Heading level={3} size="lg" className="mb-4">
-            Privacy & Security
-          </Atoms.Heading>
-          <Atoms.Typography size="md" className="text-muted-foreground">
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-            laborum.
-          </Atoms.Typography>
-        </Atoms.Card>
-
-        <Atoms.Card className="p-6">
-          <Atoms.Heading level={3} size="lg" className="mb-4">
-            Notifications
-          </Atoms.Heading>
-          <Atoms.Typography size="md" className="text-muted-foreground">
-            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem
-            aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-          </Atoms.Typography>
-        </Atoms.Card>
-      </div>
-    </Organisms.ContentLayout>
+      <Organisms.ContentLayout
+        showLeftMobileButton={false}
+        showRightMobileButton={false}
+        leftSidebarContent={<SettingsLeftSidebar />}
+        rightSidebarContent={<SettingsRightSidebar />}
+        leftDrawerContent={<SettingsLeftDrawer />}
+        rightDrawerContent={<SettingsRightDrawer />}
+        className="lg:pt-0 pt-[145px]"
+      >
+        {children}
+      </Organisms.ContentLayout>
+    </>
   );
+}
+
+export function SettingsLeftSidebar() {
+  return (
+    <div className="self-start sticky top-[100px] w-full">
+      <Molecules.SettingsMenu />
+    </div>
+  );
+}
+
+export function SettingsRightSidebar() {
+  return (
+    <div className="self-start sticky top-[100px]">
+      <Molecules.SettingsInfo />
+    </div>
+  );
+}
+
+export function SettingsLeftDrawer() {
+  return <Molecules.SettingsMenu />;
+}
+
+export function SettingsRightDrawer() {
+  return <Molecules.SettingsInfo />;
 }

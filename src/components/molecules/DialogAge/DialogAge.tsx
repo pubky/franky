@@ -8,7 +8,7 @@ export function DialogAge() {
           over 18 years old.
         </Atoms.Typography>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-xl">
+      <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Age minimum: 18">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Age minimum: 18</Atoms.DialogTitle>
         </Atoms.DialogHeader>

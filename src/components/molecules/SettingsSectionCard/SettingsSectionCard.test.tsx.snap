@@ -1,0 +1,155 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsSectionCard - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-section"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-3 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-user"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+        />
+        <circle
+          cx="12"
+          cy="7"
+          r="4"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Test Section
+      </h2>
+    </div>
+    <div>
+      Test content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`] = `
+<div
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-3 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-user"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+        />
+        <circle
+          cx="12"
+          cy="7"
+          r="4"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Test Section
+      </h2>
+    </div>
+    <p
+      class="text-base font-medium leading-6 text-secondary-foreground"
+    >
+      Test description
+    </p>
+    <div>
+      Test content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 1`] = `
+<div
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-3 flex"
+  >
+    <div
+      class="justify-start items-center gap-2 inline-flex"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-user"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+        />
+        <circle
+          cx="12"
+          cy="7"
+          r="4"
+        />
+      </svg>
+      <h2
+        class="text-2xl font-bold leading-8 text-foreground"
+      >
+        Test Section
+      </h2>
+    </div>
+    <div>
+      Test content
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SettingsSectionCard - Snapshots > matches snapshot without icon and title 1`] = `
+<div
+  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+>
+  <div
+    class="w-full flex-col justify-start items-start gap-3 flex"
+  >
+    <div>
+      Test content only
+    </div>
+  </div>
+</div>
+`;
