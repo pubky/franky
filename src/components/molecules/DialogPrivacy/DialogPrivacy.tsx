@@ -19,7 +19,7 @@ export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>{trigger || defaultTrigger}</Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-xl">
+      <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Privacy Policy">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Privacy Policy</Atoms.DialogTitle>
         </Atoms.DialogHeader>

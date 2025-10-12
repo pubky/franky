@@ -21,7 +21,7 @@ export function DialogTerms({ trigger }: DialogTermsProps) {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>{trigger || defaultTrigger}</Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-xl">
+      <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Terms of Service">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Terms of Service</Atoms.DialogTitle>
         </Atoms.DialogHeader>
