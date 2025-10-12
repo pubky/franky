@@ -90,7 +90,7 @@ Cypress.Commands.add(
       cy.get('#invite-code-input').type(inviteCode);
     });
 
-    cy.get('#continue-btn').click();
+    cy.get('#homeserver-navigation-continue-btn').click();
 
     cy.location('pathname').should('eq', '/onboarding/profile');
 
