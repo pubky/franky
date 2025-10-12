@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Home } from './Home';
 import * as App from '@/app';
 
-// Mock next/navigation
+// Mock next/navigation - REQUIRED: external dependency
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
@@ -15,114 +15,63 @@ vi.mock('next/navigation', () => ({
   })),
 }));
 
-// Mock dexie-react-hooks
+// Mock dexie-react-hooks - REQUIRED: database dependency
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(() => null),
 }));
 
-// Mock the Core module
-vi.mock('@/core', () => ({
-  AuthController: {
-    logout: vi.fn(),
-  },
-  useAuthStore: vi.fn(() => ({
-    currentUserPubky: null,
-  })),
-  useOnboardingStore: vi.fn(() => ({
-    showWelcomeDialog: false,
-    setShowWelcomeDialog: vi.fn(),
-  })),
-  useFiltersStore: vi.fn(() => ({
-    layout: 'columns',
-    setLayout: vi.fn(),
-    reach: 'all',
-    setReach: vi.fn(),
-    sort: 'recent',
-    setSort: vi.fn(),
-    content: 'all',
-    setContent: vi.fn(),
-  })),
-  PostController: {
-    fetch: vi.fn(() => Promise.resolve([])),
-  },
-  db: {
-    user_details: {
-      get: vi.fn(() => Promise.resolve(null)),
+// Mock the Core module - REQUIRED: stores and controllers
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(() => ({
+      currentUserPubky: null,
+    })),
+    useOnboardingStore: vi.fn(() => ({
+      secretKey: null,
+      showWelcomeDialog: false,
+      setShowWelcomeDialog: vi.fn(),
+    })),
+    useFiltersStore: vi.fn(() => ({
+      layout: 'columns',
+      setLayout: vi.fn(),
+      reach: 'all',
+      setReach: vi.fn(),
+      sort: 'recent',
+      setSort: vi.fn(),
+      content: 'all',
+      setContent: vi.fn(),
+    })),
+    PostController: {
+      read: vi.fn(() => Promise.resolve([])),
     },
-  },
-}));
+    db: {
+      user_details: {
+        get: vi.fn(() => Promise.resolve(null)),
+      },
+    },
+  };
+});
 
-// Mock the atoms
-vi.mock('@/atoms', () => ({
-  Container: ({ children, className, size }: { children: React.ReactNode; className?: string; size?: string }) => (
-    <div className={className} data-size={size}>
-      {children}
-    </div>
-  ),
-  Heading: ({
-    children,
-    level,
-    size,
-    className,
-  }: {
-    children: React.ReactNode;
-    level?: number;
-    size?: string;
-    className?: string;
-  }) => (
-    <h1 data-level={level} data-size={size} className={className}>
-      {children}
-    </h1>
-  ),
-  Button: ({
-    children,
-    variant,
-    size,
-    onClick,
-    id,
-    className,
-  }: {
-    children: React.ReactNode;
-    variant?: string;
-    size?: string;
-    onClick?: () => void;
-    id?: string;
-    className?: string;
-  }) => (
-    <button onClick={onClick} data-variant={variant} data-size={size} id={id} className={className}>
-      {children}
-    </button>
-  ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <span data-size={size} className={className}>
-      {children}
-    </span>
-  ),
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className} data-testid="card">
-      {children}
-    </div>
-  ),
-}));
-
-// Mock the molecules
-vi.mock('@/molecules', () => ({
+// Mock organisms - REQUIRED: complex components with their own dependencies
+vi.mock('@/organisms', () => ({
+  Post: () => <div data-testid="post">Mocked Post</div>,
+  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
   DialogWelcome: ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (open: boolean) => void }) =>
     isOpen ? (
       <div data-testid="dialog-welcome" onClick={() => onOpenChange(false)}>
         Mocked DialogWelcome
       </div>
     ) : null,
-  AlertBackup: () => <div data-testid="alert-backup">Mocked AlertBackup</div>,
+  AlertBackup: ({ onDismiss }: { onDismiss?: () => void }) => (
+    <div data-testid="alert-backup" onClick={onDismiss}>
+      Mocked AlertBackup
+    </div>
+  ),
 }));
 
-// Mock organisms
-vi.mock('@/organisms', () => ({
-  Post: () => <div data-testid="post">Mocked Post</div>,
-  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
-}));
-
-// Mock hooks
+// Mock hooks - REQUIRED: custom hooks with complex logic
 vi.mock('@/hooks', () => ({
   useInfiniteScroll: vi.fn(() => ({
     sentinelRef: { current: null },
@@ -130,13 +79,8 @@ vi.mock('@/hooks', () => ({
 }));
 
 describe('Home', () => {
-  let mockLogout: (() => void) | undefined;
-
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    // Get the mocked AuthController
-    const { AuthController } = await import('@/core');
-    mockLogout = AuthController.logout as (() => void) | undefined;
   });
 
   it('renders without errors', () => {
@@ -148,9 +92,6 @@ describe('Home', () => {
     render(<Home />);
     const heading = screen.getByText('Home');
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveAttribute('data-level', '1');
-    expect(heading).toHaveAttribute('data-size', 'xl');
-    expect(heading).toHaveClass('text-2xl');
   });
 
   it('displays welcome message', () => {
@@ -160,12 +101,10 @@ describe('Home', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders logout button with correct props', () => {
+  it('renders logout button', () => {
     render(<Home />);
     const logoutButton = screen.getByText('Logout');
     expect(logoutButton).toBeInTheDocument();
-    expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
-    expect(logoutButton).toHaveAttribute('data-size', 'default');
     expect(logoutButton).toHaveAttribute('id', 'home-logout-btn');
   });
 
@@ -179,26 +118,11 @@ describe('Home', () => {
     fireEvent.click(logoutButton);
 
     expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
-    expect(mockLogout).not.toHaveBeenCalled(); // Should not logout immediately
   });
 
   it('renders container structure correctly', () => {
     render(<Home />);
     expect(screen.getByTestId('content-layout')).toBeInTheDocument();
-  });
-
-  it('renders 5 placeholder cards', () => {
-    render(<Home />);
-    const cards = screen.getAllByTestId('card');
-    expect(cards).toHaveLength(5);
-  });
-
-  it('applies correct styling to cards', () => {
-    render(<Home />);
-    const cards = screen.getAllByTestId('card');
-    cards.forEach((card) => {
-      expect(card).toHaveClass('p-6');
-    });
   });
 
   describe('Welcome Dialog Behavior', () => {

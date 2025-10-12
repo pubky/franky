@@ -100,7 +100,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           <span>Use encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8 max-w-full overflow-hidden">
+      <Atoms.DialogContent className="gap-6 p-8 max-w-full overflow-hidden" hiddenTitle="Restore with encrypted file">
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
           <Atoms.DialogTitle className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
             Restore with encrypted file

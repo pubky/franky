@@ -27,7 +27,10 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8">
+      <Atoms.DialogContent
+        className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+        hiddenTitle="Back up your pubky"
+      >
         <Atoms.DialogHeader>
           <Atoms.DialogTitle id="backup-dialog-title" className="leading-[1.25] pb-2">
             Back up your pubky

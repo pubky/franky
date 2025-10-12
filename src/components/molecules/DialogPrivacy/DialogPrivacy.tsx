@@ -3,17 +3,23 @@ import * as Atoms from '@/atoms';
 const EMAIL_URL = 'mailto:info@synonym.to';
 const EMAIL_PRIVACY_URL = 'mailto:privacy@synonym.to';
 
-export function DialogPrivacy() {
+interface DialogPrivacyProps {
+  trigger?: React.ReactNode;
+}
+
+export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
   const baseCSS = 'text-muted-foreground text-base font-normal';
+
+  const defaultTrigger = (
+    <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
+      Privacy Policy
+    </Atoms.Typography>
+  );
 
   return (
     <Atoms.Dialog>
-      <Atoms.DialogTrigger asChild>
-        <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
-          Privacy Policy
-        </Atoms.Typography>
-      </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-xl">
+      <Atoms.DialogTrigger asChild>{trigger || defaultTrigger}</Atoms.DialogTrigger>
+      <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Privacy Policy">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Privacy Policy</Atoms.DialogTitle>
         </Atoms.DialogHeader>

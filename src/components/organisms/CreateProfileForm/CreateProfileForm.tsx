@@ -360,7 +360,7 @@ export const CreateProfileForm = () => {
           </Atoms.Container>
         </Atoms.Card>
         <Molecules.ProfileNavigation
-          className="onboarding-nav mt-auto lg:mt-0"
+          className="onboarding-nav mt-auto lg:pt-0"
           backButtonDisabled={true}
           continueButtonDisabled={
             !!nameError ||

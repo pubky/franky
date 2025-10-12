@@ -19,8 +19,15 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
   </div>
   <div
     class="gap-6 p-8"
+    data-hidden-title="Backup as encrypted file"
     data-testid="dialog-content"
   >
+    <h2
+      class="sr-only"
+      data-testid="dialog-hidden-title"
+    >
+      Backup as encrypted file
+    </h2>
     <div
       class="space-y-1.5 pr-6"
       data-testid="dialog-header"

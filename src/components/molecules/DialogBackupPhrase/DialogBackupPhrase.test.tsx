@@ -69,8 +69,21 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-content" className={className}>
+  DialogContent: ({
+    children,
+    className,
+    hiddenTitle,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    hiddenTitle?: string;
+  }) => (
+    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
+      {hiddenTitle && (
+        <h2 className="sr-only" data-testid="dialog-hidden-title">
+          {hiddenTitle}
+        </h2>
+      )}
       {children}
     </div>
   ),

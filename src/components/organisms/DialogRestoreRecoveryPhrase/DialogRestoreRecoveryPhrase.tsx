@@ -64,7 +64,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
           Use recovery phrase
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8">
+      <Atoms.DialogContent className="gap-6 p-8" hiddenTitle="Restore with recovery phrase">
         <RestoreForm
           userWords={userWords}
           errors={errors}

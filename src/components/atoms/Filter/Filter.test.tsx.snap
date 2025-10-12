@@ -121,7 +121,7 @@ exports[`Filter Components > FilterList > renders with default props 1`] = `
 
 exports[`Filter Components > FilterRoot > applies custom className 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-4 bg-background custom-class"
+  class="mx-auto w-full flex flex-col gap-2 bg-background custom-class"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -133,7 +133,7 @@ exports[`Filter Components > FilterRoot > applies custom className 1`] = `
 
 exports[`Filter Components > FilterRoot > renders with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-4 bg-background"
+  class="mx-auto w-full flex flex-col gap-2 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >

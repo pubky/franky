@@ -44,7 +44,7 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubky
           <Image src="/images/badge-android.png" alt="Google Play" width={135} height={40} />
         )}
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-[384px]">
+      <Atoms.DialogContent className="sm:max-w-[384px]" hiddenTitle="Download Pubky Ring">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Download Pubky Ring</Atoms.DialogTitle>
           <Atoms.DialogDescription className="text-sm font-medium">

@@ -28,7 +28,10 @@ export function DialogExport({ mnemonic, children }: DialogExportProps) {
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="p-8 rounded-xl flex flex-col w-[430px]">
+      <Atoms.DialogContent
+        className="p-8 rounded-xl flex flex-col w-[430px]"
+        hiddenTitle={mnemonic ? 'Import recovery phrase' : 'Pubky Ring export'}
+      >
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
           <Atoms.DialogTitle className="text-2xl font-bold leading-8">
             {mnemonic ? 'Import recovery phrase' : 'Pubky Ring export'}

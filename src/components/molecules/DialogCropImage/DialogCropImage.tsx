@@ -73,6 +73,7 @@ export function DialogCropImage({ open, imageSrc, fileName, fileType, onClose, o
       <Atoms.DialogContent
         className="bg-popover border-border p-8 sm:p-6 max-w-xl gap-6 rounded-2xl"
         showCloseButton={false}
+        hiddenTitle="Cropped Image"
       >
         <Atoms.DialogHeader className="gap-1">
           <Atoms.DialogTitle className="text-2xl sm:text-xl">Cropped Image</Atoms.DialogTitle>

@@ -21,6 +21,18 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
+  SidebarButton: ({
+    children,
+    icon: Icon,
+  }: {
+    children: React.ReactNode;
+    icon: React.ComponentType<{ className?: string }>;
+  }) => (
+    <button data-testid="sidebar-button">
+      <Icon data-testid="sidebar-button-icon" />
+      <span data-testid="sidebar-button-text">{children}</span>
+    </button>
+  ),
   Link: ({ children, href, className }: { children: React.ReactNode; href: string; className?: string }) => (
     <a data-testid="link" href={href} className={className}>
       {children}

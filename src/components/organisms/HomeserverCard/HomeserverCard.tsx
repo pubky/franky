@@ -126,38 +126,11 @@ export function HomeserverCard() {
         </Atoms.Container>
       </Molecules.ContentCard>
       <Molecules.HomeserverFooter />
-      <Atoms.Container
-        className={Libs.cn('onboarding-nav mt-auto flex-row gap-3 lg:gap-6 justify-between py-6 lg:mt-0')}
-      >
-        <Atoms.Button
-          size="lg"
-          className="rounded-full flex-1 md:flex-0 w-full"
-          variant={'secondary'}
-          onClick={() => router.push(App.ONBOARDING_ROUTES.BACKUP)}
-        >
-          <Libs.ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Atoms.Button>
-        <Atoms.Button
-          id="continue-btn"
-          size="lg"
-          className="rounded-full flex-1 md:flex-0 w-full"
-          onClick={onHandleContinueButton}
-          disabled={!isFormValid()}
-        >
-          {isLoading ? (
-            <>
-              <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {buttonContinueText}
-            </>
-          ) : (
-            <>
-              <Libs.ArrowRight className="mr-2 h-4 w-4" />
-              {buttonContinueText}
-            </>
-          )}
-        </Atoms.Button>
-      </Atoms.Container>
+      <Molecules.HomeserverNavigation
+        continueButtonDisabled={!isFormValid()}
+        onHandleContinueButton={onHandleContinueButton}
+        continueText={buttonContinueText}
+      />
     </Atoms.Container>
   );
 }

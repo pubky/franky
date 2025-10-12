@@ -26,7 +26,7 @@ export function DialogFeedback({ name, avatar }: DialogFeedbackProps) {
           </Atoms.Typography>
         </Atoms.Container>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="sm:max-w-xl gap-0">
+      <Atoms.DialogContent className="sm:max-w-xl gap-0" hiddenTitle="Provide Feedback">
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Provide Feedback</Atoms.DialogTitle>
         </Atoms.DialogHeader>
