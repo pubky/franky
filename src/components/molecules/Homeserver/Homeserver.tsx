@@ -43,6 +43,7 @@ export const HomeserverNavigation = ({
 
   return (
     <Molecules.ButtonsNavigation
+      id="homeserver-navigation"
       onHandleBackButton={onHandleBackButton}
       onHandleContinueButton={onHandleContinueButton}
       continueButtonDisabled={continueButtonDisabled}
