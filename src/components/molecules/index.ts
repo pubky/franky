@@ -21,7 +21,6 @@ export * from './DialogFeedback';
 export * from './FAQAccordion';
 export * from './DialogPrivacy';
 export * from './DialogTerms';
-export * from './DialogWelcome';
 export * from './Header';
 export * from './Home';
 export * from './InputField';
