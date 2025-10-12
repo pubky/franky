@@ -1,30 +1,18 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SettingsLanguage } from './SettingsLanguage';
 
 describe('SettingsLanguage', () => {
-  it('renders loader initially', () => {
+  it('renders language content', () => {
     render(<SettingsLanguage />);
-    const skeletons = document.querySelectorAll('.animate-pulse');
-    expect(skeletons.length).toBeGreaterThan(0);
+    expect(screen.getByText('Language')).toBeInTheDocument();
   });
 
-  it('renders language content after loading', async () => {
+  it('renders language selector', () => {
     render(<SettingsLanguage />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Language')).toBeInTheDocument();
-    });
-  });
-
-  it('renders language selector', async () => {
-    render(<SettingsLanguage />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Display language')).toBeInTheDocument();
-      expect(screen.getByText('English')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Display language')).toBeInTheDocument();
+    expect(screen.getByText('English')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
@@ -34,13 +22,8 @@ describe('SettingsLanguage', () => {
 });
 
 describe('SettingsLanguage - Snapshots', () => {
-  it('matches snapshot after loading', async () => {
+  it('matches snapshot', () => {
     const { container } = render(<SettingsLanguage />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Language')).toBeInTheDocument();
-    });
-
     expect(container.firstChild).toMatchSnapshot();
   });
 });

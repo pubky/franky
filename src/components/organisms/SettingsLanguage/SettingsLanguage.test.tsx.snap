@@ -1,11 +1,11 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsLanguage - Snapshots > matches snapshot after loading 1`] = `
+exports[`SettingsLanguage - Snapshots > matches snapshot 1`] = `
 <div
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div
       class="justify-start items-center gap-2 inline-flex"

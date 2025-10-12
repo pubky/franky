@@ -1,10 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import * as Atoms from '@/atoms';
+import { useState } from 'react';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 const defaultPreferences = {
   follow: true,
@@ -43,18 +41,6 @@ export interface SettingsNotificationsProps {
 
 export function SettingsNotifications({ className }: SettingsNotificationsProps) {
   const [preferences, setPreferences] = useState(defaultPreferences);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate loading from storage/API
-    const loadPreferences = async () => {
-      setIsLoading(true);
-      // TODO: Load from actual storage
-      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
-      setIsLoading(false);
-    };
-    void loadPreferences();
-  }, []);
 
   const handleToggle = (type: NotificationType) => {
     setPreferences((prev) => ({
@@ -63,10 +49,6 @@ export function SettingsNotifications({ className }: SettingsNotificationsProps)
     }));
     // TODO: Save settings to storage or backend
   };
-
-  if (isLoading) {
-    return <Atoms.SettingsLoader className={className} />;
-  }
 
   return (
     <Molecules.SettingsSectionCard

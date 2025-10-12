@@ -1,43 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
+exports[`SettingsAccount - Snapshots > matches snapshot 1`] = `
 <div
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
-    <div
-      class="justify-start items-center gap-2 inline-flex"
-    >
-      <svg
-        aria-hidden="true"
-        class="lucide lucide-user"
-        fill="none"
-        height="24"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
-        />
-        <circle
-          cx="12"
-          cy="7"
-          r="4"
-        />
-      </svg>
-      <h2
-        class="text-2xl font-bold leading-8 text-foreground"
-      >
-        Account
-      </h2>
-    </div>
     <div
       class="flex-col justify-start items-start flex"
     >
@@ -68,14 +37,14 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
           />
         </svg>
         <h2
-          class="text-4xl font-bold text-foreground"
+          class="text-2xl font-bold text-foreground"
           data-testid="heading-2"
         >
           Sign out from Pubky
         </h2>
       </div>
       <p
-        class="text-base-secondary-foreground text-base font-medium leading-6 pb-6"
+        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
         data-testid="typography"
       >
         Sign out to protect your account from unauthorized access.
@@ -144,14 +113,14 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
           />
         </svg>
         <h2
-          class="text-4xl font-bold text-foreground"
+          class="text-2xl font-bold text-foreground"
           data-testid="heading-2"
         >
           Edit your profile
         </h2>
       </div>
       <p
-        class="text-base-secondary-foreground text-base font-medium leading-6 pb-6"
+        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
         data-testid="typography"
       >
         Update your bio or user picture, so friends can find you easier.
@@ -222,14 +191,14 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
           />
         </svg>
         <h2
-          class="text-4xl font-bold text-foreground"
+          class="text-2xl font-bold text-foreground"
           data-testid="heading-2"
         >
           Back up your account
         </h2>
       </div>
       <p
-        class="text-base-secondary-foreground text-base font-medium leading-6 pb-6"
+        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
         data-testid="typography"
       >
         You have already completed the backup, or closed your browser before doing so. Your recovery file and seed phrase have been deleted.
@@ -304,17 +273,17 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
           />
         </svg>
         <h2
-          class="text-4xl font-bold text-foreground"
+          class="text-2xl font-bold text-foreground"
           data-testid="heading-2"
         >
           Download your data
         </h2>
       </div>
       <p
-        class="text-base-secondary-foreground text-base font-medium leading-6 pb-6"
+        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
         data-testid="typography"
       >
-        Your data on Pubky is yours. Export your account data to use it elsewhere. Note this is not a full pubky homeserver export, this function will export data related to pubky.app.
+        Your data on Pubky is yours. Export your account data to use it elsewhere.
       </p>
       <button
         class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
@@ -395,14 +364,14 @@ exports[`SettingsAccount - Snapshots > matches snapshot after loading 1`] = `
           />
         </svg>
         <h2
-          class="text-4xl font-bold text-destructive"
+          class="text-2xl font-bold text-destructive"
           data-testid="heading-2"
         >
           Delete your account
         </h2>
       </div>
       <p
-        class="text-base-secondary-foreground text-base font-medium leading-6 pb-6"
+        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
         data-testid="typography"
       >
         Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences.

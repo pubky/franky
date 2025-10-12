@@ -10,7 +10,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot when dialog is closed 1`] 
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -147,7 +147,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with default props 1`] = `
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -284,7 +284,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with different public key 
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -421,7 +421,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with empty name 1`] = `
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -554,7 +554,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with generated avatar 1`] 
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -691,7 +691,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long bio 1`] = `
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -828,7 +828,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with long name 1`] = `
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -965,7 +965,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with minimal props 1`] = `
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -1100,7 +1100,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot with single word name 1`] 
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2
@@ -1237,7 +1237,7 @@ exports[`DialogWelcome - Snapshots > matches snapshot without bio 1`] = `
     data-testid="dialog-content"
   >
     <div
-      class="text-left pr-6 gap-0"
+      class="text-left pr-6 gap-0 mb-6"
       data-testid="dialog-header"
     >
       <h2

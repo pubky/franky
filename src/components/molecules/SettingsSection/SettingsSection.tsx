@@ -32,11 +32,14 @@ export const SettingsSection = React.memo(function SettingsSection({
     <div className="flex-col justify-start items-start flex">
       <div className="justify-start items-center gap-2 inline-flex pb-6">
         <Icon size={24} className={iconClassName} />
-        <Atoms.Heading level={2} size="xl" className={titleClassName}>
+        <Atoms.Heading level={2} size="lg" className={titleClassName}>
           {title}
         </Atoms.Heading>
       </div>
-      <Atoms.Typography size="md" className="text-base-secondary-foreground text-base font-medium leading-6 pb-6">
+      <Atoms.Typography
+        size="md"
+        className="text-base-secondary-foreground text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+      >
         {description}
       </Atoms.Typography>
       <Atoms.Button

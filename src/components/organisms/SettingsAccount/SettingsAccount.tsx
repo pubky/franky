@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import { AUTH_ROUTES } from '@/app';
-import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 export interface SettingsAccountProps {
   className?: string;
@@ -14,21 +12,9 @@ export interface SettingsAccountProps {
 
 export function SettingsAccount({ className }: SettingsAccountProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount] = useState(false);
-
-  useEffect(() => {
-    // Simulate loading account settings
-    const loadSettings = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
-      // TODO: Load from storage or backend
-      setIsLoading(false);
-    };
-    void loadSettings();
-  }, []);
 
   const handleSignOut = () => {
     router.push(AUTH_ROUTES.LOGOUT);
@@ -44,12 +30,8 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
     }, 2000);
   };
 
-  if (isLoading) {
-    return <Atoms.SettingsLoader className={className} />;
-  }
-
   return (
-    <Molecules.SettingsSectionCard icon={Libs.User} title="Account" description="" className={className}>
+    <Molecules.SettingsSectionCard className={className}>
       <Molecules.SettingsSection
         icon={Libs.LogOut}
         title="Sign out from Pubky"
@@ -94,7 +76,7 @@ export function SettingsAccount({ className }: SettingsAccountProps) {
       <Molecules.SettingsSection
         icon={Libs.Download}
         title="Download your data"
-        description="Your data on Pubky is yours. Export your account data to use it elsewhere. Note this is not a full pubky homeserver export, this function will export data related to pubky.app."
+        description="Your data on Pubky is yours. Export your account data to use it elsewhere."
         buttonText={loadingDownload ? `Downloading... ${progressDownload}%` : 'Download data'}
         buttonIcon={Libs.Download}
         buttonId="download-data-btn"

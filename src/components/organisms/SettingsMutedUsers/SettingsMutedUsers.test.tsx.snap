@@ -5,7 +5,7 @@ exports[`SettingsMutedUsers - Snapshots > matches snapshot with custom className
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-muted"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div
       class="justify-start items-center gap-2 inline-flex"
@@ -68,7 +68,7 @@ exports[`SettingsMutedUsers - Snapshots > matches snapshot with no muted users 1
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div
       class="justify-start items-center gap-2 inline-flex"

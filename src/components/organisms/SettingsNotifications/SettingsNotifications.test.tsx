@@ -1,33 +1,21 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SettingsNotifications } from './SettingsNotifications';
 
 describe('SettingsNotifications', () => {
-  it('renders loader initially', () => {
+  it('renders notifications content', () => {
     render(<SettingsNotifications />);
-    const skeletons = document.querySelectorAll('.animate-pulse');
-    expect(skeletons.length).toBeGreaterThan(0);
+    expect(screen.getByText('Platform notifications')).toBeInTheDocument();
   });
 
-  it('renders notifications content after loading', async () => {
+  it('renders all notification switches', () => {
     render(<SettingsNotifications />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Platform notifications')).toBeInTheDocument();
-    });
-  });
-
-  it('renders all notification switches', async () => {
-    render(<SettingsNotifications />);
-
-    await waitFor(() => {
-      expect(screen.getByText('New follower')).toBeInTheDocument();
-      expect(screen.getByText('New reply to your post')).toBeInTheDocument();
-      expect(screen.getByText('Someone mentioned your profile')).toBeInTheDocument();
-      expect(screen.getByText('New repost to your post')).toBeInTheDocument();
-      expect(screen.getByText('New friend')).toBeInTheDocument();
-    });
+    expect(screen.getByText('New follower')).toBeInTheDocument();
+    expect(screen.getByText('New reply to your post')).toBeInTheDocument();
+    expect(screen.getByText('Someone mentioned your profile')).toBeInTheDocument();
+    expect(screen.getByText('New repost to your post')).toBeInTheDocument();
+    expect(screen.getByText('New friend')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
@@ -37,13 +25,8 @@ describe('SettingsNotifications', () => {
 });
 
 describe('SettingsNotifications - Snapshots', () => {
-  it('matches snapshot after loading', async () => {
+  it('matches snapshot', () => {
     const { container } = render(<SettingsNotifications />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Platform notifications')).toBeInTheDocument();
-    });
-
     expect(container.firstChild).toMatchSnapshot();
   });
 });

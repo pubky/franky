@@ -28,7 +28,7 @@ export function DialogWelcome({ isOpen, onOpenChange, name, pubky, bio }: Dialog
   return (
     <Atoms.Dialog open={isOpen} onOpenChange={onOpenChange}>
       <Atoms.DialogContent className="sm:max-w-xl">
-        <Atoms.DialogHeader className="text-left pr-6 gap-0">
+        <Atoms.DialogHeader className="text-left pr-6 gap-0 mb-6">
           <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
           <Atoms.DialogDescription className="font-medium">
             Your keys, your content, your rules.

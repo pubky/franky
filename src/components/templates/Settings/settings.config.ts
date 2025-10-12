@@ -15,5 +15,3 @@ export const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
   { icon: Libs.Globe, label: 'Language', path: SETTINGS_ROUTES.LANGUAGE },
   { icon: Libs.CircleHelp, label: 'Help', path: SETTINGS_ROUTES.HELP },
 ];
-
-export const SETTINGS_LOADING_DELAY_MS = 500;

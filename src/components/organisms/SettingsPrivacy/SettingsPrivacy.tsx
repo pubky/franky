@@ -1,33 +1,29 @@
 'use client';
 
 import * as React from 'react';
-import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import { SETTINGS_LOADING_DELAY_MS } from '@/templates/Settings/settings.config';
 
 export interface SettingsPrivacyProps {
   className?: string;
 }
 
 export function SettingsPrivacy({ className }: SettingsPrivacyProps) {
-  const [showConfirmation, setShowConfirmation] = React.useState(true);
-  const [blurCensored, setBlurCensored] = React.useState(true);
-  const [isLoading, setIsLoading] = React.useState(true);
+  const [showConfirmation, setShowConfirmation] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('checkLink');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  });
 
-  React.useEffect(() => {
-    // Load settings from storage
-    const loadSettings = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, SETTINGS_LOADING_DELAY_MS));
-      const confirmSetting = localStorage.getItem('checkLink');
-      const blurSetting = localStorage.getItem('blurCensored');
-      if (confirmSetting !== null) setShowConfirmation(confirmSetting === 'true');
-      if (blurSetting !== null) setBlurCensored(blurSetting === 'true');
-      setIsLoading(false);
-    };
-    loadSettings();
-  }, []);
+  const [blurCensored, setBlurCensored] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('blurCensored');
+      return saved !== null ? saved === 'true' : true;
+    }
+    return true;
+  });
 
   const handleConfirmationToggle = (checked: boolean) => {
     setShowConfirmation(checked);
@@ -38,10 +34,6 @@ export function SettingsPrivacy({ className }: SettingsPrivacyProps) {
     setBlurCensored(checked);
     localStorage.setItem('blurCensored', String(checked));
   };
-
-  if (isLoading) {
-    return <Atoms.SettingsLoader className={className} />;
-  }
 
   return (
     <Molecules.SettingsSectionCard

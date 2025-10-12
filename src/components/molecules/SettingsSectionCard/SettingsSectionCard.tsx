@@ -19,7 +19,7 @@ export function SettingsSectionCard({ icon: Icon, title, description, children, 
         className,
       )}
     >
-      <div className="w-full flex-col justify-start items-start gap-6 flex">
+      <div className="w-full flex-col justify-start items-start gap-3 flex">
         {Icon && title && (
           <div className="justify-start items-center gap-2 inline-flex">
             <Icon size={24} />

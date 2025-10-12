@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SettingsAccount } from './SettingsAccount';
 
 // Mock next/navigation
@@ -11,30 +11,18 @@ vi.mock('next/navigation', () => ({
 }));
 
 describe('SettingsAccount', () => {
-  it('renders loader initially', () => {
+  it('renders account content', () => {
     render(<SettingsAccount />);
-    const skeletons = document.querySelectorAll('.animate-pulse');
-    expect(skeletons.length).toBeGreaterThan(0);
+    expect(screen.getByText('Sign out from Pubky')).toBeInTheDocument();
   });
 
-  it('renders account content after loading', async () => {
+  it('renders all account sections', () => {
     render(<SettingsAccount />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Sign out from Pubky')).toBeInTheDocument();
-    });
-  });
-
-  it('renders all account sections', async () => {
-    render(<SettingsAccount />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Sign out from Pubky')).toBeInTheDocument();
-      expect(screen.getByText('Edit your profile')).toBeInTheDocument();
-      expect(screen.getByText('Back up your account')).toBeInTheDocument();
-      expect(screen.getByText('Download your data')).toBeInTheDocument();
-      expect(screen.getByText('Delete your account')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Sign out from Pubky')).toBeInTheDocument();
+    expect(screen.getByText('Edit your profile')).toBeInTheDocument();
+    expect(screen.getByText('Back up your account')).toBeInTheDocument();
+    expect(screen.getByText('Download your data')).toBeInTheDocument();
+    expect(screen.getByText('Delete your account')).toBeInTheDocument();
   });
 
   it('applies custom className', () => {
@@ -44,13 +32,8 @@ describe('SettingsAccount', () => {
 });
 
 describe('SettingsAccount - Snapshots', () => {
-  it('matches snapshot after loading', async () => {
+  it('matches snapshot', () => {
     const { container } = render(<SettingsAccount />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Sign out from Pubky')).toBeInTheDocument();
-    });
-
     expect(container.firstChild).toMatchSnapshot();
   });
 });

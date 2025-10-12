@@ -5,7 +5,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with custom classNam
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-section"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div
       class="justify-start items-center gap-2 inline-flex"
@@ -50,7 +50,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`]
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div
       class="justify-start items-center gap-2 inline-flex"
@@ -100,7 +100,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div
       class="justify-start items-center gap-2 inline-flex"
@@ -145,7 +145,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot without icon and tit
   class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-6 flex"
+    class="w-full flex-col justify-start items-start gap-3 flex"
   >
     <div>
       Test content only
