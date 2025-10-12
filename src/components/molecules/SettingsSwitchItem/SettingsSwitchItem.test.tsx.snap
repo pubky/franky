@@ -1,0 +1,112 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
+<div
+  class="w-full h-8 justify-between items-center inline-flex"
+>
+  <p
+    class="text-sm text-foreground font-semibold"
+    data-testid="typography"
+  >
+    Test Setting
+  </p>
+  <button
+    aria-checked="true"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    data-state="checked"
+    id="test-switch"
+    role="switch"
+    type="button"
+    value="on"
+  >
+    <span
+      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      data-state="checked"
+    />
+  </button>
+</div>
+`;
+
+exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
+<div
+  class="w-full h-8 justify-between items-center inline-flex"
+>
+  <p
+    class="text-sm text-foreground font-semibold"
+    data-testid="typography"
+  >
+    Test Setting
+  </p>
+  <button
+    aria-checked="false"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    data-disabled=""
+    data-state="unchecked"
+    disabled=""
+    id="test-switch"
+    role="switch"
+    type="button"
+    value="on"
+  >
+    <span
+      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      data-disabled=""
+      data-state="unchecked"
+    />
+  </button>
+</div>
+`;
+
+exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="w-full h-8 justify-between items-center inline-flex custom-item"
+>
+  <p
+    class="text-sm text-foreground font-semibold"
+    data-testid="typography"
+  >
+    Test Setting
+  </p>
+  <button
+    aria-checked="false"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    data-state="unchecked"
+    id="test-switch"
+    role="switch"
+    type="button"
+    value="on"
+  >
+    <span
+      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      data-state="unchecked"
+    />
+  </button>
+</div>
+`;
+
+exports[`SettingsSwitchItem - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="w-full h-8 justify-between items-center inline-flex"
+>
+  <p
+    class="text-sm text-foreground font-semibold"
+    data-testid="typography"
+  >
+    Test Setting
+  </p>
+  <button
+    aria-checked="false"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    data-state="unchecked"
+    id="test-switch"
+    role="switch"
+    type="button"
+    value="on"
+  >
+    <span
+      class="pointer-events-none block h-[18px] w-[18px] rounded-full bg-white shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-6 data-[state=unchecked]:translate-x-0"
+      data-state="unchecked"
+    />
+  </button>
+</div>
+`;

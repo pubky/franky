@@ -1,87 +1,54 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PublicKey } from './PublicKey';
 
-// Mock atoms
-vi.mock('@/atoms', () => ({
-  Container: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <div data-testid="container" data-size={size} className={className}>
-      {children}
-    </div>
-  ),
-}));
-
 // Mock molecules
-vi.mock('@/molecules', () => ({
-  PageWrapper: ({ children }: { children: React.ReactNode }) => <div data-testid="page-wrapper">{children}</div>,
-  PublicKeyHeader: () => <div data-testid="public-key-header">Public Key Header</div>,
-  PublicKeyNavigation: () => <div data-testid="public-key-navigation">Public Key Navigation</div>,
-  PageContainer: ({ children }: { children: React.ReactNode }) => <div data-testid="page-container">{children}</div>,
-}));
+vi.mock('@/molecules', async () => {
+  const actual = await vi.importActual('@/molecules');
+  return {
+    ...actual,
+    PublicKeyHeader: () => <div data-testid="public-key-header">Public Key Header</div>,
+    PublicKeyNavigation: () => <div data-testid="public-key-navigation">Public Key Navigation</div>,
+  };
+});
 
 // Mock organisms
-vi.mock('@/organisms', () => ({
-  PublicKeyCard: () => <div data-testid="public-key-card">Public Key Card</div>,
-}));
+vi.mock('@/organisms', async () => {
+  const actual = await vi.importActual('@/organisms');
+  return {
+    ...actual,
+    PublicKeyCard: () => <div data-testid="public-key-card">Public Key Card</div>,
+  };
+});
 
 describe('PublicKey', () => {
   it('renders all main components', () => {
     render(<PublicKey />);
 
-    expect(screen.getByTestId('container')).toBeInTheDocument();
     expect(screen.getByTestId('public-key-header')).toBeInTheDocument();
     expect(screen.getByTestId('public-key-card')).toBeInTheDocument();
     expect(screen.getByTestId('public-key-navigation')).toBeInTheDocument();
   });
 
-  it('renders components in correct order within page wrapper', () => {
+  it('renders content with correct testId', () => {
     render(<PublicKey />);
 
-    const pageWrapper = screen.getByTestId('container');
-    const children = Array.from(pageWrapper.children) as HTMLElement[];
-
-    expect(children).toHaveLength(2);
-
-    const [contentWrapper, navigationWrapper] = children;
-    const contentChildren = Array.from(contentWrapper.children) as HTMLElement[];
-
-    expect(contentWrapper).toHaveAttribute('data-testid', 'public-key-content');
-    expect(contentChildren).toHaveLength(2);
-    expect(contentChildren[0]).toHaveAttribute('data-testid', 'public-key-header');
-    expect(contentChildren[1]).toHaveAttribute('data-testid', 'public-key-card');
-    expect(contentWrapper).toHaveClass('flex-1');
-    expect(contentWrapper).toHaveClass('lg:flex-none');
-    expect(navigationWrapper).toHaveClass('mt-auto');
-    expect(navigationWrapper).toHaveClass('onboarding-nav');
-    expect(navigationWrapper).toHaveClass('lg:mt-0');
-    expect(navigationWrapper.firstChild).toHaveAttribute('data-testid', 'public-key-navigation');
+    expect(screen.getByTestId('public-key-content')).toBeInTheDocument();
   });
 
-  it('wraps all content in page wrapper', () => {
-    render(<PublicKey />);
-
-    const pageWrapper = screen.getByTestId('container');
-
-    // All main components should be children of PageWrapper
-    expect(pageWrapper).toContainElement(screen.getByTestId('public-key-header'));
-    expect(pageWrapper).toContainElement(screen.getByTestId('public-key-card'));
-    expect(pageWrapper).toContainElement(screen.getByTestId('public-key-navigation'));
-  });
-
-  it('applies the onboarding layout classes to the container', () => {
-    render(<PublicKey />);
-
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('min-h-dvh');
-    expect(container).toHaveClass('gap-6');
-    expect(container).toHaveClass('pb-0');
-    expect(container).toHaveClass('lg:pb-6');
-    expect(container).toHaveClass('pt-4');
-    expect(container).toHaveClass('lg:min-h-0');
-  });
-
-  it('renders without crashing', () => {
+  it('renders navigation in correct container', () => {
     const { container } = render(<PublicKey />);
-    expect(container.firstChild).toBeInTheDocument();
+
+    const navContainer = container.querySelector('.onboarding-nav');
+    expect(navContainer).toBeInTheDocument();
+    expect(navContainer).toContainElement(screen.getByTestId('public-key-navigation'));
+  });
+});
+
+describe('PublicKey - Snapshots', () => {
+  it('matches snapshot', () => {
+    const { container } = render(<PublicKey />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

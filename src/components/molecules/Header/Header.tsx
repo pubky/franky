@@ -128,9 +128,7 @@ export function HeaderNavigationButtons({
       </Atoms.Link>
 
       <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
-        <Atoms.Avatar
-          className={Libs.cn('w-12 h-12 cursor-pointer', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}
-        >
+        <Atoms.Avatar className="w-12 h-12 cursor-pointer">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>

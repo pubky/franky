@@ -8,6 +8,7 @@ export * from './DialogConfirmBackup';
 export * from './DialogBackupEncrypted';
 export * from './DialogRestoreEncryptedFile';
 export * from './DialogRestoreRecoveryPhrase';
+export * from './DialogWelcome';
 export * from './Header';
 export * from './HomeserverCard';
 export * from './LeftSidebar';

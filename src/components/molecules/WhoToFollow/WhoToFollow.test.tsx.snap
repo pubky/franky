@@ -1,50 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WhoToFollow - Snapshots > matches snapshot for See All button 1`] = `
-<button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
->
-  <div
-    class="h-4 w-4"
-    data-testid="users-icon"
-  >
-    Users
-  </div>
-  <span
-    class="text-sm font-medium"
-  >
-    See all
-  </span>
-</button>
-`;
-
-exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 1`] = `
-<div
-  class="text-base font-bold text-foreground"
->
-  Anna Pleb
-</div>
-`;
-
-exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 2`] = `
-<div
-  class="text-base font-bold text-foreground"
->
-  Carl Smith
-</div>
-`;
-
-exports[`WhoToFollow - Snapshots > matches snapshot for individual user items 3`] = `
-<div
-  class="text-base font-bold text-foreground"
->
-  Mi Lei
-</div>
-`;
-
 exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="flex flex-col gap-4 custom-follow"
+  class="flex flex-col gap-2 custom-follow"
   data-testid="who-to-follow"
 >
   <h2
@@ -291,11 +249,13 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
     </div>
   </div>
   <button
-    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+    data-testid="sidebar-button"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-users h-4 w-4"
+      class="lucide lucide-users"
+      data-testid="sidebar-button-icon"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -322,7 +282,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
       />
     </svg>
     <span
-      class="text-sm font-medium"
+      data-testid="sidebar-button-text"
     >
       See all
     </span>
@@ -332,7 +292,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with custom className 1`] = 
 
 exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="flex flex-col gap-4"
+  class="flex flex-col gap-2"
   data-testid="who-to-follow"
 >
   <h2
@@ -579,11 +539,13 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
     </div>
   </div>
   <button
-    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+    data-testid="sidebar-button"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-users h-4 w-4"
+      class="lucide lucide-users"
+      data-testid="sidebar-button-icon"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -610,7 +572,7 @@ exports[`WhoToFollow - Snapshots > matches snapshot with default props 1`] = `
       />
     </svg>
     <span
-      class="text-sm font-medium"
+      data-testid="sidebar-button-text"
     >
       See all
     </span>

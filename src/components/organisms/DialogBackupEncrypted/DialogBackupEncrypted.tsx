@@ -35,7 +35,7 @@ export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) 
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="gap-6 p-8">
+      <Atoms.DialogContent className="gap-6 p-8" hiddenTitle="Backup as encrypted file">
         {step === 1 && <RecoveryStep1 setStep={setStep} />}
         {step === 2 && <RecoveryStep2 handleClose={handleClose} />}
       </Atoms.DialogContent>

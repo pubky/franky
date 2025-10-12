@@ -39,7 +39,7 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
             Done
           </Atoms.Button>
         </Atoms.DialogTrigger>
-        <Atoms.DialogContent className="max-w-sm sm:max-w-xl gap-0 p-6 md:p-8">
+        <Atoms.DialogContent className="max-w-sm sm:max-w-xl gap-0 p-6 md:p-8" hiddenTitle="All backed up?">
           <Atoms.DialogHeader>
             <Atoms.DialogTitle id="backup-done-dialog-title" className="leading-[1.25] pb-2">
               All backed up?

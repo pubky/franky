@@ -69,7 +69,10 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
           <span>Add link</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="p-8 rounded-xl border bg-popover max-w-xl sm:p-6 sm:rounded-lg">
+      <Atoms.DialogContent
+        className="p-8 rounded-xl border bg-popover max-w-xl sm:p-6 sm:rounded-lg"
+        hiddenTitle="Add link"
+      >
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle className="text-2xl font-bold text-foreground sm:text-xl">Add link</Atoms.DialogTitle>
         </Atoms.DialogHeader>
