@@ -1,8 +1,8 @@
 import * as Core from '@/core';
 
 export enum STREAM_PREFIX {
-  POSTS = 'stream/posts',
-  POSTS_BY_IDS = 'stream/posts/by_ids',
+  POSTS = 'v0/stream/posts',
+  POSTS_BY_IDS = 'v0/stream/posts/by_ids',
 }
 
 export enum StreamSource {

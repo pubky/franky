@@ -4,7 +4,7 @@ This project uses Zod for environment variable validation to ensure type safety 
 
 ## Configuration
 
-All environment variables are validated in `src/lib/env.ts` using Zod schemas. This provides:
+All environment variables are validated in `src/libs/env/env.ts` using Zod schemas. This provides:
 
 - **Type safety**: All env vars are properly typed
 - **Validation**: Invalid values will cause startup errors
@@ -29,10 +29,15 @@ All environment variables are validated in `src/lib/env.ts` using Zod schemas. T
 
 ### Nexus Service
 
-- `NEXT_PUBLIC_NEXUS_URL` (default: `"https://nexus.staging.pubky.app/v0"`)
-  - Base URL for the Nexus service API
+- `NEXT_PUBLIC_NEXUS_URL` (default: `"https://nexus.staging.pubky.app"`)
+  - Base URL for the Nexus service API host
   - Must be a valid URL
-  - Used for bootstrap data and other API calls
+  - API endpoints include their version in the literal path (e.g. `/v0/post/...`)
+
+- `NEXT_PUBLIC_CDN_URL` (default: `"https://nexus.staging.pubky.app/static"`)
+  - Base URL for static content delivery (e.g. avatars, images)
+  - Must be a valid URL
+  - Allows switching to a CDN or dedicated file server without changing Nexus API calls
 
 ### Sync Configuration
 
@@ -55,12 +60,13 @@ All environment variables are validated in `src/lib/env.ts` using Zod schemas. T
 Instead of using `process.env` directly, import the validated environment:
 
 ```typescript
-import { env } from '@/lib/env';
+import { Env } from '@/libs';
 
 // Type-safe and validated
-const dbVersion = env.NEXT_PUBLIC_DB_VERSION; // number
-const debugMode = env.NEXT_PUBLIC_DEBUG_MODE; // boolean
-const nexusUrl = env.NEXT_PUBLIC_NEXUS_URL; // string (validated URL)
+const dbVersion = Env.NEXT_PUBLIC_DB_VERSION; // number
+const debugMode = Env.NEXT_PUBLIC_DEBUG_MODE; // boolean
+const nexusUrl = Env.NEXT_PUBLIC_NEXUS_URL; // string (validated URL)
+const cdnUrl = Env.NEXT_PUBLIC_CDN_URL; // string (validated URL)
 ```
 
 ### Setting Variables
@@ -76,7 +82,10 @@ const nexusUrl = env.NEXT_PUBLIC_NEXUS_URL; // string (validated URL)
 NEXT_PUBLIC_DEBUG_MODE=true
 
 # Use local Nexus instance
-NEXT_PUBLIC_NEXUS_URL=http://localhost:3001/v0
+NEXT_PUBLIC_NEXUS_URL=http://localhost:3001
+
+# Serve static assets locally
+NEXT_PUBLIC_CDN_URL=http://localhost:3001/static
 
 # Shorter sync TTL for development
 NEXT_PUBLIC_SYNC_TTL=60000
@@ -104,7 +113,8 @@ In development mode with `NEXT_PUBLIC_DEBUG_MODE=true`, the environment configur
 │   NODE_ENV  │             'development'               │
 │ DB_VERSION  │                    1                    │
 │ DEBUG_MODE  │                  true                   │
-│ NEXUS_URL   │   'https://nexus.staging.pubky.app/v0' │
+│ NEXUS_URL   │     'https://nexus.staging.pubky.app' │
+│  CDN_URL    │ 'https://nexus.staging.pubky.app/static' │
 │  SYNC_TTL   │            '300000ms (300s)'            │
 └─────────────┴─────────────────────────────────────────┘
 ```

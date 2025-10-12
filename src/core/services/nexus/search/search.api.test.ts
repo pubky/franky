@@ -16,10 +16,10 @@ describe('Search API', () => {
         skip: 0,
         limit: 10,
       };
-      const baseRoute = 'search/posts/by_tag';
+      const baseRoute = 'v0/search/posts/by_tag';
 
       const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag?skip=0&limit=10`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/posts/by_tag?skip=0&limit=10`);
     });
 
     it('should build URL with all parameters', () => {
@@ -31,11 +31,11 @@ describe('Search API', () => {
         start: 1000,
         end: 2000,
       };
-      const baseRoute = 'search/posts/by_tag';
+      const baseRoute = 'v0/search/posts/by_tag';
 
       const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag?skip=5&limit=20&sorting=timeline&start=1000&end=2000`,
+        `${Config.NEXUS_URL}/v0/search/posts/by_tag?skip=5&limit=20&sorting=timeline&start=1000&end=2000`,
       );
     });
 
@@ -45,7 +45,7 @@ describe('Search API', () => {
         skip: 0,
         limit: 10,
       };
-      const baseRoute = 'search/posts/by_tag';
+      const baseRoute = 'v0/search/posts/by_tag';
 
       const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
       expect(result).not.toContain('tag=');
@@ -60,20 +60,20 @@ describe('Search API', () => {
         limit: null as unknown as number,
         sorting: StreamSorting.TIMELINE,
       };
-      const baseRoute = 'search/posts/by_tag';
+      const baseRoute = 'v0/search/posts/by_tag';
 
       const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag?sorting=timeline`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/posts/by_tag?sorting=timeline`);
     });
 
     it('should handle empty parameters object', () => {
       const params: TTagSearchParams = {
         tag: testTag,
       };
-      const baseRoute = 'search/posts/by_tag';
+      const baseRoute = 'v0/search/posts/by_tag';
 
       const result = buildUrlWithQuery(baseRoute, params, SEARCH_PATH_PARAMS);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/posts/by_tag`);
     });
   });
 
@@ -86,7 +86,7 @@ describe('Search API', () => {
       };
 
       const result = searchApi.byTag(params);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag/${testTag}?skip=0&limit=10`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/posts/by_tag/${testTag}?skip=0&limit=10`);
     });
 
     it('should generate correct URL with all parameters', () => {
@@ -101,7 +101,7 @@ describe('Search API', () => {
 
       const result = searchApi.byTag(params);
       expect(result).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/posts/by_tag/${testTag}?skip=5&limit=20&sorting=timeline&start=1000&end=2000`,
+        `${Config.NEXUS_URL}/v0/search/posts/by_tag/${testTag}?skip=5&limit=20&sorting=timeline&start=1000&end=2000`,
       );
     });
   });
@@ -115,9 +115,7 @@ describe('Search API', () => {
       };
 
       const result = searchApi.byPrefix(params);
-      expect(result).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/tags/by_prefix/${testPrefix}?skip=0&limit=10`,
-      );
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/tags/by_prefix/${testPrefix}?skip=0&limit=10`);
     });
   });
 
@@ -130,9 +128,7 @@ describe('Search API', () => {
       };
 
       const result = searchApi.byUser(params);
-      expect(result).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/users/by_id/${testPrefix}?skip=0&limit=10`,
-      );
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/users/by_id/${testPrefix}?skip=0&limit=10`);
     });
   });
 
@@ -145,9 +141,7 @@ describe('Search API', () => {
       };
 
       const result = searchApi.byUsername(params);
-      expect(result).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/search/users/by_name/${testPrefix}?skip=0&limit=10`,
-      );
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/search/users/by_name/${testPrefix}?skip=0&limit=10`);
     });
   });
 
