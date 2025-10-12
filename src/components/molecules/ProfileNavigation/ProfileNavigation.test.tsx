@@ -1,47 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import { ProfileNavigation } from './Profile';
-
-// Mock libs
-// Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
-});
-
-// Mock atoms
-vi.mock('@/atoms', () => ({
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="container" className={className}>
-      {children}
-    </div>
-  ),
-  Button: ({
-    children,
-    variant,
-    size,
-    className,
-    onClick,
-    disabled,
-  }: {
-    children: React.ReactNode;
-    variant?: string;
-    size?: string;
-    className?: string;
-    onClick?: () => void;
-    disabled?: boolean;
-  }) => (
-    <button
-      data-testid={`button-${variant || 'default'}`}
-      data-size={size}
-      className={className}
-      onClick={onClick}
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  ),
-}));
+import { ProfileNavigation } from './ProfileNavigation';
 
 describe('ProfileNavigation - Snapshots', () => {
   const defaultProps = {
