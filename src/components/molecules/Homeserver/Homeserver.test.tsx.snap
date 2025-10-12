@@ -2,7 +2,6 @@
 
 exports[`Homeserver Components - Snapshots > HomeserverFooter - Snapshots > matches snapshot for default HomeserverFooter 1`] = `
 <div
-  class="pt-6"
   data-testid="footer-links"
 >
   By creating an account on the Pubky homeserver, you agree to the 
@@ -52,7 +51,6 @@ exports[`Homeserver Components - Snapshots > HomeserverHeader - Snapshots > matc
 
 exports[`Homeserver Components - Snapshots > HomeserverNavigation - Snapshots > matches snapshot for HomeserverNavigation with custom continue text 1`] = `
 <div
-  class="py-6"
   data-testid="buttons-navigation"
 >
   <button
@@ -70,7 +68,6 @@ exports[`Homeserver Components - Snapshots > HomeserverNavigation - Snapshots > 
 
 exports[`Homeserver Components - Snapshots > HomeserverNavigation - Snapshots > matches snapshot for HomeserverNavigation with disabled continue button 1`] = `
 <div
-  class="py-6"
   data-testid="buttons-navigation"
 >
   <button
@@ -89,7 +86,6 @@ exports[`Homeserver Components - Snapshots > HomeserverNavigation - Snapshots > 
 
 exports[`Homeserver Components - Snapshots > HomeserverNavigation - Snapshots > matches snapshot for default HomeserverNavigation 1`] = `
 <div
-  class="py-6"
   data-testid="buttons-navigation"
 >
   <button

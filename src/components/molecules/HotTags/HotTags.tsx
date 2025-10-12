@@ -37,17 +37,9 @@ export function HotTags({ tags, onTagClick, onSeeAll, maxTags = 5, ...props }: H
 
       {/* See All Button */}
       {tags.length > maxTags && (
-        <Atoms.Button
-          variant="outline"
-          onClick={handleSeeAll}
-          className="w-full flex items-center justify-center gap-2"
-          data-testid="see-all-button"
-        >
-          <Libs.Tag className="w-4 h-4" />
-          <Atoms.Typography size="sm" className="font-bold">
-            Explore all
-          </Atoms.Typography>
-        </Atoms.Button>
+        <Atoms.SidebarButton icon={Libs.Tag} onClick={handleSeeAll} data-testid="see-all-button">
+          Explore all
+        </Atoms.SidebarButton>
       )}
     </Atoms.Container>
   );

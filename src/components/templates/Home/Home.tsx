@@ -7,7 +7,6 @@ import { AUTH_ROUTES } from '@/app';
 import { useLiveQuery } from 'dexie-react-hooks';
 
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
@@ -139,7 +138,7 @@ export function Home() {
   return (
     <>
       {userDetails && currentUserPubky && (
-        <Molecules.DialogWelcome
+        <Organisms.DialogWelcome
           isOpen={showWelcomeDialog}
           onOpenChange={handleWelcomeClose}
           name={userDetails.name}

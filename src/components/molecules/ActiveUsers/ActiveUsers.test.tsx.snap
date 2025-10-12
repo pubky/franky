@@ -2,11 +2,13 @@
 
 exports[`ActiveUsers - Snapshots > matches snapshot for See All button 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  data-testid="sidebar-button"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-users h-4 w-4"
+    class="lucide lucide-users"
+    data-testid="sidebar-button-icon"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -33,7 +35,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot for See All button 1`] = `
     />
   </svg>
   <span
-    class="text-sm font-medium"
+    data-testid="sidebar-button-text"
   >
     See All
   </span>
@@ -66,7 +68,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot for individual user items 3`
 
 exports[`ActiveUsers - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="flex flex-col gap-4 custom-active-users"
+  class="flex flex-col gap-2 custom-active-users"
   data-testid="active-users"
 >
   <h2
@@ -187,11 +189,13 @@ exports[`ActiveUsers - Snapshots > matches snapshot with custom className 1`] = 
     </div>
   </div>
   <button
-    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+    data-testid="sidebar-button"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-users h-4 w-4"
+      class="lucide lucide-users"
+      data-testid="sidebar-button-icon"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -218,7 +222,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot with custom className 1`] = 
       />
     </svg>
     <span
-      class="text-sm font-medium"
+      data-testid="sidebar-button-text"
     >
       See All
     </span>
@@ -228,7 +232,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot with custom className 1`] = 
 
 exports[`ActiveUsers - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="flex flex-col gap-4"
+  class="flex flex-col gap-2"
   data-testid="active-users"
 >
   <h2
@@ -349,11 +353,13 @@ exports[`ActiveUsers - Snapshots > matches snapshot with default props 1`] = `
     </div>
   </div>
   <button
-    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/10 transition-colors"
+    class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+    data-testid="sidebar-button"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-users h-4 w-4"
+      class="lucide lucide-users"
+      data-testid="sidebar-button-icon"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -380,7 +386,7 @@ exports[`ActiveUsers - Snapshots > matches snapshot with default props 1`] = `
       />
     </svg>
     <span
-      class="text-sm font-medium"
+      data-testid="sidebar-button-text"
     >
       See All
     </span>

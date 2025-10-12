@@ -9,7 +9,7 @@ function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTML
     <Atoms.Container
       data-slot="filter-root"
       data-testid="filter-root"
-      className={Libs.cn('flex flex-col gap-4 bg-background', className)}
+      className={Libs.cn('flex flex-col gap-2 bg-background', className)}
       {...props}
     >
       {children}
@@ -28,14 +28,14 @@ function FilterHeader({
   className?: string;
 } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <div data-slot="filter-header" data-testid="filter-header" className="flex flex-col gap-1" {...props}>
+    <div data-slot="filter-header" data-testid="filter-header" className="flex flex-col gap-2" {...props}>
       <Atoms.Heading level={2} size="lg" className={Libs.cn('text-muted-foreground font-light', className)}>
         {title}
       </Atoms.Heading>
       {subtitle && (
-        <Atoms.Typography size="sm" className="text-muted-foreground">
+        <p className="text-base font-medium leading-normal text-[var(--base-secondary-foreground,#D4D4DB)]">
           {subtitle}
-        </Atoms.Typography>
+        </p>
       )}
     </div>
   );
