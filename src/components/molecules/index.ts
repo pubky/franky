@@ -48,6 +48,8 @@ export * from './FilterSort';
 export * from './Scan';
 export * from './SearchInput';
 export * from './SettingsDivider';
+export * from './SettingsInfo';
+export * from './SettingsMenu';
 export * from './SettingsMobileMenu';
 export * from './SettingsSection';
 export * from './SettingsSectionCard';

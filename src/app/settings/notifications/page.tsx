@@ -1,5 +1,5 @@
-import * as Organisms from '@/organisms';
+import * as Templates from '@/templates';
 
 export default function SettingsNotificationsPage() {
-  return <Organisms.SettingsNotifications />;
+  return <Templates.Notifications />;
 }

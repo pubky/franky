@@ -1,5 +1,5 @@
-import * as Organisms from '@/organisms';
+import * as Templates from '@/templates';
 
 export default function SettingsMutedUsersPage() {
-  return <Organisms.SettingsMutedUsers />;
+  return <Templates.MutedUsers />;
 }

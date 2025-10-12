@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import * as Libs from '@/libs';
-import { SETTINGS_MENU_ITEMS } from '@/templates/Settings/settings.config';
+import { SETTINGS_MENU_ITEMS } from '@/molecules/SettingsMenu/SettingsMenu';
 
 export interface SettingsMobileMenuProps {
   className?: string;
