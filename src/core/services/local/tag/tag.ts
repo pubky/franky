@@ -16,7 +16,7 @@ export class LocalTagService {
    * @throws {AppError} When user has already tagged this post with the same label
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ postId, label, taggerId }: Core.TLocalSaveTagParams) {
+  static async createPostTag({ taggedId: postId, label, taggerId }: Core.TLocalTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.findById(postId);
 
@@ -50,6 +50,9 @@ export class LocalTagService {
     }
   }
 
+  static async createUserTag({ taggedId, label, taggerId }: Core.TLocalTagParams) {
+  }
+
   /**
    * Removes a tag from a post and updates all related counts.
    *
@@ -65,7 +68,7 @@ export class LocalTagService {
    * @throws {AppError} When post has no tags or user hasn't tagged with this label
    * @throws {DatabaseError} When database operations fail
    */
-  static async delete({ postId, label, taggerId }: Core.TLocalRemoveTagParams) {
+    static async deletePostTag({ taggedId: postId, label, taggerId }: Core.TLocalTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.findById(postId);
 
@@ -99,6 +102,9 @@ export class LocalTagService {
         { error, postId, label, taggerId },
       );
     }
+  }
+
+  static async deleteUserTag({ taggedId, label, taggerId }: Core.TLocalTagParams) {
   }
 
   /**
