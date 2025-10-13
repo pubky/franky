@@ -5,7 +5,7 @@ import * as AvatarPrimitive from '@radix-ui/react-avatar';
 import { type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/libs';
-import { avatarVariants } from '@/components';
+import { avatarVariants } from './Avatar.variants';
 
 const Avatar = React.forwardRef<
   React.ComponentRef<typeof AvatarPrimitive.Root>,

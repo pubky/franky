@@ -27,6 +27,33 @@ export function ProfileHeader({
 }: ProfileHeaderProps) {
   const router = useRouter();
   const [showStatusMenu, setShowStatusMenu] = React.useState(false);
+  const [currentStatus, setCurrentStatus] = React.useState(status);
+  const [customStatus, setCustomStatus] = React.useState('');
+  const [selectedEmoji, setSelectedEmoji] = React.useState('😊');
+
+  const statusOptions = [
+    { emoji: '👋', label: 'Available' },
+    { emoji: '🕓', label: 'Away' },
+    { emoji: '🌴', label: 'Vacationing' },
+    { emoji: '👨‍💻', label: 'Working' },
+    { emoji: '✈️', label: 'Traveling' },
+    { emoji: '🥂', label: 'Celebrating' },
+    { emoji: '🤒', label: 'Sick' },
+    { emoji: '💭', label: 'No Status' },
+  ];
+
+  const commonEmojis = ['😊', '🎉', '💪', '🔥', '❤️', '👍', '✨', '🚀'];
+
+  const cycleEmoji = () => {
+    const currentIndex = commonEmojis.indexOf(selectedEmoji);
+    const nextIndex = (currentIndex + 1) % commonEmojis.length;
+    setSelectedEmoji(commonEmojis[nextIndex]);
+  };
+
+  const getCurrentEmoji = () => {
+    const option = statusOptions.find((opt) => opt.label === currentStatus);
+    return option?.emoji || '🌴';
+  };
 
   const handleCopyPubky = async () => {
     try {
@@ -51,11 +78,11 @@ export function ProfileHeader({
   };
 
   const handleEditProfile = () => {
-    router.push(APP_ROUTES.SETTINGS);
+    router.push(APP_ROUTES.EDIT_PROFILE);
   };
 
   return (
-    <div className={Libs.cn('flex flex-col lg:flex-row gap-6 lg:gap-8 w-full', className)}>
+    <div className={Libs.cn('flex flex-col lg:flex-row gap-6 w-full', className)}>
       {/* Avatar */}
       <div className="flex justify-center lg:justify-start">
         <Atoms.Avatar className="w-16 h-16 lg:w-[136px] lg:h-[136px]">
@@ -70,11 +97,11 @@ export function ProfileHeader({
       <div className="flex-1 flex flex-col gap-3 lg:gap-6">
         {/* Name and Bio */}
         <div className="text-center lg:text-left flex flex-col gap-3">
-          <Atoms.Heading level={1} className="text-2xl lg:text-4xl font-normal">
+          <Atoms.Heading level={1} className="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white">
             {name}
           </Atoms.Heading>
           {bio && (
-            <Atoms.Typography size="md" className="text-muted-foreground font-normal">
+            <Atoms.Typography size="md" className="text-base leading-normal font-medium text-[#D4D4DB]">
               {bio}
             </Atoms.Typography>
           )}
@@ -85,12 +112,7 @@ export function ProfileHeader({
           <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
             {isOwnProfile && (
               <>
-                <Atoms.Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleEditProfile}
-                  className="h-8 px-3 py-2"
-                >
+                <Atoms.Button variant="secondary" size="sm" onClick={handleEditProfile} className="h-8 px-3 py-2">
                   <Libs.Pencil className="w-4 h-4 mr-2" />
                   Edit profile
                 </Atoms.Button>
@@ -125,50 +147,72 @@ export function ProfileHeader({
             <div className="relative">
               <Atoms.Popover open={showStatusMenu} onOpenChange={setShowStatusMenu}>
                 <Atoms.PopoverTrigger asChild>
-                  <Atoms.Button variant="secondary" size="sm" className="h-8 px-3 py-2">
-                    <span className="mr-2">🌴</span>
-                    {status}
-                    <Libs.ChevronDown className="w-4 h-4 ml-2" />
-                  </Atoms.Button>
+                  <div className="flex items-center cursor-pointer text-xl font-light leading-7 tracking-wide">
+                    <span className="mr-2">{getCurrentEmoji()}</span>
+                    <span>{currentStatus}</span>
+                    <Libs.ChevronDown
+                      className={Libs.cn(
+                        'w-4 h-4 ml-1 transition-transform duration-300',
+                        showStatusMenu ? 'rotate-180' : 'rotate-0',
+                      )}
+                    />
+                  </div>
                 </Atoms.PopoverTrigger>
-                <Atoms.PopoverContent align="start" className="w-56">
+                <Atoms.PopoverContent align="start" className="w-72 p-2">
                   <div className="flex flex-col gap-1">
-                    <Atoms.Button
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start"
-                      onClick={() => setShowStatusMenu(false)}
-                    >
-                      <span className="mr-2">🌴</span>
-                      Vacationing
-                    </Atoms.Button>
-                    <Atoms.Button
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start"
-                      onClick={() => setShowStatusMenu(false)}
-                    >
-                      <span className="mr-2">💼</span>
-                      Working
-                    </Atoms.Button>
-                    <Atoms.Button
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start"
-                      onClick={() => setShowStatusMenu(false)}
-                    >
-                      <span className="mr-2">🎮</span>
-                      Gaming
-                    </Atoms.Button>
-                    <Atoms.Button
-                      variant="ghost"
-                      size="sm"
-                      className="justify-start"
-                      onClick={() => setShowStatusMenu(false)}
-                    >
-                      <span className="mr-2">😴</span>
-                      Sleeping
-                    </Atoms.Button>
+                    {statusOptions.map((option) => (
+                      <Atoms.Button
+                        key={option.label}
+                        variant="ghost"
+                        size="sm"
+                        className="justify-start"
+                        onClick={() => {
+                          setCurrentStatus(option.label);
+                          setShowStatusMenu(false);
+                          // TODO: Save status to backend
+                        }}
+                      >
+                        <span className="mr-2">{option.emoji}</span>
+                        {option.label}
+                      </Atoms.Button>
+                    ))}
+
+                    {/* Custom Status Section */}
+                    <div className="mt-3 pt-3 border-t">
+                      <Atoms.Label className="text-[11px] text-muted-foreground mb-2">CUSTOM STATUS</Atoms.Label>
+                      <div className="flex gap-2">
+                        <Atoms.Input
+                          value={customStatus}
+                          onChange={(e) => setCustomStatus(e.target.value)}
+                          placeholder="Add status"
+                          maxLength={12}
+                          className="flex-1 h-8 text-sm"
+                        />
+                        <Atoms.Button
+                          variant="ghost"
+                          size="sm"
+                          className="px-2"
+                          onClick={cycleEmoji}
+                          title="Click to change emoji"
+                        >
+                          {selectedEmoji}
+                        </Atoms.Button>
+                        {customStatus && (
+                          <Atoms.Button
+                            variant="ghost"
+                            size="sm"
+                            className="px-2"
+                            onClick={() => {
+                              setCurrentStatus(customStatus);
+                              setShowStatusMenu(false);
+                              // TODO: Save custom status to backend
+                            }}
+                          >
+                            <Libs.Plus className="w-4 h-4" />
+                          </Atoms.Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </Atoms.PopoverContent>
               </Atoms.Popover>
@@ -179,4 +223,3 @@ export function ProfileHeader({
     </div>
   );
 }
-

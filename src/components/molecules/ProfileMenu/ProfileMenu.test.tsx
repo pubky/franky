@@ -28,9 +28,8 @@ describe('ProfileMenu', () => {
       friends: 20,
     };
     render(<ProfileMenu counts={counts} />);
-    expect(screen.getByText('10')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('Posts (10)')).toBeInTheDocument();
+    expect(screen.getByText('Replies (5)')).toBeInTheDocument();
+    expect(screen.getByText('Tagged (3)')).toBeInTheDocument();
   });
 });
-

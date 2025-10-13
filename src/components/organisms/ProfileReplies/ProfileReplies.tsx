@@ -46,4 +46,3 @@ export function ProfileReplies({ className }: ProfileRepliesProps) {
     </Atoms.Container>
   );
 }
-

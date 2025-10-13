@@ -2,77 +2,85 @@
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 
 export interface ProfileInfoProps {
-  bio?: string;
   links?: Array<{ label: string; url: string }>;
   tags?: Array<{ label: string; count: number }>;
   className?: string;
 }
 
-export function ProfileInfo({ bio, links, tags, className }: ProfileInfoProps) {
+const getLinkIcon = (url: string) => {
+  const domain = url.toLowerCase();
+  if (domain.includes('x.com') || domain.includes('twitter.com')) {
+    return Libs.XTwitter;
+  }
+  if (domain.includes('github.com')) {
+    return Libs.Github2;
+  }
+  if (domain.includes('telegram')) {
+    return Libs.Telegram;
+  }
+  if (domain.includes('youtube.com')) {
+    return Libs.Video;
+  }
+  return Libs.Link;
+};
+
+export function ProfileInfo({ links, tags, className }: ProfileInfoProps) {
   return (
-    <Atoms.Container className={Libs.cn('flex flex-col gap-6', className)}>
-      {/* Bio Section */}
-      {bio && (
-        <Atoms.Card className="p-4">
-          <Atoms.Heading level={3} size="md" className="mb-2">
-            Bio
+    <div className={Libs.cn('flex flex-col gap-6', className)}>
+      {/* Tagged as Section */}
+      {tags && tags.length > 0 && (
+        <Atoms.Container className="flex flex-col gap-2">
+          <Atoms.Heading level={2} size="lg" className="text-muted-foreground font-light">
+            Tagged as
           </Atoms.Heading>
-          <Atoms.Typography size="sm" className="text-muted-foreground break-words whitespace-pre-wrap">
-            {bio}
-          </Atoms.Typography>
-        </Atoms.Card>
+
+          {tags.map((tag, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Atoms.Tag name={tag.label} count={tag.count} className="flex-1" />
+              <button className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors">
+                <Libs.Search className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+
+          <Atoms.SidebarButton icon={Libs.Tag}>Tag yourself</Atoms.SidebarButton>
+        </Atoms.Container>
       )}
 
       {/* Links Section */}
       {links && links.length > 0 && (
-        <Atoms.Card className="p-4">
-          <Atoms.Heading level={3} size="md" className="mb-3">
+        <Atoms.Container className="flex flex-col gap-2">
+          <Atoms.Heading level={2} size="lg" className="text-muted-foreground font-light">
             Links
           </Atoms.Heading>
-          <Atoms.Container className="flex flex-col gap-2">
-            {links.map((link, index) => (
-              <Atoms.Link
-                key={index}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm hover:text-foreground transition-colors"
-              >
-                <Libs.ExternalLink size={14} />
-                <span className="truncate">{link.label || link.url}</span>
-              </Atoms.Link>
-            ))}
-          </Atoms.Container>
-        </Atoms.Card>
+
+          <div className="flex flex-col gap-2">
+            {links.map((link, index) => {
+              const IconComponent = getLinkIcon(link.url);
+              const displayLabel = link.label || new URL(link.url).hostname.replace('www.', '');
+              return (
+                <a
+                  key={index}
+                  href="https://google.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground/80 transition-colors cursor-pointer"
+                >
+                  <IconComponent size={20} className="shrink-0" />
+                  <span>{displayLabel}</span>
+                </a>
+              );
+            })}
+          </div>
+        </Atoms.Container>
       )}
 
-      {/* Tags Section */}
-      {tags && tags.length > 0 && (
-        <Atoms.Card className="p-4">
-          <Atoms.Heading level={3} size="md" className="mb-3">
-            Top Tags
-          </Atoms.Heading>
-          <Atoms.Container className="flex flex-col gap-2">
-            {tags.map((tag, index) => (
-              <Atoms.Container key={index} className="flex items-center justify-between">
-                <Atoms.Container className="flex items-center gap-2">
-                  <Libs.Tag size={14} className="text-muted-foreground" />
-                  <Atoms.Typography size="sm" className="truncate">
-                    {tag.label}
-                  </Atoms.Typography>
-                </Atoms.Container>
-                <Atoms.Badge variant="secondary" className="ml-2">
-                  {tag.count}
-                </Atoms.Badge>
-              </Atoms.Container>
-            ))}
-          </Atoms.Container>
-        </Atoms.Card>
-      )}
-    </Atoms.Container>
+      {/* Feedback Section */}
+      <Molecules.FeedbackCard />
+    </div>
   );
 }
-

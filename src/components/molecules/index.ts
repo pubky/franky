@@ -11,6 +11,7 @@ export * from './ButtonFilters';
 export * from './HotTags';
 export * from './ButtonsNavigation';
 export * from './Content';
+export * from './ContentNotFound';
 export * from './DialogAddLink';
 export * from './DialogCropImage';
 export * from './DialogAge';

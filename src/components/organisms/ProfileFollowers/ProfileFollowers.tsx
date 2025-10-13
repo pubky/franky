@@ -4,31 +4,20 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
+import Link from 'next/link';
+import { APP_ROUTES } from '@/app';
 
 export interface ProfileFollowersProps {
   className?: string;
 }
 
 export function ProfileFollowers({ className }: ProfileFollowersProps) {
+  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
+  const isOwnProfile = !!currentUserPubky;
+
   // TODO: Replace with actual data fetching
-  const mockFollowers: Molecules.UserData[] = [
-    {
-      id: '1',
-      name: 'Alice Johnson',
-      handle: '@alice',
-      avatar: undefined,
-      tagsCount: 5,
-      postsCount: 10,
-    },
-    {
-      id: '2',
-      name: 'Bob Smith',
-      handle: '@bob',
-      avatar: undefined,
-      tagsCount: 3,
-      postsCount: 8,
-    },
-  ];
+  const followers: Molecules.UserData[] = [];
   const isLoading = false;
 
   if (isLoading) {
@@ -41,17 +30,33 @@ export function ProfileFollowers({ className }: ProfileFollowersProps) {
     );
   }
 
-  if (mockFollowers.length === 0) {
+  if (followers.length === 0) {
     return (
-      <Atoms.Card className={Libs.cn('p-12 text-center', className)}>
-        <Libs.Users className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <Atoms.Heading level={3} size="lg" className="mb-2">
-          No followers yet
-        </Atoms.Heading>
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          People who follow you will appear here.
-        </Atoms.Typography>
-      </Atoms.Card>
+      <Molecules.ContentNotFound
+        icon={<Libs.Users size={48} className="text-[#c8ff00]" />}
+        title={isOwnProfile ? 'Looking for followers?' : 'No followers yet'}
+        description={
+          isOwnProfile ? (
+            <>
+              When someone follows this account, their profile will appear here.
+              <br />
+              Start posting and engaging with others to grow your followers.
+            </>
+          ) : (
+            'There are no followers to show.'
+          )
+        }
+        className={className}
+      >
+        {isOwnProfile && (
+          <Link href={APP_ROUTES.HOME}>
+            <Atoms.Button className="z-10 w-auto">
+              <Libs.Plus className="w-6 h-6 mr-2" />
+              Create a Post
+            </Atoms.Button>
+          </Link>
+        )}
+      </Molecules.ContentNotFound>
     );
   }
 
@@ -62,7 +67,7 @@ export function ProfileFollowers({ className }: ProfileFollowersProps) {
           Followers
         </Atoms.Heading>
         <Atoms.Container className="flex flex-col gap-3">
-          {mockFollowers.map((user) => (
+          {followers.map((user) => (
             <Molecules.User key={user.id} user={user} showAction={false} />
           ))}
         </Atoms.Container>
@@ -70,4 +75,3 @@ export function ProfileFollowers({ className }: ProfileFollowersProps) {
     </Atoms.Container>
   );
 }
-

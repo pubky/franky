@@ -1,0 +1,409 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfileMobileMenu > matches snapshot 1`] = `
+<div
+  class="fixed top-[73px] left-0 right-0 z-20 bg-background/80 backdrop-blur-sm border-b border-[var(--base-border,#303034)]"
+>
+  <div
+    class="flex w-full overflow-x-auto"
+  >
+    <button
+      aria-current="page"
+      aria-label="Posts"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-foreground border-b border-white"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-sticky-note shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+        />
+        <path
+          d="M15 3v4a2 2 0 0 0 2 2h4"
+        />
+      </svg>
+    </button>
+    <button
+      aria-label="Replies"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-message-square shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        />
+      </svg>
+    </button>
+    <button
+      aria-label="Tagged"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-tag shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+        />
+        <circle
+          cx="7.5"
+          cy="7.5"
+          fill="currentColor"
+          r=".5"
+        />
+      </svg>
+    </button>
+    <button
+      aria-label="Followers"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-users shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+        />
+        <path
+          d="M16 3.128a4 4 0 0 1 0 7.744"
+        />
+        <path
+          d="M22 21v-2a4 4 0 0 0-3-3.87"
+        />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
+      </svg>
+    </button>
+    <button
+      aria-label="Following"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-user-plus shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+        />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
+        <line
+          x1="19"
+          x2="19"
+          y1="8"
+          y2="14"
+        />
+        <line
+          x1="22"
+          x2="16"
+          y1="11"
+          y2="11"
+        />
+      </svg>
+    </button>
+    <button
+      aria-label="Friends"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-users-round shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 21a8 8 0 0 0-16 0"
+        />
+        <circle
+          cx="10"
+          cy="8"
+          r="5"
+        />
+        <path
+          d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"
+        />
+      </svg>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
+<div
+  class="fixed top-[73px] left-0 right-0 z-20 bg-background/80 backdrop-blur-sm border-b border-[var(--base-border,#303034)]"
+>
+  <div
+    class="flex w-full overflow-x-auto"
+  >
+    <button
+      aria-current="page"
+      aria-label="Posts"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-foreground border-b border-white"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-sticky-note shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+        />
+        <path
+          d="M15 3v4a2 2 0 0 0 2 2h4"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium"
+      >
+        10
+      </span>
+    </button>
+    <button
+      aria-label="Replies"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-message-square shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium"
+      >
+        5
+      </span>
+    </button>
+    <button
+      aria-label="Tagged"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-tag shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+        />
+        <circle
+          cx="7.5"
+          cy="7.5"
+          fill="currentColor"
+          r=".5"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium"
+      >
+        3
+      </span>
+    </button>
+    <button
+      aria-label="Followers"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-users shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+        />
+        <path
+          d="M16 3.128a4 4 0 0 1 0 7.744"
+        />
+        <path
+          d="M22 21v-2a4 4 0 0 0-3-3.87"
+        />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium"
+      >
+        100
+      </span>
+    </button>
+    <button
+      aria-label="Following"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-user-plus shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+        />
+        <circle
+          cx="9"
+          cy="7"
+          r="4"
+        />
+        <line
+          x1="19"
+          x2="19"
+          y1="8"
+          y2="14"
+        />
+        <line
+          x1="22"
+          x2="16"
+          y1="11"
+          y2="11"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium"
+      >
+        50
+      </span>
+    </button>
+    <button
+      aria-label="Friends"
+      class="flex flex-1 justify-center items-center gap-1 px-2.5 py-3.5 transition-all relative whitespace-nowrap hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-users-round shrink-0"
+        fill="none"
+        height="20"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="20"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 21a8 8 0 0 0-16 0"
+        />
+        <circle
+          cx="10"
+          cy="8"
+          r="5"
+        />
+        <path
+          d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"
+        />
+      </svg>
+      <span
+        class="text-xs font-medium"
+      >
+        20
+      </span>
+    </button>
+  </div>
+</div>
+`;

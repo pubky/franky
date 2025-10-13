@@ -32,7 +32,7 @@ export function ProfileTagged({ className }: ProfileTaggedProps) {
           No tagged posts
         </Atoms.Heading>
         <Atoms.Typography size="md" className="text-muted-foreground">
-          Posts where you've been tagged will appear here.
+          Posts where you&apos;ve been tagged will appear here.
         </Atoms.Typography>
       </Atoms.Card>
     );
@@ -46,4 +46,3 @@ export function ProfileTagged({ className }: ProfileTaggedProps) {
     </Atoms.Container>
   );
 }
-

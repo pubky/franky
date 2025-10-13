@@ -17,13 +17,15 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     avatar: undefined,
     bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
     links: [
-      { label: 'Website', url: 'https://example.com' },
-      { label: 'GitHub', url: 'https://github.com' },
+      { label: 'bitcoin.org', url: 'https://bitcoin.org' },
+      { label: 'x.com', url: 'https://x.com' },
+      { label: 'youtube.com', url: 'https://youtube.com' },
+      { label: 'telegram.chat', url: 'https://telegram.chat' },
     ],
     tags: [
-      { label: 'JavaScript', count: 10 },
-      { label: 'React', count: 8 },
-      { label: 'Web3', count: 5 },
+      { label: 'satoshi', count: 36 },
+      { label: 'bitcoin', count: 21 },
+      { label: 'og', count: 5 },
     ],
   };
 
@@ -33,4 +35,3 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     </Templates.Profile>
   );
 }
-

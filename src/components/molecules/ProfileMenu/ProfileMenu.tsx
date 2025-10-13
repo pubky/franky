@@ -81,4 +81,3 @@ export function ProfileMenu({ className, counts }: ProfileMenuProps) {
     </Atoms.FilterRoot>
   );
 }
-

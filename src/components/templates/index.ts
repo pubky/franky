@@ -1,5 +1,6 @@
 export * from './Backup';
 export * from './Bookmarks';
+export * from './EditProfile';
 export * from './Home';
 export * from './Hot';
 export * from './Install';

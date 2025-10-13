@@ -4,23 +4,20 @@ import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
+import Link from 'next/link';
+import { APP_ROUTES } from '@/app';
 
 export interface ProfileFollowingProps {
   className?: string;
 }
 
 export function ProfileFollowing({ className }: ProfileFollowingProps) {
+  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
+  const isOwnProfile = !!currentUserPubky;
+
   // TODO: Replace with actual data fetching
-  const mockFollowing: Molecules.UserData[] = [
-    {
-      id: '1',
-      name: 'Charlie Brown',
-      handle: '@charlie',
-      avatar: undefined,
-      tagsCount: 7,
-      postsCount: 15,
-    },
-  ];
+  const following: Molecules.UserData[] = [];
   const isLoading = false;
 
   if (isLoading) {
@@ -33,17 +30,41 @@ export function ProfileFollowing({ className }: ProfileFollowingProps) {
     );
   }
 
-  if (mockFollowing.length === 0) {
+  if (following.length === 0) {
     return (
-      <Atoms.Card className={Libs.cn('p-12 text-center', className)}>
-        <Libs.UserPlus className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <Atoms.Heading level={3} size="lg" className="mb-2">
-          Not following anyone yet
-        </Atoms.Heading>
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          People you follow will appear here.
-        </Atoms.Typography>
-      </Atoms.Card>
+      <Molecules.ContentNotFound
+        icon={<Libs.UserPlus size={48} className="text-[#c8ff00]" />}
+        title={isOwnProfile ? 'You are the algorithm' : 'No following yet'}
+        description={
+          isOwnProfile ? (
+            <>
+              Following accounts is a simple way to curate your timeline.
+              <br />
+              Stay updated on the topics and people that interest you.
+            </>
+          ) : (
+            'There are no following to show.'
+          )
+        }
+        className={className}
+      >
+        {isOwnProfile && (
+          <div className="flex gap-3 z-10 justify-center flex-wrap">
+            <Link href={APP_ROUTES.SEARCH}>
+              <Atoms.Button>
+                <Libs.UserPlus className="w-4 h-4 mr-2" />
+                Who to Follow
+              </Atoms.Button>
+            </Link>
+            <Link href={APP_ROUTES.HOT}>
+              <Atoms.Button>
+                <Libs.UserPlus className="w-4 h-4 mr-2" />
+                Active Users
+              </Atoms.Button>
+            </Link>
+          </div>
+        )}
+      </Molecules.ContentNotFound>
     );
   }
 
@@ -54,7 +75,7 @@ export function ProfileFollowing({ className }: ProfileFollowingProps) {
           Following
         </Atoms.Heading>
         <Atoms.Container className="flex flex-col gap-3">
-          {mockFollowing.map((user) => (
+          {following.map((user) => (
             <Molecules.User
               key={user.id}
               user={user}
@@ -68,4 +89,3 @@ export function ProfileFollowing({ className }: ProfileFollowingProps) {
     </Atoms.Container>
   );
 }
-

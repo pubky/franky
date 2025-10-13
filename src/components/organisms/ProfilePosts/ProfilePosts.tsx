@@ -46,4 +46,3 @@ export function ProfilePosts({ className }: ProfilePostsProps) {
     </Atoms.Container>
   );
 }
-

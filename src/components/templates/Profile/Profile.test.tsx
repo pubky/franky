@@ -46,4 +46,3 @@ describe('Profile', () => {
     expect(screen.getByText('Profile Content')).toBeInTheDocument();
   });
 });
-

@@ -1,4 +1,4 @@
-import * as Templates from '@/templates';
+import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
 
 export const metadata = Molecules.Metadata({
@@ -7,5 +7,5 @@ export const metadata = Molecules.Metadata({
 });
 
 export default function ProfilePage() {
-  return <Templates.Profile />;
+  return <Organisms.ProfilePosts />;
 }

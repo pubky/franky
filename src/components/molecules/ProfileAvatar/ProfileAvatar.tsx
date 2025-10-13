@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import Image from 'next/image';
 
 export interface ProfileAvatarProps {
   name: string;
@@ -31,8 +32,8 @@ export function ProfileAvatar({
     <Atoms.Card className={Libs.cn('relative overflow-hidden', className)}>
       {/* Cover Image */}
       {coverImage && (
-        <div className="h-32 w-full bg-muted">
-          <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
+        <div className="h-32 w-full bg-muted relative">
+          <Image src={coverImage} alt="Cover" fill className="object-cover" />
         </div>
       )}
       {!coverImage && <div className="h-32 w-full bg-gradient-to-r from-primary/20 to-secondary/20" />}
@@ -87,4 +88,3 @@ export function ProfileAvatar({
     </Atoms.Card>
   );
 }
-

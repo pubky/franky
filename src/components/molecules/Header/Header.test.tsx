@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import { HeaderContainer, HeaderTitle, HeaderOnboarding, HeaderSocialLinks, HeaderNavigationButtons } from './Header';
@@ -9,7 +9,7 @@ import { HeaderButtonSignIn, HeaderHome, HeaderSignIn } from '@/organisms';
 // Mock Next.js router
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(),
-  usePathname: vi.fn(),
+  usePathname: vi.fn(() => '/home'),
 }));
 
 // Mock dexie-react-hooks
@@ -156,6 +156,7 @@ describe('Header Components', () => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
     vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
     vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
+    vi.mocked(usePathname).mockReturnValue('/home');
   });
 
   afterEach(() => {
@@ -489,6 +490,7 @@ describe('Header Components - Snapshots', () => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
     vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
     vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
+    vi.mocked(usePathname).mockReturnValue('/home');
   });
 
   it('matches snapshot for HeaderContainer', () => {

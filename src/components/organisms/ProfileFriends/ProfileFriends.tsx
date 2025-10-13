@@ -53,4 +53,3 @@ export function ProfileFriends({ className }: ProfileFriendsProps) {
     </Atoms.Container>
   );
 }
-

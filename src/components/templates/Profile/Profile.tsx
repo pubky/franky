@@ -5,8 +5,6 @@ import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
-import { APP_ROUTES } from '@/app';
-import { useRouter } from 'next/navigation';
 
 export interface ProfileProps {
   children: React.ReactNode;
@@ -31,19 +29,14 @@ export interface ProfileProps {
 export function Profile({ children, profileCounts, profileInfo }: ProfileProps) {
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
-  const router = useRouter();
 
   // Get current user for checking if it's own profile
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
 
-  const handleEditProfile = () => {
-    router.push(APP_ROUTES.SETTINGS);
-  };
-
   return (
     <>
       {/* Profile Header - ABOVE everything, full width */}
-      <div className="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 pt-20 lg:pt-[144px] pb-6">
+      <div className="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 pb-6">
         <Organisms.ProfileHeader
           name={profileInfo?.name || 'User'}
           handle={profileInfo?.handle || '@user'}
@@ -84,7 +77,7 @@ export function ProfileLeftSidebar({ counts }: { counts?: ProfileProps['profileC
 export function ProfileRightSidebar({ profileInfo }: { profileInfo?: ProfileProps['profileInfo'] }) {
   return (
     <div className="self-start sticky top-[100px]">
-      <Molecules.ProfileInfo bio={profileInfo?.bio} links={profileInfo?.links} tags={profileInfo?.tags} />
+      <Molecules.ProfileInfo links={profileInfo?.links} tags={profileInfo?.tags} />
     </div>
   );
 }
@@ -94,5 +87,5 @@ export function ProfileLeftDrawer({ counts }: { counts?: ProfileProps['profileCo
 }
 
 export function ProfileRightDrawer({ profileInfo }: { profileInfo?: ProfileProps['profileInfo'] }) {
-  return <Molecules.ProfileInfo bio={profileInfo?.bio} links={profileInfo?.links} tags={profileInfo?.tags} />;
+  return <Molecules.ProfileInfo links={profileInfo?.links} tags={profileInfo?.tags} />;
 }

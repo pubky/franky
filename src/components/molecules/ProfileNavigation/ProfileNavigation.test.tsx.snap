@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with different configurations 1`] = `
+exports[`ProfileNavigation > Snapshots > matches snapshot for ProfileNavigation with different configurations 1`] = `
 <div
   class="mx-auto w-full flex flex-row gap-3 lg:gap-6 justify-between py-6 custom-nav"
   data-testid="container"
@@ -64,7 +64,7 @@ exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation 
 </div>
 `;
 
-exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with disabled states 1`] = `
+exports[`ProfileNavigation > Snapshots > matches snapshot for ProfileNavigation with disabled states 1`] = `
 <div
   class="mx-auto w-full flex flex-row gap-3 lg:gap-6 justify-between py-6"
   data-testid="container"
@@ -130,7 +130,7 @@ exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation 
 </div>
 `;
 
-exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with hidden continue button 1`] = `
+exports[`ProfileNavigation > Snapshots > matches snapshot for ProfileNavigation with hidden continue button 1`] = `
 <div
   class="mx-auto w-full flex flex-row gap-3 lg:gap-6 justify-between py-6"
   data-testid="container"
@@ -166,7 +166,7 @@ exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation 
 </div>
 `;
 
-exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation with loading state 1`] = `
+exports[`ProfileNavigation > Snapshots > matches snapshot for ProfileNavigation with loading state 1`] = `
 <div
   class="mx-auto w-full flex flex-row gap-3 lg:gap-6 justify-between py-6"
   data-testid="container"
@@ -227,7 +227,7 @@ exports[`ProfileNavigation - Snapshots > matches snapshot for ProfileNavigation 
 </div>
 `;
 
-exports[`ProfileNavigation - Snapshots > matches snapshot for default ProfileNavigation 1`] = `
+exports[`ProfileNavigation > Snapshots > matches snapshot for default ProfileNavigation 1`] = `
 <div
   class="mx-auto w-full flex flex-row gap-3 lg:gap-6 justify-between py-6"
   data-testid="container"

@@ -34,11 +34,8 @@ describe('ProfileAvatar', () => {
 
   it('shows unfollow button when already following', () => {
     const onFollowToggle = vi.fn();
-    render(
-      <ProfileAvatar {...defaultProps} isOwnProfile={false} onFollowToggle={onFollowToggle} isFollowing={true} />,
-    );
+    render(<ProfileAvatar {...defaultProps} isOwnProfile={false} onFollowToggle={onFollowToggle} isFollowing={true} />);
     const unfollowButton = screen.getByText('Unfollow');
     expect(unfollowButton).toBeInTheDocument();
   });
 });
-

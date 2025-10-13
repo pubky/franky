@@ -3,11 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { ProfileInfo } from './ProfileInfo';
 
 describe('ProfileInfo', () => {
-  it('renders bio when provided', () => {
-    const bio = 'This is my bio';
-    render(<ProfileInfo bio={bio} />);
-    expect(screen.getByText('Bio')).toBeInTheDocument();
-    expect(screen.getByText(bio)).toBeInTheDocument();
+  it('renders FeedbackCard always', () => {
+    render(<ProfileInfo />);
+    expect(screen.getByText('Feedback')).toBeInTheDocument();
   });
 
   it('renders links when provided', () => {
@@ -27,14 +25,13 @@ describe('ProfileInfo', () => {
       { label: 'React', count: 5 },
     ];
     render(<ProfileInfo tags={tags} />);
-    expect(screen.getByText('Top Tags')).toBeInTheDocument();
+    expect(screen.getByText('Tagged as')).toBeInTheDocument();
     expect(screen.getByText('JavaScript')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
   });
 
-  it('renders nothing when no props provided', () => {
-    const { container } = render(<ProfileInfo />);
-    expect(container.firstChild?.childNodes.length).toBe(0);
+  it('renders FeedbackCard when no props provided', () => {
+    render(<ProfileInfo />);
+    expect(screen.getByText('Feedback')).toBeInTheDocument();
   });
 });
-

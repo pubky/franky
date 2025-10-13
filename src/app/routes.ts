@@ -21,6 +21,7 @@ export enum APP_ROUTES {
   BOOKMARKS = '/bookmarks',
   SETTINGS = '/settings',
   PROFILE = '/profile',
+  EDIT_PROFILE = '/edit-profile',
 }
 
 export enum SETTINGS_ROUTES {
@@ -55,6 +56,7 @@ export const ALLOWED_ROUTES = [
   APP_ROUTES.BOOKMARKS,
   APP_ROUTES.SETTINGS,
   APP_ROUTES.PROFILE,
+  APP_ROUTES.EDIT_PROFILE,
   POST_ROUTES.POST,
   AUTH_ROUTES.LOGOUT,
 ];
@@ -78,6 +80,10 @@ export const AUTHENTICATED_ROUTES = {
   allowedRoutes: ALLOWED_ROUTES,
   redirectTo: APP_ROUTES.HOME,
 };
+
+// Allow settings subroutes
+export const SETTINGS_SUBROUTES = Object.values(SETTINGS_ROUTES);
+export const PROFILE_SUBROUTES = Object.values(PROFILE_ROUTES);
 
 // Backwards compatibility
 export const HOME_ROUTES = {

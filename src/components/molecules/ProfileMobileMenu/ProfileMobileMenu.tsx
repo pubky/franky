@@ -68,9 +68,7 @@ export function ProfileMobileMenu({ className, counts }: ProfileMobileMenuProps)
               aria-current={isSelected ? 'page' : undefined}
             >
               <Icon size={20} className="shrink-0" />
-              {count !== undefined && (
-                <span className="text-xs font-medium">{count}</span>
-              )}
+              {count !== undefined && <span className="text-xs font-medium">{count}</span>}
             </button>
           );
         })}
@@ -78,4 +76,3 @@ export function ProfileMobileMenu({ className, counts }: ProfileMobileMenuProps)
     </div>
   );
 }
-
