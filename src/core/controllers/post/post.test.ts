@@ -235,5 +235,115 @@ describe('PostController', () => {
         }),
       );
     });
+
+    it('should bubble up database errors from application layer', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      // Force a transaction failure in the application layer
+      const createSpy = vi
+        .spyOn(ApplicationModule.Post, 'create')
+        .mockRejectedValueOnce(new Error('Database transaction failed'));
+
+      try {
+        await expect(PostController.create(createPostParams('Will fail'))).rejects.toThrow(
+          'Database transaction failed',
+        );
+      } finally {
+        createSpy.mockRestore();
+      }
+    });
+
+    it('should not call application layer when validation fails', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+
+      try {
+        // Try to create a reply to non-existent post
+        await expect(PostController.create(createPostParams('Reply', 'nonexistent:post'))).rejects.toThrow(
+          'Failed to validate parent post',
+        );
+
+        // Verify application layer was never called
+        expect(createSpy).not.toHaveBeenCalled();
+      } finally {
+        createSpy.mockRestore();
+      }
+    });
+  });
+
+  describe('delete', () => {
+    it('should be callable', async () => {
+      const { PostController } = await import('./post');
+      expect(PostController.delete).toBeTypeOf('function');
+    });
+
+    it('should throw error when post not found', async () => {
+      const { PostController } = await import('./post');
+
+      await expect(
+        PostController.delete({
+          postId: 'nonexistent:post',
+          userId: testData.authorPubky,
+        }),
+      ).rejects.toThrow('Post not found');
+    });
+
+    it('should throw error when user is not the author', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      await expect(
+        PostController.delete({
+          postId: testData.fullPostId,
+          userId: 'different:user' as Core.Pubky,
+        }),
+      ).rejects.toThrow('User is not the author of this post');
+    });
+
+    it('should bubble up database errors from application layer during delete', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      // Force a transaction failure in the application layer
+      const deleteSpy = vi
+        .spyOn(ApplicationModule.Post, 'delete')
+        .mockRejectedValueOnce(new Error('Database transaction failed'));
+
+      try {
+        await expect(
+          PostController.delete({
+            postId: testData.fullPostId,
+            userId: testData.authorPubky,
+          }),
+        ).rejects.toThrow('Database transaction failed');
+      } finally {
+        deleteSpy.mockRestore();
+      }
+    });
+
+    it('should not call application layer when post not found', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const deleteSpy = vi.spyOn(ApplicationModule.Post, 'delete');
+
+      try {
+        await expect(
+          PostController.delete({
+            postId: 'nonexistent:post',
+            userId: testData.authorPubky,
+          }),
+        ).rejects.toThrow('Post not found');
+
+        // Verify application layer was never called
+        expect(deleteSpy).not.toHaveBeenCalled();
+      } finally {
+        deleteSpy.mockRestore();
+      }
+    });
   });
 });

@@ -652,5 +652,93 @@ describe('LocalPostService', () => {
       expect(parentCounts!.replies).toBe(0);
       expect(originalCounts!.reposts).toBe(0);
     });
+
+    it('should rollback delete operation if transaction fails', async () => {
+      const parentPostId = 'parent:post123';
+      const replyId = testData.fullPostId1;
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+
+      // Setup parent and reply
+      await setupExistingPost(parentPostId, 'Parent post');
+      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
+      await setupExistingPost(replyId, 'Reply post', parentUri);
+
+      // Spy to force failure during transaction
+      const spy = vi.spyOn(Core.PostDetailsModel, 'deleteById').mockRejectedValueOnce(new Error('Simulated failure'));
+
+      try {
+        // Act + Assert
+        await expect(
+          Core.Local.Post.delete({
+            postId: replyId,
+            userId: testData.authorPubky,
+            parentUri,
+          }),
+        ).rejects.toThrow('Failed to delete post');
+
+        // Verify rollback - all data should still exist
+        const [details, counts, relationships, tags] = await Promise.all([
+          getSavedPost(replyId),
+          getSavedCounts(replyId),
+          getSavedRelationships(replyId),
+          getSavedTags(replyId),
+        ]);
+
+        expect(details).toBeTruthy();
+        expect(counts).toBeTruthy();
+        expect(relationships).toBeTruthy();
+        expect(tags).toBeTruthy();
+
+        // Parent count should not have been decremented
+        const parentCounts = await getSavedCounts(parentPostId);
+        expect(parentCounts!.replies).toBe(1);
+      } finally {
+        spy.mockRestore();
+      }
+    });
+
+    it('should rollback delete operation if parent count update fails', async () => {
+      const parentPostId = 'parent:post123';
+      const replyId = testData.fullPostId1;
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+
+      // Setup parent and reply
+      await setupExistingPost(parentPostId, 'Parent post');
+      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
+      await setupExistingPost(replyId, 'Reply post', parentUri);
+
+      // Spy to force failure during parent count update
+      const spy = vi.spyOn(Core.PostCountsModel, 'update').mockRejectedValueOnce(new Error('Count update failed'));
+
+      try {
+        // Act + Assert
+        await expect(
+          Core.Local.Post.delete({
+            postId: replyId,
+            userId: testData.authorPubky,
+            parentUri,
+          }),
+        ).rejects.toThrow('Failed to delete post');
+
+        // Verify rollback - reply should still exist
+        const [details, counts, relationships, tags] = await Promise.all([
+          getSavedPost(replyId),
+          getSavedCounts(replyId),
+          getSavedRelationships(replyId),
+          getSavedTags(replyId),
+        ]);
+
+        expect(details).toBeTruthy();
+        expect(counts).toBeTruthy();
+        expect(relationships).toBeTruthy();
+        expect(tags).toBeTruthy();
+
+        // Parent count should remain unchanged
+        const parentCounts = await getSavedCounts(parentPostId);
+        expect(parentCounts!.replies).toBe(1);
+      } finally {
+        spy.mockRestore();
+      }
+    });
   });
 });

@@ -29,6 +29,7 @@ describe('Post Application', () => {
     postJson: { content: 'Hello, world!', kind: 'short' },
     parentUri: undefined,
     attachments: undefined,
+    repostedUri: undefined,
   });
 
   const createMockReplyData = (): TCreatePostInput => ({
@@ -40,6 +41,7 @@ describe('Post Application', () => {
     postJson: { content: 'This is a reply', kind: 'short' },
     parentUri: 'pubky://parent/pub/pubky.app/posts/parent123',
     attachments: undefined,
+    repostedUri: undefined,
   });
 
   // Helper functions
@@ -69,6 +71,7 @@ describe('Post Application', () => {
         authorId: mockData.authorId,
         parentUri: mockData.parentUri,
         attachments: mockData.attachments,
+        repostedUri: mockData.repostedUri,
       });
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
     });
@@ -89,6 +92,7 @@ describe('Post Application', () => {
         authorId: mockData.authorId,
         parentUri: mockData.parentUri,
         attachments: mockData.attachments,
+        repostedUri: mockData.repostedUri,
       });
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
     });
@@ -112,6 +116,7 @@ describe('Post Application', () => {
         authorId: mockData.authorId,
         parentUri: mockData.parentUri,
         attachments: mockData.attachments,
+        repostedUri: mockData.repostedUri,
       });
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
     });
@@ -159,6 +164,146 @@ describe('Post Application', () => {
         }),
       );
       expect(requestSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle creating a repost with repostedUri', async () => {
+      const mockData: TCreatePostInput = {
+        ...createMockPostData(),
+        kind: 'repost',
+        content: '',
+        repostedUri: 'pubky://original/pub/pubky.app/posts/original123',
+      };
+      const { saveSpy, requestSpy } = setupMocks();
+
+      saveSpy.mockResolvedValue(undefined);
+      requestSpy.mockResolvedValue(undefined);
+
+      await Post.create(mockData);
+
+      expect(saveSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        content: mockData.content,
+        kind: mockData.kind,
+        authorId: mockData.authorId,
+        parentUri: mockData.parentUri,
+        attachments: mockData.attachments,
+        repostedUri: mockData.repostedUri,
+      });
+      expect(requestSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle creating a quote repost with content', async () => {
+      const mockData: TCreatePostInput = {
+        ...createMockPostData(),
+        kind: 'repost',
+        content: 'This is amazing!',
+        repostedUri: 'pubky://original/pub/pubky.app/posts/original123',
+      };
+      const { saveSpy, requestSpy } = setupMocks();
+
+      saveSpy.mockResolvedValue(undefined);
+      requestSpy.mockResolvedValue(undefined);
+
+      await Post.create(mockData);
+
+      expect(saveSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        content: mockData.content,
+        kind: mockData.kind,
+        authorId: mockData.authorId,
+        parentUri: mockData.parentUri,
+        attachments: mockData.attachments,
+        repostedUri: mockData.repostedUri,
+      });
+      expect(requestSpy).toHaveBeenCalledOnce();
+    });
+  });
+
+  describe('delete', () => {
+    const createMockDeleteData = () => ({
+      postId: 'author:post123',
+      userId: 'author' as Core.Pubky,
+      postUrl: 'pubky://author/pub/pubky.app/posts/post123',
+      parentUri: undefined,
+      repostedUri: undefined,
+    });
+
+    it('should delete locally and sync to homeserver successfully', async () => {
+      const mockData = createMockDeleteData();
+      const deleteSpy = vi.spyOn(Core.Local.Post, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+      await Post.delete(mockData);
+
+      expect(deleteSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        userId: mockData.userId,
+        parentUri: mockData.parentUri,
+        repostedUri: mockData.repostedUri,
+      });
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.postUrl);
+    });
+
+    it('should propagate error when local delete fails and not call homeserver', async () => {
+      const mockData = createMockDeleteData();
+      const deleteSpy = vi.spyOn(Core.Local.Post, 'delete').mockRejectedValue(new Error('local-delete-fail'));
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+      await expect(Post.delete(mockData)).rejects.toThrow('local-delete-fail');
+
+      expect(deleteSpy).toHaveBeenCalledOnce();
+      expect(requestSpy).not.toHaveBeenCalled();
+    });
+
+    it('should propagate error when homeserver delete fails', async () => {
+      const mockData = createMockDeleteData();
+      const deleteSpy = vi.spyOn(Core.Local.Post, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockRejectedValue(new Error('Failed to DELETE from homeserver: 500'));
+
+      await expect(Post.delete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 500');
+
+      expect(deleteSpy).toHaveBeenCalledOnce();
+      expect(requestSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle deleting reply with parentUri', async () => {
+      const mockData = {
+        ...createMockDeleteData(),
+        parentUri: 'pubky://parent/pub/pubky.app/posts/parent123',
+      };
+      const deleteSpy = vi.spyOn(Core.Local.Post, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+      await Post.delete(mockData);
+
+      expect(deleteSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        userId: mockData.userId,
+        parentUri: mockData.parentUri,
+        repostedUri: mockData.repostedUri,
+      });
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.postUrl);
+    });
+
+    it('should handle deleting repost with repostedUri', async () => {
+      const mockData = {
+        ...createMockDeleteData(),
+        repostedUri: 'pubky://original/pub/pubky.app/posts/original123',
+      };
+      const deleteSpy = vi.spyOn(Core.Local.Post, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+      await Post.delete(mockData);
+
+      expect(deleteSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        userId: mockData.userId,
+        parentUri: mockData.parentUri,
+        repostedUri: mockData.repostedUri,
+      });
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.postUrl);
     });
   });
 });
