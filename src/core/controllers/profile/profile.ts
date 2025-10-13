@@ -5,6 +5,10 @@ import { z } from 'zod';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
+  static async read({ user_id }: Core.TUserId) {
+    return await Core.ProfileApplication.read({ user_id });
+  }
+
   // Upload avatar to homeserver and return the url
   static async uploadAvatar(avatarFile: File, pubky: Core.Pubky): Promise<string> {
     const fileContent = await avatarFile.arrayBuffer();

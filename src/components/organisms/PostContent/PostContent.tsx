@@ -1,17 +1,28 @@
 'use client';
 
 import { useLiveQuery } from 'dexie-react-hooks';
-import * as Atoms from '@/atoms';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
-interface PostContentProps {
+export interface PostContentOrganismProps {
   postId: string;
+  className?: string;
 }
 
-export function PostContent({ postId }: PostContentProps) {
-  const postDetails = useLiveQuery(() => Core.db.post_details.get(postId).then((details) => details), [postId]);
+export function PostContent({ postId, className }: PostContentOrganismProps) {
+  // Fetch post details for content
+  const postDetails = useLiveQuery(async () => {
+    return await Core.PostDetailsModel.findById(postId);
+  }, [postId]);
 
-  if (!postDetails) return null;
+  if (!postDetails) {
+    // TODO: Add skeleton loading component for PostContent
+    return <div className="text-muted-foreground">Loading content...</div>;
+  }
 
-  return <Atoms.Typography className="whitespace-pre-line">{postDetails.content}</Atoms.Typography>;
+  return (
+    <div className={Libs.cn('flex flex-col gap-3 rounded-2xl', className)}>
+      <p className="text-base leading-6 font-medium text-secondary-foreground">{postDetails.content}</p>
+    </div>
+  );
 }

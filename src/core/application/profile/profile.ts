@@ -4,6 +4,10 @@ import { TUploadAvatarInput, TCreateProfileInput } from './profile.types';
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
+  static async read({ user_id }: Core.TUserId) {
+    return await Core.UserDetailsModel.findById(user_id);
+  }
+
   static async uploadAvatar({ blobResult, fileResult }: TUploadAvatarInput) {
     // 1. Upload Blob
     await Core.HomeserverService.putBlob(blobResult.meta.url, blobResult.blob.data);

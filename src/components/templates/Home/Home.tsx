@@ -19,10 +19,10 @@ import {
   HomeRightDrawerMobile,
 } from './Home.sidebars';
 
-const POSTS_PER_PAGE = 20;
+const POSTS_PER_PAGE = 2;
 
 export function Home() {
-  const [posts, setPosts] = useState<Core.NexusPost[]>([]);
+  const [postIds, setPostIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export function Home() {
   // Fetch current user details from database
   const userDetails = useLiveQuery(async () => {
     if (!currentUserPubky) return null;
-    const details = await Core.db.user_details.get(currentUserPubky);
+    const details = await Core.ProfileController.read({ user_id: currentUserPubky });
     return details || null;
   }, [currentUserPubky]);
 
@@ -68,16 +68,22 @@ export function Home() {
         setLoading(true);
         setError(null);
 
-        const fetchedPosts = await Core.PostController.read({ limit: POSTS_PER_PAGE, offset: 0 });
-        setPosts(fetchedPosts);
+        // Get post IDs from the stream
+        const ids = await Core.StreamController.read({
+          streamId: Core.PostStreamTypes.TIMELINE_ALL,
+          limit: POSTS_PER_PAGE,
+          offset: 0,
+        });
+
+        setPostIds(ids);
         setCurrentPage(1);
 
         // Check if we have more posts available
-        if (fetchedPosts.length < POSTS_PER_PAGE) {
+        if (ids.length < POSTS_PER_PAGE) {
           setHasMore(false);
         }
 
-        console.log('Fetched initial posts:', fetchedPosts);
+        console.log('Fetched initial post IDs from stream:', ids);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch posts');
         console.error('Error fetching posts:', err);
@@ -98,21 +104,27 @@ export function Home() {
       setError(null);
 
       const offset = currentPage * POSTS_PER_PAGE;
-      const newPosts = await Core.PostController.read({ limit: POSTS_PER_PAGE, offset });
 
-      if (newPosts.length === 0) {
+      // Get post IDs from the stream
+      const ids = await Core.StreamController.read({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        limit: POSTS_PER_PAGE,
+        offset,
+      });
+
+      if (ids.length === 0) {
         setHasMore(false);
       } else {
-        setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+        setPostIds((prevIds) => [...prevIds, ...ids]);
         setCurrentPage((prev) => prev + 1);
 
         // Check if this was the last page
-        if (newPosts.length < POSTS_PER_PAGE) {
+        if (ids.length < POSTS_PER_PAGE) {
           setHasMore(false);
         }
-      }
 
-      console.log('Loaded more posts:', newPosts);
+        console.log('Loaded more post IDs from stream:', ids);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load more posts');
       console.error('Error loading more posts:', err);
@@ -130,9 +142,9 @@ export function Home() {
     debounceMs: 200,
   });
 
-  const handlePostClick = (post: Core.NexusPost) => {
-    const [userId, postId] = post.details.id.split(':');
-    router.push(`/post/${userId}/${postId}`);
+  const handlePostClick = (postId: string) => {
+    const [userId, pId] = postId.split(':');
+    router.push(`/post/${userId}/${pId}`);
   };
 
   return (
@@ -196,81 +208,69 @@ export function Home() {
           </Atoms.Button>
         </div>
 
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          Welcome to your home. This is where you&apos;ll see posts from people you follow.
-        </Atoms.Typography>
+        {/* Posts */}
+        {loading ? (
+          <Atoms.Container className="flex justify-center items-center py-8">
+            <Atoms.Typography size="md" className="text-muted-foreground">
+              Loading posts...
+            </Atoms.Typography>
+          </Atoms.Container>
+        ) : error && postIds.length === 0 ? (
+          <Atoms.Container className="flex justify-center items-center py-8">
+            <Atoms.Typography size="md" className="text-destructive">
+              Error: {error}
+            </Atoms.Typography>
+          </Atoms.Container>
+        ) : postIds.length === 0 ? (
+          <Atoms.Container className="flex justify-center items-center py-8">
+            <Atoms.Typography size="md" className="text-muted-foreground">
+              No posts found
+            </Atoms.Typography>
+          </Atoms.Container>
+        ) : (
+          <Atoms.Container className="w-full mx-auto">
+            {/* Posts List */}
+            <div className="w-full space-y-4 mt-4">
+              {postIds.map((postId, index) => (
+                <Organisms.PostMain
+                  key={`${postId}-${index}`}
+                  postId={postId}
+                  onClick={() => handlePostClick(postId)}
+                />
+              ))}
 
-        {/* Placeholder content */}
-        <div className="flex flex-col gap-4 mt-4">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <Atoms.Card key={i} className="p-6">
-              {/* Posts */}
-              {loading ? (
+              {/* Loading More Indicator */}
+              {loadingMore && (
                 <Atoms.Container className="flex justify-center items-center py-8">
                   <Atoms.Typography size="md" className="text-muted-foreground">
-                    Loading posts...
+                    Loading more posts...
                   </Atoms.Typography>
-                </Atoms.Container>
-              ) : error && posts.length === 0 ? (
-                <Atoms.Container className="flex justify-center items-center py-8">
-                  <Atoms.Typography size="md" className="text-destructive">
-                    Error: {error}
-                  </Atoms.Typography>
-                </Atoms.Container>
-              ) : posts.length === 0 ? (
-                <Atoms.Container className="flex justify-center items-center py-8">
-                  <Atoms.Typography size="md" className="text-muted-foreground">
-                    No posts found
-                  </Atoms.Typography>
-                </Atoms.Container>
-              ) : (
-                <Atoms.Container className="w-full max-w-2xl mx-auto">
-                  {/* Posts List */}
-                  <div className="w-full space-y-4">
-                    {posts.map((post) => (
-                      <Organisms.Post
-                        key={post.details.id}
-                        postId={post.details.id}
-                        clickable={true}
-                        onClick={() => handlePostClick(post)}
-                      />
-                    ))}
-
-                    {/* Loading More Indicator */}
-                    {loadingMore && (
-                      <Atoms.Container className="flex justify-center items-center py-8">
-                        <Atoms.Typography size="md" className="text-muted-foreground">
-                          Loading more posts...
-                        </Atoms.Typography>
-                      </Atoms.Container>
-                    )}
-
-                    {/* Error on loading more */}
-                    {error && posts.length > 0 && (
-                      <Atoms.Container className="flex justify-center items-center py-4">
-                        <Atoms.Typography size="sm" className="text-destructive">
-                          Error loading more posts: {error}
-                        </Atoms.Typography>
-                      </Atoms.Container>
-                    )}
-
-                    {/* End of posts message */}
-                    {!hasMore && !loadingMore && posts.length > 0 && (
-                      <Atoms.Container className="flex justify-center items-center py-8">
-                        <Atoms.Typography size="md" className="text-muted-foreground">
-                          You&apos;ve reached the end! 🎉
-                        </Atoms.Typography>
-                      </Atoms.Container>
-                    )}
-
-                    {/* Infinite scroll sentinel */}
-                    <div ref={sentinelRef} style={{ height: '20px' }} />
-                  </div>
                 </Atoms.Container>
               )}
-            </Atoms.Card>
-          ))}
-        </div>
+
+              {/* Error on loading more */}
+              {error && postIds.length > 0 && (
+                <Atoms.Container className="flex justify-center items-center py-4">
+                  <Atoms.Typography size="sm" className="text-destructive">
+                    Error loading more posts: {error}
+                  </Atoms.Typography>
+                </Atoms.Container>
+              )}
+
+              {/* End of posts message */}
+              {!hasMore && !loadingMore && postIds.length > 0 && (
+                <Atoms.Container className="flex justify-center items-center py-8">
+                  <Atoms.Typography size="md" className="text-muted-foreground">
+                    You&apos;ve reached the end! 🎉
+                  </Atoms.Typography>
+                </Atoms.Container>
+              )}
+
+              {/* Infinite scroll sentinel */}
+              <div ref={sentinelRef} style={{ height: '20px' }} />
+            </div>
+          </Atoms.Container>
+        )}
       </Organisms.ContentLayout>
     </>
   );

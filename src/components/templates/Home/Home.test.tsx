@@ -94,13 +94,6 @@ describe('Home', () => {
     expect(heading).toBeInTheDocument();
   });
 
-  it('displays welcome message', () => {
-    render(<Home />);
-    expect(
-      screen.getByText("Welcome to your home. This is where you'll see posts from people you follow."),
-    ).toBeInTheDocument();
-  });
-
   it('renders logout button', () => {
     render(<Home />);
     const logoutButton = screen.getByText('Logout');
