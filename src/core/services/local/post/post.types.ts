@@ -14,10 +14,3 @@ export type TLocalSavePostParams = {
   attachments?: string[];
   repostedUri?: string;
 };
-
-export type TLocalDeleteParams = {
-  postId: string;
-  userId: Core.Pubky;
-  parentUri?: string;
-  repostedUri?: string;
-};

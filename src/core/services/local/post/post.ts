@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import type { TLocalFetchPostsParams, TLocalSavePostParams, TLocalDeleteParams } from './post.types';
+import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
@@ -149,6 +149,8 @@ export class LocalPostService {
             Core.PostRelationshipsModel.create(postRelationships),
             Core.PostCountsModel.create(postCounts),
             Core.PostTagsModel.create({ id: postId, tags: [] }),
+            // TODO: what about userCounts
+            // TODO: what about the streams. From now we can PAUSE
           ]);
 
           // Update parent reply count if this is a reply
@@ -202,7 +204,13 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async delete({ postId, userId, parentUri, repostedUri }: TLocalDeleteParams) {
+  static async delete({ postId, deleterId }: Core.TDeletePostParams) {
+    // STOPPED HERE, check the relationships. In the controller not need it
+    const postRelationships = await Core.PostRelationshipsModel.findById(postId);
+
+    const parentUri = postRelationships?.replied ?? undefined;
+    const repostedUri = postRelationships?.reposted ?? undefined;
+
     try {
       await Core.db.transaction(
         'rw',
@@ -211,6 +219,7 @@ export class LocalPostService {
           Core.PostRelationshipsModel.table,
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
+          // TODO: MIssing user counts depending the post type
         ],
         async () => {
           await Promise.all([
@@ -218,6 +227,8 @@ export class LocalPostService {
             Core.PostRelationshipsModel.deleteById(postId),
             Core.PostCountsModel.deleteById(postId),
             Core.PostTagsModel.deleteById(postId),
+            // TODO: what about userCounts
+            // TODO: what about the streams. From now we can PAUSE
           ]);
 
           // Decrement parent reply count if this is a reply
@@ -248,13 +259,13 @@ export class LocalPostService {
         },
       );
 
-      Logger.debug('Post deleted successfully', { postId, userId });
+      Logger.debug('Post deleted successfully', { postId, deleterId });
     } catch (error) {
-      Logger.error('Failed to delete post', { postId, userId });
+      Logger.error('Failed to delete post', { postId, deleterId });
       throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
         error,
         postId,
-        userId,
+        deleterId,
       });
     }
   }

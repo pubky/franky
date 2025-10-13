@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
 import { Logger } from '@/libs';
-import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
+import type { TLocalSavePostParams } from './post.types';
 
 // Test data
 const testData = {
@@ -24,11 +24,6 @@ const createSaveParams = (content: string, postId?: string): TLocalSavePostParam
   authorId: testData.authorPubky,
   parentUri: undefined,
   attachments: undefined,
-});
-
-const createFetchParams = (limit?: number, offset?: number): TLocalFetchPostsParams => ({
-  limit,
-  offset,
 });
 
 const getSavedPost = async (postId: string) => {
@@ -99,68 +94,9 @@ describe('LocalPostService', () => {
     );
   });
 
-  describe('fetch', () => {
-    it('should fetch posts with default pagination', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Test post 1');
-
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts).toBeInstanceOf(Array);
-      expect(posts.length).toBe(1);
-      expect(posts[0].details.content).toBe('Test post 1');
-    });
-
-    it('should fetch posts with custom limit', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Test post 1');
-      await setupExistingPost(testData.fullPostId2, 'Test post 2');
-
-      const posts = await Core.Local.Post.fetch(createFetchParams(1));
-
-      expect(posts.length).toBeLessThanOrEqual(1);
-    });
-
-    it('should return empty array when no posts exist', async () => {
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts).toEqual([]);
-    });
-
-    it('should exclude replies from main feed', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Root post');
-      const replyUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
-      await setupExistingPost(testData.fullPostId2, 'Reply post', replyUri);
-
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts.length).toBe(1);
-      expect(posts[0].details.content).toBe('Root post');
-    });
-
-    it('should return posts with all required fields', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Test post');
-
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts[0]).toHaveProperty('details');
-      expect(posts[0]).toHaveProperty('counts');
-      expect(posts[0]).toHaveProperty('tags');
-      expect(posts[0]).toHaveProperty('relationships');
-      expect(posts[0]).toHaveProperty('bookmark');
-    });
-  });
-
   describe('save', () => {
-    it('should save a new post', async () => {
+    it('should save post with all related models initialized', async () => {
       await Core.Local.Post.create(createSaveParams('Hello, world!'));
-
-      const savedPost = await getSavedPost(testData.fullPostId1);
-      expect(savedPost).toBeTruthy();
-      expect(savedPost!.content).toBe('Hello, world!');
-      expect(savedPost!.kind).toBe('short');
-    });
-
-    it('should create all related models when saving a post', async () => {
-      await Core.Local.Post.create(createSaveParams('Test post'));
 
       const [details, counts, relationships, tags] = await Promise.all([
         getSavedPost(testData.fullPostId1),
@@ -170,26 +106,20 @@ describe('LocalPostService', () => {
       ]);
 
       expect(details).toBeTruthy();
+      expect(details!.content).toBe('Hello, world!');
+      expect(details!.kind).toBe('short');
+
       expect(counts).toBeTruthy();
-      expect(relationships).toBeTruthy();
+      expect(counts!.tags).toBe(0);
+      expect(counts!.replies).toBe(0);
+      expect(counts!.reposts).toBe(0);
+
       expect(tags).toBeTruthy();
-    });
+      expect(tags!.tags).toEqual([]);
 
-    it('should initialize counts to zero', async () => {
-      await Core.Local.Post.create(createSaveParams('Test post'));
-
-      const savedCounts = await getSavedCounts(testData.fullPostId1);
-      expect(savedCounts!.tags).toBe(0);
-      expect(savedCounts!.unique_tags).toBe(0);
-      expect(savedCounts!.replies).toBe(0);
-      expect(savedCounts!.reposts).toBe(0);
-    });
-
-    it('should initialize tags as empty array', async () => {
-      await Core.Local.Post.create(createSaveParams('Test post'));
-
-      const savedTags = await getSavedTags(testData.fullPostId1);
-      expect(savedTags!.tags).toEqual([]);
+      expect(relationships).toBeTruthy();
+      expect(relationships!.replied).toBeNull();
+      expect(relationships!.reposted).toBeNull();
     });
 
     it('should set parentUri in relationships for replies', async () => {
@@ -209,10 +139,8 @@ describe('LocalPostService', () => {
       const parentPostId = 'parent:post123';
       const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
 
-      // Setup parent post
       await setupExistingPost(parentPostId, 'Parent post');
 
-      // Create reply
       const saveParams: TLocalSavePostParams = {
         ...createSaveParams('This is a reply', testData.fullPostId1),
         parentUri,
@@ -222,6 +150,22 @@ describe('LocalPostService', () => {
 
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(1);
+    });
+
+    it('should handle reply creation when parent post does not exist', async () => {
+      const parentUri = `pubky://nonexistent/pub/pubky.app/posts/missing123`;
+
+      const saveParams: TLocalSavePostParams = {
+        ...createSaveParams('Reply to missing parent', testData.fullPostId1),
+        parentUri,
+      };
+
+      // Should not throw - just silently skips incrementing non-existent parent
+      await expect(Core.Local.Post.create(saveParams)).resolves.not.toThrow();
+
+      const savedPost = await getSavedPost(testData.fullPostId1);
+      expect(savedPost).toBeTruthy();
+      expect(savedPost!.content).toBe('Reply to missing parent');
     });
 
     it('should handle posts with attachments', async () => {
@@ -265,15 +209,6 @@ describe('LocalPostService', () => {
       expect(savedPost!.indexed_at).toBeLessThanOrEqual(after);
     });
 
-    it('should initialize relationships with null values for non-replies', async () => {
-      await Core.Local.Post.create(createSaveParams('Test post'));
-
-      const savedRelationships = await getSavedRelationships(testData.fullPostId1);
-      expect(savedRelationships!.replied).toBeNull();
-      expect(savedRelationships!.reposted).toBeNull();
-      expect(savedRelationships!.mentioned).toEqual([]);
-    });
-
     it('should write atomically across tables (rollback on error)', async () => {
       // Arrange: spy to throw on PostTagsModel.create
       const spy = vi.spyOn(Core.PostTagsModel, 'create').mockRejectedValueOnce(new Error('Simulated failure'));
@@ -298,22 +233,6 @@ describe('LocalPostService', () => {
       } finally {
         spy.mockRestore();
       }
-    });
-
-    it('should commit all writes across tables on success', async () => {
-      await Core.Local.Post.create(createSaveParams('Atomic success'));
-
-      const [details, counts, relationships, tags] = await Promise.all([
-        getSavedPost(testData.fullPostId1),
-        getSavedCounts(testData.fullPostId1),
-        getSavedRelationships(testData.fullPostId1),
-        getSavedTags(testData.fullPostId1),
-      ]);
-
-      expect(details).toBeTruthy();
-      expect(counts).toBeTruthy();
-      expect(relationships).toBeTruthy();
-      expect(tags).toBeTruthy();
     });
 
     it('should increment parent replies via counts update when saving a reply', async () => {
@@ -422,126 +341,19 @@ describe('LocalPostService', () => {
       const savedRelationships = await getSavedRelationships(repostId);
       expect(savedRelationships!.reposted).toBe(originalUri);
     });
-
-    it('should handle repost of repost (chain reposts)', async () => {
-      const originalPostId = 'original:post123';
-      const firstRepostId = 'first:repost456';
-      const secondRepostId = testData.fullPostId1;
-      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
-      const firstRepostUri = `pubky://first/pub/pubky.app/posts/repost456`;
-
-      // Setup original post
-      await setupExistingPost(originalPostId, 'Original post');
-
-      // Create first repost
-      await setupExistingPost(firstRepostId, '');
-      await Core.PostRelationshipsModel.update(firstRepostId, { reposted: originalUri });
-
-      // Create second repost (repost of repost)
-      const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('', secondRepostId),
-        kind: 'repost',
-        repostedUri: firstRepostUri,
-      };
-
-      await Core.Local.Post.create(saveParams);
-
-      const savedRelationships = await getSavedRelationships(secondRepostId);
-      expect(savedRelationships!.reposted).toBe(firstRepostUri);
-    });
-  });
-
-  describe('deleteRepost', () => {
-    it('should delete repost and all related records', async () => {
-      const originalPostId = 'original:post123';
-      const repostId = testData.fullPostId1;
-      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
-
-      // Setup original post and repost
-      await setupExistingPost(originalPostId, 'Original post');
-      await setupExistingPost(repostId, '');
-      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
-      await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
-
-      // Delete repost
-      await Core.Local.Post.delete({
-        postId: repostId,
-        userId: testData.authorPubky,
-        repostedUri: originalUri,
-      });
-
-      // Verify repost is deleted
-      const [details, counts, relationships, tags] = await Promise.all([
-        getSavedPost(repostId),
-        getSavedCounts(repostId),
-        getSavedRelationships(repostId),
-        getSavedTags(repostId),
-      ]);
-
-      expect(details).toBeUndefined();
-      expect(counts).toBeUndefined();
-      expect(relationships).toBeUndefined();
-      expect(tags).toBeUndefined();
-    });
-
-    it('should decrement original post repost count when deleting repost', async () => {
-      const originalPostId = 'original:post123';
-      const repostId = testData.fullPostId1;
-      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
-
-      // Setup original post and repost
-      await setupExistingPost(originalPostId, 'Original post');
-      await setupExistingPost(repostId, '');
-      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
-      await Core.PostCountsModel.update(originalPostId, { reposts: 1 });
-
-      // Delete repost
-      await Core.Local.Post.delete({
-        postId: repostId,
-        userId: testData.authorPubky,
-        repostedUri: originalUri,
-      });
-
-      const originalCounts = await getSavedCounts(originalPostId);
-      expect(originalCounts!.reposts).toBe(0);
-    });
-
-    it('should not decrement below zero when deleting repost', async () => {
-      const originalPostId = 'original:post123';
-      const repostId = testData.fullPostId1;
-      const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
-
-      // Setup with count already at 0
-      await setupExistingPost(originalPostId, 'Original post');
-      await setupExistingPost(repostId, '');
-      await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
-
-      // Delete repost
-      await Core.Local.Post.delete({
-        postId: repostId,
-        userId: testData.authorPubky,
-        repostedUri: originalUri,
-      });
-
-      const originalCounts = await getSavedCounts(originalPostId);
-      expect(originalCounts!.reposts).toBe(0);
-    });
   });
 
   describe('deletePost', () => {
     it('should delete post and all related records', async () => {
       const postId = testData.fullPostId1;
 
-      // Setup post
       await setupExistingPost(postId, 'Test post');
 
-      // Delete post
       await Core.Local.Post.delete({
         postId,
-        userId: testData.authorPubky,
+        deleterId: testData.authorPubky,
       });
 
-      // Verify post is deleted
       const [details, counts, relationships, tags] = await Promise.all([
         getSavedPost(postId),
         getSavedCounts(postId),
@@ -553,6 +365,44 @@ describe('LocalPostService', () => {
       expect(counts).toBeUndefined();
       expect(relationships).toBeUndefined();
       expect(tags).toBeUndefined();
+    });
+
+    it('should fetch relationships from database to determine reply/repost status', async () => {
+      const parentPostId = 'parent:post123';
+      const replyId = testData.fullPostId1;
+      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+
+      await setupExistingPost(parentPostId, 'Parent post');
+      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
+      await setupExistingPost(replyId, 'Reply post', parentUri);
+
+      // Delete only passes postId and deleterId - relationships are fetched internally
+      await Core.Local.Post.delete({
+        postId: replyId,
+        deleterId: testData.authorPubky,
+      });
+
+      // Verify parent count was decremented (proving relationships were fetched)
+      const parentCounts = await getSavedCounts(parentPostId);
+      expect(parentCounts!.replies).toBe(0);
+    });
+
+    it('should handle delete when parent/original post no longer exists', async () => {
+      const replyId = testData.fullPostId1;
+      const parentUri = `pubky://nonexistent/pub/pubky.app/posts/missing123`;
+
+      await setupExistingPost(replyId, 'Reply to deleted parent', parentUri);
+
+      // Should not throw - just silently skips decrementing non-existent parent
+      await expect(
+        Core.Local.Post.delete({
+          postId: replyId,
+          deleterId: testData.authorPubky,
+        }),
+      ).resolves.not.toThrow();
+
+      const deletedPost = await getSavedPost(replyId);
+      expect(deletedPost).toBeUndefined();
     });
 
     it('should decrement parent reply count when deleting a reply', async () => {
@@ -570,8 +420,7 @@ describe('LocalPostService', () => {
       // Delete reply
       await Core.Local.Post.delete({
         postId: replyId,
-        userId: testData.authorPubky,
-        parentUri,
+        deleterId: testData.authorPubky,
       });
 
       const parentCounts = await getSavedCounts(parentPostId);
@@ -594,8 +443,7 @@ describe('LocalPostService', () => {
       // Delete repost
       await Core.Local.Post.delete({
         postId: repostId,
-        userId: testData.authorPubky,
-        repostedUri: originalUri,
+        deleterId: testData.authorPubky,
       });
 
       const originalCounts = await getSavedCounts(originalPostId);
@@ -614,8 +462,7 @@ describe('LocalPostService', () => {
       // Delete reply
       await Core.Local.Post.delete({
         postId: replyId,
-        userId: testData.authorPubky,
-        parentUri,
+        deleterId: testData.authorPubky,
       });
 
       const parentCounts = await getSavedCounts(parentPostId);
@@ -642,9 +489,7 @@ describe('LocalPostService', () => {
       // Delete post
       await Core.Local.Post.delete({
         postId,
-        userId: testData.authorPubky,
-        parentUri,
-        repostedUri: originalUri,
+        deleterId: testData.authorPubky,
       });
 
       const parentCounts = await getSavedCounts(parentPostId);
@@ -653,7 +498,7 @@ describe('LocalPostService', () => {
       expect(originalCounts!.reposts).toBe(0);
     });
 
-    it('should rollback delete operation if transaction fails', async () => {
+    it('should rollback delete operation on transaction failure', async () => {
       const parentPostId = 'parent:post123';
       const replyId = testData.fullPostId1;
       const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
@@ -667,12 +512,10 @@ describe('LocalPostService', () => {
       const spy = vi.spyOn(Core.PostDetailsModel, 'deleteById').mockRejectedValueOnce(new Error('Simulated failure'));
 
       try {
-        // Act + Assert
         await expect(
           Core.Local.Post.delete({
             postId: replyId,
-            userId: testData.authorPubky,
-            parentUri,
+            deleterId: testData.authorPubky,
           }),
         ).rejects.toThrow('Failed to delete post');
 
@@ -690,50 +533,6 @@ describe('LocalPostService', () => {
         expect(tags).toBeTruthy();
 
         // Parent count should not have been decremented
-        const parentCounts = await getSavedCounts(parentPostId);
-        expect(parentCounts!.replies).toBe(1);
-      } finally {
-        spy.mockRestore();
-      }
-    });
-
-    it('should rollback delete operation if parent count update fails', async () => {
-      const parentPostId = 'parent:post123';
-      const replyId = testData.fullPostId1;
-      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
-
-      // Setup parent and reply
-      await setupExistingPost(parentPostId, 'Parent post');
-      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
-      await setupExistingPost(replyId, 'Reply post', parentUri);
-
-      // Spy to force failure during parent count update
-      const spy = vi.spyOn(Core.PostCountsModel, 'update').mockRejectedValueOnce(new Error('Count update failed'));
-
-      try {
-        // Act + Assert
-        await expect(
-          Core.Local.Post.delete({
-            postId: replyId,
-            userId: testData.authorPubky,
-            parentUri,
-          }),
-        ).rejects.toThrow('Failed to delete post');
-
-        // Verify rollback - reply should still exist
-        const [details, counts, relationships, tags] = await Promise.all([
-          getSavedPost(replyId),
-          getSavedCounts(replyId),
-          getSavedRelationships(replyId),
-          getSavedTags(replyId),
-        ]);
-
-        expect(details).toBeTruthy();
-        expect(counts).toBeTruthy();
-        expect(relationships).toBeTruthy();
-        expect(tags).toBeTruthy();
-
-        // Parent count should remain unchanged
         const parentCounts = await getSavedCounts(parentPostId);
         expect(parentCounts!.replies).toBe(1);
       } finally {

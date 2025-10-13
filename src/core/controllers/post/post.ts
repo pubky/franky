@@ -1,7 +1,8 @@
 import * as Core from '@/core';
 import * as Application from '@/core/application';
-import type { TCreatePostParams, TReadPostsParams, TDeleteParams } from './post.types';
+import type { TCreatePostParams, TReadPostsParams, TDeletePostParams } from './post.types';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
+import { PostValidators } from '@/core/pipes/post/post.validators';
 
 export class PostController {
   private static isInitialized = false;
@@ -54,27 +55,15 @@ export class PostController {
 
     // Validate and set parent URI if this is a reply
     if (parentPostId) {
-      const parentPost = await Core.PostDetailsModel.findById(parentPostId);
-      if (!parentPost) {
-        throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Failed to validate parent post', 404, {
-          parentPostId,
-        });
-      }
-      parentUri = parentPost.uri;
+      parentUri = await PostValidators.validatePostId({ postId: parentPostId, message: 'Parent post' });
     }
 
     // Validate and set reposted URI if this is a repost
     if (originalPostId) {
-      const originalPost = await Core.PostDetailsModel.findById(originalPostId);
-      if (!originalPost) {
-        throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Original post not found', 404, {
-          originalPostId,
-        });
-      }
-      repostedUri = originalPost.uri;
+      repostedUri = await PostValidators.validatePostId({ postId: originalPostId, message: 'Original post' });
     }
 
-    const normalizedPost = await Core.PostNormalizer.to(
+    const { post, meta } = await Core.PostNormalizer.to(
       {
         content: content.trim(),
         kind,
@@ -84,24 +73,24 @@ export class PostController {
       authorId,
     );
 
-    const postId = Core.buildPostCompositeId({ pubky: authorId, postId: normalizedPost.meta.id });
+    const postId = Core.buildPostCompositeId({ pubky: authorId, postId: meta.id });
 
     if (originalPostId) {
       postKind = 'repost';
     } else {
-      postKind = Core.normalizePostKind(normalizedPost.post.kind) as Core.NexusPostKind;
+      postKind = Core.normalizePostKind(post.kind) as Core.NexusPostKind;
     }
 
     await Application.Post.create({
-      postUrl: normalizedPost.meta.url,
-      postJson: normalizedPost.post.toJson(),
+      postUrl: meta.url,
+      postJson: post.toJson(),
       postId,
-      content: normalizedPost.post.content,
+      content: post.content,
       kind: postKind,
       authorId,
       parentUri,
       repostedUri,
-      attachments: normalizedPost.post.attachments ?? undefined,
+      attachments: post.attachments ?? undefined,
     });
   }
 
@@ -109,32 +98,20 @@ export class PostController {
    * Delete a post
    * @param params - Parameters object
    * @param params.postId - ID of the post to delete
-   * @param params.userId - ID of the user deleting the post
+   * @param params.deleterId - ID of the user deleting the post
    */
-  static async delete({ postId, userId }: TDeleteParams) {
+  static async delete({ postId, deleterId }: TDeletePostParams) {
     await this.initialize();
 
-    const post = await Core.PostDetailsModel.findById(postId);
-    if (!post) {
-      throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, { postId });
-    }
+    const { pubky: authorId } = Core.parsePostCompositeId(postId);
 
-    const author = postId.split(':')[0];
-    if (author !== userId) {
+    if (authorId !== deleterId) {
       throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'User is not the author of this post', 403, {
         postId,
-        userId,
+        deleterId,
       });
     }
 
-    const postRelationships = await Core.PostRelationshipsModel.findById(postId);
-
-    await Application.Post.delete({
-      postId,
-      userId,
-      postUrl: post.uri,
-      parentUri: postRelationships?.replied ?? undefined,
-      repostedUri: postRelationships?.reposted ?? undefined,
-    });
+    await Application.Post.delete({ postId, deleterId });
   }
 }

@@ -13,7 +13,7 @@ export type TReadPostsParams = {
   offset?: number;
 };
 
-export type TDeleteParams = {
+export type TDeletePostParams = {
   postId: string;
-  userId: Core.Pubky;
+  deleterId: Core.Pubky;
 };
