@@ -171,21 +171,45 @@ describe('Header Components', () => {
         </HeaderContainer>,
       );
 
-      const container = screen.getByText('Test Content').closest('header');
+      const container = screen.getByRole('banner');
       expect(container).toHaveClass(
-        'flex',
-        'py-6',
-        'items-center',
-        'px-6',
         'sticky',
         'top-0',
-        'z-10',
+        'z-20',
+        'w-full',
         'bg-gradient-to-b',
-        'from-[var(--background)]',
+        'from-[var(--background)]/95',
         'to-[var(--transparent)]',
-        'h-[96px]',
-        'md:h-[144px]',
+        'backdrop-blur-sm',
       );
+
+      const innerContainer = container.querySelector('[data-testid="container"]') as HTMLElement | null;
+      expect(innerContainer).not.toBeNull();
+      const inner = innerContainer as HTMLElement;
+      expect(inner).toHaveClass(
+        'flex',
+        'flex-row',
+        'flex-wrap',
+        'items-center',
+        'justify-between',
+        'gap-4',
+        'sm:gap-6',
+        'px-4',
+        'sm:px-6',
+        'py-4',
+        'sm:py-6',
+      );
+    });
+
+    it('merges custom className', () => {
+      render(
+        <HeaderContainer className="custom-class">
+          <div>Test Content</div>
+        </HeaderContainer>,
+      );
+
+      const container = screen.getByRole('banner');
+      expect(container).toHaveClass('custom-class');
     });
   });
 

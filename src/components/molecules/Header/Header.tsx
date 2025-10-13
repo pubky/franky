@@ -8,17 +8,34 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as App from '@/app';
 
-export const HeaderContainer = ({ children }: { children: React.ReactNode }) => {
+type HeaderContainerProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+export const HeaderContainer = ({ children, className }: HeaderContainerProps) => {
   return (
-    <Atoms.Container
-      as="header"
-      size="container"
-      className="hidden lg:flex py-6 items-center px-6 sticky top-0 z-10 bg-gradient-to-b from-[var(--background)] to-[var(--transparent)] h-[96px] md:h-[144px]"
+    <header
+      className={Libs.cn(
+        'sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] backdrop-blur-sm py-6',
+        className,
+      )}
     >
-      <Atoms.Container as="nav" className="flex-row items-center py-0 md:py-6 gap-6 w-full h-full">
-        {children}
+      <Atoms.Container
+        size="container"
+        className={Libs.cn(
+          'flex flex-row flex-wrap items-center justify-between gap-4 sm:gap-6',
+          'px-4 sm:px-6 py-4 sm:py-6',
+        )}
+      >
+        <Atoms.Container
+          as="nav"
+          className="flex w-full flex-row flex-wrap items-center gap-4 sm:flex-nowrap sm:items-center sm:gap-6"
+        >
+          {children}
+        </Atoms.Container>
       </Atoms.Container>
-    </Atoms.Container>
+    </header>
   );
 };
 
@@ -69,7 +86,7 @@ export function HeaderNavigationButtons({
   const isActive = (path: string) => pathname === path;
 
   return (
-    <Atoms.Container className="flex flex-row w-auto justify-start items-center gap-3">
+    <Atoms.Container className="hidden w-auto flex-row items-center justify-start gap-3 lg:flex">
       <Atoms.Link href={App.APP_ROUTES.HOME}>
         <Atoms.Button
           className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
@@ -111,9 +128,7 @@ export function HeaderNavigationButtons({
       </Atoms.Link>
 
       <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
-        <Atoms.Avatar
-          className={Libs.cn('w-12 h-12 cursor-pointer', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}
-        >
+        <Atoms.Avatar className="w-12 h-12 cursor-pointer">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>

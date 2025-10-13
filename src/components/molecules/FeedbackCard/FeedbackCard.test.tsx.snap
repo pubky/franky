@@ -18,7 +18,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot for user info section 1`] =
 
 exports[`FeedbackCard - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="flex flex-col gap-4 custom-feedback"
+  class="flex flex-col gap-2 custom-feedback"
   data-testid="feedback-card"
 >
   <h2
@@ -85,7 +85,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with custom className 1`] =
 
 exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="flex flex-col gap-4"
+  class="flex flex-col gap-2"
   data-testid="feedback-card"
 >
   <h2

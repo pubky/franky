@@ -19,7 +19,7 @@ export const HomeserverHeader = () => {
 
 export const HomeserverFooter = () => {
   return (
-    <Atoms.FooterLinks className="pt-6">
+    <Atoms.FooterLinks>
       By creating an account on the Pubky homeserver, you agree to the <Molecules.DialogTerms />,{' '}
       <Molecules.DialogPrivacy />, and you confirm that you are <Molecules.DialogAge />
     </Atoms.FooterLinks>
@@ -43,7 +43,7 @@ export const HomeserverNavigation = ({
 
   return (
     <Molecules.ButtonsNavigation
-      className="py-6"
+      id="homeserver-navigation"
       onHandleBackButton={onHandleBackButton}
       onHandleContinueButton={onHandleContinueButton}
       continueButtonDisabled={continueButtonDisabled}

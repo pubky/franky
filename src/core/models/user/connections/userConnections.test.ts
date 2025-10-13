@@ -104,4 +104,64 @@ describe('UserConnectionsModel', () => {
       expect(c2!.followers).toEqual([testUserId1]);
     });
   });
+
+  describe('createConnection/deleteConnection boolean returns', () => {
+    const userA = Core.generateTestUserId(10);
+    const userB = Core.generateTestUserId(11);
+
+    it('createConnection returns true when a new connection is added', async () => {
+      const added = (await Core.UserConnectionsModel.createConnection(
+        userA,
+        userB,
+        Core.UserConnectionsFields.FOLLOWING,
+      )) as unknown as boolean;
+      expect(added).toBe(true);
+
+      const row = await Core.UserConnectionsModel.findById(userA);
+      expect(row).not.toBeNull();
+      expect(row!.following).toContain(userB);
+    });
+
+    it('createConnection returns false when the connection already exists (no-op)', async () => {
+      await Core.UserConnectionsModel.create({ id: userA, following: [userB], followers: [] });
+      const added = (await Core.UserConnectionsModel.createConnection(
+        userA,
+        userB,
+        Core.UserConnectionsFields.FOLLOWING,
+      )) as unknown as boolean;
+      expect(added).toBe(false);
+
+      const row = await Core.UserConnectionsModel.findById(userA);
+      expect(row).not.toBeNull();
+      expect(row!.following.filter((x) => x === userB).length).toBe(1);
+    });
+
+    it('deleteConnection returns true when an existing connection is removed', async () => {
+      await Core.UserConnectionsModel.create({ id: userA, following: [userB], followers: [] });
+      const removed = (await Core.UserConnectionsModel.deleteConnection(
+        userA,
+        userB,
+        Core.UserConnectionsFields.FOLLOWING,
+      )) as unknown as boolean;
+      expect(removed).toBe(true);
+
+      const row = await Core.UserConnectionsModel.findById(userA);
+      expect(row).not.toBeNull();
+      expect(row!.following).not.toContain(userB);
+    });
+
+    it('deleteConnection returns false when the connection does not exist (no-op)', async () => {
+      await Core.UserConnectionsModel.create({ id: userA, following: [], followers: [] });
+      const removed = (await Core.UserConnectionsModel.deleteConnection(
+        userA,
+        userB,
+        Core.UserConnectionsFields.FOLLOWING,
+      )) as unknown as boolean;
+      expect(removed).toBe(false);
+
+      const row = await Core.UserConnectionsModel.findById(userA);
+      expect(row).not.toBeNull();
+      expect(row!.following).toEqual([]);
+    });
+  });
 });

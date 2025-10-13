@@ -12,3 +12,8 @@ export const userConnectionsTableSchema = `
   followers,
   following
 `;
+
+export enum UserConnectionsFields {
+  FOLLOWERS = 'followers',
+  FOLLOWING = 'following',
+}

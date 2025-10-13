@@ -80,7 +80,7 @@ export function HomeserverCard() {
   const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onHandleContinueButton);
 
   return (
-    <>
+    <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="homeserver-card">
       <Molecules.ContentCard
         image={{
           src: '/images/gift.png',
@@ -126,36 +126,11 @@ export function HomeserverCard() {
         </Atoms.Container>
       </Molecules.ContentCard>
       <Molecules.HomeserverFooter />
-      <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between py-6')}>
-        <Atoms.Button
-          size="lg"
-          className="rounded-full flex-1 md:flex-0 w-full"
-          variant={'secondary'}
-          onClick={() => router.push(App.ONBOARDING_ROUTES.BACKUP)}
-        >
-          <Libs.ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Atoms.Button>
-        <Atoms.Button
-          id="continue-btn"
-          size="lg"
-          className="rounded-full flex-1 md:flex-0 w-full"
-          onClick={onHandleContinueButton}
-          disabled={!isFormValid()}
-        >
-          {isLoading ? (
-            <>
-              <Libs.Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {buttonContinueText}
-            </>
-          ) : (
-            <>
-              <Libs.ArrowRight className="mr-2 h-4 w-4" />
-              {buttonContinueText}
-            </>
-          )}
-        </Atoms.Button>
-      </Atoms.Container>
-    </>
+      <Molecules.HomeserverNavigation
+        continueButtonDisabled={!isFormValid()}
+        onHandleContinueButton={onHandleContinueButton}
+        continueText={buttonContinueText}
+      />
+    </Atoms.Container>
   );
 }

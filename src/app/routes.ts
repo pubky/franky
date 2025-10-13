@@ -23,6 +23,15 @@ export enum APP_ROUTES {
   PROFILE = '/profile',
 }
 
+export enum SETTINGS_ROUTES {
+  ACCOUNT = '/settings/account',
+  NOTIFICATIONS = '/settings/notifications',
+  PRIVACY_SAFETY = '/settings/privacy-safety',
+  MUTED_USERS = '/settings/muted-users',
+  LANGUAGE = '/settings/language',
+  HELP = '/settings/help',
+}
+
 export enum POST_ROUTES {
   POST = '/post',
 }
