@@ -18,8 +18,8 @@ global.FileReader = class {
   result: string | ArrayBuffer | null = null;
   error: DOMException | null = null;
   readyState: number = 0;
-  onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null = null;
-  onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null = null;
+  onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null = null;
+  onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => void) | null = null;
 
   readAsDataURL() {
     setTimeout(() => {
@@ -34,7 +34,7 @@ global.FileReader = class {
   dispatchEvent() {
     return true;
   }
-} as any;
+};
 
 describe('EditProfile', () => {
   beforeEach(() => {
@@ -107,7 +107,6 @@ describe('EditProfile', () => {
   });
 
   it('handles avatar file upload', async () => {
-    const user = userEvent.setup();
     render(<EditProfile />);
 
     const file = new File(['avatar content'], 'avatar.jpg', { type: 'image/jpeg' });
