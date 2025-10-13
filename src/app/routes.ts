@@ -32,6 +32,15 @@ export enum SETTINGS_ROUTES {
   HELP = '/settings/help',
 }
 
+export enum PROFILE_ROUTES {
+  POSTS = '/profile/posts',
+  REPLIES = '/profile/replies',
+  TAGGED = '/profile/tagged',
+  FOLLOWERS = '/profile/followers',
+  FOLLOWING = '/profile/following',
+  FRIENDS = '/profile/friends',
+}
+
 export enum POST_ROUTES {
   POST = '/post',
 }

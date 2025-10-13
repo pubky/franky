@@ -1,5 +1,6 @@
-import * as Templates from '@/templates';
+import { redirect } from 'next/navigation';
+import { PROFILE_ROUTES } from '@/app/routes';
 
 export default function ProfilePage() {
-  return <Templates.ProfilePage />;
+  redirect(PROFILE_ROUTES.POSTS);
 }
