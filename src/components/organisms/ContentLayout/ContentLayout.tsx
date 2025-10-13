@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -34,6 +35,13 @@ export function ContentLayout({
   showRightMobileButton = true,
   className,
 }: ContentLayoutProps) {
+  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
+  const userDetails = useLiveQuery(
+    () => (currentUserPubky ? Core.db.user_details.get(currentUserPubky) : undefined),
+    [currentUserPubky],
+  );
+
+  const avatarImage = userDetails?.image || undefined;
   const { layout } = Core.useFiltersStore();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);
@@ -123,7 +131,7 @@ export function ContentLayout({
       </div>
 
       {/* Mobile footer navigation */}
-      <Molecules.MobileFooter />
+      <Molecules.MobileFooter avatarImage={avatarImage} />
 
       {/* Drawer for filters - slides in from left */}
       {(leftDrawerContent || leftDrawerContentMobile) && (

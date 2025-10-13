@@ -230,10 +230,10 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/profile"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent"
       >
         TU
       </span>
@@ -376,10 +376,10 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/profile"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
     >
       <span
-        class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+        class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent"
       >
         TU
       </span>
@@ -553,10 +553,10 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       href="/profile"
     >
       <span
-        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
+        class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
       >
         <span
-          class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+          class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent"
         >
           TU
         </span>

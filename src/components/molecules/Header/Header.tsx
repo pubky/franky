@@ -128,9 +128,9 @@ export function HeaderNavigationButtons({
       </Atoms.Link>
 
       <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
-        <Atoms.Avatar className="w-12 h-12 cursor-pointer">
+        <Atoms.Avatar size="lg">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
-          <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
+          <Atoms.AvatarFallback active={isActive(App.APP_ROUTES.PROFILE)}>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (
           <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">

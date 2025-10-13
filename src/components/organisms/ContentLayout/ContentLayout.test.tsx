@@ -4,6 +4,15 @@ import { ContentLayout } from './ContentLayout';
 
 // Mock the filters store
 vi.mock('@/core', () => ({
+  useAuthStore: () => ({
+    currentUserPubky: 'test-pubky',
+    session: null,
+    isAuthenticated: false,
+    setCurrentUserPubky: vi.fn(),
+    setSession: vi.fn(),
+    setAuthenticated: vi.fn(),
+    reset: vi.fn(),
+  }),
   useFiltersStore: () => ({
     layout: 'columns',
     setLayout: vi.fn(),
@@ -14,6 +23,11 @@ vi.mock('@/core', () => ({
     content: 'all',
     setContent: vi.fn(),
   }),
+  db: {
+    user_details: {
+      get: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
+    },
+  },
   LAYOUT: {
     COLUMNS: 'columns',
     WIDE: 'wide',

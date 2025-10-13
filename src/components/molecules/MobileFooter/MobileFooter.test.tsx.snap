@@ -36,13 +36,11 @@ exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
   href="/profile"
 >
   <div
-    class="h-12 w-12"
     data-testid="avatar"
   >
     <img
       alt="Profile"
       data-testid="avatar-image"
-      src="https://i.pravatar.cc/150?img=68"
     />
     <div
       data-testid="avatar-fallback"
@@ -215,13 +213,11 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
       href="/profile"
     >
       <div
-        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
           alt="Profile"
           data-testid="avatar-image"
-          src="https://i.pravatar.cc/150?img=68"
         />
         <div
           data-testid="avatar-fallback"
@@ -396,13 +392,11 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
       href="/profile"
     >
       <div
-        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
           alt="Profile"
           data-testid="avatar-image"
-          src="https://i.pravatar.cc/150?img=68"
         />
         <div
           data-testid="avatar-fallback"
@@ -577,13 +571,11 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
       href="/profile"
     >
       <div
-        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
           alt="Profile"
           data-testid="avatar-image"
-          src="https://i.pravatar.cc/150?img=68"
         />
         <div
           data-testid="avatar-fallback"
