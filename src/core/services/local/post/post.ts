@@ -142,6 +142,7 @@ export class LocalPostService {
           Core.PostRelationshipsModel.table,
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
+          Core.UserCountsModel.table,
         ],
         async () => {
           await Promise.all([
@@ -149,31 +150,40 @@ export class LocalPostService {
             Core.PostRelationshipsModel.create(postRelationships),
             Core.PostCountsModel.create(postCounts),
             Core.PostTagsModel.create({ id: postId, tags: [] }),
-            // TODO: what about userCounts
-            // TODO: what about the streams. From now we can PAUSE
           ]);
+
+          const ops: Promise<unknown>[] = [];
 
           // Update parent reply count if this is a reply
           if (parentUri) {
             const fullParentId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (!fullParentId) return;
-
-            const parentCounts = await Core.PostCountsModel.findById(fullParentId);
-            if (!parentCounts) return;
-
-            await Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 });
+            if (fullParentId) {
+              const parentCounts = await Core.PostCountsModel.findById(fullParentId);
+              if (parentCounts) {
+                ops.push(Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 }));
+              }
+            }
           }
 
           // Update original post repost count if this is a repost
           if (repostedUri) {
             const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-            if (!originalPostId) return;
-
-            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-            if (!originalCounts) return;
-
-            await Core.PostCountsModel.update(originalCounts.id, { reposts: originalCounts.reposts + 1 });
+            if (originalPostId) {
+              const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+              if (originalCounts) {
+                ops.push(Core.PostCountsModel.update(originalCounts.id, { reposts: originalCounts.reposts + 1 }));
+              }
+            }
           }
+
+          // Update author's user counts
+          if (parentUri) {
+            ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.REPLIES, 1));
+          } else {
+            ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.POSTS, 1));
+          }
+
+          await Promise.all(ops);
         },
       );
 
@@ -205,7 +215,6 @@ export class LocalPostService {
    * @throws {DatabaseError} When database operations fail
    */
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {
-    // STOPPED HERE, check the relationships. In the controller not need it
     const postRelationships = await Core.PostRelationshipsModel.findById(postId);
 
     const parentUri = postRelationships?.replied ?? undefined;
@@ -219,7 +228,7 @@ export class LocalPostService {
           Core.PostRelationshipsModel.table,
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
-          // TODO: MIssing user counts depending the post type
+          Core.UserCountsModel.table,
         ],
         async () => {
           await Promise.all([
@@ -227,35 +236,48 @@ export class LocalPostService {
             Core.PostRelationshipsModel.deleteById(postId),
             Core.PostCountsModel.deleteById(postId),
             Core.PostTagsModel.deleteById(postId),
-            // TODO: what about userCounts
-            // TODO: what about the streams. From now we can PAUSE
           ]);
+
+          const ops: Promise<unknown>[] = [];
 
           // Decrement parent reply count if this is a reply
           if (parentUri) {
             const parentPostId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (!parentPostId) return;
-
-            const parentCounts = await Core.PostCountsModel.findById(parentPostId);
-            if (!parentCounts) return;
-
-            await Core.PostCountsModel.update(parentCounts.id, {
-              replies: Math.max(0, parentCounts.replies - 1),
-            });
+            if (parentPostId) {
+              const parentCounts = await Core.PostCountsModel.findById(parentPostId);
+              if (parentCounts) {
+                ops.push(
+                  Core.PostCountsModel.update(parentCounts.id, {
+                    replies: Math.max(0, parentCounts.replies - 1),
+                  }),
+                );
+              }
+            }
           }
 
           // Decrement original post repost count if this is a repost
           if (repostedUri) {
             const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-            if (!originalPostId) return;
-
-            const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-            if (!originalCounts) return;
-
-            await Core.PostCountsModel.update(originalCounts.id, {
-              reposts: Math.max(0, originalCounts.reposts - 1),
-            });
+            if (originalPostId) {
+              const originalCounts = await Core.PostCountsModel.findById(originalPostId);
+              if (originalCounts) {
+                ops.push(
+                  Core.PostCountsModel.update(originalCounts.id, {
+                    reposts: Math.max(0, originalCounts.reposts - 1),
+                  }),
+                );
+              }
+            }
           }
+
+          // Update author's user counts
+          if (parentUri) {
+            ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.REPLIES, -1));
+          } else {
+            ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.POSTS, -1));
+          }
+
+          await Promise.all(ops);
         },
       );
 

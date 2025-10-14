@@ -1,9 +1,29 @@
-import { PostResult, PubkyAppPostEmbed } from 'pubky-app-specs';
+import { PostResult, PubkyAppPostEmbed, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostNormalizer {
   private constructor() {}
+
+  private static stringToPostKind(kind: string): PubkyAppPostKind {
+    const normalized = kind.toLowerCase();
+    switch (normalized) {
+      case 'short':
+        return PubkyAppPostKind.Short;
+      case 'long':
+        return PubkyAppPostKind.Long;
+      case 'image':
+        return PubkyAppPostKind.Image;
+      case 'video':
+        return PubkyAppPostKind.Video;
+      case 'link':
+        return PubkyAppPostKind.Link;
+      case 'file':
+        return PubkyAppPostKind.File;
+      default:
+        return PubkyAppPostKind.Short;
+    }
+  }
 
   static async to(post: Core.PostValidatorData, specsPubky: Core.Pubky): Promise<PostResult> {
     const builder = Core.PubkySpecsSingleton.get(specsPubky);
@@ -11,7 +31,14 @@ export class PostNormalizer {
     // Create embed object if embed URI is provided
     let embedObject: PubkyAppPostEmbed | null = null;
     if (post.embed) {
-      embedObject = new PubkyAppPostEmbed(post.embed, post.kind);
+      const embeddedPostId = Core.buildPostIdFromPubkyUri(post.embed);
+      if (embeddedPostId) {
+        const embeddedPost = await Core.PostDetailsModel.findById(embeddedPostId);
+        if (embeddedPost) {
+          const embeddedKind = this.stringToPostKind(embeddedPost.kind);
+          embedObject = new PubkyAppPostEmbed(post.embed, embeddedKind);
+        }
+      }
     }
 
     const result = builder.createPost(
