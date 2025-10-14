@@ -2,46 +2,18 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import * as Libs from '@/libs';
-import { PROFILE_MENU_ITEMS } from '@/molecules/ProfileMenu/ProfileMenu';
+import { PROFILE_MENU_ITEMS, getProfileCount, ProfileCounts } from '@/molecules/ProfileMenu/profileMenu.shared';
 
 export interface ProfileMobileMenuProps {
   className?: string;
-  counts?: {
-    notifications?: number;
-    posts?: number;
-    replies?: number;
-    followers?: number;
-    following?: number;
-    friends?: number;
-    tagged?: number;
-  };
+  counts?: ProfileCounts;
 }
 
 export function ProfileMobileMenu({ className, counts }: ProfileMobileMenuProps) {
   const pathname = usePathname();
   const router = useRouter();
 
-  const getCount = (label: string) => {
-    if (!counts) return undefined;
-    switch (label) {
-      case 'Notifications':
-        return counts.notifications;
-      case 'Posts':
-        return counts.posts;
-      case 'Replies':
-        return counts.replies;
-      case 'Followers':
-        return counts.followers;
-      case 'Following':
-        return counts.following;
-      case 'Friends':
-        return counts.friends;
-      case 'Tagged':
-        return counts.tagged;
-      default:
-        return undefined;
-    }
-  };
+  const getCount = (label: string) => getProfileCount(label, counts);
 
   return (
     <div
