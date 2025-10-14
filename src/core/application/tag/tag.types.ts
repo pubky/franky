@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 
-export type TCreateTagInput = Core.TTagEventParams &{
+export type TCreateTagInput = Core.TTagEventParams & {
   tagUrl: string;
   tagJson: Record<string, unknown>;
 };

@@ -47,7 +47,12 @@ export class TagController {
     });
   }
 
-  private static async generateTagUri({ taggedId, label, taggerId, taggedKind }: Core.TTagEventParams): Promise<{ tagUrl: string, tag: PubkyAppTag }> {
+  private static async generateTagUri({
+    taggedId,
+    label,
+    taggerId,
+    taggedKind,
+  }: Core.TTagEventParams): Promise<{ tagUrl: string; tag: PubkyAppTag }> {
     let uri: string;
     if (taggedKind === Core.TagKind.POST) {
       const { pubky, postId } = Core.parsePostCompositeId(taggedId);
