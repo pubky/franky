@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
 
 // Test data
 const testData = {
@@ -11,14 +10,14 @@ const testData = {
 };
 
 // Helper functions
-const createTagParams = (label: string): TLocalSaveTagParams => ({
-  postId: testData.postId,
+const createTagParams = (label: string): Core.TLocalTagParams => ({
+  taggedId: testData.postId,
   label,
   taggerId: testData.taggerPubky,
 });
 
-const createRemoveParams = (label: string): TLocalRemoveTagParams => ({
-  postId: testData.postId,
+const createRemoveParams = (label: string): Core.TLocalTagParams => ({
+  taggedId: testData.postId,
   label,
   taggerId: testData.taggerPubky,
 });
@@ -90,7 +89,7 @@ describe('LocalTagService', () => {
 
   describe('create', () => {
     it('should create a new tag to a post', async () => {
-      await Core.LocalTagService.create(createTagParams('javascript'));
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
 
       const savedTags = await getSavedTags();
       expect(savedTags).toBeTruthy();
@@ -101,11 +100,11 @@ describe('LocalTagService', () => {
     });
 
     it('should create tagger to existing tag', async () => {
-      await Core.LocalTagService.create(createTagParams('javascript'));
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
       await setupExistingTag('javascript', [testData.taggerPubky], false);
 
-      await Core.LocalTagService.create({
-        postId: testData.postId,
+      await Core.LocalPostTagService.create({
+        taggedId: testData.postId,
         label: 'javascript',
         taggerId: testData.anotherTaggerPubky,
       });
@@ -118,14 +117,14 @@ describe('LocalTagService', () => {
     it('should throw error if user already created tag post with this label', async () => {
       await setupExistingTag('javascript', [testData.taggerPubky], true);
 
-      await expect(Core.LocalTagService.create(createTagParams('javascript'))).rejects.toThrow(
+      await expect(Core.LocalPostTagService.create(createTagParams('javascript'))).rejects.toThrow(
         /Failed to save tag to PostTagsModel/,
       );
     });
 
     it('should update post counts when creating tag', async () => {
       await setupPostCounts(0, 0);
-      await Core.LocalTagService.create(createTagParams('javascript'));
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
 
       const savedCounts = await getSavedCounts();
       expect(savedCounts!.tags).toBe(1);
@@ -134,7 +133,7 @@ describe('LocalTagService', () => {
 
     it('should increment user tagged count when creating tag', async () => {
       await setupUserCounts(testData.taggerPubky, 0);
-      await Core.LocalTagService.create(createTagParams('javascript'));
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
 
       const userCounts = await getUserCounts(testData.taggerPubky);
       expect(userCounts!.tagged).toBe(1);
@@ -142,15 +141,15 @@ describe('LocalTagService', () => {
 
     it('should increment user tagged count from existing value when creating tag', async () => {
       await setupUserCounts(testData.taggerPubky, 5);
-      await Core.LocalTagService.create(createTagParams('javascript'));
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
 
       const userCounts = await getUserCounts(testData.taggerPubky);
       expect(userCounts!.tagged).toBe(6);
     });
 
     it('should create multiple different tags to a post', async () => {
-      await Core.LocalTagService.create(createTagParams('javascript'));
-      await Core.LocalTagService.create(createTagParams('react'));
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
+      await Core.LocalPostTagService.create(createTagParams('react'));
 
       const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(2);
@@ -166,14 +165,14 @@ describe('LocalTagService', () => {
     });
 
     it('should delete tag from post', async () => {
-      await Core.LocalTagService.delete(createRemoveParams('javascript'));
+      await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
 
       const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(0);
     });
 
     it('should update post counts when deleting tag', async () => {
-      await Core.LocalTagService.delete(createRemoveParams('javascript'));
+      await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
 
       const savedCounts = await getSavedCounts();
       expect(savedCounts!.tags).toBe(0);
@@ -182,7 +181,7 @@ describe('LocalTagService', () => {
 
     it('should decrement user tagged count when deleting tag', async () => {
       await setupUserCounts(testData.taggerPubky, 1);
-      await Core.LocalTagService.delete(createRemoveParams('javascript'));
+      await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
 
       const userCounts = await getUserCounts(testData.taggerPubky);
       expect(userCounts!.tagged).toBe(0);
@@ -190,7 +189,7 @@ describe('LocalTagService', () => {
 
     it('should decrement user tagged count from existing value when deleting tag', async () => {
       await setupUserCounts(testData.taggerPubky, 10);
-      await Core.LocalTagService.delete(createRemoveParams('javascript'));
+      await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
 
       const userCounts = await getUserCounts(testData.taggerPubky);
       expect(userCounts!.tagged).toBe(9);
@@ -199,7 +198,7 @@ describe('LocalTagService', () => {
     it('should throw error if post has no tags when deleting tag', async () => {
       await Core.PostTagsModel.table.clear();
 
-      await expect(Core.LocalTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
+      await expect(Core.LocalPostTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
         'Failed to remove tag from PostTagsModel',
       );
     });
@@ -207,7 +206,7 @@ describe('LocalTagService', () => {
     it('should throw error if user has not created tag post with this label when deleting tag', async () => {
       await setupExistingTag('javascript', [testData.taggerPubky], false);
 
-      await expect(Core.LocalTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
+      await expect(Core.LocalPostTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
         'Failed to remove tag from PostTagsModel',
       );
     });
@@ -215,7 +214,7 @@ describe('LocalTagService', () => {
     it('should delete only the tagger but keep tag if other taggers exist', async () => {
       await setupExistingTag('javascript', [testData.taggerPubky, testData.anotherTaggerPubky], true);
 
-      await Core.LocalTagService.delete(createRemoveParams('javascript'));
+      await Core.LocalPostTagService.delete(createRemoveParams('javascript'));
 
       const savedTags = await getSavedTags();
       expect(savedTags!.tags).toHaveLength(1);

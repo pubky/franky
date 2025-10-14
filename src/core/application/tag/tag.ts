@@ -18,18 +18,18 @@ import * as Core from '@/core';
 export class TagApplication {
   static async create({ taggerId, taggedId, label, tagUrl, tagJson, taggedKind }: Core.TCreateTagInput) {
     if (taggedKind === Core.TagKind.POST) {
-      await Core.LocalTagService.createPostTag({ taggerId, taggedId, label });
+      await Core.LocalPostTagService.create({ taggerId, taggedId, label });
     } else {
-      await Core.LocalTagService.createUserTag({ taggerId, taggedId, label });
+      await Core.LocalUserTagService.createUserTag({ taggerId, taggedId, label });
     }
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
   }
 
   static async delete({ taggerId, taggedId, label, tagUrl, taggedKind }: Core.TDeleteTagInput) {
     if (taggedKind === Core.TagKind.POST) {
-      await Core.LocalTagService.deletePostTag({ taggerId, taggedId, label });
+      await Core.LocalPostTagService.delete({ taggerId, taggedId, label });
     } else {
-      await Core.LocalTagService.deleteUserTag({ taggerId, taggedId, label });
+      await Core.LocalUserTagService.deleteUserTag({ taggerId, taggedId, label });
     }
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, tagUrl);
   }
