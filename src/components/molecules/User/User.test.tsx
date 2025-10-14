@@ -3,6 +3,19 @@ import { describe, it, expect, vi } from 'vitest';
 import { User, type UserData } from './User';
 import { ButtonVariant } from '@/atoms';
 
+// Mock the components
+vi.mock('@/components', () => ({
+  avatarVariants: vi.fn(({ size = 'default' }) => {
+    const sizeClasses = {
+      sm: 'h-6 w-6',
+      default: 'h-10 w-10',
+      lg: 'h-12 w-12',
+      xl: 'h-16 w-16',
+    };
+    return `relative flex shrink-0 overflow-hidden rounded-full ${sizeClasses[size as keyof typeof sizeClasses] || sizeClasses.default}`;
+  }),
+}));
+
 const mockUser: UserData = {
   id: '1',
   name: 'Anna Pleb',

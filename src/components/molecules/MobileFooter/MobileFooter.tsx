@@ -7,10 +7,11 @@ import * as Libs from '@/libs';
 import * as App from '@/app';
 
 export interface MobileFooterProps {
+  avatarImage?: string;
   className?: string;
 }
 
-export function MobileFooter({ className }: MobileFooterProps) {
+export function MobileFooter({ avatarImage, className }: MobileFooterProps) {
   const pathname = usePathname();
 
   const isActive = (path: string) => pathname === path;
@@ -43,9 +44,9 @@ export function MobileFooter({ className }: MobileFooterProps) {
           );
         })}
         <Link href={App.APP_ROUTES.PROFILE} aria-label="Profile" className="flex-shrink-0 relative">
-          <Atoms.Avatar className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}>
-            <Atoms.AvatarImage src="https://i.pravatar.cc/150?img=68" alt="Profile" />
-            <Atoms.AvatarFallback>
+          <Atoms.Avatar size="lg">
+            <Atoms.AvatarImage src={avatarImage} alt="Profile" />
+            <Atoms.AvatarFallback active={isActive(App.APP_ROUTES.PROFILE)}>
               <Libs.User className="h-5 w-5" />
             </Atoms.AvatarFallback>
           </Atoms.Avatar>

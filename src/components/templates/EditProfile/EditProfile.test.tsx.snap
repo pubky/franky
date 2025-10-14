@@ -1,0 +1,627 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`EditProfile > matches snapshot 1`] = `
+<div
+  class="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 py-12"
+>
+  <div
+    class="mb-6"
+  >
+    <h1
+      class="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2"
+      data-testid="heading-1"
+    >
+      Edit your 
+      <span
+        class="text-brand"
+      >
+        profile.
+      </span>
+    </h1>
+    <div
+      class="flex items-center gap-3"
+    >
+      <p
+        class="text-base leading-normal font-medium text-[#D4D4DB]"
+        data-testid="typography"
+      >
+        Add your name, bio, links, and avatar.
+      </p>
+      <div
+        class="inline-flex items-center justify-center rounded-md border text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
+        data-slot="badge"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-key"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+          />
+          <path
+            d="m21 2-9.6 9.6"
+          />
+          <circle
+            cx="7.5"
+            cy="15.5"
+            r="5.5"
+          />
+        </svg>
+        kls37...xri8o
+      </div>
+      <button
+        class="p-1.5 rounded-full hover:bg-muted transition-colors"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-circle-help"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+          <path
+            d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+          />
+          <path
+            d="M12 17h.01"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl shadow-sm p-8 lg:p-12 mb-6"
+    data-slot="card"
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12"
+    >
+      <div
+        class="flex flex-col gap-6"
+      >
+        <h2
+          class="text-4xl text-foreground font-bold"
+          data-testid="heading-2"
+        >
+          Profile
+        </h2>
+        <div>
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            NAME
+          </label>
+          <div
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            data-testid="container"
+          >
+            <input
+              aria-invalid="false"
+              class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+              data-testid="input"
+              maxlength="24"
+              placeholder="Your name"
+              type="text"
+              value="Satoshi Nakamoto"
+            />
+          </div>
+        </div>
+        <div>
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            BIO
+          </label>
+          <div
+            class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium"
+            data-testid="container"
+          >
+            <textarea
+              aria-invalid="false"
+              class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 rounded-md border bg-transparent text-base shadow-xs transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+              data-slot="textarea"
+              maxlength="160"
+              placeholder="Tell us about yourself"
+              rows="4"
+            >
+              Authored the Bitcoin white paper, developed Bitcoin, mined 1st block.
+            </textarea>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-6"
+      >
+        <h2
+          class="text-4xl text-foreground font-bold"
+          data-testid="heading-2"
+        >
+          Links
+        </h2>
+        <div
+          class="relative"
+        >
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            WEBSITE
+          </label>
+          <div
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            data-testid="container"
+          >
+            <input
+              aria-invalid="false"
+              class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+              data-testid="input"
+              placeholder="https://"
+              type="text"
+              value="https://www.bitcoin.org/"
+            />
+          </div>
+        </div>
+        <div
+          class="relative"
+        >
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            X (TWITTER)
+          </label>
+          <div
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            data-testid="container"
+          >
+            <input
+              aria-invalid="false"
+              class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+              data-testid="input"
+              placeholder="@user"
+              type="text"
+              value="@satoshi"
+            />
+          </div>
+        </div>
+        <button
+          class="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-link"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+            />
+            <path
+              d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+            />
+          </svg>
+          Add link
+        </button>
+      </div>
+      <div
+        class="flex flex-col gap-6 items-center lg:items-start"
+      >
+        <h2
+          class="text-4xl text-foreground font-bold"
+          data-testid="heading-2"
+        >
+          Avatar
+        </h2>
+        <div
+          class="relative"
+        >
+          <span
+            class="relative flex shrink-0 overflow-hidden rounded-full w-40 h-40"
+          >
+            <span
+              class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent text-4xl"
+            >
+              SN
+            </span>
+          </span>
+          <input
+            accept="image/*"
+            class="hidden"
+            id="avatar-upload"
+            type="file"
+          />
+          <label
+            class="absolute -bottom-2 -right-2 flex h-12 w-12 items-center justify-center rounded-full bg-secondary hover:bg-secondary/80 cursor-pointer transition-colors"
+            for="avatar-upload"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-plus"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="M12 5v14"
+              />
+            </svg>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex gap-4 justify-end"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 px-8"
+      data-size="lg"
+      data-slot="button"
+      data-variant="secondary"
+    >
+      Cancel
+    </button>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand h-10 gap-1 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 px-8"
+      data-size="lg"
+      data-slot="button"
+      data-variant="default"
+    >
+      Save Profile
+    </button>
+  </div>
+</div>
+`;
+
+exports[`EditProfile > matches snapshot with loading state 1`] = `
+<div
+  class="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 py-12"
+>
+  <div
+    class="mb-6"
+  >
+    <h1
+      class="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2"
+      data-testid="heading-1"
+    >
+      Edit your 
+      <span
+        class="text-brand"
+      >
+        profile.
+      </span>
+    </h1>
+    <div
+      class="flex items-center gap-3"
+    >
+      <p
+        class="text-base leading-normal font-medium text-[#D4D4DB]"
+        data-testid="typography"
+      >
+        Add your name, bio, links, and avatar.
+      </p>
+      <div
+        class="inline-flex items-center justify-center rounded-md border text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
+        data-slot="badge"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-key"
+          fill="none"
+          height="14"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"
+          />
+          <path
+            d="m21 2-9.6 9.6"
+          />
+          <circle
+            cx="7.5"
+            cy="15.5"
+            r="5.5"
+          />
+        </svg>
+        kls37...xri8o
+      </div>
+      <button
+        class="p-1.5 rounded-full hover:bg-muted transition-colors"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-circle-help"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="10"
+          />
+          <path
+            d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+          />
+          <path
+            d="M12 17h.01"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div
+    class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl shadow-sm p-8 lg:p-12 mb-6"
+    data-slot="card"
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12"
+    >
+      <div
+        class="flex flex-col gap-6"
+      >
+        <h2
+          class="text-4xl text-foreground font-bold"
+          data-testid="heading-2"
+        >
+          Profile
+        </h2>
+        <div>
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            NAME
+          </label>
+          <div
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            data-testid="container"
+          >
+            <input
+              aria-invalid="false"
+              class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+              data-testid="input"
+              maxlength="24"
+              placeholder="Your name"
+              type="text"
+              value="Satoshi Nakamoto"
+            />
+          </div>
+        </div>
+        <div>
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            BIO
+          </label>
+          <div
+            class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium"
+            data-testid="container"
+          >
+            <textarea
+              aria-invalid="false"
+              class="border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 rounded-md border bg-transparent text-base shadow-xs transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent"
+              data-slot="textarea"
+              maxlength="160"
+              placeholder="Tell us about yourself"
+              rows="4"
+            >
+              Authored the Bitcoin white paper, developed Bitcoin, mined 1st block.
+            </textarea>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-col gap-6"
+      >
+        <h2
+          class="text-4xl text-foreground font-bold"
+          data-testid="heading-2"
+        >
+          Links
+        </h2>
+        <div
+          class="relative"
+        >
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            WEBSITE
+          </label>
+          <div
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            data-testid="container"
+          >
+            <input
+              aria-invalid="false"
+              class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+              data-testid="input"
+              placeholder="https://"
+              type="text"
+              value="https://www.bitcoin.org/"
+            />
+          </div>
+        </div>
+        <div
+          class="relative"
+        >
+          <label
+            class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-[11px] text-muted-foreground mb-2"
+            data-slot="label"
+          >
+            X (TWITTER)
+          </label>
+          <div
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            data-testid="container"
+          >
+            <input
+              aria-invalid="false"
+              class="file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus:outline-none hover:outline-none hover:ring-0 focus:ring-0 focus:ring-offset-0 w-full !bg-transparent border-none"
+              data-testid="input"
+              placeholder="@user"
+              type="text"
+              value="@satoshi"
+            />
+          </div>
+        </div>
+        <button
+          class="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-link"
+            fill="none"
+            height="16"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"
+            />
+            <path
+              d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
+            />
+          </svg>
+          Add link
+        </button>
+      </div>
+      <div
+        class="flex flex-col gap-6 items-center lg:items-start"
+      >
+        <h2
+          class="text-4xl text-foreground font-bold"
+          data-testid="heading-2"
+        >
+          Avatar
+        </h2>
+        <div
+          class="relative"
+        >
+          <span
+            class="relative flex shrink-0 overflow-hidden rounded-full w-40 h-40"
+          >
+            <span
+              class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent text-4xl"
+            >
+              SN
+            </span>
+          </span>
+          <input
+            accept="image/*"
+            class="hidden"
+            id="avatar-upload"
+            type="file"
+          />
+          <label
+            class="absolute -bottom-2 -right-2 flex h-12 w-12 items-center justify-center rounded-full bg-secondary hover:bg-secondary/80 cursor-pointer transition-colors"
+            for="avatar-upload"
+          >
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-plus"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 12h14"
+              />
+              <path
+                d="M12 5v14"
+              />
+            </svg>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex gap-4 justify-end"
+  >
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 px-8"
+      data-size="lg"
+      data-slot="button"
+      data-variant="secondary"
+    >
+      Cancel
+    </button>
+    <button
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand h-10 gap-1 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8 px-8"
+      data-size="lg"
+      data-slot="button"
+      data-variant="default"
+    >
+      Save Profile
+    </button>
+  </div>
+</div>
+`;
