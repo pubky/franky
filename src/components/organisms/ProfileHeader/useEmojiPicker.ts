@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef, MouseEvent, RefObject } from 'react';
-import { useClickOutside } from '@/hooks';
 
 interface UseEmojiPickerReturn {
   showEmojiPicker: boolean;
@@ -15,9 +14,6 @@ interface UseEmojiPickerReturn {
 export function useEmojiPicker(): UseEmojiPickerReturn {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
-
-  // Close emoji picker when clicking outside
-  useClickOutside(emojiPickerRef as RefObject<HTMLElement>, () => setShowEmojiPicker(false));
 
   // Close emoji picker on Escape key
   useEffect(() => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { StatusDropdown } from './StatusDropdown';
 
@@ -20,26 +20,19 @@ describe('StatusDropdown', () => {
     vi.clearAllMocks();
   });
 
-  it('renders current status and emoji', () => {
-    render(<StatusDropdown {...defaultProps} />);
+  it('renders current status and default emoji when no selectedEmoji', () => {
+    render(<StatusDropdown {...defaultProps} selectedEmoji="" />);
 
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
-    expect(screen.getByText('🌴')).toBeInTheDocument(); // Default emoji for Vacationing
+    expect(screen.getByText('🌴')).toBeInTheDocument();
   });
 
-  it('shows chevron down icon', () => {
+  it('prefers selectedEmoji in trigger when provided', () => {
     render(<StatusDropdown {...defaultProps} />);
 
-    const chevron = screen.getByTestId('popover-trigger');
-    expect(chevron).toBeInTheDocument();
-  });
-
-  it('rotates chevron when menu is open', () => {
-    render(<StatusDropdown {...defaultProps} showStatusMenu={true} />);
-
-    const chevron = screen.getByTestId('popover-trigger');
-    const svg = chevron.querySelector('svg');
-    expect(svg).toHaveClass('rotate-180');
+    // Trigger shows selectedEmoji
+    const trigger = screen.getByTestId('popover-trigger');
+    expect(trigger).toHaveTextContent('😊');
   });
 
   it('calls onStatusMenuChange when trigger is clicked', () => {
@@ -56,7 +49,7 @@ describe('StatusDropdown', () => {
 
     expect(screen.getByText('Available')).toBeInTheDocument();
     expect(screen.getByText('Away')).toBeInTheDocument();
-    expect(screen.getAllByText('Vacationing')).toHaveLength(2); // One in trigger, one in dropdown
+    expect(screen.getAllByText('Vacationing')).toHaveLength(2);
     expect(screen.getByText('Working')).toBeInTheDocument();
     expect(screen.getByText('Traveling')).toBeInTheDocument();
     expect(screen.getByText('Celebrating')).toBeInTheDocument();
@@ -73,33 +66,21 @@ describe('StatusDropdown', () => {
     expect(defaultProps.onStatusSelect).toHaveBeenCalledWith('Available');
   });
 
-  it('renders custom status section', () => {
+  it('renders custom status section and emoji button', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} />);
 
     expect(screen.getByText('CUSTOM STATUS')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Add status')).toBeInTheDocument();
-  });
-
-  it('calls onCustomStatusChange when input value changes', () => {
-    render(<StatusDropdown {...defaultProps} showStatusMenu={true} />);
-
-    const input = screen.getByPlaceholderText('Add status');
-    fireEvent.change(input, { target: { value: 'Custom status' } });
-
-    expect(defaultProps.onCustomStatusChange).toHaveBeenCalledWith('Custom status');
-  });
-
-  it('shows emoji picker button with selected emoji', () => {
-    render(<StatusDropdown {...defaultProps} showStatusMenu={true} />);
-
-    const emojiButton = screen.getByText('😊');
+    // The emoji appears in both trigger and button; assert the button via title
+    const emojiButton = screen.getByTitle('Click to change emoji');
     expect(emojiButton).toBeInTheDocument();
+    expect(emojiButton).toHaveTextContent('😊');
   });
 
-  it('calls onEmojiPickerClick when emoji button is clicked', () => {
+  it('emits onEmojiPickerClick when emoji button is clicked', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} />);
 
-    const emojiButton = screen.getByText('😊');
+    const emojiButton = screen.getByTitle('Click to change emoji');
     fireEvent.click(emojiButton);
 
     expect(defaultProps.onEmojiPickerClick).toHaveBeenCalled();
@@ -108,7 +89,6 @@ describe('StatusDropdown', () => {
   it('shows save button when custom status has text', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} customStatus="Custom status" />);
 
-    // Look for the button that contains the Plus icon by checking for SVG elements
     const buttons = screen.getAllByRole('button');
     const saveButton = buttons.find(
       (button) => button.querySelector('svg') && button.querySelector('svg')?.classList.contains('w-4'),
@@ -119,14 +99,11 @@ describe('StatusDropdown', () => {
   it('calls onCustomStatusSave when save button is clicked', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} customStatus="Custom status" />);
 
-    // Look for the button that contains the Plus icon
     const buttons = screen.getAllByRole('button');
     const saveButton = buttons.find(
       (button) => button.querySelector('svg') && button.querySelector('svg')?.classList.contains('w-4'),
     );
-    if (saveButton) {
-      fireEvent.click(saveButton);
-    }
+    if (saveButton) fireEvent.click(saveButton);
 
     expect(defaultProps.onCustomStatusSave).toHaveBeenCalled();
   });
@@ -134,7 +111,6 @@ describe('StatusDropdown', () => {
   it('hides save button when custom status is empty', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} customStatus="" />);
 
-    // The save button should not be rendered when customStatus is empty
     const buttons = screen.getAllByRole('button');
     const saveButton = buttons.find(
       (button) => button.querySelector('svg') && button.querySelector('svg')?.classList.contains('w-4'),

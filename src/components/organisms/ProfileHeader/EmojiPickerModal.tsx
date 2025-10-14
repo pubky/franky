@@ -4,11 +4,19 @@ import { RefObject, MouseEvent } from 'react';
 import * as Atoms from '@/atoms';
 import { MAX_CUSTOM_STATUS_LENGTH } from './index';
 
+interface EmojiObject {
+  native: string;
+  shortcodes?: string;
+  unified?: string;
+  keywords?: string[];
+  name?: string;
+}
+
 interface EmojiPickerModalProps {
   show: boolean;
   customStatus: string;
   emojiPickerRef: RefObject<HTMLDivElement | null>;
-  onEmojiSelect: (emoji: { native: string }) => void;
+  onEmojiSelect: (emoji: EmojiObject) => void;
   onClose: () => void;
   onContentClick: (e: MouseEvent) => void;
 }
@@ -40,6 +48,7 @@ export function EmojiPickerModal({
         <div className="w-full">
           <Atoms.EmojiPicker
             onEmojiSelect={onEmojiSelect}
+            onClose={onClose}
             maxLength={MAX_CUSTOM_STATUS_LENGTH}
             currentInput={customStatus}
           />

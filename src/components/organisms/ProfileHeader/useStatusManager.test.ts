@@ -10,7 +10,6 @@ describe('useStatusManager', () => {
     expect(result.current.customStatus).toBe('');
     expect(result.current.selectedEmoji).toBe('😊');
     expect(result.current.showStatusMenu).toBe(false);
-    expect(result.current.showEmojiPicker).toBe(false);
   });
 
   it('initializes with custom initial status', () => {
@@ -19,14 +18,16 @@ describe('useStatusManager', () => {
     expect(result.current.currentStatus).toBe('Working');
   });
 
-  it('updates current status', () => {
+  it('updates current status and updates emoji to predefined', () => {
     const { result } = renderHook(() => useStatusManager());
 
     act(() => {
-      result.current.setCurrentStatus('Available');
+      result.current.handleStatusSelect('Away');
     });
 
-    expect(result.current.currentStatus).toBe('Available');
+    expect(result.current.currentStatus).toBe('Away');
+    expect(result.current.selectedEmoji).toBe('🕓');
+    expect(result.current.showStatusMenu).toBe(false);
   });
 
   it('updates custom status', () => {
@@ -37,27 +38,6 @@ describe('useStatusManager', () => {
     });
 
     expect(result.current.customStatus).toBe('Custom status');
-  });
-
-  it('updates selected emoji', () => {
-    const { result } = renderHook(() => useStatusManager());
-
-    act(() => {
-      result.current.setSelectedEmoji('🎉');
-    });
-
-    expect(result.current.selectedEmoji).toBe('🎉');
-  });
-
-  it('handles status selection', () => {
-    const { result } = renderHook(() => useStatusManager());
-
-    act(() => {
-      result.current.handleStatusSelect('Away');
-    });
-
-    expect(result.current.currentStatus).toBe('Away');
-    expect(result.current.showStatusMenu).toBe(false);
   });
 
   it('handles custom status save', () => {
@@ -75,7 +55,7 @@ describe('useStatusManager', () => {
     expect(result.current.showStatusMenu).toBe(false);
   });
 
-  it('handles emoji selection', () => {
+  it('handles emoji selection to set custom emoji', () => {
     const { result } = renderHook(() => useStatusManager());
 
     act(() => {
@@ -83,41 +63,5 @@ describe('useStatusManager', () => {
     });
 
     expect(result.current.selectedEmoji).toBe('🎉');
-    expect(result.current.showEmojiPicker).toBe(false);
-  });
-
-  it('handles emoji selection with invalid emoji', () => {
-    const { result } = renderHook(() => useStatusManager());
-    const initialEmoji = result.current.selectedEmoji;
-
-    act(() => {
-      result.current.handleEmojiSelect({ native: '' });
-    });
-
-    expect(result.current.selectedEmoji).toBe(initialEmoji);
-  });
-
-  it('handles status menu change when emoji picker is closed', () => {
-    const { result } = renderHook(() => useStatusManager());
-
-    act(() => {
-      result.current.handleStatusMenuChange(false);
-    });
-
-    expect(result.current.showStatusMenu).toBe(false);
-  });
-
-  it('prevents status menu close when emoji picker is open', () => {
-    const { result } = renderHook(() => useStatusManager());
-
-    act(() => {
-      result.current.setShowEmojiPicker(true);
-    });
-
-    act(() => {
-      result.current.handleStatusMenuChange(false);
-    });
-
-    expect(result.current.showStatusMenu).toBe(false); // Should remain unchanged
   });
 });

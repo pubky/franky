@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
@@ -35,13 +36,41 @@ export function ProfileHeader({
   const router = useRouter();
 
   // Custom hooks for state management
-  const statusManager = useStatusManager({ initialStatus: status });
-  const { handleCopyPubky, handleCopyLink } = useCopyActions({ handle });
   const emojiPicker = useEmojiPicker();
+  const statusManager = useStatusManager({
+    initialStatus: status,
+    showEmojiPicker: emojiPicker.showEmojiPicker,
+  });
+  const { handleCopyPubky, handleCopyLink } = useCopyActions({ handle });
+
+  // Track which emoji picker is open
+  const [isCustomStatusEmojiPicker, setIsCustomStatusEmojiPicker] = React.useState(false);
 
   // Navigation handlers
   const handleSignOut = () => router.push(APP_ROUTES.HOME);
   const handleEditProfile = () => router.push(APP_ROUTES.EDIT_PROFILE);
+
+  // Emoji selection handler
+  const handleEmojiSelect = (emojiObject: {
+    native: string;
+    shortcodes?: string;
+    unified?: string;
+    keywords?: string[];
+    name?: string;
+  }) => {
+    if (isCustomStatusEmojiPicker) {
+      statusManager.setSelectedEmoji(emojiObject.native);
+    } else {
+      statusManager.handleEmojiSelect(emojiObject);
+    }
+    setIsCustomStatusEmojiPicker(false);
+  };
+
+  // Custom status emoji picker click handler
+  const handleCustomStatusEmojiClick = (e: React.MouseEvent) => {
+    setIsCustomStatusEmojiPicker(true);
+    emojiPicker.handleEmojiPickerClick(e);
+  };
 
   return (
     <div
@@ -144,7 +173,7 @@ export function ProfileHeader({
               onStatusSelect={statusManager.handleStatusSelect}
               onCustomStatusChange={statusManager.setCustomStatus}
               onCustomStatusSave={statusManager.handleCustomStatusSave}
-              onEmojiPickerClick={emojiPicker.handleEmojiPickerClick}
+              onEmojiPickerClick={handleCustomStatusEmojiClick}
             />
           )}
         </div>
@@ -155,7 +184,7 @@ export function ProfileHeader({
         show={emojiPicker.showEmojiPicker}
         customStatus={statusManager.customStatus}
         emojiPickerRef={emojiPicker.emojiPickerRef}
-        onEmojiSelect={statusManager.handleEmojiSelect}
+        onEmojiSelect={handleEmojiSelect}
         onClose={emojiPicker.closeEmojiPicker}
         onContentClick={emojiPicker.handleEmojiPickerContentClick}
       />

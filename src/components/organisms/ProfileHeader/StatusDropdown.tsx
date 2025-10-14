@@ -30,7 +30,8 @@ export function StatusDropdown({
 }: StatusDropdownProps) {
   const getCurrentEmoji = () => {
     const option = STATUS_OPTIONS.find((opt) => opt.label === currentStatus);
-    return option?.emoji || '🌴';
+    const fallback = option?.emoji || '🌴';
+    return selectedEmoji && selectedEmoji.trim() !== '' ? selectedEmoji : fallback;
   };
   return (
     <div className="relative">
