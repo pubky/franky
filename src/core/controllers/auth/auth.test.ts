@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { AuthController } from './auth';
 import { HomeserverService } from '@/core/services/homeserver';
 import * as Core from '@/core';
-import { Identity, Logger } from '@/libs';
+import { Identity } from '@/libs';
 
 const TEST_SECRET_KEY = Buffer.from(new Uint8Array(32).fill(1)).toString('hex');
 
@@ -167,14 +167,12 @@ describe('AuthController', () => {
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
 
-      // Should throw error when homeserver logout fails, but local state should still be cleared
+      // Should throw error when homeserver logout fails
       await expect(AuthController.logout()).rejects.toThrow('Network error');
       expect(logoutSpy).toHaveBeenCalled();
-      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
 
-      // Verify local state was cleared despite the error
-      // Note: In a real scenario, you would check that stores are actually reset
-      // For this test, we're just verifying the logout method was called and threw
+      // clearDatabase is not called when homeserver logout fails because the error is thrown first
+      expect(clearDatabaseSpy).not.toHaveBeenCalled();
 
       clearDatabaseSpy.mockRestore();
       logoutSpy.mockRestore();
@@ -202,19 +200,17 @@ describe('AuthController', () => {
       logoutSpy.mockRestore();
     });
 
-    it('should log a warning if clearing the database fails', async () => {
+    it('should throw error if clearing the database fails', async () => {
       const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
       const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockRejectedValue(new Error('clear failed'));
-      const loggerWarnSpy = vi.spyOn(Logger, 'warn').mockImplementation(() => {});
 
-      await AuthController.logout();
+      // Should throw error when clearDatabase fails
+      await expect(AuthController.logout()).rejects.toThrow('clear failed');
 
       expect(logoutSpy).toHaveBeenCalled();
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
-      expect(loggerWarnSpy).toHaveBeenCalledWith('Failed to clear local database on logout', expect.any(Error));
 
-      loggerWarnSpy.mockRestore();
       clearDatabaseSpy.mockRestore();
       logoutSpy.mockRestore();
     });
