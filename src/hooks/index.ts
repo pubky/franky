@@ -1,3 +1,4 @@
+export * from './useClickOutside';
 export * from './useCopyToClipboard';
 export * from './useIsTouchDevice';
 export * from './useAuthStatus';

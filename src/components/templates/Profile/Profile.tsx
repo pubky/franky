@@ -30,12 +30,10 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
 
-  // Get current user for checking if it's own profile
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
 
   return (
     <>
-      {/* Profile Header - ABOVE everything, full width */}
       <div className="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 pb-6">
         <Organisms.ProfileHeader
           name={profileInfo?.name || 'User'}

@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
-import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 
 export interface ProfileRepliesProps {
   className?: string;
@@ -26,15 +27,12 @@ export function ProfileReplies({ className }: ProfileRepliesProps) {
 
   if (mockReplies.length === 0) {
     return (
-      <Atoms.Card className={Libs.cn('p-12 text-center', className)}>
-        <Libs.MessageSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-        <Atoms.Heading level={3} size="lg" className="mb-2">
-          No replies yet
-        </Atoms.Heading>
-        <Atoms.Typography size="md" className="text-muted-foreground">
-          Replies to posts will appear here.
-        </Atoms.Typography>
-      </Atoms.Card>
+      <Molecules.ContentNotFound
+        icon={<Libs.MessageCircle size={48} className="text-brand" />}
+        title="No replies yet"
+        description="Replies to posts will appear here."
+        className={className}
+      />
     );
   }
 

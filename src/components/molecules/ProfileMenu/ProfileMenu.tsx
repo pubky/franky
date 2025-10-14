@@ -7,12 +7,13 @@ import * as Libs from '@/libs';
 import { PROFILE_ROUTES } from '@/app';
 
 export const PROFILE_MENU_ITEMS: ProfileMenuItem[] = [
+  { icon: Libs.Bell, label: 'Notifications', path: PROFILE_ROUTES.NOTIFICATIONS },
   { icon: Libs.StickyNote, label: 'Posts', path: PROFILE_ROUTES.POSTS },
-  { icon: Libs.MessageSquare, label: 'Replies', path: PROFILE_ROUTES.REPLIES },
+  { icon: Libs.MessageCircle, label: 'Replies', path: PROFILE_ROUTES.REPLIES },
+  { icon: Libs.UsersRound, label: 'Followers', path: PROFILE_ROUTES.FOLLOWERS },
+  { icon: Libs.UsersRound2, label: 'Following', path: PROFILE_ROUTES.FOLLOWING },
+  { icon: Libs.HeartHandshake, label: 'Friends', path: PROFILE_ROUTES.FRIENDS },
   { icon: Libs.Tag, label: 'Tagged', path: PROFILE_ROUTES.TAGGED },
-  { icon: Libs.Users, label: 'Followers', path: PROFILE_ROUTES.FOLLOWERS },
-  { icon: Libs.UserPlus, label: 'Following', path: PROFILE_ROUTES.FOLLOWING },
-  { icon: Libs.UsersRound, label: 'Friends', path: PROFILE_ROUTES.FRIENDS },
 ];
 
 export interface ProfileMenuItem {
@@ -24,12 +25,13 @@ export interface ProfileMenuItem {
 export interface ProfileMenuProps {
   className?: string;
   counts?: {
+    notifications?: number;
     posts?: number;
     replies?: number;
-    tagged?: number;
     followers?: number;
     following?: number;
     friends?: number;
+    tagged?: number;
   };
 }
 
@@ -39,18 +41,20 @@ export function ProfileMenu({ className, counts }: ProfileMenuProps) {
   const getCount = (label: string) => {
     if (!counts) return undefined;
     switch (label) {
+      case 'Notifications':
+        return counts.notifications;
       case 'Posts':
         return counts.posts;
       case 'Replies':
         return counts.replies;
-      case 'Tagged':
-        return counts.tagged;
       case 'Followers':
         return counts.followers;
       case 'Following':
         return counts.following;
       case 'Friends':
         return counts.friends;
+      case 'Tagged':
+        return counts.tagged;
       default:
         return undefined;
     }
@@ -58,8 +62,6 @@ export function ProfileMenu({ className, counts }: ProfileMenuProps) {
 
   return (
     <Atoms.FilterRoot className={className}>
-      <Atoms.FilterHeader title="Profile" />
-
       <Atoms.FilterList>
         {PROFILE_MENU_ITEMS.map((item) => {
           const Icon = item.icon;

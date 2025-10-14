@@ -6,7 +6,7 @@ import { ProfileMobileMenu } from './ProfileMobileMenu';
 // Mock next/navigation
 const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(() => '/profile/posts'),
+  usePathname: vi.fn(() => '/profile/notifications'),
   useRouter: () => ({
     push: mockPush,
   }),
@@ -20,34 +20,36 @@ describe('ProfileMobileMenu', () => {
   it('renders all mobile menu items', () => {
     render(<ProfileMobileMenu />);
 
-    // Should render 6 buttons for 6 menu items
+    // Should render 7 buttons for 7 menu items
     const buttons = screen.getAllByRole('button');
-    expect(buttons).toHaveLength(6);
+    expect(buttons).toHaveLength(7);
 
     // Check that all menu items are present by their aria-labels
+    expect(screen.getByLabelText('Notifications')).toBeInTheDocument();
     expect(screen.getByLabelText('Posts')).toBeInTheDocument();
     expect(screen.getByLabelText('Replies')).toBeInTheDocument();
-    expect(screen.getByLabelText('Tagged')).toBeInTheDocument();
     expect(screen.getByLabelText('Followers')).toBeInTheDocument();
     expect(screen.getByLabelText('Following')).toBeInTheDocument();
     expect(screen.getByLabelText('Friends')).toBeInTheDocument();
+    expect(screen.getByLabelText('Tagged')).toBeInTheDocument();
   });
 
   it('displays counts when provided', () => {
     const counts = {
+      notifications: 3,
       posts: 10,
       replies: 5,
-      tagged: 3,
       followers: 100,
       following: 50,
       friends: 20,
+      tagged: 3,
     };
     render(<ProfileMobileMenu counts={counts} />);
 
     // Check for the count numbers in span elements
+    expect(screen.getAllByText('3')).toHaveLength(2); // notifications and tagged both have count 3
     expect(screen.getByText('10')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('100')).toBeInTheDocument();
     expect(screen.getByText('50')).toBeInTheDocument();
     expect(screen.getByText('20')).toBeInTheDocument();
@@ -90,11 +92,11 @@ describe('ProfileMobileMenu', () => {
     render(<ProfileMobileMenu />);
 
     // Click different menu items and verify navigation
+    fireEvent.click(screen.getByLabelText('Notifications'));
+    expect(mockPush).toHaveBeenCalledWith('/profile/notifications');
+
     fireEvent.click(screen.getByLabelText('Replies'));
     expect(mockPush).toHaveBeenCalledWith('/profile/replies');
-
-    fireEvent.click(screen.getByLabelText('Tagged'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/tagged');
 
     fireEvent.click(screen.getByLabelText('Followers'));
     expect(mockPush).toHaveBeenCalledWith('/profile/followers');
@@ -104,6 +106,9 @@ describe('ProfileMobileMenu', () => {
 
     fireEvent.click(screen.getByLabelText('Friends'));
     expect(mockPush).toHaveBeenCalledWith('/profile/friends');
+
+    fireEvent.click(screen.getByLabelText('Tagged'));
+    expect(mockPush).toHaveBeenCalledWith('/profile/tagged');
   });
 
   it('matches snapshot', () => {

@@ -23,6 +23,7 @@ export * from './ProfileFollowers';
 export * from './ProfileFollowing';
 export * from './ProfileFriends';
 export * from './ProfileHeader';
+export * from './ProfileNotifications';
 export * from './ProfilePosts';
 export * from './ProfileReplies';
 export * from './ProfileTagged';

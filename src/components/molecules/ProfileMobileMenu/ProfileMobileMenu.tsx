@@ -7,12 +7,13 @@ import { PROFILE_MENU_ITEMS } from '@/molecules/ProfileMenu/ProfileMenu';
 export interface ProfileMobileMenuProps {
   className?: string;
   counts?: {
+    notifications?: number;
     posts?: number;
     replies?: number;
-    tagged?: number;
     followers?: number;
     following?: number;
     friends?: number;
+    tagged?: number;
   };
 }
 
@@ -23,18 +24,20 @@ export function ProfileMobileMenu({ className, counts }: ProfileMobileMenuProps)
   const getCount = (label: string) => {
     if (!counts) return undefined;
     switch (label) {
+      case 'Notifications':
+        return counts.notifications;
       case 'Posts':
         return counts.posts;
       case 'Replies':
         return counts.replies;
-      case 'Tagged':
-        return counts.tagged;
       case 'Followers':
         return counts.followers;
       case 'Following':
         return counts.following;
       case 'Friends':
         return counts.friends;
+      case 'Tagged':
+        return counts.tagged;
       default:
         return undefined;
     }

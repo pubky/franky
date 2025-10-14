@@ -5,6 +5,7 @@ import { Profile } from './Profile';
 // Mock dependencies
 vi.mock('@/hooks', () => ({
   useLayoutReset: vi.fn(),
+  useClickOutside: vi.fn(),
 }));
 
 vi.mock('next/navigation', () => ({

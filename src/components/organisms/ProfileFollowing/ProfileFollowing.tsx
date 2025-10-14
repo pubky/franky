@@ -33,7 +33,7 @@ export function ProfileFollowing({ className }: ProfileFollowingProps) {
   if (following.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.UserPlus size={48} className="text-[#c8ff00]" />}
+        icon={<Libs.UserPlus size={48} className="text-brand" />}
         title={isOwnProfile ? 'You are the algorithm' : 'No following yet'}
         description={
           isOwnProfile ? (

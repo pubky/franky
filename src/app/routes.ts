@@ -34,12 +34,13 @@ export enum SETTINGS_ROUTES {
 }
 
 export enum PROFILE_ROUTES {
+  NOTIFICATIONS = '/profile/notifications',
   POSTS = '/profile/posts',
   REPLIES = '/profile/replies',
-  TAGGED = '/profile/tagged',
   FOLLOWERS = '/profile/followers',
   FOLLOWING = '/profile/following',
   FRIENDS = '/profile/friends',
+  TAGGED = '/profile/tagged',
 }
 
 export enum POST_ROUTES {

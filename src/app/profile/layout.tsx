@@ -3,12 +3,13 @@ import * as Templates from '@/templates';
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   // TODO: Fetch actual profile data here
   const mockProfileCounts = {
+    notifications: 3,
     posts: 10,
     replies: 5,
-    tagged: 3,
     followers: 100,
     following: 50,
     friends: 20,
+    tagged: 3,
   };
 
   const mockProfileInfo = {
