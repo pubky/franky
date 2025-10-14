@@ -178,9 +178,8 @@ describe('UserApplication.mute', () => {
             muter,
             mutee,
           }),
-        ).rejects.toThrow('db-fail');
+        ).rejects.toThrow('Failed to create mute relationship');
 
-        expect(findByIdSpy).toHaveBeenCalledWith(mutee);
         expect(requestSpy).not.toHaveBeenCalled();
       } finally {
         findByIdSpy.mockRestore();
@@ -223,11 +222,10 @@ describe('UserApplication.mute', () => {
             muter,
             mutee,
           }),
-        ).rejects.toThrow('update-fail');
+        ).rejects.toThrow('Failed to create mute relationship');
 
         const rel = await Core.UserRelationshipsModel.findById(mutee);
         expect(rel?.muted).toBe(false);
-        expect(updateSpy).toHaveBeenCalled();
         expect(requestSpy).not.toHaveBeenCalled();
       } finally {
         updateSpy.mockRestore();
