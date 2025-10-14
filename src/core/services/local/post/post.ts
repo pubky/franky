@@ -1,93 +1,9 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
-import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
+import type { TLocalSavePostParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
-  /**
-   * Fetch posts with optional pagination
-   * @param params - Parameters object
-   * @param params.limit - Number of posts to fetch (default: 30)
-   * @param params.offset - Number of posts to skip (default: 0)
-   * @returns Array of NexusPost objects
-   */
-  static async fetch({ limit = 30, offset = 0 }: TLocalFetchPostsParams = {}): Promise<Core.NexusPost[]> {
-    try {
-      const allRelationships = await Core.PostRelationshipsModel.table.toArray();
-      const replyPostIds = new Set(allRelationships.filter((rel) => rel.replied).map((rel) => rel.id));
-
-      const allPostDetails = await Core.PostDetailsModel.fetchPaginated(limit * 2, offset);
-      const postDetails = allPostDetails.filter((post) => !replyPostIds.has(post.id)).slice(0, limit);
-
-      if (postDetails.length === 0) {
-        return [];
-      }
-
-      const postIds = postDetails.map((post) => post.id);
-
-      const [countsData, tagsData, relationshipsData] = await Promise.all([
-        Core.PostCountsModel.findByIds(postIds),
-        Core.PostTagsModel.findByIds(postIds),
-        Core.PostRelationshipsModel.findByIds(postIds),
-      ]);
-
-      const countsMap = new Map(countsData.map((c) => [c.id, c]));
-      const tagsMap = new Map(tagsData.map((t) => [t.id, t]));
-      const relationshipsMap = new Map(relationshipsData.map((r) => [r.id, r]));
-
-      const replyCounts = new Map<string, number>();
-      allRelationships.forEach((rel) => {
-        if (rel.replied) {
-          replyCounts.set(rel.replied, (replyCounts.get(rel.replied) || 0) + 1);
-        }
-      });
-      const posts: Core.NexusPost[] = postDetails.map((details) => {
-        const baseCounts = countsMap.get(details.id) || {
-          id: details.id,
-          tags: 0,
-          unique_tags: 0,
-          replies: 0,
-          reposts: 0,
-        };
-
-        const { pubky } = Core.parsePostCompositeId(details.id);
-
-        return {
-          details: {
-            id: details.id,
-            content: details.content,
-            indexed_at: details.indexed_at,
-            author: pubky,
-            kind: details.kind,
-            uri: details.uri,
-            attachments: details.attachments,
-          },
-          counts: {
-            ...baseCounts,
-            replies: replyCounts.get(details.id) || 0, // Use actual reply count
-          },
-          tags: tagsMap.get(details.id)?.tags.map((t) => new Core.TagModel(t)) || [],
-          relationships: relationshipsMap.get(details.id) || {
-            id: details.id,
-            replied: null,
-            reposted: null,
-            mentioned: [],
-          },
-          bookmark: null, // TODO: Add bookmark support if needed
-        };
-      });
-
-      Logger.debug(`Fetched ${posts.length} posts from normalized tables`, { limit, offset });
-      return posts;
-    } catch (error) {
-      throw createDatabaseError(DatabaseErrorType.QUERY_FAILED, 'Failed to fetch Post records', 500, {
-        error,
-        limit,
-        offset,
-      });
-    }
-  }
-
   /**
    * Save a new post to the local database.
    *

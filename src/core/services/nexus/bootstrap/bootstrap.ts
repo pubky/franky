@@ -1,63 +1,27 @@
-import * as Libs from '@/libs';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
+/**
+ * Nexus Bootstrap Service
+ *
+ * Handles fetching bootstrap data from Nexus API.
+ */
 export class NexusBootstrapService {
-  static async retrieveAndPersist(pubky: Core.Pubky) {
+  /**
+   * Retrieves bootstrap data from Nexus API
+   *
+   * @param pubky - User's public key
+   * @returns Bootstrap data (users, posts, streams)
+   */
+  static async read(pubky: Core.Pubky): Promise<Core.NexusBootstrapResponse> {
     try {
       const url = Core.bootstrapApi.get(pubky);
-      const { users, posts, list } = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
-
-      // Persist fetched data in the database
-      await this.persistUsers(users);
-      await this.persistPosts(posts);
-      await this.persistStreams(list);
+      const data = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
+      Libs.Logger.debug('Bootstrap data fetched successfully', { data });
+      return data;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AppError') throw error;
-      // Handle network/fetch errors
-      throw Libs.createNexusError(Libs.NexusErrorType.NETWORK_ERROR, 'Failed to fetch bootstrap data', 500, {
-        error,
-        pubky,
-      });
+      Libs.Logger.error('Failed to fetch bootstrap data', error);
+      throw error;
     }
-  }
-
-  static async persistUsers(users: Core.NexusUser[]) {
-    await Core.UserCountsModel.bulkSave(users.map((user) => [user.details.id, user.counts]));
-    await Core.UserDetailsModel.bulkSave(users.map((user) => user.details));
-    await Core.UserRelationshipsModel.bulkSave(users.map((user) => [user.details.id, user.relationship]));
-    await Core.UserTagsModel.bulkSave(users.map((user) => [user.details.id, user.tags]));
-  }
-
-  static async persistPosts(posts: Core.NexusPost[]) {
-    const postCounts: Core.NexusModelTuple<Core.NexusPostCounts>[] = [];
-    const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
-    const postTags: Core.NexusModelTuple<Core.TagModel[]>[] = [];
-    const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
-
-    for (const post of posts) {
-      // post.details.id is Crockford Base32 strings derived from timestamps. If two users post at the same time, the id will be the same.
-      // To avoid that, we need to use the authorId:postId format to ensure the id is unique.
-      const postId = Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id });
-
-      postCounts.push([postId, post.counts]);
-      postRelationships.push([postId, post.relationships]);
-      postTags.push([postId, post.tags]);
-      // Exclude the author from the post details
-      // eslint-disable-next-line
-      const { author, ...detailsWithoutAuthor } = post.details;
-      postDetails.push({ ...detailsWithoutAuthor, id: postId });
-    }
-
-    await Core.PostDetailsModel.bulkSave(postDetails);
-    await Core.PostCountsModel.bulkSave(postCounts);
-    await Core.PostTagsModel.bulkSave(postTags);
-    await Core.PostRelationshipsModel.bulkSave(postRelationships);
-  }
-
-  static async persistStreams(list: Core.NexusBootstrapList) {
-    await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_ALL, list.stream);
-    await Core.UserStreamModel.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, list.influencers);
-    await Core.UserStreamModel.upsert(Core.UserStreamTypes.RECOMMENDED, list.recommended);
-    await Core.TagStreamModel.upsert(Core.TagStreamTypes.TODAY_ALL, list.hot_tags);
   }
 }

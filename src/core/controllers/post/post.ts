@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 import * as Application from '@/core/application';
-import type { TCreatePostParams, TReadPostsParams } from './post.types';
+import type { TCreatePostParams } from './post.types';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostController {
@@ -16,18 +16,6 @@ export class PostController {
       await Core.db.initialize();
       this.isInitialized = true;
     }
-  }
-
-  /**
-   * Read posts with optional pagination
-   * @param params - Parameters object
-   * @param params.limit - Number of posts to fetch (default: 30)
-   * @param params.offset - Number of posts to skip (default: 0)
-   * @returns Array of NexusPost objects
-   */
-  static async read({ limit = 30, offset = 0 }: TReadPostsParams = {}): Promise<Core.NexusPost[]> {
-    await this.initialize();
-    return Core.Local.Post.fetch({ limit, offset });
   }
 
   /**

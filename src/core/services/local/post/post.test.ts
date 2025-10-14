@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
 import { Logger } from '@/libs';
-import type { TLocalFetchPostsParams, TLocalSavePostParams } from './post.types';
+import type { TLocalSavePostParams } from './post.types';
 
 // Test data
 const testData = {
@@ -24,11 +24,6 @@ const createSaveParams = (content: string, postId?: string): TLocalSavePostParam
   authorId: testData.authorPubky,
   parentUri: undefined,
   attachments: undefined,
-});
-
-const createFetchParams = (limit?: number, offset?: number): TLocalFetchPostsParams => ({
-  limit,
-  offset,
 });
 
 const getSavedPost = async (postId: string) => {
@@ -97,56 +92,6 @@ describe('LocalPostService', () => {
         await Core.PostTagsModel.table.clear();
       },
     );
-  });
-
-  describe('fetch', () => {
-    it('should fetch posts with default pagination', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Test post 1');
-
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts).toBeInstanceOf(Array);
-      expect(posts.length).toBe(1);
-      expect(posts[0].details.content).toBe('Test post 1');
-    });
-
-    it('should fetch posts with custom limit', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Test post 1');
-      await setupExistingPost(testData.fullPostId2, 'Test post 2');
-
-      const posts = await Core.Local.Post.fetch(createFetchParams(1));
-
-      expect(posts.length).toBeLessThanOrEqual(1);
-    });
-
-    it('should return empty array when no posts exist', async () => {
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts).toEqual([]);
-    });
-
-    it('should exclude replies from main feed', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Root post');
-      const replyUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
-      await setupExistingPost(testData.fullPostId2, 'Reply post', replyUri);
-
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts.length).toBe(1);
-      expect(posts[0].details.content).toBe('Root post');
-    });
-
-    it('should return posts with all required fields', async () => {
-      await setupExistingPost(testData.fullPostId1, 'Test post');
-
-      const posts = await Core.Local.Post.fetch();
-
-      expect(posts[0]).toHaveProperty('details');
-      expect(posts[0]).toHaveProperty('counts');
-      expect(posts[0]).toHaveProperty('tags');
-      expect(posts[0]).toHaveProperty('relationships');
-      expect(posts[0]).toHaveProperty('bookmark');
-    });
   });
 
   describe('save', () => {

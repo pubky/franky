@@ -10,7 +10,8 @@ export class AuthController {
       authStore.setSession(session);
       authStore.setCurrentUserPubky(pubky);
       // Once we have the session, we have to bootstrap the app
-      await Core.NexusBootstrapService.retrieveAndPersist(pubky);
+      const data = await Core.NexusBootstrapService.read(pubky);
+      await Core.LocalPersistenceService.persistBootstrap(data);
       // Setting that state, the guard enforces to redirect to the main page (/home)
       authStore.setAuthenticated(true);
     } catch (error) {
@@ -37,19 +38,19 @@ export class AuthController {
     try {
       const authStore = Core.useAuthStore.getState();
       const pubky = authStore.currentUserPubky || '';
-      let success = false;
+      const success = false;
       let retries = 0;
       while (!success && retries < 3) {
         try {
           // Wait 5 seconds before each attempt to let Nexus index the user
-          console.log(`Waiting 5 seconds before bootstrap attempt ${retries + 1}...`);
+          Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt ${retries + 1}...`);
           await new Promise((resolve) => setTimeout(resolve, 5000));
 
-          await Core.NexusBootstrapService.retrieveAndPersist(pubky);
-          success = true;
+          const data = await Core.NexusBootstrapService.read(pubky);
+          await Core.LocalPersistenceService.persistBootstrap(data);
           authStore.setAuthenticated(true);
         } catch (error) {
-          console.error('Failed to bootstrap', error, retries);
+          Libs.Logger.error('Failed to bootstrap', error, retries);
           retries++;
         }
       }
@@ -83,7 +84,8 @@ export class AuthController {
       const pubky = publicKey.z32();
       authStore.setCurrentUserPubky(pubky);
       // Once we have the session, we have to bootstrap the app
-      await Core.NexusBootstrapService.retrieveAndPersist(pubky);
+      const data = await Core.NexusBootstrapService.read(pubky);
+      await Core.LocalPersistenceService.persistBootstrap(data);
       // Setting that state, the guard enforces to redirect to the main page (/home)
       authStore.setAuthenticated(true);
     }
