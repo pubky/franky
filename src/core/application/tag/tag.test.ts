@@ -21,24 +21,26 @@ vi.mock('@/core/services/homeserver', () => ({
 describe('Tag Application', () => {
   // Test data factory
   const createMockTagData = (): TCreateTagInput => ({
-    postId: 'author:post123',
+    taggedId: 'author:post123',
     label: 'test-tag',
     taggerId: 'tagger123' as Core.Pubky,
     tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
     tagJson: { label: 'test-tag' },
+    taggedKind: Core.TagKind.POST,
   });
 
   const createMockDeleteData = (): TDeleteTagInput => ({
-    postId: 'author:post123',
+    taggedId: 'author:post123',
     label: 'test-tag',
     taggerId: 'tagger123' as Core.Pubky,
     tagUrl: 'pubky://tagger123/pub/pubky.app/tags/test-tag',
+    taggedKind: Core.TagKind.POST,
   });
 
   // Helper functions
   const setupMocks = () => ({
-    saveSpy: vi.spyOn(Core.LocalTagService, 'create'),
-    removeSpy: vi.spyOn(Core.LocalTagService, 'delete'),
+    saveSpy: vi.spyOn(Core.LocalPostTagService, 'create'),
+    removeSpy: vi.spyOn(Core.LocalPostTagService, 'delete'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
   });
 
@@ -57,7 +59,7 @@ describe('Tag Application', () => {
       await TagApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
-        postId: mockData.postId,
+        taggedId: mockData.taggedId,
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
@@ -99,7 +101,7 @@ describe('Tag Application', () => {
       await TagApplication.delete(mockData);
 
       expect(removeSpy).toHaveBeenCalledWith({
-        postId: mockData.postId,
+        taggedId: mockData.taggedId,
         label: mockData.label,
         taggerId: mockData.taggerId,
       });
