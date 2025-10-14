@@ -9,4 +9,26 @@ export class UserApplication {
     }
     await Core.HomeserverService.request(eventType, followUrl, followJson);
   }
+
+  static async mute({ eventType, muteUrl, muteJson, mutee }: Core.TUserApplicationMuteParams) {
+    await Core.db.transaction('rw', [Core.UserRelationshipsModel.table], async () => {
+      const rel = await Core.UserRelationshipsModel.findById(mutee);
+      const shouldMute = eventType === Core.HomeserverAction.PUT;
+
+      if (rel) {
+        if (rel.muted === shouldMute) return;
+        await Core.UserRelationshipsModel.update(mutee, { muted: shouldMute });
+        return;
+      }
+
+      await Core.UserRelationshipsModel.create({
+        id: mutee,
+        following: false,
+        followed_by: false,
+        muted: shouldMute,
+      });
+    });
+
+    await Core.HomeserverService.request(eventType, muteUrl, muteJson);
+  }
 }
