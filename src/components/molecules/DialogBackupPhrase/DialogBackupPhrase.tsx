@@ -303,7 +303,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
                 className={`rounded-full ${
                   isThisInstanceUsed
                     ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                    : 'dark:border-transparent bg-secondary cursor-pointer'
+                    : 'border-transparent bg-secondary cursor-pointer'
                 }`}
                 onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
                 disabled={isThisInstanceUsed}

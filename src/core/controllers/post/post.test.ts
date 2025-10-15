@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import type { TCreatePostParams, TReadPostsParams } from './post.types';
+import type { TCreatePostParams } from './post.types';
 
 // Mock homeserver
 const mockHomeserver = {
@@ -46,11 +46,6 @@ const createPostParams = (content: string, parentPostId?: string): TCreatePostPa
   content,
   authorId: testData.authorPubky,
   parentPostId,
-});
-
-const readPostsParams = (limit?: number, offset?: number): TReadPostsParams => ({
-  limit,
-  offset,
 });
 
 const setupExistingPost = async () => {
@@ -116,40 +111,6 @@ describe('PostController', () => {
     );
   });
 
-  describe('read', () => {
-    it('should be callable', async () => {
-      const { PostController } = await import('./post');
-      expect(PostController.read).toBeTypeOf('function');
-    });
-
-    it('should fetch posts with default pagination', async () => {
-      await setupExistingPost();
-      const { PostController } = await import('./post');
-
-      const posts = await PostController.read();
-
-      expect(posts).toBeInstanceOf(Array);
-      expect(posts.length).toBeGreaterThanOrEqual(0);
-    });
-
-    it('should fetch posts with custom limit and offset', async () => {
-      await setupExistingPost();
-      const { PostController } = await import('./post');
-
-      const posts = await PostController.read(readPostsParams(10, 5));
-
-      expect(posts).toBeInstanceOf(Array);
-    });
-
-    it('should return empty array when no posts exist', async () => {
-      const { PostController } = await import('./post');
-
-      const posts = await PostController.read();
-
-      expect(posts).toEqual([]);
-    });
-  });
-
   describe('create', () => {
     it('should be callable', async () => {
       const { PostController } = await import('./post');
@@ -209,7 +170,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+      const createSpy = vi.spyOn(ApplicationModule.PostApplication, 'create');
 
       await PostController.create(createPostParams('Hello, world!'));
 
@@ -225,7 +186,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+      const createSpy = vi.spyOn(ApplicationModule.PostApplication, 'create');
 
       await PostController.create(createPostParams('Hello, world!'));
 

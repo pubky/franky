@@ -5,8 +5,3 @@ export type TCreatePostParams = {
   content: string;
   authorId: Core.Pubky;
 };
-
-export type TReadPostsParams = {
-  limit?: number;
-  offset?: number;
-};

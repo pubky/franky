@@ -9,8 +9,4 @@ export enum PostStreamTypes {
   TIMELINE_FOLLOWING = 'timeline:following:all',
   TIMELINE_FRIENDS = 'timeline:friends:all',
   TIMELINE_PICTURES = 'timeline:all:image',
-  // TODO: Not sure if we are going to store engagement related streams
-  ENGAGEMENT_ALL = 'total_engagement:all:all',
-  ENGAGEMENT_FOLLOWING = 'total_engagement:following:all',
-  ENGAGEMENT_FRIENDS = 'total_engagement:friends:all',
 }

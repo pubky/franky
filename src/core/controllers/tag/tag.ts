@@ -1,19 +1,9 @@
 import { postUriBuilder } from 'pubky-app-specs';
+
 import * as Core from '@/core';
-import * as Application from '@/core/application';
-import type { TCreateTagParams, TDeleteTagParams } from './tag.types';
 
 export class TagController {
-  private static isInitialized = false;
-
   private constructor() {}
-
-  private static async initialize() {
-    if (!this.isInitialized) {
-      await Core.db.initialize();
-      this.isInitialized = true;
-    }
-  }
 
   /**
    * Create a tag
@@ -22,9 +12,7 @@ export class TagController {
    * @param params.label - Tag label
    * @param params.taggerId - ID of the user adding the tag
    */
-  static async create({ targetId, label, taggerId }: TCreateTagParams) {
-    await this.initialize();
-
+  static async create({ targetId, label, taggerId }: Core.TCreateTagParams) {
     const { pubky, postId } = Core.parsePostCompositeId(targetId);
     const postUri = postUriBuilder(pubky, postId);
 
@@ -32,7 +20,7 @@ export class TagController {
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
     // Use composite targetId for local persistence to align with delete flow and tests
-    await Application.Tag.create({
+    await Core.TagApplication.create({
       postId: targetId,
       label: normalizedLabel,
       taggerId,
@@ -48,16 +36,14 @@ export class TagController {
    * @param params.label - Tag label to remove
    * @param params.taggerId - ID of the user removing the tag
    */
-  static async delete({ targetId, label, taggerId }: TDeleteTagParams) {
-    await this.initialize();
-
+  static async delete({ targetId, label, taggerId }: Core.TDeleteTagParams) {
     const { pubky, postId } = Core.parsePostCompositeId(targetId);
     const postUri = postUriBuilder(pubky, postId);
 
     const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
-    await Application.Tag.delete({
+    await Core.TagApplication.delete({
       postId: targetId,
       label: normalizedLabel,
       taggerId,
