@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { SettingsSection } from './SettingsSection';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock Atoms
 vi.mock('@/atoms', () => ({
@@ -112,23 +113,27 @@ describe('SettingsSection', () => {
 describe('SettingsSection - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<SettingsSection {...defaultProps} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with destructive variant', () => {
     const { container } = render(<SettingsSection {...defaultProps} buttonVariant="destructive" />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with disabled button', () => {
     const { container } = render(<SettingsSection {...defaultProps} buttonDisabled={true} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with custom classNames', () => {
     const { container } = render(
       <SettingsSection {...defaultProps} titleClassName="custom-title" iconClassName="custom-icon" />,
     );
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer.firstChild).toMatchSnapshot();
   });
 });

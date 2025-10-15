@@ -165,47 +165,6 @@ exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] 
 </button>
 `;
 
-exports[`SidebarButton - Snapshots > matches snapshot with click handler 1`] = `
-<button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
->
-  <svg
-    aria-hidden="true"
-    class="lucide lucide-file-text h-4 w-4"
-    fill="none"
-    height="24"
-    stroke="currentColor"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2"
-    viewBox="0 0 24 24"
-    width="24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
-    />
-    <path
-      d="M14 2v4a2 2 0 0 0 2 2h4"
-    />
-    <path
-      d="M10 9H8"
-    />
-    <path
-      d="M16 13H8"
-    />
-    <path
-      d="M16 17H8"
-    />
-  </svg>
-  <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
-  >
-    Clickable Button
-  </span>
-</button>
-`;
-
 exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] = `
 <button
   class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
@@ -290,47 +249,6 @@ exports[`SidebarButton - Snapshots > matches snapshot with custom className 1`] 
     class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
   >
     Custom Button
-  </span>
-</button>
-`;
-
-exports[`SidebarButton - Snapshots > matches snapshot with default props 1`] = `
-<button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
->
-  <svg
-    aria-hidden="true"
-    class="lucide lucide-file-text h-4 w-4"
-    fill="none"
-    height="24"
-    stroke="currentColor"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    stroke-width="2"
-    viewBox="0 0 24 24"
-    width="24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
-    />
-    <path
-      d="M14 2v4a2 2 0 0 0 2 2h4"
-    />
-    <path
-      d="M10 9H8"
-    />
-    <path
-      d="M16 13H8"
-    />
-    <path
-      d="M16 17H8"
-    />
-  </svg>
-  <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
-  >
-    Default Button
   </span>
 </button>
 `;

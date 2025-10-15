@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { SettingsInfo } from './SettingsInfo';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 describe('SettingsInfo', () => {
   it('renders without crashing', () => {
@@ -30,6 +31,7 @@ describe('SettingsInfo', () => {
 describe('SettingsInfo - Snapshots', () => {
   it('matches snapshot', () => {
     const { container } = render(<SettingsInfo />);
-    expect(container).toMatchSnapshot();
+    const normalizedContainer = normaliseRadixIds(container);
+    expect(normalizedContainer).toMatchSnapshot();
   });
 });
