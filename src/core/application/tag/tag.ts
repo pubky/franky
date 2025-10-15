@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 
 /**
  * Tag application service implementing local-first architecture.
@@ -16,14 +15,14 @@ import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
  * - Add reconciliation mechanisms during app sync/bootstrap
  * - Consider compensation rollback on homeserver failure if strict consistency is required
  */
-export class Tag {
-  static async create({ postId, label, taggerId, tagUrl, tagJson }: TCreateTagInput) {
-    await Core.Local.Tag.create({ postId, label, taggerId });
+export class TagApplication {
+  static async create({ postId, label, taggerId, tagUrl, tagJson }: Core.TCreateTagInput) {
+    await Core.LocalTagService.create({ postId, label, taggerId });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
   }
 
-  static async delete({ postId, label, taggerId, tagUrl }: TDeleteTagInput) {
-    await Core.Local.Tag.delete({ postId, label, taggerId });
+  static async delete({ postId, label, taggerId, tagUrl }: Core.TDeleteTagInput) {
+    await Core.LocalTagService.delete({ postId, label, taggerId });
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, tagUrl);
   }
 }

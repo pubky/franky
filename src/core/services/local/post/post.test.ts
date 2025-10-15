@@ -164,7 +164,7 @@ describe('LocalPostService', () => {
         post: new PubkyAppPost(baseParams.post.content, PubkyAppPostKind.Short, parentUri, undefined, undefined),
       };
 
-      await Core.Local.Post.create(saveParams);
+      await Core.LocalPostService.create(saveParams);
 
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(1);
@@ -199,7 +199,7 @@ describe('LocalPostService', () => {
         PubkyAppPostKind.Long,
       );
 
-      await Core.Local.Post.create(saveParams);
+      await Core.LocalPostService.create(saveParams);
 
       const savedPost = await getSavedPost(testData.fullPostId1);
       expect(savedPost!.kind).toBe('long');
@@ -212,7 +212,7 @@ describe('LocalPostService', () => {
 
       try {
         // Act + Assert
-        await expect(Core.Local.Post.create(params)).rejects.toThrow('Failed to save post');
+        await expect(Core.LocalPostService.create(params)).rejects.toThrow('Failed to save post');
 
         // Validate no partial data remains
         const [details, counts, relationships, tags] = await Promise.all([

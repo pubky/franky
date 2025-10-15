@@ -8,11 +8,6 @@ export type TCreatePostParams = {
   authorId: Core.Pubky;
 };
 
-export type TReadPostsParams = {
-  limit?: number;
-  offset?: number;
-};
-
 export type TDeletePostParams = {
   postId: string;
   deleterId: Core.Pubky;

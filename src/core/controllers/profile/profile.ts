@@ -5,6 +5,10 @@ import { z } from 'zod';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
+  static async read({ userId }: Core.TReadProfileParams) {
+    return await Core.ProfileApplication.read({ userId });
+  }
+
   // Upload avatar to homeserver and return the url
   static async uploadAvatar(avatarFile: File, pubky: Core.Pubky): Promise<string> {
     const fileContent = await avatarFile.arrayBuffer();
@@ -21,7 +25,6 @@ export class ProfileController {
   }
 
   static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
-    // Q: What does it happen if the profile is invalid?
     const { user, meta } = await Core.UserNormalizer.to(
       {
         name: profile.name,
