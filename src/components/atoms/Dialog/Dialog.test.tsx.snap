@@ -141,7 +141,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
 
 exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 <div
-  class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
+  class="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:justify-end mt-6"
   data-slot="dialog-footer"
 >
   <button>
@@ -155,18 +155,18 @@ exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 
 exports[`Dialog - Snapshots > matches snapshot for DialogHeader 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="flex flex-col gap-6"
   data-slot="dialog-header"
   data-testid="dialog-header"
 >
   <h2
-    class="self-stretch justify-start text-base-foreground text-2xl font-bold leading-loose undefined"
+    class="text-foreground text-2xl font-bold leading-normal"
     data-testid="dialog-title"
   >
     Dialog Title
   </h2>
   <p
-    class="text-muted-foreground text-sm"
+    class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
     data-testid="dialog-description"
   >
     Dialog Description
@@ -221,18 +221,18 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
         data-testid="dialog-content"
       >
         <div
-          class="flex flex-col gap-2"
+          class="flex flex-col gap-6"
           data-slot="dialog-header"
           data-testid="dialog-header"
         >
           <h2
-            class="self-stretch justify-start text-base-foreground text-2xl font-bold leading-loose undefined"
+            class="text-foreground text-2xl font-bold leading-normal"
             data-testid="dialog-title"
           >
             Dialog Title
           </h2>
           <p
-            class="text-muted-foreground text-sm"
+            class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
             data-testid="dialog-description"
           >
             Dialog Description
@@ -242,7 +242,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
           Dialog body content
         </div>
         <div
-          class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end"
+          class="flex flex-col gap-3 sm:flex-row sm:gap-2 sm:justify-end mt-6"
           data-slot="dialog-footer"
         >
           <button>

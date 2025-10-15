@@ -15,6 +15,7 @@ export * from './DialogAddLink';
 export * from './DialogCropImage';
 export * from './DialogAge';
 export * from './DialogBackupPhrase';
+export * from './DialogDeleteAccount';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogExport';
 export * from './DialogFeedback';

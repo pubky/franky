@@ -82,7 +82,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="dialog-header"
       data-testid="dialog-header"
-      className={Libs.cn('flex flex-col gap-2', className)}
+      className={Libs.cn('flex flex-col gap-6', className)}
       {...props}
     />
   );
@@ -92,7 +92,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="dialog-footer"
-      className={Libs.cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
+      className={Libs.cn('flex flex-col gap-3 sm:flex-row sm:gap-2 sm:justify-end mt-6', className)}
       {...props}
     />
   );
@@ -103,9 +103,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
     <DialogPrimitive.Title
       data-slot="dialog-title"
       data-testid="dialog-title"
-      className={Libs.cn(
-        `self-stretch justify-start text-base-foreground text-2xl font-bold leading-loose ${className}`,
-      )}
+      className={Libs.cn('text-foreground text-2xl font-bold leading-normal', className)}
       {...props}
     />
   );
@@ -115,7 +113,7 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={Libs.cn('text-muted-foreground text-sm', className)}
+      className={Libs.cn('text-muted-foreground text-lg font-normal leading-6 tracking-wide', className)}
       {...props}
     />
   );
