@@ -98,7 +98,7 @@ describe('UserApplication.mute', () => {
 
   describe('Operation Order', () => {
     it('should call database operation before homeserver for PUT', async () => {
-      const createSpy = vi.spyOn(Core.Local.Mute, 'create');
+      const createSpy = vi.spyOn(Core.LocalMuteService, 'create');
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       await UserApplication.mute({
@@ -113,7 +113,7 @@ describe('UserApplication.mute', () => {
     });
 
     it('should call database operation before homeserver for DELETE', async () => {
-      const deleteSpy = vi.spyOn(Core.Local.Mute, 'delete');
+      const deleteSpy = vi.spyOn(Core.LocalMuteService, 'delete');
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       await UserApplication.mute({
@@ -197,7 +197,7 @@ describe('UserApplication.mute', () => {
     });
 
     it('should handle both database and homeserver failures', async () => {
-      const createSpy = vi.spyOn(Core.Local.Mute, 'create').mockRejectedValue(new Error('db-fail'));
+      const createSpy = vi.spyOn(Core.LocalMuteService, 'create').mockRejectedValue(new Error('db-fail'));
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
 
       await expect(
