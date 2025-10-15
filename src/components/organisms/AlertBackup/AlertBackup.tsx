@@ -1,19 +1,34 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 
-interface AlertBackupProps {
-  onDismiss?: () => void;
-}
-
-export const AlertBackup = ({ onDismiss }: AlertBackupProps) => {
+/**
+ * AlertBackup
+ *
+ * Self-contained component that manages its own visibility state.
+ * Shows an alert when user has a secret key that needs to be backed up.
+ * No props needed - manages its own state internally.
+ */
+export const AlertBackup = () => {
   const { secretKey } = Core.useOnboardingStore();
+  const [showAlert, setShowAlert] = useState(false);
 
-  // Don't show alert if there's no secretKey (user signed in with their own keys)
-  if (!secretKey) {
+  useEffect(() => {
+    if (secretKey) {
+      setShowAlert(true);
+    }
+  }, [secretKey]);
+
+  const handleDismiss = () => {
+    setShowAlert(false);
+  };
+
+  // Don't show alert if there's no secretKey or it was dismissed
+  if (!secretKey || !showAlert) {
     return null;
   }
 
@@ -26,7 +41,7 @@ export const AlertBackup = ({ onDismiss }: AlertBackupProps) => {
         </Atoms.Typography>
       </Atoms.Container>
       <Organisms.DialogBackup />
-      <Organisms.DialogConfirmBackup onConfirm={onDismiss} />
+      <Organisms.DialogConfirmBackup onConfirm={handleDismiss} />
     </Atoms.Container>
   );
 };
