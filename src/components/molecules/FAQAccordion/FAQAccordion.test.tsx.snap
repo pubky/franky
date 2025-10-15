@@ -1,0 +1,302 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content 1`] = `
+<div
+  class="w-full flex-col gap-4 flex"
+  data-orientation="vertical"
+>
+  <div
+    class="w-full border border-border rounded-lg overflow-hidden"
+    data-orientation="vertical"
+    data-state="closed"
+  >
+    <h3
+      data-orientation="vertical"
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r0»"
+        aria-expanded="false"
+        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-«rc»"
+        type="button"
+      >
+        <span
+          class="text-base font-semibold text-left"
+        >
+          Complex question
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m6 9 6 6 6-6"
+          />
+        </svg>
+      </button>
+    </h3>
+    <div
+      aria-labelledby="radix-«rc»"
+      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-orientation="vertical"
+      data-state="closed"
+      hidden=""
+      id="radix-«rd»"
+      role="region"
+      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+    />
+  </div>
+</div>
+`;
+
+exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="w-full flex-col gap-4 flex custom-faq-class"
+  data-orientation="vertical"
+>
+  <div
+    class="w-full border border-border rounded-lg overflow-hidden"
+    data-orientation="vertical"
+    data-state="closed"
+  >
+    <h3
+      data-orientation="vertical"
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r0»"
+        aria-expanded="false"
+        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-«r8»"
+        type="button"
+      >
+        <span
+          class="text-base font-semibold text-left"
+        >
+          What is Pubky?
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m6 9 6 6 6-6"
+          />
+        </svg>
+      </button>
+    </h3>
+    <div
+      aria-labelledby="radix-«r8»"
+      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-orientation="vertical"
+      data-state="closed"
+      hidden=""
+      id="radix-«r9»"
+      role="region"
+      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+    />
+  </div>
+  <div
+    class="w-full border border-border rounded-lg overflow-hidden"
+    data-orientation="vertical"
+    data-state="closed"
+  >
+    <h3
+      data-orientation="vertical"
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r0»"
+        aria-expanded="false"
+        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-«ra»"
+        type="button"
+      >
+        <span
+          class="text-base font-semibold text-left"
+        >
+          How do I sign up?
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m6 9 6 6 6-6"
+          />
+        </svg>
+      </button>
+    </h3>
+    <div
+      aria-labelledby="radix-«ra»"
+      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-orientation="vertical"
+      data-state="closed"
+      hidden=""
+      id="radix-«rb»"
+      role="region"
+      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+    />
+  </div>
+</div>
+`;
+
+exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="w-full flex-col gap-4 flex"
+  data-orientation="vertical"
+>
+  <div
+    class="w-full border border-border rounded-lg overflow-hidden"
+    data-orientation="vertical"
+    data-state="closed"
+  >
+    <h3
+      data-orientation="vertical"
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r0»"
+        aria-expanded="false"
+        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-«r4»"
+        type="button"
+      >
+        <span
+          class="text-base font-semibold text-left"
+        >
+          What is Pubky?
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m6 9 6 6 6-6"
+          />
+        </svg>
+      </button>
+    </h3>
+    <div
+      aria-labelledby="radix-«r4»"
+      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-orientation="vertical"
+      data-state="closed"
+      hidden=""
+      id="radix-«r5»"
+      role="region"
+      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+    />
+  </div>
+  <div
+    class="w-full border border-border rounded-lg overflow-hidden"
+    data-orientation="vertical"
+    data-state="closed"
+  >
+    <h3
+      data-orientation="vertical"
+      data-state="closed"
+    >
+      <button
+        aria-controls="radix-«r0»"
+        aria-expanded="false"
+        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        data-orientation="vertical"
+        data-radix-collection-item=""
+        data-state="closed"
+        id="radix-«r6»"
+        type="button"
+      >
+        <span
+          class="text-base font-semibold text-left"
+        >
+          How do I sign up?
+        </span>
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m6 9 6 6 6-6"
+          />
+        </svg>
+      </button>
+    </h3>
+    <div
+      aria-labelledby="radix-«r6»"
+      class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+      data-orientation="vertical"
+      data-state="closed"
+      hidden=""
+      id="radix-«r7»"
+      role="region"
+      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+    />
+  </div>
+</div>
+`;
+
+exports[`FAQAccordion - Snapshots > matches snapshot with empty items 1`] = `
+<div
+  class="w-full flex-col gap-4 flex"
+  data-orientation="vertical"
+/>
+`;
