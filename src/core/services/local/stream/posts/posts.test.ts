@@ -76,11 +76,7 @@ describe('LocalStreamService', () => {
       vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Call the method
-      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(
-        streamId,
-        ['post-1', 'post-2'],
-        mockNexusPosts,
-      );
+      const result = await Core.LocalStreamPostsService.persistPosts(mockNexusPosts);
 
       // Build expected composite ID
       const compositeId = Core.buildPostCompositeId({ pubky: 'user-123', postId: 'post-3' });
@@ -103,7 +99,7 @@ describe('LocalStreamService', () => {
       // Create initial stream
       await Core.PostStreamModel.create(streamId, ['post-1']);
 
-      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, ['post-1'], []);
+      const result = await Core.LocalStreamPostsService.persistPosts([]);
 
       // Verify the result is null (no new posts)
       expect(result).toBeNull();
@@ -165,9 +161,9 @@ describe('LocalStreamService', () => {
         },
       ];
 
-      await expect(
-        Core.LocalStreamPostsService.fetchAndCachePosts(streamId, ['post-1'], errorPost as unknown as Core.NexusPost[]),
-      ).rejects.toThrow('Network error');
+      await expect(Core.LocalStreamPostsService.persistPosts(errorPost as unknown as Core.NexusPost[])).rejects.toThrow(
+        'Network error',
+      );
 
       // Verify stream was not updated
       const updatedStream = await Core.PostStreamModel.findById(streamId);

@@ -44,7 +44,7 @@ export function Timeline() {
         const skip = isInitialLoad ? 0 : currentPage * POSTS_PER_PAGE;
 
         // Get post IDs from the stream
-        const ids = await Core.PostStreamApplication.read({
+        const ids = await Core.PostStreamApplication.getOrFetchStreamSlice({
           streamId: Core.PostStreamTypes.TIMELINE_ALL,
           limit: POSTS_PER_PAGE,
           skip,

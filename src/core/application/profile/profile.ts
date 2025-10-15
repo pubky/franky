@@ -18,12 +18,13 @@ export class ProfileApplication {
   static async create({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
-      // Initialize authentication store
-      Core.useAuthStore.getState().setCurrentUserPubky(pubky);
-      Core.useAuthStore.getState().setAuthenticated(true);
+      const authStore = Core.useAuthStore.getState();
+      authStore.setCurrentUserPubky(pubky);
+      authStore.setAuthenticated(true);
     } catch (error) {
-      Core.useAuthStore.getState().setAuthenticated(false);
-      Core.useAuthStore.getState().setCurrentUserPubky(null);
+      const authStore = Core.useAuthStore.getState();
+      authStore.setAuthenticated(false);
+      authStore.setCurrentUserPubky(null);
       throw error;
     }
   }

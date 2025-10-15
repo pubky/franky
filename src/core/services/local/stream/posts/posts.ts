@@ -4,62 +4,20 @@ import * as Libs from '@/libs';
 export class LocalStreamPostsService {
   private constructor() {}
 
-  static async findById(streamId: Core.PostStreamTypes): Promise<{ stream: string[] } | null> {
-    return await Core.PostStreamModel.findById(streamId);
+  static async upsert(streamId: Core.PostStreamTypes, stream: string[]): Promise<void> {
+    try {
+      await Core.PostStreamModel.upsert(streamId, stream);
+    } catch (error) {
+      Libs.Logger.error('Failed to upsert post stream', { streamId, error });
+      throw error;
+    }
   }
 
-  /**
-   * Fetches posts from Nexus, persists them locally, and updates the cache
-   *
-   * @param streamId - The type of stream to fetch
-   * @param existingStream - Current cached stream IDs to merge with new ones
-   * @returns Updated stream array or null if no posts found
-   */
-  static async fetchAndCachePosts(
-    streamId: Core.PostStreamTypes,
-    existingStream: string[] = [],
-    nexusPosts: Core.NexusPost[] = [],
-  ): Promise<string[] | null> {
+  static async findById(streamId: Core.PostStreamTypes): Promise<{ stream: string[] } | null> {
     try {
-      // This local service does not fetch remotely; posts must be provided by caller
-      const posts: Core.NexusPost[] = nexusPosts;
-
-      // No posts available -> signal no update
-      if (!posts || posts.length === 0) {
-        return null;
-      }
-
-      // Persist to local database
-      const users = posts.map((post) => post.details.author);
-      await Core.LocalStreamUsersService.persistUserStream(users);
-      await Core.LocalStreamPostsService.persistPosts(posts);
-
-      // Extract composite IDs
-      const fetchedPostIds = posts.map((post) =>
-        Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
-      );
-
-      // Filter out duplicates already present in the stream
-      const newPostIds = fetchedPostIds.filter((id) => !existingStream.includes(id));
-
-      // No new unique posts -> signal no update
-      if (newPostIds.length === 0) {
-        return null;
-      }
-
-      // Merge with existing stream and update cache
-      const updatedStream = [...existingStream, ...newPostIds];
-      await Core.PostStreamModel.upsert(streamId, updatedStream);
-
-      Libs.Logger.debug('Stream cache updated', {
-        streamId,
-        newPosts: newPostIds.length,
-        totalCached: updatedStream.length,
-      });
-
-      return updatedStream;
+      return await Core.PostStreamModel.findById(streamId);
     } catch (error) {
-      Libs.Logger.error('Failed to fetch and cache posts', { streamId, error });
+      Libs.Logger.error('Failed to find post stream by id', { streamId, error });
       throw error;
     }
   }
@@ -111,8 +69,13 @@ export class LocalStreamPostsService {
    *
    * @param posts - Array of posts from Nexus API
    */
-  static async persistPosts(posts: Core.NexusPost[]): Promise<void> {
+  static async persistPosts(posts: Core.NexusPost[]): Promise<string[] | null> {
     try {
+      // No posts to persist → signal no update
+      if (!posts || posts.length === 0) {
+        return null;
+      }
+
       const postCounts: Core.NexusModelTuple<Core.NexusPostCounts>[] = [];
       const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
       const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
@@ -147,7 +110,37 @@ export class LocalStreamPostsService {
         Core.PostRelationshipsModel.bulkSave(postRelationships),
       ]);
 
-      Libs.Logger.debug('Posts persisted successfully', { count: posts.length });
+      // Build composite IDs for the persisted posts
+      const fetchedPostIds = posts.map((post) =>
+        Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
+      );
+
+      // Merge with existing default timeline stream and update cache
+      const existing = await Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_ALL);
+      const existingStream = existing?.stream ?? [];
+
+      // Filter out duplicates already present in the stream
+      const newPostIds = fetchedPostIds.filter((id) => !existingStream.includes(id));
+
+      // If nothing new to add, return the current stream (no change)
+      if (newPostIds.length === 0) {
+        Libs.Logger.debug('Posts persisted with no stream updates', {
+          count: posts.length,
+          totalCached: existingStream.length,
+        });
+        return existingStream;
+      }
+
+      const updatedStream = [...existingStream, ...newPostIds];
+      await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_ALL, updatedStream);
+
+      Libs.Logger.debug('Posts persisted and stream updated successfully', {
+        count: posts.length,
+        newPosts: newPostIds.length,
+        totalCached: updatedStream.length,
+      });
+
+      return updatedStream;
     } catch (error) {
       Libs.Logger.error('Failed to persist posts', { error, count: posts.length });
       throw error;

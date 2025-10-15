@@ -13,7 +13,7 @@ export class NexusPostStreamService {
    * @param params - Parameters for fetching post stream data
    * @returns Post stream data
    */
-  static async fetch(params: Core.TStreamPostsParams): Promise<Core.NexusPost[]> {
+  static async fetch(params: Core.TReadStreamPostsParams): Promise<Core.NexusPost[]> {
     try {
       const url = Core.postStreamApi.all(params);
       const response = await Core.queryNexus<Core.NexusPost[]>(url);

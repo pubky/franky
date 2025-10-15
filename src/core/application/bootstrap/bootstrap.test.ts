@@ -93,28 +93,53 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
+      const upsertInfluencersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
 
       await BootstrapApplication.read(TEST_PUBKY);
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
+      expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
+      expect(upsertPostsStreamSpy).toHaveBeenCalledWith(
+        Core.PostStreamTypes.TIMELINE_ALL,
+        mockBootstrapData.list.stream,
+      );
+      expect(upsertInfluencersStreamSpy).toHaveBeenCalledWith(
+        Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        mockBootstrapData.list.influencers,
+      );
+      expect(upsertInfluencersStreamSpy).toHaveBeenCalledWith(
+        Core.UserStreamTypes.RECOMMENDED,
+        mockBootstrapData.list.recommended,
+      );
+      expect(upsertTagsStreamSpy).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, mockBootstrapData.list.hot_tags);
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
+      upsertPostsStreamSpy.mockRestore();
+      upsertInfluencersStreamSpy.mockRestore();
+      upsertTagsStreamSpy.mockRestore();
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockRejectedValue(new Error('Network error'));
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
 
       await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Network error');
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(persistBootstrapSpy).not.toHaveBeenCalled();
+      expect(persistUsersSpy).not.toHaveBeenCalled();
+      expect(persistPostsSpy).not.toHaveBeenCalled();
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
     });
 
     it('should throw error when LocalPersistenceService fails', async () => {
@@ -130,17 +155,17 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi
-        .spyOn(Core.LocalBootstrapService, 'persistBootstrap')
+      const persistUsersSpy = vi
+        .spyOn(Core.LocalStreamUsersService, 'persistUsers')
         .mockRejectedValue(new Error('Database error'));
 
       await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Database error');
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
     });
 
     it('should handle empty bootstrap data', async () => {
@@ -156,15 +181,24 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
+      const upsertUsersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
 
       await BootstrapApplication.read(TEST_PUBKY);
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
+      expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
+      upsertPostsStreamSpy.mockRestore();
+      upsertUsersStreamSpy.mockRestore();
+      upsertTagsStreamSpy.mockRestore();
     });
   });
 
@@ -190,7 +224,11 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
+      const upsertUsersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -203,11 +241,16 @@ describe('BootstrapApplication', () => {
 
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
+      expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
       expect(loggerErrorSpy).not.toHaveBeenCalled();
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
+      upsertPostsStreamSpy.mockRestore();
+      upsertUsersStreamSpy.mockRestore();
+      upsertTagsStreamSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });
@@ -228,7 +271,11 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockResolvedValueOnce(mockBootstrapData);
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
+      const upsertUsersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -247,10 +294,15 @@ describe('BootstrapApplication', () => {
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 2...');
       expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to bootstrap', expect.any(Error), 0);
       expect(nexusFetchSpy).toHaveBeenCalledTimes(2);
-      expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
+      expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
+      upsertPostsStreamSpy.mockRestore();
+      upsertUsersStreamSpy.mockRestore();
+      upsertTagsStreamSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });
@@ -259,7 +311,8 @@ describe('BootstrapApplication', () => {
       const nexusFetchSpy = vi
         .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValue(new Error('User not indexed'));
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -285,10 +338,12 @@ describe('BootstrapApplication', () => {
       expect(loggerInfoSpy).toHaveBeenCalledTimes(3);
       expect(loggerErrorSpy).toHaveBeenCalledTimes(3);
       expect(nexusFetchSpy).toHaveBeenCalledTimes(3);
-      expect(persistBootstrapSpy).not.toHaveBeenCalled();
+      expect(persistUsersSpy).not.toHaveBeenCalled();
+      expect(persistPostsSpy).not.toHaveBeenCalled();
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });
@@ -297,7 +352,8 @@ describe('BootstrapApplication', () => {
       const nexusFetchSpy = vi
         .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValue(new Error('User not indexed'));
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -325,7 +381,8 @@ describe('BootstrapApplication', () => {
       expect(loggerErrorSpy).toHaveBeenNthCalledWith(3, 'Failed to bootstrap', expect.any(Error), 2);
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });
@@ -347,7 +404,11 @@ describe('BootstrapApplication', () => {
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockRejectedValueOnce(new Error('Still not indexed'))
         .mockResolvedValueOnce(mockBootstrapData);
-      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
+      const upsertUsersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -372,10 +433,15 @@ describe('BootstrapApplication', () => {
       expect(loggerInfoSpy).toHaveBeenNthCalledWith(2, 'Waiting 5 seconds before bootstrap attempt 2...');
       expect(loggerInfoSpy).toHaveBeenNthCalledWith(3, 'Waiting 5 seconds before bootstrap attempt 3...');
       expect(nexusFetchSpy).toHaveBeenCalledTimes(3);
-      expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
+      expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
 
       nexusFetchSpy.mockRestore();
-      persistBootstrapSpy.mockRestore();
+      persistUsersSpy.mockRestore();
+      persistPostsSpy.mockRestore();
+      upsertPostsStreamSpy.mockRestore();
+      upsertUsersStreamSpy.mockRestore();
+      upsertTagsStreamSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });

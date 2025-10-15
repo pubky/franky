@@ -32,7 +32,7 @@ describe('PostStreamApplication', () => {
       );
 
       // Read first 10 posts
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
         skip: 0,
@@ -101,7 +101,7 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Read posts (cache is empty, should fetch from Nexus)
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 5,
         skip: 0,
@@ -197,7 +197,7 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Request posts beyond cache (offset 0, limit 10)
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
         skip: 0,
@@ -238,7 +238,7 @@ describe('PostStreamApplication', () => {
       );
 
       // Read posts with offset 10
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 5,
         skip: 10,
@@ -310,7 +310,7 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Should detect corruption, clear cache, and refetch
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 2,
         skip: 0,
@@ -333,7 +333,7 @@ describe('PostStreamApplication', () => {
       // Mock Nexus to return empty array
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
 
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
         skip: 0,
@@ -364,7 +364,7 @@ describe('PostStreamApplication', () => {
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
 
       // Request 10 posts but only 5 exist
-      const result = await Core.PostStreamApplication.read({
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
         skip: 0,
