@@ -4,18 +4,18 @@ import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
-import { SETTINGS_ROUTES } from '@/app';
+import * as App from '@/app';
 
 export interface SettingsInfoProps {
   className?: string;
 }
 
 const FAQ_QUESTIONS = [
-  { question: 'How can I update my profile information?', href: SETTINGS_ROUTES.HELP },
-  { question: 'How can I delete my post?', href: SETTINGS_ROUTES.HELP },
-  { question: 'How do I mute someone?', href: SETTINGS_ROUTES.HELP },
-  { question: 'How can I restore my account?', href: SETTINGS_ROUTES.HELP },
-  { question: 'How is Pubky different from other social platforms?', href: SETTINGS_ROUTES.HELP },
+  { question: 'How can I update my profile information?', href: App.SETTINGS_ROUTES.HELP },
+  { question: 'How can I delete my post?', href: App.SETTINGS_ROUTES.HELP },
+  { question: 'How do I mute someone?', href: App.SETTINGS_ROUTES.HELP },
+  { question: 'How can I restore my account?', href: App.SETTINGS_ROUTES.HELP },
+  { question: 'How is Pubky different from other social platforms?', href: App.SETTINGS_ROUTES.HELP },
 ];
 
 const APP_VERSION = 'Pubky v0.12 © Synonym Software Ltd';
@@ -52,7 +52,7 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
               </div>
             </Link>
           ))}
-          <Link href={SETTINGS_ROUTES.HELP}>
+          <Link href={App.SETTINGS_ROUTES.HELP}>
             <Atoms.SidebarButton icon={Libs.HelpCircle}>More FAQ</Atoms.SidebarButton>
           </Link>
         </Atoms.FilterList>
