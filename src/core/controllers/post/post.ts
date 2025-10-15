@@ -1,8 +1,5 @@
 import * as Core from '@/core';
-import * as Application from '@/core/application';
-import type { TCreatePostParams, TReadPostsParams, TDeletePostParams } from './post.types';
-import { createSanitizationError, SanitizationErrorType } from '@/libs';
-import { PostValidators } from '@/core/pipes/post/post.validators';
+import * as Libs from '@/libs';
 
 export class PostController {
   private static isInitialized = false;
@@ -26,7 +23,7 @@ export class PostController {
    * @param params.offset - Number of posts to skip (default: 0)
    * @returns Array of NexusPost objects
    */
-  static async read({ limit = 30, offset = 0 }: TReadPostsParams = {}): Promise<Core.NexusPost[]> {
+  static async read({ limit = 30, offset = 0 }: Core.TReadPostsParams = {}): Promise<Core.NexusPost[]> {
     await this.initialize();
     return Core.Local.Post.fetch({ limit, offset });
   }
@@ -46,7 +43,7 @@ export class PostController {
     content,
     kind = Core.PubkyAppPostKind.Short,
     authorId,
-  }: TCreatePostParams) {
+  }: Core.TCreatePostParams) {
     await this.initialize();
 
     let parentUri: string | undefined = undefined;
@@ -54,12 +51,12 @@ export class PostController {
 
     // Validate and set parent URI if this is a reply
     if (parentPostId) {
-      parentUri = await PostValidators.validatePostId({ postId: parentPostId, message: 'Parent post' });
+      parentUri = await Core.PostValidators.validatePostId({ postId: parentPostId, message: 'Parent post' });
     }
 
     // Validate and set reposted URI if this is a repost
     if (originalPostId) {
-      repostedUri = await PostValidators.validatePostId({ postId: originalPostId, message: 'Original post' });
+      repostedUri = await Core.PostValidators.validatePostId({ postId: originalPostId, message: 'Original post' });
     }
 
     const { post, meta } = await Core.PostNormalizer.to(
@@ -72,7 +69,7 @@ export class PostController {
       authorId,
     );
 
-    await Application.Post.create({
+    await Core.Post.create({
       postId: meta.id,
       authorId,
       post,
@@ -86,18 +83,23 @@ export class PostController {
    * @param params.postId - ID of the post to delete
    * @param params.deleterId - ID of the user deleting the post
    */
-  static async delete({ postId, deleterId }: TDeletePostParams) {
+  static async delete({ postId, deleterId }: Core.TDeletePostParams) {
     await this.initialize();
 
     const { pubky: authorId } = Core.parsePostCompositeId(postId);
 
     if (authorId !== deleterId) {
-      throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'User is not the author of this post', 403, {
-        postId,
-        deleterId,
-      });
+      throw Libs.createSanitizationError(
+        Libs.SanitizationErrorType.POST_NOT_FOUND,
+        'User is not the author of this post',
+        403,
+        {
+          postId,
+          deleterId,
+        },
+      );
     }
 
-    await Application.Post.delete({ postId, deleterId });
+    await Core.Post.delete({ postId, deleterId });
   }
 }

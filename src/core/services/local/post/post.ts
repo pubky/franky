@@ -119,8 +119,7 @@ export class LocalPostService {
         id: compositePostId,
         content,
         indexed_at: Date.now(),
-        // TODO: Wait for pubky-app-specs new version to parse the value to string not number
-        kind: Core.PostNormalizer.stringToPostKind(kind),
+        kind: Core.PostNormalizer.postKindToLowerCase(kind),
         uri: postUriBuilder(authorId, postId),
         attachments: attachments ?? null,
       };
@@ -159,34 +158,16 @@ export class LocalPostService {
 
           const ops: Promise<unknown>[] = [];
 
-          // Update parent reply count if this is a reply
+          // Update related post counts
           if (parentUri) {
-            const fullParentId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (fullParentId) {
-              const parentCounts = await Core.PostCountsModel.findById(fullParentId);
-              if (parentCounts) {
-                ops.push(Core.PostCountsModel.update(parentCounts.id, { replies: parentCounts.replies + 1 }));
-              }
-            }
+            ops.push(this.updatePostCount(parentUri, 'replies', 1));
           }
-
-          // Update original post repost count if this is a repost
           if (repostedUri) {
-            const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-            if (originalPostId) {
-              const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-              if (originalCounts) {
-                ops.push(Core.PostCountsModel.update(originalCounts.id, { reposts: originalCounts.reposts + 1 }));
-              }
-            }
+            ops.push(this.updatePostCount(repostedUri, 'reposts', 1));
           }
 
-          // Update author's user counts
-          ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.POSTS, 1));
-
-          if (parentUri) {
-            ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.REPLIES, 1));
-          }
+          // Update author's user counts in a single operation
+          ops.push(this.updateUserCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
 
           await Promise.all(ops);
         },
@@ -245,42 +226,16 @@ export class LocalPostService {
 
           const ops: Promise<unknown>[] = [];
 
-          // Decrement parent reply count if this is a reply
+          // Decrement related post counts
           if (parentUri) {
-            const parentPostId = Core.buildPostIdFromPubkyUri(parentUri);
-            if (parentPostId) {
-              const parentCounts = await Core.PostCountsModel.findById(parentPostId);
-              if (parentCounts) {
-                ops.push(
-                  Core.PostCountsModel.update(parentCounts.id, {
-                    replies: Math.max(0, parentCounts.replies - 1),
-                  }),
-                );
-              }
-            }
+            ops.push(this.updatePostCount(parentUri, 'replies', -1));
           }
-
-          // Decrement original post repost count if this is a repost
           if (repostedUri) {
-            const originalPostId = Core.buildPostIdFromPubkyUri(repostedUri);
-            if (originalPostId) {
-              const originalCounts = await Core.PostCountsModel.findById(originalPostId);
-              if (originalCounts) {
-                ops.push(
-                  Core.PostCountsModel.update(originalCounts.id, {
-                    reposts: Math.max(0, originalCounts.reposts - 1),
-                  }),
-                );
-              }
-            }
+            ops.push(this.updatePostCount(repostedUri, 'reposts', -1));
           }
 
-          // Update author's user counts
-          ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.POSTS, -1));
-
-          if (parentUri) {
-            ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.REPLIES, -1));
-          }
+          // Update author's user counts in a single operation
+          ops.push(this.updateUserCounts(deleterId, { posts: -1, replies: parentUri ? -1 : 0 }));
 
           await Promise.all(ops);
         },
@@ -294,6 +249,50 @@ export class LocalPostService {
         postId,
         deleterId,
       });
+    }
+  }
+
+  /**
+   * Helper method to update post counts safely
+   */
+  private static async updatePostCount(
+    uri: string,
+    countField: 'replies' | 'reposts',
+    countChange: number,
+  ): Promise<void> {
+    const postId = Core.buildPostIdFromPubkyUri(uri);
+    if (!postId) return;
+
+    const counts = await Core.PostCountsModel.findById(postId);
+    if (!counts) return;
+
+    const currentCount = counts[countField];
+    const newCount = Math.max(0, currentCount + countChange);
+
+    await Core.PostCountsModel.update(postId, { [countField]: newCount });
+  }
+
+  /**
+   * Helper method to update multiple user counts in a single operation
+   */
+  private static async updateUserCounts(
+    userId: Core.Pubky,
+    countChanges: { posts?: number; replies?: number },
+  ): Promise<void> {
+    const userCounts = await Core.UserCountsModel.findById(userId);
+    if (!userCounts) return;
+
+    const updates: Partial<Core.UserCountsModelSchema> = {};
+
+    if (countChanges.posts !== undefined) {
+      updates.posts = Math.max(0, userCounts.posts + countChanges.posts);
+    }
+    if (countChanges.replies !== undefined && countChanges.replies !== 0) {
+      updates.replies = Math.max(0, userCounts.replies + countChanges.replies);
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await Core.UserCountsModel.update(userId, updates);
     }
   }
 }

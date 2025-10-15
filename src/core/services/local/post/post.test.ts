@@ -49,7 +49,7 @@ const setupExistingPost = async (postId: string, content: string, parentUri?: st
     id: postId,
     content,
     indexed_at: Date.now(),
-    kind: PubkyAppPostKind.Short,
+    kind: 'short',
     uri: `pubky://${pubky}/pub/pubky.app/posts/${postIdPart}`,
     attachments: null,
   };
@@ -75,6 +75,22 @@ const setupExistingPost = async (postId: string, content: string, parentUri?: st
   await Core.PostTagsModel.create({ id: postId, tags: [] });
 };
 
+const setupUserCounts = async (userId: Core.Pubky) => {
+  const userCounts: Core.UserCountsModelSchema = {
+    id: userId,
+    tagged: 0,
+    tags: 0,
+    unique_tags: 0,
+    posts: 0,
+    replies: 0,
+    following: 0,
+    followers: 0,
+    friends: 0,
+    bookmarks: 0,
+  };
+  await Core.UserCountsModel.table.add(userCounts);
+};
+
 describe('LocalPostService', () => {
   beforeEach(async () => {
     await Core.db.initialize();
@@ -85,19 +101,22 @@ describe('LocalPostService', () => {
         Core.PostCountsModel.table,
         Core.PostRelationshipsModel.table,
         Core.PostTagsModel.table,
+        Core.UserCountsModel.table,
       ],
       async () => {
         await Core.PostDetailsModel.table.clear();
         await Core.PostCountsModel.table.clear();
         await Core.PostRelationshipsModel.table.clear();
         await Core.PostTagsModel.table.clear();
+        await Core.UserCountsModel.table.clear();
       },
     );
   });
 
   describe('create', () => {
     it('should save post with all related models initialized', async () => {
-      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+      await setupUserCounts(testData.authorPubky);
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
       await Core.Local.Post.create(createSaveParams('Hello, world!'));
 
@@ -110,7 +129,7 @@ describe('LocalPostService', () => {
 
       expect(details).toBeTruthy();
       expect(details!.content).toBe('Hello, world!');
-      expect(details!.kind).toBe(PubkyAppPostKind.Short);
+      expect(details!.kind).toBe('short');
 
       expect(counts).toBeTruthy();
       expect(counts!.tags).toBe(0);
@@ -124,13 +143,8 @@ describe('LocalPostService', () => {
       expect(relationships!.replied).toBeNull();
       expect(relationships!.reposted).toBeNull();
 
-      // Verify user count increment for root post
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, 1);
-      expect(userCountsSpy).not.toHaveBeenCalledWith(
-        testData.authorPubky,
-        Core.UserCountsFields.REPLIES,
-        expect.anything(),
-      );
+      // Verify user count increment for root post (single update call)
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 1 });
 
       userCountsSpy.mockRestore();
     });
@@ -140,8 +154,9 @@ describe('LocalPostService', () => {
       const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
 
       await setupExistingPost(parentPostId, 'Parent post');
+      await setupUserCounts(testData.authorPubky);
 
-      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
       const baseParams = createSaveParams('This is a reply', testData.fullPostId1);
       const saveParams: TLocalSavePostParams = {
@@ -154,9 +169,8 @@ describe('LocalPostService', () => {
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(1);
 
-      // Verify user count increments for reply
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, 1);
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.REPLIES, 1);
+      // Verify user count increments for reply (single update call)
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 1, replies: 1 });
 
       userCountsSpy.mockRestore();
     });
@@ -188,7 +202,7 @@ describe('LocalPostService', () => {
       await Core.Local.Post.create(saveParams);
 
       const savedPost = await getSavedPost(testData.fullPostId1);
-      expect(savedPost!.kind).toBe(PubkyAppPostKind.Long);
+      expect(savedPost!.kind).toBe('long');
     });
 
     it('should write atomically across tables (rollback on error)', async () => {
@@ -317,7 +331,7 @@ describe('LocalPostService', () => {
 
       const savedPost = await getSavedPost(repostId);
       expect(savedPost!.content).toBe(quoteContent);
-      expect(savedPost!.kind).toBe(PubkyAppPostKind.Short);
+      expect(savedPost!.kind).toBe('short');
 
       const savedRelationships = await getSavedRelationships(repostId);
       expect(savedRelationships!.reposted).toBe(originalUri);
@@ -329,8 +343,9 @@ describe('LocalPostService', () => {
       const postId = testData.fullPostId1;
 
       await setupExistingPost(postId, 'Test post');
+      await setupUserCounts(testData.authorPubky);
 
-      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
       await Core.Local.Post.delete({
         postId,
@@ -349,13 +364,8 @@ describe('LocalPostService', () => {
       expect(relationships).toBeUndefined();
       expect(tags).toBeUndefined();
 
-      // Verify user count decrement for root post
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, -1);
-      expect(userCountsSpy).not.toHaveBeenCalledWith(
-        testData.authorPubky,
-        Core.UserCountsFields.REPLIES,
-        expect.anything(),
-      );
+      // Verify user count decrement for root post (single update call)
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 0 });
 
       userCountsSpy.mockRestore();
     });
@@ -389,8 +399,9 @@ describe('LocalPostService', () => {
 
       // Setup reply
       await setupExistingPost(replyId, 'Reply post', parentUri);
+      await setupUserCounts(testData.authorPubky);
 
-      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
       // Delete reply
       await Core.Local.Post.delete({
@@ -401,9 +412,8 @@ describe('LocalPostService', () => {
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(0);
 
-      // Verify user count decrements for reply
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, -1);
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.REPLIES, -1);
+      // Verify user count decrements for reply (single update call)
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 0, replies: 0 });
 
       userCountsSpy.mockRestore();
     });

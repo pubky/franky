@@ -1,28 +1,13 @@
-import { PostResult, PubkyAppPostEmbed, PubkyAppPostKind } from 'pubky-app-specs';
+import { PostResult, PubkyAppPostEmbed } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostNormalizer {
   private constructor() {}
 
-  static stringToPostKind(kind: string): PubkyAppPostKind {
-    const normalized = kind.toLowerCase();
-    switch (normalized) {
-      case 'short':
-        return PubkyAppPostKind.Short;
-      case 'long':
-        return PubkyAppPostKind.Long;
-      case 'image':
-        return PubkyAppPostKind.Image;
-      case 'video':
-        return PubkyAppPostKind.Video;
-      case 'link':
-        return PubkyAppPostKind.Link;
-      case 'file':
-        return PubkyAppPostKind.File;
-      default:
-        return PubkyAppPostKind.Short;
-    }
+  static postKindToLowerCase(kind: string): string {
+    // We will use that one until we fix the pubky-app-specs library
+    return kind.toLowerCase();
   }
 
   static async to(post: Core.PostValidatorData, specsPubky: Core.Pubky): Promise<PostResult> {
@@ -35,7 +20,7 @@ export class PostNormalizer {
       if (embeddedPostId) {
         const embeddedPost = await Core.PostDetailsModel.findById(embeddedPostId);
         if (embeddedPost) {
-          embedObject = new PubkyAppPostEmbed(post.embed, embeddedPost.kind);
+          embedObject = new PubkyAppPostEmbed(post.embed, embeddedPost.kind as unknown as Core.PubkyAppPostKind);
         }
       }
     }

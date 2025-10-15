@@ -2,7 +2,6 @@ import { Table } from 'dexie';
 
 import * as Core from '@/core';
 import { RecordModelBase } from '@/core/models/shared/base/record/baseRecord';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export class PostDetailsModel
   extends RecordModelBase<string, Core.PostDetailsModelSchema>
@@ -12,7 +11,7 @@ export class PostDetailsModel
 
   content: string;
   indexed_at: number;
-  kind: PubkyAppPostKind;
+  kind: string;
   uri: string;
   attachments: string[] | null;
 

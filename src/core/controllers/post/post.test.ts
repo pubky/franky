@@ -53,7 +53,7 @@ const setupExistingPost = async () => {
     id: testData.fullPostId,
     content: 'Test post content',
     indexed_at: Date.now(),
-    kind: 0, // PubkyAppPostKind.Short
+    kind: 'short', // PubkyAppPostKind.Short
     uri: `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId}`,
     attachments: null,
   };
@@ -123,7 +123,7 @@ describe('PostController', () => {
 
       const savedPost = allPosts[0];
       expect(savedPost.content).toBe('Hello, world!');
-      expect(savedPost.kind).toBe(0); // PubkyAppPostKind.Short
+      expect(savedPost.kind).toBe('short'); // PubkyAppPostKind.Short
     });
 
     it('should create a reply when parentPostId is provided', async () => {
@@ -137,7 +137,7 @@ describe('PostController', () => {
       const replyPost = allPosts.find((p) => p.content === 'This is a reply');
 
       expect(replyPost).toBeTruthy();
-      expect(replyPost!.kind).toBe(0); // PubkyAppPostKind.Short
+      expect(replyPost!.kind).toBe('short'); // PubkyAppPostKind.Short
     });
 
     it('should throw error when parent post not found', async () => {
