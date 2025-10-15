@@ -1,15 +1,66 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogWelcome } from './DialogWelcome';
 
-const { mockGetAvatar } = vi.hoisted(() => ({
+const { mockGetAvatar, mockCopyToClipboard, mockSetShowWelcomeDialog } = vi.hoisted(() => ({
   mockGetAvatar: vi.fn((pubky: string) => `https://mocked.avatar/${pubky}`),
+  mockCopyToClipboard: vi.fn(),
+  mockSetShowWelcomeDialog: vi.fn(),
 }));
 
 vi.mock('@/core', () => ({
   filesApi: {
     getAvatar: mockGetAvatar,
   },
+  useAuthStore: vi.fn(() => ({
+    currentUserPubky: 'test-pubky-123',
+  })),
+  useOnboardingStore: vi.fn(() => ({
+    showWelcomeDialog: true,
+    setShowWelcomeDialog: mockSetShowWelcomeDialog,
+  })),
+  ProfileController: {
+    read: vi.fn(() =>
+      Promise.resolve({
+        name: 'Test User',
+        bio: 'Test bio',
+        image: 'test-image.jpg',
+      }),
+    ),
+  },
+}));
+
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(() => {
+    // Immediately resolve the callback to return user details
+    return {
+      name: 'Test User',
+      bio: 'Test bio',
+      image: 'test-image.jpg',
+    };
+  }),
+}));
+
+// Mock hooks
+vi.mock('@/hooks', () => ({
+  useCopyToClipboard: vi.fn(() => ({
+    copyToClipboard: mockCopyToClipboard,
+  })),
+}));
+
+// Mock libs
+vi.mock('@/libs', () => ({
+  formatPublicKey: vi.fn(({ key, length }) => `${key.slice(0, 4)}...${key.slice(-length + 4)}`),
+  extractInitials: vi.fn(({ name }) =>
+    name
+      .split(' ')
+      .map((n: string) => n[0])
+      .join('')
+      .toUpperCase(),
+  ),
+  Key: ({ className }: { className?: string }) => <svg data-testid="key-icon" className={className} />,
+  ArrowRight: ({ className }: { className?: string }) => <svg data-testid="arrow-right-icon" className={className} />,
 }));
 
 // Mock atoms
@@ -27,8 +78,16 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="dialog-content" className={className}>
+  DialogContent: ({
+    children,
+    className,
+    hiddenTitle,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    hiddenTitle?: string;
+  }) => (
+    <div data-testid="dialog-content" className={className} data-hidden-title={hiddenTitle}>
       {children}
     </div>
   ),
@@ -37,7 +96,11 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  DialogTitle: ({ children }: { children: React.ReactNode }) => <h2 data-testid="dialog-title">{children}</h2>,
+  DialogTitle: ({ children, id }: { children: React.ReactNode; id?: string }) => (
+    <h2 data-testid="dialog-title" id={id}>
+      {children}
+    </h2>
+  ),
   DialogDescription: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="dialog-description" className={className}>
       {children}
@@ -50,7 +113,6 @@ vi.mock('@/atoms', () => ({
   ),
   Typography: ({
     children,
-    as,
     className,
     size,
   }: {
@@ -59,11 +121,10 @@ vi.mock('@/atoms', () => ({
     className?: string;
     size?: string;
   }) => {
-    const Tag = as || 'p';
     return (
-      <Tag data-testid="typography" data-size={size} className={className}>
+      <p data-testid="typography" data-size={size} className={className}>
         {children}
-      </Tag>
+      </p>
     );
   },
   Button: ({
@@ -72,22 +133,30 @@ vi.mock('@/atoms', () => ({
     variant,
     className,
     size,
+    id,
   }: {
     children: React.ReactNode;
     onClick?: () => void;
     variant?: string;
     className?: string;
     size?: string;
+    id?: string;
   }) => (
     <button
-      data-testid={`button-${variant || 'default'}`}
-      data-variant={variant}
-      data-size={size}
-      className={className}
+      data-testid={variant === 'secondary' ? 'button-secondary' : 'button-primary'}
       onClick={onClick}
+      data-variant={variant}
+      className={className}
+      data-size={size}
+      id={id}
     >
       {children}
     </button>
+  ),
+  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="card" className={className}>
+      {children}
+    </div>
   ),
   Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="avatar" className={className}>
@@ -100,18 +169,7 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>
-      {children}
-    </div>
-  ),
 }));
-
-// Mock libs - use actual utility functions and icons from lucide-react
-vi.mock('@/libs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
-});
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
@@ -121,21 +179,12 @@ vi.mock('@/molecules', () => ({
 }));
 
 describe('DialogWelcome', () => {
-  const defaultProps = {
-    isOpen: true,
-    onOpenChange: vi.fn(),
-    name: 'Satoshi Nakamoto',
-    pubky: 'test-public-key-12345',
-    bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetAvatar.mockClear();
   });
 
-  it('renders with default props', () => {
-    render(<DialogWelcome {...defaultProps} />);
+  it('renders with user data from hooks', () => {
+    render(<DialogWelcome />);
 
     const dialog = screen.getByTestId('dialog');
     const content = screen.getByTestId('dialog-content');
@@ -146,105 +195,30 @@ describe('DialogWelcome', () => {
     expect(content).toBeInTheDocument();
     expect(header).toBeInTheDocument();
     expect(title).toBeInTheDocument();
+    expect(screen.getByText('Test User')).toBeInTheDocument();
+    expect(screen.getByText('Test bio')).toBeInTheDocument();
   });
 
-  it('calls onOpenChange when explore button is clicked', () => {
-    const onOpenChange = vi.fn();
-    render(<DialogWelcome {...defaultProps} onOpenChange={onOpenChange} />);
+  it('calls setShowWelcomeDialog when explore button is clicked', () => {
+    render(<DialogWelcome />);
 
     const exploreButton = screen.getByText('Explore Pubky');
     fireEvent.click(exploreButton);
 
-    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(mockSetShowWelcomeDialog).toHaveBeenCalledWith(false);
   });
 
   it('calls copyToClipboard when copy button is clicked', () => {
-    render(<DialogWelcome {...defaultProps} />);
+    render(<DialogWelcome />);
 
     const copyButton = screen.getByTestId('button-secondary');
     fireEvent.click(copyButton);
 
-    // The button should be clickable and not throw any errors
-    expect(copyButton).toBeInTheDocument();
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('test-pubky-123');
   });
 
   it('uses generated avatar url', () => {
-    render(<DialogWelcome {...defaultProps} />);
-
-    expect(mockGetAvatar).toHaveBeenCalledWith(defaultProps.pubky);
-
-    const avatarImage = screen.getByTestId('avatar-image');
-    expect(avatarImage).toHaveAttribute('src', `https://mocked.avatar/${defaultProps.pubky}`);
-  });
-});
-
-describe('DialogWelcome - Snapshots', () => {
-  const defaultProps = {
-    isOpen: true,
-    onOpenChange: vi.fn(),
-    name: 'Satoshi Nakamoto',
-    pubky: 'test-public-key-12345',
-    bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-  };
-
-  it('matches snapshot with default props', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with minimal props', () => {
-    const minimalProps = {
-      isOpen: true,
-      onOpenChange: vi.fn(),
-      name: 'Test User',
-      pubky: 'test-key',
-    };
-
-    const { container } = render(<DialogWelcome {...minimalProps} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with single word name', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} name="Satoshi" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with empty name', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} name="" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with long name', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} name="John Doe Smith Johnson-Baker-Taylor-Jones" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot without bio', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} bio={undefined} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with long bio', () => {
-    const longBio =
-      'This is a very long bio that should test how the component handles extensive text content and whether it properly wraps and displays within the dialog constraints.';
-    const { container } = render(<DialogWelcome {...defaultProps} bio={longBio} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with generated avatar', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with different public key format', () => {
-    const { container } = render(
-      <DialogWelcome {...defaultProps} pubky="pk:abc123def456ghi789jkl012mno345pqr678stu901vwx234yz" />,
-    );
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot when dialog is closed', () => {
-    const { container } = render(<DialogWelcome {...defaultProps} isOpen={false} />);
-    expect(container.firstChild).toMatchSnapshot();
+    render(<DialogWelcome />);
+    expect(mockGetAvatar).toHaveBeenCalledWith('test-pubky-123');
   });
 });

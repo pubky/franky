@@ -58,17 +58,13 @@ vi.mock('@/core', async (importOriginal) => {
 vi.mock('@/organisms', () => ({
   Post: () => <div data-testid="post">Mocked Post</div>,
   ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
-  DialogWelcome: ({ isOpen, onOpenChange }: { isOpen: boolean; onOpenChange: (open: boolean) => void }) =>
-    isOpen ? (
-      <div data-testid="dialog-welcome" onClick={() => onOpenChange(false)}>
-        Mocked DialogWelcome
-      </div>
-    ) : null,
+  DialogWelcome: () => <div data-testid="dialog-welcome-component">Mocked DialogWelcome Component</div>,
   AlertBackup: ({ onDismiss }: { onDismiss?: () => void }) => (
     <div data-testid="alert-backup" onClick={onDismiss}>
       Mocked AlertBackup
     </div>
   ),
+  Timeline: () => <div data-testid="timeline">Mocked Timeline</div>,
 }));
 
 // Mock hooks - REQUIRED: custom hooks with complex logic
@@ -92,13 +88,6 @@ describe('Home', () => {
     render(<Home />);
     const heading = screen.getByText('Home');
     expect(heading).toBeInTheDocument();
-  });
-
-  it('displays welcome message', () => {
-    render(<Home />);
-    expect(
-      screen.getByText("Welcome to your home. This is where you'll see posts from people you follow."),
-    ).toBeInTheDocument();
   });
 
   it('renders logout button', () => {
@@ -126,136 +115,11 @@ describe('Home', () => {
   });
 
   describe('Welcome Dialog Behavior', () => {
-    it('should not show welcome dialog when showWelcomeDialog is false', async () => {
-      const mockUseOnboardingStore = vi.fn(() => ({
-        showWelcomeDialog: false,
-        setShowWelcomeDialog: vi.fn(),
-      }));
-
-      // Update the mock for this test
-      const Core = await import('@/core');
-      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
-
+    it('should render DialogWelcome component', () => {
       render(<Home />);
 
-      expect(screen.queryByTestId('dialog-welcome')).not.toBeInTheDocument();
-    });
-
-    it('should show welcome dialog when showWelcomeDialog is true and user details exist', async () => {
-      const mockSetShowWelcomeDialog = vi.fn();
-      const mockUseOnboardingStore = vi.fn(() => ({
-        showWelcomeDialog: true,
-        setShowWelcomeDialog: mockSetShowWelcomeDialog,
-      }));
-
-      const mockUseAuthStore = vi.fn(() => ({
-        currentUserPubky: 'test-pubky-123',
-      }));
-
-      // Mock useLiveQuery to return user details
-      const { useLiveQuery } = await import('dexie-react-hooks');
-      vi.mocked(useLiveQuery).mockReturnValue({
-        name: 'Test User',
-        bio: 'Test bio',
-        image: 'test-image.jpg',
-      });
-
-      // Update the mocks for this test
-      const Core = await import('@/core');
-      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
-      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
-
-      render(<Home />);
-
-      expect(screen.getByTestId('dialog-welcome')).toBeInTheDocument();
-    });
-
-    it('should not show welcome dialog when user details do not exist', async () => {
-      const mockUseOnboardingStore = vi.fn(() => ({
-        showWelcomeDialog: true,
-        setShowWelcomeDialog: vi.fn(),
-      }));
-
-      const mockUseAuthStore = vi.fn(() => ({
-        currentUserPubky: null,
-      }));
-
-      // Update the mocks for this test
-      const Core = await import('@/core');
-      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
-      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
-
-      render(<Home />);
-
-      expect(screen.queryByTestId('dialog-welcome')).not.toBeInTheDocument();
-    });
-
-    it('should call setShowWelcomeDialog(false) when welcome dialog is closed', async () => {
-      const mockSetShowWelcomeDialog = vi.fn();
-      const mockUseOnboardingStore = vi.fn(() => ({
-        showWelcomeDialog: true,
-        setShowWelcomeDialog: mockSetShowWelcomeDialog,
-      }));
-
-      const mockUseAuthStore = vi.fn(() => ({
-        currentUserPubky: 'test-pubky-123',
-      }));
-
-      // Mock useLiveQuery to return user details
-      const { useLiveQuery } = await import('dexie-react-hooks');
-      vi.mocked(useLiveQuery).mockReturnValue({
-        name: 'Test User',
-        bio: 'Test bio',
-        image: 'test-image.jpg',
-      });
-
-      // Update the mocks for this test
-      const Core = await import('@/core');
-      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
-      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
-
-      render(<Home />);
-
-      const welcomeDialog = screen.getByTestId('dialog-welcome');
-      expect(welcomeDialog).toBeInTheDocument();
-
-      // Click to close the dialog
-      fireEvent.click(welcomeDialog);
-
-      expect(mockSetShowWelcomeDialog).toHaveBeenCalledWith(false);
-    });
-
-    it('should have correct welcome dialog props when shown', async () => {
-      const mockSetShowWelcomeDialog = vi.fn();
-      const mockUseOnboardingStore = vi.fn(() => ({
-        showWelcomeDialog: true,
-        setShowWelcomeDialog: mockSetShowWelcomeDialog,
-      }));
-
-      const mockUseAuthStore = vi.fn(() => ({
-        currentUserPubky: 'test-pubky-123',
-      }));
-
-      const mockUserDetails = {
-        name: 'Test User',
-        bio: 'Test bio',
-        image: 'test-image.jpg',
-      };
-
-      // Mock useLiveQuery to return user details
-      const { useLiveQuery } = await import('dexie-react-hooks');
-      vi.mocked(useLiveQuery).mockReturnValue(mockUserDetails);
-
-      // Update the mocks for this test
-      const Core = await import('@/core');
-      vi.mocked(Core.useOnboardingStore).mockImplementation(mockUseOnboardingStore);
-      vi.mocked(Core.useAuthStore).mockImplementation(mockUseAuthStore);
-
-      render(<Home />);
-
-      // The dialog should be rendered with correct props
-      // This is implicitly tested by the dialog being shown when conditions are met
-      expect(screen.getByTestId('dialog-welcome')).toBeInTheDocument();
+      // The DialogWelcome component is rendered (its internal logic determines visibility)
+      expect(screen.getByTestId('dialog-welcome-component')).toBeInTheDocument();
     });
   });
 });

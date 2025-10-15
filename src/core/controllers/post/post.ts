@@ -1,33 +1,12 @@
 import * as Core from '@/core';
 import * as Application from '@/core/application';
-import type { TCreatePostParams, TReadPostsParams } from './post.types';
-import { createSanitizationError, SanitizationErrorType } from '@/libs';
+import * as Libs from '@/libs';
 
 export class PostController {
-  private static isInitialized = false;
+  private constructor() {} // Prevent instantiation
 
-  private constructor() {}
-
-  /**
-   * Initialize the controller
-   */
-  private static async initialize() {
-    if (!this.isInitialized) {
-      await Core.db.initialize();
-      this.isInitialized = true;
-    }
-  }
-
-  /**
-   * Read posts with optional pagination
-   * @param params - Parameters object
-   * @param params.limit - Number of posts to fetch (default: 30)
-   * @param params.offset - Number of posts to skip (default: 0)
-   * @returns Array of NexusPost objects
-   */
-  static async read({ limit = 30, offset = 0 }: TReadPostsParams = {}): Promise<Core.NexusPost[]> {
-    await this.initialize();
-    return Core.Local.Post.fetch({ limit, offset });
+  static async read({ postId }: { postId: string }) {
+    return await Core.PostDetailsModel.findById(postId);
   }
 
   /**
@@ -37,16 +16,19 @@ export class PostController {
    * @param params.content - Post content
    * @param params.authorId - ID of the user creating the post
    */
-  static async create({ parentPostId, content, authorId }: TCreatePostParams) {
-    await this.initialize();
-
+  static async create({ parentPostId, content, authorId }: Core.TCreatePostParams) {
     let parentUri: string | undefined = undefined;
     if (parentPostId) {
       const parentPost = await Core.PostDetailsModel.findById(parentPostId);
       if (!parentPost) {
-        throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Failed to validate parent post', 404, {
-          parentPostId,
-        });
+        throw Libs.createSanitizationError(
+          Libs.SanitizationErrorType.POST_NOT_FOUND,
+          'Failed to validate parent post',
+          404,
+          {
+            parentPostId,
+          },
+        );
       }
       parentUri = parentPost.uri;
     }
@@ -62,7 +44,7 @@ export class PostController {
 
     const postId = Core.buildPostCompositeId({ pubky: authorId, postId: normalizedPost.meta.id });
 
-    await Application.Post.create({
+    await Application.PostApplication.create({
       postUrl: normalizedPost.meta.url,
       postJson: normalizedPost.post.toJson(),
       postId,
