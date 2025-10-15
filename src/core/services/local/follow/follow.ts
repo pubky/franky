@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import * as Libs from '@/libs';
 
 export class LocalFollowService {
   static async create({ follower, followee }: Core.TFollowParams) {
@@ -48,10 +48,10 @@ export class LocalFollowService {
         },
       );
 
-      Logger.debug('Follow created successfully', { follower, followee });
+      Libs.Logger.debug('Follow created successfully', { follower, followee });
     } catch (error) {
-      Logger.error('Failed to follow a user', { follower, followee, error });
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to create follow relationship', 500, {
+      Libs.Logger.error('Failed to follow a user', { follower, followee, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to create follow relationship', 500, {
         error,
       });
     }
@@ -102,12 +102,17 @@ export class LocalFollowService {
         },
       );
 
-      Logger.debug('Unfollow completed successfully', { follower, followee });
+      Libs.Logger.debug('Unfollow completed successfully', { follower, followee });
     } catch (error) {
-      Logger.error('Failed to unfollow a user', { follower, followee, error });
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete follow relationship', 500, {
-        error,
-      });
+      Libs.Logger.error('Failed to unfollow a user', { follower, followee, error });
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.DELETE_FAILED,
+        'Failed to delete follow relationship',
+        500,
+        {
+          error,
+        },
+      );
     }
   }
 }

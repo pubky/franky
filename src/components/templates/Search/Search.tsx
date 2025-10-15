@@ -22,7 +22,7 @@ export function Search() {
 
   return (
     <>
-      <Organisms.DialogWelcome isOpen={false} onOpenChange={() => {}} name="" pubky="" bio="" />
+      <Organisms.DialogWelcome />
       <Organisms.ContentLayout
         leftSidebarContent={
           <>

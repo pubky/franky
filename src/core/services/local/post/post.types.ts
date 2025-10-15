@@ -1,10 +1,5 @@
 import * as Core from '@/core';
 
-export type TLocalFetchPostsParams = {
-  limit?: number;
-  offset?: number;
-};
-
 export type TLocalSavePostParams = {
   postId: string;
   content: string;
