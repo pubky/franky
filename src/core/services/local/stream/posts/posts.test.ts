@@ -72,12 +72,15 @@ describe('LocalStreamService', () => {
         },
       ];
 
-      // Mock the Nexus services
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      // Mock the Nexus services used indirectly by LocalStreamUsersService
       vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Call the method
-      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 2, ['post-1', 'post-2']);
+      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(
+        streamId,
+        ['post-1', 'post-2'],
+        mockNexusPosts,
+      );
 
       // Build expected composite ID
       const compositeId = Core.buildPostCompositeId({ pubky: 'user-123', postId: 'post-3' });
@@ -100,10 +103,7 @@ describe('LocalStreamService', () => {
       // Create initial stream
       await Core.PostStreamModel.create(streamId, ['post-1']);
 
-      // Mock Nexus to return empty array
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
-
-      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 1, ['post-1']);
+      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, ['post-1'], []);
 
       // Verify the result is null (no new posts)
       expect(result).toBeNull();
@@ -118,13 +118,56 @@ describe('LocalStreamService', () => {
       // Create initial stream
       await Core.PostStreamModel.create(streamId, ['post-1']);
 
-      // Mock Nexus to throw error
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockRejectedValue(new Error('Network error'));
+      // Mock user fetch to avoid network and force an error on post persistence
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockRejectedValue(new Error('Network error'));
 
       // Expect the error to be thrown
-      await expect(Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 1, ['post-1'])).rejects.toThrow(
-        'Network error',
-      );
+      const errorPost = [
+        {
+          details: {
+            id: 'p-err',
+            content: 'content',
+            kind: 'short' as const,
+            uri: 'https://example.com/p-err',
+            author: 'u-err',
+            indexed_at: Date.now(),
+            attachments: null,
+          },
+          counts: { replies: 0, tags: 0, unique_tags: 0, reposts: 0 },
+          author: {
+            details: {
+              name: 'Err',
+              bio: 'Err',
+              id: 'u-err',
+              links: null,
+              status: null,
+              image: null,
+              indexed_at: Date.now(),
+            },
+            counts: {
+              tagged: 0,
+              tags: 0,
+              unique_tags: 0,
+              posts: 0,
+              replies: 0,
+              following: 0,
+              followers: 0,
+              friends: 0,
+              bookmarks: 0,
+            },
+            tags: [],
+            relationship: { following: false, followed_by: false, muted: false },
+          },
+          tags: [],
+          relationships: { replied: null, reposted: null, mentioned: [] },
+          bookmark: null,
+        },
+      ];
+
+      await expect(
+        Core.LocalStreamPostsService.fetchAndCachePosts(streamId, ['post-1'], errorPost as unknown as Core.NexusPost[]),
+      ).rejects.toThrow('Network error');
 
       // Verify stream was not updated
       const updatedStream = await Core.PostStreamModel.findById(streamId);
@@ -177,7 +220,7 @@ describe('LocalStreamService', () => {
       expect(streamBefore).toBeTruthy();
 
       // Clear the cache
-      await Core.LocalStreamPostsService.clearCorruptedCache(streamId);
+      await Core.LocalStreamPostsService.deleteById(streamId);
 
       // Verify stream was deleted
       const streamAfter = await Core.PostStreamModel.findById(streamId);
@@ -187,7 +230,7 @@ describe('LocalStreamService', () => {
     it('should not throw error if stream does not exist', async () => {
       // Try to clear a non-existent stream - using a valid PostStreamTypes enum value
       const nonExistentStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING;
-      await expect(Core.LocalStreamPostsService.clearCorruptedCache(nonExistentStreamId)).resolves.not.toThrow();
+      await expect(Core.LocalStreamPostsService.deleteById(nonExistentStreamId)).resolves.not.toThrow();
     });
   });
 });

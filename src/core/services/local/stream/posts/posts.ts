@@ -4,54 +4,62 @@ import * as Libs from '@/libs';
 export class LocalStreamPostsService {
   private constructor() {}
 
+  static async findById(streamId: Core.PostStreamTypes): Promise<{ stream: string[] } | null> {
+    return await Core.PostStreamModel.findById(streamId);
+  }
+
   /**
    * Fetches posts from Nexus, persists them locally, and updates the cache
    *
    * @param streamId - The type of stream to fetch
-   * @param fetchOffset - Offset for pagination in the Nexus API
    * @param existingStream - Current cached stream IDs to merge with new ones
    * @returns Updated stream array or null if no posts found
    */
   static async fetchAndCachePosts(
     streamId: Core.PostStreamTypes,
-    fetchOffset: number,
     existingStream: string[] = [],
+    nexusPosts: Core.NexusPost[] = [],
   ): Promise<string[] | null> {
     try {
-      // Fetch from Nexus API
-      const nexusPosts = await Core.NexusPostStreamService.fetch({
-        streamId,
-        limit: 100,
-        skip: fetchOffset,
-      });
+      // This local service does not fetch remotely; posts must be provided by caller
+      const posts: Core.NexusPost[] = nexusPosts;
 
-      if (!nexusPosts || nexusPosts.length === 0) {
+      // No posts available -> signal no update
+      if (!posts || posts.length === 0) {
         return null;
       }
 
       // Persist to local database
-      const users = nexusPosts.map((post) => post.details.author);
+      const users = posts.map((post) => post.details.author);
       await Core.LocalStreamUsersService.persistUserStream(users);
-      await Core.LocalStreamPostsService.persistPosts(nexusPosts);
+      await Core.LocalStreamPostsService.persistPosts(posts);
 
       // Extract composite IDs
-      const postIds = nexusPosts.map((post) =>
+      const fetchedPostIds = posts.map((post) =>
         Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
       );
 
+      // Filter out duplicates already present in the stream
+      const newPostIds = fetchedPostIds.filter((id) => !existingStream.includes(id));
+
+      // No new unique posts -> signal no update
+      if (newPostIds.length === 0) {
+        return null;
+      }
+
       // Merge with existing stream and update cache
-      const updatedStream = [...existingStream, ...postIds];
+      const updatedStream = [...existingStream, ...newPostIds];
       await Core.PostStreamModel.upsert(streamId, updatedStream);
 
       Libs.Logger.debug('Stream cache updated', {
         streamId,
-        newPosts: postIds.length,
+        newPosts: newPostIds.length,
         totalCached: updatedStream.length,
       });
 
       return updatedStream;
     } catch (error) {
-      Libs.Logger.error('Failed to fetch and cache posts', { streamId, fetchOffset, error });
+      Libs.Logger.error('Failed to fetch and cache posts', { streamId, error });
       throw error;
     }
   }
@@ -81,11 +89,11 @@ export class LocalStreamPostsService {
   }
 
   /**
-   * Clears corrupted cache for a given stream
+   * Deletes a stream from the local database
    *
    * @param streamId - Stream ID to clear
    */
-  static async clearCorruptedCache(streamId: Core.PostStreamTypes): Promise<void> {
+  static async deleteById(streamId: Core.PostStreamTypes): Promise<void> {
     try {
       await Core.PostStreamModel.deleteById(streamId);
       Libs.Logger.info('Corrupted cache cleared', { streamId });

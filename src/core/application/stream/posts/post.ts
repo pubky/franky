@@ -5,23 +5,28 @@ export class PostStreamApplication {
   static async read({ streamId, limit = 30, skip = 0 }: Core.TStreamPostsParams): Promise<string[]> {
     try {
       // 1. Get stream from cache
-      let cachedStream = await Core.PostStreamModel.findById(streamId);
+      let cachedStream = await Core.LocalStreamPostsService.findById(streamId);
 
       // 2. Validate cache integrity (check for duplicates)
       if (cachedStream && !Core.LocalStreamPostsService.validateCacheIntegrity(cachedStream)) {
-        await Core.LocalStreamPostsService.clearCorruptedCache(streamId);
+        await Core.LocalStreamPostsService.deleteById(streamId);
         cachedStream = null;
       }
 
       // 3. If no cache exists, fetch initial batch and create cache
       if (!cachedStream || cachedStream.stream.length === 0) {
-        const updatedStream = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 0);
+        // Fetch from Nexus API
+        const nexusPosts = await Core.NexusPostStreamService.fetch({
+          streamId,
+          limit,
+          skip: 0,
+        });
 
-        if (!updatedStream) {
-          return [];
-        }
+        const streamIds = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, [], nexusPosts);
 
-        cachedStream = await Core.PostStreamModel.findById(streamId);
+        cachedStream = {
+          stream: streamIds || [],
+        };
       }
 
       // 4. Check if we need to fetch more posts
@@ -30,10 +35,18 @@ export class PostStreamApplication {
       // Keep fetching until we have enough posts or no more posts are available
       while (requestedEnd > cachedStream!.stream.length) {
         const currentCacheSize = cachedStream!.stream.length;
+
+        // Fetch from Nexus API
+        const nexusPosts = await Core.NexusPostStreamService.fetch({
+          streamId,
+          limit,
+          skip: currentCacheSize,
+        });
+
         const updatedStream = await Core.LocalStreamPostsService.fetchAndCachePosts(
           streamId,
-          currentCacheSize,
           cachedStream!.stream,
+          nexusPosts,
         );
 
         // If no new posts were fetched, break the loop
@@ -42,7 +55,9 @@ export class PostStreamApplication {
         }
 
         // Update cachedStream reference
-        cachedStream = await Core.PostStreamModel.findById(streamId);
+        cachedStream = {
+          stream: updatedStream || [],
+        };
       }
 
       // 5. Return the requested slice from cache
