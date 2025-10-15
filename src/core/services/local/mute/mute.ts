@@ -27,10 +27,7 @@ export class LocalMuteService {
    * Updates the mute status for a user relationship
    * @private
    */
-  private static async updateMuteStatus(
-    { muter, mutee }: Core.TMuteParams,
-    action: MuteAction
-  ): Promise<void> {
+  private static async updateMuteStatus({ muter, mutee }: Core.TMuteParams, action: MuteAction): Promise<void> {
     const config = {
       mute: {
         targetStatus: true,
@@ -59,7 +56,7 @@ export class LocalMuteService {
           if (existingRelationship.muted === targetStatus) {
             return;
           }
-          
+
           // Update the existing relationship
           await Core.UserRelationshipsModel.update(mutee, { muted: targetStatus });
           return;
