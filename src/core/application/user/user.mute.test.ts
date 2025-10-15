@@ -20,12 +20,17 @@ describe('UserApplication.mute', () => {
     vi.clearAllMocks();
   });
 
-  describe('PUT (mute user)', () => {
-    it('should create relationship with muted=true when no relationship exists', async () => {
+  describe.each<['PUT' | 'DELETE', 'mute' | 'unmute', boolean]>([
+    ['PUT', 'mute', true],
+    ['DELETE', 'unmute', false],
+  ])('%s operation', (eventType, action, expectedStatus) => {
+    const homeserverAction = eventType === 'PUT' ? Core.HomeserverAction.PUT : Core.HomeserverAction.DELETE;
+
+    it(`should ${action} when no relationship exists`, async () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       await UserApplication.mute({
-        eventType: Core.HomeserverAction.PUT,
+        eventType: homeserverAction,
         muteUrl,
         muteJson,
         muter,
@@ -34,24 +39,24 @@ describe('UserApplication.mute', () => {
 
       const rel = await Core.UserRelationshipsModel.findById(mutee);
       expect(rel).toBeDefined();
-      expect(rel?.muted).toBe(true);
+      expect(rel?.muted).toBe(expectedStatus);
       expect(rel?.following).toBe(false);
       expect(rel?.followed_by).toBe(false);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, muteUrl, muteJson);
+      expect(requestSpy).toHaveBeenCalledWith(homeserverAction, muteUrl, muteJson);
     });
 
-    it('should update existing relationship to muted=true', async () => {
+    it(`should update existing relationship to muted=${expectedStatus}`, async () => {
       await Core.UserRelationshipsModel.create({
         id: mutee,
         following: true,
         followed_by: true,
-        muted: false,
+        muted: !expectedStatus,
       });
 
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       await UserApplication.mute({
-        eventType: Core.HomeserverAction.PUT,
+        eventType: homeserverAction,
         muteUrl,
         muteJson,
         muter,
@@ -59,22 +64,41 @@ describe('UserApplication.mute', () => {
       });
 
       const rel = await Core.UserRelationshipsModel.findById(mutee);
-      expect(rel).toBeDefined();
-      expect(rel?.muted).toBe(true);
+      expect(rel?.muted).toBe(expectedStatus);
       expect(rel?.following).toBe(true);
       expect(rel?.followed_by).toBe(true);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, muteUrl, muteJson);
+      expect(requestSpy).toHaveBeenCalledWith(homeserverAction, muteUrl, muteJson);
     });
 
-    it('should be idempotent when user already muted', async () => {
+    it(`should be idempotent when user already ${action}d`, async () => {
       await Core.UserRelationshipsModel.create({
         id: mutee,
         following: false,
         followed_by: false,
-        muted: true,
+        muted: expectedStatus,
       });
 
       const updateSpy = vi.spyOn(Core.UserRelationshipsModel, 'update');
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await UserApplication.mute({
+        eventType: homeserverAction,
+        muteUrl,
+        muteJson,
+        muter,
+        mutee,
+      });
+
+      const rel = await Core.UserRelationshipsModel.findById(mutee);
+      expect(rel?.muted).toBe(expectedStatus);
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(requestSpy).toHaveBeenCalledWith(homeserverAction, muteUrl, muteJson);
+    });
+  });
+
+  describe('Operation Order', () => {
+    it('should call database operation before homeserver for PUT', async () => {
+      const createSpy = vi.spyOn(Core.Local.Mute, 'create');
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       await UserApplication.mute({
@@ -85,87 +109,27 @@ describe('UserApplication.mute', () => {
         mutee,
       });
 
-      const rel = await Core.UserRelationshipsModel.findById(mutee);
-      expect(rel?.muted).toBe(true);
-      expect(updateSpy).not.toHaveBeenCalled();
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, muteUrl, muteJson);
+      expect(createSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
+    });
+
+    it('should call database operation before homeserver for DELETE', async () => {
+      const deleteSpy = vi.spyOn(Core.Local.Mute, 'delete');
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await UserApplication.mute({
+        eventType: Core.HomeserverAction.DELETE,
+        muteUrl,
+        muteJson,
+        muter,
+        mutee,
+      });
+
+      expect(deleteSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
     });
   });
 
-  describe('DELETE (unmute user)', () => {
-    it('should update existing relationship to muted=false', async () => {
-      await Core.UserRelationshipsModel.create({
-        id: mutee,
-        following: true,
-        followed_by: false,
-        muted: true,
-      });
-
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
-
-      await UserApplication.mute({
-        eventType: Core.HomeserverAction.DELETE,
-        muteUrl,
-        muteJson,
-        muter,
-        mutee,
-      });
-
-      const rel = await Core.UserRelationshipsModel.findById(mutee);
-      expect(rel).toBeDefined();
-      expect(rel?.muted).toBe(false);
-      expect(rel?.following).toBe(true);
-      expect(rel?.followed_by).toBe(false);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, muteUrl, muteJson);
-    });
-
-    it('should create relationship with muted=false when no relationship exists', async () => {
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
-
-      await UserApplication.mute({
-        eventType: Core.HomeserverAction.DELETE,
-        muteUrl,
-        muteJson,
-        muter,
-        mutee,
-      });
-
-      const rel = await Core.UserRelationshipsModel.findById(mutee);
-      expect(rel).toBeDefined();
-      expect(rel?.muted).toBe(false);
-      expect(rel?.following).toBe(false);
-      expect(rel?.followed_by).toBe(false);
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, muteUrl, muteJson);
-    });
-
-    it('should be idempotent when user already unmuted', async () => {
-      await Core.UserRelationshipsModel.create({
-        id: mutee,
-        following: false,
-        followed_by: false,
-        muted: false,
-      });
-
-      const updateSpy = vi.spyOn(Core.UserRelationshipsModel, 'update');
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
-
-      await UserApplication.mute({
-        eventType: Core.HomeserverAction.DELETE,
-        muteUrl,
-        muteJson,
-        muter,
-        mutee,
-      });
-
-      const rel = await Core.UserRelationshipsModel.findById(mutee);
-      expect(rel?.muted).toBe(false);
-      expect(updateSpy).not.toHaveBeenCalled();
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, muteUrl, muteJson);
-    });
-  });
-
-  describe('error handling', () => {
-    it('should propagate error when database transaction fails and not call homeserver', async () => {
+  describe('Error Handling', () => {
+    it('should not call homeserver when database operation fails', async () => {
       const findByIdSpy = vi.spyOn(Core.UserRelationshipsModel, 'findById').mockRejectedValue(new Error('db-fail'));
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
@@ -186,7 +150,7 @@ describe('UserApplication.mute', () => {
       }
     });
 
-    it('should propagate error when homeserver request fails', async () => {
+    it('should propagate homeserver errors', async () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
 
       await expect(
@@ -202,7 +166,7 @@ describe('UserApplication.mute', () => {
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, muteUrl, muteJson);
     });
 
-    it('should rollback transaction when update fails', async () => {
+    it('should rollback database transaction when update fails', async () => {
       await Core.UserRelationshipsModel.create({
         id: mutee,
         following: false,
@@ -230,6 +194,55 @@ describe('UserApplication.mute', () => {
       } finally {
         updateSpy.mockRestore();
       }
+    });
+
+    it('should handle both database and homeserver failures', async () => {
+      const createSpy = vi.spyOn(Core.Local.Mute, 'create').mockRejectedValue(new Error('db-fail'));
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
+
+      await expect(
+        UserApplication.mute({
+          eventType: Core.HomeserverAction.PUT,
+          muteUrl,
+          muteJson,
+          muter,
+          mutee,
+        }),
+      ).rejects.toThrow('db-fail');
+
+      expect(createSpy).toHaveBeenCalled();
+      expect(requestSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle invalid event types gracefully', async () => {
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await UserApplication.mute({
+        eventType: 'INVALID' as unknown as Core.HomeserverAction,
+        muteUrl,
+        muteJson,
+        muter,
+        mutee,
+      });
+
+      expect(requestSpy).not.toHaveBeenCalled();
+    });
+
+    it('should handle undefined return values correctly', async () => {
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      const result = await UserApplication.mute({
+        eventType: Core.HomeserverAction.DELETE,
+        muteUrl,
+        muteJson,
+        muter,
+        mutee,
+      });
+
+      expect(result).toBeUndefined();
+      expect(requestSpy).toHaveBeenCalled();
     });
   });
 });

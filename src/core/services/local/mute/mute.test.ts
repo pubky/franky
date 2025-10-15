@@ -113,7 +113,7 @@ describe('LocalMuteService', () => {
   describe('Logging', () => {
     it('should log success messages correctly', async () => {
       const debugSpy = vi.spyOn(Logger, 'debug');
-      
+
       await Core.Local.Mute.create({ muter, mutee });
       expect(debugSpy).toHaveBeenCalledWith('Mute created successfully', { muter, mutee });
 
@@ -134,7 +134,7 @@ describe('LocalMuteService', () => {
       }
 
       expect(errorSpy).toHaveBeenCalledWith('Failed to mute a user', { muter, mutee, error: expect.any(Error) });
-      
+
       spy.mockRestore();
       errorSpy.mockRestore();
     });
