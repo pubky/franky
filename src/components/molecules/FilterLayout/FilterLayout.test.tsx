@@ -14,33 +14,22 @@ describe('FilterLayout', () => {
     render(<FilterLayout />);
 
     expect(screen.getByText('Layout')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
-  });
-
-  it('renders with custom selected tab', () => {
-    render(<FilterLayout selectedTab={LAYOUT.WIDE} />);
-
-    const wideItem = screen.getByText('Wide').closest('[data-testid="filter-item"]');
-    expect(wideItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
+    const onTabChange = vi.fn();
+    render(<FilterLayout onTabChange={onTabChange} />);
+    fireEvent.click(screen.getByText('Wide'));
+    expect(onTabChange).toHaveBeenCalledWith('wide');
+  });
+
+  it('does not call onTabChange when tab is clicked and is disabled', () => {
     const onTabChange = vi.fn();
     render(<FilterLayout onTabChange={onTabChange} />);
 
     // Visual tab is disabled, so clicking it shouldn't trigger onTabChange
     fireEvent.click(screen.getByText('Visual'));
     expect(onTabChange).not.toHaveBeenCalled();
-  });
-
-  it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterLayout selectedTab={LAYOUT.COLUMNS} />);
-
-    const columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
-    const wideItem2 = screen.getByText('Wide').closest('[data-testid="filter-item"]');
-
-    expect(columnsItem).toMatchSnapshot();
-    expect(wideItem2).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -62,40 +51,35 @@ describe('FilterLayout', () => {
     expect(onTabChange.mock.calls.length).toBe(callCountBefore); // Should not increase
   });
 
-  it('applies correct styling classes', () => {
-    render(<FilterLayout selectedTab={LAYOUT.COLUMNS} />);
-
-    const columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
-    const wideItem = screen.getByText('Wide').closest('[data-testid="filter-item"]');
-
-    expect(columnsItem).toMatchSnapshot();
-    expect(wideItem).toMatchSnapshot();
-  });
-
-  it('renders with correct icons', () => {
-    render(<FilterLayout />);
-
-    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
-  });
-
-  it('applies correct icon classes', () => {
-    render(<FilterLayout />);
-
-    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
-  });
-
   it('rerenders with different selected tabs', () => {
     const { rerender } = render(<FilterLayout selectedTab={LAYOUT.COLUMNS} />);
 
     let columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
     const wideItem3 = screen.getByText('Wide').closest('[data-testid="filter-item"]');
-    expect(columnsItem).toMatchSnapshot();
-    expect(wideItem3).toMatchSnapshot();
+    expect(columnsItem).toBeInTheDocument();
+    expect(wideItem3).toBeInTheDocument();
 
     rerender(<FilterLayout selectedTab={LAYOUT.VISUAL} />);
     columnsItem = screen.getByText('Columns').closest('[data-testid="filter-item"]');
     const visualItem = screen.getByText('Visual').closest('[data-testid="filter-item"]');
-    expect(columnsItem).toMatchSnapshot();
-    expect(visualItem).toMatchSnapshot();
+    expect(columnsItem).toBeInTheDocument();
+    expect(visualItem).toBeInTheDocument();
+  });
+});
+
+describe('FilterLayout - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<FilterLayout />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Columns selected tab', () => {
+    const { container } = render(<FilterLayout selectedTab={LAYOUT.COLUMNS} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Wide selected tab', () => {
+    const { container } = render(<FilterLayout selectedTab={LAYOUT.WIDE} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
