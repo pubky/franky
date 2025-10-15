@@ -73,7 +73,10 @@ export const userStreamApi = {
 
   // Users by IDs (POST request)
   usersByIds: (params: Core.TUserStreamUsersByIdsParams) => {
-    return { body: buildUserStreamBodyUrl(params), url: Core.buildNexusUrl(Core.USER_STREAM_PREFIX.USERS_BY_IDS) };
+    return {
+      body: buildUserStreamBodyUrl(params),
+      url: Core.buildNexusUrl(Core.USER_STREAM_PREFIX.USERS_BY_IDS),
+    };
   },
 };
 

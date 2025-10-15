@@ -2,27 +2,15 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 
-export interface HomeSidebarProps {
-  reach: Core.ReachType;
-  setReach: (reach: Core.ReachType) => void;
-  sort: Core.SortType;
-  setSort: (sort: Core.SortType) => void;
-  content: Core.ContentType;
-  setContent: (content: Core.ContentType) => void;
-  layout: Core.LayoutType;
-  setLayout: (layout: Core.LayoutType) => void;
-}
+/**
+ * HomeLeftSidebar
+ *
+ * Self-contained component that manages its own filter state.
+ * No props needed - uses global filters store.
+ */
+export function HomeLeftSidebar() {
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
 
-export function HomeLeftSidebar({
-  reach,
-  setReach,
-  sort,
-  setSort,
-  content,
-  setContent,
-  layout,
-  setLayout,
-}: HomeSidebarProps) {
   return (
     <>
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
@@ -55,16 +43,15 @@ export function HomeRightSidebar() {
   );
 }
 
-export function HomeLeftDrawer({
-  reach,
-  setReach,
-  sort,
-  setSort,
-  content,
-  setContent,
-  layout,
-  setLayout,
-}: HomeSidebarProps) {
+/**
+ * HomeLeftDrawer
+ *
+ * Self-contained component that manages its own filter state.
+ * No props needed - uses global filters store.
+ */
+export function HomeLeftDrawer() {
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+
   return (
     <div className="flex flex-col gap-6">
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
@@ -95,14 +82,16 @@ export function HomeRightDrawer() {
   );
 }
 
-export function HomeLeftDrawerMobile({
-  reach,
-  setReach,
-  sort,
-  setSort,
-  content,
-  setContent,
-}: Omit<HomeSidebarProps, 'layout' | 'setLayout'>) {
+/**
+ * HomeLeftDrawerMobile
+ *
+ * Self-contained component that manages its own filter state.
+ * No props needed - uses global filters store.
+ * Note: Mobile version doesn't show layout filter.
+ */
+export function HomeLeftDrawerMobile() {
+  const { reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+
   return (
     <div className="flex flex-col gap-6">
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />

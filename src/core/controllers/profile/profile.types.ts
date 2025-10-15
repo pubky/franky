@@ -1,3 +1,7 @@
-import { NexusUserDetails } from '@/core';
+import * as Core from '@/core';
 
-export type UserControllerNewData = Omit<NexusUserDetails, 'id' | 'indexed_at' | 'status'>;
+export type UserControllerNewData = Omit<Core.NexusUserDetails, 'id' | 'indexed_at' | 'status'>;
+
+export type TReadProfileParams = {
+  userId: Core.Pubky;
+};

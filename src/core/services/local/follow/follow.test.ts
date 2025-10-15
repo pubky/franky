@@ -45,7 +45,7 @@ describe('LocalFollowService.create', () => {
   });
 
   it('increments following and followers and updates connections', async () => {
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -63,7 +63,7 @@ describe('LocalFollowService.create', () => {
   it('runs all writes atomically (rollback when a write fails)', async () => {
     const spy = vi.spyOn(Core.UserConnectionsModel, 'createConnection').mockRejectedValueOnce(new Error('fail'));
 
-    await expect(Core.Local.Follow.create({ follower: userA, followee: userB })).rejects.toThrow();
+    await expect(Core.LocalFollowService.create({ follower: userA, followee: userB })).rejects.toThrow();
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -91,7 +91,7 @@ describe('LocalFollowService.create', () => {
       await Core.UserCountsModel.update(userB, { followers: 1 });
     });
 
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -109,8 +109,8 @@ describe('LocalFollowService.create', () => {
   });
 
   it('double follow does not increment counts twice or duplicate connections', async () => {
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -131,7 +131,7 @@ describe('LocalFollowService.create', () => {
     const spy = vi.spyOn(Core.UserCountsModel, 'updateCount').mockRejectedValueOnce(new Error('counts-fail'));
 
     try {
-      await Core.Local.Follow.create({ follower: userA, followee: userB });
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
       expect.unreachable('should throw');
     } catch (err: unknown) {
       const e = err as { message?: string; details?: { error?: { message?: string } } };
@@ -160,9 +160,9 @@ describe('LocalFollowService.create', () => {
     await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
 
     // First follow should create following and bump friends for both
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
     // Second follow should be a no-op for friends and counts
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -190,7 +190,7 @@ describe('LocalFollowService.create', () => {
       await Core.UserCountsModel.table.clear();
     });
 
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -209,7 +209,7 @@ describe('LocalFollowService.create', () => {
 
   it('upserts relationship on first follow and sets following=true', async () => {
     // No relationship exists for userB
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const rel = await Core.UserRelationshipsModel.table.get(userB);
     expect(rel).toBeDefined();
@@ -221,7 +221,7 @@ describe('LocalFollowService.create', () => {
   it('updates existing relationship to following=true without changing followed_by', async () => {
     await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
 
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const rel = await Core.UserRelationshipsModel.table.get(userB);
     expect(rel).toBeDefined();
@@ -236,7 +236,7 @@ describe('LocalFollowService.create', () => {
       await Core.UserCountsModel.table.clear();
     });
 
-    await Core.Local.Follow.create({ follower: userA, followee: userB });
+    await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -283,7 +283,7 @@ describe('LocalFollowService.delete', () => {
   });
 
   it('decrements following and followers and removes connections', async () => {
-    await Core.Local.Follow.delete({ follower: userA, followee: userB });
+    await Core.LocalFollowService.delete({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -320,7 +320,7 @@ describe('LocalFollowService.delete', () => {
       });
     });
 
-    await Core.Local.Follow.delete({ follower: userA, followee: userB });
+    await Core.LocalFollowService.delete({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -349,7 +349,7 @@ describe('LocalFollowService.delete', () => {
   it('runs all writes atomically (rollback when a write fails)', async () => {
     const spy = vi.spyOn(Core.UserConnectionsModel, 'deleteConnection').mockRejectedValueOnce(new Error('fail'));
 
-    await expect(Core.Local.Follow.delete({ follower: userA, followee: userB })).rejects.toThrow();
+    await expect(Core.LocalFollowService.delete({ follower: userA, followee: userB })).rejects.toThrow();
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -375,7 +375,7 @@ describe('LocalFollowService.delete', () => {
       await Core.UserCountsModel.update(userB, { followers: 0 });
     });
 
-    await Core.Local.Follow.delete({ follower: userA, followee: userB });
+    await Core.LocalFollowService.delete({ follower: userA, followee: userB });
 
     const [aCounts, bCounts] = await Promise.all([
       Core.UserCountsModel.table.get(userA),
@@ -393,7 +393,7 @@ describe('LocalFollowService.delete', () => {
       await Core.UserCountsModel.table.clear();
     });
 
-    await Core.Local.Follow.delete({ follower: userA, followee: userB });
+    await Core.LocalFollowService.delete({ follower: userA, followee: userB });
 
     const [aCounts, bCounts, aConn, bConn] = await Promise.all([
       Core.UserCountsModel.table.get(userA),

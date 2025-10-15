@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostTagAddButton - Snapshots > matches snapshot 1`] = `
+<button
+  aria-label="Add new tag"
+  class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer border shadow-xs hover:text-accent-foreground border-input gap-1.5 has-[>svg]:px-2.5 size-8 !min-w-8 p-0 rounded-lg border-dashed bg-transparent hover:bg-transparent transition-opacity hover:opacity-80"
+  data-size="sm"
+  data-slot="button"
+  data-variant="outline"
+>
+  <div
+    class="size-4 opacity-[0.32]"
+    data-stroke-width="2"
+    data-testid="plus-icon"
+  >
+    Plus
+  </div>
+</button>
+`;
