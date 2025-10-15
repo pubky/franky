@@ -25,7 +25,6 @@ export class ProfileController {
   }
 
   static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
-    // Q: What does it happen if the profile is invalid?
     const { user, meta } = await Core.UserNormalizer.to(
       {
         name: profile.name,

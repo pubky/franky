@@ -1,14 +1,8 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
-export type TStreamPostsParams = {
-  streamId: Core.PostStreamTypes;
-  limit?: number;
-  offset?: number;
-};
-
 export class PostStreamApplication {
-  static async read({ streamId, limit = 30, offset = 0 }: TStreamPostsParams): Promise<string[]> {
+  static async read({ streamId, limit = 30, offset = 0 }: Core.TStreamPostsParams): Promise<string[]> {
     try {
       // 1. Get stream from cache
       let cachedStream = await Core.PostStreamModel.findById(streamId);

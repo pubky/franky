@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Post } from './post';
+import { PostApplication } from './post';
 import * as Core from '@/core';
 import type { TCreatePostInput } from './post.types';
 
@@ -60,7 +60,7 @@ describe('Post Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await Post.create(mockData);
+      await PostApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
@@ -80,7 +80,7 @@ describe('Post Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await Post.create(mockData);
+      await PostApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
@@ -103,7 +103,7 @@ describe('Post Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await Post.create(mockData);
+      await PostApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
@@ -122,7 +122,7 @@ describe('Post Application', () => {
 
       saveSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(Post.create(mockData)).rejects.toThrow('Database error');
+      await expect(PostApplication.create(mockData)).rejects.toThrow('Database error');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
     });
@@ -134,7 +134,7 @@ describe('Post Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(Post.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
+      await expect(PostApplication.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
@@ -150,7 +150,7 @@ describe('Post Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await Post.create(mockData);
+      await PostApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith(
         expect.objectContaining({

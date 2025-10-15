@@ -1,20 +1,7 @@
 import * as Core from '@/core';
-import type { TReadStreamPostsParams } from './stream.types';
 
 export class StreamController {
-  private static isInitialized = false;
-
   private constructor() {} // Prevent instantiation
-
-  /**
-   * Initialize the controller
-   */
-  private static async initialize() {
-    if (!this.isInitialized) {
-      await Core.db.initialize();
-      this.isInitialized = true;
-    }
-  }
 
   /**
    * Read post IDs from a stream with optional pagination
@@ -24,9 +11,7 @@ export class StreamController {
    * @param params.offset - Number of post IDs to skip (default: 0)
    * @returns Array of post IDs
    */
-  static async read({ streamId, limit = 30, offset = 0 }: TReadStreamPostsParams): Promise<string[]> {
-    await this.initialize();
-
+  static async read({ streamId, limit = 30, offset = 0 }: Core.TReadStreamPostsParams): Promise<string[]> {
     // Fetch the stream from the database
     const stream = await Core.PostStreamModel.findById(streamId);
 

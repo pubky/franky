@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Tag } from './tag';
+import { TagApplication } from './tag';
 import * as Core from '@/core';
 import type { TCreateTagInput, TDeleteTagInput } from './tag.types';
 
@@ -54,7 +54,7 @@ describe('Tag Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await Tag.create(mockData);
+      await TagApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
@@ -70,7 +70,7 @@ describe('Tag Application', () => {
 
       saveSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(Tag.create(mockData)).rejects.toThrow('Database error');
+      await expect(TagApplication.create(mockData)).rejects.toThrow('Database error');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
     });
@@ -82,7 +82,7 @@ describe('Tag Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(Tag.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
+      await expect(TagApplication.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
@@ -96,7 +96,7 @@ describe('Tag Application', () => {
       removeSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await Tag.delete(mockData);
+      await TagApplication.delete(mockData);
 
       expect(removeSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
@@ -112,7 +112,7 @@ describe('Tag Application', () => {
 
       removeSpy.mockRejectedValue(new Error('User has not tagged this post with this label'));
 
-      await expect(Tag.delete(mockData)).rejects.toThrow('User has not tagged this post with this label');
+      await expect(TagApplication.delete(mockData)).rejects.toThrow('User has not tagged this post with this label');
       expect(removeSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
     });
@@ -124,7 +124,7 @@ describe('Tag Application', () => {
       removeSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(Tag.delete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 404');
+      await expect(TagApplication.delete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 404');
       expect(removeSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });

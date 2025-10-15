@@ -170,7 +170,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+      const createSpy = vi.spyOn(ApplicationModule.PostApplication, 'create');
 
       await PostController.create(createPostParams('Hello, world!'));
 
@@ -186,7 +186,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
+      const createSpy = vi.spyOn(ApplicationModule.PostApplication, 'create');
 
       await PostController.create(createPostParams('Hello, world!'));
 
