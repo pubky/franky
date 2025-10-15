@@ -19,10 +19,10 @@ export class LocalStreamPostsService {
   ): Promise<string[] | null> {
     try {
       // Fetch from Nexus API
-      const nexusPosts = await Core.NexusPostStreamService.read({
+      const nexusPosts = await Core.NexusPostStreamService.fetch({
         streamId,
         limit: 100,
-        offset: fetchOffset,
+        skip: fetchOffset,
       });
 
       if (!nexusPosts || nexusPosts.length === 0) {

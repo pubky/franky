@@ -2,7 +2,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostStreamApplication {
-  static async read({ streamId, limit = 30, offset = 0 }: Core.TStreamPostsParams): Promise<string[]> {
+  static async read({ streamId, limit = 30, skip = 0 }: Core.TStreamPostsParams): Promise<string[]> {
     try {
       // 1. Get stream from cache
       let cachedStream = await Core.PostStreamModel.findById(streamId);
@@ -25,7 +25,7 @@ export class PostStreamApplication {
       }
 
       // 4. Check if we need to fetch more posts
-      const requestedEnd = offset + limit;
+      const requestedEnd = skip + limit;
 
       // Keep fetching until we have enough posts or no more posts are available
       while (requestedEnd > cachedStream!.stream.length) {
@@ -46,7 +46,7 @@ export class PostStreamApplication {
       }
 
       // 5. Return the requested slice from cache
-      const result = cachedStream!.stream.slice(offset, offset + limit);
+      const result = cachedStream!.stream.slice(skip, skip + limit);
 
       return result;
     } catch (error) {

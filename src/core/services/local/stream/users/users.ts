@@ -41,7 +41,7 @@ export class LocalStreamUsersService {
       // remove duplicates
       const uniqueUndefinedUsers = [...new Set(undefinedUsers)];
 
-      const usersData = await Core.NexusUserStreamService.read({ user_ids: uniqueUndefinedUsers });
+      const usersData = await Core.NexusUserStreamService.fetchByIds({ user_ids: uniqueUndefinedUsers });
       await this.persistUsers(usersData);
     } catch (error) {
       Libs.Logger.error('Failed to persist user stream', { error });

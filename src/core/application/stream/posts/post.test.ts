@@ -35,7 +35,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 10,
-        offset: 0,
+        skip: 0,
       });
 
       expect(result).toHaveLength(10);
@@ -97,14 +97,14 @@ describe('PostStreamApplication', () => {
       }));
 
       // Mock Nexus services
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Read posts (cache is empty, should fetch from Nexus)
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 5,
-        offset: 0,
+        skip: 0,
       });
 
       // Build expected composite IDs
@@ -193,14 +193,14 @@ describe('PostStreamApplication', () => {
         bookmark: null,
       }));
 
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Request posts beyond cache (offset 0, limit 10)
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 10,
-        offset: 0,
+        skip: 0,
       });
 
       // Build expected composite IDs for new posts
@@ -241,7 +241,7 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 5,
-        offset: 10,
+        skip: 10,
       });
 
       expect(result).toHaveLength(5);
@@ -306,14 +306,14 @@ describe('PostStreamApplication', () => {
         bookmark: null,
       }));
 
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Should detect corruption, clear cache, and refetch
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 2,
-        offset: 0,
+        skip: 0,
       });
 
       // Build expected composite IDs
@@ -331,12 +331,12 @@ describe('PostStreamApplication', () => {
 
     it('should return empty array when no posts are available', async () => {
       // Mock Nexus to return empty array
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
 
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 10,
-        offset: 0,
+        skip: 0,
       });
 
       expect(result).toEqual([]);
@@ -361,13 +361,13 @@ describe('PostStreamApplication', () => {
       );
 
       // Mock Nexus to return empty (no more posts)
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
 
       // Request 10 posts but only 5 exist
       const result = await Core.PostStreamApplication.read({
         streamId,
         limit: 10,
-        offset: 0,
+        skip: 0,
       });
 
       // Should return only the 5 available posts

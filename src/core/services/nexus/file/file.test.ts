@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { filesApi, buildFileBodyUrl } from './file.api';
-import { FileVariant, type TImageParams, type TFileBody } from './file.type';
+import { FileVariant, type TImageParams, type TFileBody } from './file.types';
 import * as Config from '@/config';
 
 const pubky = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry';

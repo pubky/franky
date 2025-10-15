@@ -73,8 +73,8 @@ describe('LocalStreamService', () => {
       ];
 
       // Mock the Nexus services
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
       // Call the method
       const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 2, ['post-1', 'post-2']);
@@ -101,7 +101,7 @@ describe('LocalStreamService', () => {
       await Core.PostStreamModel.create(streamId, ['post-1']);
 
       // Mock Nexus to return empty array
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
 
       const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 1, ['post-1']);
 
@@ -119,7 +119,7 @@ describe('LocalStreamService', () => {
       await Core.PostStreamModel.create(streamId, ['post-1']);
 
       // Mock Nexus to throw error
-      vi.spyOn(Core.NexusPostStreamService, 'read').mockRejectedValue(new Error('Network error'));
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockRejectedValue(new Error('Network error'));
 
       // Expect the error to be thrown
       await expect(Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 1, ['post-1'])).rejects.toThrow(

@@ -13,18 +13,13 @@ export class NexusUserStreamService {
    * @param params - Parameters for fetching user stream data
    * @returns User stream data
    */
-  static async read(params: Core.TUserStreamUsersByIdsParams): Promise<Core.NexusUser[]> {
+  static async fetchByIds(params: Core.TUserStreamUsersByIdsParams): Promise<Core.NexusUser[]> {
     try {
-      // Convert offset to skip for Nexus API
-      const apiParams = {
-        ...params,
-      };
-
-      if (apiParams.user_ids.length === 0) {
+      if (params.user_ids.length === 0) {
         return [];
       }
 
-      const url = Core.userStreamApi.usersByIds(apiParams);
+      const url = Core.userStreamApi.usersByIds(params);
 
       const response = await Core.queryNexus<Core.NexusUser[]>(url.url, 'POST', JSON.stringify(url.body));
       Libs.Logger.debug('Users fetched successfully', { response });

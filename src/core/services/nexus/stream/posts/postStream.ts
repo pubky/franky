@@ -13,15 +13,9 @@ export class NexusPostStreamService {
    * @param params - Parameters for fetching post stream data
    * @returns Post stream data
    */
-  static async read(params: Core.TStreamPostsParams): Promise<Core.NexusPost[]> {
+  static async fetch(params: Core.TStreamPostsParams): Promise<Core.NexusPost[]> {
     try {
-      // Convert offset to skip for Nexus API
-      const { offset, ...rest } = params;
-      const apiParams = {
-        ...rest,
-        skip: offset, // Nexus API uses 'skip' instead of 'offset'
-      };
-      const url = Core.postStreamApi.all(apiParams);
+      const url = Core.postStreamApi.all(params);
       const response = await Core.queryNexus<Core.NexusPost[]>(url);
       Libs.Logger.debug('Posts fetched successfully', { response });
 
