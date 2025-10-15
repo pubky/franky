@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import { PubkyAppPostKind } from 'pubky-app-specs';
 
 describe('PostDetailsModel', () => {
   beforeEach(async () => {
@@ -16,7 +15,7 @@ describe('PostDetailsModel', () => {
     content: 'This is a test post content',
     indexed_at: Date.now(),
     author: testAuthor,
-    kind: PubkyAppPostKind.Short,
+    kind: 'short',
     uri: 'https://example.com/post/1',
     attachments: ['image1.jpg', 'image2.png'],
   };
@@ -112,8 +111,8 @@ describe('PostDetailsModel', () => {
 
     it('should handle different post kinds', async () => {
       const mockPostDetails: Core.PostDetailsModelSchema[] = [
-        createPostDetailsData(testPostId1, { ...MOCK_NEXUS_POST_DETAILS, kind: PubkyAppPostKind.Short }),
-        createPostDetailsData(testPostId2, { ...MOCK_NEXUS_POST_DETAILS, kind: PubkyAppPostKind.Long }),
+        createPostDetailsData(testPostId1, { ...MOCK_NEXUS_POST_DETAILS, kind: 'short' }),
+        createPostDetailsData(testPostId2, { ...MOCK_NEXUS_POST_DETAILS, kind: 'long' }),
       ];
 
       await Core.PostDetailsModel.bulkSave(mockPostDetails);
@@ -125,8 +124,8 @@ describe('PostDetailsModel', () => {
 
       expect(postDetails1).not.toBeNull();
       expect(postDetails2).not.toBeNull();
-      expect(postDetails1!.kind).toBe(PubkyAppPostKind.Short);
-      expect(postDetails2!.kind).toBe(PubkyAppPostKind.Long);
+      expect(postDetails1!.kind).toBe('short');
+      expect(postDetails2!.kind).toBe('long');
     });
 
     it('should handle posts with and without attachments', async () => {

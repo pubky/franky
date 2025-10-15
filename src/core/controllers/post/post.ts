@@ -24,8 +24,6 @@ export class PostController {
     kind = Core.PubkyAppPostKind.Short,
     authorId,
   }: Core.TCreatePostParams) {
-    await this.initialize();
-
     let parentUri: string | undefined = undefined;
     let repostedUri: string | undefined = undefined;
 
@@ -49,7 +47,7 @@ export class PostController {
       authorId,
     );
 
-    await Core.Post.create({
+    await Core.PostApplication.create({
       postId: meta.id,
       authorId,
       post,
@@ -64,8 +62,6 @@ export class PostController {
    * @param params.deleterId - ID of the user deleting the post
    */
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {
-    await this.initialize();
-
     const { pubky: authorId } = Core.parsePostCompositeId(postId);
 
     if (authorId !== deleterId) {
@@ -80,6 +76,6 @@ export class PostController {
       );
     }
 
-    await Core.Post.delete({ postId, deleterId });
+    await Core.PostApplication.delete({ postId, deleterId });
   }
 }

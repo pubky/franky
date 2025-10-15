@@ -1,10 +1,9 @@
 import * as Core from '@/core';
-import type { TCreatePostInput } from './post.types';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
-export class Post {
-  static async create({ postUrl, postId, authorId, post }: TCreatePostInput) {
-    await Core.Local.Post.create({ postId, authorId, post });
+export class PostApplication {
+  static async create({ postUrl, postId, authorId, post }: Core.TCreatePostInput) {
+    await Core.LocalPostService.create({ postId, authorId, post });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
   }
 
@@ -14,7 +13,7 @@ export class Post {
     if (!post) {
       throw createSanitizationError(SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, { postId });
     }
-    await Core.Local.Post.delete({ postId, deleterId });
+    await Core.LocalPostService.delete({ postId, deleterId });
 
     const postUrl = post.uri;
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);

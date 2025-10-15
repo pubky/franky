@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import type { TCreatePostParams } from './post.types';
 
 // Mock homeserver
 const mockHomeserver = {
@@ -42,7 +41,7 @@ const testData = {
 };
 
 // Helper functions
-const createPostParams = (content: string, parentPostId?: string): TCreatePostParams => ({
+const createPostParams = (content: string, parentPostId?: string): Core.TCreatePostParams => ({
   content,
   authorId: testData.authorPubky,
   parentPostId,
@@ -153,7 +152,7 @@ describe('PostController', () => {
       const ApplicationModule = await import('@/core/application');
 
       const createSpy = vi
-        .spyOn(ApplicationModule.Post, 'create')
+        .spyOn(ApplicationModule.PostApplication, 'create')
         .mockRejectedValueOnce(new Error('Database transaction failed'));
 
       try {
@@ -172,7 +171,7 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
-      const deleteSpy = vi.spyOn(ApplicationModule.Post, 'delete').mockResolvedValue(undefined);
+      const deleteSpy = vi.spyOn(ApplicationModule.PostApplication, 'delete').mockResolvedValue(undefined);
 
       try {
         await PostController.delete({
@@ -207,7 +206,7 @@ describe('PostController', () => {
       const ApplicationModule = await import('@/core/application');
 
       const deleteSpy = vi
-        .spyOn(ApplicationModule.Post, 'delete')
+        .spyOn(ApplicationModule.PostApplication, 'delete')
         .mockRejectedValueOnce(new Error('Database transaction failed'));
 
       try {

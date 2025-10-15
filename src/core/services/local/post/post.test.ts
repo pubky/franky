@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
-import { Logger } from '@/libs';
-import type { TLocalSavePostParams } from './post.types';
+import * as Libs from '@/libs';
 import { PubkyAppPostKind, PubkyAppPost, PubkyAppPostEmbed } from 'pubky-app-specs';
 
 // Test data
@@ -18,7 +17,7 @@ const createSaveParams = (
   content: string,
   postId?: string,
   kind: PubkyAppPostKind = PubkyAppPostKind.Short,
-): TLocalSavePostParams => {
+): Core.TLocalSavePostParams => {
   const { postId: postIdPart } = Core.parsePostCompositeId(postId || testData.fullPostId1);
   return {
     postId: postIdPart,
@@ -118,7 +117,7 @@ describe('LocalPostService', () => {
       await setupUserCounts(testData.authorPubky);
       const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
-      await Core.Local.Post.create(createSaveParams('Hello, world!'));
+      await Core.LocalPostService.create(createSaveParams('Hello, world!'));
 
       const [details, counts, relationships, tags] = await Promise.all([
         getSavedPost(testData.fullPostId1),
@@ -159,7 +158,7 @@ describe('LocalPostService', () => {
       const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
       const baseParams = createSaveParams('This is a reply', testData.fullPostId1);
-      const saveParams: TLocalSavePostParams = {
+      const saveParams: Core.TLocalSavePostParams = {
         ...baseParams,
         post: new PubkyAppPost(baseParams.post.content, PubkyAppPostKind.Short, parentUri, undefined, undefined),
       };
@@ -179,13 +178,13 @@ describe('LocalPostService', () => {
       const parentUri = `pubky://nonexistent/pub/pubky.app/posts/missing123`;
 
       const baseParams = createSaveParams('Reply to missing parent', testData.fullPostId1);
-      const saveParams: TLocalSavePostParams = {
+      const saveParams: Core.TLocalSavePostParams = {
         ...baseParams,
         post: new PubkyAppPost(baseParams.post.content, PubkyAppPostKind.Short, parentUri, undefined, undefined),
       };
 
       // Should not throw - just silently skips incrementing non-existent parent
-      await expect(Core.Local.Post.create(saveParams)).resolves.not.toThrow();
+      await expect(Core.LocalPostService.create(saveParams)).resolves.not.toThrow();
 
       const savedPost = await getSavedPost(testData.fullPostId1);
       expect(savedPost).toBeTruthy();
@@ -232,14 +231,14 @@ describe('LocalPostService', () => {
     });
 
     it('should log an error on failure with minimal context', async () => {
-      const loggerSpy = vi.spyOn(Logger, 'error');
+      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
 
       // Force a failure early
       const originalCreate = Core.PostDetailsModel.create;
       vi.spyOn(Core.PostDetailsModel, 'create').mockRejectedValueOnce(new Error('boom'));
 
       const params = createSaveParams('Will fail');
-      await expect(Core.Local.Post.create(params)).rejects.toThrow('Failed to save post');
+      await expect(Core.LocalPostService.create(params)).rejects.toThrow('Failed to save post');
 
       expect(loggerSpy).toHaveBeenCalledWith('Failed to save post', {
         postId: params.postId,
@@ -261,7 +260,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(originalPostId, 'Original post content');
 
       // Create repost
-      const saveParams: TLocalSavePostParams = {
+      const saveParams: Core.TLocalSavePostParams = {
         postId: testData.postId1,
         authorId: testData.authorPubky,
         post: new PubkyAppPost(
@@ -273,7 +272,7 @@ describe('LocalPostService', () => {
         ),
       };
 
-      await Core.Local.Post.create(saveParams);
+      await Core.LocalPostService.create(saveParams);
 
       const savedRelationships = await getSavedRelationships(repostId);
       expect(savedRelationships!.reposted).toBe(originalUri);
@@ -287,7 +286,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(originalPostId, 'Original post');
 
       // Create repost
-      const saveParams: TLocalSavePostParams = {
+      const saveParams: Core.TLocalSavePostParams = {
         postId: testData.postId1,
         authorId: testData.authorPubky,
         post: new PubkyAppPost(
@@ -299,7 +298,7 @@ describe('LocalPostService', () => {
         ),
       };
 
-      await Core.Local.Post.create(saveParams);
+      await Core.LocalPostService.create(saveParams);
 
       const originalCounts = await getSavedCounts(originalPostId);
       expect(originalCounts!.reposts).toBe(1);
@@ -315,7 +314,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(originalPostId, 'Original post');
 
       // Create quote repost
-      const saveParams: TLocalSavePostParams = {
+      const saveParams: Core.TLocalSavePostParams = {
         postId: testData.postId1,
         authorId: testData.authorPubky,
         post: new PubkyAppPost(
@@ -327,7 +326,7 @@ describe('LocalPostService', () => {
         ),
       };
 
-      await Core.Local.Post.create(saveParams);
+      await Core.LocalPostService.create(saveParams);
 
       const savedPost = await getSavedPost(repostId);
       expect(savedPost!.content).toBe(quoteContent);
@@ -347,7 +346,7 @@ describe('LocalPostService', () => {
 
       const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
-      await Core.Local.Post.delete({
+      await Core.LocalPostService.delete({
         postId,
         deleterId: testData.authorPubky,
       });
@@ -378,7 +377,7 @@ describe('LocalPostService', () => {
 
       // Should not throw - just silently skips decrementing non-existent parent
       await expect(
-        Core.Local.Post.delete({
+        Core.LocalPostService.delete({
           postId: replyId,
           deleterId: testData.authorPubky,
         }),
@@ -404,7 +403,7 @@ describe('LocalPostService', () => {
       const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'update');
 
       // Delete reply
-      await Core.Local.Post.delete({
+      await Core.LocalPostService.delete({
         postId: replyId,
         deleterId: testData.authorPubky,
       });
@@ -432,7 +431,7 @@ describe('LocalPostService', () => {
       await Core.PostRelationshipsModel.update(repostId, { reposted: originalUri });
 
       // Delete repost
-      await Core.Local.Post.delete({
+      await Core.LocalPostService.delete({
         postId: repostId,
         deleterId: testData.authorPubky,
       });
@@ -451,7 +450,7 @@ describe('LocalPostService', () => {
       await setupExistingPost(replyId, 'Reply post', parentUri);
 
       // Delete reply
-      await Core.Local.Post.delete({
+      await Core.LocalPostService.delete({
         postId: replyId,
         deleterId: testData.authorPubky,
       });
@@ -478,7 +477,7 @@ describe('LocalPostService', () => {
       await Core.PostRelationshipsModel.update(postId, { reposted: originalUri });
 
       // Delete post
-      await Core.Local.Post.delete({
+      await Core.LocalPostService.delete({
         postId,
         deleterId: testData.authorPubky,
       });
@@ -504,7 +503,7 @@ describe('LocalPostService', () => {
 
       try {
         await expect(
-          Core.Local.Post.delete({
+          Core.LocalPostService.delete({
             postId: replyId,
             deleterId: testData.authorPubky,
           }),

@@ -1,5 +1,5 @@
 import * as Core from '@/core';
-import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
+import * as Libs from '@/libs';
 import type { TLocalSavePostParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
 
@@ -89,10 +89,10 @@ export class LocalPostService {
         },
       );
 
-      Logger.debug('Post saved successfully', { postId, kind, parentUri, repostedUri });
+      Libs.Logger.debug('Post saved successfully', { postId, kind, parentUri, repostedUri });
     } catch (error) {
-      Logger.error('Failed to save post', { postId, authorId });
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
+      Libs.Logger.error('Failed to save post', { postId, authorId });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
         error,
         postId,
         content,
@@ -157,10 +157,10 @@ export class LocalPostService {
         },
       );
 
-      Logger.debug('Post deleted successfully', { postId, deleterId });
+      Libs.Logger.debug('Post deleted successfully', { postId, deleterId });
     } catch (error) {
-      Logger.error('Failed to delete post', { postId, deleterId });
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
+      Libs.Logger.error('Failed to delete post', { postId, deleterId });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
         error,
         postId,
         deleterId,
