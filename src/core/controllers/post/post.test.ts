@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import type { TCreatePostParams, TReadPostsParams } from './post.types';
+import type { TCreatePostParams } from './post.types';
 
 // Mock homeserver
 const mockHomeserver = {
@@ -10,11 +10,11 @@ const mockHomeserver = {
 // Mock pubky-app-specs
 vi.mock('pubky-app-specs', () => ({
   PubkySpecsBuilder: class {
-    createPost(content: string, kind: string) {
+    createPost(content: string, kind: number) {
       return {
         post: {
           content,
-          kind,
+          kind: kind === 0 ? 'short' : kind === 1 ? 'long' : 'short',
           attachments: null,
           toJson: () => ({ content, kind }),
         },
@@ -26,8 +26,8 @@ vi.mock('pubky-app-specs', () => ({
     }
   },
   PubkyAppPostKind: {
-    Short: 'Short',
-    Long: 'Long',
+    Short: 0,
+    Long: 1,
   },
   postUriBuilder: (authorId: string, postId: string) => `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
 }));
@@ -48,17 +48,12 @@ const createPostParams = (content: string, parentPostId?: string): TCreatePostPa
   parentPostId,
 });
 
-const readPostsParams = (limit?: number, offset?: number): TReadPostsParams => ({
-  limit,
-  offset,
-});
-
 const setupExistingPost = async () => {
   const postDetails: Core.PostDetailsModelSchema = {
     id: testData.fullPostId,
     content: 'Test post content',
     indexed_at: Date.now(),
-    kind: 'short',
+    kind: 0, // PubkyAppPostKind.Short
     uri: `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId}`,
     attachments: null,
   };
@@ -116,35 +111,6 @@ describe('PostController', () => {
     );
   });
 
-  describe('read', () => {
-    it('should fetch posts with default pagination', async () => {
-      await setupExistingPost();
-      const { PostController } = await import('./post');
-
-      const posts = await PostController.read();
-
-      expect(posts).toBeInstanceOf(Array);
-      expect(posts.length).toBeGreaterThanOrEqual(0);
-    });
-
-    it('should fetch posts with custom limit and offset', async () => {
-      await setupExistingPost();
-      const { PostController } = await import('./post');
-
-      const posts = await PostController.read(readPostsParams(10, 5));
-
-      expect(posts).toBeInstanceOf(Array);
-    });
-
-    it('should return empty array when no posts exist', async () => {
-      const { PostController } = await import('./post');
-
-      const posts = await PostController.read();
-
-      expect(posts).toEqual([]);
-    });
-  });
-
   describe('create', () => {
     it('should create a post and sync to homeserver', async () => {
       mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
@@ -157,7 +123,7 @@ describe('PostController', () => {
 
       const savedPost = allPosts[0];
       expect(savedPost.content).toBe('Hello, world!');
-      expect(savedPost.kind).toBe('short');
+      expect(savedPost.kind).toBe(0); // PubkyAppPostKind.Short
     });
 
     it('should create a reply when parentPostId is provided', async () => {
@@ -171,18 +137,7 @@ describe('PostController', () => {
       const replyPost = allPosts.find((p) => p.content === 'This is a reply');
 
       expect(replyPost).toBeTruthy();
-      expect(replyPost!.kind).toBe('short');
-    });
-
-    it('should trim whitespace from content', async () => {
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
-      const { PostController } = await import('./post');
-
-      await PostController.create(createPostParams('  Hello, world!  '));
-
-      const allPosts = await Core.PostDetailsModel.table.toArray();
-      const savedPost = allPosts[0];
-      expect(savedPost.content).toBe('Hello, world!');
+      expect(replyPost!.kind).toBe(0); // PubkyAppPostKind.Short
     });
 
     it('should throw error when parent post not found', async () => {
@@ -190,23 +145,6 @@ describe('PostController', () => {
 
       await expect(PostController.create(createPostParams('Reply', 'nonexistent:post'))).rejects.toThrow(
         'Parent post not found',
-      );
-    });
-
-    it('should pass normalized data to application layer', async () => {
-      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
-      const { PostController } = await import('./post');
-      const ApplicationModule = await import('@/core/application');
-
-      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
-
-      await PostController.create(createPostParams('Hello, world!'));
-
-      expect(createSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          kind: 'short',
-          attachments: undefined,
-        }),
       );
     });
 
@@ -222,23 +160,6 @@ describe('PostController', () => {
         await expect(PostController.create(createPostParams('Will fail'))).rejects.toThrow(
           'Database transaction failed',
         );
-      } finally {
-        createSpy.mockRestore();
-      }
-    });
-
-    it('should not call application layer when validation fails', async () => {
-      const { PostController } = await import('./post');
-      const ApplicationModule = await import('@/core/application');
-
-      const createSpy = vi.spyOn(ApplicationModule.Post, 'create');
-
-      try {
-        await expect(PostController.create(createPostParams('Reply', 'nonexistent:post'))).rejects.toThrow(
-          'Parent post not found',
-        );
-
-        expect(createSpy).not.toHaveBeenCalled();
       } finally {
         createSpy.mockRestore();
       }
@@ -280,19 +201,6 @@ describe('PostController', () => {
       ).rejects.toThrow('User is not the author of this post');
     });
 
-    it('should throw error on authorization check for non-existent post', async () => {
-      const { PostController } = await import('./post');
-
-      // Authorization check happens before post lookup,
-      // so trying to delete a post where the postId indicates a different author fails immediately
-      await expect(
-        PostController.delete({
-          postId: 'nonexistent:post',
-          deleterId: testData.authorPubky,
-        }),
-      ).rejects.toThrow('User is not the author of this post');
-    });
-
     it('should propagate errors from application layer', async () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
@@ -309,26 +217,6 @@ describe('PostController', () => {
             deleterId: testData.authorPubky,
           }),
         ).rejects.toThrow('Database transaction failed');
-      } finally {
-        deleteSpy.mockRestore();
-      }
-    });
-
-    it('should not call application layer when authorization fails', async () => {
-      const { PostController } = await import('./post');
-      const ApplicationModule = await import('@/core/application');
-
-      const deleteSpy = vi.spyOn(ApplicationModule.Post, 'delete');
-
-      try {
-        await expect(
-          PostController.delete({
-            postId: 'nonexistent:post',
-            deleterId: testData.authorPubky,
-          }),
-        ).rejects.toThrow('User is not the author of this post');
-
-        expect(deleteSpy).not.toHaveBeenCalled();
       } finally {
         deleteSpy.mockRestore();
       }

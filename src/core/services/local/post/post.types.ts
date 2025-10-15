@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { PubkyAppPost } from 'pubky-app-specs';
 
 export type TLocalFetchPostsParams = {
   limit?: number;
@@ -7,10 +8,6 @@ export type TLocalFetchPostsParams = {
 
 export type TLocalSavePostParams = {
   postId: string;
-  content: string;
-  kind: Core.NexusPostKind;
   authorId: Core.Pubky;
-  parentUri?: string;
-  attachments?: string[];
-  repostedUri?: string;
+  post: PubkyAppPost;
 };

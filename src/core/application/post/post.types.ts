@@ -1,13 +1,9 @@
 import * as Core from '@/core';
+import { PubkyAppPost } from 'pubky-app-specs';
 
 export type TCreatePostInput = {
   postId: string;
-  content: string;
-  kind: Core.NexusPostKind;
   authorId: Core.Pubky;
+  post: PubkyAppPost;
   postUrl: string;
-  postJson: Record<string, unknown>;
-  parentUri?: string;
-  attachments?: string[];
-  repostedUri?: string;
 };

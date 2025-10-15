@@ -51,7 +51,6 @@ export class PostController {
 
     let parentUri: string | undefined = undefined;
     let repostedUri: string | undefined = undefined;
-    let postKind: Core.NexusPostKind;
 
     // Validate and set parent URI if this is a reply
     if (parentPostId) {
@@ -73,24 +72,11 @@ export class PostController {
       authorId,
     );
 
-    const postId = Core.buildPostCompositeId({ pubky: authorId, postId: meta.id });
-
-    if (originalPostId) {
-      postKind = 'repost';
-    } else {
-      postKind = Core.normalizePostKind(post.kind) as Core.NexusPostKind;
-    }
-
     await Application.Post.create({
-      postUrl: meta.url,
-      postJson: post.toJson(),
-      postId,
-      content: post.content,
-      kind: postKind,
+      postId: meta.id,
       authorId,
-      parentUri,
-      repostedUri,
-      attachments: post.attachments ?? undefined,
+      post,
+      postUrl: meta.url,
     });
   }
 

@@ -1,6 +1,5 @@
 import { type Pubky, type Timestamp, type TagModel } from '@/core';
-
-export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export enum StreamSorting {
   TIMELINE = 'timeline',
@@ -116,7 +115,7 @@ export type NexusPostDetails = {
   content: string;
   indexed_at: number;
   author: Pubky;
-  kind: NexusPostKind;
+  kind: PubkyAppPostKind;
   uri: string;
   attachments: string[] | null;
 };

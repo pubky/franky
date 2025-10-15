@@ -3,19 +3,9 @@ import type { TCreatePostInput } from './post.types';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class Post {
-  static async create({
-    postUrl,
-    postJson,
-    postId,
-    content,
-    kind,
-    authorId,
-    parentUri,
-    attachments,
-    repostedUri,
-  }: TCreatePostInput) {
-    await Core.Local.Post.create({ postId, content, kind, authorId, parentUri, attachments, repostedUri });
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, postJson);
+  static async create({ postUrl, postId, authorId, post }: TCreatePostInput) {
+    await Core.Local.Post.create({ postId, authorId, post });
+    await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
   }
 
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {

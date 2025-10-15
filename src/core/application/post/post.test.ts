@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Post } from './post';
 import * as Core from '@/core';
 import type { TCreatePostInput } from './post.types';
+import { PubkyAppPost, PubkyAppPostKind } from 'pubky-app-specs';
 
 // Mock the Local.Post service
 vi.mock('@/core/services/local/post', () => ({
@@ -20,17 +21,16 @@ vi.mock('@/core/services/homeserver', () => ({
 
 describe('Post Application', () => {
   // Test data factory
-  const createMockPostData = (): TCreatePostInput => ({
-    postId: 'author:post123',
-    content: 'Hello, world!',
-    kind: 'short',
-    authorId: 'author' as Core.Pubky,
-    postUrl: 'pubky://author/pub/pubky.app/posts/post123',
-    postJson: { content: 'Hello, world!', kind: 'short' },
-    parentUri: undefined,
-    attachments: undefined,
-    repostedUri: undefined,
-  });
+  const createMockPostData = (): TCreatePostInput => {
+    const mockPost = new PubkyAppPost('Hello, world!', PubkyAppPostKind.Short, undefined, undefined, undefined);
+
+    return {
+      postId: 'post123',
+      authorId: 'author' as Core.Pubky,
+      post: mockPost,
+      postUrl: 'pubky://author/pub/pubky.app/posts/post123',
+    };
+  };
 
   // Helper functions
   const setupMocks = () => ({
@@ -54,14 +54,17 @@ describe('Post Application', () => {
 
       expect(saveSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
-        content: mockData.content,
-        kind: mockData.kind,
         authorId: mockData.authorId,
-        parentUri: mockData.parentUri,
-        attachments: mockData.attachments,
-        repostedUri: mockData.repostedUri,
+        post: mockData.post,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
+      expect(requestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        mockData.postUrl,
+        expect.objectContaining({
+          content: 'Hello, world!',
+          kind: 'short',
+        }),
+      );
     });
 
     it('should propagate error when local save fails', async () => {
@@ -97,7 +100,7 @@ describe('Post Application', () => {
     const mockPostDetails = {
       id: 'author:post123',
       content: 'Test post',
-      kind: 'short' as const,
+      kind: PubkyAppPostKind.Short,
       uri: 'pubky://author/pub/pubky.app/posts/post123',
       indexed_at: Date.now(),
       attachments: null,

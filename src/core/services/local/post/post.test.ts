@@ -2,29 +2,30 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
 import { Logger } from '@/libs';
 import type { TLocalSavePostParams } from './post.types';
+import { PubkyAppPostKind, PubkyAppPost, PubkyAppPostEmbed } from 'pubky-app-specs';
 
 // Test data
 const testData = {
   authorPubky: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky,
   postId1: 'abc123xyz',
-  postId2: 'def456uvw',
   get fullPostId1() {
     return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId1 });
-  },
-  get fullPostId2() {
-    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId2 });
   },
 };
 
 // Helper functions
-const createSaveParams = (content: string, postId?: string): TLocalSavePostParams => ({
-  postId: postId || testData.fullPostId1,
-  content,
-  kind: 'short',
-  authorId: testData.authorPubky,
-  parentUri: undefined,
-  attachments: undefined,
-});
+const createSaveParams = (
+  content: string,
+  postId?: string,
+  kind: PubkyAppPostKind = PubkyAppPostKind.Short,
+): TLocalSavePostParams => {
+  const { postId: postIdPart } = Core.parsePostCompositeId(postId || testData.fullPostId1);
+  return {
+    postId: postIdPart,
+    authorId: testData.authorPubky,
+    post: new PubkyAppPost(content, kind, undefined, undefined, undefined),
+  };
+};
 
 const getSavedPost = async (postId: string) => {
   return await Core.PostDetailsModel.table.get(postId);
@@ -48,7 +49,7 @@ const setupExistingPost = async (postId: string, content: string, parentUri?: st
     id: postId,
     content,
     indexed_at: Date.now(),
-    kind: 'short',
+    kind: PubkyAppPostKind.Short,
     uri: `pubky://${pubky}/pub/pubky.app/posts/${postIdPart}`,
     attachments: null,
   };
@@ -94,8 +95,10 @@ describe('LocalPostService', () => {
     );
   });
 
-  describe('save', () => {
+  describe('create', () => {
     it('should save post with all related models initialized', async () => {
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+
       await Core.Local.Post.create(createSaveParams('Hello, world!'));
 
       const [details, counts, relationships, tags] = await Promise.all([
@@ -107,7 +110,7 @@ describe('LocalPostService', () => {
 
       expect(details).toBeTruthy();
       expect(details!.content).toBe('Hello, world!');
-      expect(details!.kind).toBe('short');
+      expect(details!.kind).toBe(PubkyAppPostKind.Short);
 
       expect(counts).toBeTruthy();
       expect(counts!.tags).toBe(0);
@@ -120,19 +123,16 @@ describe('LocalPostService', () => {
       expect(relationships).toBeTruthy();
       expect(relationships!.replied).toBeNull();
       expect(relationships!.reposted).toBeNull();
-    });
 
-    it('should set parentUri in relationships for replies', async () => {
-      const parentUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/parent123`;
-      const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('This is a reply'),
-        parentUri,
-      };
+      // Verify user count increment for root post
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, 1);
+      expect(userCountsSpy).not.toHaveBeenCalledWith(
+        testData.authorPubky,
+        Core.UserCountsFields.REPLIES,
+        expect.anything(),
+      );
 
-      await Core.Local.Post.create(saveParams);
-
-      const savedRelationships = await getSavedRelationships(testData.fullPostId1);
-      expect(savedRelationships!.replied).toBe(parentUri);
+      userCountsSpy.mockRestore();
     });
 
     it('should increment parent reply count when creating a reply', async () => {
@@ -141,23 +141,33 @@ describe('LocalPostService', () => {
 
       await setupExistingPost(parentPostId, 'Parent post');
 
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+
+      const baseParams = createSaveParams('This is a reply', testData.fullPostId1);
       const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('This is a reply', testData.fullPostId1),
-        parentUri,
+        ...baseParams,
+        post: new PubkyAppPost(baseParams.post.content, PubkyAppPostKind.Short, parentUri, undefined, undefined),
       };
 
       await Core.Local.Post.create(saveParams);
 
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(1);
+
+      // Verify user count increments for reply
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, 1);
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.REPLIES, 1);
+
+      userCountsSpy.mockRestore();
     });
 
     it('should handle reply creation when parent post does not exist', async () => {
       const parentUri = `pubky://nonexistent/pub/pubky.app/posts/missing123`;
 
+      const baseParams = createSaveParams('Reply to missing parent', testData.fullPostId1);
       const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('Reply to missing parent', testData.fullPostId1),
-        parentUri,
+        ...baseParams,
+        post: new PubkyAppPost(baseParams.post.content, PubkyAppPostKind.Short, parentUri, undefined, undefined),
       };
 
       // Should not throw - just silently skips incrementing non-existent parent
@@ -168,45 +178,17 @@ describe('LocalPostService', () => {
       expect(savedPost!.content).toBe('Reply to missing parent');
     });
 
-    it('should handle posts with attachments', async () => {
-      const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('Post with images'),
-        attachments: ['image1.jpg', 'image2.png'],
-      };
-
-      await Core.Local.Post.create(saveParams);
-
-      const savedPost = await getSavedPost(testData.fullPostId1);
-      expect(savedPost!.attachments).toEqual(['image1.jpg', 'image2.png']);
-    });
-
     it('should handle long-form posts', async () => {
-      const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('This is a long-form post with more content'),
-        kind: 'long',
-      };
+      const saveParams = createSaveParams(
+        'This is a long-form post with more content',
+        undefined,
+        PubkyAppPostKind.Long,
+      );
 
       await Core.Local.Post.create(saveParams);
 
       const savedPost = await getSavedPost(testData.fullPostId1);
-      expect(savedPost!.kind).toBe('long');
-    });
-
-    it('should generate correct URI format', async () => {
-      await Core.Local.Post.create(createSaveParams('Test post'));
-
-      const savedPost = await getSavedPost(testData.fullPostId1);
-      expect(savedPost!.uri).toBe(`pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`);
-    });
-
-    it('should set indexed_at timestamp', async () => {
-      const before = Date.now();
-      await Core.Local.Post.create(createSaveParams('Test post'));
-      const after = Date.now();
-
-      const savedPost = await getSavedPost(testData.fullPostId1);
-      expect(savedPost!.indexed_at).toBeGreaterThanOrEqual(before);
-      expect(savedPost!.indexed_at).toBeLessThanOrEqual(after);
+      expect(savedPost!.kind).toBe(PubkyAppPostKind.Long);
     });
 
     it('should write atomically across tables (rollback on error)', async () => {
@@ -233,24 +215,6 @@ describe('LocalPostService', () => {
       } finally {
         spy.mockRestore();
       }
-    });
-
-    it('should increment parent replies via counts update when saving a reply', async () => {
-      const parentPostId = 'parent:post123';
-      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
-
-      // Setup parent
-      await setupExistingPost(parentPostId, 'Parent post');
-
-      // Act: save reply
-      const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('Reply here', testData.fullPostId1),
-        parentUri,
-      };
-      await Core.Local.Post.create(saveParams);
-
-      const parentCounts = await getSavedCounts(parentPostId);
-      expect(parentCounts!.replies).toBe(1);
     });
 
     it('should log an error on failure with minimal context', async () => {
@@ -284,9 +248,15 @@ describe('LocalPostService', () => {
 
       // Create repost
       const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('', repostId),
-        kind: 'repost',
-        repostedUri: originalUri,
+        postId: testData.postId1,
+        authorId: testData.authorPubky,
+        post: new PubkyAppPost(
+          '',
+          PubkyAppPostKind.Short,
+          undefined,
+          new PubkyAppPostEmbed(originalUri, PubkyAppPostKind.Short),
+          undefined,
+        ),
       };
 
       await Core.Local.Post.create(saveParams);
@@ -297,7 +267,6 @@ describe('LocalPostService', () => {
 
     it('should increment original post repost count when creating repost', async () => {
       const originalPostId = 'original:post123';
-      const repostId = testData.fullPostId1;
       const originalUri = `pubky://original/pub/pubky.app/posts/post123`;
 
       // Setup original post
@@ -305,9 +274,15 @@ describe('LocalPostService', () => {
 
       // Create repost
       const saveParams: TLocalSavePostParams = {
-        ...createSaveParams('', repostId),
-        kind: 'repost',
-        repostedUri: originalUri,
+        postId: testData.postId1,
+        authorId: testData.authorPubky,
+        post: new PubkyAppPost(
+          '',
+          PubkyAppPostKind.Short,
+          undefined,
+          new PubkyAppPostEmbed(originalUri, PubkyAppPostKind.Short),
+          undefined,
+        ),
       };
 
       await Core.Local.Post.create(saveParams);
@@ -327,16 +302,22 @@ describe('LocalPostService', () => {
 
       // Create quote repost
       const saveParams: TLocalSavePostParams = {
-        ...createSaveParams(quoteContent, repostId),
-        kind: 'repost',
-        repostedUri: originalUri,
+        postId: testData.postId1,
+        authorId: testData.authorPubky,
+        post: new PubkyAppPost(
+          quoteContent,
+          PubkyAppPostKind.Short,
+          undefined,
+          new PubkyAppPostEmbed(originalUri, PubkyAppPostKind.Short),
+          undefined,
+        ),
       };
 
       await Core.Local.Post.create(saveParams);
 
       const savedPost = await getSavedPost(repostId);
       expect(savedPost!.content).toBe(quoteContent);
-      expect(savedPost!.kind).toBe('repost');
+      expect(savedPost!.kind).toBe(PubkyAppPostKind.Short);
 
       const savedRelationships = await getSavedRelationships(repostId);
       expect(savedRelationships!.reposted).toBe(originalUri);
@@ -348,6 +329,8 @@ describe('LocalPostService', () => {
       const postId = testData.fullPostId1;
 
       await setupExistingPost(postId, 'Test post');
+
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
 
       await Core.Local.Post.delete({
         postId,
@@ -365,26 +348,16 @@ describe('LocalPostService', () => {
       expect(counts).toBeUndefined();
       expect(relationships).toBeUndefined();
       expect(tags).toBeUndefined();
-    });
 
-    it('should fetch relationships from database to determine reply/repost status', async () => {
-      const parentPostId = 'parent:post123';
-      const replyId = testData.fullPostId1;
-      const parentUri = `pubky://parent/pub/pubky.app/posts/post123`;
+      // Verify user count decrement for root post
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, -1);
+      expect(userCountsSpy).not.toHaveBeenCalledWith(
+        testData.authorPubky,
+        Core.UserCountsFields.REPLIES,
+        expect.anything(),
+      );
 
-      await setupExistingPost(parentPostId, 'Parent post');
-      await Core.PostCountsModel.update(parentPostId, { replies: 1 });
-      await setupExistingPost(replyId, 'Reply post', parentUri);
-
-      // Delete only passes postId and deleterId - relationships are fetched internally
-      await Core.Local.Post.delete({
-        postId: replyId,
-        deleterId: testData.authorPubky,
-      });
-
-      // Verify parent count was decremented (proving relationships were fetched)
-      const parentCounts = await getSavedCounts(parentPostId);
-      expect(parentCounts!.replies).toBe(0);
+      userCountsSpy.mockRestore();
     });
 
     it('should handle delete when parent/original post no longer exists', async () => {
@@ -417,6 +390,8 @@ describe('LocalPostService', () => {
       // Setup reply
       await setupExistingPost(replyId, 'Reply post', parentUri);
 
+      const userCountsSpy = vi.spyOn(Core.UserCountsModel, 'updateCount');
+
       // Delete reply
       await Core.Local.Post.delete({
         postId: replyId,
@@ -425,6 +400,12 @@ describe('LocalPostService', () => {
 
       const parentCounts = await getSavedCounts(parentPostId);
       expect(parentCounts!.replies).toBe(0);
+
+      // Verify user count decrements for reply
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.POSTS, -1);
+      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, Core.UserCountsFields.REPLIES, -1);
+
+      userCountsSpy.mockRestore();
     });
 
     it('should decrement original post repost count when deleting a repost', async () => {

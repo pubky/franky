@@ -108,27 +108,32 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ postId, content, kind, authorId, parentUri, attachments, repostedUri }: TLocalSavePostParams) {
-    const { postId: postIdPart } = Core.parsePostCompositeId(postId);
+  static async create({ postId, authorId, post }: TLocalSavePostParams) {
+    const compositePostId = Core.buildPostCompositeId({ pubky: authorId, postId });
+    const { content, kind, parent: parentUri, attachments, embed } = post;
+
+    const repostedUri = embed?.uri ?? null;
+
     try {
       const postDetails: Core.PostDetailsModelSchema = {
-        id: postId,
+        id: compositePostId,
         content,
         indexed_at: Date.now(),
-        kind,
-        uri: postUriBuilder(authorId, postIdPart),
+        // TODO: Wait for pubky-app-specs new version to parse the value to string not number
+        kind: Core.PostNormalizer.stringToPostKind(kind),
+        uri: postUriBuilder(authorId, postId),
         attachments: attachments ?? null,
       };
 
       const postRelationships: Core.PostRelationshipsModelSchema = {
-        id: postId,
+        id: compositePostId,
         replied: parentUri ?? null,
-        reposted: repostedUri ?? null,
+        reposted: repostedUri,
         mentioned: [],
       };
 
       const postCounts: Core.PostCountsModelSchema = {
-        id: postId,
+        id: compositePostId,
         tags: 0,
         unique_tags: 0,
         replies: 0,
@@ -149,7 +154,7 @@ export class LocalPostService {
             Core.PostDetailsModel.create(postDetails),
             Core.PostRelationshipsModel.create(postRelationships),
             Core.PostCountsModel.create(postCounts),
-            Core.PostTagsModel.create({ id: postId, tags: [] }),
+            Core.PostTagsModel.create({ id: compositePostId, tags: [] }),
           ]);
 
           const ops: Promise<unknown>[] = [];
@@ -177,10 +182,10 @@ export class LocalPostService {
           }
 
           // Update author's user counts
+          ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.POSTS, 1));
+
           if (parentUri) {
             ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.REPLIES, 1));
-          } else {
-            ops.push(Core.UserCountsModel.updateCount(authorId, Core.UserCountsFields.POSTS, 1));
           }
 
           await Promise.all(ops);
@@ -271,10 +276,10 @@ export class LocalPostService {
           }
 
           // Update author's user counts
+          ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.POSTS, -1));
+
           if (parentUri) {
             ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.REPLIES, -1));
-          } else {
-            ops.push(Core.UserCountsModel.updateCount(deleterId, Core.UserCountsFields.POSTS, -1));
           }
 
           await Promise.all(ops);

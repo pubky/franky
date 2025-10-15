@@ -5,7 +5,7 @@ import * as Libs from '@/libs';
 export class PostNormalizer {
   private constructor() {}
 
-  private static stringToPostKind(kind: string): PubkyAppPostKind {
+  static stringToPostKind(kind: string): PubkyAppPostKind {
     const normalized = kind.toLowerCase();
     switch (normalized) {
       case 'short':
@@ -35,8 +35,7 @@ export class PostNormalizer {
       if (embeddedPostId) {
         const embeddedPost = await Core.PostDetailsModel.findById(embeddedPostId);
         if (embeddedPost) {
-          const embeddedKind = this.stringToPostKind(embeddedPost.kind);
-          embedObject = new PubkyAppPostEmbed(post.embed, embeddedKind);
+          embedObject = new PubkyAppPostEmbed(post.embed, embeddedPost.kind);
         }
       }
     }
