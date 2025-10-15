@@ -6,5 +6,4 @@ export {
   HomeRightDrawer as BookmarksRightDrawer,
   HomeLeftDrawerMobile as BookmarksLeftDrawerMobile,
   HomeRightDrawerMobile as BookmarksRightDrawerMobile,
-  type HomeSidebarProps as BookmarksSidebarProps,
 } from '../Home/Home.sidebars';
