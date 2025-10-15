@@ -52,9 +52,9 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
               </div>
             </Link>
           ))}
-          <Atoms.SidebarButton icon={Libs.HelpCircle} onClick={() => {}}>
-            More FAQ
-          </Atoms.SidebarButton>
+          <Link href={SETTINGS_ROUTES.HELP}>
+            <Atoms.SidebarButton icon={Libs.HelpCircle}>More FAQ</Atoms.SidebarButton>
+          </Link>
         </Atoms.FilterList>
       </Atoms.FilterRoot>
 
