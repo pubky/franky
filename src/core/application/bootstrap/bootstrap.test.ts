@@ -31,22 +31,25 @@ describe('BootstrapApplication', () => {
               image: null,
               links: null,
               status: null,
+              indexed_at: Date.now(),
             },
             counts: {
               followers: 10,
               following: 5,
               posts: 20,
+              tagged: 0,
+              tags: 0,
+              unique_tags: 0,
+              replies: 0,
+              friends: 0,
+              bookmarks: 0,
             },
             relationship: {
               following: false,
               followed_by: false,
               muted: false,
-              blocking: false,
-              blocked_by: false,
             },
-            tags: {
-              tags: [],
-            },
+            tags: [],
           },
         ],
         posts: [
@@ -54,39 +57,43 @@ describe('BootstrapApplication', () => {
             details: {
               id: 'post-1',
               content: 'Test post content',
-              kind: 'Short',
+              kind: 'short',
               attachments: [],
-              embed: null,
+              uri: 'pubky://user-1/pub/pubky.app/posts/post-1',
               indexed_at: Date.now(),
+              author: 'user-1',
             },
-            author: 'user-1',
             counts: {
               replies: 0,
               reposts: 0,
               tags: 0,
+              unique_tags: 0,
             },
-            relationship: {
-              reposted: false,
-              replied: false,
-              tagged: [],
+            relationships: {
+              reposted: null,
+              replied: null,
+              mentioned: [],
             },
-            tags: {
-              tags: [],
-            },
+            tags: [],
           },
         ],
         list: {
           stream: ['post-1'],
           influencers: ['user-1'],
           recommended: ['user-2'],
-          hot_tags: ['technology', 'ai'],
+          hot_tags: [
+            {
+              label: 'technology',
+              taggers_id: ['user-1'],
+              tagged_count: 1,
+              taggers_count: 1,
+            },
+          ],
         },
       };
 
       const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi
-        .spyOn(Core.LocalPersistenceService, 'persistBootstrap')
-        .mockResolvedValue(undefined);
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
 
       await BootstrapApplication.read(TEST_PUBKY);
 
@@ -99,7 +106,7 @@ describe('BootstrapApplication', () => {
 
     it('should throw error when NexusBootstrapService fails', async () => {
       const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockRejectedValue(new Error('Network error'));
-      const persistBootstrapSpy = vi.spyOn(Core.LocalPersistenceService, 'persistBootstrap');
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
 
       await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Network error');
 
@@ -124,7 +131,7 @@ describe('BootstrapApplication', () => {
 
       const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
       const persistBootstrapSpy = vi
-        .spyOn(Core.LocalPersistenceService, 'persistBootstrap')
+        .spyOn(Core.LocalBootstrapService, 'persistBootstrap')
         .mockRejectedValue(new Error('Database error'));
 
       await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Database error');
@@ -149,9 +156,7 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi
-        .spyOn(Core.LocalPersistenceService, 'persistBootstrap')
-        .mockResolvedValue(undefined);
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
 
       await BootstrapApplication.read(TEST_PUBKY);
 
@@ -185,9 +190,7 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
-      const persistBootstrapSpy = vi
-        .spyOn(Core.LocalPersistenceService, 'persistBootstrap')
-        .mockResolvedValue(undefined);
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -225,9 +228,7 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusBootstrapService, 'read')
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockResolvedValueOnce(mockBootstrapData);
-      const persistBootstrapSpy = vi
-        .spyOn(Core.LocalPersistenceService, 'persistBootstrap')
-        .mockResolvedValue(undefined);
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -258,7 +259,7 @@ describe('BootstrapApplication', () => {
       const nexusReadSpy = vi
         .spyOn(Core.NexusBootstrapService, 'read')
         .mockRejectedValue(new Error('User not indexed'));
-      const persistBootstrapSpy = vi.spyOn(Core.LocalPersistenceService, 'persistBootstrap');
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -296,7 +297,7 @@ describe('BootstrapApplication', () => {
       const nexusReadSpy = vi
         .spyOn(Core.NexusBootstrapService, 'read')
         .mockRejectedValue(new Error('User not indexed'));
-      const persistBootstrapSpy = vi.spyOn(Core.LocalPersistenceService, 'persistBootstrap');
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
@@ -346,9 +347,7 @@ describe('BootstrapApplication', () => {
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockRejectedValueOnce(new Error('Still not indexed'))
         .mockResolvedValueOnce(mockBootstrapData);
-      const persistBootstrapSpy = vi
-        .spyOn(Core.LocalPersistenceService, 'persistBootstrap')
-        .mockResolvedValue(undefined);
+      const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 

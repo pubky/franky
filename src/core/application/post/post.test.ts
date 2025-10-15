@@ -44,7 +44,7 @@ describe('Post Application', () => {
 
   // Helper functions
   const setupMocks = () => ({
-    saveSpy: vi.spyOn(Core.Local.Post, 'create'),
+    saveSpy: vi.spyOn(Core.LocalPostService, 'create'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
   });
 

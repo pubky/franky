@@ -8,14 +8,14 @@ export class PostStreamApplication {
       let cachedStream = await Core.PostStreamModel.findById(streamId);
 
       // 2. Validate cache integrity (check for duplicates)
-      if (cachedStream && !Core.LocalStreamService.validateCacheIntegrity(cachedStream)) {
-        await Core.LocalStreamService.clearCorruptedCache(streamId);
+      if (cachedStream && !Core.LocalStreamPostsService.validateCacheIntegrity(cachedStream)) {
+        await Core.LocalStreamPostsService.clearCorruptedCache(streamId);
         cachedStream = null;
       }
 
       // 3. If no cache exists, fetch initial batch and create cache
       if (!cachedStream || cachedStream.stream.length === 0) {
-        const updatedStream = await Core.LocalStreamService.fetchAndCachePosts(streamId, 0);
+        const updatedStream = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 0);
 
         if (!updatedStream) {
           return [];
@@ -30,7 +30,7 @@ export class PostStreamApplication {
       // Keep fetching until we have enough posts or no more posts are available
       while (requestedEnd > cachedStream!.stream.length) {
         const currentCacheSize = cachedStream!.stream.length;
-        const updatedStream = await Core.LocalStreamService.fetchAndCachePosts(
+        const updatedStream = await Core.LocalStreamPostsService.fetchAndCachePosts(
           streamId,
           currentCacheSize,
           cachedStream!.stream,

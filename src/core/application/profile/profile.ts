@@ -17,7 +17,7 @@ export class ProfileApplication {
   static async create({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
-      // Initialise authentication store
+      // Initialize authentication store
       Core.useAuthStore.getState().setCurrentUserPubky(pubky);
       Core.useAuthStore.getState().setAuthenticated(true);
     } catch (error) {

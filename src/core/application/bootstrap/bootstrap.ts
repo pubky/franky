@@ -4,7 +4,7 @@ import * as Libs from '@/libs';
 export class BootstrapApplication {
   static async read(pubky: Core.Pubky) {
     const data = await Core.NexusBootstrapService.read(pubky);
-    await Core.LocalPersistenceService.persistBootstrap(data);
+    await Core.LocalBootstrapService.persistBootstrap(data);
   }
 
   static async authorizeAndBootstrap(pubky: Core.Pubky) {

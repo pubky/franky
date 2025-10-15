@@ -11,7 +11,7 @@ export class PostApplication {
     parentUri,
     attachments,
   }: Core.TCreatePostInput) {
-    await Core.Local.Post.create({ postId, content, kind, authorId, parentUri, attachments });
+    await Core.LocalPostService.create({ postId, content, kind, authorId, parentUri, attachments });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, postJson);
   }
 }

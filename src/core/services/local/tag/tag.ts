@@ -1,7 +1,5 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import type { TLocalSaveTagParams, TLocalRemoveTagParams } from './tag.types';
-import { UserCountsFields } from '@/core/models/user/counts/userCounts.schema';
 
 export class LocalTagService {
   /**
@@ -18,7 +16,7 @@ export class LocalTagService {
    * @throws {AppError} When user has already tagged this post with the same label
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ postId, label, taggerId }: TLocalSaveTagParams) {
+  static async create({ postId, label, taggerId }: Core.TLocalSaveTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.findById(postId);
 
@@ -37,8 +35,8 @@ export class LocalTagService {
 
       const tagger = await Core.UserCountsModel.findById(taggerId);
       if (tagger) {
-        tagger.updateCount(UserCountsFields.TAGGED, Core.INCREMENT);
-        await Core.UserCountsModel.update(taggerId, { [UserCountsFields.TAGGED]: tagger.tagged });
+        tagger.updateCount(Core.UserCountsFields.TAGGED, Core.INCREMENT);
+        await Core.UserCountsModel.update(taggerId, { [Core.UserCountsFields.TAGGED]: tagger.tagged });
       }
 
       Libs.Logger.debug('Tag saved', { postId, label, taggerId });
@@ -67,7 +65,7 @@ export class LocalTagService {
    * @throws {AppError} When post has no tags or user hasn't tagged with this label
    * @throws {DatabaseError} When database operations fail
    */
-  static async delete({ postId, label, taggerId }: TLocalRemoveTagParams) {
+  static async delete({ postId, label, taggerId }: Core.TLocalRemoveTagParams) {
     try {
       const tagsData = await Core.PostTagsModel.findById(postId);
 
@@ -88,8 +86,8 @@ export class LocalTagService {
 
       const tagger = await Core.UserCountsModel.findById(taggerId);
       if (tagger) {
-        tagger.updateCount(UserCountsFields.TAGGED, Core.DECREMENT);
-        await Core.UserCountsModel.update(taggerId, { [UserCountsFields.TAGGED]: tagger.tagged });
+        tagger.updateCount(Core.UserCountsFields.TAGGED, Core.DECREMENT);
+        await Core.UserCountsModel.update(taggerId, { [Core.UserCountsFields.TAGGED]: tagger.tagged });
       }
 
       Libs.Logger.debug('Tag removed', { postId, label, taggerId });

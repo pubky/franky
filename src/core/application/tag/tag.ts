@@ -17,12 +17,12 @@ import * as Core from '@/core';
  */
 export class TagApplication {
   static async create({ postId, label, taggerId, tagUrl, tagJson }: Core.TCreateTagInput) {
-    await Core.Local.Tag.create({ postId, label, taggerId });
+    await Core.LocalTagService.create({ postId, label, taggerId });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
   }
 
   static async delete({ postId, label, taggerId, tagUrl }: Core.TDeleteTagInput) {
-    await Core.Local.Tag.delete({ postId, label, taggerId });
+    await Core.LocalTagService.delete({ postId, label, taggerId });
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, tagUrl);
   }
 }

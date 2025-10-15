@@ -77,7 +77,7 @@ describe('LocalStreamService', () => {
       vi.spyOn(Core.NexusUserStreamService, 'read').mockResolvedValue([]);
 
       // Call the method
-      const result = await Core.LocalStreamService.fetchAndCachePosts(streamId, 2, ['post-1', 'post-2']);
+      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 2, ['post-1', 'post-2']);
 
       // Build expected composite ID
       const compositeId = Core.buildPostCompositeId({ pubky: 'user-123', postId: 'post-3' });
@@ -103,7 +103,7 @@ describe('LocalStreamService', () => {
       // Mock Nexus to return empty array
       vi.spyOn(Core.NexusPostStreamService, 'read').mockResolvedValue([]);
 
-      const result = await Core.LocalStreamService.fetchAndCachePosts(streamId, 1, ['post-1']);
+      const result = await Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 1, ['post-1']);
 
       // Verify the result is null (no new posts)
       expect(result).toBeNull();
@@ -122,7 +122,7 @@ describe('LocalStreamService', () => {
       vi.spyOn(Core.NexusPostStreamService, 'read').mockRejectedValue(new Error('Network error'));
 
       // Expect the error to be thrown
-      await expect(Core.LocalStreamService.fetchAndCachePosts(streamId, 1, ['post-1'])).rejects.toThrow(
+      await expect(Core.LocalStreamPostsService.fetchAndCachePosts(streamId, 1, ['post-1'])).rejects.toThrow(
         'Network error',
       );
 
@@ -137,7 +137,7 @@ describe('LocalStreamService', () => {
     it('should return true when stream has no duplicates', () => {
       const stream = { stream: ['post-1', 'post-2', 'post-3'] };
 
-      const result = Core.LocalStreamService.validateCacheIntegrity(stream);
+      const result = Core.LocalStreamPostsService.validateCacheIntegrity(stream);
 
       expect(result).toBe(true);
     });
@@ -145,7 +145,7 @@ describe('LocalStreamService', () => {
     it('should return false when stream has duplicates', () => {
       const stream = { stream: ['post-1', 'post-2', 'post-1'] };
 
-      const result = Core.LocalStreamService.validateCacheIntegrity(stream);
+      const result = Core.LocalStreamPostsService.validateCacheIntegrity(stream);
 
       expect(result).toBe(false);
     });
@@ -153,7 +153,7 @@ describe('LocalStreamService', () => {
     it('should return true for empty stream', () => {
       const stream = { stream: [] };
 
-      const result = Core.LocalStreamService.validateCacheIntegrity(stream);
+      const result = Core.LocalStreamPostsService.validateCacheIntegrity(stream);
 
       expect(result).toBe(true);
     });
@@ -161,7 +161,7 @@ describe('LocalStreamService', () => {
     it('should return true for single item stream', () => {
       const stream = { stream: ['post-1'] };
 
-      const result = Core.LocalStreamService.validateCacheIntegrity(stream);
+      const result = Core.LocalStreamPostsService.validateCacheIntegrity(stream);
 
       expect(result).toBe(true);
     });
@@ -177,7 +177,7 @@ describe('LocalStreamService', () => {
       expect(streamBefore).toBeTruthy();
 
       // Clear the cache
-      await Core.LocalStreamService.clearCorruptedCache(streamId);
+      await Core.LocalStreamPostsService.clearCorruptedCache(streamId);
 
       // Verify stream was deleted
       const streamAfter = await Core.PostStreamModel.findById(streamId);
@@ -187,7 +187,7 @@ describe('LocalStreamService', () => {
     it('should not throw error if stream does not exist', async () => {
       // Try to clear a non-existent stream - using a valid PostStreamTypes enum value
       const nonExistentStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING;
-      await expect(Core.LocalStreamService.clearCorruptedCache(nonExistentStreamId)).resolves.not.toThrow();
+      await expect(Core.LocalStreamPostsService.clearCorruptedCache(nonExistentStreamId)).resolves.not.toThrow();
     });
   });
 });

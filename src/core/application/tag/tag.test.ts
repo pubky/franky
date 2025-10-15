@@ -37,8 +37,8 @@ describe('Tag Application', () => {
 
   // Helper functions
   const setupMocks = () => ({
-    saveSpy: vi.spyOn(Core.Local.Tag, 'create'),
-    removeSpy: vi.spyOn(Core.Local.Tag, 'delete'),
+    saveSpy: vi.spyOn(Core.LocalTagService, 'create'),
+    removeSpy: vi.spyOn(Core.LocalTagService, 'delete'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
   });
 
