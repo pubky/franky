@@ -8,7 +8,7 @@ import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
-const POSTS_PER_PAGE = 2;
+const POSTS_PER_PAGE = 20;
 
 /**
  * Timeline
@@ -44,7 +44,7 @@ export function Timeline() {
         const offset = isInitialLoad ? 0 : currentPage * POSTS_PER_PAGE;
 
         // Get post IDs from the stream
-        const ids = await Core.StreamPostsController.read({
+        const ids = await Core.PostStreamApplication.read({
           streamId: Core.PostStreamTypes.TIMELINE_ALL,
           limit: POSTS_PER_PAGE,
           offset,

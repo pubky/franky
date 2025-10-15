@@ -12,15 +12,6 @@ export class StreamPostsController {
    * @returns Array of post IDs
    */
   static async read({ streamId, limit = 30, offset = 0 }: Core.TReadStreamPostsParams): Promise<string[]> {
-    // Fetch the stream from the database
-    const stream = await Core.PostStreamModel.findById(streamId);
-
-    if (!stream) {
-      // Return empty array if stream doesn't exist
-      return [];
-    }
-
-    // Apply pagination to the stream's post IDs and return them
-    return stream.stream.slice(offset, offset + limit);
+    return await Core.PostStreamApplication.read({ streamId, limit, offset });
   }
 }

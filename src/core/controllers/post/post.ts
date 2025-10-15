@@ -4,6 +4,11 @@ import * as Libs from '@/libs';
 
 export class PostController {
   private constructor() {} // Prevent instantiation
+
+  static async read({ postId }: { postId: string }) {
+    return await Core.PostDetailsModel.findById(postId);
+  }
+
   /**
    * Create a post (including replies)
    * @param params - Parameters object

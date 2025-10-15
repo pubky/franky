@@ -15,7 +15,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
 
   // Fetch post details to get indexed_at
   const postDetails = useLiveQuery(async () => {
-    return await Core.PostDetailsModel.findById(postId);
+    return await Core.PostController.read({ postId });
   }, [postId]);
 
   // Fetch user details for avatar and name
@@ -37,7 +37,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
     <div className={Libs.cn('flex items-start justify-between w-full', className)}>
       <div className="flex items-center gap-3">
         <Atoms.Avatar size="lg">
-          <Atoms.AvatarImage src={userDetails.image || undefined} />
+          <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <div className="flex flex-col">
