@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PostApplication } from './post';
 import * as Core from '@/core';
-import type { TCreatePostInput } from './post.types';
+import { PubkyAppPost, PubkyAppPostKind } from 'pubky-app-specs';
 
 // Mock the Local.Post service
 vi.mock('@/core/services/local/post', () => ({
@@ -20,27 +19,16 @@ vi.mock('@/core/services/homeserver', () => ({
 
 describe('Post Application', () => {
   // Test data factory
-  const createMockPostData = (): TCreatePostInput => ({
-    postId: 'author:post123',
-    content: 'Hello, world!',
-    kind: 'short',
-    authorId: 'author' as Core.Pubky,
-    postUrl: 'pubky://author/pub/pubky.app/posts/post123',
-    postJson: { content: 'Hello, world!', kind: 'short' },
-    parentUri: undefined,
-    attachments: undefined,
-  });
+  const createMockPostData = (): Core.TCreatePostInput => {
+    const mockPost = new PubkyAppPost('Hello, world!', PubkyAppPostKind.Short, undefined, undefined, undefined);
 
-  const createMockReplyData = (): TCreatePostInput => ({
-    postId: 'author:reply123',
-    content: 'This is a reply',
-    kind: 'short',
-    authorId: 'author' as Core.Pubky,
-    postUrl: 'pubky://author/pub/pubky.app/posts/reply123',
-    postJson: { content: 'This is a reply', kind: 'short' },
-    parentUri: 'pubky://parent/pub/pubky.app/posts/parent123',
-    attachments: undefined,
-  });
+    return {
+      postId: 'post123',
+      authorId: 'author' as Core.Pubky,
+      post: mockPost,
+      postUrl: 'pubky://author/pub/pubky.app/posts/post123',
+    };
+  };
 
   // Helper functions
   const setupMocks = () => ({
@@ -53,111 +41,119 @@ describe('Post Application', () => {
   });
 
   describe('create', () => {
-    it('should save locally and sync to homeserver successfully', async () => {
+    it('should save post locally and sync to homeserver', async () => {
       const mockData = createMockPostData();
       const { saveSpy, requestSpy } = setupMocks();
 
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await PostApplication.create(mockData);
+      await Core.PostApplication.create(mockData);
 
       expect(saveSpy).toHaveBeenCalledWith({
         postId: mockData.postId,
-        content: mockData.content,
-        kind: mockData.kind,
         authorId: mockData.authorId,
-        parentUri: mockData.parentUri,
-        attachments: mockData.attachments,
+        post: mockData.post,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
+      expect(requestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        mockData.postUrl,
+        expect.objectContaining({
+          content: 'Hello, world!',
+          kind: 'short',
+        }),
+      );
     });
 
-    it('should handle reply creation with parentUri', async () => {
-      const mockData = createMockReplyData();
-      const { saveSpy, requestSpy } = setupMocks();
-
-      saveSpy.mockResolvedValue(undefined);
-      requestSpy.mockResolvedValue(undefined);
-
-      await PostApplication.create(mockData);
-
-      expect(saveSpy).toHaveBeenCalledWith({
-        postId: mockData.postId,
-        content: mockData.content,
-        kind: mockData.kind,
-        authorId: mockData.authorId,
-        parentUri: mockData.parentUri,
-        attachments: mockData.attachments,
-      });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
-    });
-
-    it('should handle posts with attachments', async () => {
-      const mockData: TCreatePostInput = {
-        ...createMockPostData(),
-        attachments: ['image1.jpg', 'image2.png'],
-      };
-      const { saveSpy, requestSpy } = setupMocks();
-
-      saveSpy.mockResolvedValue(undefined);
-      requestSpy.mockResolvedValue(undefined);
-
-      await PostApplication.create(mockData);
-
-      expect(saveSpy).toHaveBeenCalledWith({
-        postId: mockData.postId,
-        content: mockData.content,
-        kind: mockData.kind,
-        authorId: mockData.authorId,
-        parentUri: mockData.parentUri,
-        attachments: mockData.attachments,
-      });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, mockData.postUrl, mockData.postJson);
-    });
-
-    it('should throw when local save fails', async () => {
+    it('should propagate error when local save fails', async () => {
       const mockData = createMockPostData();
       const { saveSpy, requestSpy } = setupMocks();
 
       saveSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(PostApplication.create(mockData)).rejects.toThrow('Database error');
+      await expect(Core.PostApplication.create(mockData)).rejects.toThrow('Database error');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
     });
 
-    it('should throw when homeserver sync fails', async () => {
+    it('should propagate error when homeserver sync fails', async () => {
       const mockData = createMockPostData();
       const { saveSpy, requestSpy } = setupMocks();
 
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(PostApplication.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
+      await expect(Core.PostApplication.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
+  });
 
-    it('should handle long-form posts', async () => {
-      const mockData: TCreatePostInput = {
-        ...createMockPostData(),
-        kind: 'long',
-        content: 'This is a long-form post with much more content...',
-      };
-      const { saveSpy, requestSpy } = setupMocks();
+  describe('delete', () => {
+    const createMockDeleteData = () => ({
+      postId: 'author:post123',
+      deleterId: 'author' as Core.Pubky,
+    });
 
-      saveSpy.mockResolvedValue(undefined);
-      requestSpy.mockResolvedValue(undefined);
+    const mockPostDetails = {
+      id: 'author:post123',
+      content: 'Test post',
+      kind: PubkyAppPostKind.Short,
+      uri: 'pubky://author/pub/pubky.app/posts/post123',
+      indexed_at: Date.now(),
+      attachments: null,
+    };
 
-      await PostApplication.create(mockData);
+    it('should fetch post, delete locally and sync to homeserver', async () => {
+      const mockData = createMockDeleteData();
+      const findByIdSpy = vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(mockPostDetails);
+      const deleteSpy = vi.spyOn(Core.LocalPostService, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
 
-      expect(saveSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          kind: 'long',
-          content: 'This is a long-form post with much more content...',
-        }),
-      );
+      await Core.PostApplication.delete(mockData);
+
+      expect(findByIdSpy).toHaveBeenCalledWith(mockData.postId);
+      expect(deleteSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        deleterId: mockData.deleterId,
+      });
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockPostDetails.uri);
+    });
+
+    it('should throw error when post not found', async () => {
+      const mockData = createMockDeleteData();
+      const findByIdSpy = vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(null);
+
+      await expect(Core.PostApplication.delete(mockData)).rejects.toThrow('Post not found');
+
+      expect(findByIdSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should propagate error when local delete fails', async () => {
+      const mockData = createMockDeleteData();
+      const findByIdSpy = vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(mockPostDetails);
+      const deleteSpy = vi.spyOn(Core.LocalPostService, 'delete').mockRejectedValue(new Error('local-delete-fail'));
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+      await expect(Core.PostApplication.delete(mockData)).rejects.toThrow('local-delete-fail');
+
+      expect(findByIdSpy).toHaveBeenCalledOnce();
+      expect(deleteSpy).toHaveBeenCalledOnce();
+      expect(requestSpy).not.toHaveBeenCalled();
+    });
+
+    it('should propagate error when homeserver delete fails', async () => {
+      const mockData = createMockDeleteData();
+      const findByIdSpy = vi.spyOn(Core.PostDetailsModel, 'findById').mockResolvedValue(mockPostDetails);
+      const deleteSpy = vi.spyOn(Core.LocalPostService, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockRejectedValue(new Error('Failed to DELETE from homeserver: 500'));
+
+      await expect(Core.PostApplication.delete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 500');
+
+      expect(findByIdSpy).toHaveBeenCalledOnce();
+      expect(deleteSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
   });

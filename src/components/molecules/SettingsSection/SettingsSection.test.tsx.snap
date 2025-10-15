@@ -1,0 +1,200 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsSection - Snapshots > matches snapshot with custom classNames 1`] = `
+<div
+  class="flex-col justify-start items-start flex"
+>
+  <div
+    class="justify-start items-center gap-2 inline-flex pb-6"
+  >
+    <svg
+      class="custom-icon"
+      data-size="24"
+      data-testid="mock-icon"
+    >
+      <title>
+        Mock Icon
+      </title>
+    </svg>
+    <h2
+      class="custom-title"
+      data-level="2"
+      data-size="lg"
+      data-testid="heading"
+    >
+      Account Settings
+    </h2>
+  </div>
+  <p
+    class="text-base-secondary-foreground text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+    data-size="md"
+    data-testid="typography"
+  >
+    Manage your account preferences and security settings.
+  </p>
+  <button
+    data-size="default"
+    data-testid="button"
+    data-variant="secondary"
+    id="edit-account-btn"
+  >
+    <svg
+      data-size="16"
+      data-testid="mock-button-icon"
+    >
+      <title>
+        Mock Button Icon
+      </title>
+    </svg>
+    Edit Account
+  </button>
+</div>
+`;
+
+exports[`SettingsSection - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex-col justify-start items-start flex"
+>
+  <div
+    class="justify-start items-center gap-2 inline-flex pb-6"
+  >
+    <svg
+      data-size="24"
+      data-testid="mock-icon"
+    >
+      <title>
+        Mock Icon
+      </title>
+    </svg>
+    <h2
+      data-level="2"
+      data-size="lg"
+      data-testid="heading"
+    >
+      Account Settings
+    </h2>
+  </div>
+  <p
+    class="text-base-secondary-foreground text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+    data-size="md"
+    data-testid="typography"
+  >
+    Manage your account preferences and security settings.
+  </p>
+  <button
+    data-size="default"
+    data-testid="button"
+    data-variant="secondary"
+    id="edit-account-btn"
+  >
+    <svg
+      data-size="16"
+      data-testid="mock-button-icon"
+    >
+      <title>
+        Mock Button Icon
+      </title>
+    </svg>
+    Edit Account
+  </button>
+</div>
+`;
+
+exports[`SettingsSection - Snapshots > matches snapshot with destructive variant 1`] = `
+<div
+  class="flex-col justify-start items-start flex"
+>
+  <div
+    class="justify-start items-center gap-2 inline-flex pb-6"
+  >
+    <svg
+      data-size="24"
+      data-testid="mock-icon"
+    >
+      <title>
+        Mock Icon
+      </title>
+    </svg>
+    <h2
+      data-level="2"
+      data-size="lg"
+      data-testid="heading"
+    >
+      Account Settings
+    </h2>
+  </div>
+  <p
+    class="text-base-secondary-foreground text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+    data-size="md"
+    data-testid="typography"
+  >
+    Manage your account preferences and security settings.
+  </p>
+  <button
+    data-size="default"
+    data-testid="button"
+    data-variant="destructive"
+    id="edit-account-btn"
+  >
+    <svg
+      data-size="16"
+      data-testid="mock-button-icon"
+    >
+      <title>
+        Mock Button Icon
+      </title>
+    </svg>
+    Edit Account
+  </button>
+</div>
+`;
+
+exports[`SettingsSection - Snapshots > matches snapshot with disabled button 1`] = `
+<div
+  class="flex-col justify-start items-start flex"
+>
+  <div
+    class="justify-start items-center gap-2 inline-flex pb-6"
+  >
+    <svg
+      data-size="24"
+      data-testid="mock-icon"
+    >
+      <title>
+        Mock Icon
+      </title>
+    </svg>
+    <h2
+      data-level="2"
+      data-size="lg"
+      data-testid="heading"
+    >
+      Account Settings
+    </h2>
+  </div>
+  <p
+    class="text-base-secondary-foreground text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+    data-size="md"
+    data-testid="typography"
+  >
+    Manage your account preferences and security settings.
+  </p>
+  <button
+    data-size="default"
+    data-testid="button"
+    data-variant="secondary"
+    disabled=""
+    id="edit-account-btn"
+  >
+    <svg
+      data-size="16"
+      data-testid="mock-button-icon"
+    >
+      <title>
+        Mock Button Icon
+      </title>
+    </svg>
+    Edit Account
+  </button>
+</div>
+`;

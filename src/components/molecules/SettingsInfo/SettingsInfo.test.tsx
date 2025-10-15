@@ -25,7 +25,9 @@ describe('SettingsInfo', () => {
     render(<SettingsInfo />);
     expect(screen.getByText('Pubky v0.12 © Synonym Software Ltd')).toBeInTheDocument();
   });
+});
 
+describe('SettingsInfo - Snapshots', () => {
   it('matches snapshot', () => {
     const { container } = render(<SettingsInfo />);
     expect(container).toMatchSnapshot();

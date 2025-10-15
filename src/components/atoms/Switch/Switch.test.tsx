@@ -37,12 +37,6 @@ describe('Switch', () => {
     const switchElement = screen.getByRole('switch');
     expect(switchElement).toBeDisabled();
   });
-
-  it('applies custom className', () => {
-    render(<Switch className="custom-class" />);
-    const switchElement = screen.getByRole('switch');
-    expect(switchElement).toHaveClass('custom-class');
-  });
 });
 
 describe('Switch - Snapshots', () => {

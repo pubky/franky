@@ -32,7 +32,9 @@ describe('FeedSection', () => {
     render(<FeedSection showCreateButton={false} />);
     expect(screen.queryByText('Create Feed')).not.toBeInTheDocument();
   });
+});
 
+describe('FeedSection - Snapshots', () => {
   it('matches snapshot', () => {
     const { container } = render(<FeedSection />);
     expect(container).toMatchSnapshot();

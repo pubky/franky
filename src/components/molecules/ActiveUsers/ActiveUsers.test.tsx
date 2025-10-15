@@ -97,47 +97,11 @@ describe('ActiveUsers', () => {
     expect(fallbacks[2]).toHaveTextContent('F');
   });
 
-  it('renders See All button with correct styling', () => {
-    render(<ActiveUsers />);
-
-    const seeAllButton = screen.getByText('See All');
-    expect(seeAllButton).toBeInTheDocument();
-    expect(seeAllButton.closest('button')).toHaveClass(
-      'w-full',
-      'flex',
-      'items-center',
-      'justify-center',
-      'gap-2',
-      'py-2',
-      'px-4',
-      'rounded-full',
-      'border',
-      'border-border',
-      'hover:bg-secondary/80',
-      'cursor-pointer',
-      'transition-colors',
-    );
-  });
-
   it('renders See All button with correct icon', () => {
     render(<ActiveUsers />);
 
     expect(document.querySelector('.lucide-users')).toBeInTheDocument();
     expect(screen.getByText('See All')).toBeInTheDocument();
-  });
-
-  it('applies correct container classes', () => {
-    render(<ActiveUsers />);
-
-    const container = screen.getByTestId('active-users');
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-2');
-  });
-
-  it('applies correct heading classes', () => {
-    render(<ActiveUsers />);
-
-    const heading = screen.getByText('Active Users');
-    expect(heading).toHaveClass('text-2xl', 'font-light', 'text-muted-foreground');
   });
 
   it('applies correct user item classes', () => {
@@ -149,29 +113,6 @@ describe('ActiveUsers', () => {
     userItems.forEach((item) => {
       const userContainer = item.closest('div')?.parentElement?.parentElement;
       expect(userContainer).toHaveClass('flex', 'items-center', 'gap-3');
-    });
-  });
-
-  it('applies correct avatar classes', () => {
-    render(<ActiveUsers />);
-
-    const avatars = screen.getAllByTestId('avatar');
-    avatars.forEach((avatar) => {
-      expect(avatar).toHaveClass('h-12', 'w-12');
-    });
-  });
-
-  it('applies correct user info classes', () => {
-    render(<ActiveUsers />);
-
-    const userNames = screen.getAllByText(/David|Emma|Frank/);
-    userNames.forEach((name) => {
-      expect(name).toHaveClass('text-base', 'font-bold', 'text-foreground');
-    });
-
-    const userStats = screen.getAllByText(/posts • \d+ tags/);
-    userStats.forEach((stat) => {
-      expect(stat).toHaveClass('text-sm', 'text-muted-foreground', 'opacity-50');
     });
   });
 
@@ -208,22 +149,5 @@ describe('ActiveUsers - Snapshots', () => {
   it('matches snapshot with custom className', () => {
     const { container } = render(<ActiveUsers className="custom-active-users" />);
     expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for individual user items', () => {
-    render(<ActiveUsers />);
-
-    const userItems = screen.getAllByText(/David|Emma|Frank/);
-    userItems.forEach((item) => {
-      const userContainer = item.closest('div');
-      expect(userContainer).toMatchSnapshot();
-    });
-  });
-
-  it('matches snapshot for See All button', () => {
-    render(<ActiveUsers />);
-
-    const seeAllButton = screen.getByText('See All').closest('button');
-    expect(seeAllButton).toMatchSnapshot();
   });
 });

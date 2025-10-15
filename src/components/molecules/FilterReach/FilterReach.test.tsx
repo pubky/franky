@@ -14,14 +14,6 @@ describe('FilterReach', () => {
     render(<FilterReach />);
 
     expect(screen.getByText('Reach')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
-  });
-
-  it('renders with custom selected tab', () => {
-    render(<FilterReach selectedTab={REACH.FOLLOWING} />);
-
-    const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
-    expect(followingItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -32,16 +24,6 @@ describe('FilterReach', () => {
     fireEvent.click(friendsElement);
 
     expect(mockOnTabChange).toHaveBeenCalledWith('friends');
-  });
-
-  it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterReach selectedTab={REACH.ME} />);
-
-    const meItem = screen.getByText('Me').closest('[data-testid="filter-item"]');
-    const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
-
-    expect(meItem).toMatchSnapshot();
-    expect(allItem).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -59,14 +41,31 @@ describe('FilterReach', () => {
       expect(mockOnTabChange).toHaveBeenCalledWith(tab);
     });
   });
+});
 
-  it('applies correct styling classes', () => {
-    render(<FilterReach selectedTab={REACH.ALL} />);
+describe('FilterReach - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<FilterReach />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
-    const followingItem = screen.getByText('Following').closest('[data-testid="filter-item"]');
+  it('matches snapshot with All content selected tab', () => {
+    const { container } = render(<FilterReach selectedTab={REACH.ALL} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
 
-    expect(allItem).toMatchSnapshot();
-    expect(followingItem).toMatchSnapshot();
+  it('matches snapshot with Following content selected tab', () => {
+    const { container } = render(<FilterReach selectedTab={REACH.FOLLOWING} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Friends content selected tab', () => {
+    const { container } = render(<FilterReach selectedTab={REACH.FRIENDS} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Me content selected tab', () => {
+    const { container } = render(<FilterReach selectedTab={REACH.ME} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

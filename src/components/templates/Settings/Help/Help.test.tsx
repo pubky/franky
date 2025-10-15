@@ -3,6 +3,21 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Help } from './Help';
 
+// Helper function to normalize Radix UI IDs for snapshot testing
+const normalizeRadixIds = (html: string): string => {
+  // Create a map to track ID replacements
+  const idMap = new Map<string, string>();
+  let counter = 0;
+
+  return html.replace(/radix-«r[0-9a-z]+»/gi, (match) => {
+    if (!idMap.has(match)) {
+      idMap.set(match, `radix-«r${counter}»`);
+      counter++;
+    }
+    return idMap.get(match)!;
+  });
+};
+
 describe('Help', () => {
   it('renders with default props', () => {
     render(<Help />);
@@ -38,11 +53,13 @@ describe('Help', () => {
 describe('Help - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<Help />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedHtml = normalizeRadixIds(container.innerHTML);
+    expect(normalizedHtml).toMatchSnapshot();
   });
 
   it('matches snapshot with custom className', () => {
     const { container } = render(<Help className="custom-help" />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalizedHtml = normalizeRadixIds(container.innerHTML);
+    expect(normalizedHtml).toMatchSnapshot();
   });
 });

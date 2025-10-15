@@ -14,14 +14,6 @@ describe('FilterContent', () => {
     render(<FilterContent />);
 
     expect(screen.getByText('Content')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
-  });
-
-  it('renders with custom selected tab', () => {
-    render(<FilterContent selectedTab={CONTENT.VIDEOS} />);
-
-    const videosItem = screen.getByText('Videos').closest('[data-testid="filter-item"]');
-    expect(videosItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -32,16 +24,6 @@ describe('FilterContent', () => {
     expect(onTabChange).toHaveBeenCalledWith('images');
   });
 
-  it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterContent selectedTab={CONTENT.POSTS} />);
-
-    const postsItem = screen.getByText('Posts').closest('[data-testid="filter-item"]');
-    const allItem = screen.getByText('All').closest('[data-testid="filter-item"]');
-
-    expect(postsItem).toMatchSnapshot();
-    expect(allItem).toMatchSnapshot();
-  });
-
   it('handles all tab types correctly', () => {
     const onTabChange = vi.fn();
     render(<FilterContent onTabChange={onTabChange} />);
@@ -49,21 +31,8 @@ describe('FilterContent', () => {
     const tabs: ContentTab[] = ['all', 'posts', 'articles', 'images', 'videos', 'links', 'files'];
 
     tabs.forEach((tab) => {
-      const label =
-        tab === 'all'
-          ? 'All'
-          : tab === 'posts'
-            ? 'Posts'
-            : tab === 'articles'
-              ? 'Articles'
-              : tab === 'images'
-                ? 'Images'
-                : tab === 'videos'
-                  ? 'Videos'
-                  : tab === 'links'
-                    ? 'Links'
-                    : 'Files';
-
+      // capitalize first letter
+      const label = tab.charAt(0).toUpperCase() + tab.slice(1);
       fireEvent.click(screen.getByText(label));
       expect(onTabChange).toHaveBeenCalledWith(tab);
     });
@@ -129,5 +98,47 @@ describe('FilterContent', () => {
     expect(onTabChange).toHaveBeenNthCalledWith(1, 'images');
     expect(onTabChange).toHaveBeenNthCalledWith(2, 'videos');
     expect(onTabChange).toHaveBeenNthCalledWith(3, 'files');
+  });
+});
+
+describe('FilterContent - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<FilterContent />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with All content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.ALL} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Posts content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.POSTS} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Articles content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.ARTICLES} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Images content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.IMAGES} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Videos content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.VIDEOS} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Links content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.LINKS} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Files content selected tab', () => {
+    const { container } = render(<FilterContent selectedTab={CONTENT.FILES} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

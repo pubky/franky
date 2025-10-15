@@ -11,7 +11,7 @@ export class PostDetailsModel
 
   content: string;
   indexed_at: number;
-  kind: Core.NexusPostKind;
+  kind: string;
   uri: string;
   attachments: string[] | null;
 

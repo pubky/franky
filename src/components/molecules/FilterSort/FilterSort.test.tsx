@@ -14,14 +14,6 @@ describe('FilterSort', () => {
     render(<FilterSort />);
 
     expect(screen.getByText('Sort')).toBeInTheDocument();
-    expect(screen.getByTestId('filter-root')).toMatchSnapshot();
-  });
-
-  it('renders with custom selected tab', () => {
-    render(<FilterSort selectedTab={SORT.POPULARITY} />);
-
-    const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
-    expect(popularityItem).toMatchSnapshot();
   });
 
   it('calls onTabChange when tab is clicked', () => {
@@ -32,16 +24,6 @@ describe('FilterSort', () => {
     fireEvent.click(popularityElement);
 
     expect(mockOnTabChange).toHaveBeenCalledWith('popularity');
-  });
-
-  it('shows correct visual state for selected and unselected tabs', () => {
-    render(<FilterSort selectedTab={SORT.RECENT} />);
-
-    const recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
-    const popularityItem2 = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
-
-    expect(recentItem).toMatchSnapshot();
-    expect(popularityItem2).toMatchSnapshot();
   });
 
   it('handles all tab types correctly', () => {
@@ -56,28 +38,6 @@ describe('FilterSort', () => {
       fireEvent.click(element);
       expect(mockOnTabChange).toHaveBeenCalledWith(tab);
     });
-  });
-
-  it('applies correct styling classes', () => {
-    render(<FilterSort selectedTab={SORT.RECENT} />);
-
-    const recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
-    const popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
-
-    expect(recentItem).toMatchSnapshot();
-    expect(popularityItem).toMatchSnapshot();
-  });
-
-  it('renders with correct icons', () => {
-    render(<FilterSort />);
-
-    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
-  });
-
-  it('applies correct icon classes', () => {
-    render(<FilterSort />);
-
-    expect(screen.getByTestId('filter-list')).toMatchSnapshot();
   });
 
   it('handles tab switching correctly', () => {
@@ -98,8 +58,8 @@ describe('FilterSort', () => {
     let recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     let popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
 
-    expect(recentItem).toMatchSnapshot();
-    expect(popularityItem).toMatchSnapshot();
+    expect(recentItem).toBeInTheDocument();
+    expect(popularityItem).toBeInTheDocument();
 
     // Rerender with different selected tab
     rerender(<FilterSort selectedTab="popularity" />);
@@ -107,7 +67,24 @@ describe('FilterSort', () => {
     recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
 
-    expect(recentItem).toMatchSnapshot();
-    expect(popularityItem).toMatchSnapshot();
+    expect(recentItem).toBeInTheDocument();
+    expect(popularityItem).toBeInTheDocument();
+  });
+});
+
+describe('FilterSort - Snapshots', () => {
+  it('matches snapshot with default props', () => {
+    const { container } = render(<FilterSort />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Recent content selected tab', () => {
+    const { container } = render(<FilterSort selectedTab={SORT.RECENT} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with Popularity content selected tab', () => {
+    const { container } = render(<FilterSort selectedTab={SORT.POPULARITY} />);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
