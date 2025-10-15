@@ -13,7 +13,7 @@ export class NexusBootstrapService {
    * @param pubky - User's public key
    * @returns Bootstrap data (users, posts, streams)
    */
-  static async read(pubky: Core.Pubky): Promise<Core.NexusBootstrapResponse> {
+  static async fetch(pubky: Core.Pubky): Promise<Core.NexusBootstrapResponse> {
     try {
       const url = Core.bootstrapApi.get(pubky);
       const data = await Core.queryNexus<Core.NexusBootstrapResponse>(url);

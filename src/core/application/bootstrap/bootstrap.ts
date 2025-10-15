@@ -3,7 +3,7 @@ import * as Libs from '@/libs';
 
 export class BootstrapApplication {
   static async read(pubky: Core.Pubky) {
-    const data = await Core.NexusBootstrapService.read(pubky);
+    const data = await Core.NexusBootstrapService.fetch(pubky);
     await Core.LocalBootstrapService.persistBootstrap(data);
   }
 

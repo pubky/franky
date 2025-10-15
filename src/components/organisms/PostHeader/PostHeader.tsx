@@ -21,7 +21,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
   // Fetch user details for avatar and name
   const userDetails = useLiveQuery(async () => {
     try {
-      return await Core.ProfileController.read({ user_id: userId as Core.Pubky });
+      return await Core.ProfileController.read({ userId: userId as Core.Pubky });
     } catch (error) {
       console.error('Error fetching user details:', error);
       return null;

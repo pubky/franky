@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 
-export class StreamController {
+export class StreamPostsController {
   private constructor() {} // Prevent instantiation
 
   /**

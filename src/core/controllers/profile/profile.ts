@@ -5,8 +5,8 @@ import { z } from 'zod';
 export class ProfileController {
   private constructor() {} // Prevent instantiation
 
-  static async read({ user_id }: Core.TUserId) {
-    return await Core.ProfileApplication.read({ user_id });
+  static async read({ userId }: Core.TReadProfileParams) {
+    return await Core.ProfileApplication.read({ userId });
   }
 
   // Upload avatar to homeserver and return the url

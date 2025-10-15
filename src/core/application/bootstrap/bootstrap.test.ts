@@ -92,28 +92,28 @@ describe('BootstrapApplication', () => {
         },
       };
 
-      const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
+      const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
 
       await BootstrapApplication.read(TEST_PUBKY);
 
-      expect(nexusReadSpy).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
       expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {
-      const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockRejectedValue(new Error('Network error'));
+      const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockRejectedValue(new Error('Network error'));
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
 
       await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Network error');
 
-      expect(nexusReadSpy).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
       expect(persistBootstrapSpy).not.toHaveBeenCalled();
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
     });
 
@@ -129,17 +129,17 @@ describe('BootstrapApplication', () => {
         },
       };
 
-      const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
+      const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const persistBootstrapSpy = vi
         .spyOn(Core.LocalBootstrapService, 'persistBootstrap')
         .mockRejectedValue(new Error('Database error'));
 
       await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Database error');
 
-      expect(nexusReadSpy).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
       expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
     });
 
@@ -155,15 +155,15 @@ describe('BootstrapApplication', () => {
         },
       };
 
-      const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
+      const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
 
       await BootstrapApplication.read(TEST_PUBKY);
 
-      expect(nexusReadSpy).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
       expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
     });
   });
@@ -189,7 +189,7 @@ describe('BootstrapApplication', () => {
         },
       };
 
-      const nexusReadSpy = vi.spyOn(Core.NexusBootstrapService, 'read').mockResolvedValue(mockBootstrapData);
+      const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
@@ -202,11 +202,11 @@ describe('BootstrapApplication', () => {
       await bootstrapPromise;
 
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
-      expect(nexusReadSpy).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
       expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
       expect(loggerErrorSpy).not.toHaveBeenCalled();
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
@@ -224,8 +224,8 @@ describe('BootstrapApplication', () => {
         },
       };
 
-      const nexusReadSpy = vi
-        .spyOn(Core.NexusBootstrapService, 'read')
+      const nexusFetchSpy = vi
+        .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockResolvedValueOnce(mockBootstrapData);
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap').mockResolvedValue(undefined);
@@ -246,18 +246,18 @@ describe('BootstrapApplication', () => {
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 2...');
       expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to bootstrap', expect.any(Error), 0);
-      expect(nexusReadSpy).toHaveBeenCalledTimes(2);
+      expect(nexusFetchSpy).toHaveBeenCalledTimes(2);
       expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });
 
     it('should retry up to 3 times and throw error if all attempts fail', async () => {
-      const nexusReadSpy = vi
-        .spyOn(Core.NexusBootstrapService, 'read')
+      const nexusFetchSpy = vi
+        .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValue(new Error('User not indexed'));
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
@@ -284,18 +284,18 @@ describe('BootstrapApplication', () => {
       expect(error?.message).toBe('User still not indexed');
       expect(loggerInfoSpy).toHaveBeenCalledTimes(3);
       expect(loggerErrorSpy).toHaveBeenCalledTimes(3);
-      expect(nexusReadSpy).toHaveBeenCalledTimes(3);
+      expect(nexusFetchSpy).toHaveBeenCalledTimes(3);
       expect(persistBootstrapSpy).not.toHaveBeenCalled();
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
     });
 
     it('should log retry count on each failure', async () => {
-      const nexusReadSpy = vi
-        .spyOn(Core.NexusBootstrapService, 'read')
+      const nexusFetchSpy = vi
+        .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValue(new Error('User not indexed'));
       const persistBootstrapSpy = vi.spyOn(Core.LocalBootstrapService, 'persistBootstrap');
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
@@ -324,7 +324,7 @@ describe('BootstrapApplication', () => {
       expect(loggerErrorSpy).toHaveBeenNthCalledWith(2, 'Failed to bootstrap', expect.any(Error), 1);
       expect(loggerErrorSpy).toHaveBeenNthCalledWith(3, 'Failed to bootstrap', expect.any(Error), 2);
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();
@@ -342,8 +342,8 @@ describe('BootstrapApplication', () => {
         },
       };
 
-      const nexusReadSpy = vi
-        .spyOn(Core.NexusBootstrapService, 'read')
+      const nexusFetchSpy = vi
+        .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockRejectedValueOnce(new Error('Still not indexed'))
         .mockResolvedValueOnce(mockBootstrapData);
@@ -354,7 +354,7 @@ describe('BootstrapApplication', () => {
       const bootstrapPromise = BootstrapApplication.authorizeAndBootstrap(TEST_PUBKY);
 
       // First attempt
-      expect(nexusReadSpy).not.toHaveBeenCalled();
+      expect(nexusFetchSpy).not.toHaveBeenCalled();
       await vi.advanceTimersByTimeAsync(5000);
       await vi.runAllTimersAsync();
 
@@ -371,10 +371,10 @@ describe('BootstrapApplication', () => {
       expect(loggerInfoSpy).toHaveBeenNthCalledWith(1, 'Waiting 5 seconds before bootstrap attempt 1...');
       expect(loggerInfoSpy).toHaveBeenNthCalledWith(2, 'Waiting 5 seconds before bootstrap attempt 2...');
       expect(loggerInfoSpy).toHaveBeenNthCalledWith(3, 'Waiting 5 seconds before bootstrap attempt 3...');
-      expect(nexusReadSpy).toHaveBeenCalledTimes(3);
+      expect(nexusFetchSpy).toHaveBeenCalledTimes(3);
       expect(persistBootstrapSpy).toHaveBeenCalledWith(mockBootstrapData);
 
-      nexusReadSpy.mockRestore();
+      nexusFetchSpy.mockRestore();
       persistBootstrapSpy.mockRestore();
       loggerInfoSpy.mockRestore();
       loggerErrorSpy.mockRestore();

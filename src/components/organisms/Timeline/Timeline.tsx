@@ -44,7 +44,7 @@ export function Timeline() {
         const offset = isInitialLoad ? 0 : currentPage * POSTS_PER_PAGE;
 
         // Get post IDs from the stream
-        const ids = await Core.PostStreamApplication.read({
+        const ids = await Core.StreamPostsController.read({
           streamId: Core.PostStreamTypes.TIMELINE_ALL,
           limit: POSTS_PER_PAGE,
           offset,

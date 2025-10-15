@@ -3,8 +3,9 @@ import * as Core from '@/core';
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
-  static async read({ user_id }: Core.TUserId) {
-    return await Core.UserDetailsModel.findById(user_id);
+  static async read({ userId }: Core.TReadProfileParams) {
+    // TODO: get from nexus api if not found in database
+    return await Core.UserDetailsModel.findById(userId);
   }
 
   static async uploadAvatar({ blobResult, fileResult }: Core.TUploadAvatarInput) {

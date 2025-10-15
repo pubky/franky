@@ -152,7 +152,7 @@ describe('NexusBootstrapService', () => {
         json: () => Promise.resolve(mockResponse),
       });
 
-      const result = await Core.NexusBootstrapService.read(pubky);
+      const result = await Core.NexusBootstrapService.fetch(pubky);
 
       expect(mockFetch).toHaveBeenCalledWith(Core.bootstrapApi.get(pubky), {
         method: 'GET',
@@ -170,7 +170,7 @@ describe('NexusBootstrapService', () => {
         statusText: 'Bad Request',
       });
 
-      await expect(Core.NexusBootstrapService.read(pubky)).rejects.toMatchObject({
+      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.INVALID_REQUEST,
         statusCode: 400,
         details: expect.objectContaining({
@@ -187,7 +187,7 @@ describe('NexusBootstrapService', () => {
         statusText: 'Not Found',
       });
 
-      await expect(Core.NexusBootstrapService.read(pubky)).rejects.toMatchObject({
+      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.RESOURCE_NOT_FOUND,
         statusCode: 404,
       });
@@ -199,7 +199,7 @@ describe('NexusBootstrapService', () => {
         json: () => Promise.reject(new Error('Invalid JSON')),
       });
 
-      await expect(Core.NexusBootstrapService.read(pubky)).rejects.toMatchObject({
+      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.INVALID_RESPONSE,
         statusCode: 500,
         details: expect.objectContaining({
@@ -211,7 +211,7 @@ describe('NexusBootstrapService', () => {
     it('should throw error on fetch failure', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network failure'));
 
-      await expect(Core.NexusBootstrapService.read(pubky)).rejects.toThrow('Network failure');
+      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toThrow('Network failure');
     });
 
     it('should throw RATE_LIMIT_EXCEEDED on 429', async () => {
@@ -221,7 +221,7 @@ describe('NexusBootstrapService', () => {
         statusText: 'Too Many Requests',
       });
 
-      await expect(Core.NexusBootstrapService.read(pubky)).rejects.toMatchObject({
+      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.RATE_LIMIT_EXCEEDED,
         statusCode: 429,
       });
@@ -234,7 +234,7 @@ describe('NexusBootstrapService', () => {
         statusText: 'Service Unavailable',
       });
 
-      await expect(Core.NexusBootstrapService.read(pubky)).rejects.toMatchObject({
+      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.SERVICE_UNAVAILABLE,
         statusCode: 503,
       });

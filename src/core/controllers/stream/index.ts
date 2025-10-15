@@ -1,2 +1,1 @@
-export * from './stream';
-export * from './stream.types';
+export * from './posts';
