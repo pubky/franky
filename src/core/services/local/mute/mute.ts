@@ -1,60 +1,82 @@
 import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 
+type MuteAction = 'mute' | 'unmute';
+
 export class LocalMuteService {
-  static async create({ muter, mutee }: Core.TMuteParams) {
-    try {
-      await Core.db.transaction('rw', [Core.UserRelationshipsModel.table], async () => {
-        const rel = await Core.UserRelationshipsModel.findById(mutee);
+  private static readonly DEFAULT_RELATIONSHIP = {
+    following: false,
+    followed_by: false,
+  } as const;
 
-        if (rel) {
-          if (rel.muted === true) return;
-          await Core.UserRelationshipsModel.update(mutee, { muted: true });
-          return;
-        }
-
-        await Core.UserRelationshipsModel.create({
-          id: mutee,
-          following: false,
-          followed_by: false,
-          muted: true,
-        });
-      });
-
-      Logger.debug('Mute created successfully', { muter, mutee });
-    } catch (error) {
-      Logger.error('Failed to mute a user', { muter, mutee, error });
-      throw createDatabaseError(DatabaseErrorType.SAVE_FAILED, 'Failed to create mute relationship', 500, {
-        error,
-      });
-    }
+  /**
+   * Creates a mute relationship between users
+   */
+  static async create({ muter, mutee }: Core.TMuteParams): Promise<void> {
+    return LocalMuteService.updateMuteStatus({ muter, mutee }, 'mute');
   }
 
-  static async delete({ muter, mutee }: Core.TMuteParams) {
+  /**
+   * Removes a mute relationship between users
+   */
+  static async delete({ muter, mutee }: Core.TMuteParams): Promise<void> {
+    return LocalMuteService.updateMuteStatus({ muter, mutee }, 'unmute');
+  }
+
+  /**
+   * Updates the mute status for a user relationship
+   * @private
+   */
+  private static async updateMuteStatus(
+    { muter, mutee }: Core.TMuteParams,
+    action: MuteAction
+  ): Promise<void> {
+    const config = {
+      mute: {
+        targetStatus: true,
+        successMessage: 'Mute created successfully',
+        errorMessage: 'Failed to mute a user',
+        databaseErrorMessage: 'Failed to create mute relationship',
+        errorType: DatabaseErrorType.SAVE_FAILED,
+      },
+      unmute: {
+        targetStatus: false,
+        successMessage: 'Unmute completed successfully',
+        errorMessage: 'Failed to unmute a user',
+        databaseErrorMessage: 'Failed to delete mute relationship',
+        errorType: DatabaseErrorType.DELETE_FAILED,
+      },
+    };
+
+    const { targetStatus, successMessage, errorMessage, databaseErrorMessage, errorType } = config[action];
+
     try {
       await Core.db.transaction('rw', [Core.UserRelationshipsModel.table], async () => {
-        const rel = await Core.UserRelationshipsModel.findById(mutee);
+        const existingRelationship = await Core.UserRelationshipsModel.findById(mutee);
 
-        if (rel) {
-          if (rel.muted === false) return;
-          await Core.UserRelationshipsModel.update(mutee, { muted: false });
+        if (existingRelationship) {
+          // If the relationship already has the desired mute status, no action needed
+          if (existingRelationship.muted === targetStatus) {
+            return;
+          }
+          
+          // Update the existing relationship
+          await Core.UserRelationshipsModel.update(mutee, { muted: targetStatus });
           return;
         }
 
+        // Create a new relationship with the desired mute status
         await Core.UserRelationshipsModel.create({
           id: mutee,
-          following: false,
-          followed_by: false,
-          muted: false,
+          ...this.DEFAULT_RELATIONSHIP,
+          muted: targetStatus,
         });
       });
 
-      Logger.debug('Unmute completed successfully', { muter, mutee });
+      Logger.debug(successMessage, { muter, mutee });
     } catch (error) {
-      Logger.error('Failed to unmute a user', { muter, mutee, error });
-      throw createDatabaseError(DatabaseErrorType.DELETE_FAILED, 'Failed to delete mute relationship', 500, {
-        error,
-      });
+      Logger.error(errorMessage, { muter, mutee, error });
+      throw createDatabaseError(errorType, databaseErrorMessage, 500, { error });
     }
   }
 }
