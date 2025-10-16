@@ -1,8 +1,8 @@
 import * as Pubky from '@synonymdev/pubky';
+
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
-import { HomeserverAction } from './homeserver.types';
 
 export class HomeserverService {
   private defaultKeypair = {
@@ -155,7 +155,7 @@ export class HomeserverService {
     }
   }
 
-  private async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
+  async fetch(url: string, options?: Core.FetchOptions): Promise<Response> {
     try {
       const response = await this.client.fetch(url, { ...options, credentials: 'include' });
 
@@ -177,7 +177,7 @@ export class HomeserverService {
    * @param {string} url - Pubky URL.
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
-  static async request(method: HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
+  static async request(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
       method,
@@ -203,7 +203,7 @@ export class HomeserverService {
   static async putBlob(url: string, blob: Uint8Array) {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
-      method: HomeserverAction.PUT,
+      method: Core.HomeserverAction.PUT,
       body: blob,
     });
 
@@ -249,7 +249,7 @@ export class HomeserverService {
    * @param {string} url - Pubky URL of the file to delete.
    */
   static async delete(url: string) {
-    await this.request(HomeserverAction.DELETE, url);
+    await this.request(Core.HomeserverAction.DELETE, url);
     Libs.Logger.debug('Delete successful', { url });
   }
 
@@ -320,5 +320,34 @@ export class HomeserverService {
         );
       }
     }
+  }
+
+  // TODO: remove this once we have a proper signup token endpoint, mb should live inside of a test utils file
+  static async generateSignupToken() {
+    const endpoint = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL;
+    const password = Libs.Env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD;
+
+    const response = await fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        'X-Admin-Password': password,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw Libs.createCommonError(
+        Libs.CommonErrorType.NETWORK_ERROR,
+        `Failed to generate signup token: ${response.status} ${errorText}`,
+        response.status,
+      );
+    }
+
+    const token = (await response.text()).trim();
+    if (!token) {
+      throw Libs.createCommonError(Libs.CommonErrorType.UNEXPECTED_ERROR, 'No token received from server', 500);
+    }
+
+    return token;
   }
 }

@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SettingsInfo > matches snapshot 1`] = `
+exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
 <div>
   <div
     class="flex flex-col gap-6"
@@ -33,7 +33,7 @@ exports[`SettingsInfo > matches snapshot 1`] = `
         data-testid="filter-list"
       >
         <button
-          aria-controls="radix-«ro»"
+          aria-controls="radix-«r0»"
           aria-expanded="false"
           aria-haspopup="dialog"
           class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
@@ -79,7 +79,7 @@ exports[`SettingsInfo > matches snapshot 1`] = `
           </span>
         </button>
         <button
-          aria-controls="radix-«rr»"
+          aria-controls="radix-«r0»"
           aria-expanded="false"
           aria-haspopup="dialog"
           class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
@@ -318,40 +318,44 @@ exports[`SettingsInfo > matches snapshot 1`] = `
             </div>
           </div>
         </a>
-        <button
-          class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+        <a
+          href="/settings/help"
         >
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-circle-help h-4 w-4"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
           >
-            <circle
-              cx="12"
-              cy="12"
-              r="10"
-            />
-            <path
-              d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
-            />
-            <path
-              d="M12 17h.01"
-            />
-          </svg>
-          <span
-            class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
-          >
-            More FAQ
-          </span>
-        </button>
+            <svg
+              aria-hidden="true"
+              class="lucide lucide-circle-help h-4 w-4"
+              fill="none"
+              height="24"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+              />
+              <path
+                d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+              />
+              <path
+                d="M12 17h.01"
+              />
+            </svg>
+            <span
+              class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+            >
+              More FAQ
+            </span>
+          </button>
+        </a>
       </div>
     </div>
     <div
