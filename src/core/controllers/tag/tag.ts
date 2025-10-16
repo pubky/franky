@@ -13,7 +13,6 @@ export class TagController {
    * @param params.taggerId - ID of the user adding the tag
    */
   static async create(params: Core.TTagEventParams) {
-
     const { tagUrl, tag } = await TagController.generateTagUri(params);
     const { taggedId, taggedKind, taggerId } = params;
 
@@ -36,7 +35,6 @@ export class TagController {
    * @param params.taggerId - ID of the user removing the tag
    */
   static async delete(params: Core.TTagEventParams) {
-
     const { tagUrl, tag } = await TagController.generateTagUri(params);
     const { taggerId, taggedId, taggedKind } = params;
 

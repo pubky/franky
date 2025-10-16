@@ -27,6 +27,39 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
     this.tags = this.tags.filter((tag) => tag.taggers_count > 0);
   }
 
+  saveTag(label: string, taggerId: Core.Pubky): boolean | null {
+    let tagExists = true;
+    let labelTagData = this.findByLabel(label);
+    // The label does not exist, create it
+    if (!labelTagData) {
+      labelTagData = new Core.TagModel({ label, taggers: [], taggers_count: 0, relationship: false });
+      this.tags.push(labelTagData);
+      tagExists = false;
+    }
+    // The label exist and the active user put a tag already
+    else if (labelTagData?.relationship) {
+      return null;
+    }
+    labelTagData.addTagger(taggerId);
+    labelTagData.setRelationship(true);
+    return tagExists;
+  }
+
+  removeTag(label: string, taggerId: Core.Pubky) {
+    const labelTagData = this.findByLabel(label);
+    if (!labelTagData) {
+      throw new Error('Tag not found');
+    } else if (!labelTagData?.relationship) {
+      // TODO: Not sure if we neeed to be that harsh
+      throw new Error('User has not tagged this post with this label');
+    }
+
+    labelTagData.removeTagger(taggerId);
+    labelTagData.setRelationship(false);
+    //If there is not taggers, remove the tag
+    this.deleteTagIfNoTaggers();
+  }
+
   // -------- Static CRUD (inherited from ModelBase) --------
 
   static async bulkSave<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
@@ -47,5 +80,27 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
         },
       );
     }
+  }
+
+  /**
+   * Retrieves or creates a TagCollection model instance for a given ID.
+   *
+   * @param id - Unique identifier
+   * @returns TagCollection model instance with existing or empty tags
+   * @private
+   */
+  static async getOrCreate<TId, TSchema extends Core.TagCollectionModelSchema<TId>>(
+    this: {
+      table: Table<TSchema>;
+      new (data: TSchema): TagCollection<TId, TSchema>;
+      findById(id: TId): Promise<TagCollection<TId, TSchema> | null>;
+    },
+    id: TId,
+  ): Promise<TagCollection<TId, TSchema>> {
+    const tagsData = await this.findById(id);
+    if (tagsData) {
+      return tagsData;
+    }
+    return new this({ id, tags: [] } as unknown as TSchema);
   }
 }
