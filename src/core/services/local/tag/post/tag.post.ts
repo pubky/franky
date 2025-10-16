@@ -1,6 +1,5 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import { UserCountsFields } from '@/core/models/user/counts/userCounts.schema';
 
 export class LocalPostTagService {
   private static readonly TAG_TABLES = [
@@ -25,13 +24,17 @@ export class LocalPostTagService {
   static async create({ taggedId: postId, label, taggerId }: Core.TLocalTagParams) {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
-        const postTagsModel = await this.getOrCreatePostTagsModel(postId);
-
-        postTagsModel.saveTag(label, taggerId);
-
+        const postTagsModel = await Core.PostTagsModel.getOrCreate<string, Core.PostTagsModelSchema>(postId);
+        let status = postTagsModel.saveTag(label, taggerId);
+        // Ignore all the operations
+        if (status === null) {
+          Libs.Logger.debug('User already tagged this post with this label', { postId, label, taggerId });
+          return;
+        }
         await this.savePostTagsModel(postId, postTagsModel);
+
         await this.updatePostCounts(postId, postTagsModel);
-        await this.updateTaggerCount(taggerId, Core.INCREMENT);
+        await Core.updateTaggerCount(taggerId, Core.INCREMENT);
 
         Libs.Logger.debug('Tag saved', { postId, label, taggerId });
       });
@@ -75,7 +78,7 @@ export class LocalPostTagService {
 
         await this.savePostTagsModel(postId, postTagsModel);
         await this.updatePostCounts(postId, postTagsModel);
-        await this.updateTaggerCount(taggerId, Core.DECREMENT);
+        await Core.updateTaggerCount(taggerId, Core.DECREMENT);
 
         Libs.Logger.debug('Tag removed', { postId, label, taggerId });
       });
@@ -90,47 +93,17 @@ export class LocalPostTagService {
   }
 
   /**
-   * Retrieves or creates a PostTagsModel instance for a given post.
-   *
-   * @param postId - Unique identifier of the post
-   * @returns PostTagsModel instance with existing or empty tags
-   * @private
-   */
-  private static async getOrCreatePostTagsModel(postId: string): Promise<Core.PostTagsModel> {
-    const tagsData = await Core.PostTagsModel.findById(postId);
-    return tagsData ? new Core.PostTagsModel(tagsData) : new Core.PostTagsModel({ id: postId, tags: [] });
-  }
-
-  /**
    * Saves the PostTagsModel to the database.
    *
    * @param postId - Unique identifier of the post
    * @param postTagsModel - The PostTagsModel instance to save
    * @private
    */
-  private static async savePostTagsModel(postId: string, postTagsModel: Core.PostTagsModel): Promise<void> {
+  private static async savePostTagsModel(postId: string, postTagsModel: Core.PostTagsModel) {
     await Core.PostTagsModel.upsert({
       id: postId,
       tags: postTagsModel.tags as Core.NexusTag[],
     });
-  }
-
-  /**
-   * Updates the tagger's tagged count.
-   *
-   * @param taggerId - Unique identifier of the user
-   * @param direction - Direction of the count update (INCREMENT or DECREMENT)
-   * @private
-   */
-  private static async updateTaggerCount(
-    taggerId: Core.Pubky,
-    direction: typeof Core.INCREMENT | typeof Core.DECREMENT,
-  ): Promise<void> {
-    const tagger = await Core.UserCountsModel.findById(taggerId);
-    if (tagger) {
-      tagger.updateCount(UserCountsFields.TAGGED, direction);
-      await Core.UserCountsModel.update(taggerId, { [UserCountsFields.TAGGED]: tagger.tagged });
-    }
   }
 
   /**
@@ -143,7 +116,7 @@ export class LocalPostTagService {
    * @param postTagsModel - The PostTagsModel instance with current tag data
    * @private
    */
-  private static async updatePostCounts(postId: Core.Pubky, postTagsModel: Core.PostTagsModel): Promise<void> {
+  private static async updatePostCounts(postId: Core.Pubky, postTagsModel: Core.PostTagsModel) {
     const tags = postTagsModel.tags.reduce((sum, tag) => sum + tag.taggers_count, 0);
     const unique_tags = postTagsModel.tags.length;
 

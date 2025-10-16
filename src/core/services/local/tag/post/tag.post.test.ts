@@ -114,12 +114,13 @@ describe('LocalTagService', () => {
       expect(savedTags!.tags[0].relationship).toBe(true);
     });
 
-    it('should throw error if user already created tag post with this label', async () => {
+    it('should ignore if user already created tag post with this label', async () => {
       await setupExistingTag('javascript', [testData.taggerPubky], true);
 
-      await expect(Core.LocalPostTagService.create(createTagParams('javascript'))).rejects.toThrow(
-        /Failed to save tag to PostTagsModel/,
-      );
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
+
+      const savedTags = await getSavedTags();
+      expect(savedTags!.tags[0].taggers_count).toBe(1); // Should remain unchanged
     });
 
     it('should update post counts when creating tag', async () => {
@@ -155,6 +156,30 @@ describe('LocalTagService', () => {
       expect(savedTags!.tags).toHaveLength(2);
       expect(savedTags!.tags.map((t) => t.label)).toContain('javascript');
       expect(savedTags!.tags.map((t) => t.label)).toContain('react');
+    });
+
+    it('should not update counts when user already tagged with same label', async () => {
+      await setupExistingTag('javascript', [testData.taggerPubky], true);
+      await setupPostCounts(1, 1);
+      await setupUserCounts(testData.taggerPubky, 1);
+
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
+
+      const savedCounts = await getSavedCounts();
+      const userCounts = await getUserCounts(testData.taggerPubky);
+      expect(savedCounts!.tags).toBe(1); // Should remain unchanged
+      expect(savedCounts!.unique_tags).toBe(1); // Should remain unchanged
+      expect(userCounts!.tagged).toBe(1); // Should remain unchanged
+    });
+
+    it('should handle creating tag when no post counts exist', async () => {
+      await Core.LocalPostTagService.create(createTagParams('javascript'));
+
+      const savedCounts = await getSavedCounts();
+      expect(savedCounts!.tags).toBe(1);
+      expect(savedCounts!.unique_tags).toBe(1);
+      expect(savedCounts!.replies).toBe(0);
+      expect(savedCounts!.reposts).toBe(0);
     });
   });
 
@@ -199,7 +224,7 @@ describe('LocalTagService', () => {
       await Core.PostTagsModel.table.clear();
 
       await expect(Core.LocalPostTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
-        'Failed to remove tag from PostTagsModel',
+        'Failed to delete post tag',
       );
     });
 
@@ -207,7 +232,7 @@ describe('LocalTagService', () => {
       await setupExistingTag('javascript', [testData.taggerPubky], false);
 
       await expect(Core.LocalPostTagService.delete(createRemoveParams('javascript'))).rejects.toThrow(
-        'Failed to remove tag from PostTagsModel',
+        'Failed to delete post tag',
       );
     });
 

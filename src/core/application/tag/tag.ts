@@ -20,7 +20,7 @@ export class TagApplication {
     if (taggedKind === Core.TagKind.POST) {
       await Core.LocalPostTagService.create({ taggerId, taggedId, label });
     } else {
-      await Core.LocalUserTagService.createUserTag({ taggerId, taggedId, label });
+      await Core.LocalUserTagService.create({ taggerId, taggedId, label });
     }
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
   }
@@ -29,7 +29,7 @@ export class TagApplication {
     if (taggedKind === Core.TagKind.POST) {
       await Core.LocalPostTagService.delete({ taggerId, taggedId, label });
     } else {
-      await Core.LocalUserTagService.deleteUserTag({ taggerId, taggedId, label });
+      await Core.LocalUserTagService.delete({ taggerId, taggedId, label });
     }
     await Core.HomeserverService.request(Core.HomeserverAction.DELETE, tagUrl);
   }
