@@ -214,6 +214,45 @@ export class HomeserverService {
     }
   }
 
+  /**
+   * Lists files in a directory from the homeserver.
+   *
+   * Supports pagination with cursor and optional filtering.
+   *
+   * @param {string} baseDirectory - Base directory path to list files from.
+   * @param {string} [cursor] - Optional cursor for pagination.
+   * @param {boolean} [reverse=false] - Whether to list in reverse order.
+   * @param {number} [limit=500] - Maximum number of files to return.
+   * @returns {Promise<string[]>} Array of file URLs.
+   */
+  static async list(
+    baseDirectory: string,
+    cursor?: string,
+    reverse: boolean = false,
+    limit: number = 500,
+  ): Promise<string[]> {
+    const homeserver = this.getInstance();
+    try {
+      const files = await homeserver.client.list(baseDirectory, cursor, reverse, limit);
+      Libs.Logger.debug('List successful', { baseDirectory, filesCount: files.length });
+      return files;
+    } catch (error) {
+      return homeserver.handleError(error, Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to list files', 500, {
+        baseDirectory,
+      });
+    }
+  }
+
+  /**
+   * Deletes a file from the homeserver.
+   *
+   * @param {string} url - Pubky URL of the file to delete.
+   */
+  static async delete(url: string) {
+    await this.request(HomeserverAction.DELETE, url);
+    Libs.Logger.debug('Delete successful', { url });
+  }
+
   async logout(pubky: Core.Pubky) {
     try {
       const pubKey = Pubky.PublicKey.from(pubky);

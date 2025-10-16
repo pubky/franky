@@ -1,4 +1,4 @@
-import { TFollowParams } from './user.type';
+import { TFollowParams, TDeleteAccountInput } from './user.type';
 import * as Core from '@/core';
 
 export class UserController {
@@ -13,5 +13,9 @@ export class UserController {
       follower,
       followee,
     });
+  }
+
+  static async deleteAccount({ pubky, setProgress }: TDeleteAccountInput) {
+    await Core.UserApplication.deleteAccount({ pubky, setProgress });
   }
 }
