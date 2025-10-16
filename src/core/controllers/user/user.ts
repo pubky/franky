@@ -13,4 +13,8 @@ export class UserController {
       followee,
     });
   }
+
+  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
+    await Core.UserApplication.deleteAccount({ pubky, setProgress });
+  }
 }

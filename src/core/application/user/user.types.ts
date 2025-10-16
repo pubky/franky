@@ -5,3 +5,8 @@ export type TUserApplicationFollowParams = Core.TFollowParams & {
   followUrl: string;
   followJson: Record<string, unknown>;
 };
+
+export type TDeleteAccountParams = {
+  pubky: Core.Pubky;
+  setProgress?: (progress: number) => void;
+};
