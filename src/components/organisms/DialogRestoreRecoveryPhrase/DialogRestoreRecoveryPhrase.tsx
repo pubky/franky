@@ -195,15 +195,18 @@ function RestoreForm({
         )}
       </Atoms.Container>
 
-      <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
+      <Atoms.Container display="grid" className="grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2">
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6">
+          <Atoms.Button
+            variant="outline"
+            className="order-2 sm:order-1 w-full rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+          >
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
           id="recovery-phrase-restore-btn"
-          className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+          className="order-1 sm:order-2 w-full rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           onClick={onRestore}
           disabled={!isFormValid()}
         >
