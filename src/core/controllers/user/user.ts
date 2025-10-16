@@ -13,4 +13,8 @@ export class UserController {
       followee,
     });
   }
+
+  static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
+    await Core.UserApplication.downloadData({ pubky, setProgress });
+  }
 }
