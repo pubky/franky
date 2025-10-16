@@ -187,11 +187,11 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
         </Atoms.Container>
 
         {/* Action Buttons */}
-        <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
+        <Atoms.Container display="grid" className="grid-cols-1 gap-4 sm:gap-3 md:grid-cols-2">
           <DialogClose asChild>
             <Atoms.Button
               variant="outline"
-              className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+              className="order-2 md:order-1 w-full rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
               onClick={handleReset}
               disabled={isRestoring}
             >
@@ -200,7 +200,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           </DialogClose>
           <Atoms.Button
             id="encrypted-file-restore-btn"
-            className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+            className="order-1 md:order-2 w-full rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
             onClick={handleRestore}
             disabled={!isFormValid()}
           >
