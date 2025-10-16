@@ -1,8 +1,19 @@
 import type { Preview } from '@storybook/nextjs-vite';
+import { create } from 'storybook/internal/theming';
 import '../src/app/globals.css';
+
+// Custom background theme matching app's background color from globals.css
+const customBackgroundTheme = create({
+  base: 'dark',
+  appBg: 'oklch(0.118 0.014 284.115)', // --background in :root
+  appContentBg: 'oklch(0.118 0.014 284.115)',
+});
 
 const preview: Preview = {
   parameters: {
+    docs: {
+      theme: customBackgroundTheme,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
