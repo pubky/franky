@@ -25,25 +25,24 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot for default DialogDe
       >
         Delete Account
       </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        Are you sure? Your account information cannot be recovered.
-      </p>
     </div>
+    <p
+      class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
+      data-testid="typography"
+    >
+      Are you sure? Your account information cannot be recovered.
+    </p>
     <div
       data-testid="dialog-footer"
     >
       <button
-        class="w-full sm:flex-1 sm:w-0 text-foreground"
         data-size="dialog"
-        data-testid="button-dialog"
-        data-variant="dialog"
+        data-testid="button-dark"
+        data-variant="dark"
       >
         Cancel
       </button>
       <button
-        class="w-full sm:flex-1 sm:w-0"
         data-size="dialog"
         data-testid="button-destructive"
         data-variant="destructive"
@@ -115,25 +114,24 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot when closed 1`] = `
       >
         Delete Account
       </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        Are you sure? Your account information cannot be recovered.
-      </p>
     </div>
+    <p
+      class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
+      data-testid="typography"
+    >
+      Are you sure? Your account information cannot be recovered.
+    </p>
     <div
       data-testid="dialog-footer"
     >
       <button
-        class="w-full sm:flex-1 sm:w-0 text-foreground"
         data-size="dialog"
-        data-testid="button-dialog"
-        data-variant="dialog"
+        data-testid="button-dark"
+        data-variant="dark"
       >
         Cancel
       </button>
       <button
-        class="w-full sm:flex-1 sm:w-0"
         data-size="dialog"
         data-testid="button-destructive"
         data-variant="destructive"

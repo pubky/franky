@@ -123,9 +123,6 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   PopoverBackup: () => <div data-testid="popover-backup">Backup Info</div>,
-  DialogBackupPhrase: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="dialog-backup-phrase">{children || 'Backup Phrase'}</div>
-  ),
   DialogExport: ({ mnemonic, children }: { mnemonic?: string; children?: React.ReactNode }) => (
     <div data-testid="dialog-export" data-mnemonic={mnemonic || ''}>
       {children || `Export ${mnemonic ? 'with mnemonic' : 'without mnemonic'}`}
@@ -135,6 +132,9 @@ vi.mock('@/molecules', () => ({
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
+  DialogBackupPhrase: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-backup-phrase">{children || 'Backup Phrase'}</div>
+  ),
   DialogBackupEncrypted: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="dialog-backup-encrypted">{children || 'Backup Encrypted'}</div>
   ),

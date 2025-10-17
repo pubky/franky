@@ -14,7 +14,6 @@ export enum ButtonVariant {
   GHOST = 'ghost',
   BRAND = 'brand',
   LINK = 'link',
-  DIALOG = 'dialog',
 }
 
 const buttonVariants = cva(
@@ -34,15 +33,13 @@ const buttonVariants = cva(
         dark: 'bg-neutral-900 text-white hover:bg-neutral-800 border-neutral-900',
         'dark-outline':
           'bg-transparent hover:bg-neutral-900 hover:text-white bg-transparent border-neutral-700 hover:bg-neutral-800',
-        dialog:
-          'bg-background hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
       },
       size: {
         default: 'h-10 gap-1 px-4 py-2 has-[>svg]:px-4',
         sm: 'h-8 gap-1.5 px-3 has-[>svg]:px-2.5',
         lg: 'h-10 gap-1 px-8 py-7 has-[>svg]:px-6 md:has-[>svg]:px-8',
         icon: 'size-9',
-        dialog: 'h-auto gap-2 px-2.5 py-4 sm:px-8 sm:py-5 text-sm font-bold leading-normal',
+        dialog: 'h-auto gap-2 px-2.5 py-4 sm:px-8 sm:py-5 text-sm font-bold leading-normal sm:flex-1',
       },
     },
     defaultVariants: {

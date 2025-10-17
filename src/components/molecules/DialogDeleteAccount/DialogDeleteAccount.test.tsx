@@ -55,6 +55,23 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
+  Typography: ({
+    children,
+    className,
+    as: Tag = 'p',
+    'data-testid': dataTestId,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    as?: string;
+    'data-testid'?: string;
+    [key: string]: unknown;
+  }) => (
+    <Tag data-testid={dataTestId || 'typography'} className={className} {...props}>
+      {children}
+    </Tag>
+  ),
   Button: ({
     children,
     variant,
@@ -158,7 +175,7 @@ describe('DialogDeleteAccount', () => {
     const cancelButton = screen.getByText('Cancel').closest('button');
     const deleteButton = screen.getByRole('button', { name: /delete account/i });
 
-    expect(cancelButton).toHaveAttribute('data-variant', 'dialog');
+    expect(cancelButton).toHaveAttribute('data-variant', 'dark');
     expect(deleteButton).toHaveAttribute('data-variant', 'destructive');
   });
 

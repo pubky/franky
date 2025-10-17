@@ -61,7 +61,7 @@ function DialogContent({
             'relative z-50 grid' +
               ' overflow-y-auto rounded-lg border bg-background shadow-lg duration-200' +
               ' data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95' +
-              ' data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-0 sm:m-4',
+              ' data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4',
             className,
           )}
           {...props}
@@ -89,7 +89,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="dialog-header"
       data-testid="dialog-header"
-      className={Libs.cn('flex flex-col gap-6', className)}
+      className={Libs.cn('flex flex-col', className)}
       {...props}
     />
   );
@@ -99,7 +99,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot="dialog-footer"
-      className={Libs.cn('flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end', className)}
+      className={Libs.cn('flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between', className)}
       {...props}
     />
   );
@@ -120,7 +120,7 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={Libs.cn('text-muted-foreground text-lg font-normal leading-6 tracking-wide', className)}
+      className={Libs.cn('text-muted-foreground text-sm font-medium leading-normal', className)}
       {...props}
     />
   );

@@ -12,7 +12,7 @@ exports[`Dialog - Snapshots > matched snapshot for DialogContent with default pr
     class="fixed inset-0 z-50 flex items-center justify-center"
   >
     <div
-      class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-0 sm:m-4"
+      class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4"
       data-testid="dialog-content"
     >
       <div>
@@ -78,7 +78,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent with close butt
     class="fixed inset-0 z-50 flex items-center justify-center"
   >
     <div
-      class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-0 sm:m-4"
+      class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4"
       data-testid="dialog-content"
     >
       <div>
@@ -134,7 +134,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
     class="fixed inset-0 z-50 flex items-center justify-center"
   >
     <div
-      class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-0 sm:m-4"
+      class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4"
       data-testid="dialog-content"
     >
       <div>
@@ -147,7 +147,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
 
 exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 <div
-  class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end"
+  class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between"
   data-slot="dialog-footer"
 >
   <button>
@@ -161,7 +161,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 
 exports[`Dialog - Snapshots > matches snapshot for DialogHeader 1`] = `
 <div
-  class="flex flex-col gap-6"
+  class="flex flex-col"
   data-slot="dialog-header"
   data-testid="dialog-header"
 >
@@ -172,7 +172,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogHeader 1`] = `
     Dialog Title
   </h2>
   <p
-    class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
+    class="text-muted-foreground text-sm font-medium leading-normal"
     data-testid="dialog-description"
   >
     Dialog Description
@@ -225,11 +225,11 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
       class="fixed inset-0 z-50 flex items-center justify-center"
     >
       <div
-        class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-0 sm:m-4"
+        class="relative z-50 grid overflow-y-auto rounded-lg border bg-background shadow-lg duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4"
         data-testid="dialog-content"
       >
         <div
-          class="flex flex-col gap-6"
+          class="flex flex-col"
           data-slot="dialog-header"
           data-testid="dialog-header"
         >
@@ -240,7 +240,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
             Dialog Title
           </h2>
           <p
-            class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
+            class="text-muted-foreground text-sm font-medium leading-normal"
             data-testid="dialog-description"
           >
             Dialog Description
@@ -250,7 +250,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
           Dialog body content
         </div>
         <div
-          class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end"
+          class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between"
           data-slot="dialog-footer"
         >
           <button>
