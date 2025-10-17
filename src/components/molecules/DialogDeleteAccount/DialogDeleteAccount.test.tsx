@@ -92,7 +92,7 @@ vi.mock('@/libs', async (importOriginal) => {
 const defaultProps = {
   isOpen: true,
   onOpenChangeAction: vi.fn(),
-};
+} as const;
 
 describe('DialogDeleteAccount', () => {
   it('renders with default props', () => {

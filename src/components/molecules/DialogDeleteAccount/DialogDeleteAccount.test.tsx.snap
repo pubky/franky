@@ -18,7 +18,6 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot for default DialogDe
       Delete Account
     </h2>
     <div
-      class="text-left pr-6"
       data-testid="dialog-header"
     >
       <h2
@@ -109,7 +108,6 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot when closed 1`] = `
       Delete Account
     </h2>
     <div
-      class="text-left pr-6"
       data-testid="dialog-header"
     >
       <h2
