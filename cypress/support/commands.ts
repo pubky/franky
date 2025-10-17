@@ -1,6 +1,7 @@
 // <reference types="cypress" />
 
-import { backupDownloadFilePath } from './common';
+import { backupDownloadFilePath, extendedTimeout } from './common';
+import { goToProfilePageFromHeader } from './header';
 //import { checkPostIsIndexed, waitForFeedToLoad } from './posts';
 import { BackupType } from './types/enums';
 // ***********************************************
@@ -90,7 +91,7 @@ Cypress.Commands.add(
       cy.get('#invite-code-input').type(inviteCode);
     });
 
-    cy.get('#homeserver-navigation-continue-btn').click();
+    cy.get('#homeserver-navigation-continue-btn').click(extendedTimeout());
 
     cy.location('pathname').should('eq', '/onboarding/profile');
 
@@ -98,7 +99,7 @@ Cypress.Commands.add(
     cy.get('#profile-bio-input').type(profileBio);
     //cy.get('#profile-links-input').type(profileLinks);
 
-    cy.get('#profile-finish-btn').click();
+    cy.get('#profile-finish-btn').click(extendedTimeout());
 
     cy.location('pathname').should('eq', '/home');
 
@@ -154,31 +155,14 @@ function collectRecoveryPhraseWords(): Cypress.Chainable<string> {
 }
 
 Cypress.Commands.add('signOut', () => {
-  // temporary approach to sign out
-  cy.get('#home-logout-btn').click();
+  goToProfilePageFromHeader();
+
+  cy.get('#profile-sign-out-btn').click();
   cy.location('pathname').should('eq', '/logout');
-  // navigate back to homepage
+
+  // navigate back to onboarding homepage
   cy.get('#logout-navigation-back-btn').click();
   cy.location('pathname').should('eq', '/');
-
-  // todo: implement sign out using the following as a reference
-  // cy.location('pathname').then((currentPath) => {
-  //   if (currentPath !== '/profile') {
-  //     goToProfilePageFromHeader();
-  //   }
-  // });
-
-  // cy.location('pathname').should('eq', '/profile');
-
-  // cy.get('#profile-sign-out-btn').click();
-
-  // // sign out model only shows if user has not backed up recovery file
-  // if (hasBackedUp === HasBackedUp.No) cy.get('#logout-modal-sign-out-btn').click();
-
-  // cy.location('pathname').should('eq', '/logout');
-
-  // cy.get('#sign-back-in-btn').click();
-  // cy.location('pathname').should('eq', '/sign-in');
 });
 
 Cypress.Commands.add('signInWithEncryptedFile', (backupFilepath: string, passcode = '123456') => {

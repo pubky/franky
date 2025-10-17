@@ -164,7 +164,7 @@ jobs:
 
           echo "Service is ready."
 
-      - name: Run e2e tests (${{ matrix.browser }})
+      - name: Run e2e tests - Desktop (${{ matrix.browser }})
         uses: cypress-io/github-action@v6
         env:
           DEBUG: '@cypress/github-action'
@@ -174,26 +174,58 @@ jobs:
           spec: e2e/**/*.cy.ts
           browser: ${{ matrix.browser }}
           headed: false
-          summary-title: ${{ matrix.browser }}
+          summary-title: ${{ matrix.browser }} - Desktop
           install: false
           start: npm run start
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 180
 
-      - name: Upload ${{ matrix.browser }} screenshots
+      - name: Upload ${{ matrix.browser }} Desktop screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots-${{ matrix.browser }}
+          name: screenshots-${{ matrix.browser }}-desktop
           path: franky/cypress/screenshots
 
-      - name: Upload video for onboarding test
+      - name: Upload video for onboarding test - Desktop
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         continue-on-error: true
         with:
-          name: video-${{ matrix.browser }}-onboarding
+          name: video-${{ matrix.browser }}-desktop-onboarding
           path: franky/cypress/videos/onboarding.cy.ts.mp4
+          if-no-files-found: ignore
+
+      - name: Run e2e tests - Mobile (${{ matrix.browser }})
+        uses: cypress-io/github-action@v6
+        env:
+          DEBUG: '@cypress/github-action'
+        with:
+          working-directory: franky/cypress
+          config-file: cypress.config.mobile.ts
+          spec: e2e/**/*.cy.ts
+          browser: ${{ matrix.browser }}
+          headed: false
+          summary-title: ${{ matrix.browser }} - Mobile
+          install: false
+          start: npm run start
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 180
+
+      - name: Upload ${{ matrix.browser }} Mobile screenshots
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.browser }}-mobile
+          path: franky/cypress/screenshots/mobile
+
+      - name: Upload video for onboarding test - Mobile
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: video-${{ matrix.browser }}-mobile-onboarding
+          path: franky/cypress/videos/mobile/onboarding.cy.ts.mp4
           if-no-files-found: ignore
 
       - name: Upload cypress.log
