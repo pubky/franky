@@ -157,7 +157,7 @@ function collectRecoveryPhraseWords(): Cypress.Chainable<string> {
 Cypress.Commands.add('signOut', () => {
   goToProfilePageFromHeader();
 
-  cy.get('#profile-sign-out-btn').click();
+  cy.get('#profile-logout-btn').click();
   cy.location('pathname').should('eq', '/logout');
 
   // navigate back to onboarding homepage
