@@ -5,6 +5,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn
   class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
   data-slot="button"
   data-variant="secondary"
+  id="header-sign-in-btn"
 >
   <svg
     aria-hidden="true"
@@ -67,6 +68,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
     class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 gap-1 px-4 py-2 has-[>svg]:px-4"
     data-slot="button"
     data-variant="secondary"
+    id="header-sign-in-btn"
   >
     <svg
       aria-hidden="true"
@@ -228,6 +230,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   <a
     class="relative"
     href="/profile"
+    id="header-nav-profile-btn"
   >
     <span
       class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
@@ -374,6 +377,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
   <a
     class="relative"
     href="/profile"
+    id="header-nav-profile-btn"
   >
     <span
       class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
@@ -551,6 +555,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     <a
       class="relative"
       href="/profile"
+      id="header-nav-profile-btn"
     >
       <span
         class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"

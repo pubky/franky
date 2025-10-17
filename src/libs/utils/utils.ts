@@ -69,16 +69,40 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
   }
 }
 
-// Helper function to normalize Radix UI IDs in container HTML for snapshot tests
+// Helper function to normalise Radix UI IDs in container HTML for snapshot tests
+// This is to ensure that the IDs are consistent across test runs
 export const normaliseRadixIds = (container: HTMLElement) => {
   const clonedContainer = container.cloneNode(true) as HTMLElement;
+  const normalizedId = 'radix-«r0»';
+  const radixIdPattern = /^radix-«r\w+»/;
+
+  // Normalise all radix IDs to a consistent value
+  const elementsWithIds = clonedContainer.querySelectorAll('[id]');
+  elementsWithIds.forEach((el) => {
+    const id = el.getAttribute('id');
+    if (id && radixIdPattern.test(id)) {
+      el.setAttribute('id', normalizedId);
+    }
+  });
+
+  // Normalise aria-controls attributes
   const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
   elementsWithAriaControls.forEach((el) => {
     const ariaControls = el.getAttribute('aria-controls');
-    if (ariaControls && ariaControls.includes('radix-«r')) {
-      el.setAttribute('aria-controls', 'radix-«r0»');
+    if (ariaControls && radixIdPattern.test(ariaControls)) {
+      el.setAttribute('aria-controls', normalizedId);
     }
   });
+
+  // Normalise aria-labelledby attributes
+  const elementsWithAriaLabelledBy = clonedContainer.querySelectorAll('[aria-labelledby]');
+  elementsWithAriaLabelledBy.forEach((el) => {
+    const ariaLabelledBy = el.getAttribute('aria-labelledby');
+    if (ariaLabelledBy && radixIdPattern.test(ariaLabelledBy)) {
+      el.setAttribute('aria-labelledby', normalizedId);
+    }
+  });
+
   return clonedContainer;
 };
 

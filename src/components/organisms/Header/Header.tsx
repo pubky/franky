@@ -53,7 +53,7 @@ export function HeaderButtonSignIn({ ...props }: React.HTMLAttributes<HTMLButton
   };
 
   return (
-    <Atoms.Button variant="secondary" onClick={handleSignIn} {...props}>
+    <Atoms.Button id="header-sign-in-btn" variant="secondary" onClick={handleSignIn} {...props}>
       <Libs.LogIn className="mr-2 h-4 w-4" />
       Sign in
     </Atoms.Button>
