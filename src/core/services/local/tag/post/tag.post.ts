@@ -25,18 +25,19 @@ export class LocalPostTagService {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const postTagsModel = await Core.PostTagsModel.getOrCreate<string, Core.PostTagsModelSchema>(postId);
-        let status = postTagsModel.saveTag(label, taggerId);
+        let status = postTagsModel.addTagger(label, taggerId);
         // Ignore all the operations
         if (status === null) {
           Libs.Logger.debug('User already tagged this post with this label', { postId, label, taggerId });
           return;
         }
-        await this.savePostTagsModel(postId, postTagsModel);
+        await Promise.all([
+          this.savePostTagsModel(postId, postTagsModel),
+          this.updatePostCounts(postId, postTagsModel),
+          Core.updateTaggerCount(taggerId, Core.INCREMENT),
+        ]);
 
-        await this.updatePostCounts(postId, postTagsModel);
-        await Core.updateTaggerCount(taggerId, Core.INCREMENT);
-
-        Libs.Logger.debug('Tag saved', { postId, label, taggerId });
+        Libs.Logger.debug('Post tag created', { postId, label, taggerId });
       });
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to create post tag`, 500, {
@@ -74,7 +75,7 @@ export class LocalPostTagService {
 
         const postTagsModel = new Core.PostTagsModel(tagsData);
 
-        postTagsModel.removeTag(label, taggerId);
+        postTagsModel.removeTagger(label, taggerId);
 
         await this.savePostTagsModel(postId, postTagsModel);
         await this.updatePostCounts(postId, postTagsModel);
