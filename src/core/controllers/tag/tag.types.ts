@@ -1,13 +1,8 @@
 import * as Core from '@/core';
 
-export type TCreateTagParams = {
-  targetId: string;
+export type TTagEventParams = {
+  taggerId: Core.Pubky | string;
+  taggedId: Core.Pubky;
   label: string;
-  taggerId: Core.Pubky;
-};
-
-export type TDeleteTagParams = {
-  targetId: string;
-  label: string;
-  taggerId: Core.Pubky;
+  taggedKind: Core.TagKind;
 };
