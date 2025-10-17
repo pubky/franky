@@ -16,7 +16,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
     </button>
   </div>
   <div
-    class="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
+    class="max-w-sm md:max-w-2xl"
     data-testid="dialog-content"
   >
     <div
@@ -27,113 +27,102 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
       >
         Back up your pubky
       </h2>
+      <div
+        data-testid="dialog-description"
+      >
+        Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+      </div>
     </div>
     <div
+      class="md:flex-row flex-col gap-3"
       data-testid="container"
     >
       <div
-        class="gap-6"
-        data-testid="container"
+        class="w-full p-4 md:p-8 flex-col gap-4 md:gap-6"
+        data-testid="card"
       >
         <p
-          class="text-muted-foreground font-medium"
-          data-size="sm"
+          class="text-base font-bold text-card-foreground leading-none"
+          data-size="md"
           data-testid="typography"
         >
-          Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose multiple backup methods if you wish.
+          Recovery
+          <br
+            class="hidden md:inline"
+          />
+           phrase
         </p>
         <div
-          class="w-full flex md:flex-row flex-col gap-3"
-          data-testid="container"
+          class="self-center w-16 h-16 md:w-28 md:h-28"
+          data-alt="Note"
+          data-height="112"
+          data-src="/images/note.png"
+          data-testid="image"
+          data-width="112"
         >
-          <div
-            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
-            data-testid="card"
-          >
-            <p
-              class="text-base font-bold text-card-foreground leading-none"
-              data-size="md"
-              data-testid="typography"
-            >
-              Recovery
-              <br
-                class="hidden md:inline"
-              />
-               phrase
-            </p>
-            <div
-              class="self-center w-16 h-16 md:w-28 md:h-28"
-              data-alt="Note"
-              data-height="112"
-              data-src="/images/note.png"
-              data-testid="image"
-              data-width="112"
-            >
-              Next.js Image: 
-              Note
-            </div>
-            <div
-              data-testid="dialog-backup-phrase"
-            >
-              DialogBackupPhrase
-            </div>
-          </div>
-          <div
-            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
-            data-testid="card"
-          >
-            <p
-              class="text-base font-bold text-card-foreground leading-none"
-              data-size="md"
-              data-testid="typography"
-            >
-              Download encrypted file
-            </p>
-            <div
-              class="self-center w-16 h-16 md:w-28 md:h-28"
-              data-alt="Folder"
-              data-height="112"
-              data-src="/images/folder.png"
-              data-testid="image"
-              data-width="112"
-            >
-              Next.js Image: 
-              Folder
-            </div>
-            <div
-              data-testid="dialog-backup-encrypted"
-            >
-              DialogBackupEncrypted
-            </div>
-          </div>
-          <div
-            class="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6"
-            data-testid="card"
-          >
-            <p
-              class="text-base font-bold text-card-foreground leading-none"
-              data-size="md"
-              data-testid="typography"
-            >
-              Export to Pubky Ring
-            </p>
-            <div
-              class="self-center w-16 h-16 md:w-28 md:h-28"
-              data-alt="Keys"
-              data-height="112"
-              data-src="/images/keyring.png"
-              data-testid="image"
-              data-width="112"
-            >
-              Next.js Image: 
-              Keys
-            </div>
-            <div
-              data-testid="dialog-export"
-            >
-              DialogExport
-            </div>
-          </div>
+          Next.js Image: 
+          Note
+        </div>
+        <div
+          data-testid="dialog-backup-phrase"
+        >
+          DialogBackupPhrase
+        </div>
+      </div>
+      <div
+        class="w-full p-4 md:p-8 flex-col gap-4 md:gap-6"
+        data-testid="card"
+      >
+        <p
+          class="text-base font-bold text-card-foreground leading-none"
+          data-size="md"
+          data-testid="typography"
+        >
+          Download encrypted file
+        </p>
+        <div
+          class="self-center w-16 h-16 md:w-28 md:h-28"
+          data-alt="Folder"
+          data-height="112"
+          data-src="/images/folder.png"
+          data-testid="image"
+          data-width="112"
+        >
+          Next.js Image: 
+          Folder
+        </div>
+        <div
+          data-testid="dialog-backup-encrypted"
+        >
+          DialogBackupEncrypted
+        </div>
+      </div>
+      <div
+        class="w-full p-4 md:p-8 flex-col gap-4 md:gap-6"
+        data-testid="card"
+      >
+        <p
+          class="text-base font-bold text-card-foreground leading-none"
+          data-size="md"
+          data-testid="typography"
+        >
+          Export to Pubky Ring
+        </p>
+        <div
+          class="self-center w-16 h-16 md:w-28 md:h-28"
+          data-alt="Keys"
+          data-height="112"
+          data-src="/images/keyring.png"
+          data-testid="image"
+          data-width="112"
+        >
+          Next.js Image: 
+          Keys
+        </div>
+        <div
+          data-testid="dialog-export"
+        >
+          DialogExport
         </div>
       </div>
     </div>

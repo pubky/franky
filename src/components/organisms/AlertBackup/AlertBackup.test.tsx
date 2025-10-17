@@ -100,13 +100,13 @@ vi.mock('@/libs', async (importOriginal) => {
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
-  DialogBackupPhrase: vi.fn(() => <div data-testid="dialog-backup-phrase">DialogBackupPhrase</div>),
   DialogExport: vi.fn(() => <div data-testid="dialog-export">DialogExport</div>),
 }));
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
   DialogBackup: vi.fn(() => <div data-testid="dialog-backup">DialogBackup</div>),
+  DialogBackupPhrase: vi.fn(() => <div data-testid="dialog-backup-phrase">DialogBackupPhrase</div>),
   DialogConfirmBackup: vi.fn(() => <div data-testid="dialog-confirm-backup">DialogConfirmBackup</div>),
   DialogBackupEncrypted: vi.fn(() => <div data-testid="dialog-backup-encrypted">DialogBackupEncrypted</div>),
 }));

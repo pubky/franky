@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 vi.mock('@radix-ui/react-dialog', () => ({
   Root: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-root">{children}</div>,
   Trigger: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
-    <div data-testid="dialog-trigger" data-as-child={asChild}>
+    <div data-testid="dialog-trigger" data-as-child={asChild ? 'true' : 'false'}>
       {children}
     </div>
   ),
@@ -37,7 +37,7 @@ vi.mock('@radix-ui/react-dialog', () => ({
   Portal: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-portal">{children}</div>,
   Overlay: ({ className }: { className?: string }) => <div data-testid="dialog-overlay" className={className} />,
   Close: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <button data-testid="dialog-close" className={className}>
+    <button id="dialog-close-btn" data-testid="dialog-close" className={className}>
       {children}
     </button>
   ),

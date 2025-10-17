@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import Image from 'next/image';
@@ -9,6 +10,25 @@ import * as Organisms from '@/organisms';
 interface DialogBackupProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+}
+
+interface BackupMethodCardProps {
+  title: React.ReactNode;
+  imageSrc: string;
+  imageAlt: string;
+  dialog: React.ReactNode;
+}
+
+function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCardProps) {
+  return (
+    <Atoms.Card className="w-full p-4 md:p-8 flex-col gap-4 md:gap-6">
+      <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
+        {title}
+      </Atoms.Typography>
+      <Image src={imageSrc} alt={imageAlt} width={112} height={112} className="self-center w-16 h-16 md:w-28 md:h-28" />
+      {dialog}
+    </Atoms.Card>
+  );
 }
 
 export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
@@ -27,64 +47,38 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent
-        className="max-w-sm sm:max-w-xl md:max-w-2xl gap-0 max-h-[90vh] p-6 md:p-8"
-        hiddenTitle="Back up your pubky"
-      >
+      <Atoms.DialogContent className="max-w-sm md:max-w-2xl" hiddenTitle="Back up your pubky">
         <Atoms.DialogHeader>
-          <Atoms.DialogTitle id="backup-dialog-title" className="leading-[1.25] pb-2">
-            Back up your pubky
-          </Atoms.DialogTitle>
+          <Atoms.DialogTitle id="backup-dialog-title">Back up your pubky</Atoms.DialogTitle>
+          <Atoms.DialogDescription id="backup-dialog-description">
+            Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose
+            multiple backup methods if you wish.
+          </Atoms.DialogDescription>
         </Atoms.DialogHeader>
-        <Atoms.Container>
-          <Atoms.Container className="gap-6">
-            <Atoms.Typography size="sm" className="text-muted-foreground font-medium">
-              Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can choose
-              multiple backup methods if you wish.
-            </Atoms.Typography>
-            <Atoms.Container className="w-full flex md:flex-row flex-col gap-3">
-              <Atoms.Card className="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6">
-                <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
-                  Recovery
-                  <br className="hidden md:inline" /> phrase
-                </Atoms.Typography>
-                <Image
-                  src="/images/note.png"
-                  alt="Note"
-                  width={112}
-                  height={112}
-                  className="self-center w-16 h-16 md:w-28 md:h-28"
-                />
-                <Molecules.DialogBackupPhrase />
-              </Atoms.Card>
-              <Atoms.Card className="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6">
-                <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
-                  Download encrypted file
-                </Atoms.Typography>
-                <Image
-                  src="/images/folder.png"
-                  alt="Folder"
-                  width={112}
-                  height={112}
-                  className="self-center w-16 h-16 md:w-28 md:h-28"
-                />
-                <Organisms.DialogBackupEncrypted />
-              </Atoms.Card>
-              <Atoms.Card className="w-full p-4 md:p-8 bg-card rounded-lg flex flex-col gap-4 md:gap-6">
-                <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
-                  Export to Pubky Ring
-                </Atoms.Typography>
-                <Image
-                  src="/images/keyring.png"
-                  alt="Keys"
-                  width={112}
-                  height={112}
-                  className="self-center w-16 h-16 md:w-28 md:h-28"
-                />
-                <Molecules.DialogExport mnemonic={mnemonic} />
-              </Atoms.Card>
-            </Atoms.Container>
-          </Atoms.Container>
+        <Atoms.Container className="md:flex-row flex-col gap-3">
+          <BackupMethodCard
+            title={
+              <>
+                Recovery
+                <br className="hidden md:inline" /> phrase
+              </>
+            }
+            imageSrc="/images/note.png"
+            imageAlt="Note"
+            dialog={<Organisms.DialogBackupPhrase />}
+          />
+          <BackupMethodCard
+            title="Download encrypted file"
+            imageSrc="/images/folder.png"
+            imageAlt="Folder"
+            dialog={<Organisms.DialogBackupEncrypted />}
+          />
+          <BackupMethodCard
+            title="Export to Pubky Ring"
+            imageSrc="/images/keyring.png"
+            imageAlt="Keys"
+            dialog={<Molecules.DialogExport mnemonic={mnemonic} />}
+          />
         </Atoms.Container>
       </Atoms.DialogContent>
     </Atoms.Dialog>

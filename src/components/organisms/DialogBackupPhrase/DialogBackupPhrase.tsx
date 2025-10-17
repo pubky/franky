@@ -47,7 +47,7 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="gap-6 p-8" hiddenTitle="Backup recovery phrase">
+      <Atoms.DialogContent hiddenTitle="Backup recovery phrase">
         {step === 1 && (
           <RecoveryStep1
             recoveryWords={recoveryWords}

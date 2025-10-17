@@ -2,8 +2,8 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Stores from '@/core';
 import * as Organisms from '@/organisms';
+import * as Stores from '@/core';
 import * as Libs from '@/libs';
 
 export const BackupMethodCard = () => {
@@ -29,12 +29,12 @@ export const BackupMethodCard = () => {
           choose to do this later.
         </Atoms.Typography>
         <Atoms.Container className="flex-row mt-6 gap-3 flex-wrap">
-          <Molecules.DialogBackupPhrase>
+          <Organisms.DialogBackupPhrase>
             <Atoms.Button id="backup-recovery-phrase-btn" variant="secondary" className="gap-2">
               <Libs.FileText className="h-4 w-4" />
               <span>Recovery phrase</span>
             </Atoms.Button>
-          </Molecules.DialogBackupPhrase>
+          </Organisms.DialogBackupPhrase>
           <Organisms.DialogBackupEncrypted>
             <Atoms.Button id="backup-encrypted-file-btn" variant="secondary" className="gap-2">
               <Libs.FileText className="h-4 w-4" />

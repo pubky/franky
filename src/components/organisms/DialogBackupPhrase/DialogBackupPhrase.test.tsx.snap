@@ -18,7 +18,6 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
     </button>
   </div>
   <div
-    class="gap-6 p-8"
     data-hidden-title="Backup recovery phrase"
     data-testid="dialog-content"
   >
