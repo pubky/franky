@@ -208,7 +208,7 @@ jobs:
           headed: false
           summary-title: ${{ matrix.browser }} - Mobile
           install: false
-          start: npm run start
+          # no need to start the server, it's already running
           wait-on: 'http://localhost:3000'
           wait-on-timeout: 180
 
