@@ -23,11 +23,13 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
     return found ?? null;
   }
 
-  deleteTagIfNoTaggers() {
+  deleteTagIfNoTaggers(): boolean {
+    const tagsLength = this.tags.length;
     this.tags = this.tags.filter((tag) => tag.taggers_count > 0);
+    return tagsLength > this.tags.length; // true if the tag was deleted
   }
 
-  saveTag(label: string, taggerId: Core.Pubky): boolean | null {
+  addTagger(label: string, taggerId: Core.Pubky): boolean | null {
     let tagExists = true;
     let labelTagData = this.findByLabel(label);
     // The label does not exist, create it
@@ -45,19 +47,16 @@ export abstract class TagCollection<Id, Schema extends Core.TagCollectionModelSc
     return tagExists;
   }
 
-  removeTag(label: string, taggerId: Core.Pubky) {
+  removeTagger(label: string, taggerId: Core.Pubky): boolean | null {
     const labelTagData = this.findByLabel(label);
-    if (!labelTagData) {
-      throw new Error('Tag not found');
-    } else if (!labelTagData?.relationship) {
-      // TODO: Not sure if we neeed to be that harsh
-      throw new Error('User has not tagged this post with this label');
+    if (!labelTagData || !labelTagData?.relationship) {
+      return null;
     }
 
     labelTagData.removeTagger(taggerId);
     labelTagData.setRelationship(false);
     //If there is not taggers, remove the tag
-    this.deleteTagIfNoTaggers();
+    return this.deleteTagIfNoTaggers();
   }
 
   // -------- Static CRUD (inherited from ModelBase) --------
