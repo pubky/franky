@@ -1,5 +1,5 @@
-import * as Core from '@/core';
 import { BlobResult, FileResult, PubkyAppUser } from 'pubky-app-specs';
+import type { Pubky } from '@/core';
 
 export type TUploadAvatarInput = {
   blobResult: BlobResult;
@@ -9,5 +9,5 @@ export type TUploadAvatarInput = {
 export type TCreateProfileInput = {
   profile: PubkyAppUser;
   url: string;
-  pubky: Core.Pubky;
+  pubky: Pubky;
 };

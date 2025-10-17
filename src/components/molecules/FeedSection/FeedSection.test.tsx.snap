@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FeedSection > matches snapshot 1`] = `
+exports[`FeedSection - Snapshots > matches snapshot 1`] = `
 <div>
   <div
     class="mx-auto w-full flex flex-col gap-2 bg-background"
