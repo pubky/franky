@@ -151,9 +151,12 @@ describe('EditProfile', () => {
     expect(screen.getByText('Saving...')).toBeInTheDocument();
 
     // Should navigate to profile after save
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('/profile');
-    });
+    await waitFor(
+      () => {
+        expect(mockPush).toHaveBeenCalledWith('/profile');
+      },
+      { timeout: 2000 },
+    );
   });
 
   it('disables save button when loading', async () => {

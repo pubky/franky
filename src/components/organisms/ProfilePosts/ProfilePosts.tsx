@@ -39,7 +39,7 @@ export function ProfilePosts({ className }: ProfilePostsProps) {
   return (
     <Atoms.Container className={Libs.cn('flex flex-col gap-4', className)}>
       {mockPosts.map((postId) => (
-        <Organisms.Post key={postId} postId={postId} clickable />
+        <Organisms.SinglePost key={postId} postId={postId} clickable />
       ))}
     </Atoms.Container>
   );
