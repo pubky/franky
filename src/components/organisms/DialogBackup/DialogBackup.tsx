@@ -77,7 +77,7 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
             title="Export to Pubky Ring"
             imageSrc="/images/keyring.png"
             imageAlt="Keys"
-            dialog={<Molecules.DialogExport mnemonic={mnemonic} />}
+            dialog={<Molecules.DialogBackupExport mnemonic={mnemonic} />}
           />
         </Atoms.Container>
       </Atoms.DialogContent>

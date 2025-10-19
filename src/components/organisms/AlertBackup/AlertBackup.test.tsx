@@ -100,7 +100,7 @@ vi.mock('@/libs', async (importOriginal) => {
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
-  DialogExport: vi.fn(() => <div data-testid="dialog-export">DialogExport</div>),
+  DialogBackupExport: vi.fn(() => <div data-testid="dialog-export">DialogBackupExport</div>),
 }));
 
 // Mock organisms

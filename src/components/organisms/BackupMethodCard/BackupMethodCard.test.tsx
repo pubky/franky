@@ -123,7 +123,7 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   PopoverBackup: () => <div data-testid="popover-backup">Backup Info</div>,
-  DialogExport: ({ mnemonic, children }: { mnemonic?: string; children?: React.ReactNode }) => (
+  DialogBackupExport: ({ mnemonic, children }: { mnemonic?: string; children?: React.ReactNode }) => (
     <div data-testid="dialog-export" data-mnemonic={mnemonic || ''}>
       {children || `Export ${mnemonic ? 'with mnemonic' : 'without mnemonic'}`}
     </div>
@@ -193,7 +193,7 @@ describe('BackupMethodCard', () => {
     expect(contentCard).toHaveAttribute('data-image-alt', 'Shield');
   });
 
-  it('passes mnemonic correctly to DialogExport based on store state', () => {
+  it('passes mnemonic correctly to DialogBackupExport based on store state', () => {
     const testCases = [
       { mnemonic: '', expectedDisplay: 'Export to Pubky Ring' },
       { mnemonic: 'test phrase', expectedDisplay: 'Export recovery phrase' },
@@ -230,7 +230,7 @@ describe('BackupMethodCard', () => {
     // Should call the store hook
     expect(mockUseOnboardingStore).toHaveBeenCalled();
 
-    // Should pass the mnemonic to DialogExport
+    // Should pass the mnemonic to DialogBackupExport
     const dialogExport = screen.getByTestId('dialog-export');
     expect(dialogExport).toHaveAttribute('data-mnemonic', testMnemonic);
   });

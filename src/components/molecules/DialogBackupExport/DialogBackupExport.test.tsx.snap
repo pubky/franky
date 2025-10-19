@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DialogExport - Snapshots > matches snapshot for DialogExport with mnemonic 1`] = `
+exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExport with mnemonic 1`] = `
 <div
   data-testid="dialog"
 >
@@ -118,7 +118,7 @@ exports[`DialogExport - Snapshots > matches snapshot for DialogExport with mnemo
 </div>
 `;
 
-exports[`DialogExport - Snapshots > matches snapshot for DialogExport with special mnemonic 1`] = `
+exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExport with special mnemonic 1`] = `
 <div
   data-testid="dialog"
 >
@@ -236,7 +236,7 @@ exports[`DialogExport - Snapshots > matches snapshot for DialogExport with speci
 </div>
 `;
 
-exports[`DialogExport - Snapshots > matches snapshot for default DialogExport 1`] = `
+exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBackupExport 1`] = `
 <div
   data-testid="dialog"
 >

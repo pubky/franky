@@ -16,7 +16,7 @@ export * from './DialogCropImage';
 export * from './DialogAge';
 export * from './DialogDeleteAccount';
 export * from './DialogDownloadPubkyRing';
-export * from './DialogExport';
+export * from './DialogBackupExport';
 export * from './DialogFeedback';
 export * from './FAQAccordion';
 export * from './DialogPrivacy';

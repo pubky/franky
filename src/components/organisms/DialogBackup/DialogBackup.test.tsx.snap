@@ -122,7 +122,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
         <div
           data-testid="dialog-export"
         >
-          DialogExport
+          DialogBackupExport
         </div>
       </div>
     </div>

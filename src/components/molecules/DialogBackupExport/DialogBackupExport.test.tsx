@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DialogExport } from './DialogExport';
+import { DialogBackupExport } from './DialogBackupExport';
 
 // Mock Next.js Image component
 vi.mock('next/image', () => ({
@@ -110,9 +110,9 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-describe('DialogExport', () => {
+describe('DialogBackupExport', () => {
   it('renders with default props', () => {
-    render(<DialogExport />);
+    render(<DialogBackupExport />);
 
     const dialog = screen.getByTestId('dialog');
     const trigger = screen.getByTestId('dialog-trigger');
@@ -124,7 +124,7 @@ describe('DialogExport', () => {
   });
 
   it('handles click events on trigger button', () => {
-    render(<DialogExport />);
+    render(<DialogBackupExport />);
 
     const button = screen.getByTestId('button');
 
@@ -134,7 +134,7 @@ describe('DialogExport', () => {
   });
 
   it('contains proper content structure', () => {
-    render(<DialogExport />);
+    render(<DialogBackupExport />);
 
     // Check that all main elements are present
     expect(screen.getByText('Pubky Ring export')).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe('DialogExport', () => {
   describe('with mnemonic prop', () => {
     it('renders with mnemonic-specific title and button text', () => {
       const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
-      render(<DialogExport mnemonic={testMnemonic} />);
+      render(<DialogBackupExport mnemonic={testMnemonic} />);
 
       const title = screen.getByTestId('dialog-title');
       const triggerText = screen.getByText('Continue');
@@ -159,21 +159,21 @@ describe('DialogExport', () => {
   });
 });
 
-describe('DialogExport - Snapshots', () => {
-  it('matches snapshot for default DialogExport', () => {
-    const { container } = render(<DialogExport />);
+describe('DialogBackupExport - Snapshots', () => {
+  it('matches snapshot for default DialogBackupExport', () => {
+    const { container } = render(<DialogBackupExport />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for DialogExport with mnemonic', () => {
+  it('matches snapshot for DialogBackupExport with mnemonic', () => {
     const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
-    const { container } = render(<DialogExport mnemonic={testMnemonic} />);
+    const { container } = render(<DialogBackupExport mnemonic={testMnemonic} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for DialogExport with special mnemonic', () => {
+  it('matches snapshot for DialogBackupExport with special mnemonic', () => {
     const specialMnemonic = 'test phrase with spaces & symbols!';
-    const { container } = render(<DialogExport mnemonic={specialMnemonic} />);
+    const { container } = render(<DialogBackupExport mnemonic={specialMnemonic} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

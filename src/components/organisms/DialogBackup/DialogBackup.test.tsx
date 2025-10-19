@@ -11,8 +11,8 @@ vi.mock('@/core', () => ({
 
 // Mock Molecules
 vi.mock('@/molecules', () => ({
-  DialogExport: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="dialog-export">{children || 'DialogExport'}</div>
+  DialogBackupExport: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="dialog-export">{children || 'DialogBackupExport'}</div>
   ),
 }));
 

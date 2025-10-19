@@ -4,12 +4,12 @@ import { QRCodeSVG } from 'qrcode.react';
 import * as Atoms from '@/atoms';
 import * as Config from '@/config';
 
-interface DialogExportProps {
+interface DialogBackupExportProps {
   mnemonic?: string;
   children?: React.ReactNode;
 }
 
-export function DialogExport({ mnemonic, children }: DialogExportProps) {
+export function DialogBackupExport({ mnemonic, children }: DialogBackupExportProps) {
   const generateDeeplink = (mnemonicPhrase: string) => {
     // Encode the mnemonic for URL
     const encodedMnemonic = encodeURIComponent(mnemonicPhrase);
