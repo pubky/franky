@@ -1,7 +1,5 @@
 import { type Pubky, type Timestamp, type TagModel } from '@/core';
 
-export type NexusPostKind = 'short' | 'long' | 'repost' | 'reply' | 'link';
-
 export enum StreamSorting {
   TIMELINE = 'timeline',
   ENGAGEMENT = 'total_engagement',
@@ -116,7 +114,10 @@ export type NexusPostDetails = {
   content: string;
   indexed_at: number;
   author: Pubky;
-  kind: NexusPostKind;
+  // If we type this as PubkyAppPostKind, we need to map it to the correct string value
+  // if not we get a index from the enum and in indexdb is written as a number
+  // TODO: https://github.com/pubky/pubky-app-specs/issues/74
+  kind: string;
   uri: string;
   attachments: string[] | null;
 };

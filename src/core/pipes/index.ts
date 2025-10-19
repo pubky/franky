@@ -3,11 +3,11 @@
 // 2. Normalization: transform input data to the desired PubkyAppSpecs format
 
 export * from './pipes.builder';
+export * from './pipes.types';
 export * from './file';
 export * from './post';
 export * from './tag';
 export * from './user';
-export * from './pipes.types';
 export * from './follow';
 // Re-export pubky-app-specs types
 export { PubkyAppPostKind } from 'pubky-app-specs';

@@ -23,7 +23,9 @@ describe('SettingsMenu', () => {
     expect(screen.getByText('Language')).toBeInTheDocument();
     expect(screen.getByText('Help')).toBeInTheDocument();
   });
+});
 
+describe('SettingsMenu - Snapshots', () => {
   it('matches snapshot', () => {
     const { container } = render(<SettingsMenu />);
     expect(container).toMatchSnapshot();

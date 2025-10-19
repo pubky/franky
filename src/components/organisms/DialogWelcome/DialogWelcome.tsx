@@ -1,32 +1,50 @@
+'use client';
+
+import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 
-interface DialogWelcomeProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  name: string;
-  pubky: Core.Pubky;
-  bio?: string;
-}
+/**
+ * DialogWelcome
+ *
+ * Self-contained welcome dialog that manages its own state and data.
+ * No props needed - it fetches user data and manages dialog state internally.
+ */
+export function DialogWelcome() {
+  const { currentUserPubky } = Core.useAuthStore();
+  const { showWelcomeDialog, setShowWelcomeDialog } = Core.useOnboardingStore();
 
-export function DialogWelcome({ isOpen, onOpenChange, name, pubky, bio }: DialogWelcomeProps) {
-  const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
+  // Fetch current user details from database
+  const userDetails = useLiveQuery(async () => {
+    if (!currentUserPubky) return null;
+    const details = await Core.ProfileController.read({ userId: currentUserPubky });
+    return details || null;
+  }, [currentUserPubky]);
+
   const { copyToClipboard } = Hooks.useCopyToClipboard();
-  const initials = Libs.extractInitials({ name, maxLength: 2 });
-  const avatarImage = Core.filesApi.getAvatar(pubky);
+
+  // Don't render if conditions aren't met
+  if (!userDetails || !currentUserPubky) {
+    return null;
+  }
+
+  const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10 });
+  const initials = Libs.extractInitials({ name: userDetails.name, maxLength: 2 });
+  const avatarImage = Core.filesApi.getAvatar(currentUserPubky);
 
   const handleCopyToClipboard = () => {
-    copyToClipboard(pubky);
+    copyToClipboard(currentUserPubky);
   };
 
   const handleExplorePubky = () => {
-    onOpenChange(false);
+    // Set welcome dialog to false permanently - it will never show again for this user
+    setShowWelcomeDialog(false);
   };
 
   return (
-    <Atoms.Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Atoms.Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
       <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Welcome to Pubky!">
         <Atoms.DialogHeader className="text-left pr-6 gap-0 mb-6">
           <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
@@ -42,9 +60,9 @@ export function DialogWelcome({ isOpen, onOpenChange, name, pubky, bio }: Dialog
                 <Atoms.AvatarFallback className="text-4xl">{initials}</Atoms.AvatarFallback>
               </Atoms.Avatar>
               <Atoms.Container className="flex flex-col justify-center sm:justify-start items-center sm:items-start">
-                <Atoms.Typography size="lg">{name}</Atoms.Typography>
+                <Atoms.Typography size="lg">{userDetails.name}</Atoms.Typography>
                 <Atoms.Typography size="sm" className="text-center sm:text-left text-muted-foreground font-medium">
-                  {bio}
+                  {userDetails.bio}
                 </Atoms.Typography>
                 <Atoms.Button
                   variant="secondary"
