@@ -18,21 +18,18 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     </button>
   </div>
   <div
-    class="p-8 rounded-xl flex flex-col w-[430px]"
+    class="max-w-md"
     data-testid="dialog-content"
   >
     <div
-      class="space-y-1.5 pr-6"
       data-testid="dialog-header"
     >
       <h2
-        class="text-2xl font-bold leading-8"
         data-testid="dialog-title"
       >
         Import recovery phrase
       </h2>
       <p
-        class="text-sm font-medium leading-5"
         data-testid="dialog-description"
       >
         1. Open Pubky Ring, tap 'Add pubky' 
@@ -45,7 +42,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
       </p>
     </div>
     <div
-      class="justify-between items-center mt-6"
+      class="justify-between items-center"
       data-testid="container"
     >
       <div
@@ -53,7 +50,6 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
         data-testid="container"
       >
         <div
-          class="w-[250px]"
           data-testid="container"
         >
           <img
@@ -65,7 +61,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
           />
         </div>
         <div
-          class="gap-8 w-full mt-4"
+          class="gap-6"
           data-testid="container"
         >
           <div
@@ -136,21 +132,18 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     </button>
   </div>
   <div
-    class="p-8 rounded-xl flex flex-col w-[430px]"
+    class="max-w-md"
     data-testid="dialog-content"
   >
     <div
-      class="space-y-1.5 pr-6"
       data-testid="dialog-header"
     >
       <h2
-        class="text-2xl font-bold leading-8"
         data-testid="dialog-title"
       >
         Import recovery phrase
       </h2>
       <p
-        class="text-sm font-medium leading-5"
         data-testid="dialog-description"
       >
         1. Open Pubky Ring, tap 'Add pubky' 
@@ -163,7 +156,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
       </p>
     </div>
     <div
-      class="justify-between items-center mt-6"
+      class="justify-between items-center"
       data-testid="container"
     >
       <div
@@ -171,7 +164,6 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
         data-testid="container"
       >
         <div
-          class="w-[250px]"
           data-testid="container"
         >
           <img
@@ -183,7 +175,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
           />
         </div>
         <div
-          class="gap-8 w-full mt-4"
+          class="gap-6"
           data-testid="container"
         >
           <div
@@ -254,21 +246,18 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
     </button>
   </div>
   <div
-    class="p-8 rounded-xl flex flex-col w-[430px]"
+    class="max-w-md"
     data-testid="dialog-content"
   >
     <div
-      class="space-y-1.5 pr-6"
       data-testid="dialog-header"
     >
       <h2
-        class="text-2xl font-bold leading-8"
         data-testid="dialog-title"
       >
         Pubky Ring export
       </h2>
       <p
-        class="text-sm font-medium leading-5"
         data-testid="dialog-description"
       >
         1. Open Pubky Ring, tap 'Add pubky' 
@@ -279,7 +268,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
       </p>
     </div>
     <div
-      class="justify-between items-center mt-6"
+      class="justify-between items-center"
       data-testid="container"
     >
       <div
@@ -287,7 +276,6 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
         data-testid="container"
       >
         <div
-          class="w-[250px]"
           data-testid="container"
         >
           <img
@@ -299,7 +287,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
           />
         </div>
         <div
-          class="gap-8 w-full mt-4"
+          class="gap-6"
           data-testid="container"
         >
           <div
