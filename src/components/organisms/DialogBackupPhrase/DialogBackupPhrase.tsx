@@ -47,7 +47,7 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent hiddenTitle="Backup recovery phrase">
+      <Atoms.DialogContent className="max-w-sm md:max-w-2xl" hiddenTitle="Backup recovery phrase">
         {step === 1 && (
           <RecoveryStep1
             recoveryWords={recoveryWords}
@@ -76,11 +76,9 @@ function RecoveryStep1({
 }) {
   return (
     <>
-      <Atoms.DialogHeader className="space-y-1.5 pr-6">
-        <Atoms.DialogTitle className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
-          Backup recovery phrase
-        </Atoms.DialogTitle>
-        <Atoms.DialogDescription className="text-sm leading-5 max-w-[530px]">
+      <Atoms.DialogHeader>
+        <Atoms.DialogTitle>Backup recovery phrase</Atoms.DialogTitle>
+        <Atoms.DialogDescription>
           Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the
           correct order and store them in a safe place.{' '}
           <span className="text-brand font-bold">Never share this recovery phrase with anyone.</span>
@@ -108,23 +106,19 @@ function RecoveryStep1({
         {isHidden ? (
           <>
             <Atoms.DialogClose asChild>
-              <Atoms.Button
-                id="backup-recovery-phrase-cancel-btn"
-                variant="outline"
-                className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
-              >
+              <Atoms.Button id="backup-recovery-phrase-cancel-btn" variant="outline" size="dialog">
                 Cancel
               </Atoms.Button>
             </Atoms.DialogClose>
             <Atoms.Button
               id="backup-recovery-phrase-reveal-btn"
-              className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+              size="dialog"
               onClick={() => {
                 setIsHidden(!isHidden);
                 setStep(1);
               }}
             >
-              <Libs.Eye className="mr-2 h-4 w-4" />
+              <Libs.Eye className="h-4 w-4" />
               Reveal recovery phrase
             </Atoms.Button>
           </>
@@ -132,21 +126,17 @@ function RecoveryStep1({
           <>
             <Atoms.Button
               variant="outline"
-              className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+              size="dialog"
               onClick={() => {
                 setIsHidden(!isHidden);
                 setStep(1);
               }}
             >
-              <Libs.EyeOff className="mr-2 h-4 w-4" />
+              <Libs.EyeOff className="h-4 w-4" />
               Hide recovery phrase
             </Atoms.Button>
-            <Atoms.Button
-              id="backup-recovery-phrase-confirm-btn"
-              className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
-              onClick={() => setStep(2)}
-            >
-              <Libs.ArrowRight className="mr-2 h-4 w-4" />
+            <Atoms.Button id="backup-recovery-phrase-confirm-btn" size="dialog" onClick={() => setStep(2)}>
+              <Libs.ArrowRight className="h-4 w-4" />
               Confirm recovery phrase
             </Atoms.Button>
           </>
@@ -160,7 +150,6 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
   const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
   const [availableWords] = useState<string[]>([...recoveryWords].sort());
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
   const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
   const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
@@ -173,17 +162,6 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
     }
     return map;
   }, [recoveryWords]);
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 640);
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
 
   const validateSingleWord = (wordIndex: number, word: string) => {
     const newErrors = [...errors];
@@ -282,8 +260,8 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
 
   return (
     <>
-      <Atoms.DialogHeader className="space-y-1.5 pr-6">
-        <Atoms.DialogTitle className="text-2xl sm:text-[24px] font-bold">Confirm recovery phrase</Atoms.DialogTitle>
+      <Atoms.DialogHeader>
+        <Atoms.DialogTitle>Confirm recovery phrase</Atoms.DialogTitle>
         <Atoms.DialogDescription className="text-sm text-muted-foreground">
           Click or tap the 12 words in the correct order. Click on filled fields to remove words.
         </Atoms.DialogDescription>
@@ -334,19 +312,14 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       </Atoms.Container>
 
       <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
-        <Atoms.Button
-          variant="outline"
-          className="rounded-full flex-1"
-          size={isLargeScreen ? 'lg' : 'default'}
-          onClick={() => setStep(1)}
-        >
-          <Libs.ArrowLeft className="mr-2 h-4 w-4" />
+        <Atoms.Button variant="outline" size="dialog" onClick={() => setStep(1)}>
+          <Libs.ArrowLeft className="h-4 w-4" />
           Back
         </Atoms.Button>
         <Atoms.Button
           id="backup-recovery-phrase-validate-btn"
           className="rounded-full flex-1"
-          size={isLargeScreen ? 'lg' : 'default'}
+          size="dialog"
           onClick={validateWords}
           disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
         >

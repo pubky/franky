@@ -18,6 +18,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
     </button>
   </div>
   <div
+    class="max-w-sm md:max-w-2xl"
     data-hidden-title="Backup recovery phrase"
     data-testid="dialog-content"
   >
@@ -28,17 +29,14 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
       Backup recovery phrase
     </h2>
     <div
-      class="space-y-1.5 pr-6"
       data-testid="dialog-header"
     >
       <h2
-        class="text-2xl font-bold leading-8 sm:text-xl sm:leading-7"
         data-testid="dialog-title"
       >
         Backup recovery phrase
       </h2>
       <p
-        class="text-sm leading-5 max-w-[530px]"
         data-testid="dialog-description"
       >
         Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the correct order and store them in a safe place.
@@ -273,19 +271,19 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
         data-testid="dialog-close"
       >
         <button
-          class="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+          data-size="dialog"
           data-testid="button-outline"
         >
           Cancel
         </button>
       </div>
       <button
-        class="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+        data-size="dialog"
         data-testid="button-default"
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-eye mr-2 h-4 w-4"
+          class="lucide lucide-eye h-4 w-4"
           fill="none"
           height="24"
           stroke="currentColor"
