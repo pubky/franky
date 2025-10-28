@@ -4,7 +4,7 @@ export * from './ContentLayout';
 export * from './CreateProfileHeader';
 export * from './CreateProfileForm';
 export * from './DialogBackup';
-export * from './DialogBackupPhrase/DialogBackupPhrase';
+export * from './DialogBackupPhrase';
 export * from './DialogConfirmBackup';
 export * from './DialogBackupEncrypted';
 export * from './DialogRestoreEncryptedFile';
