@@ -9,12 +9,9 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
     data-testid="dialog-trigger"
   >
     <button
-      class="gap-2"
       data-testid="button-default"
     >
-      <span>
-        Continue
-      </span>
+      Continue
     </button>
   </div>
   <div
@@ -263,8 +260,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
       </div>
     </div>
     <div
-      class="gap-4 sm:gap-3 md:flex-row justify-between"
-      data-testid="container"
+      data-testid="dialog-footer"
     >
       <div
         data-as-child="true"

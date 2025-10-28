@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { DialogBackupPhrase } from './DialogBackupPhrase';
+import { useRecoveryPhraseValidation } from '@/hooks';
 
 const dialogMockControls: {
   onOpenChange?: (open: boolean) => void;
@@ -101,6 +102,11 @@ vi.mock('@/atoms', () => ({
     <p data-testid="dialog-description" className={className}>
       {children}
     </p>
+  ),
+  DialogFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-footer" className={className}>
+      {children}
+    </div>
   ),
   DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
     <div data-testid="dialog-close" data-as-child={asChild}>
@@ -571,7 +577,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     );
   };
 
-  // Test version of RecoveryStep2 with identical words
+  // Test version of RecoveryStep2 with identical words using the hook
   const RecoveryStep2Test = ({
     recoveryWords,
     setStep,
@@ -579,83 +585,16 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     recoveryWords: string[];
     setStep: (step: number) => void;
   }) => {
-    const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
-    const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
-    const [availableWords] = useState<string[]>([...recoveryWords].sort());
-    const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
-    const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
-    const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
-
-    const wordCountMap = useMemo(() => {
-      const map: Record<string, number> = {};
-      for (const w of recoveryWords) {
-        map[w] = (map[w] || 0) + 1;
-      }
-      return map;
-    }, [recoveryWords]);
-
-    const handleWordClick = (word: string, wordIndex: number) => {
-      const wordCountInPhrase = wordCountMap[word] ?? 0;
-      const currentUsageCount = usedWordCounts[word] || 0;
-
-      if (currentUsageCount >= wordCountInPhrase) {
-        return;
-      }
-
-      if (usedWordInstances.has(wordIndex)) {
-        return;
-      }
-
-      const emptyIndex = userWords.findIndex((w) => w === '');
-      if (emptyIndex !== -1) {
-        const newUserWords = [...userWords];
-        newUserWords[emptyIndex] = word;
-        setUserWords(newUserWords);
-
-        setUsedWordCounts((prev) => ({
-          ...prev,
-          [word]: currentUsageCount + 1,
-        }));
-        setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
-
-        setSlotToInstance((prev) => {
-          const next = [...prev];
-          next[emptyIndex] = wordIndex;
-          return next;
-        });
-      }
-    };
-
-    const clearWord = (index: number) => {
-      const word = userWords[index];
-      if (word) {
-        const newUserWords = [...userWords];
-        newUserWords[index] = '';
-        setUserWords(newUserWords);
-        setUsedWordCounts((prev) => ({
-          ...prev,
-          [word]: Math.max(0, (prev[word] || 0) - 1),
-        }));
-
-        const instanceIndex = slotToInstance[index];
-        if (instanceIndex !== null) {
-          setUsedWordInstances((prev) => {
-            const next = new Set(prev);
-            next.delete(instanceIndex);
-            return next;
-          });
-          setSlotToInstance((prev) => {
-            const next = [...prev];
-            next[index] = null;
-            return next;
-          });
-        }
-
-        const newErrors = [...errors];
-        newErrors[index] = false;
-        setErrors(newErrors);
-      }
-    };
+    const {
+      userWords,
+      errors,
+      availableWords,
+      usedWordInstances,
+      handleWordClick,
+      validateWords,
+      clearWord,
+      isComplete,
+    } = useRecoveryPhraseValidation({ recoveryWords });
 
     return (
       <>
@@ -722,8 +661,12 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
           <button
             data-testid="button-default"
             className="rounded-full flex-1"
-            onClick={() => setStep(3)}
-            disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
+            onClick={() => {
+              if (validateWords()) {
+                setStep(3);
+              }
+            }}
+            disabled={!isComplete}
           >
             <div data-testid="check-icon" className="mr-2 h-4 w-4">
               Check

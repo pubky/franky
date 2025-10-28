@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Image from 'next/image';
 
-import * as Atoms from '@/atoms';
+import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Stores from '@/core';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 
 interface DialogBackupPhraseProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
@@ -42,9 +43,7 @@ export function DialogBackupPhrase({ children }: DialogBackupPhraseProps) {
         <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
       ) : (
         <Atoms.DialogTrigger asChild>
-          <Atoms.Button id="backup-recovery-phrase-btn" className="gap-2">
-            <span>Continue</span>
-          </Atoms.Button>
+          <Atoms.Button id="backup-recovery-phrase-btn">Continue</Atoms.Button>
         </Atoms.DialogTrigger>
       )}
       <Atoms.DialogContent className="max-w-sm md:max-w-2xl" hiddenTitle="Backup recovery phrase">
@@ -102,7 +101,7 @@ function RecoveryStep1({
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
+      <Atoms.DialogFooter>
         {isHidden ? (
           <>
             <Atoms.DialogClose asChild>
@@ -141,120 +140,26 @@ function RecoveryStep1({
             </Atoms.Button>
           </>
         )}
-      </Atoms.Container>
+      </Atoms.DialogFooter>
     </>
   );
 }
 
 function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; setStep: (step: number) => void }) {
-  const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
-  const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
-  const [availableWords] = useState<string[]>([...recoveryWords].sort());
-  const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
-  const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
-  const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
+  const {
+    userWords,
+    errors,
+    availableWords,
+    usedWordInstances,
+    handleWordClick,
+    validateWords,
+    clearWord,
+    isComplete,
+  } = Hooks.useRecoveryPhraseValidation({ recoveryWords });
 
-  // Precompute word counts for better performance
-  const wordCountMap = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const w of recoveryWords) {
-      map[w] = (map[w] || 0) + 1;
-    }
-    return map;
-  }, [recoveryWords]);
-
-  const validateSingleWord = (wordIndex: number, word: string) => {
-    const newErrors = [...errors];
-    // Check if this specific word is correct for its position
-    const isError = word !== '' && word !== recoveryWords[wordIndex];
-    newErrors[wordIndex] = isError;
-    setErrors(newErrors);
-  };
-
-  const handleWordClick = (word: string, wordIndex: number) => {
-    const wordCountInPhrase = wordCountMap[word] ?? 0;
-    const currentUsageCount = usedWordCounts[word] || 0;
-
-    if (currentUsageCount >= wordCountInPhrase) {
-      return;
-    }
-
-    // Check if this specific word instance is already used
-    if (usedWordInstances.has(wordIndex)) {
-      return;
-    }
-
-    const emptyIndex = userWords.findIndex((w) => w === '');
-    if (emptyIndex !== -1) {
-      const newUserWords = [...userWords];
-      newUserWords[emptyIndex] = word;
-      setUserWords(newUserWords);
-
-      setUsedWordCounts((prev) => ({
-        ...prev,
-        [word]: currentUsageCount + 1,
-      }));
-      setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
-
-      // Track slot to instance mapping
-      setSlotToInstance((prev) => {
-        const next = [...prev];
-        next[emptyIndex] = wordIndex;
-        return next;
-      });
-
-      // Validate this specific word immediately
-      validateSingleWord(emptyIndex, word);
-    }
-  };
-
-  const validateWords = () => {
-    // Validate all words first
-    const newErrors = userWords.map((word, index) => {
-      return word !== '' && word !== recoveryWords[index];
-    });
-    setErrors(newErrors);
-
-    // Check if all words are correct and filled
-    const allFilled = userWords.every((word) => word !== '');
-    const allCorrect = newErrors.every((error) => !error);
-
-    // Only advance if all words are filled and correct
-    if (allFilled && allCorrect) {
+  const handleValidate = () => {
+    if (validateWords()) {
       setStep(3);
-    }
-  };
-
-  const clearWord = (index: number) => {
-    const word = userWords[index];
-    if (word) {
-      const newUserWords = [...userWords];
-      newUserWords[index] = '';
-      setUserWords(newUserWords);
-      setUsedWordCounts((prev) => ({
-        ...prev,
-        [word]: Math.max(0, (prev[word] || 0) - 1),
-      }));
-
-      // Use the exact instance that was used in this slot
-      const instanceIndex = slotToInstance[index];
-      if (instanceIndex !== null) {
-        setUsedWordInstances((prev) => {
-          const next = new Set(prev);
-          next.delete(instanceIndex);
-          return next;
-        });
-        setSlotToInstance((prev) => {
-          const next = [...prev];
-          next[index] = null;
-          return next;
-        });
-      }
-
-      // Clear error for this specific word
-      const newErrors = [...errors];
-      newErrors[index] = false;
-      setErrors(newErrors);
     }
   };
 
@@ -262,7 +167,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
     <>
       <Atoms.DialogHeader>
         <Atoms.DialogTitle>Confirm recovery phrase</Atoms.DialogTitle>
-        <Atoms.DialogDescription className="text-sm text-muted-foreground">
+        <Atoms.DialogDescription>
           Click or tap the 12 words in the correct order. Click on filled fields to remove words.
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
@@ -311,22 +216,21 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
+      <Atoms.DialogFooter>
         <Atoms.Button variant="outline" size="lg" onClick={() => setStep(1)}>
           <Libs.ArrowLeft className="h-4 w-4" />
           Back
         </Atoms.Button>
         <Atoms.Button
           id="backup-recovery-phrase-validate-btn"
-          className="rounded-full flex-1"
           size="lg"
-          onClick={validateWords}
-          disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
+          onClick={handleValidate}
+          disabled={!isComplete}
         >
-          <Libs.Check className="mr-2 h-4 w-4" />
+          <Libs.Check className="h-4 w-4" />
           Validate
         </Atoms.Button>
-      </Atoms.Container>
+      </Atoms.DialogFooter>
     </>
   );
 }
@@ -334,38 +238,30 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
 function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
   return (
     <>
-      <Atoms.DialogHeader className="pr-6 space-y-1.5">
-        <Atoms.DialogTitle className="text-xl lg:text-2xl font-bold leading-7 lg:leading-8">
-          Backup complete
-        </Atoms.DialogTitle>
-        <Atoms.DialogDescription className="text-sm font-medium text-muted-foreground leading-5">
+      <Atoms.DialogHeader>
+        <Atoms.DialogTitle>Backup complete</Atoms.DialogTitle>
+        <Atoms.DialogDescription>
           You can use your backed up recovery phrase to restore your account later.
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container>
-        <Atoms.Container className="w-full bg-card rounded-md p-6 flex items-center justify-center">
-          <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="w-48 h-48" />
-        </Atoms.Container>
+      <Atoms.Container className="w-full bg-card rounded-md p-6 flex items-center justify-center">
+        <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="w-48 h-48" />
       </Atoms.Container>
 
-      <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 lg:gap-4 sm:justify-end">
+      <Atoms.DialogFooter>
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
+          <Atoms.Button variant="outline" size="lg" onClick={handleClose}>
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
-          <Atoms.Button
-            id="backup-recovery-phrase-finish-btn"
-            className="rounded-full lg:h-[60px] lg:px-8 flex-1"
-            onClick={handleClose}
-          >
-            <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          <Atoms.Button id="backup-recovery-phrase-finish-btn" onClick={handleClose} size="lg">
+            <Libs.ArrowRight className="h-4 w-4" />
             Finish
           </Atoms.Button>
         </Atoms.DialogClose>
-      </Atoms.Container>
+      </Atoms.DialogFooter>
     </>
   );
 }
