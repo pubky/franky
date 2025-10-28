@@ -106,13 +106,13 @@ function RecoveryStep1({
         {isHidden ? (
           <>
             <Atoms.DialogClose asChild>
-              <Atoms.Button id="backup-recovery-phrase-cancel-btn" variant="outline" size="dialog">
+              <Atoms.Button id="backup-recovery-phrase-cancel-btn" variant="outline" size="lg">
                 Cancel
               </Atoms.Button>
             </Atoms.DialogClose>
             <Atoms.Button
               id="backup-recovery-phrase-reveal-btn"
-              size="dialog"
+              size="lg"
               onClick={() => {
                 setIsHidden(!isHidden);
                 setStep(1);
@@ -126,7 +126,7 @@ function RecoveryStep1({
           <>
             <Atoms.Button
               variant="outline"
-              size="dialog"
+              size="lg"
               onClick={() => {
                 setIsHidden(!isHidden);
                 setStep(1);
@@ -135,7 +135,7 @@ function RecoveryStep1({
               <Libs.EyeOff className="h-4 w-4" />
               Hide recovery phrase
             </Atoms.Button>
-            <Atoms.Button id="backup-recovery-phrase-confirm-btn" size="dialog" onClick={() => setStep(2)}>
+            <Atoms.Button id="backup-recovery-phrase-confirm-btn" size="lg" onClick={() => setStep(2)}>
               <Libs.ArrowRight className="h-4 w-4" />
               Confirm recovery phrase
             </Atoms.Button>
@@ -312,14 +312,14 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       </Atoms.Container>
 
       <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
-        <Atoms.Button variant="outline" size="dialog" onClick={() => setStep(1)}>
+        <Atoms.Button variant="outline" size="lg" onClick={() => setStep(1)}>
           <Libs.ArrowLeft className="h-4 w-4" />
           Back
         </Atoms.Button>
         <Atoms.Button
           id="backup-recovery-phrase-validate-btn"
           className="rounded-full flex-1"
-          size="dialog"
+          size="lg"
           onClick={validateWords}
           disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
         >

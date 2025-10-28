@@ -271,14 +271,14 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
         data-testid="dialog-close"
       >
         <button
-          data-size="dialog"
+          data-size="lg"
           data-testid="button-outline"
         >
           Cancel
         </button>
       </div>
       <button
-        data-size="dialog"
+        data-size="lg"
         data-testid="button-default"
       >
         <svg

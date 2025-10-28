@@ -36,14 +36,14 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot for default DialogDe
       data-testid="dialog-footer"
     >
       <button
-        data-size="dialog"
+        data-size="lg"
         data-testid="button-dark"
         data-variant="dark"
       >
         Cancel
       </button>
       <button
-        data-size="dialog"
+        data-size="lg"
         data-testid="button-destructive"
         data-variant="destructive"
       >
@@ -125,14 +125,14 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot when closed 1`] = `
       data-testid="dialog-footer"
     >
       <button
-        data-size="dialog"
+        data-size="lg"
         data-testid="button-dark"
         data-variant="dark"
       >
         Cancel
       </button>
       <button
-        data-size="dialog"
+        data-size="lg"
         data-testid="button-destructive"
         data-variant="destructive"
       >

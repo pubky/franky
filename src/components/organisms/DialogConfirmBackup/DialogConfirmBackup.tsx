@@ -57,11 +57,11 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
             </Atoms.Container>
           </Atoms.Container>
           <Atoms.DialogFooter>
-            <Atoms.Button size="dialog" variant="outline" onClick={handleBackupMethods}>
+            <Atoms.Button size="lg" variant="outline" onClick={handleBackupMethods}>
               <Libs.ShieldCheck className="h-4 w-4" />
               Backup methods
             </Atoms.Button>
-            <Atoms.Button id="backup-done-confirm-btn" size="dialog" onClick={handleConfirm}>
+            <Atoms.Button id="backup-done-confirm-btn" size="lg" onClick={handleConfirm}>
               <Libs.Check className="h-4 w-4" />
               Confirm (delete seed)
             </Atoms.Button>

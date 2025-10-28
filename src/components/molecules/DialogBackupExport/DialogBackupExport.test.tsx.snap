@@ -12,9 +12,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
       class="gap-2"
       data-testid="button"
     >
-      <span>
-        Continue
-      </span>
+      Continue
     </button>
   </div>
   <div
@@ -126,9 +124,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
       class="gap-2"
       data-testid="button"
     >
-      <span>
-        Continue
-      </span>
+      Continue
     </button>
   </div>
   <div
@@ -240,9 +236,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
       class="gap-2"
       data-testid="button"
     >
-      <span>
-        Continue
-      </span>
+      Continue
     </button>
   </div>
   <div
