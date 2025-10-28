@@ -13,4 +13,15 @@ export class UserController {
       followee,
     });
   }
+
+  static async mute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams) {
+    const { meta, mute } = await Core.MuteNormalizer.to({ muter, mutee });
+    await Core.UserApplication.mute({
+      eventType,
+      muteUrl: meta.url,
+      muteJson: mute.toJson(),
+      muter,
+      mutee,
+    });
+  }
 }
