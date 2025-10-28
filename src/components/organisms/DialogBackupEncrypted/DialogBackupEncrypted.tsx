@@ -6,7 +6,6 @@ import * as Atoms from '@/components/atoms';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import Image from 'next/image';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { Identity } from '@/libs';
 import { useOnboardingStore } from '@/core';
 
@@ -14,33 +13,40 @@ interface DialogBackupEncryptedProps {
   children?: React.ReactNode;
 }
 
-export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) {
-  const [step, setStep] = useState(1);
-
-  const handleClose = () => {
-    //delay 1 seconds
-    setTimeout(() => {
-      setStep(1);
-    }, 1000);
+function calculatePasswordStrength(password: string) {
+  let strength = 0;
+  const checks = {
+    length: password.length >= 8,
+    lowercase: /[a-z]/.test(password),
+    uppercase: /[A-Z]/.test(password),
+    numbers: /\d/.test(password),
+    symbols: /[!@#$%^&*()_+\-_=\[\]{};':"\\|,.<>\/?]/.test(password),
   };
 
-  return (
-    <Atoms.Dialog>
-      {children ? (
-        <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
-      ) : (
-        <Atoms.DialogTrigger asChild>
-          <Atoms.Button id="backup-encrypted-file-btn" className="gap-2">
-            <span>Continue</span>
-          </Atoms.Button>
-        </Atoms.DialogTrigger>
-      )}
-      <Atoms.DialogContent className="gap-6 p-8" hiddenTitle="Backup as encrypted file">
-        {step === 1 && <RecoveryStep1 setStep={setStep} />}
-        {step === 2 && <RecoveryStep2 handleClose={handleClose} />}
-      </Atoms.DialogContent>
-    </Atoms.Dialog>
-  );
+  Object.values(checks).forEach((check) => {
+    if (check) strength++;
+  });
+
+  return {
+    strength,
+    checks,
+    percentage: (strength / 5) * 100,
+  };
+}
+
+function getStrengthText(strength: number) {
+  if (strength === 0) return '';
+  if (strength <= 2) return 'Weak password';
+  if (strength <= 3) return 'Fair password';
+  if (strength <= 4) return 'Good password';
+  return 'Strong password!';
+}
+
+function getStrengthColor(strength: number) {
+  if (strength <= 2) return 'text-red-400';
+  if (strength <= 3) return 'text-yellow-400';
+  if (strength <= 4) return 'text-blue-400';
+  return 'text-green-400';
 }
 
 function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
@@ -48,49 +54,11 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const { secretKey, pubky } = useOnboardingStore();
 
-  // Password strength calculation
-  const calculatePasswordStrength = (password: string) => {
-    let strength = 0;
-    const checks = {
-      length: password.length >= 8,
-      lowercase: /[a-z]/.test(password),
-      uppercase: /[A-Z]/.test(password),
-      numbers: /\d/.test(password),
-      symbols: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
-    };
-
-    // Each check adds 1 point
-    Object.values(checks).forEach((check) => {
-      if (check) strength++;
-    });
-
-    return {
-      strength,
-      checks,
-      percentage: (strength / 5) * 100,
-    };
-  };
-
   const passwordStrength = calculatePasswordStrength(password);
   const passwordsMatch = password === confirmPassword && password !== '';
 
-  const getStrengthText = (strength: number) => {
-    if (strength === 0) return '';
-    if (strength <= 2) return 'Weak password';
-    if (strength <= 3) return 'Fair password';
-    if (strength <= 4) return 'Good password';
-    return 'Strong password!';
-  };
-
-  const getStrengthColor = (strength: number) => {
-    if (strength <= 2) return 'text-red-400';
-    if (strength <= 3) return 'text-yellow-400';
-    if (strength <= 4) return 'text-blue-400';
-    return 'text-green-400';
-  };
-
   const handleDownload = () => {
-    Identity.createRecoveryFile(
+    void Identity.createRecoveryFile(
       {
         pubky,
         secretKey: secretKey,
@@ -108,110 +76,115 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
 
   return (
     <>
-      <Atoms.DialogHeader className="space-y-1.5 pr-6">
-        <Atoms.DialogTitle className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
-          Backup as encrypted file
-        </Atoms.DialogTitle>
-        <Atoms.DialogDescription className="text-sm leading-5">
+      <Atoms.DialogHeader>
+        <Atoms.DialogTitle>Backup as encrypted file</Atoms.DialogTitle>
+        <Atoms.DialogDescription>
           Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud
           provider. <span className="text-foreground font-bold">Never share this file with anyone.</span>
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container className="gap-6">
-        <Atoms.Container className="space-y-6">
-          <Atoms.Container className="space-y-2">
-            <Atoms.Label htmlFor="password" className="text-xs font-medium tracking-widest text-muted-foreground">
-              PASSWORD
-            </Atoms.Label>
-            <Atoms.Container className="space-y-3">
-              <Atoms.Container className="relative">
-                <Atoms.Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
-                  placeholder="Enter a strong password"
-                  autoComplete="new-password"
-                />
-              </Atoms.Container>
-              <Atoms.Typography size="sm" className="text-muted-foreground text-xs font-medium leading-3">
-                We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
-              </Atoms.Typography>
-            </Atoms.Container>
-          </Atoms.Container>
-
-          <Atoms.Container className="items-start">
-            {password && (
-              <Atoms.Container className="flex-row items-center gap-3 justify-start">
-                {[1, 2, 3, 4, 5].map((index) => (
-                  <div
-                    key={index}
-                    className={`h-3 w-6 rounded-lg ${index <= passwordStrength.strength ? 'bg-brand' : 'bg-muted'}`}
-                  ></div>
-                ))}
-                <span className={`text-xs font-medium ${getStrengthColor(passwordStrength.strength)}`}>
-                  {getStrengthText(passwordStrength.strength)}
-                </span>
-              </Atoms.Container>
-            )}
-          </Atoms.Container>
-
-          <Atoms.Container className="space-y-2">
-            <Atoms.Label
-              htmlFor="confirmPassword"
-              className="text-xs font-medium tracking-widest text-muted-foreground"
-            >
-              REPEAT PASSWORD
-            </Atoms.Label>
-            <Atoms.Container className="space-y-3">
+      <Atoms.Container className="gap-3">
+        <Atoms.Container>
+          <Atoms.Label htmlFor="password" className="text-xs font-medium tracking-widest text-muted-foreground pb-4">
+            PASSWORD
+          </Atoms.Label>
+          <Atoms.Container>
+            <Atoms.Container className="relative pb-3">
               <Atoms.Input
-                id="confirmPassword"
+                id="password"
                 type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 ${
-                  confirmPassword && !passwordsMatch ? 'border-red-400' : ''
-                }`}
-                placeholder="Repeat your password"
+                className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+                placeholder="Enter a strong password"
                 autoComplete="new-password"
+                aria-describedby="password-help"
               />
-              {confirmPassword && !passwordsMatch && (
-                <Atoms.Typography size="sm" className="text-red-400 text-xs font-medium leading-3">
-                  Passwords do not match
-                </Atoms.Typography>
-              )}
             </Atoms.Container>
+            <Atoms.Typography
+              id="password-help"
+              size="sm"
+              className="text-muted-foreground text-xs font-medium leading-3"
+            >
+              We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
+            </Atoms.Typography>
+          </Atoms.Container>
+        </Atoms.Container>
+
+        <Atoms.Container className="items-start">
+          {password && (
+            <Atoms.Container className="flex-row items-center gap-3 justify-start">
+              {[1, 2, 3, 4, 5].map((index) => (
+                <div
+                  key={index}
+                  className={`h-3 w-6 rounded-lg ${index <= passwordStrength.strength ? 'bg-brand' : 'bg-muted'}`}
+                ></div>
+              ))}
+              <span
+                className={`text-xs font-medium ${getStrengthColor(passwordStrength.strength)}`}
+                role="status"
+                aria-live="polite"
+              >
+                {getStrengthText(passwordStrength.strength)}
+              </span>
+            </Atoms.Container>
+          )}
+        </Atoms.Container>
+
+        <Atoms.Container>
+          <Atoms.Label
+            htmlFor="confirmPassword"
+            className="text-xs font-medium tracking-widest text-muted-foreground pb-4"
+          >
+            REPEAT PASSWORD
+          </Atoms.Label>
+          <Atoms.Container className="pb-3">
+            <Atoms.Input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 ${
+                confirmPassword && !passwordsMatch ? 'border-destructive' : ''
+              }`}
+              placeholder="Repeat your password"
+              autoComplete="new-password"
+              aria-invalid={Boolean(confirmPassword && !passwordsMatch)}
+              aria-describedby={confirmPassword && !passwordsMatch ? 'confirm-password-error' : undefined}
+            />
+            {confirmPassword && !passwordsMatch && (
+              <Atoms.Typography
+                id="confirm-password-error"
+                size="sm"
+                className="text-destructive text-xs font-medium leading-3 pt-3"
+              >
+                Passwords do not match
+              </Atoms.Typography>
+            )}
           </Atoms.Container>
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
-        <DialogClose asChild>
+      <Atoms.DialogFooter>
+        <Atoms.DialogClose asChild>
           <Atoms.Button
             variant="outline"
-            className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+            size="lg"
             onClick={() => {
               setStep(1);
             }}
           >
-            <Libs.ArrowLeft className="mr-2 h-4 w-4 hidden" />
             Cancel
           </Atoms.Button>
-        </DialogClose>
-        <Atoms.Button
-          id="download-file-btn"
-          className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
-          onClick={handleDownload}
-          disabled={!isFormValid()}
-        >
-          <Libs.Download className="mr-2 h-4 w-4" />
+        </Atoms.DialogClose>
+        <Atoms.Button id="download-file-btn" size="lg" onClick={handleDownload} disabled={!isFormValid()}>
+          <Libs.Download className="h-4 w-4" />
           Download file
         </Atoms.Button>
-      </Atoms.Container>
+      </Atoms.DialogFooter>
     </>
   );
 }
@@ -219,9 +192,9 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
 function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
   return (
     <>
-      <Atoms.DialogHeader className="gap-1.5 pr-6">
-        <Atoms.DialogTitle className="text-xl md:text-2xl font-bold">Backup complete</Atoms.DialogTitle>
-        <Atoms.DialogDescription className="text-sm text-muted-foreground">
+      <Atoms.DialogHeader>
+        <Atoms.DialogTitle>Backup complete</Atoms.DialogTitle>
+        <Atoms.DialogDescription>
           You can use your backed up encrypted file to restore your account again later.
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
@@ -232,23 +205,50 @@ function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
         </Atoms.Container>
       </Atoms.Container>
 
-      <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 lg:gap-4 sm:justify-end">
+      <Atoms.DialogFooter>
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" className="rounded-full lg:h-[60px] lg:px-8 flex-1" onClick={handleClose}>
+          <Atoms.Button variant="outline" size="lg" onClick={handleClose}>
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.DialogClose asChild>
-          <Atoms.Button
-            id="backup-successful-ok-btn"
-            className="rounded-full lg:h-[60px] lg:px-8 flex-1"
-            onClick={handleClose}
-          >
-            <Libs.ArrowRight className="mr-2 h-4 w-4" />
+          <Atoms.Button id="backup-successful-ok-btn" size="lg" onClick={handleClose}>
+            <Libs.ArrowRight className="h-4 w-4" />
             Finish
           </Atoms.Button>
         </Atoms.DialogClose>
-      </Atoms.Container>
+      </Atoms.DialogFooter>
     </>
+  );
+}
+
+export function DialogBackupEncrypted({ children }: DialogBackupEncryptedProps) {
+  const [step, setStep] = useState(1);
+
+  const handleClose = () => {
+    //delay 1 second
+    setTimeout(() => {
+      setStep(1);
+    }, 1000);
+  };
+
+  return (
+    <Atoms.Dialog
+      onOpenChange={(open) => {
+        if (!open) setStep(1);
+      }}
+    >
+      {children ? (
+        <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
+      ) : (
+        <Atoms.DialogTrigger asChild>
+          <Atoms.Button id="backup-encrypted-file-btn">Continue</Atoms.Button>
+        </Atoms.DialogTrigger>
+      )}
+      <Atoms.DialogContent className="max-w-md sm:max-w-lg" hiddenTitle="Backup as encrypted file">
+        {step === 1 && <RecoveryStep1 setStep={setStep} />}
+        {step === 2 && <RecoveryStep2 handleClose={handleClose} />}
+      </Atoms.DialogContent>
+    </Atoms.Dialog>
   );
 }

@@ -9,7 +9,6 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     data-testid="dialog-trigger"
   >
     <button
-      class="gap-2"
       data-testid="button"
     >
       Continue
@@ -121,7 +120,6 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     data-testid="dialog-trigger"
   >
     <button
-      class="gap-2"
       data-testid="button"
     >
       Continue
@@ -233,7 +231,6 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
     data-testid="dialog-trigger"
   >
     <button
-      class="gap-2"
       data-testid="button"
     >
       Continue

@@ -9,16 +9,13 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
     data-testid="dialog-trigger"
   >
     <button
-      class="gap-2"
       data-testid="button-default"
     >
-      <span>
-        Continue
-      </span>
+      Continue
     </button>
   </div>
   <div
-    class="gap-6 p-8"
+    class="max-w-md sm:max-w-lg"
     data-hidden-title="Backup as encrypted file"
     data-testid="dialog-content"
   >
@@ -29,17 +26,14 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
       Backup as encrypted file
     </h2>
     <div
-      class="space-y-1.5 pr-6"
       data-testid="dialog-header"
     >
       <h2
-        class="text-2xl font-bold leading-8 sm:text-xl sm:leading-7"
         data-testid="dialog-title"
       >
         Backup as encrypted file
       </h2>
       <p
-        class="text-sm leading-5"
         data-testid="dialog-description"
       >
         Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud provider. 
@@ -51,126 +45,97 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
       </p>
     </div>
     <div
-      class="gap-6"
+      class="gap-3"
       data-testid="container"
     >
       <div
-        class="space-y-6"
         data-testid="container"
       >
+        <label
+          class="text-xs font-medium tracking-widest text-muted-foreground pb-4"
+          data-testid="label"
+          for="password"
+        >
+          PASSWORD
+        </label>
         <div
-          class="space-y-2"
           data-testid="container"
         >
-          <label
-            class="text-xs font-medium tracking-widest text-muted-foreground"
-            data-testid="label"
-            for="password"
-          >
-            PASSWORD
-          </label>
           <div
-            class="space-y-3"
-            data-testid="container"
-          >
-            <div
-              class="relative"
-              data-testid="container"
-            >
-              <input
-                autocomplete="new-password"
-                class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
-                data-testid="input"
-                id="password"
-                placeholder="Enter a strong password"
-                type="password"
-                value=""
-              />
-            </div>
-            <p
-              class="text-muted-foreground text-xs font-medium leading-3"
-              data-size="sm"
-              data-testid="typography"
-            >
-              We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
-            </p>
-          </div>
-        </div>
-        <div
-          class="items-start"
-          data-testid="container"
-        />
-        <div
-          class="space-y-2"
-          data-testid="container"
-        >
-          <label
-            class="text-xs font-medium tracking-widest text-muted-foreground"
-            data-testid="label"
-            for="confirmPassword"
-          >
-            REPEAT PASSWORD
-          </label>
-          <div
-            class="space-y-3"
+            class="relative pb-3"
             data-testid="container"
           >
             <input
+              aria-describedby="password-help"
               autocomplete="new-password"
-              class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 "
+              class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
               data-testid="input"
-              id="confirmPassword"
-              placeholder="Repeat your password"
+              id="password"
+              placeholder="Enter a strong password"
               type="password"
               value=""
             />
           </div>
+          <p
+            class="text-muted-foreground text-xs font-medium leading-3"
+            data-size="sm"
+            data-testid="typography"
+          >
+            We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
+          </p>
+        </div>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      />
+      <div
+        data-testid="container"
+      >
+        <label
+          class="text-xs font-medium tracking-widest text-muted-foreground pb-4"
+          data-testid="label"
+          for="confirmPassword"
+        >
+          REPEAT PASSWORD
+        </label>
+        <div
+          class="pb-3"
+          data-testid="container"
+        >
+          <input
+            aria-invalid="false"
+            autocomplete="new-password"
+            class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 "
+            data-testid="input"
+            id="confirmPassword"
+            placeholder="Repeat your password"
+            type="password"
+            value=""
+          />
         </div>
       </div>
     </div>
     <div
-      class="gap-4 sm:gap-3 md:flex-row justify-between"
-      data-testid="container"
+      data-testid="dialog-footer"
     >
       <div
         data-as-child="true"
-        data-testid="radix-dialog-close"
+        data-testid="dialog-close"
       >
         <button
-          class="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
           data-testid="button-outline"
         >
-          <svg
-            aria-hidden="true"
-            class="lucide lucide-arrow-left mr-2 h-4 w-4 hidden"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="m12 19-7-7 7-7"
-            />
-            <path
-              d="M19 12H5"
-            />
-          </svg>
           Cancel
         </button>
       </div>
       <button
-        class="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
         data-testid="button-default"
         disabled=""
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-download mr-2 h-4 w-4"
+          class="lucide lucide-download h-4 w-4"
           fill="none"
           height="24"
           stroke="currentColor"

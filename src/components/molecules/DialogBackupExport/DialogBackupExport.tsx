@@ -42,7 +42,7 @@ export function DialogBackupExport({ mnemonic, children }: DialogBackupExportPro
         <Atoms.DialogTrigger asChild>{children}</Atoms.DialogTrigger>
       ) : (
         <Atoms.DialogTrigger asChild>
-          <Atoms.Button className="gap-2">Continue</Atoms.Button>
+          <Atoms.Button>Continue</Atoms.Button>
         </Atoms.DialogTrigger>
       )}
       <Atoms.DialogContent className="max-w-md" hiddenTitle={mnemonic ? 'Import recovery phrase' : 'Pubky Ring export'}>
