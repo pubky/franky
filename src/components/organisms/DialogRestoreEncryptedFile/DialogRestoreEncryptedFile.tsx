@@ -8,28 +8,6 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-const MAX_FILENAME_LENGTH = 18;
-
-const formatSelectedFileName = (filename: string, maxLength = MAX_FILENAME_LENGTH) => {
-  if (filename.length <= maxLength) {
-    return filename;
-  }
-
-  const extensionIndex = filename.lastIndexOf('.');
-  if (extensionIndex <= 0) {
-    return `${filename.slice(0, maxLength - 1)}…`;
-  }
-
-  const extension = filename.slice(extensionIndex);
-  const baseLength = maxLength - extension.length - 1;
-
-  if (baseLength <= 0) {
-    return `${filename.slice(0, maxLength - 1)}…`;
-  }
-
-  return `${filename.slice(0, baseLength)}…${extension}`;
-};
-
 export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [password, setPassword] = useState('');
@@ -114,7 +92,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
 
   const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleRestore);
 
-  const selectedFileDisplayName = selectedFile ? formatSelectedFileName(selectedFile.name) : 'encryptedfile.pkarr';
+  const selectedFileDisplayName = selectedFile ? Libs.formatFileName(selectedFile.name) : 'encryptedfile.pkarr';
 
   return (
     <Atoms.Dialog>
