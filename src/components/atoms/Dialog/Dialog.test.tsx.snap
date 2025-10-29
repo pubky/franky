@@ -147,7 +147,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogContent without close b
 
 exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 <div
-  class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between"
+  class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between [&>*]:flex-1"
   data-slot="dialog-footer"
 >
   <button>
@@ -250,7 +250,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
           Dialog body content
         </div>
         <div
-          class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between"
+          class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between [&>*]:flex-1"
           data-slot="dialog-footer"
         >
           <button>
