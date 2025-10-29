@@ -228,3 +228,30 @@ export function timeAgo(date: Date): string {
 
   return formatDistanceToNow(date, { addSuffix: true });
 }
+
+/**
+ * Formats a filename by truncating it if it exceeds the max length,
+ * preserving the file extension
+ * @param filename - The filename to format
+ * @param maxLength - Maximum length for the filename (default: 18)
+ * @returns Formatted filename with ellipsis if truncated
+ */
+export function formatFileName(filename: string, maxLength = 18): string {
+  if (filename.length <= maxLength) {
+    return filename;
+  }
+
+  const extensionIndex = filename.lastIndexOf('.');
+  if (extensionIndex <= 0) {
+    return `${filename.slice(0, maxLength - 1)}…`;
+  }
+
+  const extension = filename.slice(extensionIndex);
+  const baseLength = maxLength - extension.length - 1;
+
+  if (baseLength <= 0) {
+    return `${filename.slice(0, maxLength - 1)}…`;
+  }
+
+  return `${filename.slice(0, baseLength)}…${extension}`;
+}
