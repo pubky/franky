@@ -177,7 +177,7 @@ export class HomeserverService {
    * @param {string} url - Pubky URL.
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
-  static async request(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
+  static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
       method,
@@ -189,6 +189,8 @@ export class HomeserverService {
         url,
       });
     }
+    // TODO: Shall we do error handling here?
+    return (await response.json()) as T;
   }
 
   /**

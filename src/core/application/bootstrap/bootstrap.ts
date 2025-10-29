@@ -14,6 +14,8 @@ export class BootstrapApplication {
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
     ]);
+    // TODO: THat one should be in another place, not here. Just testing notifications
+    await Core.NotificationController.poll({userId: pubky.toString()});
   }
 
   static async authorizeAndBootstrap(pubky: Core.Pubky) {

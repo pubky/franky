@@ -4,3 +4,4 @@ export * from './post';
 export * from './profile';
 export * from './user';
 export * from './stream';
+export * from './notification';
