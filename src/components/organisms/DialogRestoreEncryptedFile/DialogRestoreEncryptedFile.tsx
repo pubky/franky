@@ -92,6 +92,8 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
 
   const handleKeyDown = Hooks.useEnterSubmit(isFormValid, handleRestore);
 
+  const selectedFileDisplayName = selectedFile ? Libs.formatFileName(selectedFile.name) : 'encryptedfile.pkarr';
+
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
@@ -122,11 +124,12 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               onClick={handleFileSelect}
             >
               <span
-                className={`flex-1 min-w-0 truncate font-medium ${
+                className={`flex-1 min-w-0 block truncate font-medium ${
                   selectedFile?.name ? 'text-foreground' : 'text-muted-foreground'
                 }`}
+                title={selectedFile ? selectedFile.name : undefined}
               >
-                {selectedFile ? selectedFile.name : 'encryptedfile.pkarr'}
+                {selectedFileDisplayName}
               </span>
 
               <Atoms.Button

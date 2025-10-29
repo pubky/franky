@@ -17,7 +17,7 @@ export function SinglePostReplyInput({ postId }: PostReplyInputProps) {
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
 
   const handleReplySubmit = async () => {
-    if (!replyContent.trim() || !postId) return;
+    if (!replyContent.trim() || !postId || !currentUserId) return;
 
     try {
       await Core.PostController.create({

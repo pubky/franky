@@ -69,16 +69,40 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
   }
 }
 
-// Helper function to normalize Radix UI IDs in container HTML for snapshot tests
+// Helper function to normalise Radix UI IDs in container HTML for snapshot tests
+// This is to ensure that the IDs are consistent across test runs
 export const normaliseRadixIds = (container: HTMLElement) => {
   const clonedContainer = container.cloneNode(true) as HTMLElement;
+  const normalizedId = 'radix-«r0»';
+  const radixIdPattern = /^radix-«r\w+»/;
+
+  // Normalise all radix IDs to a consistent value
+  const elementsWithIds = clonedContainer.querySelectorAll('[id]');
+  elementsWithIds.forEach((el) => {
+    const id = el.getAttribute('id');
+    if (id && radixIdPattern.test(id)) {
+      el.setAttribute('id', normalizedId);
+    }
+  });
+
+  // Normalise aria-controls attributes
   const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
   elementsWithAriaControls.forEach((el) => {
     const ariaControls = el.getAttribute('aria-controls');
-    if (ariaControls && ariaControls.includes('radix-«r')) {
-      el.setAttribute('aria-controls', 'radix-«r0»');
+    if (ariaControls && radixIdPattern.test(ariaControls)) {
+      el.setAttribute('aria-controls', normalizedId);
     }
   });
+
+  // Normalise aria-labelledby attributes
+  const elementsWithAriaLabelledBy = clonedContainer.querySelectorAll('[aria-labelledby]');
+  elementsWithAriaLabelledBy.forEach((el) => {
+    const ariaLabelledBy = el.getAttribute('aria-labelledby');
+    if (ariaLabelledBy && radixIdPattern.test(ariaLabelledBy)) {
+      el.setAttribute('aria-labelledby', normalizedId);
+    }
+  });
+
   return clonedContainer;
 };
 
@@ -203,4 +227,31 @@ export function timeAgo(date: Date): string {
   if (diffHours < 24) return `${diffHours}h`;
 
   return formatDistanceToNow(date, { addSuffix: true });
+}
+
+/**
+ * Formats a filename by truncating it if it exceeds the max length,
+ * preserving the file extension
+ * @param filename - The filename to format
+ * @param maxLength - Maximum length for the filename (default: 18)
+ * @returns Formatted filename with ellipsis if truncated
+ */
+export function formatFileName(filename: string, maxLength = 18): string {
+  if (filename.length <= maxLength) {
+    return filename;
+  }
+
+  const extensionIndex = filename.lastIndexOf('.');
+  if (extensionIndex <= 0) {
+    return `${filename.slice(0, maxLength - 1)}…`;
+  }
+
+  const extension = filename.slice(extensionIndex);
+  const baseLength = maxLength - extension.length - 1;
+
+  if (baseLength <= 0) {
+    return `${filename.slice(0, maxLength - 1)}…`;
+  }
+
+  return `${filename.slice(0, baseLength)}…${extension}`;
 }
