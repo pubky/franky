@@ -11,14 +11,6 @@ export class NotificationController {
     const unread = await Core.NotificationApplication.checkUnread({ userId, lastRead });
     notificationStore.setUnread(unread);
   }
-
-  // When we run the bootstrap process, we should poll for notifications and update the store
-  static async poll({ userId }: Core.TReadProfileParams) {
-    const notificationState = await Core.NotificationApplication.poll({
-      userId
-    });
-    Core.useNotificationStore.getState().init(notificationState);
-  }
 }
 
 

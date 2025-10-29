@@ -8,7 +8,8 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(pubky);
-    await Core.BootstrapApplication.read(pubky);
+    const notificationState = await Core.BootstrapApplication.read(pubky);
+    Core.useNotificationStore.getState().init(notificationState);
     authStore.setAuthenticated(true);
   }
 
@@ -29,7 +30,8 @@ export class AuthController {
   static async authorizeAndBootstrap() {
     const authStore = Core.useAuthStore.getState();
     const pubky = authStore.currentUserPubky || '';
-    await Core.BootstrapApplication.authorizeAndBootstrap(pubky);
+    const notificationState = await Core.BootstrapApplication.authorizeAndBootstrap(pubky);
+    Core.useNotificationStore.getState().init(notificationState);
     authStore.setAuthenticated(true);
   }
 
@@ -56,7 +58,8 @@ export class AuthController {
     onboardingStore.reset();
     const pubky = publicKey.z32();
     authStore.setCurrentUserPubky(pubky);
-    await Core.BootstrapApplication.read(pubky);
+    const notificationState = await Core.BootstrapApplication.read(pubky);
+    Core.useNotificationStore.getState().init(notificationState);
     authStore.setAuthenticated(true);
   }
 
