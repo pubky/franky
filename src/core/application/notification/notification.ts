@@ -9,5 +9,3 @@ export class NotificationApplication {
     return await Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead);
   }
 }
-
-

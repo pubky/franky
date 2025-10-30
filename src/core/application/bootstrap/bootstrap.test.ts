@@ -128,14 +128,23 @@ describe('BootstrapApplication', () => {
       const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       const upsertInfluencersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: mockLastRead });
-      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(mockNotifications);
-      const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(mockUnreadCount);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: mockLastRead });
+      const nexusNotificationsSpy = vi
+        .spyOn(Core.NexusUserService, 'notifications')
+        .mockResolvedValue(mockNotifications);
+      const persistNotificationsSpy = vi
+        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .mockResolvedValue(mockUnreadCount);
 
-      const result = await BootstrapApplication.read(TEST_PUBKY);
+      const result = await BootstrapApplication.hydrate(TEST_PUBKY);
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, Core.homeserverUrl.lastRead(TEST_PUBKY));
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.GET,
+        Core.homeserverUrl.lastRead(TEST_PUBKY),
+      );
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
@@ -158,16 +167,21 @@ describe('BootstrapApplication', () => {
 
     it('should throw error when NexusBootstrapService fails', async () => {
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockRejectedValue(new Error('Network error'));
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: 1234567890 });
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: 1234567890 });
       const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
       const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount');
 
-      await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Network error');
+      await expect(BootstrapApplication.hydrate(TEST_PUBKY)).rejects.toThrow('Network error');
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, Core.homeserverUrl.lastRead(TEST_PUBKY));
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.GET,
+        Core.homeserverUrl.lastRead(TEST_PUBKY),
+      );
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).not.toHaveBeenCalled();
       expect(persistPostsSpy).not.toHaveBeenCalled();
@@ -181,19 +195,25 @@ describe('BootstrapApplication', () => {
       const mockLastRead = 1234567890;
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: mockLastRead });
-      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(mockNotifications);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: mockLastRead });
+      const nexusNotificationsSpy = vi
+        .spyOn(Core.NexusUserService, 'notifications')
+        .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi
         .spyOn(Core.LocalStreamUsersService, 'persistUsers')
         .mockRejectedValue(new Error('Database error'));
 
-      await expect(BootstrapApplication.read(TEST_PUBKY)).rejects.toThrow('Database error');
+      await expect(BootstrapApplication.hydrate(TEST_PUBKY)).rejects.toThrow('Database error');
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, Core.homeserverUrl.lastRead(TEST_PUBKY));
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.GET,
+        Core.homeserverUrl.lastRead(TEST_PUBKY),
+      );
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
-
     });
 
     it('should handle empty bootstrap data', async () => {
@@ -208,19 +228,28 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: mockLastRead });
-      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(mockNotifications);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: mockLastRead });
+      const nexusNotificationsSpy = vi
+        .spyOn(Core.NexusUserService, 'notifications')
+        .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(null);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
-      const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(mockUnreadCount);
+      const persistNotificationsSpy = vi
+        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .mockResolvedValue(mockUnreadCount);
 
-      const result = await BootstrapApplication.read(TEST_PUBKY);
+      const result = await BootstrapApplication.hydrate(TEST_PUBKY);
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, Core.homeserverUrl.lastRead(TEST_PUBKY));
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.GET,
+        Core.homeserverUrl.lastRead(TEST_PUBKY),
+      );
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
@@ -250,18 +279,24 @@ describe('BootstrapApplication', () => {
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: mockLastRead });
-      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(mockNotifications);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: mockLastRead });
+      const nexusNotificationsSpy = vi
+        .spyOn(Core.NexusUserService, 'notifications')
+        .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(null);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
-      const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(mockUnreadCount);
+      const persistNotificationsSpy = vi
+        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .mockResolvedValue(mockUnreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const bootstrapPromise = BootstrapApplication.authorizeAndBootstrap(TEST_PUBKY);
+      const bootstrapPromise = BootstrapApplication.hydrateWithRetry(TEST_PUBKY);
 
       // Fast-forward time for the first 5 second delay
       await vi.advanceTimersByTimeAsync(5000);
@@ -270,14 +305,16 @@ describe('BootstrapApplication', () => {
 
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, Core.homeserverUrl.lastRead(TEST_PUBKY));
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.GET,
+        Core.homeserverUrl.lastRead(TEST_PUBKY),
+      );
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
       expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
       expect(result).toEqual(expectedNotificationState);
       expect(loggerErrorSpy).not.toHaveBeenCalled();
-
     });
 
     it('should retry up to 3 times and succeed on second attempt', async () => {
@@ -295,18 +332,24 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockResolvedValueOnce(mockBootstrapData);
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: mockLastRead });
-      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(mockNotifications);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: mockLastRead });
+      const nexusNotificationsSpy = vi
+        .spyOn(Core.NexusUserService, 'notifications')
+        .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(null);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
-      const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(mockUnreadCount);
+      const persistNotificationsSpy = vi
+        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .mockResolvedValue(mockUnreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const bootstrapPromise = BootstrapApplication.authorizeAndBootstrap(TEST_PUBKY);
+      const bootstrapPromise = BootstrapApplication.hydrateWithRetry(TEST_PUBKY);
 
       // First attempt - wait 5 seconds then fail
       await vi.advanceTimersByTimeAsync(5000);
@@ -327,14 +370,15 @@ describe('BootstrapApplication', () => {
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
       expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
       expect(result).toEqual(expectedNotificationState);
-
     });
 
     it('should retry up to 3 times and throw error if all attempts fail', async () => {
       const nexusFetchSpy = vi
         .spyOn(Core.NexusBootstrapService, 'fetch')
         .mockRejectedValue(new Error('User not indexed'));
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: 1234567890 });
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: 1234567890 });
       const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
@@ -342,7 +386,7 @@ describe('BootstrapApplication', () => {
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const p = BootstrapApplication.authorizeAndBootstrap(TEST_PUBKY);
+      const p = BootstrapApplication.hydrateWithRetry(TEST_PUBKY);
       const assertion = expect(p).rejects.toThrow('User still not indexed');
 
       // Advance timers for all 3 attempts
@@ -357,7 +401,6 @@ describe('BootstrapApplication', () => {
       expect(persistUsersSpy).not.toHaveBeenCalled();
       expect(persistPostsSpy).not.toHaveBeenCalled();
       expect(persistNotificationsSpy).not.toHaveBeenCalled();
-
     });
 
     it('should log retry count on each failure', async () => {
@@ -366,7 +409,7 @@ describe('BootstrapApplication', () => {
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const p = BootstrapApplication.authorizeAndBootstrap(TEST_PUBKY);
+      const p = BootstrapApplication.hydrateWithRetry(TEST_PUBKY);
       const assertion = expect(p).rejects.toThrow('User still not indexed');
 
       // Advance timers for all 3 attempts
@@ -376,7 +419,6 @@ describe('BootstrapApplication', () => {
       expect(loggerErrorSpy).toHaveBeenNthCalledWith(1, 'Failed to bootstrap', expect.any(Error), 0);
       expect(loggerErrorSpy).toHaveBeenNthCalledWith(2, 'Failed to bootstrap', expect.any(Error), 1);
       expect(loggerErrorSpy).toHaveBeenNthCalledWith(3, 'Failed to bootstrap', expect.any(Error), 2);
-
     });
 
     it('should wait 5 seconds between each retry attempt', async () => {
@@ -395,18 +437,24 @@ describe('BootstrapApplication', () => {
         .mockRejectedValueOnce(new Error('Not indexed yet'))
         .mockRejectedValueOnce(new Error('Still not indexed'))
         .mockResolvedValueOnce(mockBootstrapData);
-      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue({ timestamp: mockLastRead });
-      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(mockNotifications);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: mockLastRead });
+      const nexusNotificationsSpy = vi
+        .spyOn(Core.NexusUserService, 'notifications')
+        .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(null);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
-      const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(mockUnreadCount);
+      const persistNotificationsSpy = vi
+        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .mockResolvedValue(mockUnreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const bootstrapPromise = BootstrapApplication.authorizeAndBootstrap(TEST_PUBKY);
+      const bootstrapPromise = BootstrapApplication.hydrateWithRetry(TEST_PUBKY);
 
       // First attempt
       expect(nexusFetchSpy).not.toHaveBeenCalled();
@@ -433,7 +481,6 @@ describe('BootstrapApplication', () => {
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
       expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
       expect(result).toEqual(expectedNotificationState);
-
     });
   });
 });

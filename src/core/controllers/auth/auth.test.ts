@@ -14,10 +14,12 @@ vi.mock('pubky-app-specs', () => ({
 const storeMocks = vi.hoisted(() => {
   const resetAuthStore = vi.fn();
   const resetOnboardingStore = vi.fn();
+  const notificationInit = vi.fn();
 
   return {
     resetAuthStore,
     resetOnboardingStore,
+    notificationInit,
     getAuthState: vi.fn(() => ({
       setSession: vi.fn(),
       setCurrentUserPubky: vi.fn(),
@@ -26,6 +28,9 @@ const storeMocks = vi.hoisted(() => {
     })),
     getOnboardingState: vi.fn(() => ({
       reset: resetOnboardingStore,
+    })),
+    getNotificationState: vi.fn(() => ({
+      init: notificationInit,
     })),
   };
 });
@@ -37,6 +42,9 @@ vi.mock('@/core/stores', () => ({
   },
   useOnboardingStore: {
     getState: storeMocks.getOnboardingState,
+  },
+  useNotificationStore: {
+    getState: storeMocks.getNotificationState,
   },
 }));
 
@@ -264,6 +272,35 @@ describe('AuthController', () => {
       });
 
       await expect(AuthController.generateSignupToken()).rejects.toThrow('No token received from server');
+    });
+  });
+
+  describe('notification hydration flows', () => {
+    beforeEach(() => {
+      // Ensure Core barrel uses our mocked notification store
+      (Core as any).useNotificationStore = {
+        getState: storeMocks.getNotificationState,
+      };
+    });
+
+    it('authorizeAndBootstrap should hydrate with retry and init notification store', async () => {
+      const state: Core.NotificationState = { unread: 2, lastRead: 123 };
+      const hydrateRetrySpy = vi.spyOn(Core.BootstrapApplication, 'hydrateWithRetry').mockResolvedValue(state);
+
+      await AuthController.authorizeAndBootstrap();
+
+      expect(hydrateRetrySpy).toHaveBeenCalledWith('');
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
+    });
+
+    it('loginWithAuthUrl should hydrate and init notification store', async () => {
+      const state: Core.NotificationState = { unread: 0, lastRead: 456 };
+      const hydrateSpy = vi.spyOn(Core.BootstrapApplication, 'hydrate').mockResolvedValue(state);
+
+      await AuthController.loginWithAuthUrl({ publicKey: { z32: () => 'pubky-123' } as any });
+
+      expect(hydrateSpy).toHaveBeenCalledWith('pubky-123');
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
     });
   });
 });

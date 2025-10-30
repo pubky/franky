@@ -12,5 +12,3 @@ export class NotificationController {
     notificationStore.setUnread(unread);
   }
 }
-
-
