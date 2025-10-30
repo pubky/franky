@@ -48,22 +48,6 @@ describe('NotificationModel', () => {
     expect(notification.post_uri).toBe('post999');
   });
 
-  it('should save notifications using create method', async () => {
-    const data: FlatNotification = {
-      type: NotificationType.Repost,
-      timestamp: Date.now(),
-      reposted_by: 'user5',
-      embed_uri: 'post111',
-      repost_uri: 'repost222',
-    } as FlatNotification;
-
-    await NotificationModel.create(data);
-
-    const saved = await NotificationModel.table.toArray();
-    expect(saved).toHaveLength(1);
-    expect(saved[0].type).toBe(NotificationType.Repost);
-  });
-
   it('should get recent notifications ordered by timestamp', async () => {
     const baseTime = Date.now();
     const notifications: FlatNotification[] = [

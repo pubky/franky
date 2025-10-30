@@ -1,6 +1,7 @@
 import { Table } from 'dexie';
 import * as Core from '@/core';
 import { FlatNotification, NotificationType } from './notification.types';
+import * as Libs from '@/libs';
 
 const DEFAULT_LIMIT = 20;
 
@@ -35,16 +36,23 @@ export class NotificationModel {
     Object.assign(this, notification);
   }
 
-  // Basic CRUD operations
-  static async create(notification: FlatNotification) {
-    await this.table.add(notification);
-  }
-
   static async bulkSave(notifications: FlatNotification[]) {
-    await this.table.bulkPut(notifications);
+    try {
+      return await this.table.bulkPut(notifications);
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.BULK_OPERATION_FAILED,
+        `Failed to bulk save records in ${this.table.name}`,
+        500,
+        {
+          error,
+          tuplesCount: notifications.length,
+        },
+      );
+    }
   }
 
-  // Query methods
+  // Query methods. TODO: Error handling when we will use it
   static async getRecent(limit: number = DEFAULT_LIMIT): Promise<FlatNotification[]> {
     return await this.table.orderBy('timestamp').reverse().limit(limit).toArray();
   }
