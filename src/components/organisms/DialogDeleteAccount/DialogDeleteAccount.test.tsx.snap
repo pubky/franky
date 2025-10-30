@@ -27,7 +27,7 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot for default DialogDe
       </h2>
     </div>
     <p
-      class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
+      class="text-base font-normal leading-6 tracking-wide text-white/80"
       data-testid="typography"
     >
       Are you sure? Your account information cannot be recovered.
@@ -36,13 +36,7 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot for default DialogDe
       data-testid="dialog-footer"
     >
       <button
-        data-size="lg"
-        data-testid="button-dark"
-        data-variant="dark"
-      >
-        Cancel
-      </button>
-      <button
+        class="order-1 sm:order-2"
         data-size="lg"
         data-testid="button-destructive"
         data-variant="destructive"
@@ -83,6 +77,14 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot for default DialogDe
           />
         </svg>
         Delete Account
+      </button>
+      <button
+        class="order-2 sm:order-1"
+        data-size="lg"
+        data-testid="button-outline"
+        data-variant="outline"
+      >
+        Cancel
       </button>
     </div>
   </div>
@@ -116,7 +118,7 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot when closed 1`] = `
       </h2>
     </div>
     <p
-      class="text-muted-foreground text-lg font-normal leading-6 tracking-wide"
+      class="text-base font-normal leading-6 tracking-wide text-white/80"
       data-testid="typography"
     >
       Are you sure? Your account information cannot be recovered.
@@ -125,13 +127,7 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot when closed 1`] = `
       data-testid="dialog-footer"
     >
       <button
-        data-size="lg"
-        data-testid="button-dark"
-        data-variant="dark"
-      >
-        Cancel
-      </button>
-      <button
+        class="order-1 sm:order-2"
         data-size="lg"
         data-testid="button-destructive"
         data-variant="destructive"
@@ -172,6 +168,14 @@ exports[`DialogDeleteAccount - Snapshots > matches snapshot when closed 1`] = `
           />
         </svg>
         Delete Account
+      </button>
+      <button
+        class="order-2 sm:order-1"
+        data-size="lg"
+        data-testid="button-outline"
+        data-variant="outline"
+      >
+        Cancel
       </button>
     </div>
   </div>

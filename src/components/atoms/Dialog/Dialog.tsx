@@ -59,7 +59,7 @@ function DialogContent({
           data-testid="dialog-content"
           className={Libs.cn(
             'relative z-50 grid',
-            'rounded-xl border bg-background shadow-lg duration-200',
+            'rounded-lg sm:rounded-xl border bg-background shadow-lg duration-200',
             'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
             'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4',
             className,

@@ -175,7 +175,7 @@ describe('DialogDeleteAccount', () => {
     const cancelButton = screen.getByText('Cancel').closest('button');
     const deleteButton = screen.getByRole('button', { name: /delete account/i });
 
-    expect(cancelButton).toHaveAttribute('data-variant', 'dark');
+    expect(cancelButton).toHaveAttribute('data-variant', 'outline');
     expect(deleteButton).toHaveAttribute('data-variant', 'destructive');
   });
 

@@ -33,7 +33,7 @@ describe('Button', () => {
 
     rerender(<Button variant="destructive">Destructive</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-destructive/60', 'text-white');
+    expect(button).toHaveClass('bg-destructive/60', 'text-destructive-foreground');
 
     rerender(<Button variant="link">Link</Button>);
     button = screen.getByRole('button');
