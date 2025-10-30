@@ -6,7 +6,8 @@ import * as Core from '@/core';
  * All API endpoints related to files operations
  */
 
-const PREFIX = 'files';
+const API_PREFIX = 'v0/files';
+const STATIC_PREFIX = 'files';
 
 /**
  * Files by IDs endpoint (POST request)
@@ -21,16 +22,16 @@ export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
 export const filesApi = {
   getAvatar: (pubky: Core.Pubky) => {
     const encodedPubky = Core.encodePathSegment(pubky);
-    return Core.buildNexusStaticUrl(`avatar/${encodedPubky}`);
+    return Core.buildCdnUrl(`avatar/${encodedPubky}`);
   },
   getImage: ({ pubky, file_id, variant }: Core.TImageParams) => {
     const encodedPubky = Core.encodePathSegment(pubky);
     const encodedFileId = Core.encodePathSegment(file_id);
-    return Core.buildNexusStaticUrl(`${PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);
+    return Core.buildCdnUrl(`${STATIC_PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);
   },
   getFiles: (fileUris: Core.Pubky[]) => ({
     body: buildFileBodyUrl(fileUris),
-    url: Core.buildNexusUrl(`${PREFIX}/by_ids`),
+    url: Core.buildNexusUrl(`${API_PREFIX}/by_ids`),
   }),
 };
 
