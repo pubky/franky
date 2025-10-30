@@ -44,11 +44,15 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         <Atoms.DialogTitle>Backup as encrypted file</Atoms.DialogTitle>
         <Atoms.DialogDescription>
           Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud
-          provider. <span className="text-foreground font-bold">Never share this file with anyone.</span>
+          provider.{' '}
+          <span className="text-foreground font-bold">
+            <span className="hidden sm:inline">Never share this file with anyone.</span>
+            <span className="sm:hidden">Never share this file and password with anyone.</span>
+          </span>
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container className="gap-3">
+      <Atoms.Container className="gap-6">
         <Atoms.Container>
           <Atoms.Label htmlFor="password" className="text-xs font-medium tracking-widest text-muted-foreground pb-4">
             PASSWORD
@@ -61,7 +65,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+                className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4"
                 placeholder="Enter a strong password"
                 autoComplete="new-password"
                 aria-describedby="password-help"
@@ -70,7 +74,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
             <Atoms.Typography
               id="password-help"
               size="sm"
-              className="text-muted-foreground text-xs font-medium leading-3"
+              className="text-muted-foreground text-xs font-medium leading-none"
             >
               We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
             </Atoms.Typography>
@@ -111,7 +115,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 ${
+              className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4 ${
                 confirmPassword && !passwordsMatch ? 'border-destructive' : ''
               }`}
               placeholder="Repeat your password"
@@ -133,6 +137,16 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
       </Atoms.Container>
 
       <Atoms.DialogFooter>
+        <Atoms.Button
+          id="download-file-btn"
+          size="lg"
+          onClick={handleDownload}
+          disabled={!isFormValid()}
+          className="order-2 sm:order-1"
+        >
+          <Libs.Download className="h-4 w-4" />
+          Download file
+        </Atoms.Button>
         <Atoms.DialogClose asChild>
           <Atoms.Button
             variant="outline"
@@ -140,14 +154,11 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
             onClick={() => {
               setStep(1);
             }}
+            className="order-1 sm:order-2"
           >
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
-        <Atoms.Button id="download-file-btn" size="lg" onClick={handleDownload} disabled={!isFormValid()}>
-          <Libs.Download className="h-4 w-4" />
-          Download file
-        </Atoms.Button>
       </Atoms.DialogFooter>
     </>
   );
@@ -164,7 +175,7 @@ function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
       </Atoms.DialogHeader>
 
       <Atoms.Container>
-        <Atoms.Container className="w-full bg-card rounded-md p-6 flex items-center justify-center">
+        <Atoms.Container className="w-full bg-card rounded-md p-12 flex items-center justify-center">
           <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="w-48 h-48" />
         </Atoms.Container>
       </Atoms.Container>

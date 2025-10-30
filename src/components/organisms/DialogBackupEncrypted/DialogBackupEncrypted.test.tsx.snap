@@ -36,16 +36,26 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
       <p
         data-testid="dialog-description"
       >
-        Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud provider. 
+        Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud provider.
+         
         <span
           class="text-foreground font-bold"
         >
-          Never share this file with anyone.
+          <span
+            class="hidden sm:inline"
+          >
+            Never share this file with anyone.
+          </span>
+          <span
+            class="sm:hidden"
+          >
+            Never share this file and password with anyone.
+          </span>
         </span>
       </p>
     </div>
     <div
-      class="gap-3"
+      class="gap-6"
       data-testid="container"
     >
       <div
@@ -68,7 +78,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
             <input
               aria-describedby="password-help"
               autocomplete="new-password"
-              class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+              class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4"
               data-testid="input"
               id="password"
               placeholder="Enter a strong password"
@@ -77,7 +87,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
             />
           </div>
           <p
-            class="text-muted-foreground text-xs font-medium leading-3"
+            class="text-muted-foreground text-xs font-medium leading-none"
             data-size="sm"
             data-testid="typography"
           >
@@ -106,7 +116,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
           <input
             aria-invalid="false"
             autocomplete="new-password"
-            class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4 "
+            class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4 "
             data-testid="input"
             id="confirmPassword"
             placeholder="Repeat your password"
@@ -119,17 +129,8 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
     <div
       data-testid="dialog-footer"
     >
-      <div
-        data-as-child="true"
-        data-testid="dialog-close"
-      >
-        <button
-          data-testid="button-outline"
-        >
-          Cancel
-        </button>
-      </div>
       <button
+        class="order-2 sm:order-1"
         data-testid="button-default"
         disabled=""
       >
@@ -158,6 +159,17 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
         </svg>
         Download file
       </button>
+      <div
+        data-as-child="true"
+        data-testid="dialog-close"
+      >
+        <button
+          class="order-1 sm:order-2"
+          data-testid="button-outline"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   </div>
 </div>
