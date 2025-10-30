@@ -1,0 +1,518 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SinglePost - Snapshots > matches snapshot with all props provided 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="absolute -left-12 top-0"
+  >
+    <div
+      data-height="100"
+      data-testid="reply-line"
+    >
+      ReplyLine
+    </div>
+  </div>
+  <div
+    class="p-6 rounded-lg cursor-pointer"
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot with clickable false explicitly 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="p-6 rounded-lg "
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot with clickable true 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="p-6 rounded-lg cursor-pointer"
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="p-6 rounded-lg "
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot with different postId 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="p-6 rounded-lg "
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="different-post-id"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="different-post-id"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="different-post-id"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="different-post-id"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="different-post-id"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot with isReply false explicitly 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="p-6 rounded-lg "
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`SinglePost - Snapshots > matches snapshot with isReply true 1`] = `
+<div
+  class="relative"
+>
+  <div
+    class="absolute -left-12 top-0"
+  >
+    <div
+      data-height="100"
+      data-testid="reply-line"
+    >
+      ReplyLine
+    </div>
+  </div>
+  <div
+    class="p-6 rounded-lg "
+    data-testid="card"
+  >
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col lg:col-span-2 gap-4"
+        data-testid="container"
+      >
+        <div>
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-user-details"
+          >
+            User Details
+          </div>
+        </div>
+        <div
+          class="flex flex-col gap-4"
+          data-testid="container"
+        >
+          <div
+            data-post-id="test-post-123"
+            data-testid="single-post-content"
+          >
+            Post Content
+          </div>
+          <div
+            class="block lg:hidden"
+            data-testid="container"
+          >
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-tags"
+            >
+              Post Tags
+            </div>
+          </div>
+          <div>
+            <div
+              data-post-id="test-post-123"
+              data-testid="single-post-counts"
+            >
+              Post Counts
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="hidden lg:block"
+        data-testid="container"
+      >
+        <div
+          data-post-id="test-post-123"
+          data-testid="single-post-tags"
+        >
+          Post Tags
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

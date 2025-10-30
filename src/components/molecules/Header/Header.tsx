@@ -136,7 +136,7 @@ export function HeaderNavigationButtons({
         </Atoms.Button>
       </Atoms.Link>
 
-      <Atoms.Link className="relative" href={App.APP_ROUTES.PROFILE}>
+      <Atoms.Link id="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
         <Atoms.Avatar size="lg">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
           <Atoms.AvatarFallback active={isActive(App.APP_ROUTES.PROFILE)}>{avatarInitial}</Atoms.AvatarFallback>

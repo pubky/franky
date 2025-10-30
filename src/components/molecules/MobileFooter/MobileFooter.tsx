@@ -43,7 +43,12 @@ export function MobileFooter({ avatarImage, className }: MobileFooterProps) {
             </Link>
           );
         })}
-        <Link href={App.APP_ROUTES.PROFILE} aria-label="Profile" className="flex-shrink-0 relative">
+        <Link
+          id="footer-nav-profile-btn"
+          href={App.APP_ROUTES.PROFILE}
+          aria-label="Profile"
+          className="flex-shrink-0 relative"
+        >
           <Atoms.Avatar size="lg">
             <Atoms.AvatarImage src={avatarImage} alt="Profile" />
             <Atoms.AvatarFallback active={isActive(App.APP_ROUTES.PROFILE)}>

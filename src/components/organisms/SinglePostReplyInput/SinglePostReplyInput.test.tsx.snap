@@ -1,0 +1,76 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SinglePostReplyInput - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex gap-4"
+>
+  <div
+    class="w-8 flex-shrink-0"
+  >
+    <div
+      data-height="100"
+      data-is-last="true"
+      data-testid="reply-line"
+    />
+  </div>
+  <div
+    class="flex-1"
+  >
+    <textarea
+      class="min-h-20"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+  </div>
+</div>
+`;
+
+exports[`SinglePostReplyInput - Snapshots > matches snapshot with different postId 1`] = `
+<div
+  class="flex gap-4"
+>
+  <div
+    class="w-8 flex-shrink-0"
+  >
+    <div
+      data-height="100"
+      data-is-last="true"
+      data-testid="reply-line"
+    />
+  </div>
+  <div
+    class="flex-1"
+  >
+    <textarea
+      class="min-h-20"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+  </div>
+</div>
+`;
+
+exports[`SinglePostReplyInput - Snapshots > matches snapshot with empty postId 1`] = `
+<div
+  class="flex gap-4"
+>
+  <div
+    class="w-8 flex-shrink-0"
+  >
+    <div
+      data-height="100"
+      data-is-last="true"
+      data-testid="reply-line"
+    />
+  </div>
+  <div
+    class="flex-1"
+  >
+    <textarea
+      class="min-h-20"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+  </div>
+</div>
+`;

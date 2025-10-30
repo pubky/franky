@@ -17,6 +17,11 @@ describe('Onboarding', () => {
     // profile name is also used for the backup file name
     const profileName = 'Test User'
     const backupWithFileAndPhrase = [BackupType.EncryptedFile, BackupType.RecoveryPhraseWithConfirmation];
+
+    // check header is visible
+    cy.get('header').should('exist').should('be.visible');
+    cy.get('#header-sign-in-btn').should('exist').should('be.visible');
+
     cy.onboardAsNewUser(profileName, 'Test Bio', backupWithFileAndPhrase);
 
     // confirm backup reminder is shown
