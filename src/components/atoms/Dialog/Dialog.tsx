@@ -59,7 +59,7 @@ function DialogContent({
           data-testid="dialog-content"
           className={Libs.cn(
             'relative z-50 grid',
-            'rounded-lg border bg-background shadow-lg duration-200',
+            'rounded-xl border bg-background shadow-lg duration-200',
             'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
             'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4',
             className,
@@ -100,7 +100,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="dialog-footer"
       className={Libs.cn(
-        'flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between [&>*]:flex-1',
+        'flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between [&>*]:w-full sm:[&>*]:flex-1',
         className,
       )}
       {...props}
@@ -113,7 +113,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
     <DialogPrimitive.Title
       data-slot="dialog-title"
       data-testid="dialog-title"
-      className={Libs.cn('text-foreground text-2xl font-bold leading-normal', className)}
+      className={Libs.cn('text-foreground text-xl/[1.4] sm:text-2xl/[1.333] font-bold', className)}
       {...props}
     />
   );

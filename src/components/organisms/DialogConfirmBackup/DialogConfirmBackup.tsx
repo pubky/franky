@@ -49,9 +49,13 @@ export function DialogConfirmBackup({ onConfirm }: DialogConfirmBackupProps) {
             </Atoms.DialogDescription>
           </Atoms.DialogHeader>
           <Atoms.Container className="gap-6">
-            <Atoms.Container className="bg-destructive/60 px-6 py-3 rounded-lg flex flex-row items-center gap-3">
+            <Atoms.Container className="bg-destructive/60 px-6 py-3 rounded-md flex flex-row items-center gap-3">
               <Libs.TriangleAlert className="h-4 w-4 font-bold" />
-              <Atoms.Typography id="backup-done-warning-text" size="sm" className="font-bold">
+              <Atoms.Typography
+                id="backup-done-warning-text"
+                size="sm"
+                className="font-bold text-destructive-foreground"
+              >
                 After confirming, your seed will be deleted from the browser (!)
               </Atoms.Typography>
             </Atoms.Container>
