@@ -146,16 +146,8 @@ function RecoveryStep1({
 }
 
 function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; setStep: (step: number) => void }) {
-  const {
-    userWords,
-    errors,
-    availableWords,
-    usedWordInstances,
-    handleWordClick,
-    validateWords,
-    clearWord,
-    isComplete,
-  } = Hooks.useRecoveryPhraseValidation({ recoveryWords });
+  const { userWords, errors, remainingWords, handleWordClick, validateWords, clearWord, isComplete } =
+    Hooks.useRecoveryPhraseValidation({ recoveryWords });
 
   const handleValidate = () => {
     if (validateWords()) {
@@ -174,27 +166,23 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
 
       <Atoms.Container className="space-y-6">
         <Atoms.Container className="flex-wrap gap-2 flex-row">
-          {availableWords.map((word, index) => {
-            const isThisInstanceUsed = usedWordInstances.has(index);
-
-            return (
-              <Atoms.Button
-                id={`backup-recovery-phrase-word-${word}-${index + 1}`}
-                key={`${word}-${index}`}
-                variant={isThisInstanceUsed ? 'secondary' : 'outline'}
-                size="sm"
-                className={`rounded-full ${
-                  isThisInstanceUsed
-                    ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                    : 'border-transparent bg-secondary cursor-pointer'
-                }`}
-                onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
-                disabled={isThisInstanceUsed}
-              >
-                {word}
-              </Atoms.Button>
-            );
-          })}
+          {remainingWords.map(({ word, index, isUsed }) => (
+            <Atoms.Button
+              id={`backup-recovery-phrase-word-${word}-${index + 1}`}
+              key={`${word}-${index}`}
+              variant={isUsed ? 'secondary' : 'outline'}
+              size="sm"
+              className={`rounded-full ${
+                isUsed
+                  ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
+                  : 'border-transparent bg-secondary cursor-pointer'
+              }`}
+              onClick={() => !isUsed && handleWordClick(word)}
+              disabled={isUsed}
+            >
+              {word}
+            </Atoms.Button>
+          ))}
         </Atoms.Container>
 
         <Atoms.Container display="grid" className="grid-cols-2 sm:grid-cols-3 gap-3">

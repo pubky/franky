@@ -322,17 +322,17 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     expect(tubeButtons[0]).not.toBeDisabled();
     expect(tubeButtons[1]).not.toBeDisabled();
 
-    // Click the first tube button
+    // Click the first tube button (1 out of 2 used - neither disabled yet)
     fireEvent.click(tubeButtons[0]);
 
-    // The first button should now be disabled, but the second should still be clickable
-    expect(tubeButtons[0]).toBeDisabled();
+    // Both buttons should still be enabled (count-based: 1/2 used)
+    expect(tubeButtons[0]).not.toBeDisabled();
     expect(tubeButtons[1]).not.toBeDisabled();
 
-    // Click the second tube button
+    // Click the second tube button (2 out of 2 used - both disabled now)
     fireEvent.click(tubeButtons[1]);
 
-    // Now both should be disabled
+    // Now both should be disabled (count limit reached)
     expect(tubeButtons[0]).toBeDisabled();
     expect(tubeButtons[1]).toBeDisabled();
   });
@@ -351,12 +351,12 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
     const tubeButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('tube'));
 
-    // Click first tube instance (should go to slot 0)
+    // Click first tube instance (1 out of 2 used - neither disabled)
     fireEvent.click(tubeButtons[0]);
-    expect(tubeButtons[0]).toBeDisabled();
+    expect(tubeButtons[0]).not.toBeDisabled();
     expect(tubeButtons[1]).not.toBeDisabled();
 
-    // Click second tube instance (should go to slot 1)
+    // Click second tube instance (2 out of 2 used - both disabled)
     fireEvent.click(tubeButtons[1]);
     expect(tubeButtons[0]).toBeDisabled();
     expect(tubeButtons[1]).toBeDisabled();
@@ -365,12 +365,12 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
     expect(wordSlot0?.getAttribute('data-word')).toBe('tube');
 
-    // Clear the first slot
+    // Clear the first slot (back to 1/2 used - both enabled again)
     fireEvent.click(wordSlot0!);
 
-    // Only the first tube button should be re-enabled
+    // Both tube buttons should be enabled again (count-based: 1 out of 2 used)
     expect(tubeButtons[0]).not.toBeDisabled();
-    expect(tubeButtons[1]).toBeDisabled();
+    expect(tubeButtons[1]).not.toBeDisabled();
 
     // Clear the second slot
     const wordSlot1 = container.querySelector('[data-testid="word-slot-1"]');
@@ -585,16 +585,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     recoveryWords: string[];
     setStep: (step: number) => void;
   }) => {
-    const {
-      userWords,
-      errors,
-      availableWords,
-      usedWordInstances,
-      handleWordClick,
-      validateWords,
-      clearWord,
-      isComplete,
-    } = useRecoveryPhraseValidation({ recoveryWords });
+    const { userWords, errors, remainingWords, handleWordClick, validateWords, clearWord, isComplete } =
+      useRecoveryPhraseValidation({ recoveryWords });
 
     return (
       <>
@@ -609,25 +601,21 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
 
         <div data-testid="container" className="space-y-6">
           <div data-testid="container" className="flex-wrap gap-2 flex-row">
-            {availableWords.map((word, index) => {
-              const isThisInstanceUsed = usedWordInstances.has(index);
-
-              return (
-                <button
-                  data-testid={`button-${isThisInstanceUsed ? 'secondary' : 'outline'}`}
-                  key={`${word}-${index}`}
-                  className={`rounded-full ${
-                    isThisInstanceUsed
-                      ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                      : 'dark:border-transparent bg-secondary cursor-pointer'
-                  }`}
-                  onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
-                  disabled={isThisInstanceUsed}
-                >
-                  {word}
-                </button>
-              );
-            })}
+            {remainingWords.map(({ word, index, isUsed }) => (
+              <button
+                data-testid={`button-${isUsed ? 'secondary' : 'outline'}`}
+                key={`${word}-${index}`}
+                className={`rounded-full ${
+                  isUsed
+                    ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
+                    : 'dark:border-transparent bg-secondary cursor-pointer'
+                }`}
+                onClick={() => !isUsed && handleWordClick(word)}
+                disabled={isUsed}
+              >
+                {word}
+              </button>
+            ))}
           </div>
 
           <div data-testid="container" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -700,31 +688,28 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
       expect(button).not.toBeDisabled();
     });
 
-    // Click the first bacon button
+    // Click the first bacon button (1 out of 12 used - none disabled)
     fireEvent.click(baconButtons[0]);
 
-    // Only the first button should be disabled, others should still be clickable
-    expect(baconButtons[0]).toBeDisabled();
-    baconButtons.slice(1).forEach((button) => {
+    // All buttons should still be enabled (count-based: 1/12 used)
+    baconButtons.forEach((button) => {
       expect(button).not.toBeDisabled();
     });
 
-    // Click the second bacon button
+    // Click the second bacon button (2 out of 12 used - still none disabled)
     fireEvent.click(baconButtons[1]);
 
-    // First two should be disabled, others should still be clickable
-    expect(baconButtons[0]).toBeDisabled();
-    expect(baconButtons[1]).toBeDisabled();
-    baconButtons.slice(2).forEach((button) => {
+    // All buttons should still be enabled (count-based: 2/12 used)
+    baconButtons.forEach((button) => {
       expect(button).not.toBeDisabled();
     });
 
-    // Continue clicking all buttons
+    // Continue clicking all buttons until we reach the limit
     for (let i = 2; i < baconButtons.length; i++) {
       fireEvent.click(baconButtons[i]);
     }
 
-    // All buttons should now be disabled
+    // All buttons should now be disabled (12/12 used - count limit reached)
     baconButtons.forEach((button) => {
       expect(button).toBeDisabled();
     });
@@ -756,33 +741,43 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
     const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
 
-    // Click first 3 buttons
+    // Click first 3 buttons (3 out of 12 used - none disabled yet)
     fireEvent.click(baconButtons[0]);
     fireEvent.click(baconButtons[1]);
     fireEvent.click(baconButtons[2]);
 
-    // First 3 should be disabled
-    expect(baconButtons[0]).toBeDisabled();
-    expect(baconButtons[1]).toBeDisabled();
-    expect(baconButtons[2]).toBeDisabled();
+    // All buttons should still be enabled (count-based: 3/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
-    // Clear the first slot (slot 0)
+    // Fill all 12 slots to disable all buttons
+    for (let i = 3; i < baconButtons.length; i++) {
+      fireEvent.click(baconButtons[i]);
+    }
+
+    // All buttons should now be disabled (12/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).toBeDisabled();
+    });
+
+    // Clear the first slot (back to 11/12 used - all enabled again)
     const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
     fireEvent.click(wordSlot0!);
 
-    // Only the first bacon button should be re-enabled
-    expect(baconButtons[0]).not.toBeDisabled();
-    expect(baconButtons[1]).toBeDisabled();
-    expect(baconButtons[2]).toBeDisabled();
+    // All buttons should be enabled again (count-based: 11 out of 12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
-    // Clear the second slot (slot 1)
+    // Clear the second slot (back to 10/12 used)
     const wordSlot1 = container.querySelector('[data-testid="word-slot-1"]');
     fireEvent.click(wordSlot1!);
 
-    // First two buttons should be re-enabled
-    expect(baconButtons[0]).not.toBeDisabled();
-    expect(baconButtons[1]).not.toBeDisabled();
-    expect(baconButtons[2]).toBeDisabled();
+    // All buttons should still be enabled
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
   });
 
   it('should handle reverse-order selection with identical words', () => {
@@ -799,39 +794,48 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
     const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
 
-    // Click from the end towards the start
+    // Click from the end towards the start (count-based: all buttons enabled until limit)
     const last = baconButtons.length - 1;
     fireEvent.click(baconButtons[last]);
-    // Only the last should be disabled
-    expect(baconButtons[last]).toBeDisabled();
-    expect(baconButtons[last - 1]).not.toBeDisabled();
+    // All buttons should still be enabled (1/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
     fireEvent.click(baconButtons[last - 1]);
-    // The last two should be disabled, the third-from-last enabled
-    expect(baconButtons[last]).toBeDisabled();
-    expect(baconButtons[last - 1]).toBeDisabled();
-    expect(baconButtons[last - 2]).not.toBeDisabled();
+    // All buttons should still be enabled (2/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
     // Click a few more in reverse to ensure mapping stays correct
     fireEvent.click(baconButtons[last - 2]);
     fireEvent.click(baconButtons[last - 3]);
 
-    expect(baconButtons[last]).toBeDisabled();
-    expect(baconButtons[last - 1]).toBeDisabled();
-    expect(baconButtons[last - 2]).toBeDisabled();
-    expect(baconButtons[last - 3]).toBeDisabled();
+    // All buttons should still be enabled (4/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
-    // Clear slot 0 and 1, ensure only the earliest clicked instances re-enable
+    // Fill all remaining slots
+    for (let i = 0; i < baconButtons.length - 4; i++) {
+      fireEvent.click(baconButtons[i]);
+    }
+
+    // All buttons should now be disabled (12/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).toBeDisabled();
+    });
+
+    // Clear slot 0 and 1, all buttons should be enabled again (back to 10/12 used)
     const slot0 = container.querySelector('[data-testid="word-slot-0"]');
     const slot1 = container.querySelector('[data-testid="word-slot-1"]');
     fireEvent.click(slot0!);
     fireEvent.click(slot1!);
 
-    // After clearing first two slots, the last two clicked instances should re-enable,
-    // and the earlier reverse-clicked instances should remain disabled
-    expect(baconButtons[last]).not.toBeDisabled();
-    expect(baconButtons[last - 1]).not.toBeDisabled();
-    expect(baconButtons[last - 2]).toBeDisabled();
-    expect(baconButtons[last - 3]).toBeDisabled();
+    // All buttons should be enabled again (count-based: 10 out of 12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
   });
 });

@@ -9,13 +9,11 @@ export interface UseRecoveryPhraseValidationProps {
 export interface UseRecoveryPhraseValidationReturn {
   userWords: string[];
   errors: boolean[];
-  availableWords: string[];
-  usedWordInstances: Set<number>;
-  handleWordClick: (word: string, wordIndex: number) => void;
+  remainingWords: Array<{ word: string; index: number; isUsed: boolean }>;
+  handleWordClick: (word: string) => void;
   validateWords: () => boolean;
   clearWord: (index: number) => void;
   isComplete: boolean;
-  wordCountMap: Record<string, number>;
 }
 
 export function useRecoveryPhraseValidation({
@@ -23,136 +21,92 @@ export function useRecoveryPhraseValidation({
 }: UseRecoveryPhraseValidationProps): UseRecoveryPhraseValidationReturn {
   const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
   const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
-  const [availableWords] = useState<string[]>([...recoveryWords].sort());
-  const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
-  const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
-  const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
 
-  // Precompute word counts for better performance
-  const wordCountMap = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const w of recoveryWords) {
-      map[w] = (map[w] || 0) + 1;
-    }
-    return map;
-  }, [recoveryWords]);
+  // Sorted words for selection
+  const availableWords = useMemo(() => [...recoveryWords].sort(), [recoveryWords]);
 
-  const validateSingleWord = useCallback(
-    (wordIndex: number, word: string) => {
-      setErrors((prev) => {
-        const newErrors = [...prev];
-        // Check if this specific word is correct for its position
-        const isError = word !== '' && word !== recoveryWords[wordIndex];
-        newErrors[wordIndex] = isError;
-        return newErrors;
-      });
-    },
-    [recoveryWords],
-  );
+  // Calculate which words are still available to click
+  const remainingWords = useMemo(() => {
+    const usedCount = new Map<string, number>();
+    userWords.forEach((word) => {
+      if (word) usedCount.set(word, (usedCount.get(word) || 0) + 1);
+    });
+
+    return availableWords.map((word, index) => {
+      const used = usedCount.get(word) || 0;
+      const total = recoveryWords.filter((w) => w === word).length;
+      return { word, index, isUsed: used >= total };
+    });
+  }, [availableWords, userWords, recoveryWords]);
 
   const handleWordClick = useCallback(
-    (word: string, wordIndex: number) => {
-      const wordCountInPhrase = wordCountMap[word] ?? 0;
-      const currentUsageCount = usedWordCounts[word] || 0;
-
-      if (currentUsageCount >= wordCountInPhrase) {
-        return;
-      }
-
-      // Check if this specific word instance is already used
-      if (usedWordInstances.has(wordIndex)) {
-        return;
-      }
-
+    (word: string) => {
+      // Find first empty slot
       const emptyIndex = userWords.findIndex((w) => w === '');
-      if (emptyIndex !== -1) {
-        const newUserWords = [...userWords];
-        newUserWords[emptyIndex] = word;
-        setUserWords(newUserWords);
+      if (emptyIndex === -1) return;
 
-        setUsedWordCounts((prev) => ({
-          ...prev,
-          [word]: currentUsageCount + 1,
-        }));
-        setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
+      // Check if we can use this word
+      const wordCountInPhrase = recoveryWords.filter((w) => w === word).length;
+      const usedCount = userWords.filter((w) => w === word).length;
+      if (usedCount >= wordCountInPhrase) return;
 
-        // Track slot to instance mapping
-        setSlotToInstance((prev) => {
+      // Add word to slot
+      setUserWords((prev) => {
+        const next = [...prev];
+        next[emptyIndex] = word;
+        return next;
+      });
+
+      // Validate immediately
+      setErrors((prev) => {
+        const next = [...prev];
+        next[emptyIndex] = word !== recoveryWords[emptyIndex];
+        return next;
+      });
+    },
+    [userWords, recoveryWords],
+  );
+
+  const clearWord = useCallback(
+    (index: number) => {
+      if (userWords[index]) {
+        setUserWords((prev) => {
           const next = [...prev];
-          next[emptyIndex] = wordIndex;
+          next[index] = '';
           return next;
         });
 
-        // Validate this specific word immediately
-        validateSingleWord(emptyIndex, word);
+        setErrors((prev) => {
+          const next = [...prev];
+          next[index] = false;
+          return next;
+        });
       }
     },
-    [userWords, wordCountMap, usedWordCounts, usedWordInstances, validateSingleWord],
+    [userWords],
   );
 
   const validateWords = useCallback(() => {
-    // Validate all words first
-    const newErrors = userWords.map((word, index) => {
-      return word !== '' && word !== recoveryWords[index];
-    });
+    const newErrors = userWords.map((word, i) => word !== '' && word !== recoveryWords[i]);
     setErrors(newErrors);
 
-    // Check if all words are correct and filled
     const allFilled = userWords.every((word) => word !== '');
-    const allCorrect = newErrors.every((error) => !error);
+    const allCorrect = newErrors.every((err) => !err);
 
     return allFilled && allCorrect;
   }, [userWords, recoveryWords]);
 
-  const clearWord = useCallback(
-    (index: number) => {
-      const word = userWords[index];
-      if (word) {
-        const newUserWords = [...userWords];
-        newUserWords[index] = '';
-        setUserWords(newUserWords);
-        setUsedWordCounts((prev) => ({
-          ...prev,
-          [word]: Math.max(0, (prev[word] || 0) - 1),
-        }));
-
-        // Use the exact instance that was used in this slot
-        const instanceIndex = slotToInstance[index];
-        if (instanceIndex !== null) {
-          setUsedWordInstances((prev) => {
-            const next = new Set(prev);
-            next.delete(instanceIndex);
-            return next;
-          });
-          setSlotToInstance((prev) => {
-            const next = [...prev];
-            next[index] = null;
-            return next;
-          });
-        }
-
-        // Clear error for this specific word
-        setErrors((prev) => {
-          const newErrors = [...prev];
-          newErrors[index] = false;
-          return newErrors;
-        });
-      }
-    },
-    [userWords, slotToInstance],
-  );
-
-  const isComplete = userWords.every((word) => word !== '') && errors.every((error) => !error);
+  const isComplete = useMemo(() => {
+    return userWords.every((w) => w !== '') && errors.every((e) => !e);
+  }, [userWords, errors]);
 
   return {
     userWords,
     errors,
-    availableWords,
-    usedWordInstances,
+    remainingWords,
     handleWordClick,
     validateWords,
     clearWord,
     isComplete,
-    wordCountMap,
   };
 }
