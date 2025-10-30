@@ -19,92 +19,125 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     data-testid="dialog-content"
   >
     <div
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        Import recovery phrase
-      </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        1. Open Pubky Ring, tap 'Add pubky' 
-        <br />
-        2. Choose 'Import pubky' option 
-        <br />
-        3. Tap 'Scan QR to import' 
-        <br />
-        4. Scan this QR code to import your recovery phrase
-      </p>
-    </div>
-    <div
-      class="justify-between items-center"
-      data-testid="container"
+      class="hidden lg:flex flex-col gap-6"
     >
       <div
-        class="flex-row gap-6"
+        data-testid="dialog-header"
+      >
+        <h2
+          data-testid="dialog-title"
+        >
+          Import recovery phrase
+        </h2>
+        <p
+          data-testid="dialog-description"
+        >
+          1. Open Pubky Ring, tap 'Add pubky' 
+          <br />
+          2. Choose 'Import pubky' option 
+          <br />
+          3. Tap 'Scan QR to import' 
+          <br />
+          4. Scan this QR code to import your recovery phrase
+        </p>
+      </div>
+      <div
+        class="justify-between items-start"
         data-testid="container"
       >
         <div
-          data-testid="container"
-        >
-          <img
-            alt="App preview"
-            data-testid="next-image"
-            height="430"
-            src="/images/pubky-ring-phone.png"
-            width="250"
-          />
-        </div>
-        <div
-          class="gap-6"
+          class="flex-row gap-8"
           data-testid="container"
         >
           <div
-            class="mx-0 bg-foreground rounded-lg p-4 w-[192px] h-[192px] items-center"
+            data-testid="container"
+          >
+            <img
+              alt="App preview"
+              data-testid="next-image"
+              height="430"
+              src="/images/pubky-ring-phone.png"
+              width="250"
+            />
+          </div>
+          <div
+            class="gap-6"
             data-testid="container"
           >
             <div
-              data-size="192"
-              data-testid="qr-code"
-              data-value="pubkyring://wood%20fox%20silver%20drive%20march%20fee%20palace%20flame%20earn%20door%20case%20almost"
+              class="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center"
+              data-testid="container"
             >
-              QR Code
+              <div
+                data-size="174"
+                data-testid="qr-code"
+                data-value="pubkyring://wood%20fox%20silver%20drive%20march%20fee%20palace%20flame%20earn%20door%20case%20almost"
+              >
+                QR Code
+              </div>
+            </div>
+            <div
+              class="gap-4"
+              data-testid="container"
+            >
+              <a
+                data-testid="link"
+                href="https://apps.apple.com/app/pubky-ring/id6739356756"
+                target="_blank"
+              >
+                <img
+                  alt="App Store"
+                  data-testid="next-image"
+                  height="40"
+                  src="/images/badge-apple.png"
+                  width="120"
+                />
+              </a>
+              <a
+                data-testid="link"
+                href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
+                target="_blank"
+              >
+                <img
+                  alt="Google Play"
+                  data-testid="next-image"
+                  height="40"
+                  src="/images/badge-android.png"
+                  width="135"
+                />
+              </a>
             </div>
           </div>
-          <div
-            class="gap-4"
-            data-testid="container"
-          >
-            <a
-              data-testid="link"
-              href="https://apps.apple.com/app/pubky-ring/id6739356756"
-              target="_blank"
-            >
-              <img
-                alt="App Store"
-                data-testid="next-image"
-                height="40"
-                src="/images/badge-apple.png"
-                width="120"
-              />
-            </a>
-            <a
-              data-testid="link"
-              href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
-              target="_blank"
-            >
-              <img
-                alt="Google Play"
-                data-testid="next-image"
-                height="40"
-                src="/images/badge-android.png"
-                width="135"
-              />
-            </a>
-          </div>
         </div>
+      </div>
+    </div>
+    <div
+      class="flex lg:hidden flex-col gap-6"
+    >
+      <div
+        data-testid="dialog-header"
+      >
+        <h2
+          data-testid="dialog-title"
+        >
+          Import recovery phrase
+        </h2>
+        <p
+          data-testid="dialog-description"
+        >
+          Tap the button below to import your recovery phrase into Pubky Ring for a safer and easier sign-in experience.
+        </p>
+      </div>
+      <div
+        class="gap-3"
+        data-testid="container"
+      >
+        <button
+          class="w-full"
+          data-testid="button"
+        >
+          Import to Pubky Ring
+        </button>
       </div>
     </div>
   </div>
@@ -130,92 +163,125 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     data-testid="dialog-content"
   >
     <div
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        Import recovery phrase
-      </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        1. Open Pubky Ring, tap 'Add pubky' 
-        <br />
-        2. Choose 'Import pubky' option 
-        <br />
-        3. Tap 'Scan QR to import' 
-        <br />
-        4. Scan this QR code to import your recovery phrase
-      </p>
-    </div>
-    <div
-      class="justify-between items-center"
-      data-testid="container"
+      class="hidden lg:flex flex-col gap-6"
     >
       <div
-        class="flex-row gap-6"
+        data-testid="dialog-header"
+      >
+        <h2
+          data-testid="dialog-title"
+        >
+          Import recovery phrase
+        </h2>
+        <p
+          data-testid="dialog-description"
+        >
+          1. Open Pubky Ring, tap 'Add pubky' 
+          <br />
+          2. Choose 'Import pubky' option 
+          <br />
+          3. Tap 'Scan QR to import' 
+          <br />
+          4. Scan this QR code to import your recovery phrase
+        </p>
+      </div>
+      <div
+        class="justify-between items-start"
         data-testid="container"
       >
         <div
-          data-testid="container"
-        >
-          <img
-            alt="App preview"
-            data-testid="next-image"
-            height="430"
-            src="/images/pubky-ring-phone.png"
-            width="250"
-          />
-        </div>
-        <div
-          class="gap-6"
+          class="flex-row gap-8"
           data-testid="container"
         >
           <div
-            class="mx-0 bg-foreground rounded-lg p-4 w-[192px] h-[192px] items-center"
+            data-testid="container"
+          >
+            <img
+              alt="App preview"
+              data-testid="next-image"
+              height="430"
+              src="/images/pubky-ring-phone.png"
+              width="250"
+            />
+          </div>
+          <div
+            class="gap-6"
             data-testid="container"
           >
             <div
-              data-size="192"
-              data-testid="qr-code"
-              data-value="pubkyring://test%20phrase%20with%20spaces%20%26%20symbols!"
+              class="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center"
+              data-testid="container"
             >
-              QR Code
+              <div
+                data-size="174"
+                data-testid="qr-code"
+                data-value="pubkyring://test%20phrase%20with%20spaces%20%26%20symbols!"
+              >
+                QR Code
+              </div>
+            </div>
+            <div
+              class="gap-4"
+              data-testid="container"
+            >
+              <a
+                data-testid="link"
+                href="https://apps.apple.com/app/pubky-ring/id6739356756"
+                target="_blank"
+              >
+                <img
+                  alt="App Store"
+                  data-testid="next-image"
+                  height="40"
+                  src="/images/badge-apple.png"
+                  width="120"
+                />
+              </a>
+              <a
+                data-testid="link"
+                href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
+                target="_blank"
+              >
+                <img
+                  alt="Google Play"
+                  data-testid="next-image"
+                  height="40"
+                  src="/images/badge-android.png"
+                  width="135"
+                />
+              </a>
             </div>
           </div>
-          <div
-            class="gap-4"
-            data-testid="container"
-          >
-            <a
-              data-testid="link"
-              href="https://apps.apple.com/app/pubky-ring/id6739356756"
-              target="_blank"
-            >
-              <img
-                alt="App Store"
-                data-testid="next-image"
-                height="40"
-                src="/images/badge-apple.png"
-                width="120"
-              />
-            </a>
-            <a
-              data-testid="link"
-              href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
-              target="_blank"
-            >
-              <img
-                alt="Google Play"
-                data-testid="next-image"
-                height="40"
-                src="/images/badge-android.png"
-                width="135"
-              />
-            </a>
-          </div>
         </div>
+      </div>
+    </div>
+    <div
+      class="flex lg:hidden flex-col gap-6"
+    >
+      <div
+        data-testid="dialog-header"
+      >
+        <h2
+          data-testid="dialog-title"
+        >
+          Import recovery phrase
+        </h2>
+        <p
+          data-testid="dialog-description"
+        >
+          Tap the button below to import your recovery phrase into Pubky Ring for a safer and easier sign-in experience.
+        </p>
+      </div>
+      <div
+        class="gap-3"
+        data-testid="container"
+      >
+        <button
+          class="w-full"
+          data-testid="button"
+        >
+          Import to Pubky Ring
+        </button>
       </div>
     </div>
   </div>
@@ -241,90 +307,123 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
     data-testid="dialog-content"
   >
     <div
-      data-testid="dialog-header"
-    >
-      <h2
-        data-testid="dialog-title"
-      >
-        Pubky Ring export
-      </h2>
-      <p
-        data-testid="dialog-description"
-      >
-        1. Open Pubky Ring, tap 'Add pubky' 
-        <br />
-        2. Choose the 'Import pubky' option
-        <br />
-        3. Scan this QR to import
-      </p>
-    </div>
-    <div
-      class="justify-between items-center"
-      data-testid="container"
+      class="hidden lg:flex flex-col gap-6"
     >
       <div
-        class="flex-row gap-6"
+        data-testid="dialog-header"
+      >
+        <h2
+          data-testid="dialog-title"
+        >
+          Pubky Ring export
+        </h2>
+        <p
+          data-testid="dialog-description"
+        >
+          1. Open Pubky Ring, tap 'Add pubky' 
+          <br />
+          2. Choose the 'Import pubky' option
+          <br />
+          3. Scan this QR to import
+        </p>
+      </div>
+      <div
+        class="justify-between items-start"
         data-testid="container"
       >
         <div
-          data-testid="container"
-        >
-          <img
-            alt="App preview"
-            data-testid="next-image"
-            height="430"
-            src="/images/pubky-ring-phone.png"
-            width="250"
-          />
-        </div>
-        <div
-          class="gap-6"
+          class="flex-row gap-8"
           data-testid="container"
         >
           <div
-            class="mx-0 bg-foreground rounded-lg p-4 w-[192px] h-[192px] items-center"
+            data-testid="container"
+          >
+            <img
+              alt="App preview"
+              data-testid="next-image"
+              height="430"
+              src="/images/pubky-ring-phone.png"
+              width="250"
+            />
+          </div>
+          <div
+            class="gap-6"
             data-testid="container"
           >
             <div
-              data-size="192"
-              data-testid="qr-code"
-              data-value="https://pubky.org"
+              class="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center"
+              data-testid="container"
             >
-              QR Code
+              <div
+                data-size="174"
+                data-testid="qr-code"
+                data-value="https://pubky.org"
+              >
+                QR Code
+              </div>
+            </div>
+            <div
+              class="gap-4"
+              data-testid="container"
+            >
+              <a
+                data-testid="link"
+                href="https://apps.apple.com/app/pubky-ring/id6739356756"
+                target="_blank"
+              >
+                <img
+                  alt="App Store"
+                  data-testid="next-image"
+                  height="40"
+                  src="/images/badge-apple.png"
+                  width="120"
+                />
+              </a>
+              <a
+                data-testid="link"
+                href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
+                target="_blank"
+              >
+                <img
+                  alt="Google Play"
+                  data-testid="next-image"
+                  height="40"
+                  src="/images/badge-android.png"
+                  width="135"
+                />
+              </a>
             </div>
           </div>
-          <div
-            class="gap-4"
-            data-testid="container"
-          >
-            <a
-              data-testid="link"
-              href="https://apps.apple.com/app/pubky-ring/id6739356756"
-              target="_blank"
-            >
-              <img
-                alt="App Store"
-                data-testid="next-image"
-                height="40"
-                src="/images/badge-apple.png"
-                width="120"
-              />
-            </a>
-            <a
-              data-testid="link"
-              href="https://play.google.com/store/apps/details?id=to.pubky.ring&pcampaignid=web_share"
-              target="_blank"
-            >
-              <img
-                alt="Google Play"
-                data-testid="next-image"
-                height="40"
-                src="/images/badge-android.png"
-                width="135"
-              />
-            </a>
-          </div>
         </div>
+      </div>
+    </div>
+    <div
+      class="flex lg:hidden flex-col gap-6"
+    >
+      <div
+        data-testid="dialog-header"
+      >
+        <h2
+          data-testid="dialog-title"
+        >
+          Pubky Ring export
+        </h2>
+        <p
+          data-testid="dialog-description"
+        >
+          Tap the button below to export your pubky and import it into Pubky Ring for a safer and easier sign-in experience.
+        </p>
+      </div>
+      <div
+        class="gap-3"
+        data-testid="container"
+      >
+        <button
+          class="w-full"
+          data-testid="button"
+        >
+          Import to Pubky Ring
+        </button>
       </div>
     </div>
   </div>

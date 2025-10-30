@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogBackupExport } from './DialogBackupExport';
 
@@ -33,6 +33,10 @@ vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return { ...actual };
 });
+
+// Mock window.open
+const mockWindowOpen = vi.fn();
+const originalOpen = window.open;
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -111,6 +115,21 @@ vi.mock('@/atoms', () => ({
 }));
 
 describe('DialogBackupExport', () => {
+  beforeEach(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: mockWindowOpen,
+    });
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: originalOpen,
+    });
+  });
+
   it('renders with default props', () => {
     render(<DialogBackupExport />);
 
@@ -126,40 +145,192 @@ describe('DialogBackupExport', () => {
   it('handles click events on trigger button', () => {
     render(<DialogBackupExport />);
 
-    const button = screen.getByTestId('button');
+    const buttons = screen.getAllByTestId('button');
+    const triggerButton = buttons.find((btn) => btn.textContent === 'Continue');
 
-    fireEvent.click(button);
-
-    expect(button).toBeInTheDocument();
+    expect(triggerButton).toBeInTheDocument();
+    fireEvent.click(triggerButton!);
   });
 
-  it('contains proper content structure', () => {
-    render(<DialogBackupExport />);
+  it('renders desktop version with correct classes', () => {
+    const { container } = render(<DialogBackupExport />);
 
-    // Check that all main elements are present
-    expect(screen.getByText('Pubky Ring export')).toBeInTheDocument();
-    expect(screen.getByText(/Open Pubky Ring, tap 'Add pubky'/)).toBeInTheDocument();
-    expect(screen.getByTestId('qr-code')).toBeInTheDocument();
-    expect(screen.getByAltText('App preview')).toBeInTheDocument();
-    expect(screen.getByAltText('App Store')).toBeInTheDocument();
-    expect(screen.getByAltText('Google Play')).toBeInTheDocument();
+    const desktopVersion = container.querySelector('.hidden.lg\\:flex');
+    expect(desktopVersion).toBeInTheDocument();
+  });
+
+  it('renders mobile version with correct classes', () => {
+    const { container } = render(<DialogBackupExport />);
+
+    const mobileVersion = container.querySelector('.flex.lg\\:hidden');
+    expect(mobileVersion).toBeInTheDocument();
+  });
+
+  describe('Desktop version', () => {
+    it('contains proper desktop content structure', () => {
+      render(<DialogBackupExport />);
+
+      // Check that all main elements are present
+      const titles = screen.getAllByText('Pubky Ring export');
+      expect(titles.length).toBeGreaterThan(0);
+
+      expect(screen.getByText(/Open Pubky Ring, tap 'Add pubky'/)).toBeInTheDocument();
+
+      // Desktop version should have QR code
+      const qrCodes = screen.getAllByTestId('qr-code');
+      expect(qrCodes.length).toBeGreaterThan(0);
+      const desktopQrCode = qrCodes[0];
+      expect(desktopQrCode).toBeInTheDocument();
+      expect(desktopQrCode).toHaveAttribute('data-size', '174');
+
+      expect(screen.getByAltText('App preview')).toBeInTheDocument();
+      expect(screen.getByAltText('App Store')).toBeInTheDocument();
+      expect(screen.getByAltText('Google Play')).toBeInTheDocument();
+    });
+
+    it('has correct QR code container padding', () => {
+      const { container } = render(<DialogBackupExport />);
+
+      const qrContainer = container.querySelector('[class*="p-[9px]"]');
+      expect(qrContainer).toBeInTheDocument();
+    });
+
+    it('has correct container alignment (items-start)', () => {
+      render(<DialogBackupExport />);
+
+      const containers = screen.getAllByTestId('container');
+      const mainContainer = containers.find(
+        (container) => container.className.includes('justify-between') && container.className.includes('items-start'),
+      );
+      expect(mainContainer).toBeInTheDocument();
+    });
+
+    it('has correct gap between phone and QR sections (gap-8)', () => {
+      render(<DialogBackupExport />);
+
+      const containers = screen.getAllByTestId('container');
+      const flexRowContainer = containers.find(
+        (container) => container.className.includes('flex-row') && container.className.includes('gap-8'),
+      );
+      expect(flexRowContainer).toBeInTheDocument();
+    });
+
+    it('has correct max-width (max-w-md)', () => {
+      render(<DialogBackupExport />);
+
+      const content = screen.getByTestId('dialog-content');
+      expect(content).toHaveClass('max-w-md');
+    });
+  });
+
+  describe('Mobile version', () => {
+    it('renders mobile description text', () => {
+      render(<DialogBackupExport />);
+
+      expect(
+        screen.getByText(/Tap the button below to export your pubky and import it into Pubky Ring/),
+      ).toBeInTheDocument();
+    });
+
+    it('renders mobile button', () => {
+      render(<DialogBackupExport />);
+
+      const buttons = screen.getAllByTestId('button');
+      const mobileButton = buttons.find((btn) => btn.textContent === 'Import to Pubky Ring');
+      expect(mobileButton).toBeInTheDocument();
+      expect(mobileButton).toHaveClass('w-full');
+    });
+
+    it('opens deeplink when mobile button is clicked', () => {
+      render(<DialogBackupExport />);
+
+      const buttons = screen.getAllByTestId('button');
+      const mobileButton = buttons.find((btn) => btn.textContent === 'Import to Pubky Ring');
+
+      fireEvent.click(mobileButton!);
+
+      expect(mockWindowOpen).toHaveBeenCalled();
+    });
+
+    it('does not render QR code or store badges in mobile version', () => {
+      const { container } = render(<DialogBackupExport />);
+
+      // QR codes should only exist in desktop version
+      const qrCodes = screen.getAllByTestId('qr-code');
+      expect(qrCodes.length).toBeGreaterThan(0);
+
+      // Store badges should only exist in desktop version
+      const links = screen.getAllByTestId('link');
+      expect(links.length).toBeGreaterThan(0);
+
+      // Mobile version should not have QR codes or links
+      const mobileContainer = container.querySelector('.flex.lg\\:hidden');
+      const mobileQrCode = mobileContainer?.querySelector('[data-testid="qr-code"]');
+      const mobileLinks = mobileContainer?.querySelectorAll('[data-testid="link"]');
+      expect(mobileQrCode).not.toBeInTheDocument();
+      expect(mobileLinks?.length || 0).toBe(0);
+    });
   });
 
   describe('with mnemonic prop', () => {
-    it('renders with mnemonic-specific title and button text', () => {
+    it('renders with mnemonic-specific title', () => {
       const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
       render(<DialogBackupExport mnemonic={testMnemonic} />);
 
-      const title = screen.getByTestId('dialog-title');
-      const triggerText = screen.getByText('Continue');
+      const titles = screen.getAllByTestId('dialog-title');
+      titles.forEach((title) => {
+        expect(title).toHaveTextContent('Import recovery phrase');
+      });
+    });
 
-      expect(title).toHaveTextContent('Import recovery phrase');
-      expect(triggerText).toBeInTheDocument();
+    it('renders mobile import description for mnemonic', () => {
+      const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
+      render(<DialogBackupExport mnemonic={testMnemonic} />);
+
+      expect(
+        screen.getByText(/Tap the button below to import your recovery phrase into Pubky Ring/),
+      ).toBeInTheDocument();
+    });
+
+    it('opens correct deeplink when mobile button is clicked with mnemonic', () => {
+      const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
+      render(<DialogBackupExport mnemonic={testMnemonic} />);
+
+      const buttons = screen.getAllByTestId('button');
+      const mobileButton = buttons.find((btn) => btn.textContent === 'Import to Pubky Ring');
+
+      fireEvent.click(mobileButton!);
+
+      expect(mockWindowOpen).toHaveBeenCalled();
+    });
+
+    it('renders desktop version with correct QR code size for mnemonic', () => {
+      const testMnemonic = 'wood fox silver drive march fee palace flame earn door case almost';
+      render(<DialogBackupExport mnemonic={testMnemonic} />);
+
+      const qrCodes = screen.getAllByTestId('qr-code');
+      expect(qrCodes.length).toBeGreaterThan(0);
+      const desktopQrCode = qrCodes[0];
+      expect(desktopQrCode).toHaveAttribute('data-size', '174');
     });
   });
 });
 
 describe('DialogBackupExport - Snapshots', () => {
+  beforeEach(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: mockWindowOpen,
+    });
+  });
+
+  afterEach(() => {
+    Object.defineProperty(window, 'open', {
+      configurable: true,
+      value: originalOpen,
+    });
+  });
+
   it('matches snapshot for default DialogBackupExport', () => {
     const { container } = render(<DialogBackupExport />);
     expect(container.firstChild).toMatchSnapshot();

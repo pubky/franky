@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -28,9 +30,24 @@ const EXPORT_DESCRIPTION = (
   </>
 );
 
+const MOBILE_EXPORT_DESCRIPTION =
+  'Tap the button below to export your pubky and import it into Pubky Ring for a safer and easier sign-in experience.';
+
+const MOBILE_IMPORT_DESCRIPTION =
+  'Tap the button below to import your recovery phrase into Pubky Ring for a safer and easier sign-in experience.';
+
 export function DialogBackupExport({ mnemonic, children }: DialogBackupExportProps) {
   const qrValue = mnemonic ? Libs.generatePubkyRingDeeplink(mnemonic) : Config.PUBKY_CORE_URL;
   const descriptionContent = mnemonic ? IMPORT_DESCRIPTION : EXPORT_DESCRIPTION;
+  const mobileDescription = mnemonic ? MOBILE_IMPORT_DESCRIPTION : MOBILE_EXPORT_DESCRIPTION;
+  const dialogTitle = mnemonic ? 'Import recovery phrase' : 'Pubky Ring export';
+
+  const handleMobileButtonClick = () => {
+    if (typeof window !== 'undefined') {
+      const url = mnemonic ? Libs.generatePubkyRingDeeplink(mnemonic) : Config.PUBKY_CORE_URL;
+      window.open(url, '_blank');
+    }
+  };
 
   return (
     <Atoms.Dialog>
@@ -41,33 +58,50 @@ export function DialogBackupExport({ mnemonic, children }: DialogBackupExportPro
           <Atoms.Button>Continue</Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="max-w-md" hiddenTitle={mnemonic ? 'Import recovery phrase' : 'Pubky Ring export'}>
-        <Atoms.DialogHeader>
-          <Atoms.DialogTitle>{mnemonic ? 'Import recovery phrase' : 'Pubky Ring export'}</Atoms.DialogTitle>
-          <Atoms.DialogDescription>{descriptionContent}</Atoms.DialogDescription>
-        </Atoms.DialogHeader>
+      <Atoms.DialogContent className="max-w-md" hiddenTitle={dialogTitle}>
+        {/* Desktop version - hidden on mobile, shown on desktop */}
+        <div className="hidden lg:flex flex-col gap-6">
+          <Atoms.DialogHeader>
+            <Atoms.DialogTitle>{dialogTitle}</Atoms.DialogTitle>
+            <Atoms.DialogDescription>{descriptionContent}</Atoms.DialogDescription>
+          </Atoms.DialogHeader>
 
-        <Atoms.Container className="justify-between items-center">
-          <Atoms.Container className="flex-row gap-6">
-            <Atoms.Container>
-              <Image src="/images/pubky-ring-phone.png" alt="App preview" width={250} height={430} />
-            </Atoms.Container>
-
-            <Atoms.Container className="gap-6">
-              <Atoms.Container className="mx-0 bg-foreground rounded-lg p-4 w-[192px] h-[192px] items-center">
-                <QRCodeSVG value={qrValue} size={192} />
+          <Atoms.Container className="justify-between items-start">
+            <Atoms.Container className="flex-row gap-8">
+              <Atoms.Container>
+                <Image src="/images/pubky-ring-phone.png" alt="App preview" width={250} height={430} />
               </Atoms.Container>
-              <Atoms.Container className="gap-4">
-                <Atoms.Link href={Config.APP_STORE_URL} target="_blank">
-                  <Image src="/images/badge-apple.png" alt="App Store" width={120} height={40} />
-                </Atoms.Link>
-                <Atoms.Link href={Config.PLAY_STORE_URL} target="_blank">
-                  <Image src="/images/badge-android.png" alt="Google Play" width={135} height={40} />
-                </Atoms.Link>
+
+              <Atoms.Container className="gap-6">
+                <Atoms.Container className="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center">
+                  <QRCodeSVG value={qrValue} size={174} />
+                </Atoms.Container>
+                <Atoms.Container className="gap-4">
+                  <Atoms.Link href={Config.APP_STORE_URL} target="_blank">
+                    <Image src="/images/badge-apple.png" alt="App Store" width={120} height={40} />
+                  </Atoms.Link>
+                  <Atoms.Link href={Config.PLAY_STORE_URL} target="_blank">
+                    <Image src="/images/badge-android.png" alt="Google Play" width={135} height={40} />
+                  </Atoms.Link>
+                </Atoms.Container>
               </Atoms.Container>
             </Atoms.Container>
           </Atoms.Container>
-        </Atoms.Container>
+        </div>
+
+        {/* Mobile version - shown on mobile, hidden on desktop */}
+        <div className="flex lg:hidden flex-col gap-6">
+          <Atoms.DialogHeader>
+            <Atoms.DialogTitle>{dialogTitle}</Atoms.DialogTitle>
+            <Atoms.DialogDescription>{mobileDescription}</Atoms.DialogDescription>
+          </Atoms.DialogHeader>
+
+          <Atoms.Container className="gap-3">
+            <Atoms.Button onClick={handleMobileButtonClick} className="w-full">
+              Import to Pubky Ring
+            </Atoms.Button>
+          </Atoms.Container>
+        </div>
       </Atoms.DialogContent>
     </Atoms.Dialog>
   );
