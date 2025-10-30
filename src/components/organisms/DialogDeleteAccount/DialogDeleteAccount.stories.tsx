@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
-import { DialogDeleteAccount } from '@/molecules';
+import { DialogDeleteAccount } from '@/organisms';
 
 const meta = {
   title: 'Molecules/DialogDeleteAccount',

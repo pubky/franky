@@ -4,7 +4,6 @@ import React from 'react';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import Image from 'next/image';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 
 interface DialogBackupProps {
@@ -77,7 +76,7 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
             title="Export to Pubky Ring"
             imageSrc="/images/keyring.png"
             imageAlt="Keys"
-            dialog={<Molecules.DialogBackupExport mnemonic={mnemonic} />}
+            dialog={<Organisms.DialogBackupExport mnemonic={mnemonic} />}
           />
         </Atoms.Container>
       </Atoms.DialogContent>

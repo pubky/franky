@@ -10,11 +10,7 @@ vi.mock('@/core', () => ({
 }));
 
 // Mock Molecules
-vi.mock('@/molecules', () => ({
-  DialogBackupExport: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="dialog-export">{children || 'DialogBackupExport'}</div>
-  ),
-}));
+vi.mock('@/molecules', () => ({}));
 
 // Mock Organisms
 vi.mock('@/organisms', () => ({
@@ -23,6 +19,11 @@ vi.mock('@/organisms', () => ({
   ),
   DialogBackupEncrypted: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="dialog-backup-encrypted">{children || 'DialogBackupEncrypted'}</div>
+  ),
+  DialogBackupExport: ({ mnemonic, children }: { mnemonic?: string; children?: React.ReactNode }) => (
+    <div data-testid="dialog-export" data-mnemonic={mnemonic || ''}>
+      {children || 'DialogBackupExport'}
+    </div>
   ),
 }));
 

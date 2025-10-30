@@ -120,6 +120,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
           Keys
         </div>
         <div
+          data-mnemonic="test mnemonic phrase"
           data-testid="dialog-export"
         >
           DialogBackupExport

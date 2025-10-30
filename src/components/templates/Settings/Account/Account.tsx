@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import { AUTH_ROUTES } from '@/app';
 
@@ -106,7 +107,7 @@ export function Account({ className }: AccountProps) {
         />
       </Molecules.SettingsSectionCard>
 
-      <Molecules.DialogDeleteAccount isOpen={showDeleteDialog} onOpenChangeAction={setShowDeleteDialog} />
+      <Organisms.DialogDeleteAccount isOpen={showDeleteDialog} onOpenChangeAction={setShowDeleteDialog} />
     </>
   );
 }

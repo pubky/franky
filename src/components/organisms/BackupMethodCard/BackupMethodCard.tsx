@@ -41,12 +41,12 @@ export const BackupMethodCard = () => {
               <span>Encrypted file</span>
             </Atoms.Button>
           </Organisms.DialogBackupEncrypted>
-          <Molecules.DialogBackupExport mnemonic={mnemonic}>
+          <Organisms.DialogBackupExport mnemonic={mnemonic}>
             <Atoms.Button className="gap-2">
               <Libs.Scan className="h-4 w-4" />
               <span>{mnemonic ? 'Export recovery phrase' : 'Export to Pubky Ring'}</span>
             </Atoms.Button>
-          </Molecules.DialogBackupExport>
+          </Organisms.DialogBackupExport>
         </Atoms.Container>
       </Atoms.Container>
     </Molecules.ContentCard>
