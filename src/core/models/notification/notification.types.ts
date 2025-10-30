@@ -92,8 +92,18 @@ export type PostEditedNotification = {
   linked_uri: string;
 };
 
+/**
+ * Utility type that flattens a map of notification variants into a union type.
+ * Each variant includes its type key, specific fields, and common fields.
+ * @template TMap - The map of notification types keyed by NotificationType
+ * @template Common - The common fields shared across all notification types
+ */
 type FlatFromMap<TMap, Common> = {
   [K in keyof TMap]: { type: K } & TMap[K] & Common;
 }[keyof TMap];
 
+/**
+ * Flattened notification type that combines all notification variants with their specific fields
+ * and common fields (timestamp, type) into a discriminated union.
+ */
 export type FlatNotification = FlatFromMap<NotificationVariantMap, CommonFields>;

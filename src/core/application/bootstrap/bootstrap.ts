@@ -16,7 +16,7 @@ export class BootstrapApplication {
   static async initialize(pubky: Core.Pubky): Promise<Core.NotificationState> {
     const [data, { notificationList, lastRead }] = await Promise.all([
       Core.NexusBootstrapService.fetch(pubky),
-      this.pollNotifications(pubky),
+      this.fetchNotifications(pubky),
     ]);
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
@@ -32,15 +32,14 @@ export class BootstrapApplication {
   }
 
   /**
-   * Polls for the user's recent notifications and retrieves their last read timestamp.
-   * This method fetches notification data from Nexus and determines which notifications
+   * Fetches notification data from Nexus and determines which notifications
    * are unread based on the user's last read timestamp from the homeserver.
    *
    * @private
    * @param pubky - The user's public key identifier
    * @returns Promise resolving to notification data and last read timestamp
    */
-  private static async pollNotifications(pubky: Core.Pubky) {
+  private static async fetchNotifications(pubky: Core.Pubky) {
     const {
       meta: { url },
     } = Core.homeserverApi.lastRead(pubky);
@@ -50,7 +49,7 @@ export class BootstrapApplication {
     );
     const notificationList = await Core.NexusUserService.notifications({
       user_id: pubky,
-      limit: Config.NEXUS_NOTIFICATIONS_LIMIT_ON_INIT,
+      limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
     });
     return { notificationList, lastRead: userLastRead };
   }

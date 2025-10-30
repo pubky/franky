@@ -1,9 +1,8 @@
 import { Table } from 'dexie';
 import * as Core from '@/core';
-import { FlatNotification, NotificationType } from './notification.types';
 import * as Libs from '@/libs';
-
-const DEFAULT_LIMIT = 20;
+import * as Config from '@/config';
+import { FlatNotification, NotificationType } from './notification.types';
 
 // Primary key: auto-incrementing integer (++id) managed by Dexie
 export class NotificationModel {
@@ -53,7 +52,7 @@ export class NotificationModel {
   }
 
   // Query methods. TODO: Error handling when we will use it
-  static async getRecent(limit: number = DEFAULT_LIMIT): Promise<FlatNotification[]> {
+  static async getRecent(limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT): Promise<FlatNotification[]> {
     return await this.table.orderBy('timestamp').reverse().limit(limit).toArray();
   }
 
@@ -61,7 +60,10 @@ export class NotificationModel {
     return await this.table.where('type').equals(type).toArray();
   }
 
-  static async getRecentByType(type: NotificationType, limit: number = DEFAULT_LIMIT): Promise<FlatNotification[]> {
+  static async getRecentByType(
+    type: NotificationType,
+    limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT,
+  ): Promise<FlatNotification[]> {
     return await this.table
       .where('type')
       .equals(type)

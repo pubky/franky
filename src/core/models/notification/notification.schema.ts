@@ -9,7 +9,7 @@ export type NotificationModelSchema = FlatNotification & { id: number };
 //
 // Note: User-specific fields (followed_by, replied_by, etc.) are intentionally
 // not indexed because:
-// 1. Most queries are by timestamp/type (80/20 rule)
+// 1. Most queries are by timestamp/type
 // 2. Keeps schema simple and storage efficient
 // 3. Can be added later if user queries become common
 export const notificationTableSchema = `++id, timestamp, type`;
