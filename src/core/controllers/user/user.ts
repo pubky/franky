@@ -24,7 +24,7 @@ export class UserController {
       mutee,
     });
   }
-  
+
   // This function should be called from a notification hook that polls at regular intervals
   // to check for new unread notifications and update the store
   static async notifications({ userId }: Core.TReadProfileParams) {

@@ -20,12 +20,10 @@ describe('UserController', () => {
       const mockToJson = vi.fn(() => mockFollowJson);
       const mockMeta = { url: 'https://example.com/follow' } as { url: string };
 
-      const toSpy = vi
-        .spyOn(Core.FollowNormalizer, 'to')
-        .mockResolvedValue({
-          meta: mockMeta,
-          follow: { toJson: mockToJson },
-        } as unknown as import('pubky-app-specs').FollowResult);
+      const toSpy = vi.spyOn(Core.FollowNormalizer, 'to').mockResolvedValue({
+        meta: mockMeta,
+        follow: { toJson: mockToJson },
+      } as unknown as import('pubky-app-specs').FollowResult);
 
       const followSpy = vi.spyOn(Core.UserApplication, 'follow').mockResolvedValue(undefined);
 
