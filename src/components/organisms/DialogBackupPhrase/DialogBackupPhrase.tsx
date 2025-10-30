@@ -78,16 +78,21 @@ function RecoveryStep1({
       <Atoms.DialogHeader>
         <Atoms.DialogTitle>Backup recovery phrase</Atoms.DialogTitle>
         <Atoms.DialogDescription>
-          Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the
-          correct order and store them in a safe place.{' '}
+          <span className="hidden md:inline">
+            Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the
+            correct order and store them in a safe place.{' '}
+          </span>
+          <span className="md:hidden">
+            Write down these 12 words in the correct order and store them in a safe place.{' '}
+          </span>
           <span className="text-brand font-bold">Never share this recovery phrase with anyone.</span>
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container className={Libs.cn(isHidden && 'blur-xs')}>
-        <Atoms.Container display="grid" className="grid-cols-2 md:grid-cols-3 gap-3">
+      <Atoms.Container className={Libs.cn(isHidden && 'blur-md')}>
+        <Atoms.Container display="grid" className="grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-3">
           {recoveryWords.map((word, index) => (
-            <Atoms.Container key={index} className="items-center gap-3 rounded-md bg-secondary p-4 flex-row">
+            <Atoms.Container key={index} className="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row">
               <Atoms.Badge
                 id={`backup-recovery-phrase-word-${index + 1}`}
                 variant="outline"
@@ -123,21 +128,40 @@ function RecoveryStep1({
           </>
         ) : (
           <>
-            <Atoms.Button
-              variant="outline"
-              size="lg"
-              onClick={() => {
-                setIsHidden(!isHidden);
-                setStep(1);
-              }}
-            >
-              <Libs.EyeOff className="h-4 w-4" />
-              Hide recovery phrase
-            </Atoms.Button>
-            <Atoms.Button id="backup-recovery-phrase-confirm-btn" size="lg" onClick={() => setStep(2)}>
-              <Libs.ArrowRight className="h-4 w-4" />
-              Confirm recovery phrase
-            </Atoms.Button>
+            <div className="contents md:hidden">
+              <Atoms.Button id="backup-recovery-phrase-confirm-btn" size="lg" onClick={() => setStep(2)}>
+                <Libs.ArrowRight className="h-4 w-4" />
+                Confirm recovery phrase
+              </Atoms.Button>
+              <Atoms.Button
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  setIsHidden(!isHidden);
+                  setStep(1);
+                }}
+              >
+                <Libs.EyeOff className="h-4 w-4" />
+                Hide recovery phrase
+              </Atoms.Button>
+            </div>
+            <div className="hidden md:contents">
+              <Atoms.Button
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  setIsHidden(!isHidden);
+                  setStep(1);
+                }}
+              >
+                <Libs.EyeOff className="h-4 w-4" />
+                Hide recovery phrase
+              </Atoms.Button>
+              <Atoms.Button size="lg" onClick={() => setStep(2)}>
+                <Libs.ArrowRight className="h-4 w-4" />
+                Confirm recovery phrase
+              </Atoms.Button>
+            </div>
           </>
         )}
       </Atoms.DialogFooter>
@@ -160,7 +184,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       <Atoms.DialogHeader>
         <Atoms.DialogTitle>Confirm recovery phrase</Atoms.DialogTitle>
         <Atoms.DialogDescription>
-          Click or tap the 12 words in the correct order. Click on filled fields to remove words.
+          Click or tap the 12 words in the correct order or enter the words manually.
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
@@ -171,7 +195,6 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
               id={`backup-recovery-phrase-word-${word}-${index + 1}`}
               key={`${word}-${index}`}
               variant={isUsed ? 'secondary' : 'outline'}
-              size="sm"
               className={`rounded-full ${
                 isUsed
                   ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
@@ -185,7 +208,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           ))}
         </Atoms.Container>
 
-        <Atoms.Container display="grid" className="grid-cols-2 sm:grid-cols-3 gap-3">
+        <Atoms.Container display="grid" className="grid-cols-2 sm:grid-cols-3 gap-1.5 md:gap-3">
           {userWords.map((word, i) => {
             const isCorrect = word !== '' && word === recoveryWords[i];
             const isError = errors[i];
@@ -233,22 +256,37 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container className="w-full bg-card rounded-md p-6 flex items-center justify-center">
+      <Atoms.Container className="w-full bg-card rounded-md p-12 flex items-center justify-center">
         <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="w-48 h-48" />
       </Atoms.Container>
 
       <Atoms.DialogFooter>
-        <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" size="lg" onClick={handleClose}>
-            Cancel
-          </Atoms.Button>
-        </Atoms.DialogClose>
-        <Atoms.DialogClose asChild>
-          <Atoms.Button id="backup-recovery-phrase-finish-btn" onClick={handleClose} size="lg">
-            <Libs.ArrowRight className="h-4 w-4" />
-            Finish
-          </Atoms.Button>
-        </Atoms.DialogClose>
+        <div className="contents md:hidden">
+          <Atoms.DialogClose asChild>
+            <Atoms.Button id="backup-recovery-phrase-finish-btn" onClick={handleClose}>
+              <Libs.ArrowRight className="h-4 w-4" />
+              Finish
+            </Atoms.Button>
+          </Atoms.DialogClose>
+          <Atoms.DialogClose asChild>
+            <Atoms.Button variant="outline" onClick={handleClose}>
+              Cancel
+            </Atoms.Button>
+          </Atoms.DialogClose>
+        </div>
+        <div className="hidden md:contents">
+          <Atoms.DialogClose asChild>
+            <Atoms.Button variant="outline" onClick={handleClose}>
+              Cancel
+            </Atoms.Button>
+          </Atoms.DialogClose>
+          <Atoms.DialogClose asChild>
+            <Atoms.Button onClick={handleClose}>
+              <Libs.ArrowRight className="h-4 w-4" />
+              Finish
+            </Atoms.Button>
+          </Atoms.DialogClose>
+        </div>
       </Atoms.DialogFooter>
     </>
   );

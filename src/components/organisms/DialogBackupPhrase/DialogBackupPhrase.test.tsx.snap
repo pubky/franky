@@ -36,8 +36,18 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
       <p
         data-testid="dialog-description"
       >
-        Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the correct order and store them in a safe place.
-         
+        <span
+          class="hidden md:inline"
+        >
+          Use the recovery phrase below to recover your account at a later date. Write down these 12 words in the correct order and store them in a safe place.
+           
+        </span>
+        <span
+          class="md:hidden"
+        >
+          Write down these 12 words in the correct order and store them in a safe place.
+           
+        </span>
         <span
           class="text-brand font-bold"
         >
@@ -46,15 +56,15 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
       </p>
     </div>
     <div
-      class="blur-xs"
+      class="blur-md"
       data-testid="container"
     >
       <div
-        class="grid-cols-2 md:grid-cols-3 gap-3"
+        class="grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-3"
         data-testid="container"
       >
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -71,7 +81,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -88,7 +98,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -105,7 +115,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -122,7 +132,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -139,7 +149,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -156,7 +166,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -173,7 +183,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -190,7 +200,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -207,7 +217,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -224,7 +234,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span
@@ -241,7 +251,7 @@ exports[`DialogBackupPhrase - Snapshots > matches snapshot for default DialogBac
           </span>
         </div>
         <div
-          class="items-center gap-3 rounded-md bg-secondary p-4 flex-row"
+          class="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row"
           data-testid="container"
         >
           <span

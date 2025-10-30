@@ -283,7 +283,7 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
 
     expect(outerContainer).not.toBeNull();
     expect(outerContainer?.className ?? '').not.toContain('blur-xs');
-    expect(screen.getByText('Hide recovery phrase')).toBeInTheDocument();
+    expect(screen.getAllByText('Hide recovery phrase').length).toBeGreaterThan(0);
 
     act(() => {
       dialogMockControls.onOpenChange?.(false);
@@ -297,7 +297,7 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     expect(screen.queryByText('Hide recovery phrase')).not.toBeInTheDocument();
     const updatedOuterContainer = wordContainer?.parentElement?.parentElement as HTMLElement | null;
     expect(updatedOuterContainer).not.toBeNull();
-    expect(updatedOuterContainer?.className ?? '').toContain('blur-xs');
+    expect(updatedOuterContainer?.className ?? '').toContain('blur-md');
   });
 
   it('should allow selecting duplicate words individually in step 2', () => {
@@ -307,7 +307,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Now we should be in step 2 with the word selection buttons
@@ -344,7 +345,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get both tube buttons (duplicates)
@@ -388,7 +390,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all word buttons
@@ -438,7 +441,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Select a wrong word for slot 0 (expected "tube")
@@ -673,7 +677,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons (should be 12)
@@ -734,7 +739,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons
@@ -787,7 +793,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons
