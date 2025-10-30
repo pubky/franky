@@ -30,7 +30,7 @@ export class UserController {
   static async notifications({ userId }: Core.TReadProfileParams) {
     const notificationStore = Core.useNotificationStore.getState();
     const lastRead = notificationStore.selectLastRead();
-    const unread = await Core.UserApplication.pollNotifications({ userId, lastRead });
+    const unread = await Core.UserApplication.notifications({ userId, lastRead });
     notificationStore.setUnread(unread);
   }
 }

@@ -189,10 +189,16 @@ export class HomeserverService {
         url,
       });
     }
-    // TODO-PR: This is a temporal patch to handle responses with no body (e.g. 201 Created, 204 No Content, etc.)
     if (method === Core.HomeserverAction.GET) {
-      // TODO: Shall we do error handling here?
-      return (await response.json()) as T;
+      try {
+        const text = await response.text();
+        // Handle empty body (204, 201, or anything else with an empty body)
+        if (!text) return undefined as T;
+        return JSON.parse(text) as T;
+      } catch {
+        // Return undefined on empty/invalid JSON
+        return undefined as T;
+      }
     }
     return undefined as T;
   }

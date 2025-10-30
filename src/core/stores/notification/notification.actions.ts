@@ -9,7 +9,7 @@ import { ZustandSet } from '../stores.types';
 
 // Actions/Mutators - State modification functions
 export const createNotificationActions = (set: ZustandSet<NotificationStore>): NotificationActions => ({
-  init: (state: NotificationState) => {
+  setState: (state: NotificationState) => {
     if (typeof state.unread === 'number') {
       state.unread = Math.max(0, state.unread);
     }
@@ -24,10 +24,6 @@ export const createNotificationActions = (set: ZustandSet<NotificationStore>): N
     // Ensure unread count is never negative
     const validUnread = Math.max(0, unread);
     set({ unread: validUnread }, false, NotificationActionTypes.SET_UNREAD);
-  },
-
-  markAllAsRead: () => {
-    set({ lastRead: 0, unread: 0 }, false, NotificationActionTypes.MARK_ALL_AS_READ);
   },
 
   reset: () => {

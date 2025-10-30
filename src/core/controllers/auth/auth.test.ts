@@ -30,7 +30,7 @@ const storeMocks = vi.hoisted(() => {
       reset: resetOnboardingStore,
     })),
     getNotificationState: vi.fn(() => ({
-      init: notificationInit,
+      setState: notificationInit,
     })),
   };
 });
@@ -279,23 +279,25 @@ describe('AuthController', () => {
     // Ensure the controller uses our mocked notification store in this scope
     beforeEach(() => {
       vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
-        init: storeMocks.notificationInit,
+        setState: storeMocks.notificationInit,
       } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
     });
 
-    it('authorizeAndBootstrap should hydrate with retry and init notification store', async () => {
+    it('authorizeAndBootstrap should initialize with retry and setState notification store', async () => {
       const state: Core.NotificationState = { unread: 2, lastRead: 123 };
-      const hydrateRetrySpy = vi.spyOn(Core.BootstrapApplication, 'hydrateWithRetry').mockResolvedValue(state);
+      const initializeWithRetrySpy = vi
+        .spyOn(Core.BootstrapApplication, 'initializeWithRetry')
+        .mockResolvedValue(state);
 
       await AuthController.authorizeAndBootstrap();
 
-      expect(hydrateRetrySpy).toHaveBeenCalledWith('');
+      expect(initializeWithRetrySpy).toHaveBeenCalledWith('');
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
     });
 
-    it('loginWithAuthUrl should hydrate and init notification store', async () => {
+    it('loginWithAuthUrl should initialize and setState notification store', async () => {
       const state: Core.NotificationState = { unread: 0, lastRead: 456 };
-      const hydrateSpy = vi.spyOn(Core.BootstrapApplication, 'hydrate').mockResolvedValue(state);
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(state);
 
       const publicKeyMock = {
         z32: () => 'pubky-123',
@@ -306,7 +308,7 @@ describe('AuthController', () => {
 
       await AuthController.loginWithAuthUrl({ publicKey: publicKeyMock });
 
-      expect(hydrateSpy).toHaveBeenCalledWith('pubky-123');
+      expect(initializeSpy).toHaveBeenCalledWith('pubky-123');
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
     });
   });

@@ -4,10 +4,9 @@ export interface NotificationState {
 }
 
 export interface NotificationActions {
-  init: (state: NotificationState) => void;
+  setState: (state: NotificationState) => void;
   setLastRead: (lastRead: number) => void;
   setUnread: (unread: number) => void;
-  markAllAsRead: () => void;
   reset: () => void;
 }
 

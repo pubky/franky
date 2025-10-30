@@ -111,16 +111,16 @@ describe('UserController', () => {
         setUnread,
       } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
 
-      const pollSpy = vi.spyOn(Core.UserApplication, 'pollNotifications').mockResolvedValue(unread);
+      const notificationsSpy = vi.spyOn(Core.UserApplication, 'notifications').mockResolvedValue(unread);
 
       await UserController.notifications({ userId });
 
       expect(selectLastRead).toHaveBeenCalled();
-      expect(pollSpy).toHaveBeenCalledWith({ userId, lastRead });
+      expect(notificationsSpy).toHaveBeenCalledWith({ userId, lastRead });
       expect(setUnread).toHaveBeenCalledWith(unread);
     });
 
-    it('should bubble when pollNotifications fails and not set unread', async () => {
+    it('should bubble when notifications fails and not set unread', async () => {
       const userId = 'pubky-user' as unknown as Core.Pubky;
       const lastRead = 1234;
 
@@ -131,7 +131,7 @@ describe('UserController', () => {
         setUnread,
       } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
 
-      vi.spyOn(Core.UserApplication, 'pollNotifications').mockRejectedValue(new Error('poll-fail'));
+      vi.spyOn(Core.UserApplication, 'notifications').mockRejectedValue(new Error('poll-fail'));
 
       await expect(UserController.notifications({ userId })).rejects.toThrow('poll-fail');
 

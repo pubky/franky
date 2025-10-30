@@ -1,3 +1,3 @@
 export * from './homeserver';
 export * from './homeserver.types';
-export * from './homeserver.url';
+export * from './homeserver.api';

@@ -8,8 +8,8 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(pubky);
-    const notificationState = await Core.BootstrapApplication.hydrate(pubky);
-    Core.useNotificationStore.getState().init(notificationState);
+    const notificationState = await Core.BootstrapApplication.initialize(pubky);
+    Core.useNotificationStore.getState().setState(notificationState);
     authStore.setAuthenticated(true);
   }
 
@@ -30,8 +30,8 @@ export class AuthController {
   static async authorizeAndBootstrap() {
     const authStore = Core.useAuthStore.getState();
     const pubky = authStore.currentUserPubky || '';
-    const notificationState = await Core.BootstrapApplication.hydrateWithRetry(pubky);
-    Core.useNotificationStore.getState().init(notificationState);
+    const notificationState = await Core.BootstrapApplication.initializeWithRetry(pubky);
+    Core.useNotificationStore.getState().setState(notificationState);
     authStore.setAuthenticated(true);
   }
 
@@ -58,8 +58,8 @@ export class AuthController {
     onboardingStore.reset();
     const pubky = publicKey.z32();
     authStore.setCurrentUserPubky(pubky);
-    const notificationState = await Core.BootstrapApplication.hydrate(pubky);
-    Core.useNotificationStore.getState().init(notificationState);
+    const notificationState = await Core.BootstrapApplication.initialize(pubky);
+    Core.useNotificationStore.getState().setState(notificationState);
     authStore.setAuthenticated(true);
   }
 

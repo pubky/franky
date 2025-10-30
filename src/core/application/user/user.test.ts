@@ -137,7 +137,7 @@ describe('UserApplication.pollNotifications', () => {
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(notifications);
     const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(1);
 
-    const unread = await UserApplication.pollNotifications({ userId, lastRead });
+    const unread = await UserApplication.notifications({ userId, lastRead });
 
     expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: lastRead });
     expect(persistSpy).toHaveBeenCalledWith(notifications, lastRead);
@@ -148,7 +148,7 @@ describe('UserApplication.pollNotifications', () => {
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockRejectedValue(new Error('nexus-fail'));
     const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(0);
 
-    await expect(UserApplication.pollNotifications({ userId, lastRead })).rejects.toThrow('nexus-fail');
+    await expect(UserApplication.notifications({ userId, lastRead })).rejects.toThrow('nexus-fail');
 
     expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: lastRead });
     expect(persistSpy).not.toHaveBeenCalled();
@@ -160,7 +160,7 @@ describe('UserApplication.pollNotifications', () => {
       .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
       .mockRejectedValue(new Error('persist-fail'));
 
-    await expect(UserApplication.pollNotifications({ userId, lastRead })).rejects.toThrow('persist-fail');
+    await expect(UserApplication.notifications({ userId, lastRead })).rejects.toThrow('persist-fail');
 
     expect(persistSpy).toHaveBeenCalledOnce();
   });

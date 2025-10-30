@@ -34,16 +34,6 @@ describe('NotificationStore', () => {
     expect(store.selectUnread()).toBe(0);
   });
 
-  it('marks all as read', () => {
-    const store = useNotificationStore.getState();
-
-    store.setUnread(5);
-    store.markAllAsRead();
-
-    expect(store.selectUnread()).toBe(0);
-    expect(store.selectLastRead()).toBe(0);
-  });
-
   it('resets to initial state', () => {
     const store = useNotificationStore.getState();
 
