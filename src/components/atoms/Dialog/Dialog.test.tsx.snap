@@ -161,7 +161,7 @@ exports[`Dialog - Snapshots > matches snapshot for DialogFooter 1`] = `
 
 exports[`Dialog - Snapshots > matches snapshot for DialogHeader 1`] = `
 <div
-  class="flex flex-col"
+  class="flex flex-col gap-1.5 pr-6"
   data-slot="dialog-header"
   data-testid="dialog-header"
 >
@@ -229,7 +229,7 @@ exports[`Dialog - Snapshots > matches snapshot for complete dialog structure 1`]
         data-testid="dialog-content"
       >
         <div
-          class="flex flex-col"
+          class="flex flex-col gap-1.5 pr-6"
           data-slot="dialog-header"
           data-testid="dialog-header"
         >

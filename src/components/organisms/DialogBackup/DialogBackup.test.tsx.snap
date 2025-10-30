@@ -16,7 +16,7 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
     </button>
   </div>
   <div
-    class="max-w-sm md:max-w-2xl"
+    class="max-w-sm md:max-w-xl p-6 md:p-8"
     data-testid="dialog-content"
   >
     <div
@@ -38,92 +38,136 @@ exports[`DialogBackup - Snapshots > matches snapshot for trigger button 1`] = `
       data-testid="container"
     >
       <div
-        class="w-full p-4 md:p-8 flex-col gap-4 md:gap-6"
+        class="w-full py-0 px-0 flex-[1_0_0] flex-col gap-3 md:gap-6"
         data-testid="card"
       >
-        <p
-          class="text-base font-bold text-card-foreground leading-none"
-          data-size="md"
-          data-testid="typography"
-        >
-          Recovery
-          <br
-            class="hidden md:inline"
-          />
-           phrase
-        </p>
         <div
-          class="self-center w-16 h-16 md:w-28 md:h-28"
-          data-alt="Note"
-          data-height="112"
-          data-src="/images/note.png"
-          data-testid="image"
-          data-width="112"
+          class="px-6 py-0 flex flex-col gap-2 pt-5 md:pt-6"
         >
-          Next.js Image: 
-          Note
+          <p
+            class="text-base font-bold text-card-foreground leading-none"
+            data-size="md"
+            data-testid="typography"
+          >
+            Recovery phrase
+          </p>
         </div>
         <div
-          data-testid="dialog-backup-phrase"
+          class="px-24 md:px-6 py-0 flex flex-col gap-2"
         >
-          DialogBackupPhrase
+          <div
+            class="aspect-square w-full flex items-center justify-center"
+          >
+            <div
+              class="w-full h-full object-cover"
+              data-alt="Note"
+              data-height="192"
+              data-src="/images/note.png"
+              data-testid="image"
+              data-width="192"
+            >
+              Next.js Image: 
+              Note
+            </div>
+          </div>
+        </div>
+        <div
+          class="px-6 py-0 flex flex-col gap-2 pb-5 md:pb-6"
+        >
+          <div
+            data-testid="dialog-backup-phrase"
+          >
+            DialogBackupPhrase
+          </div>
         </div>
       </div>
       <div
-        class="w-full p-4 md:p-8 flex-col gap-4 md:gap-6"
+        class="w-full py-0 px-0 flex-[1_0_0] flex-col gap-3 md:gap-6"
         data-testid="card"
       >
-        <p
-          class="text-base font-bold text-card-foreground leading-none"
-          data-size="md"
-          data-testid="typography"
-        >
-          Download encrypted file
-        </p>
         <div
-          class="self-center w-16 h-16 md:w-28 md:h-28"
-          data-alt="Folder"
-          data-height="112"
-          data-src="/images/folder.png"
-          data-testid="image"
-          data-width="112"
+          class="px-6 py-0 flex flex-col gap-2 pt-5 md:pt-6"
         >
-          Next.js Image: 
-          Folder
+          <p
+            class="text-base font-bold text-card-foreground leading-none"
+            data-size="md"
+            data-testid="typography"
+          >
+            Download encrypted file
+          </p>
         </div>
         <div
-          data-testid="dialog-backup-encrypted"
+          class="px-24 md:px-6 py-0 flex flex-col gap-2"
         >
-          DialogBackupEncrypted
+          <div
+            class="aspect-square w-full flex items-center justify-center"
+          >
+            <div
+              class="w-full h-full object-cover"
+              data-alt="Folder"
+              data-height="192"
+              data-src="/images/folder.png"
+              data-testid="image"
+              data-width="192"
+            >
+              Next.js Image: 
+              Folder
+            </div>
+          </div>
+        </div>
+        <div
+          class="px-6 py-0 flex flex-col gap-2 pb-5 md:pb-6"
+        >
+          <div
+            data-testid="dialog-backup-encrypted"
+          >
+            DialogBackupEncrypted
+          </div>
         </div>
       </div>
       <div
-        class="w-full p-4 md:p-8 flex-col gap-4 md:gap-6"
+        class="w-full py-0 px-0 flex-[1_0_0] flex-col gap-3 md:gap-6"
         data-testid="card"
       >
-        <p
-          class="text-base font-bold text-card-foreground leading-none"
-          data-size="md"
-          data-testid="typography"
-        >
-          Export to Pubky Ring
-        </p>
         <div
-          class="self-center w-16 h-16 md:w-28 md:h-28"
-          data-alt="Keys"
-          data-height="112"
-          data-src="/images/keyring.png"
-          data-testid="image"
-          data-width="112"
+          class="px-6 py-0 flex flex-col gap-2 pt-5 md:pt-6"
         >
-          Next.js Image: 
-          Keys
+          <p
+            class="text-base font-bold text-card-foreground leading-none"
+            data-size="md"
+            data-testid="typography"
+          >
+            Export to Pubky Ring
+          </p>
         </div>
         <div
-          data-mnemonic="test mnemonic phrase"
-          data-testid="dialog-export"
+          class="px-24 md:px-6 py-0 flex flex-col gap-2"
         >
-          DialogBackupExport
+          <div
+            class="aspect-square w-full flex items-center justify-center"
+          >
+            <div
+              class="w-full h-full object-cover"
+              data-alt="Keys"
+              data-height="192"
+              data-src="/images/keyring.png"
+              data-testid="image"
+              data-width="192"
+            >
+              Next.js Image: 
+              Keys
+            </div>
+          </div>
+        </div>
+        <div
+          class="px-6 py-0 flex flex-col gap-2 pb-5 md:pb-6"
+        >
+          <div
+            data-mnemonic="test mnemonic phrase"
+            data-testid="dialog-export"
+          >
+            DialogBackupExport
+          </div>
         </div>
       </div>
     </div>
