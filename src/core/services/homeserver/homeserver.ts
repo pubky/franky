@@ -189,8 +189,12 @@ export class HomeserverService {
         url,
       });
     }
-    // TODO: Shall we do error handling here?
-    return (await response.json()) as T;
+    // TODO-PR: This is a temporal patch to handle responses with no body (e.g. 201 Created, 204 No Content, etc.)
+    if (method === Core.HomeserverAction.GET) {
+      // TODO: Shall we do error handling here?
+      return (await response.json()) as T;
+    }
+    return undefined as T;
   }
 
   /**

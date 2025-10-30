@@ -135,8 +135,8 @@ describe('NotificationModel', () => {
 
     const recentFollows = await NotificationModel.getRecentByType(NotificationType.Follow, 2);
     expect(recentFollows).toHaveLength(2);
-    expect((recentFollows[0] as any).followed_by).toBe('user3');
-    expect((recentFollows[1] as any).followed_by).toBe('user2');
+    expect((recentFollows[0] as FlatNotification & { followed_by: string }).followed_by).toBe('user3');
+    expect((recentFollows[1] as FlatNotification & { followed_by: string }).followed_by).toBe('user2');
     expect(recentFollows.every((n) => n.type === NotificationType.Follow)).toBe(true);
   });
 });

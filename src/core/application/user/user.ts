@@ -23,4 +23,8 @@ export class UserApplication {
       return;
     }
   }
+  static async pollNotifications({ userId, lastRead }: Core.TUserApplicationNotificationsParams): Promise<number> {
+    const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
+    return await Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead);
+  }
 }

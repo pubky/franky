@@ -145,5 +145,5 @@ export type NexusPost = {
 
 export type NexusNotification = {
   timestamp: number;
-  body: Record<string, any>; // Generic object to handle all notification types
+  body: Record<string, unknown>; // Generic object to handle all notification types
 };

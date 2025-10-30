@@ -37,7 +37,7 @@ export class NotificationModel {
 
   // Basic CRUD operations
   static async create(notification: FlatNotification) {
-    const id = await this.table.add(notification);
+    await this.table.add(notification);
   }
 
   static async bulkSave(notifications: FlatNotification[]) {

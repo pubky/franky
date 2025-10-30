@@ -452,7 +452,6 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
         .mockResolvedValue(mockUnreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
-      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
       const bootstrapPromise = BootstrapApplication.hydrateWithRetry(TEST_PUBKY);
 

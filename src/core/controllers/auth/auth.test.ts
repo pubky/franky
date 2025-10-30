@@ -276,11 +276,11 @@ describe('AuthController', () => {
   });
 
   describe('notification hydration flows', () => {
+    // Ensure the controller uses our mocked notification store in this scope
     beforeEach(() => {
-      // Ensure Core barrel uses our mocked notification store
-      (Core as any).useNotificationStore = {
-        getState: storeMocks.getNotificationState,
-      };
+      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+        init: storeMocks.notificationInit,
+      } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
     });
 
     it('authorizeAndBootstrap should hydrate with retry and init notification store', async () => {
@@ -297,7 +297,14 @@ describe('AuthController', () => {
       const state: Core.NotificationState = { unread: 0, lastRead: 456 };
       const hydrateSpy = vi.spyOn(Core.BootstrapApplication, 'hydrate').mockResolvedValue(state);
 
-      await AuthController.loginWithAuthUrl({ publicKey: { z32: () => 'pubky-123' } as any });
+      const publicKeyMock = {
+        z32: () => 'pubky-123',
+        free: () => {},
+        to_uint8array: () => new Uint8Array(),
+        toUint8Array: () => new Uint8Array(),
+      } as import('@synonymdev/pubky').PublicKey;
+
+      await AuthController.loginWithAuthUrl({ publicKey: publicKeyMock });
 
       expect(hydrateSpy).toHaveBeenCalledWith('pubky-123');
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
