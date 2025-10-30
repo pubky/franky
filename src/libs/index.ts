@@ -8,3 +8,4 @@ export * from './deeplink';
 export * from './share';
 export * from './svg';
 export * from './utils';
+export * from './password';
