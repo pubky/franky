@@ -45,17 +45,13 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
       </div>
 
       {/* Mobile menu - visible only on mobile, full width */}
-      <div className="lg:hidden">
-        <Molecules.ProfileMobileMenu counts={profileCounts} />
-      </div>
+      <Molecules.ProfileMobileMenu counts={profileCounts} className="lg:hidden" />
 
       <Organisms.ContentLayout
         showLeftMobileButton={false}
         showRightMobileButton={false}
         leftSidebarContent={<ProfileLeftSidebar counts={profileCounts} />}
         rightSidebarContent={<ProfileRightSidebar profileInfo={profileInfo} />}
-        leftDrawerContent={<ProfileLeftDrawer counts={profileCounts} />}
-        rightDrawerContent={<ProfileRightDrawer profileInfo={profileInfo} />}
         className="pt-0"
       >
         {children}
@@ -78,12 +74,4 @@ export function ProfileRightSidebar({ profileInfo }: { profileInfo?: ProfileProp
       <Molecules.ProfileInfo links={profileInfo?.links} tags={profileInfo?.tags} />
     </div>
   );
-}
-
-export function ProfileLeftDrawer({ counts }: { counts?: ProfileProps['profileCounts'] }) {
-  return <Molecules.ProfileMenu counts={counts} />;
-}
-
-export function ProfileRightDrawer({ profileInfo }: { profileInfo?: ProfileProps['profileInfo'] }) {
-  return <Molecules.ProfileInfo links={profileInfo?.links} tags={profileInfo?.tags} />;
 }
