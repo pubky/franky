@@ -5,3 +5,13 @@ export type TUserApplicationFollowParams = Core.TFollowParams & {
   followUrl: string;
   followJson: Record<string, unknown>;
 };
+
+export type TUserApplicationMuteParams = Core.TMuteParams & {
+  eventType: Core.HomeserverAction;
+  muteUrl: string;
+  muteJson: Record<string, unknown>;
+};
+export type TUserApplicationNotificationsParams = {
+  userId: Core.Pubky;
+  lastRead: number;
+};

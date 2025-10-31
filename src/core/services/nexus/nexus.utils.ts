@@ -12,11 +12,11 @@ export const HTTP_METHODS = {
 type HttpMethod = keyof typeof HTTP_METHODS;
 
 export function buildNexusUrl(endpoint: string): string {
-  return `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/${endpoint}`;
+  return `${Config.NEXUS_URL}/${endpoint}`;
 }
 
-export function buildNexusStaticUrl(endpoint: string): string {
-  return `${Config.NEXUS_URL}/static/${endpoint}`;
+export function buildCdnUrl(endpoint: string): string {
+  return `${Config.CDN_URL}/${endpoint}`;
 }
 
 /**

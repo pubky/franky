@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`SinglePostReplies > renders snapshot with malformed reply IDs 1`] = `
+exports[`SinglePostReplies - Snapshots > matches snapshot with malformed reply IDs 1`] = `
 <div>
   <div
     class="flex flex-col gap-4"
@@ -70,7 +70,7 @@ exports[`SinglePostReplies > renders snapshot with malformed reply IDs 1`] = `
 </div>
 `;
 
-exports[`SinglePostReplies > renders snapshot with multiple replies 1`] = `
+exports[`SinglePostReplies - Snapshots > matches snapshot with multiple replies 1`] = `
 <div>
   <div
     class="flex flex-col gap-4"
@@ -140,7 +140,16 @@ exports[`SinglePostReplies > renders snapshot with multiple replies 1`] = `
 </div>
 `;
 
-exports[`SinglePostReplies > renders snapshot with single reply 1`] = `
+exports[`SinglePostReplies - Snapshots > matches snapshot with no replies 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-4"
+    data-testid="container"
+  />
+</div>
+`;
+
+exports[`SinglePostReplies - Snapshots > matches snapshot with single reply 1`] = `
 <div>
   <div
     class="flex flex-col gap-4"
@@ -167,14 +176,5 @@ exports[`SinglePostReplies > renders snapshot with single reply 1`] = `
       </div>
     </div>
   </div>
-</div>
-`;
-
-exports[`SinglePostReplies > renders snapshot without replies 1`] = `
-<div>
-  <div
-    class="flex flex-col gap-4"
-    data-testid="container"
-  />
 </div>
 `;

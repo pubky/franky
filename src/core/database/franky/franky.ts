@@ -16,6 +16,7 @@ import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
+import { notificationTableSchema } from '@/core/models/notification/notification.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -27,6 +28,7 @@ export class AppDatabase extends Dexie {
   user_tags!: Dexie.Table<Core.TagCollectionModelSchema<Core.Pubky>>;
   user_connections!: Dexie.Table<Core.UserConnectionsModelSchema>;
   user_ttl!: Dexie.Table<Core.UserTtlModelSchema>;
+  notifications!: Dexie.Table<Core.FlatNotification>;
   // Post
   post_counts!: Dexie.Table<Core.PostCountsModelSchema>;
   post_details!: Dexie.Table<Core.PostDetailsModelSchema>;
@@ -49,6 +51,7 @@ export class AppDatabase extends Dexie {
         user_connections: userConnectionsTableSchema,
         user_ttl: userTtlTableSchema,
         user_tags: tagCollectionTableSchema,
+        notifications: notificationTableSchema,
         // Post related tables
         post_counts: postCountsTableSchema,
         post_details: postDetailsTableSchema,

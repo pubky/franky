@@ -477,6 +477,21 @@ describe('DialogRestoreEncryptedFile', () => {
     expect(screen.getByText('encryptedfile.pkarr')).toBeInTheDocument();
   });
 
+  it('displays selected file name with a tooltip for long filenames', async () => {
+    render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
+
+    const fileInput = screen.getByLabelText('Select encrypted backup file');
+    const longFile = mockFile('this_is_a_very_long_filename_that_should_truncate_when_displayed.pkarr');
+
+    fireEvent.change(fileInput, { target: { files: [longFile] } });
+
+    await waitFor(() => {
+      const fileNameDisplay = screen.getByTitle(longFile.name);
+      expect(fileNameDisplay).toHaveTextContent('this_is_a_v….pkarr');
+      expect(fileNameDisplay.textContent?.length).toBeLessThanOrEqual(18);
+    });
+  });
+
   it('triggers file selection when upload area is clicked', () => {
     render(<DialogRestoreEncryptedFile onRestore={mockOnRestore} />);
 

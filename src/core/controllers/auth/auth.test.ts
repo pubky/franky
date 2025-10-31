@@ -14,10 +14,12 @@ vi.mock('pubky-app-specs', () => ({
 const storeMocks = vi.hoisted(() => {
   const resetAuthStore = vi.fn();
   const resetOnboardingStore = vi.fn();
+  const notificationInit = vi.fn();
 
   return {
     resetAuthStore,
     resetOnboardingStore,
+    notificationInit,
     getAuthState: vi.fn(() => ({
       setSession: vi.fn(),
       setCurrentUserPubky: vi.fn(),
@@ -26,6 +28,9 @@ const storeMocks = vi.hoisted(() => {
     })),
     getOnboardingState: vi.fn(() => ({
       reset: resetOnboardingStore,
+    })),
+    getNotificationState: vi.fn(() => ({
+      setState: notificationInit,
     })),
   };
 });
@@ -37,6 +42,9 @@ vi.mock('@/core/stores', () => ({
   },
   useOnboardingStore: {
     getState: storeMocks.getOnboardingState,
+  },
+  useNotificationStore: {
+    getState: storeMocks.getNotificationState,
   },
 }));
 
@@ -264,6 +272,44 @@ describe('AuthController', () => {
       });
 
       await expect(AuthController.generateSignupToken()).rejects.toThrow('No token received from server');
+    });
+  });
+
+  describe('notification hydration flows', () => {
+    // Ensure the controller uses our mocked notification store in this scope
+    beforeEach(() => {
+      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+        setState: storeMocks.notificationInit,
+      } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
+    });
+
+    it('authorizeAndBootstrap should initialize with retry and setState notification store', async () => {
+      const state: Core.NotificationState = { unread: 2, lastRead: 123 };
+      const initializeWithRetrySpy = vi
+        .spyOn(Core.BootstrapApplication, 'initializeWithRetry')
+        .mockResolvedValue(state);
+
+      await AuthController.authorizeAndBootstrap();
+
+      expect(initializeWithRetrySpy).toHaveBeenCalledWith('');
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
+    });
+
+    it('loginWithAuthUrl should initialize and setState notification store', async () => {
+      const state: Core.NotificationState = { unread: 0, lastRead: 456 };
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(state);
+
+      const publicKeyMock = {
+        z32: () => 'pubky-123',
+        free: () => {},
+        to_uint8array: () => new Uint8Array(),
+        toUint8Array: () => new Uint8Array(),
+      } as import('@synonymdev/pubky').PublicKey;
+
+      await AuthController.loginWithAuthUrl({ publicKey: publicKeyMock });
+
+      expect(initializeSpy).toHaveBeenCalledWith('pubky-123');
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
     });
   });
 });

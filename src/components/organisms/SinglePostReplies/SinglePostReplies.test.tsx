@@ -55,42 +55,6 @@ describe('SinglePostReplies', () => {
     });
   });
 
-  it('renders snapshot without replies', () => {
-    mockUseLiveQuery
-      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
-      .mockReturnValueOnce([]); // replyIds
-
-    const { container } = render(<SinglePostReplies postId="test-post-id" />);
-    expect(container).toMatchSnapshot();
-  });
-
-  it('renders snapshot with single reply', () => {
-    mockUseLiveQuery
-      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
-      .mockReturnValueOnce(['author1:reply1']); // replyIds
-
-    const { container } = render(<SinglePostReplies postId="test-post-id" />);
-    expect(container).toMatchSnapshot();
-  });
-
-  it('renders snapshot with multiple replies', () => {
-    mockUseLiveQuery
-      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
-      .mockReturnValueOnce(['author1:reply1', 'author2:reply2', 'author3:reply3']); // replyIds
-
-    const { container } = render(<SinglePostReplies postId="test-post-id" />);
-    expect(container).toMatchSnapshot();
-  });
-
-  it('renders snapshot with malformed reply IDs', () => {
-    mockUseLiveQuery
-      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
-      .mockReturnValueOnce(['malformed-id-without-colon', ':reply1', 'author1:']); // replyIds
-
-    const { container } = render(<SinglePostReplies postId="test-post-id" />);
-    expect(container).toMatchSnapshot();
-  });
-
   it('navigates to reply when clicked', async () => {
     mockUseLiveQuery
       .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
@@ -141,5 +105,43 @@ describe('SinglePostReplies', () => {
     await waitFor(() => {
       expect(mockPush).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe('SinglePostReplies - Snapshots', () => {
+  it('matches snapshot with single reply', () => {
+    mockUseLiveQuery
+      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
+      .mockReturnValueOnce(['author1:reply1']); // replyIds
+
+    const { container } = render(<SinglePostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot with multiple replies', () => {
+    mockUseLiveQuery
+      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
+      .mockReturnValueOnce(['author1:reply1', 'author2:reply2', 'author3:reply3']); // replyIds
+
+    const { container } = render(<SinglePostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot with malformed reply IDs', () => {
+    mockUseLiveQuery
+      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
+      .mockReturnValueOnce(['malformed-id-without-colon', ':reply1', 'author1:']); // replyIds
+
+    const { container } = render(<SinglePostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
+  });
+
+  it('matches snapshot with no replies', () => {
+    mockUseLiveQuery
+      .mockReturnValueOnce({ uri: 'test-uri' }) // postDetails
+      .mockReturnValueOnce([]); // replyIds
+
+    const { container } = render(<SinglePostReplies postId="test-post-id" />);
+    expect(container).toMatchSnapshot();
   });
 });

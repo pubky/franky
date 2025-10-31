@@ -45,3 +45,11 @@ export const verifyNotificationCounter = (expectedCount = '1') => {
   // Assert the counter text
   cy.get('#header-notification-counter').should('have.text', expectedCount);
 };
+
+/**
+ * Returns a timeout options object with doubled timeout when not in CI
+ * Useful for commands that may need extra time in local development
+ */
+export const extendedTimeout = (): Partial<Cypress.Timeoutable> => {
+  return Cypress.env('ci') ? { timeout: Cypress.config('defaultCommandTimeout') * 1.2 } : { timeout: Cypress.config('defaultCommandTimeout') * 2 };
+};

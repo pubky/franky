@@ -5,7 +5,7 @@ import * as Core from '@/core';
  * All API endpoints related to user operations
  */
 
-const PREFIX = 'user';
+const PREFIX = 'v0/user';
 
 export const userApi = {
   view: (params: Core.TUserViewParams) => {

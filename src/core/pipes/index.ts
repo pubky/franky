@@ -9,5 +9,6 @@ export * from './post';
 export * from './tag';
 export * from './user';
 export * from './follow';
+export * from './mute';
 // Re-export pubky-app-specs types
 export { PubkyAppPostKind } from 'pubky-app-specs';
