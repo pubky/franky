@@ -25,7 +25,7 @@ export class LocalPostTagService {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const postTagsModel = await Core.PostTagsModel.getOrCreate<string, Core.PostTagsModelSchema>(postId);
-        let status = postTagsModel.addTagger(label, taggerId);
+        const status = postTagsModel.addTagger(label, taggerId);
         // Ignore all the operations
         if (status === null) {
           Libs.Logger.debug('User already tagged this post with this label', { postId, label, taggerId });
@@ -75,7 +75,15 @@ export class LocalPostTagService {
 
         const postTagsModel = new Core.PostTagsModel(tagsData);
 
-        postTagsModel.removeTagger(label, taggerId);
+        const status = postTagsModel.removeTagger(label, taggerId);
+        if (status === null) {
+          throw Libs.createDatabaseError(
+            Libs.DatabaseErrorType.QUERY_FAILED,
+            `User has not created tag post with this label`,
+            404,
+            { postId, label, taggerId },
+          );
+        }
 
         await this.savePostTagsModel(postId, postTagsModel);
         await this.updatePostCounts(postId, postTagsModel);
@@ -128,15 +136,8 @@ export class LocalPostTagService {
         unique_tags,
       });
     } else {
-      // TODO(core): Fetch counts from Nexus and reconcile local tag counts.
-      // This prevents drift between local Dexie state and the upstream source of truth.
-      await Core.PostCountsModel.upsert({
-        id: postId,
-        tags,
-        unique_tags,
-        replies: 0,
-        reposts: 0,
-      });
+      // TODO: Maybe fetch counts from Nexus and reconcile local tag counts.
+      Libs.Logger.warn('Post counts not found, skipping update', { postId });
     }
   }
 }
