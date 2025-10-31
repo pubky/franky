@@ -108,8 +108,8 @@ describe('TagController', () => {
     );
 
     // Import TagController after mocks are set up
-    const module = await import('./tag');
-    TagController = module.TagController;
+    const tagModule = await import('./tag');
+    TagController = tagModule.TagController;
   });
 
   describe('create', () => {

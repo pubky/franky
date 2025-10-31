@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-
 import { postUriBuilder, PubkyAppTag, userUriBuilder } from 'pubky-app-specs';
 
 export class TagController {

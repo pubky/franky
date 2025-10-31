@@ -8,7 +8,7 @@ export class LocalUserTagService {
     try {
       await Core.db.transaction('rw', this.TAG_TABLES, async () => {
         const userTagsModel = await Core.UserTagsModel.getOrCreate<Core.Pubky, Core.UserTagsModelSchema>(taggedId);
-        let tagExists = userTagsModel.addTagger(label, taggerId);
+        const tagExists = userTagsModel.addTagger(label, taggerId);
 
         // Cancel the operation
         if (tagExists === null) {
@@ -18,7 +18,7 @@ export class LocalUserTagService {
         await Promise.all([
           this.saveUserTagsModel(taggedId, userTagsModel),
           Core.updateTaggerCount(taggerId, Core.INCREMENT),
-          this.updateUserCounts(taggedId, { tags: 1, unique_tags: !tagExists ? 1 : undefined}),
+          this.updateUserCounts(taggedId, { tags: 1, unique_tags: !tagExists ? 1 : undefined }),
         ]);
 
         Libs.Logger.debug('User tag created', { taggedId, label, taggerId });
@@ -46,13 +46,17 @@ export class LocalUserTagService {
           await Promise.all([
             this.saveUserTagsModel(taggedId, userTagsModel),
             Core.updateTaggerCount(taggerId, Core.DECREMENT),
-            this.updateUserCounts(taggedId, { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined}),
+            this.updateUserCounts(taggedId, { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined }),
           ]);
           Libs.Logger.debug('User tag deleted', { taggedId, label, taggerId });
         } else {
-          throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, `User has not tagged this user with this label`, 404, { taggedId, label, taggerId });
+          throw Libs.createDatabaseError(
+            Libs.DatabaseErrorType.QUERY_FAILED,
+            `User has not tagged this user with this label`,
+            404,
+            { taggedId, label, taggerId },
+          );
         }
-        
       });
     } catch (error) {
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.UPDATE_FAILED, `Failed to delete user tag`, 500, {

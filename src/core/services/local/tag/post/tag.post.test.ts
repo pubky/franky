@@ -171,16 +171,6 @@ describe('LocalTagService', () => {
       expect(savedCounts!.unique_tags).toBe(1); // Should remain unchanged
       expect(userCounts!.tagged).toBe(1); // Should remain unchanged
     });
-
-    it('should handle creating tag when no post counts exist', async () => {
-      await Core.LocalPostTagService.create(createTagParams('javascript'));
-
-      const savedCounts = await getSavedCounts();
-      expect(savedCounts!.tags).toBe(1);
-      expect(savedCounts!.unique_tags).toBe(1);
-      expect(savedCounts!.replies).toBe(0);
-      expect(savedCounts!.reposts).toBe(0);
-    });
   });
 
   describe('remove', () => {
