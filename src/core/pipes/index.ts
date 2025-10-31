@@ -10,5 +10,6 @@ export * from './tag';
 export * from './user';
 export * from './follow';
 export * from './mute';
+export * from './notification';
 // Re-export pubky-app-specs types
 export { PubkyAppPostKind } from 'pubky-app-specs';

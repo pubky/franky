@@ -15,9 +15,9 @@ export class ProfileController {
     const blobData = new Uint8Array(fileContent);
 
     // 1. Normalize Blob
-    const blobResult = await Core.FileNormalizer.toBlob(blobData, pubky);
+    const blobResult = Core.FileNormalizer.toBlob(blobData, pubky);
     // 2. Normalize File Record
-    const fileResult = await Core.FileNormalizer.toFile(avatarFile, blobResult.meta.url, pubky);
+    const fileResult = Core.FileNormalizer.toFile(avatarFile, blobResult.meta.url, pubky);
     // 3. Upload to homeserver
     await Core.ProfileApplication.uploadAvatar({ blobResult, fileResult });
 
@@ -25,7 +25,7 @@ export class ProfileController {
   }
 
   static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
-    const { user, meta } = await Core.UserNormalizer.to(
+    const { user, meta } = Core.UserNormalizer.to(
       {
         name: profile.name,
         bio: profile.bio ?? '',

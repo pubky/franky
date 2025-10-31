@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { LastReadResult } from 'pubky-app-specs';
 import { BootstrapApplication } from './bootstrap';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -21,9 +22,23 @@ const emptyBootstrap = (): Core.NexusBootstrapResponse => ({
 
 describe('BootstrapApplication', () => {
   const TEST_PUBKY = '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y';
+  const MOCK_LAST_READ_URL = 'http://example.com/last-read';
+  const MOCK_LAST_READ = 1234567890;
+
+  const getBootstrapParams = (pubky: string): Core.TBootstrapParams => {
+    const {
+      meta: { url },
+    } = Core.NotificationNormalizer.to(pubky);
+    return { pubky, lastReadUrl: url };
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
+      meta: {
+        url: MOCK_LAST_READ_URL,
+      },
+    } as LastReadResult);
   });
 
   afterEach(() => {
@@ -115,11 +130,10 @@ describe('BootstrapApplication', () => {
         },
       ];
 
-      const mockLastRead = 1234567890;
       const mockUnreadCount = 1;
       const expectedNotificationState: Core.NotificationState = {
         unread: mockUnreadCount,
-        lastRead: mockLastRead,
+        lastRead: MOCK_LAST_READ,
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
@@ -130,7 +144,7 @@ describe('BootstrapApplication', () => {
       const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: mockLastRead });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
@@ -138,13 +152,11 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
         .mockResolvedValue(mockUnreadCount);
 
-      const result = await BootstrapApplication.initialize(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const result = await BootstrapApplication.initialize(params);
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      const {
-        meta: { url },
-      } = Core.homeserverApi.lastRead(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, url);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
@@ -161,7 +173,7 @@ describe('BootstrapApplication', () => {
         mockBootstrapData.list.recommended,
       );
       expect(upsertTagsStreamSpy).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, mockBootstrapData.list.hot_tags);
-      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
+      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, MOCK_LAST_READ);
       expect(result).toEqual(expectedNotificationState);
     });
 
@@ -169,19 +181,17 @@ describe('BootstrapApplication', () => {
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockRejectedValue(new Error('Network error'));
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: 1234567890 });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
       const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount');
 
-      await expect(BootstrapApplication.initialize(TEST_PUBKY)).rejects.toThrow('Network error');
+      const params = getBootstrapParams(TEST_PUBKY);
+      await expect(BootstrapApplication.initialize(params)).rejects.toThrow('Network error');
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      const {
-        meta: { url },
-      } = Core.homeserverApi.lastRead(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, url);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).not.toHaveBeenCalled();
       expect(persistPostsSpy).not.toHaveBeenCalled();
@@ -192,12 +202,11 @@ describe('BootstrapApplication', () => {
       const mockBootstrapData: Core.NexusBootstrapResponse = emptyBootstrap();
 
       const mockNotifications: Core.NexusNotification[] = [];
-      const mockLastRead = 1234567890;
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: mockLastRead });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
@@ -205,13 +214,11 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.LocalStreamUsersService, 'persistUsers')
         .mockRejectedValue(new Error('Database error'));
 
-      await expect(BootstrapApplication.initialize(TEST_PUBKY)).rejects.toThrow('Database error');
+      const params = getBootstrapParams(TEST_PUBKY);
+      await expect(BootstrapApplication.initialize(params)).rejects.toThrow('Database error');
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      const {
-        meta: { url },
-      } = Core.homeserverApi.lastRead(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, url);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
     });
@@ -220,17 +227,16 @@ describe('BootstrapApplication', () => {
       const mockBootstrapData: Core.NexusBootstrapResponse = emptyBootstrap();
 
       const mockNotifications: Core.NexusNotification[] = [];
-      const mockLastRead = 1234567890;
       const mockUnreadCount = 0;
       const expectedNotificationState: Core.NotificationState = {
         unread: mockUnreadCount,
-        lastRead: mockLastRead,
+        lastRead: MOCK_LAST_READ,
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: mockLastRead });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
@@ -243,17 +249,15 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
         .mockResolvedValue(mockUnreadCount);
 
-      const result = await BootstrapApplication.initialize(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const result = await BootstrapApplication.initialize(params);
 
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      const {
-        meta: { url },
-      } = Core.homeserverApi.lastRead(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, url);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
-      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
+      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, MOCK_LAST_READ);
       expect(result).toEqual(expectedNotificationState);
     });
   });
@@ -271,17 +275,16 @@ describe('BootstrapApplication', () => {
       const mockBootstrapData: Core.NexusBootstrapResponse = emptyBootstrap();
 
       const mockNotifications: Core.NexusNotification[] = [];
-      const mockLastRead = 1234567890;
       const mockUnreadCount = 0;
       const expectedNotificationState: Core.NotificationState = {
         unread: mockUnreadCount,
-        lastRead: mockLastRead,
+        lastRead: MOCK_LAST_READ,
       };
 
       const nexusFetchSpy = vi.spyOn(Core.NexusBootstrapService, 'fetch').mockResolvedValue(mockBootstrapData);
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: mockLastRead });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
@@ -296,7 +299,8 @@ describe('BootstrapApplication', () => {
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const bootstrapPromise = BootstrapApplication.initializeWithRetry(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const bootstrapPromise = BootstrapApplication.initializeWithRetry(params);
 
       // Fast-forward time for the first 5 second delay
       await vi.advanceTimersByTimeAsync(5000);
@@ -305,14 +309,11 @@ describe('BootstrapApplication', () => {
 
       expect(loggerInfoSpy).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
       expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
-      const {
-        meta: { url },
-      } = Core.homeserverApi.lastRead(TEST_PUBKY);
-      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, url);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
-      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
+      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, MOCK_LAST_READ);
       expect(result).toEqual(expectedNotificationState);
       expect(loggerErrorSpy).not.toHaveBeenCalled();
     });
@@ -321,11 +322,10 @@ describe('BootstrapApplication', () => {
       const mockBootstrapData: Core.NexusBootstrapResponse = emptyBootstrap();
 
       const mockNotifications: Core.NexusNotification[] = [];
-      const mockLastRead = 1234567890;
       const mockUnreadCount = 0;
       const expectedNotificationState: Core.NotificationState = {
         unread: mockUnreadCount,
-        lastRead: mockLastRead,
+        lastRead: MOCK_LAST_READ,
       };
 
       const nexusFetchSpy = vi
@@ -334,7 +334,7 @@ describe('BootstrapApplication', () => {
         .mockResolvedValueOnce(mockBootstrapData);
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: mockLastRead });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
@@ -349,7 +349,8 @@ describe('BootstrapApplication', () => {
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const bootstrapPromise = BootstrapApplication.initializeWithRetry(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const bootstrapPromise = BootstrapApplication.initializeWithRetry(params);
 
       // First attempt - wait 5 seconds then fail
       await vi.advanceTimersByTimeAsync(5000);
@@ -368,7 +369,7 @@ describe('BootstrapApplication', () => {
       expect(nexusNotificationsSpy).toHaveBeenCalledTimes(2);
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
-      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
+      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, MOCK_LAST_READ);
       expect(result).toEqual(expectedNotificationState);
     });
 
@@ -378,7 +379,7 @@ describe('BootstrapApplication', () => {
         .mockRejectedValue(new Error('User not indexed'));
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: 1234567890 });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
@@ -386,7 +387,8 @@ describe('BootstrapApplication', () => {
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const p = BootstrapApplication.initializeWithRetry(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const p = BootstrapApplication.initializeWithRetry(params);
       const assertion = expect(p).rejects.toThrow('User still not indexed');
 
       // Advance timers for all 3 attempts
@@ -409,7 +411,8 @@ describe('BootstrapApplication', () => {
       vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
 
-      const p = BootstrapApplication.initializeWithRetry(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const p = BootstrapApplication.initializeWithRetry(params);
       const assertion = expect(p).rejects.toThrow('User still not indexed');
 
       // Advance timers for all 3 attempts
@@ -425,11 +428,10 @@ describe('BootstrapApplication', () => {
       const mockBootstrapData: Core.NexusBootstrapResponse = emptyBootstrap();
 
       const mockNotifications: Core.NexusNotification[] = [];
-      const mockLastRead = 1234567890;
       const mockUnreadCount = 0;
       const expectedNotificationState: Core.NotificationState = {
         unread: mockUnreadCount,
-        lastRead: mockLastRead,
+        lastRead: MOCK_LAST_READ,
       };
 
       const nexusFetchSpy = vi
@@ -439,7 +441,7 @@ describe('BootstrapApplication', () => {
         .mockResolvedValueOnce(mockBootstrapData);
       const homeserverRequestSpy = vi
         .spyOn(Core.HomeserverService, 'request')
-        .mockResolvedValue({ timestamp: mockLastRead });
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
@@ -453,7 +455,8 @@ describe('BootstrapApplication', () => {
         .mockResolvedValue(mockUnreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
 
-      const bootstrapPromise = BootstrapApplication.initializeWithRetry(TEST_PUBKY);
+      const params = getBootstrapParams(TEST_PUBKY);
+      const bootstrapPromise = BootstrapApplication.initializeWithRetry(params);
 
       // First attempt
       expect(nexusFetchSpy).not.toHaveBeenCalled();
@@ -478,7 +481,7 @@ describe('BootstrapApplication', () => {
       expect(nexusNotificationsSpy).toHaveBeenCalledTimes(3);
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
       expect(persistPostsSpy).toHaveBeenCalledWith(mockBootstrapData.posts);
-      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, mockLastRead);
+      expect(persistNotificationsSpy).toHaveBeenCalledWith(mockNotifications, MOCK_LAST_READ);
       expect(result).toEqual(expectedNotificationState);
     });
   });

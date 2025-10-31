@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { TagResult } from 'pubky-app-specs';
 import * as Core from '@/core';
 import type { TCreateTagParams, TDeleteTagParams } from './tag.types';
 
@@ -66,6 +67,14 @@ describe('TagController', () => {
     vi.resetModules();
     vi.clearAllMocks();
     mockHomeserver.fetch.mockClear();
+
+    vi.spyOn(Core.TagNormalizer, 'to').mockImplementation((uri: string, label: string, pubky: Core.Pubky) => {
+      return {
+        tag: { label, toJson: () => ({ label }), free: vi.fn() },
+        meta: { url: `pubky://${pubky}/pub/pubky.app/tags/${label}` },
+        free: vi.fn(),
+      } as unknown as TagResult;
+    });
 
     // Mock Core module
     vi.doMock('@/core', async () => {

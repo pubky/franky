@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TextDecoder, TextEncoder } from 'util';
+import { UserResult } from 'pubky-app-specs';
 import type { Pubky } from '@/core/models/models.types';
 
 const mockFileNormalizer = {
@@ -73,8 +74,8 @@ describe('ProfileController', () => {
         meta: { url: 'file-url' },
       };
 
-      mockFileNormalizer.toBlob.mockResolvedValue(blobResult);
-      mockFileNormalizer.toFile.mockResolvedValue(fileResult);
+      mockFileNormalizer.toBlob.mockReturnValue(blobResult);
+      mockFileNormalizer.toFile.mockReturnValue(fileResult);
       mockProfileApplication.uploadAvatar.mockResolvedValue(undefined);
 
       const result = await ProfileController.uploadAvatar(avatarFile, testPubky);
@@ -93,7 +94,9 @@ describe('ProfileController', () => {
     it('propagates errors when blob normalization fails', async () => {
       const avatarFile = new MockFile(['avatar'], 'avatar.png', { type: 'image/png' });
       const error = new Error('normalizer failed');
-      mockFileNormalizer.toBlob.mockRejectedValue(error);
+      mockFileNormalizer.toBlob.mockImplementation(() => {
+        throw error;
+      });
 
       await expect(ProfileController.uploadAvatar(avatarFile, testPubky)).rejects.toThrow('normalizer failed');
       expect(mockFileNormalizer.toFile).not.toHaveBeenCalled();
@@ -107,8 +110,10 @@ describe('ProfileController', () => {
         meta: { url: 'blob-url' },
       };
 
-      mockFileNormalizer.toBlob.mockResolvedValue(blobResult);
-      mockFileNormalizer.toFile.mockRejectedValue(new Error('file failed'));
+      mockFileNormalizer.toBlob.mockReturnValue(blobResult);
+      mockFileNormalizer.toFile.mockImplementation(() => {
+        throw new Error('file failed');
+      });
 
       await expect(ProfileController.uploadAvatar(avatarFile, testPubky)).rejects.toThrow('file failed');
       expect(mockProfileApplication.uploadAvatar).not.toHaveBeenCalled();
@@ -125,8 +130,8 @@ describe('ProfileController', () => {
         meta: { url: 'file-url' },
       };
 
-      mockFileNormalizer.toBlob.mockResolvedValue(blobResult);
-      mockFileNormalizer.toFile.mockResolvedValue(fileResult);
+      mockFileNormalizer.toBlob.mockReturnValue(blobResult);
+      mockFileNormalizer.toFile.mockReturnValue(fileResult);
       mockProfileApplication.uploadAvatar.mockRejectedValue(new Error('upload failed'));
 
       await expect(ProfileController.uploadAvatar(avatarFile, testPubky)).rejects.toThrow('upload failed');
@@ -145,7 +150,7 @@ describe('ProfileController', () => {
         meta: { url: 'user-url' },
       };
 
-      mockUserNormalizer.to.mockResolvedValue(userResult);
+      mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.create.mockResolvedValue(undefined);
 
       await ProfileController.create(
@@ -182,7 +187,7 @@ describe('ProfileController', () => {
         meta: { url: 'user-url' },
       };
 
-      mockUserNormalizer.to.mockResolvedValue(userResult);
+      mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.create.mockResolvedValue(undefined);
 
       await ProfileController.create(
@@ -216,7 +221,9 @@ describe('ProfileController', () => {
       };
       const error = new Error('validation failed');
 
-      mockUserNormalizer.to.mockRejectedValue(error);
+      mockUserNormalizer.to.mockImplementation(() => {
+        throw error;
+      });
 
       await expect(
         ProfileController.create(
@@ -238,7 +245,7 @@ describe('ProfileController', () => {
         meta: { url: 'user-url' },
       };
 
-      mockUserNormalizer.to.mockResolvedValue(userResult);
+      mockUserNormalizer.to.mockReturnValue(userResult as unknown as UserResult);
       mockProfileApplication.create.mockRejectedValue(new Error('create failed'));
 
       await expect(
