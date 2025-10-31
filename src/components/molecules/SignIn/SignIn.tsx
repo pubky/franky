@@ -152,6 +152,11 @@ export const SignInContent = () => {
   };
 
   useEffect(() => {
+    // Clear onboarding storage when sign-in flow begins to prevent backup reminders from showing for existing users
+    Core.useOnboardingStore.getState().reset();
+  }, []);
+
+  useEffect(() => {
     isMountedRef.current = true;
     fetchUrl();
     return () => {
