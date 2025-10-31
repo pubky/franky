@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { Session } from '@synonymdev/pubky';
+import * as Core from '@/core';
 
 // Mock global fetch
 global.fetch = vi.fn();
@@ -478,6 +479,16 @@ describe('HomeserverService', () => {
         type: HomeserverErrorType.SIGNUP_FAILED,
         statusCode: 500,
       });
+    });
+  });
+
+  describe('HomeserverService.request', () => {
+    it('should return undefined for GET with 200 and empty body', async () => {
+      const { HomeserverService } = await import('@/core/services/homeserver/homeserver');
+      const singleton = HomeserverService.getInstance('dummy-key');
+      singleton.fetch = async () => new Response('', { status: 200 });
+      const result = await HomeserverService.request(Core.HomeserverAction.GET, 'https://example.com/empty');
+      expect(result).toBeUndefined();
     });
   });
 });
