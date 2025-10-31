@@ -23,10 +23,10 @@ describe('User API', () => {
         depth: 2,
         viewer_id: testViewerId,
       };
-      const baseRoute = 'user/test';
+      const baseRoute = 'v0/user/test';
 
       const result = buildUrlWithQuery(baseRoute, params, USER_PATH_PARAMS);
-      expect(result).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/test?depth=2&viewer_id=${testViewerId}`);
+      expect(result).toBe(`${Config.NEXUS_URL}/v0/user/test?depth=2&viewer_id=${testViewerId}`);
     });
 
     it('should exclude path parameters from query string', () => {
@@ -34,7 +34,7 @@ describe('User API', () => {
         user_id: testUserId,
         depth: 1,
       };
-      const baseRoute = 'user/test';
+      const baseRoute = 'v0/user/test';
 
       const result = buildUrlWithQuery(baseRoute, params, USER_PATH_PARAMS);
       expect(result).not.toContain('user_id=');
@@ -46,8 +46,8 @@ describe('User API', () => {
     it('should generate correct URLs for basic endpoints', () => {
       const params: Core.TUserId = { user_id: testUserId };
 
-      expect(userApi.counts(params)).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/counts`);
-      expect(userApi.details(params)).toBe(`${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/details`);
+      expect(userApi.counts(params)).toBe(`${Config.NEXUS_URL}/v0/user/${testUserId}/counts`);
+      expect(userApi.details(params)).toBe(`${Config.NEXUS_URL}/v0/user/${testUserId}/details`);
     });
 
     it('should generate correct URLs for view endpoints', () => {
@@ -57,14 +57,12 @@ describe('User API', () => {
         viewer_id: testViewerId,
       };
 
-      expect(userApi.view(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}?depth=2&viewer_id=${testViewerId}`,
-      );
+      expect(userApi.view(params)).toBe(`${Config.NEXUS_URL}/v0/user/${testUserId}?depth=2&viewer_id=${testViewerId}`);
       expect(userApi.followers(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/followers?depth=2&viewer_id=${testViewerId}`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/followers?depth=2&viewer_id=${testViewerId}`,
       );
       expect(userApi.following(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/following?depth=2&viewer_id=${testViewerId}`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/following?depth=2&viewer_id=${testViewerId}`,
       );
     });
 
@@ -75,7 +73,7 @@ describe('User API', () => {
       };
 
       expect(userApi.relationship(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/relationship/${testViewerId}`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/relationship/${testViewerId}`,
       );
     });
 
@@ -87,7 +85,7 @@ describe('User API', () => {
       };
 
       expect(userApi.friends(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/friends?depth=2&viewer_id=${testViewerId}`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/friends?depth=2&viewer_id=${testViewerId}`,
       );
     });
 
@@ -99,7 +97,7 @@ describe('User API', () => {
       };
 
       expect(userApi.muted(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/muted?depth=2&viewer_id=${testViewerId}`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/muted?depth=2&viewer_id=${testViewerId}`,
       );
     });
 
@@ -113,7 +111,7 @@ describe('User API', () => {
       };
 
       expect(userApi.notifications(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/notifications?skip=0&limit=10&start=1000&end=2000`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/notifications?skip=0&limit=10&start=1000&end=2000`,
       );
     });
 
@@ -126,7 +124,7 @@ describe('User API', () => {
       };
 
       expect(userApi.taggers(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/taggers/test-tag?skip=0&limit=10`,
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/taggers/test-tag?skip=0&limit=10`,
       );
     });
 
@@ -137,9 +135,7 @@ describe('User API', () => {
         limit_tags: 10,
       };
 
-      expect(userApi.tags(params)).toBe(
-        `${Config.NEXUS_URL}/${Config.NEXUS_VERSION}/user/${testUserId}/tags?skip_tags=0&limit_tags=10`,
-      );
+      expect(userApi.tags(params)).toBe(`${Config.NEXUS_URL}/v0/user/${testUserId}/tags?skip_tags=0&limit_tags=10`);
     });
   });
 
