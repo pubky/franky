@@ -12,7 +12,6 @@ describe('StatusDropdown', () => {
     onStatusMenuChange: vi.fn(),
     onStatusSelect: vi.fn(),
     onCustomStatusChange: vi.fn(),
-    onCustomStatusSave: vi.fn(),
     onEmojiPickerClick: vi.fn(),
   };
 
@@ -71,10 +70,12 @@ describe('StatusDropdown', () => {
 
     expect(screen.getByText('CUSTOM STATUS')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Add status')).toBeInTheDocument();
-    // The emoji appears in both trigger and button; assert the button via title
+    // The emoji button uses an icon now, not text content
     const emojiButton = screen.getByTitle('Click to change emoji');
     expect(emojiButton).toBeInTheDocument();
-    expect(emojiButton).toHaveTextContent('😊');
+    // Check that the emoji display shows the selected emoji in custom status section
+    const emojiDisplays = screen.getAllByText('😊');
+    expect(emojiDisplays.length).toBeGreaterThan(0);
   });
 
   it('emits onEmojiPickerClick when emoji button is clicked', () => {
@@ -86,35 +87,20 @@ describe('StatusDropdown', () => {
     expect(defaultProps.onEmojiPickerClick).toHaveBeenCalled();
   });
 
-  it('shows save button when custom status has text', () => {
+  it('allows custom status input to be editable', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} customStatus="Custom status" />);
 
-    const buttons = screen.getAllByRole('button');
-    const saveButton = buttons.find(
-      (button) => button.querySelector('svg') && button.querySelector('svg')?.classList.contains('w-4'),
-    );
-    expect(saveButton).toBeInTheDocument();
+    const input = screen.getByPlaceholderText('Add status');
+    expect(input).toHaveValue('Custom status');
+    expect(input).not.toHaveAttribute('readonly');
   });
 
-  it('calls onCustomStatusSave when save button is clicked', () => {
-    render(<StatusDropdown {...defaultProps} showStatusMenu={true} customStatus="Custom status" />);
-
-    const buttons = screen.getAllByRole('button');
-    const saveButton = buttons.find(
-      (button) => button.querySelector('svg') && button.querySelector('svg')?.classList.contains('w-4'),
-    );
-    if (saveButton) fireEvent.click(saveButton);
-
-    expect(defaultProps.onCustomStatusSave).toHaveBeenCalled();
-  });
-
-  it('hides save button when custom status is empty', () => {
+  it('calls onCustomStatusChange when custom status input changes', () => {
     render(<StatusDropdown {...defaultProps} showStatusMenu={true} customStatus="" />);
 
-    const buttons = screen.getAllByRole('button');
-    const saveButton = buttons.find(
-      (button) => button.querySelector('svg') && button.querySelector('svg')?.classList.contains('w-4'),
-    );
-    expect(saveButton).toBeUndefined();
+    const input = screen.getByPlaceholderText('Add status');
+    fireEvent.change(input, { target: { value: 'New status' } });
+
+    expect(defaultProps.onCustomStatusChange).toHaveBeenCalled();
   });
 });
