@@ -27,6 +27,7 @@ export * from './Home';
 export * from './HomeHeader';
 export * from './InputField';
 export * from './Install';
+export * from './InviteCodes';
 export * from './Logo';
 export * from './Metadata';
 export * from './Logout';

@@ -28,7 +28,7 @@ exports[`EditProfile > matches snapshot 1`] = `
         Add your name, bio, links, and avatar.
       </p>
       <div
-        class="inline-flex items-center justify-center rounded-md border text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
+        class="inline-flex items-center justify-center rounded-md border text-sm font-semibold leading-5 w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
         data-slot="badge"
         data-variant="secondary"
       >
@@ -102,7 +102,7 @@ exports[`EditProfile > matches snapshot 1`] = `
         class="flex flex-col gap-6"
       >
         <h2
-          class="text-4xl text-foreground font-bold"
+          class="text-4xl leading-normal text-foreground font-bold"
           data-testid="heading-2"
         >
           Profile
@@ -157,7 +157,7 @@ exports[`EditProfile > matches snapshot 1`] = `
         class="flex flex-col gap-6"
       >
         <h2
-          class="text-4xl text-foreground font-bold"
+          class="text-4xl leading-normal text-foreground font-bold"
           data-testid="heading-2"
         >
           Links
@@ -238,7 +238,7 @@ exports[`EditProfile > matches snapshot 1`] = `
         class="flex flex-col gap-6 items-center lg:items-start"
       >
         <h2
-          class="text-4xl text-foreground font-bold"
+          class="text-4xl leading-normal text-foreground font-bold"
           data-testid="heading-2"
         >
           Avatar
@@ -341,7 +341,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
         Add your name, bio, links, and avatar.
       </p>
       <div
-        class="inline-flex items-center justify-center rounded-md border text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
+        class="inline-flex items-center justify-center rounded-md border text-sm font-semibold leading-5 w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
         data-slot="badge"
         data-variant="secondary"
       >
@@ -415,7 +415,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
         class="flex flex-col gap-6"
       >
         <h2
-          class="text-4xl text-foreground font-bold"
+          class="text-4xl leading-normal text-foreground font-bold"
           data-testid="heading-2"
         >
           Profile
@@ -470,7 +470,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
         class="flex flex-col gap-6"
       >
         <h2
-          class="text-4xl text-foreground font-bold"
+          class="text-4xl leading-normal text-foreground font-bold"
           data-testid="heading-2"
         >
           Links
@@ -551,7 +551,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
         class="flex flex-col gap-6 items-center lg:items-start"
       >
         <h2
-          class="text-4xl text-foreground font-bold"
+          class="text-4xl leading-normal text-foreground font-bold"
           data-testid="heading-2"
         >
           Avatar

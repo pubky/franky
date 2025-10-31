@@ -26,10 +26,10 @@ export function ProfileMenu({ className, counts }: ProfileMenuProps) {
             <Link key={item.label} href={item.path}>
               <Atoms.FilterItem isSelected={isSelected} onClick={() => {}}>
                 <Atoms.FilterItemIcon icon={Icon} />
-                <Atoms.FilterItemLabel>
-                  {item.label}
-                  {count !== undefined && ` (${count})`}
-                </Atoms.FilterItemLabel>
+                <Atoms.FilterItemLabel className="flex-1">{item.label}</Atoms.FilterItemLabel>
+                {count !== undefined && (
+                  <span className={isSelected ? 'text-foreground' : 'text-muted-foreground'}>{count}</span>
+                )}
               </Atoms.FilterItem>
             </Link>
           );

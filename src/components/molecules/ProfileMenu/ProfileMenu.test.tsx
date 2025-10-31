@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfileMenu } from './ProfileMenu';
 
@@ -28,8 +28,11 @@ describe('ProfileMenu', () => {
       friends: 20,
     };
     render(<ProfileMenu counts={counts} />);
-    expect(screen.getByText('Posts (10)')).toBeInTheDocument();
-    expect(screen.getByText('Replies (5)')).toBeInTheDocument();
-    expect(screen.getByText('Tagged (3)')).toBeInTheDocument();
+    expect(screen.getByText('Posts')).toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(screen.getByText('Replies')).toBeInTheDocument();
+    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('Tagged')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 });

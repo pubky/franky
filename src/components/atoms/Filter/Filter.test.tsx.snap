@@ -2,7 +2,7 @@
 
 exports[`Filter Components > FilterHeader > applies custom className 1`] = `
 <h2
-  class="text-2xl text-muted-foreground font-light custom-header"
+  class="text-2xl leading-8 text-muted-foreground font-light custom-header"
   data-testid="heading-2"
 >
   Test Filter
@@ -11,7 +11,7 @@ exports[`Filter Components > FilterHeader > applies custom className 1`] = `
 
 exports[`Filter Components > FilterHeader > renders with title 1`] = `
 <h2
-  class="text-2xl text-muted-foreground font-light"
+  class="text-2xl leading-8 text-muted-foreground font-light"
   data-testid="heading-2"
 >
   Test Filter
@@ -20,7 +20,7 @@ exports[`Filter Components > FilterHeader > renders with title 1`] = `
 
 exports[`Filter Components > FilterItem > applies custom className 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 custom-item"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80 custom-item"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -33,7 +33,7 @@ exports[`Filter Components > FilterItem > applies custom className 1`] = `
 
 exports[`Filter Components > FilterItem > renders as selected 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -46,7 +46,7 @@ exports[`Filter Components > FilterItem > renders as selected 1`] = `
 
 exports[`Filter Components > FilterItem > renders as unselected 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -59,7 +59,7 @@ exports[`Filter Components > FilterItem > renders as unselected 1`] = `
 
 exports[`Filter Components > FilterItem > renders with default props 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -94,7 +94,7 @@ exports[`Filter Components > FilterItemLabel > applies custom className 1`] = `
 
 exports[`Filter Components > FilterList > applies custom className 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 custom-list"
+  class="mx-auto w-full flex flex-col gap-0 custom-list"
   data-slot="filter-list"
   data-testid="filter-list"
 >
@@ -106,7 +106,7 @@ exports[`Filter Components > FilterList > applies custom className 1`] = `
 
 exports[`Filter Components > FilterList > renders with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2"
+  class="mx-auto w-full flex flex-col gap-0"
   data-slot="filter-list"
   data-testid="filter-list"
 >
@@ -121,7 +121,7 @@ exports[`Filter Components > FilterList > renders with default props 1`] = `
 
 exports[`Filter Components > FilterRoot > applies custom className 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background custom-class"
+  class="mx-auto w-full flex flex-col gap-0 bg-background custom-class"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -133,7 +133,7 @@ exports[`Filter Components > FilterRoot > applies custom className 1`] = `
 
 exports[`Filter Components > FilterRoot > renders with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >

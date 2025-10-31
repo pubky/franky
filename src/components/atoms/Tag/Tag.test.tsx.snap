@@ -7,13 +7,13 @@ exports[`Tag - Snapshots > matches snapshot for long tag name 1`] = `
   style="background-color: rgba(255, 85, 0, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     very-long-tag-name-example
   </p>
   <p
-    class="text-sm ml-1.5 text-foreground/50 font-medium"
+    class="text-sm leading-5 ml-1.5 text-foreground/50 font-medium"
     data-testid="tag-count"
   >
     7
@@ -28,7 +28,7 @@ exports[`Tag - Snapshots > matches snapshot when clicked 1`] = `
   style="background-color: rgba(255, 51, 0, 0.3); border: 1px solid rgb(255, 51, 0);"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     been clicked
@@ -43,13 +43,13 @@ exports[`Tag - Snapshots > matches snapshot with all props combined 1`] = `
   style="background-color: rgba(255, 0, 4, 0.3); border: 1px solid rgb(255, 0, 4);"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     defi
   </p>
   <p
-    class="text-sm ml-1.5 text-foreground/50 font-medium"
+    class="text-sm leading-5 ml-1.5 text-foreground/50 font-medium"
     data-testid="tag-count"
   >
     123
@@ -64,13 +64,13 @@ exports[`Tag - Snapshots > matches snapshot with count 1`] = `
   style="background-color: rgba(171, 0, 255, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     sixteen count
   </p>
   <p
-    class="text-sm ml-1.5 text-foreground/50 font-medium"
+    class="text-sm leading-5 ml-1.5 text-foreground/50 font-medium"
     data-testid="tag-count"
   >
     16
@@ -85,7 +85,7 @@ exports[`Tag - Snapshots > matches snapshot with custom className 1`] = `
   style="background-color: rgba(28, 255, 0, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     custom-class
@@ -100,7 +100,7 @@ exports[`Tag - Snapshots > matches snapshot with default props 1`] = `
   style="background-color: rgba(255, 209, 0, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     default props
@@ -115,13 +115,13 @@ exports[`Tag - Snapshots > matches snapshot with large count 1`] = `
   style="background-color: rgba(255, 0, 234, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     large count
   </p>
   <p
-    class="text-sm ml-1.5 text-foreground/50 font-medium"
+    class="text-sm leading-5 ml-1.5 text-foreground/50 font-medium"
     data-testid="tag-count"
   >
     999999
@@ -136,13 +136,13 @@ exports[`Tag - Snapshots > matches snapshot with zero count 1`] = `
   style="background-color: rgba(0, 255, 151, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     zero count
   </p>
   <p
-    class="text-sm ml-1.5 text-foreground/50 font-medium"
+    class="text-sm leading-5 ml-1.5 text-foreground/50 font-medium"
     data-testid="tag-count"
   >
     0
@@ -157,7 +157,7 @@ exports[`Tag - Snapshots > matches snapshot without clicked 1`] = `
   style="background-color: rgba(0, 22, 255, 0.3); border: 1px solid transparent;"
 >
   <p
-    class="text-sm font-semibold text-foreground"
+    class="text-sm font-semibold leading-5 text-foreground"
     data-testid="tag-name"
   >
     clicked false

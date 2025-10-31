@@ -5,7 +5,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
   class="w-full h-8 justify-between items-center inline-flex"
 >
   <p
-    class="text-sm text-foreground font-semibold"
+    class="text-sm leading-5 text-foreground font-semibold"
     data-testid="typography"
   >
     Test Setting
@@ -32,7 +32,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
   class="w-full h-8 justify-between items-center inline-flex"
 >
   <p
-    class="text-sm text-foreground font-semibold"
+    class="text-sm leading-5 text-foreground font-semibold"
     data-testid="typography"
   >
     Test Setting
@@ -62,7 +62,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className
   class="w-full h-8 justify-between items-center inline-flex custom-item"
 >
   <p
-    class="text-sm text-foreground font-semibold"
+    class="text-sm leading-5 text-foreground font-semibold"
     data-testid="typography"
   >
     Test Setting
@@ -89,7 +89,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with default props 1`
   class="w-full h-8 justify-between items-center inline-flex"
 >
   <p
-    class="text-sm text-foreground font-semibold"
+    class="text-sm leading-5 text-foreground font-semibold"
     data-testid="typography"
   >
     Test Setting

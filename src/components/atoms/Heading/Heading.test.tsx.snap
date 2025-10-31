@@ -2,7 +2,7 @@
 
 exports[`Heading - Snapshots > matches snapshot for 2xl size 1`] = `
 <h1
-  class="text-7xl sm:text-9xl font-bold text-foreground"
+  class="text-7xl sm:text-9xl font-bold leading-normal text-foreground"
   data-testid="heading-1"
 >
   2XL Heading
@@ -11,7 +11,7 @@ exports[`Heading - Snapshots > matches snapshot for 2xl size 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for combined level and size 1`] = `
 <h3
-  class="text-7xl sm:text-9xl font-bold text-foreground"
+  class="text-7xl sm:text-9xl font-bold leading-normal text-foreground"
   data-testid="heading-3"
 >
   H3 2XL Heading
@@ -20,7 +20,7 @@ exports[`Heading - Snapshots > matches snapshot for combined level and size 1`] 
 
 exports[`Heading - Snapshots > matches snapshot for extra large size 1`] = `
 <h1
-  class="text-4xl font-bold text-foreground"
+  class="text-4xl font-bold leading-normal text-foreground"
   data-testid="heading-1"
 >
   Extra Large Heading
@@ -29,7 +29,7 @@ exports[`Heading - Snapshots > matches snapshot for extra large size 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for h1 level 1`] = `
 <h1
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-1"
 >
   H1 Heading
@@ -38,7 +38,7 @@ exports[`Heading - Snapshots > matches snapshot for h1 level 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for h2 level 1`] = `
 <h2
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-2"
 >
   H2 Heading
@@ -47,7 +47,7 @@ exports[`Heading - Snapshots > matches snapshot for h2 level 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for h3 level 1`] = `
 <h3
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-3"
 >
   H3 Heading
@@ -56,7 +56,7 @@ exports[`Heading - Snapshots > matches snapshot for h3 level 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for h4 level 1`] = `
 <h4
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-4"
 >
   H4 Heading
@@ -65,7 +65,7 @@ exports[`Heading - Snapshots > matches snapshot for h4 level 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for h5 level 1`] = `
 <h5
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-5"
 >
   H5 Heading
@@ -74,7 +74,7 @@ exports[`Heading - Snapshots > matches snapshot for h5 level 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for h6 level 1`] = `
 <h6
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-6"
 >
   H6 Heading
@@ -83,7 +83,7 @@ exports[`Heading - Snapshots > matches snapshot for h6 level 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for large size 1`] = `
 <h1
-  class="text-2xl font-bold text-foreground"
+  class="text-2xl font-bold leading-8 text-foreground"
   data-testid="heading-1"
 >
   Large Heading
@@ -92,7 +92,7 @@ exports[`Heading - Snapshots > matches snapshot for large size 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for medium size 1`] = `
 <h1
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-1"
 >
   Medium Heading
@@ -101,7 +101,7 @@ exports[`Heading - Snapshots > matches snapshot for medium size 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot for small size 1`] = `
 <h1
-  class="text-lg font-semibold text-foreground"
+  class="text-lg font-semibold leading-normal text-foreground"
   data-testid="heading-1"
 >
   Small Heading
@@ -110,7 +110,7 @@ exports[`Heading - Snapshots > matches snapshot for small size 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot with complex children 1`] = `
 <h1
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-1"
 >
   <span>
@@ -125,7 +125,7 @@ exports[`Heading - Snapshots > matches snapshot with complex children 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot with custom className 1`] = `
 <h1
-  class="text-xl font-semibold text-foreground custom-heading-class"
+  class="text-xl font-semibold leading-normal text-foreground custom-heading-class"
   data-testid="heading-1"
 >
   Custom Heading
@@ -134,7 +134,7 @@ exports[`Heading - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`Heading - Snapshots > matches snapshot with default props 1`] = `
 <h1
-  class="text-xl font-semibold text-foreground"
+  class="text-xl font-semibold leading-normal text-foreground"
   data-testid="heading-1"
 >
   Default Heading

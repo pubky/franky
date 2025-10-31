@@ -62,8 +62,12 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
 
 export function ProfileLeftSidebar({ counts }: { counts?: ProfileProps['profileCounts'] }) {
   return (
-    <div className="self-start sticky top-[100px] w-full">
+    <div className="flex flex-col gap-8 w-full">
+      {/* Menu Section */}
       <Molecules.ProfileMenu counts={counts} />
+
+      {/* Invite Codes Section */}
+      <Molecules.InviteCodes />
     </div>
   );
 }

@@ -48,7 +48,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Show confirmation before redirecting
@@ -72,7 +72,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Blur censored posts or profile pictures
@@ -96,7 +96,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Sign me out when inactive for 5 minutes
@@ -123,7 +123,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Require PIN when inactive for 5 minutes
@@ -150,7 +150,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Hide your profile in 'Who to Follow'
@@ -177,7 +177,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Hide your profile in 'Active Friends'
@@ -204,7 +204,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Hide your profile in search results
@@ -231,7 +231,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         class="w-full h-8 justify-between items-center inline-flex"
       >
         <p
-          class="text-sm text-foreground font-semibold"
+          class="text-sm leading-5 text-foreground font-semibold"
           data-testid="typography"
         >
           Never show posts from people you don't follow
