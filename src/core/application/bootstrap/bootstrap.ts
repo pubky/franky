@@ -13,10 +13,10 @@ export class BootstrapApplication {
    * @param pubky - The user's public key identifier
    * @returns Promise resolving to the current notification state with unread count and last read timestamp
    */
-  static async initialize(pubky: Core.Pubky): Promise<Core.NotificationState> {
+  static async initialize(params: Core.TBootstrapParams): Promise<Core.NotificationState> {
     const [data, { notificationList, lastRead }] = await Promise.all([
-      Core.NexusBootstrapService.fetch(pubky),
-      this.fetchNotifications(pubky),
+      Core.NexusBootstrapService.fetch(params.pubky),
+      this.fetchNotifications(params),
     ]);
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
@@ -39,13 +39,10 @@ export class BootstrapApplication {
    * @param pubky - The user's public key identifier
    * @returns Promise resolving to notification data and last read timestamp
    */
-  private static async fetchNotifications(pubky: Core.Pubky) {
-    const {
-      meta: { url },
-    } = Core.homeserverApi.lastRead(pubky);
+  private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
     const { timestamp: userLastRead } = await Core.HomeserverService.request<{ timestamp: number }>(
       Core.HomeserverAction.GET,
-      url,
+      lastReadUrl,
     );
     const notificationList = await Core.NexusUserService.notifications({
       user_id: pubky,
@@ -63,7 +60,7 @@ export class BootstrapApplication {
    * @returns Promise resolving to the notification state after successful bootstrap
    * @throws Error when bootstrap fails after all retry attempts
    */
-  static async initializeWithRetry(pubky: Core.Pubky): Promise<Core.NotificationState> {
+  static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let success = false;
     let retries = 0;
     let notificationState = Core.notificationInitialState;
@@ -72,7 +69,7 @@ export class BootstrapApplication {
         // Wait 5 seconds before each attempt to let Nexus index the user
         Libs.Logger.info(`Waiting 5 seconds before bootstrap attempt ${retries + 1}...`);
         await new Promise((resolve) => setTimeout(resolve, 5000));
-        notificationState = await this.initialize(pubky);
+        notificationState = await this.initialize(params);
         success = true;
       } catch (error) {
         Libs.Logger.error('Failed to bootstrap', error, retries);
