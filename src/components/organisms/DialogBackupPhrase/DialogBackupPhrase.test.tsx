@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { DialogBackupPhrase } from './DialogBackupPhrase';
+import { useRecoveryPhraseValidation } from '@/hooks';
 
 const dialogMockControls: {
   onOpenChange?: (open: boolean) => void;
@@ -101,6 +102,11 @@ vi.mock('@/atoms', () => ({
     <p data-testid="dialog-description" className={className}>
       {children}
     </p>
+  ),
+  DialogFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-footer" className={className}>
+      {children}
+    </div>
   ),
   DialogClose: ({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) => (
     <div data-testid="dialog-close" data-as-child={asChild}>
@@ -277,7 +283,7 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
 
     expect(outerContainer).not.toBeNull();
     expect(outerContainer?.className ?? '').not.toContain('blur-xs');
-    expect(screen.getByText('Hide recovery phrase')).toBeInTheDocument();
+    expect(screen.getAllByText('Hide recovery phrase').length).toBeGreaterThan(0);
 
     act(() => {
       dialogMockControls.onOpenChange?.(false);
@@ -291,7 +297,7 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     expect(screen.queryByText('Hide recovery phrase')).not.toBeInTheDocument();
     const updatedOuterContainer = wordContainer?.parentElement?.parentElement as HTMLElement | null;
     expect(updatedOuterContainer).not.toBeNull();
-    expect(updatedOuterContainer?.className ?? '').toContain('blur-xs');
+    expect(updatedOuterContainer?.className ?? '').toContain('blur-md');
   });
 
   it('should allow selecting duplicate words individually in step 2', () => {
@@ -301,7 +307,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Now we should be in step 2 with the word selection buttons
@@ -316,17 +323,17 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     expect(tubeButtons[0]).not.toBeDisabled();
     expect(tubeButtons[1]).not.toBeDisabled();
 
-    // Click the first tube button
+    // Click the first tube button (1 out of 2 used - neither disabled yet)
     fireEvent.click(tubeButtons[0]);
 
-    // The first button should now be disabled, but the second should still be clickable
-    expect(tubeButtons[0]).toBeDisabled();
+    // Both buttons should still be enabled (count-based: 1/2 used)
+    expect(tubeButtons[0]).not.toBeDisabled();
     expect(tubeButtons[1]).not.toBeDisabled();
 
-    // Click the second tube button
+    // Click the second tube button (2 out of 2 used - both disabled now)
     fireEvent.click(tubeButtons[1]);
 
-    // Now both should be disabled
+    // Now both should be disabled (count limit reached)
     expect(tubeButtons[0]).toBeDisabled();
     expect(tubeButtons[1]).toBeDisabled();
   });
@@ -338,19 +345,20 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get both tube buttons (duplicates)
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
     const tubeButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('tube'));
 
-    // Click first tube instance (should go to slot 0)
+    // Click first tube instance (1 out of 2 used - neither disabled)
     fireEvent.click(tubeButtons[0]);
-    expect(tubeButtons[0]).toBeDisabled();
+    expect(tubeButtons[0]).not.toBeDisabled();
     expect(tubeButtons[1]).not.toBeDisabled();
 
-    // Click second tube instance (should go to slot 1)
+    // Click second tube instance (2 out of 2 used - both disabled)
     fireEvent.click(tubeButtons[1]);
     expect(tubeButtons[0]).toBeDisabled();
     expect(tubeButtons[1]).toBeDisabled();
@@ -359,12 +367,12 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
     expect(wordSlot0?.getAttribute('data-word')).toBe('tube');
 
-    // Clear the first slot
+    // Clear the first slot (back to 1/2 used - both enabled again)
     fireEvent.click(wordSlot0!);
 
-    // Only the first tube button should be re-enabled
+    // Both tube buttons should be enabled again (count-based: 1 out of 2 used)
     expect(tubeButtons[0]).not.toBeDisabled();
-    expect(tubeButtons[1]).toBeDisabled();
+    expect(tubeButtons[1]).not.toBeDisabled();
 
     // Clear the second slot
     const wordSlot1 = container.querySelector('[data-testid="word-slot-1"]');
@@ -382,7 +390,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all word buttons
@@ -432,7 +441,8 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Select a wrong word for slot 0 (expected "tube")
@@ -571,7 +581,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     );
   };
 
-  // Test version of RecoveryStep2 with identical words
+  // Test version of RecoveryStep2 with identical words using the hook
   const RecoveryStep2Test = ({
     recoveryWords,
     setStep,
@@ -579,83 +589,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     recoveryWords: string[];
     setStep: (step: number) => void;
   }) => {
-    const [userWords, setUserWords] = useState<string[]>(Array(12).fill(''));
-    const [errors, setErrors] = useState<boolean[]>(Array(12).fill(false));
-    const [availableWords] = useState<string[]>([...recoveryWords].sort());
-    const [usedWordCounts, setUsedWordCounts] = useState<Record<string, number>>({});
-    const [usedWordInstances, setUsedWordInstances] = useState<Set<number>>(new Set());
-    const [slotToInstance, setSlotToInstance] = useState<(number | null)[]>(Array(12).fill(null));
-
-    const wordCountMap = useMemo(() => {
-      const map: Record<string, number> = {};
-      for (const w of recoveryWords) {
-        map[w] = (map[w] || 0) + 1;
-      }
-      return map;
-    }, [recoveryWords]);
-
-    const handleWordClick = (word: string, wordIndex: number) => {
-      const wordCountInPhrase = wordCountMap[word] ?? 0;
-      const currentUsageCount = usedWordCounts[word] || 0;
-
-      if (currentUsageCount >= wordCountInPhrase) {
-        return;
-      }
-
-      if (usedWordInstances.has(wordIndex)) {
-        return;
-      }
-
-      const emptyIndex = userWords.findIndex((w) => w === '');
-      if (emptyIndex !== -1) {
-        const newUserWords = [...userWords];
-        newUserWords[emptyIndex] = word;
-        setUserWords(newUserWords);
-
-        setUsedWordCounts((prev) => ({
-          ...prev,
-          [word]: currentUsageCount + 1,
-        }));
-        setUsedWordInstances((prev) => new Set([...prev, wordIndex]));
-
-        setSlotToInstance((prev) => {
-          const next = [...prev];
-          next[emptyIndex] = wordIndex;
-          return next;
-        });
-      }
-    };
-
-    const clearWord = (index: number) => {
-      const word = userWords[index];
-      if (word) {
-        const newUserWords = [...userWords];
-        newUserWords[index] = '';
-        setUserWords(newUserWords);
-        setUsedWordCounts((prev) => ({
-          ...prev,
-          [word]: Math.max(0, (prev[word] || 0) - 1),
-        }));
-
-        const instanceIndex = slotToInstance[index];
-        if (instanceIndex !== null) {
-          setUsedWordInstances((prev) => {
-            const next = new Set(prev);
-            next.delete(instanceIndex);
-            return next;
-          });
-          setSlotToInstance((prev) => {
-            const next = [...prev];
-            next[index] = null;
-            return next;
-          });
-        }
-
-        const newErrors = [...errors];
-        newErrors[index] = false;
-        setErrors(newErrors);
-      }
-    };
+    const { userWords, errors, remainingWords, handleWordClick, validateWords, clearWord, isComplete } =
+      useRecoveryPhraseValidation({ recoveryWords });
 
     return (
       <>
@@ -670,25 +605,21 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
 
         <div data-testid="container" className="space-y-6">
           <div data-testid="container" className="flex-wrap gap-2 flex-row">
-            {availableWords.map((word, index) => {
-              const isThisInstanceUsed = usedWordInstances.has(index);
-
-              return (
-                <button
-                  data-testid={`button-${isThisInstanceUsed ? 'secondary' : 'outline'}`}
-                  key={`${word}-${index}`}
-                  className={`rounded-full ${
-                    isThisInstanceUsed
-                      ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                      : 'dark:border-transparent bg-secondary cursor-pointer'
-                  }`}
-                  onClick={() => !isThisInstanceUsed && handleWordClick(word, index)}
-                  disabled={isThisInstanceUsed}
-                >
-                  {word}
-                </button>
-              );
-            })}
+            {remainingWords.map(({ word, index, isUsed }) => (
+              <button
+                data-testid={`button-${isUsed ? 'secondary' : 'outline'}`}
+                key={`${word}-${index}`}
+                className={`rounded-full ${
+                  isUsed
+                    ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
+                    : 'dark:border-transparent bg-secondary cursor-pointer'
+                }`}
+                onClick={() => !isUsed && handleWordClick(word)}
+                disabled={isUsed}
+              >
+                {word}
+              </button>
+            ))}
           </div>
 
           <div data-testid="container" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -722,8 +653,12 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
           <button
             data-testid="button-default"
             className="rounded-full flex-1"
-            onClick={() => setStep(3)}
-            disabled={userWords.some((word) => word === '') || errors.some((error) => error)}
+            onClick={() => {
+              if (validateWords()) {
+                setStep(3);
+              }
+            }}
+            disabled={!isComplete}
           >
             <div data-testid="check-icon" className="mr-2 h-4 w-4">
               Check
@@ -742,7 +677,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons (should be 12)
@@ -757,31 +693,28 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
       expect(button).not.toBeDisabled();
     });
 
-    // Click the first bacon button
+    // Click the first bacon button (1 out of 12 used - none disabled)
     fireEvent.click(baconButtons[0]);
 
-    // Only the first button should be disabled, others should still be clickable
-    expect(baconButtons[0]).toBeDisabled();
-    baconButtons.slice(1).forEach((button) => {
+    // All buttons should still be enabled (count-based: 1/12 used)
+    baconButtons.forEach((button) => {
       expect(button).not.toBeDisabled();
     });
 
-    // Click the second bacon button
+    // Click the second bacon button (2 out of 12 used - still none disabled)
     fireEvent.click(baconButtons[1]);
 
-    // First two should be disabled, others should still be clickable
-    expect(baconButtons[0]).toBeDisabled();
-    expect(baconButtons[1]).toBeDisabled();
-    baconButtons.slice(2).forEach((button) => {
+    // All buttons should still be enabled (count-based: 2/12 used)
+    baconButtons.forEach((button) => {
       expect(button).not.toBeDisabled();
     });
 
-    // Continue clicking all buttons
+    // Continue clicking all buttons until we reach the limit
     for (let i = 2; i < baconButtons.length; i++) {
       fireEvent.click(baconButtons[i]);
     }
 
-    // All buttons should now be disabled
+    // All buttons should now be disabled (12/12 used - count limit reached)
     baconButtons.forEach((button) => {
       expect(button).toBeDisabled();
     });
@@ -806,40 +739,51 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
     const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
 
-    // Click first 3 buttons
+    // Click first 3 buttons (3 out of 12 used - none disabled yet)
     fireEvent.click(baconButtons[0]);
     fireEvent.click(baconButtons[1]);
     fireEvent.click(baconButtons[2]);
 
-    // First 3 should be disabled
-    expect(baconButtons[0]).toBeDisabled();
-    expect(baconButtons[1]).toBeDisabled();
-    expect(baconButtons[2]).toBeDisabled();
+    // All buttons should still be enabled (count-based: 3/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
-    // Clear the first slot (slot 0)
+    // Fill all 12 slots to disable all buttons
+    for (let i = 3; i < baconButtons.length; i++) {
+      fireEvent.click(baconButtons[i]);
+    }
+
+    // All buttons should now be disabled (12/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).toBeDisabled();
+    });
+
+    // Clear the first slot (back to 11/12 used - all enabled again)
     const wordSlot0 = container.querySelector('[data-testid="word-slot-0"]');
     fireEvent.click(wordSlot0!);
 
-    // Only the first bacon button should be re-enabled
-    expect(baconButtons[0]).not.toBeDisabled();
-    expect(baconButtons[1]).toBeDisabled();
-    expect(baconButtons[2]).toBeDisabled();
+    // All buttons should be enabled again (count-based: 11 out of 12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
-    // Clear the second slot (slot 1)
+    // Clear the second slot (back to 10/12 used)
     const wordSlot1 = container.querySelector('[data-testid="word-slot-1"]');
     fireEvent.click(wordSlot1!);
 
-    // First two buttons should be re-enabled
-    expect(baconButtons[0]).not.toBeDisabled();
-    expect(baconButtons[1]).not.toBeDisabled();
-    expect(baconButtons[2]).toBeDisabled();
+    // All buttons should still be enabled
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
   });
 
   it('should handle reverse-order selection with identical words', () => {
@@ -849,46 +793,56 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
     fireEvent.click(revealButton);
 
-    const confirmButton = screen.getByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButtons = screen.getAllByRole('button', { name: /confirm recovery phrase/i });
+    const confirmButton = confirmButtons[0];
     fireEvent.click(confirmButton);
 
     // Get all bacon buttons
     const wordButtons = container.querySelectorAll('button[data-testid^="button-"]');
     const baconButtons = Array.from(wordButtons).filter((button) => button.textContent?.includes('bacon'));
 
-    // Click from the end towards the start
+    // Click from the end towards the start (count-based: all buttons enabled until limit)
     const last = baconButtons.length - 1;
     fireEvent.click(baconButtons[last]);
-    // Only the last should be disabled
-    expect(baconButtons[last]).toBeDisabled();
-    expect(baconButtons[last - 1]).not.toBeDisabled();
+    // All buttons should still be enabled (1/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
     fireEvent.click(baconButtons[last - 1]);
-    // The last two should be disabled, the third-from-last enabled
-    expect(baconButtons[last]).toBeDisabled();
-    expect(baconButtons[last - 1]).toBeDisabled();
-    expect(baconButtons[last - 2]).not.toBeDisabled();
+    // All buttons should still be enabled (2/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
     // Click a few more in reverse to ensure mapping stays correct
     fireEvent.click(baconButtons[last - 2]);
     fireEvent.click(baconButtons[last - 3]);
 
-    expect(baconButtons[last]).toBeDisabled();
-    expect(baconButtons[last - 1]).toBeDisabled();
-    expect(baconButtons[last - 2]).toBeDisabled();
-    expect(baconButtons[last - 3]).toBeDisabled();
+    // All buttons should still be enabled (4/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
 
-    // Clear slot 0 and 1, ensure only the earliest clicked instances re-enable
+    // Fill all remaining slots
+    for (let i = 0; i < baconButtons.length - 4; i++) {
+      fireEvent.click(baconButtons[i]);
+    }
+
+    // All buttons should now be disabled (12/12 used)
+    baconButtons.forEach((button) => {
+      expect(button).toBeDisabled();
+    });
+
+    // Clear slot 0 and 1, all buttons should be enabled again (back to 10/12 used)
     const slot0 = container.querySelector('[data-testid="word-slot-0"]');
     const slot1 = container.querySelector('[data-testid="word-slot-1"]');
     fireEvent.click(slot0!);
     fireEvent.click(slot1!);
 
-    // After clearing first two slots, the last two clicked instances should re-enable,
-    // and the earlier reverse-clicked instances should remain disabled
-    expect(baconButtons[last]).not.toBeDisabled();
-    expect(baconButtons[last - 1]).not.toBeDisabled();
-    expect(baconButtons[last - 2]).toBeDisabled();
-    expect(baconButtons[last - 3]).toBeDisabled();
+    // All buttons should be enabled again (count-based: 10 out of 12 used)
+    baconButtons.forEach((button) => {
+      expect(button).not.toBeDisabled();
+    });
   });
 });

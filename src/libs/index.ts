@@ -4,6 +4,8 @@ export * from './icons';
 export * from './identity';
 export * from './image';
 export * from './logger';
+export * from './deeplink';
 export * from './share';
 export * from './svg';
 export * from './utils';
+export * from './password';

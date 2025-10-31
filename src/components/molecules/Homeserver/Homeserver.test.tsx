@@ -17,9 +17,6 @@ vi.mock('@/molecules', () => ({
       {children}
     </div>
   ),
-  DialogTerms: () => <span data-testid="dialog-terms">Terms of Service</span>,
-  DialogPrivacy: () => <span data-testid="dialog-privacy">Privacy Policy</span>,
-  DialogAge: () => <span data-testid="dialog-age">over 18 years old.</span>,
   ButtonsNavigation: ({
     className,
     onHandleBackButton,
@@ -42,6 +39,13 @@ vi.mock('@/molecules', () => ({
       </button>
     </div>
   ),
+}));
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  DialogTerms: () => <span data-testid="dialog-terms">Terms of Service</span>,
+  DialogPrivacy: () => <span data-testid="dialog-privacy">Privacy Policy</span>,
+  DialogAge: () => <span data-testid="dialog-age">over 18 years old.</span>,
 }));
 
 // Mock atoms

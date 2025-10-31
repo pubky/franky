@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Atoms from '@/atoms';
 import * as App from '@/app';
 
@@ -20,8 +21,8 @@ export const HomeserverHeader = () => {
 export const HomeserverFooter = () => {
   return (
     <Atoms.FooterLinks>
-      By creating an account on the Pubky homeserver, you agree to the <Molecules.DialogTerms />,{' '}
-      <Molecules.DialogPrivacy />, and you confirm that you are <Molecules.DialogAge />
+      By creating an account on the Pubky homeserver, you agree to the <Organisms.DialogTerms />,{' '}
+      <Organisms.DialogPrivacy />, and you confirm that you are <Organisms.DialogAge />
     </Atoms.FooterLinks>
   );
 };

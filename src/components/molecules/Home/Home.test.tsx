@@ -23,10 +23,14 @@ vi.mock('@/molecules', () => ({
       </button>
     </div>
   ),
+  PopoverInvite: () => <div data-testid="popover-invite">Invite Popover</div>,
+}));
+
+// Mock organisms
+vi.mock('@/organisms', () => ({
   DialogTerms: () => <button data-testid="dialog-terms">Terms of Service</button>,
   DialogPrivacy: () => <button data-testid="dialog-privacy">Privacy Policy</button>,
   DialogAge: () => <button data-testid="dialog-age">over 18 years old.</button>,
-  PopoverInvite: () => <div data-testid="popover-invite">Invite Popover</div>,
 }));
 
 // Mock atoms

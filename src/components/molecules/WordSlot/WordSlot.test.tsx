@@ -201,10 +201,10 @@ describe('WordSlot', () => {
       const input = screen.getByTestId('input');
 
       // Check for error styling classes
-      expect(containers.some((container) => container.className?.includes('border-red-500'))).toBe(true);
+      expect(containers.some((container) => container.className?.includes('border-destructive'))).toBe(true);
 
-      expect(badge.className?.includes('bg-red-500')).toBe(true);
-      expect(input.className?.includes('!text-red-500')).toBe(true);
+      expect(badge.className?.includes('bg-destructive')).toBe(true);
+      expect(input.className?.includes('!text-destructive')).toBe(true);
     });
 
     it('shows correct title attribute when word can be cleared', () => {

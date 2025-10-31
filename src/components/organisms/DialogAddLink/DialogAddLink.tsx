@@ -1,7 +1,7 @@
 'use client';
 
-import * as Atoms from '@/components/atoms';
-import * as Molecules from '@/components/molecules';
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import { useState } from 'react';
 import { z } from 'zod';

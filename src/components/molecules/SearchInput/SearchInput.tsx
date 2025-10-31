@@ -64,7 +64,7 @@ export const SearchInput = ({
   );
 
   return (
-    <Atoms.Container className={containerClassName}>
+    <Atoms.Container data-testid="search-input" className={containerClassName}>
       <Atoms.Input
         type="text"
         placeholder={placeholder}

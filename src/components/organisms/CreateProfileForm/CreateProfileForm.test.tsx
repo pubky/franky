@@ -222,9 +222,6 @@ vi.mock('@/molecules', async (importOriginal) => {
 
   return {
     ...actual,
-    DialogAge: () => <div data-testid="dialog-age">DialogAge</div>,
-    DialogTerms: () => <div data-testid="dialog-terms">DialogTerms</div>,
-    DialogPrivacy: () => <div data-testid="dialog-privacy">DialogPrivacy</div>,
     useToast: () => ({
       toast: mockToast,
     }),
@@ -328,6 +325,14 @@ vi.mock('@/molecules', async (importOriginal) => {
         </button>
       </div>
     ),
+  };
+});
+
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
+
+  return {
+    ...actual,
     DialogAddLink: ({ onSave }: { onSave: (label: string, url: string) => void }) => (
       <div data-testid="dialog-add-link">
         <button onClick={() => onSave('Test Label', 'https://test.com')}>Add Link</button>

@@ -55,7 +55,10 @@ export const HeaderOnboarding = ({ currentStep }: { currentStep: number }) => {
 
 export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Atoms.Container className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}>
+    <Atoms.Container
+      data-testid="header-social-links"
+      className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}
+    >
       <Atoms.Link href={Config.GITHUB_URL} target="_blank" variant="muted" size="default">
         <Libs.Github2 className="w-6 h-6" />
       </Atoms.Link>

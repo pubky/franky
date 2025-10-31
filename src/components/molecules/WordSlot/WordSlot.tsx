@@ -53,25 +53,27 @@ export const WordSlot = (props: Types.WordSlotProps) => {
   const canClear = word !== '';
 
   const containerClasses = Libs.cn(
-    'flex-row px-3 py-2 rounded-md border border-dashed overflow-hidden relative',
-    'inline-flex w-full items-center bg-transparent transition-colors',
+    'flex-row px-5 py-4 rounded-md border border-dashed overflow-hidden relative',
+    'inline-flex w-full items-center transition-colors',
+    'bg-background/10',
     canClear && 'cursor-pointer',
     isCorrect && 'border-brand hover:bg-brand/10',
-    isError && 'border-red-500 hover:bg-red-500/20',
-    !isCorrect && !isError && canClear && 'hover:bg-secondary/80',
+    isError && 'border-destructive hover:bg-destructive/20',
+    !isCorrect && !isError && 'border-input hover:bg-secondary/80',
   );
 
   const badgeClasses = Libs.cn(
-    'z-10 h-6 w-6 rounded-full flex-shrink-0 absolute left-3 top-1/2 -translate-y-1/2',
-    !isCorrect && !isError && 'bg-muted text-muted-foreground',
-    isCorrect && 'bg-brand text-black',
-    isError && 'bg-red-500 text-white',
+    'z-10 h-5 min-w-5 rounded-full flex-shrink-0 absolute left-5 top-1/2 -translate-y-1/2 px-1',
+    !isCorrect && !isError && 'bg-secondary text-secondary-foreground border border-transparent',
+    isCorrect && 'bg-brand text-primary-foreground border border-transparent',
+    isError && 'bg-destructive text-destructive-foreground border border-transparent',
   );
 
   const inputColor = Libs.cn(
-    '!border-none !bg-transparent !px-0 !pl-10 !pr-3 flex-row flex-1 min-w-0',
+    '!border-none !bg-transparent !px-0 !pl-[52px] !pr-5 flex-row flex-1 min-w-0 text-base font-medium leading-[24px]',
+    !isCorrect && !isError && word === '' && 'text-muted-foreground',
     isCorrect && '!text-brand',
-    isError && '!text-red-500',
+    isError && '!text-destructive',
   );
 
   const title = canClear ? 'Click to remove this word' : '';

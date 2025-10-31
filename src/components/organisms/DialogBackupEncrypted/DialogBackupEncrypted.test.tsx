@@ -171,6 +171,11 @@ vi.mock('@/components/atoms', () => ({
       {children}
     </p>
   ),
+  DialogFooter: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="dialog-footer" className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 describe('DialogBackupEncrypted', () => {
