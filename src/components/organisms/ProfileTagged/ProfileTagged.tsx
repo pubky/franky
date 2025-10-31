@@ -29,9 +29,16 @@ export function ProfileTagged({ className }: ProfileTaggedProps) {
     return (
       <Molecules.ContentNotFound
         icon={<Libs.Tag size={48} className="text-brand" />}
-        title="No tagged posts"
-        description="Posts where you've been tagged will appear here."
-        className={className}
+        title="Discover who tagged you"
+        description={
+          <>
+            <p className="mb-0">No one has tagged you yet.</p>
+            <p>Tip: You can add tags to your own profile too.</p>
+          </>
+        }
+        backgroundImage="/images/background-6.png"
+        mobileBackgroundImage="/images/background-6.png"
+        className={Libs.cn('mt-6', className)}
       />
     );
   }

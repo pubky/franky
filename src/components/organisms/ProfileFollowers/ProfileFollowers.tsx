@@ -33,25 +33,26 @@ export function ProfileFollowers({ className }: ProfileFollowersProps) {
   if (followers.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.Users size={48} className="text-brand" />}
+        icon={<Libs.UsersRound2 size={48} className="text-brand" />}
         title={isOwnProfile ? 'Looking for followers?' : 'No followers yet'}
         description={
           isOwnProfile ? (
             <>
-              When someone follows this account, their profile will appear here.
-              <br />
-              Start posting and engaging with others to grow your followers.
+              <p className="mb-0">When someone follows this account, their profile will appear here.</p>
+              <p>Start posting and engaging with others to grow your followers!</p>
             </>
           ) : (
             'There are no followers to show.'
           )
         }
+        backgroundImage="/images/keyhole.png"
+        mobileBackgroundImage="/images/keyhole.png"
         className={className}
       >
         {isOwnProfile && (
           <Link href={APP_ROUTES.HOME}>
-            <Atoms.Button className="z-10 w-auto">
-              <Libs.Plus className="w-6 h-6 mr-2" />
+            <Atoms.Button variant="default" size="sm">
+              <Libs.Plus className="w-4 h-4" />
               Create a Post
             </Atoms.Button>
           </Link>

@@ -33,33 +33,34 @@ export function ProfileFollowing({ className }: ProfileFollowingProps) {
   if (following.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.UserPlus size={48} className="text-brand" />}
+        icon={<Libs.UserRoundPlus size={48} className="text-brand" />}
         title={isOwnProfile ? 'You are the algorithm' : 'No following yet'}
         description={
           isOwnProfile ? (
             <>
-              Following accounts is a simple way to curate your timeline.
-              <br />
-              Stay updated on the topics and people that interest you.
+              <p className="mb-0">Following account is a simple way to curate your timeline.</p>
+              <p>Stay updated on the topics and people that interest you.</p>
             </>
           ) : (
             'There are no following to show.'
           )
         }
+        backgroundImage="/images/keyhole.png"
+        mobileBackgroundImage="/images/keyhole.png"
         className={className}
       >
         {isOwnProfile && (
-          <div className="flex gap-3 z-10 justify-center flex-wrap">
+          <div className="flex gap-6 items-center justify-center flex-wrap lg:flex-row flex-col">
             <Link href={APP_ROUTES.SEARCH}>
-              <Atoms.Button>
-                <Libs.UserPlus className="w-4 h-4 mr-2" />
+              <Atoms.Button variant="secondary" size="sm">
+                <Libs.UserRoundPlus className="w-4 h-4" />
                 Who to Follow
               </Atoms.Button>
             </Link>
             <Link href={APP_ROUTES.HOT}>
-              <Atoms.Button>
-                <Libs.UserPlus className="w-4 h-4 mr-2" />
-                Active Users
+              <Atoms.Button variant="secondary" size="sm">
+                <Libs.UserRoundPlus className="w-4 h-4" />
+                Popular Users
               </Atoms.Button>
             </Link>
           </div>

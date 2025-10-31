@@ -1,10 +1,12 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import { APP_ROUTES } from '@/app';
 
 export interface ProfilePostsProps {
   className?: string;
@@ -28,11 +30,20 @@ export function ProfilePosts({ className }: ProfilePostsProps) {
   if (mockPosts.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.StickyNote size={48} className="text-brand" />}
+        icon={<Libs.File size={48} className="text-brand" />}
         title="No posts yet"
-        description="Posts will appear here when you create them."
+        description="What's on your mind?"
+        backgroundImage="/images/background-2.png"
+        mobileBackgroundImage="/images/background-2.png"
         className={className}
-      />
+      >
+        <Link href={APP_ROUTES.HOME}>
+          <Atoms.Button variant="default" size="sm">
+            <Libs.Plus className="w-4 h-4" />
+            Create a Post
+          </Atoms.Button>
+        </Link>
+      </Molecules.ContentNotFound>
     );
   }
 

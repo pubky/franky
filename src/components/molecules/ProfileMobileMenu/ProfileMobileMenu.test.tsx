@@ -1,15 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { usePathname } from 'next/navigation';
 import { ProfileMobileMenu } from './ProfileMobileMenu';
 
 // Mock next/navigation
-const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(() => '/profile/notifications'),
-  useRouter: () => ({
-    push: mockPush,
-  }),
 }));
 
 describe('ProfileMobileMenu', () => {
@@ -20,18 +16,18 @@ describe('ProfileMobileMenu', () => {
   it('renders all mobile menu items', () => {
     render(<ProfileMobileMenu />);
 
-    // Should render 7 buttons for 7 menu items
-    const buttons = screen.getAllByRole('button');
-    expect(buttons).toHaveLength(7);
+    // Should render 7 links for 7 menu items (Tagged is first)
+    const links = screen.getAllByRole('link');
+    expect(links).toHaveLength(7);
 
     // Check that all menu items are present by their aria-labels
+    expect(screen.getByLabelText('Tagged')).toBeInTheDocument();
     expect(screen.getByLabelText('Notifications')).toBeInTheDocument();
     expect(screen.getByLabelText('Posts')).toBeInTheDocument();
     expect(screen.getByLabelText('Replies')).toBeInTheDocument();
     expect(screen.getByLabelText('Followers')).toBeInTheDocument();
     expect(screen.getByLabelText('Following')).toBeInTheDocument();
     expect(screen.getByLabelText('Friends')).toBeInTheDocument();
-    expect(screen.getByLabelText('Tagged')).toBeInTheDocument();
   });
 
   it('displays counts when provided', () => {
@@ -58,10 +54,8 @@ describe('ProfileMobileMenu', () => {
   it('handles navigation when menu items are clicked', () => {
     render(<ProfileMobileMenu />);
 
-    const postsButton = screen.getByLabelText('Posts');
-    fireEvent.click(postsButton);
-
-    expect(mockPush).toHaveBeenCalledWith('/profile/posts');
+    const postsLink = screen.getByLabelText('Posts');
+    expect(postsLink).toHaveAttribute('href', '/profile/posts');
   });
 
   it('highlights active menu item based on current pathname', () => {
@@ -91,24 +85,14 @@ describe('ProfileMobileMenu', () => {
   it('handles all navigation routes correctly', () => {
     render(<ProfileMobileMenu />);
 
-    // Click different menu items and verify navigation
-    fireEvent.click(screen.getByLabelText('Notifications'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/notifications');
-
-    fireEvent.click(screen.getByLabelText('Replies'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/replies');
-
-    fireEvent.click(screen.getByLabelText('Followers'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/followers');
-
-    fireEvent.click(screen.getByLabelText('Following'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/following');
-
-    fireEvent.click(screen.getByLabelText('Friends'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/friends');
-
-    fireEvent.click(screen.getByLabelText('Tagged'));
-    expect(mockPush).toHaveBeenCalledWith('/profile/tagged');
+    // Verify all links have correct href attributes
+    expect(screen.getByLabelText('Tagged')).toHaveAttribute('href', '/profile/tagged');
+    expect(screen.getByLabelText('Notifications')).toHaveAttribute('href', '/profile/notifications');
+    expect(screen.getByLabelText('Replies')).toHaveAttribute('href', '/profile/replies');
+    expect(screen.getByLabelText('Followers')).toHaveAttribute('href', '/profile/followers');
+    expect(screen.getByLabelText('Following')).toHaveAttribute('href', '/profile/following');
+    expect(screen.getByLabelText('Friends')).toHaveAttribute('href', '/profile/friends');
+    expect(screen.getByLabelText('Posts')).toHaveAttribute('href', '/profile/posts');
   });
 
   it('matches snapshot', () => {

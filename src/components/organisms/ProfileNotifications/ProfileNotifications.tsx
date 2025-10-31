@@ -24,9 +24,11 @@ export function ProfileNotifications({ className }: ProfileNotificationsProps) {
   if (mockNotifications.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.Bell size={48} className="text-brand" />}
-        title="No notifications yet"
-        description="When you get notifications, they'll show up here."
+        icon={<Libs.Frown size={48} className="text-brand" />}
+        title="Nothing to see here yet"
+        description="Tags, follows, reposts and account information will be displayed here."
+        backgroundImage="/images/background-3.png"
+        mobileBackgroundImage="/images/background-3.png"
         className={className}
       />
     );

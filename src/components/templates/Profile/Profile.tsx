@@ -1,10 +1,13 @@
 'use client';
 
 import * as React from 'react';
+import { usePathname } from 'next/navigation';
+import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
+import { PROFILE_ROUTES } from '@/app';
 
 export interface ProfileProps {
   children: React.ReactNode;
@@ -31,10 +34,13 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
   Hooks.useLayoutReset();
 
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
+  const pathname = usePathname();
+  const isTaggedPage = pathname === PROFILE_ROUTES.TAGGED;
 
   return (
     <>
-      <div className="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 pb-6">
+      {/* Profile header - visible on desktop always, on mobile only for tagged page */}
+      <div className={Libs.cn('max-w-5xl xl:max-w-6xl m-auto px-6 xl:px-0 pb-6', !isTaggedPage && 'lg:block hidden')}>
         <Organisms.ProfileHeader
           name={profileInfo?.name || 'User'}
           handle={profileInfo?.handle || '@user'}
@@ -47,15 +53,17 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
       {/* Mobile menu - visible only on mobile, full width */}
       <Molecules.ProfileMobileMenu counts={profileCounts} className="lg:hidden" />
 
-      <Organisms.ContentLayout
-        showLeftMobileButton={false}
-        showRightMobileButton={false}
-        leftSidebarContent={<ProfileLeftSidebar counts={profileCounts} />}
-        rightSidebarContent={<ProfileRightSidebar profileInfo={profileInfo} />}
-        className="pt-0"
-      >
-        {children}
-      </Organisms.ContentLayout>
+      <div className={Libs.cn(isTaggedPage ? 'mt-6 lg:mt-0' : 'mt-36 lg:mt-0')}>
+        <Organisms.ContentLayout
+          showLeftMobileButton={false}
+          showRightMobileButton={false}
+          leftSidebarContent={<ProfileLeftSidebar counts={profileCounts} />}
+          rightSidebarContent={<ProfileRightSidebar profileInfo={profileInfo} />}
+          className="pt-0"
+        >
+          {children}
+        </Organisms.ContentLayout>
+      </div>
     </>
   );
 }
