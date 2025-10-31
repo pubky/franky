@@ -25,10 +25,7 @@ export function ProfileMobileMenu({ className, counts }: ProfileMobileMenuProps)
 
   return (
     <div
-      className={Libs.cn(
-        'fixed top-[72px] left-0 right-0 z-20 bg-background shadow-xl border-b border-border',
-        className,
-      )}
+      className={Libs.cn('fixed top-18 left-0 right-0 z-20 bg-background shadow-xl border-b border-border', className)}
     >
       <div className="flex w-full items-center">
         {/* Menu items - Tagged is first on mobile with CircleUserRound icon */}
