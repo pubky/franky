@@ -74,4 +74,22 @@ describe('Avatar - Snapshots', () => {
     );
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it('matches snapshot with AvatarFallback active state', () => {
+    const { container } = render(
+      <Avatar>
+        <AvatarFallback active={true}>JD</AvatarFallback>
+      </Avatar>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with AvatarFallback inactive state', () => {
+    const { container } = render(
+      <Avatar>
+        <AvatarFallback active={false}>JD</AvatarFallback>
+      </Avatar>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
 });

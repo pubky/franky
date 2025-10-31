@@ -1,11 +1,35 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Avatar - Snapshots > matches snapshot with AvatarFallback active state 1`] = `
+<span
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
+>
+  <span
+    class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 bg-muted"
+  >
+    JD
+  </span>
+</span>
+`;
+
+exports[`Avatar - Snapshots > matches snapshot with AvatarFallback inactive state 1`] = `
+<span
+  class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
+>
+  <span
+    class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent"
+  >
+    JD
+  </span>
+</span>
+`;
+
 exports[`Avatar - Snapshots > matches snapshot with AvatarFallback only 1`] = `
 <span
   class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 >
   <span
-    class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+    class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent"
   >
     JD
   </span>
@@ -17,7 +41,7 @@ exports[`Avatar - Snapshots > matches snapshot with AvatarImage and AvatarFallba
   class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 >
   <span
-    class="flex h-full w-full items-center justify-center rounded-full bg-muted"
+    class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent"
   >
     JD
   </span>
@@ -29,7 +53,7 @@ exports[`Avatar - Snapshots > matches snapshot with custom AvatarFallback classN
   class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10"
 >
   <span
-    class="flex h-full w-full items-center justify-center rounded-full bg-muted custom-fallback"
+    class="flex h-full w-full items-center justify-center rounded-full cursor-pointer hover:bg-secondary/80 border bg-transparent custom-fallback"
   >
     AB
   </span>

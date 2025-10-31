@@ -3,7 +3,7 @@
 exports[`FilterTimeframe > matches snapshot 1`] = `
 <div>
   <div
-    class="mx-auto w-full flex flex-col gap-2 bg-background"
+    class="mx-auto w-full flex flex-col gap-0 bg-background"
     data-slot="filter-root"
     data-testid="filter-root"
   >
@@ -13,19 +13,19 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
       data-testid="filter-header"
     >
       <h2
-        class="text-2xl text-muted-foreground font-light"
+        class="text-2xl leading-8 text-muted-foreground font-light"
         data-testid="heading-2"
       >
         Timeframe
       </h2>
     </div>
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex flex-col gap-0"
       data-slot="filter-list"
       data-testid="filter-list"
     >
       <p
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -67,7 +67,7 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         </span>
       </p>
       <p
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -109,7 +109,7 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         </span>
       </p>
       <p
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"

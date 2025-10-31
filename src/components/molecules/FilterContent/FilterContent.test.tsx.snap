@@ -2,12 +2,12 @@
 
 exports[`FilterContent > applies correct icon classes 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2"
+  class="mx-auto w-full flex flex-col gap-0"
   data-slot="filter-list"
   data-testid="filter-list"
 >
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -42,7 +42,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -74,7 +74,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -116,7 +116,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -158,7 +158,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -192,7 +192,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -224,7 +224,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -263,7 +263,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
 
 exports[`FilterContent > applies correct styling classes 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -301,7 +301,7 @@ exports[`FilterContent > applies correct styling classes 1`] = `
 
 exports[`FilterContent > applies correct styling classes 2`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -336,12 +336,12 @@ exports[`FilterContent > applies correct styling classes 2`] = `
 
 exports[`FilterContent > renders with correct icons 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2"
+  class="mx-auto w-full flex flex-col gap-0"
   data-slot="filter-list"
   data-testid="filter-list"
 >
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -376,7 +376,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -408,7 +408,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -450,7 +450,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -492,7 +492,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -526,7 +526,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -558,7 +558,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
@@ -597,7 +597,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -635,7 +635,7 @@ exports[`FilterContent > rerenders with different selected tabs 1`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 2`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -670,7 +670,7 @@ exports[`FilterContent > rerenders with different selected tabs 2`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 3`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -708,7 +708,7 @@ exports[`FilterContent > rerenders with different selected tabs 3`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 4`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
@@ -745,7 +745,7 @@ exports[`FilterContent > rerenders with different selected tabs 4`] = `
 
 exports[`FilterContent - Snapshots > matches snapshot with All content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -755,19 +755,19 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -802,7 +802,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -834,7 +834,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -876,7 +876,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -918,7 +918,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -952,7 +952,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -984,7 +984,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1024,7 +1024,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
 
 exports[`FilterContent - Snapshots > matches snapshot with Articles content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1034,19 +1034,19 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1081,7 +1081,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1113,7 +1113,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1155,7 +1155,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1197,7 +1197,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1231,7 +1231,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1263,7 +1263,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1303,7 +1303,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
 
 exports[`FilterContent - Snapshots > matches snapshot with Files content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1313,19 +1313,19 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1360,7 +1360,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1392,7 +1392,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1434,7 +1434,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1476,7 +1476,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1510,7 +1510,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1542,7 +1542,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1582,7 +1582,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Images content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1592,19 +1592,19 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1639,7 +1639,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1671,7 +1671,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1713,7 +1713,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1755,7 +1755,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1789,7 +1789,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1821,7 +1821,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1861,7 +1861,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
 
 exports[`FilterContent - Snapshots > matches snapshot with Links content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -1871,19 +1871,19 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1918,7 +1918,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1950,7 +1950,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -1992,7 +1992,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2034,7 +2034,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2068,7 +2068,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2100,7 +2100,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2140,7 +2140,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Posts content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -2150,19 +2150,19 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2197,7 +2197,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2229,7 +2229,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2271,7 +2271,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2313,7 +2313,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2347,7 +2347,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2379,7 +2379,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2419,7 +2419,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Videos content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -2429,19 +2429,19 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2476,7 +2476,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2508,7 +2508,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2550,7 +2550,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2592,7 +2592,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2626,7 +2626,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2658,7 +2658,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2698,7 +2698,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
 
 exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -2708,19 +2708,19 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Content
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2755,7 +2755,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2787,7 +2787,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2829,7 +2829,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2871,7 +2871,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2905,7 +2905,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -2937,7 +2937,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"

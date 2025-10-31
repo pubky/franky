@@ -47,7 +47,7 @@ export const Tag = ({
   return (
     <div
       className={Libs.cn(
-        'w-fit flex items-center justify-between px-3 h-8 rounded-md cursor-pointer transition-all duration-200',
+        'w-fit flex items-center gap-1 px-3 h-8 rounded-md cursor-pointer transition-all duration-200',
         className,
       )}
       style={{
@@ -66,7 +66,7 @@ export const Tag = ({
       </Atoms.Typography>
 
       {count !== undefined && (
-        <Atoms.Typography size="sm" className="ml-1.5 text-foreground/50 font-medium" data-testid="tag-count">
+        <Atoms.Typography size="sm" className="opacity-50 font-medium" data-testid="tag-count">
           {count}
         </Atoms.Typography>
       )}

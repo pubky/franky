@@ -4,6 +4,7 @@ export * from './Button';
 export * from './Card';
 export * from './Container';
 export * from './Dialog';
+export * from './EmojiPicker';
 export * from './Filter';
 export * from './FooterLinks';
 export * from './Heading';
