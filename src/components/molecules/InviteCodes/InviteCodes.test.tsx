@@ -1,6 +1,19 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { InviteCodes } from './InviteCodes';
+
+// Mock hooks
+const mockCopyToClipboard = vi.fn();
+vi.mock('@/hooks', async () => {
+  const actual = await vi.importActual('@/hooks');
+  return {
+    ...actual,
+    useCopyToClipboard: () => ({
+      copyToClipboard: mockCopyToClipboard,
+    }),
+  };
+});
 
 // Mock atoms
 vi.mock('@/atoms', async () => {
@@ -20,13 +33,15 @@ vi.mock('@/atoms', async () => {
     Badge: ({
       children,
       className,
+      onClick,
       'data-testid': dataTestId,
     }: {
       children: React.ReactNode;
       className?: string;
+      onClick?: () => void;
       'data-testid'?: string;
     }) => (
-      <div data-testid={dataTestId || 'badge'} className={className}>
+      <div data-testid={dataTestId || 'badge'} className={className} onClick={onClick}>
         {children}
       </div>
     ),
@@ -34,6 +49,10 @@ vi.mock('@/atoms', async () => {
 });
 
 describe('InviteCodes', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('renders the component with default invite codes', () => {
     render(<InviteCodes />);
 
@@ -59,16 +78,36 @@ describe('InviteCodes', () => {
     expect(screen.queryByText('K8M5-3X9S-27PS')).not.toBeInTheDocument();
   });
 
-  it('applies opacity-20 to all codes except the first one', () => {
+  it('all codes have cursor-pointer and hover styles', () => {
     render(<InviteCodes />);
 
     const firstCode = screen.getByTestId('invite-code-0');
     const secondCode = screen.getByTestId('invite-code-1');
     const thirdCode = screen.getByTestId('invite-code-2');
 
-    expect(firstCode).not.toHaveClass('opacity-20');
-    expect(secondCode).toHaveClass('opacity-20');
-    expect(thirdCode).toHaveClass('opacity-20');
+    expect(firstCode).toHaveClass('cursor-pointer', 'hover:opacity-80', 'transition-opacity');
+    expect(secondCode).toHaveClass('cursor-pointer', 'hover:opacity-80', 'transition-opacity');
+    expect(thirdCode).toHaveClass('cursor-pointer', 'hover:opacity-80', 'transition-opacity');
+  });
+
+  it('calls copyToClipboard when a code is clicked', async () => {
+    const user = userEvent.setup();
+    render(<InviteCodes />);
+
+    const firstCode = screen.getByTestId('invite-code-0');
+    await user.click(firstCode);
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('K8M5-3X9S-27PS');
+  });
+
+  it('calls copyToClipboard with correct code for each badge', async () => {
+    const user = userEvent.setup();
+    render(<InviteCodes />);
+
+    const secondCode = screen.getByTestId('invite-code-1');
+    await user.click(secondCode);
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('X4RS-3G1K-56HS');
   });
 
   it('renders heading with correct props', () => {

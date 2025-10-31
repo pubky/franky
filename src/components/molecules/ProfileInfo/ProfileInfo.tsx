@@ -41,7 +41,7 @@ export function ProfileInfo({ links, tags, className }: ProfileInfoProps) {
           {tags.map((tag, index) => (
             <div key={index} className="flex items-center gap-2">
               <Atoms.Tag name={tag.label} count={tag.count} className="flex-1" />
-              <button className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors">
+              <button className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary shadow-xs hover:bg-secondary/80 transition-colors">
                 <Libs.Search className="h-4 w-4" />
               </button>
             </div>
@@ -68,9 +68,9 @@ export function ProfileInfo({ links, tags, className }: ProfileInfoProps) {
                   href="https://google.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground/80 transition-colors cursor-pointer"
+                  className="flex items-center gap-2.5 text-base font-medium text-secondary-foreground leading-6 hover:text-foreground/80 hover:opacity-50 transition-colors cursor-pointer"
                 >
-                  <IconComponent size={20} className="shrink-0" />
+                  <IconComponent size={16} className="shrink-0" />
                   <span>{displayLabel}</span>
                 </a>
               );

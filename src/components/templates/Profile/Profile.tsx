@@ -73,9 +73,5 @@ export function ProfileLeftSidebar({ counts }: { counts?: ProfileProps['profileC
 }
 
 export function ProfileRightSidebar({ profileInfo }: { profileInfo?: ProfileProps['profileInfo'] }) {
-  return (
-    <div className="self-start sticky top-[100px]">
-      <Molecules.ProfileInfo links={profileInfo?.links} tags={profileInfo?.tags} />
-    </div>
-  );
+  return <Molecules.ProfileInfo links={profileInfo?.links} tags={profileInfo?.tags} />;
 }

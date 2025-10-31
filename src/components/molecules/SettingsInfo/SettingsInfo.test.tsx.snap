@@ -36,7 +36,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           aria-controls="radix-«r0»"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+          class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
           data-as-child="true"
           data-slot="dialog-trigger"
           data-state="closed"
@@ -82,7 +82,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           aria-controls="radix-«r0»"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+          class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
           data-as-child="true"
           data-slot="dialog-trigger"
           data-state="closed"
@@ -322,7 +322,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           href="/settings/help"
         >
           <button
-            class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+            class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
           >
             <svg
               aria-hidden="true"

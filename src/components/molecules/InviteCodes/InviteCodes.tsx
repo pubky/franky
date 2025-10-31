@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 
 export interface InviteCodesProps {
   inviteCodes?: string[];
@@ -12,6 +13,13 @@ export interface InviteCodesProps {
 export function InviteCodes({ inviteCodes = [], className }: InviteCodesProps) {
   const defaultInviteCodes = ['K8M5-3X9S-27PS', 'X4RS-3G1K-56HS', '9PUM-2JNG-37ER'];
   const codes = inviteCodes.length > 0 ? inviteCodes : defaultInviteCodes;
+  const { copyToClipboard } = Hooks.useCopyToClipboard({
+    successTitle: 'Invite code copied to clipboard',
+  });
+
+  const handleCodeClick = (code: string) => {
+    void copyToClipboard(code);
+  };
 
   return (
     <div className={Libs.cn('flex flex-col gap-2 w-full', className)} data-testid="invite-codes">
@@ -26,7 +34,8 @@ export function InviteCodes({ inviteCodes = [], className }: InviteCodesProps) {
           <Atoms.Badge
             key={code}
             variant="brand"
-            className={index > 0 ? 'opacity-20' : ''}
+            className="cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => handleCodeClick(code)}
             data-testid={`invite-code-${index}`}
           >
             {code}

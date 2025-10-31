@@ -1,12 +1,19 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Profile } from './Profile';
 
 // Mock dependencies
-vi.mock('@/hooks', () => ({
-  useLayoutReset: vi.fn(),
-  useClickOutside: vi.fn(),
-}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useLayoutReset: vi.fn(),
+    useClickOutside: vi.fn(),
+    useCopyToClipboard: vi.fn(() => ({
+      copyToClipboard: vi.fn(),
+    })),
+  };
+});
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/profile/posts',
