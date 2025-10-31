@@ -1,0 +1,184 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostActionsBar - Snapshots > matches snapshot loading 1`] = `
+<div
+  class="text-muted-foreground"
+>
+  Loading actions...
+</div>
+`;
+
+exports[`PostActionsBar - Snapshots > matches snapshot with counts 1`] = `
+<div
+  data-class-name="flex-row flex-1 w-auto items-center justify-end gap-2 extra"
+  data-testid="actions-container"
+>
+  <button
+    aria-label="Tag post (7)"
+    class="border-none"
+    data-size="sm"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-tag size-4 text-secondary-foreground"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+      />
+      <circle
+        cx="7.5"
+        cy="7.5"
+        fill="currentColor"
+        r=".5"
+      />
+    </svg>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      7
+    </span>
+  </button>
+  <button
+    aria-label="Reply to post (8)"
+    class="border-none"
+    data-size="sm"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-message-circle size-4 text-secondary-foreground"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
+      />
+    </svg>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      8
+    </span>
+  </button>
+  <button
+    aria-label="Repost (9)"
+    class="border-none"
+    data-size="sm"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-repeat size-4 text-secondary-foreground"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m17 2 4 4-4 4"
+      />
+      <path
+        d="M3 11v-1a4 4 0 0 1 4-4h14"
+      />
+      <path
+        d="m7 22-4-4 4-4"
+      />
+      <path
+        d="M21 13v1a4 4 0 0 1-4 4H3"
+      />
+    </svg>
+    <span
+      class="text-xs font-bold leading-4 text-muted-foreground"
+    >
+      9
+    </span>
+  </button>
+  <button
+    aria-label="Add bookmark"
+    class="w-10 border-none"
+    data-size="sm"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-bookmark size-4 text-secondary-foreground"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"
+      />
+    </svg>
+  </button>
+  <button
+    aria-label="More options"
+    class="border-none"
+    data-size="sm"
+    data-variant="secondary"
+    style="box-shadow: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-ellipsis size-4 text-secondary-foreground"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="1"
+      />
+      <circle
+        cx="19"
+        cy="12"
+        r="1"
+      />
+      <circle
+        cx="5"
+        cy="12"
+        r="1"
+      />
+    </svg>
+  </button>
+</div>
+`;

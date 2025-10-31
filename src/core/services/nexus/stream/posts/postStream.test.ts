@@ -18,7 +18,7 @@ describe('Stream API URL Generation', () => {
         limit: 10,
       });
 
-      expect(url).toContain('stream/posts?');
+      expect(url).toContain('v0/stream/posts?');
       expect(url).toContain('source=following');
       expect(url).toContain(`observer_id=${mockObserverId}`);
       expect(url).toContain(`viewer_id=${mockViewerId}`);
@@ -183,12 +183,12 @@ describe('Stream API URL Generation', () => {
   });
 
   describe('URL structure validation', () => {
-    it('should always start with stream/posts?', () => {
+    it('should always start with v0/stream/posts?', () => {
       const url = postStreamApi.following({
         observer_id: mockObserverId,
       });
 
-      expect(url).toMatch(/stream\/posts\?/);
+      expect(url).toMatch(/v0\/stream\/posts\?/);
     });
 
     it('should have proper query parameter format', () => {
