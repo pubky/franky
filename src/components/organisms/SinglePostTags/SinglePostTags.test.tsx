@@ -65,18 +65,22 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock the core
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(),
-  db: {
-    post_tags: {
-      get: vi.fn().mockResolvedValue({ tags: [] }),
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual<typeof import('@/core')>('@/core');
+  return {
+    ...actual,
+    useAuthStore: vi.fn(),
+    db: {
+      post_tags: {
+        get: vi.fn().mockResolvedValue({ tags: [] }),
+      },
     },
-  },
-  TagController: {
-    create: vi.fn(),
-    delete: vi.fn(),
-  },
-}));
+    TagController: {
+      create: vi.fn(),
+      delete: vi.fn(),
+    },
+  };
+});
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockUseAuthStore = vi.mocked(Core.useAuthStore);
@@ -123,9 +127,10 @@ describe('SinglePostTags', () => {
 
     await waitFor(() => {
       expect(mockTagControllerCreate).toHaveBeenCalledWith({
-        targetId: 'test-post-123',
+        taggedId: 'test-post-123',
         label: 'new-tag',
         taggerId: 'test-user-id',
+        taggedKind: Core.TagKind.POST,
       });
     });
   });
@@ -149,9 +154,10 @@ describe('SinglePostTags', () => {
 
     await waitFor(() => {
       expect(mockTagControllerCreate).toHaveBeenCalledWith({
-        targetId: 'test-post-123',
+        taggedId: 'test-post-123',
         label: 'new-tag',
         taggerId: 'test-user-id',
+        taggedKind: Core.TagKind.POST,
       });
     });
   });
@@ -224,9 +230,10 @@ describe('SinglePostTags', () => {
 
     await waitFor(() => {
       expect(mockTagControllerDelete).toHaveBeenCalledWith({
-        targetId: 'test-post-123',
+        taggedId: 'test-post-123',
         label: 'react',
         taggerId: 'test-user-id',
+        taggedKind: Core.TagKind.POST,
       });
     });
   });

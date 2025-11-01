@@ -8,6 +8,3 @@ export interface PaginationParams {
   skip?: number;
   limit?: number;
 }
-
-export const INCREMENT = 1;
-export const DECREMENT = -1;

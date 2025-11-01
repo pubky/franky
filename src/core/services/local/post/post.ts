@@ -83,7 +83,7 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(this.updateUserCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
+          ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
 
           await Promise.all(ops);
         },
@@ -151,7 +151,7 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(this.updateUserCounts(deleterId, { posts: -1, replies: parentUri ? -1 : 0 }));
+          ops.push(Core.UserCountsModel.updateCounts(deleterId, { posts: -1, replies: parentUri ? -1 : 0 }));
 
           await Promise.all(ops);
         },
@@ -186,29 +186,5 @@ export class LocalPostService {
     const newCount = Math.max(0, currentCount + countChange);
 
     await Core.PostCountsModel.update(postId, { [countField]: newCount });
-  }
-
-  /**
-   * Helper method to update multiple user counts in a single operation
-   */
-  private static async updateUserCounts(
-    userId: Core.Pubky,
-    countChanges: { posts?: number; replies?: number },
-  ): Promise<void> {
-    const userCounts = await Core.UserCountsModel.findById(userId);
-    if (!userCounts) return;
-
-    const updates: Partial<Core.UserCountsModelSchema> = {};
-
-    if (countChanges.posts !== undefined) {
-      updates.posts = Math.max(0, userCounts.posts + countChanges.posts);
-    }
-    if (countChanges.replies !== undefined && countChanges.replies !== 0) {
-      updates.replies = Math.max(0, userCounts.replies + countChanges.replies);
-    }
-
-    if (Object.keys(updates).length > 0) {
-      await Core.UserCountsModel.update(userId, updates);
-    }
   }
 }

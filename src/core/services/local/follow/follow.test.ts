@@ -128,7 +128,7 @@ describe('LocalFollowService.create', () => {
   });
 
   it('rolls back connections and counts if a counts write fails', async () => {
-    const spy = vi.spyOn(Core.UserCountsModel, 'updateCount').mockRejectedValueOnce(new Error('counts-fail'));
+    const spy = vi.spyOn(Core.UserCountsModel, 'updateCounts').mockRejectedValueOnce(new Error('counts-fail'));
 
     try {
       await Core.LocalFollowService.create({ follower: userA, followee: userB });
