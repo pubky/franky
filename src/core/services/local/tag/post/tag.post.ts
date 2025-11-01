@@ -34,7 +34,7 @@ export class LocalPostTagService {
         await Promise.all([
           this.savePostTagsModel(postId, postTagsModel),
           this.updatePostCounts(postId, postTagsModel),
-          Core.updateTaggerCount(taggerId, Core.INCREMENT),
+          Core.UserCountsModel.updateCounts(taggerId, { tagged: 1 }),
         ]);
 
         Libs.Logger.debug('Post tag created', { postId, label, taggerId });
@@ -87,7 +87,7 @@ export class LocalPostTagService {
 
         await this.savePostTagsModel(postId, postTagsModel);
         await this.updatePostCounts(postId, postTagsModel);
-        await Core.updateTaggerCount(taggerId, Core.DECREMENT);
+        await Core.UserCountsModel.updateCounts(taggerId, { tagged: -1 });
 
         Libs.Logger.debug('Tag removed', { postId, label, taggerId });
       });
