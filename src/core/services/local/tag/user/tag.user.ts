@@ -17,8 +17,8 @@ export class LocalUserTagService {
         }
         await Promise.all([
           this.saveUserTagsModel(taggedId, userTagsModel),
-          Core.updateTaggerCount(taggerId, Core.INCREMENT),
-          this.updateUserCounts(taggedId, { tags: 1, unique_tags: !tagExists ? 1 : undefined }),
+          Core.UserCountsModel.updateCounts(taggerId, { tagged: 1 }),
+          Core.UserCountsModel.updateCounts(taggedId, { tags: 1, unique_tags: !tagExists ? 1 : undefined }),
         ]);
 
         Libs.Logger.debug('User tag created', { taggedId, label, taggerId });
@@ -28,8 +28,8 @@ export class LocalUserTagService {
         error,
       });
     }
-    // update tagged user_tags. From there we will get the unique_tags count. DONE
     // Update tagger user counts, tagged. DONE
+    // update tagged user_tags. From there we will get the unique_tags count. DONE
     // Update tagged user counts, tags
     // Update tagged user_counts, unique_tags. For that we need to check user tags
   }
@@ -45,8 +45,8 @@ export class LocalUserTagService {
         if (typeof lastTaggerOnTag === 'boolean') {
           await Promise.all([
             this.saveUserTagsModel(taggedId, userTagsModel),
-            Core.updateTaggerCount(taggerId, Core.DECREMENT),
-            this.updateUserCounts(taggedId, { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined }),
+            Core.UserCountsModel.updateCounts(taggerId, { tagged: -1 }),
+            Core.UserCountsModel.updateCounts(taggedId, { tags: -1, unique_tags: lastTaggerOnTag ? -1 : undefined }),
           ]);
           Libs.Logger.debug('User tag deleted', { taggedId, label, taggerId });
         } else {
@@ -80,26 +80,5 @@ export class LocalUserTagService {
       id: userId,
       tags: userTagsModel.tags as Core.NexusTag[],
     });
-  }
-
-  private static async updateUserCounts(
-    userId: Core.Pubky,
-    countChanges: { tags?: number; unique_tags?: number },
-  ): Promise<void> {
-    const userCounts = await Core.UserCountsModel.findById(userId);
-    if (!userCounts) return;
-
-    const updates: Partial<Core.UserCountsModelSchema> = {};
-
-    if (countChanges.tags !== undefined) {
-      updates.tags = Math.max(0, userCounts.tags + countChanges.tags);
-    }
-    if (countChanges.unique_tags !== undefined && countChanges.unique_tags !== 0) {
-      updates.unique_tags = Math.max(0, userCounts.unique_tags + countChanges.unique_tags);
-    }
-
-    if (Object.keys(updates).length > 0) {
-      await Core.UserCountsModel.update(userId, updates);
-    }
   }
 }
