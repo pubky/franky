@@ -52,8 +52,6 @@ export enum DatabaseErrorType {
   DB_OPEN_FAILED = 'DB_OPEN_FAILED',
   DB_DELETE_FAILED = 'DB_DELETE_FAILED',
   DB_SCHEMA_ERROR = 'DB_SCHEMA_ERROR',
-
-  // TODO: Add more error types
 }
 
 export enum CommonErrorType {
@@ -75,9 +73,14 @@ export enum SanitizationErrorType {
   POST_NOT_FOUND = 'POST_NOT_FOUND',
 }
 
+export enum StateErrorType {
+  USER_NOT_AUTHENTICATED = 'USER_NOT_AUTHENTICATED',
+}
+
 export type AppErrorType =
   | NexusErrorType
   | DatabaseErrorType
   | CommonErrorType
   | HomeserverErrorType
+  | StateErrorType
   | SanitizationErrorType;

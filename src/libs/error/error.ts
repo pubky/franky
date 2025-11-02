@@ -1,19 +1,11 @@
-import {
-  Logger,
-  NexusErrorType,
-  type AppErrorType,
-  type HomeserverErrorType,
-  type CommonErrorType,
-  type DatabaseErrorType,
-  SanitizationErrorType,
-} from '@/libs';
+import * as Libs from '@/libs';
 
 export class AppError extends Error {
-  public readonly type: AppErrorType;
+  public readonly type: Libs.AppErrorType;
   public readonly details?: Record<string, unknown>;
   public readonly statusCode: number;
 
-  constructor(type: AppErrorType, message: string, statusCode: number = 500, details?: Record<string, unknown>) {
+  constructor(type: Libs.AppErrorType, message: string, statusCode: number = 500, details?: Record<string, unknown>) {
     super(message);
     this.type = type;
     this.details = details;
@@ -35,20 +27,20 @@ export class AppError extends Error {
 
     switch (true) {
       case this.statusCode >= 500:
-        Logger.error(`[${this.type}] ${this.message}`, errorContext);
+        Libs.Logger.error(`[${this.type}] ${this.message}`, errorContext);
         break;
       case this.statusCode >= 400:
-        Logger.warn(`[${this.type}] ${this.message}`, errorContext);
+        Libs.Logger.warn(`[${this.type}] ${this.message}`, errorContext);
         break;
       default:
-        Logger.info(`[${this.type}] ${this.message}`, errorContext);
+        Libs.Logger.info(`[${this.type}] ${this.message}`, errorContext);
     }
   }
 }
 
 // Helper functions with integrated logging
 export function createNexusError(
-  type: NexusErrorType,
+  type: Libs.NexusErrorType,
   message: string,
   statusCode?: number,
   details?: Record<string, unknown>,
@@ -59,23 +51,23 @@ export function createNexusError(
 /**
  * Maps HTTP status codes to specific Nexus error types
  */
-export function mapHttpStatusToNexusErrorType(status: number): NexusErrorType {
+export function mapHttpStatusToNexusErrorType(status: number): Libs.NexusErrorType {
   switch (status) {
     case 400:
-      return NexusErrorType.INVALID_REQUEST;
+      return Libs.NexusErrorType.INVALID_REQUEST;
     case 404:
-      return NexusErrorType.RESOURCE_NOT_FOUND;
+      return Libs.NexusErrorType.RESOURCE_NOT_FOUND;
     case 429:
-      return NexusErrorType.RATE_LIMIT_EXCEEDED;
+      return Libs.NexusErrorType.RATE_LIMIT_EXCEEDED;
     case 503:
-      return NexusErrorType.SERVICE_UNAVAILABLE;
+      return Libs.NexusErrorType.SERVICE_UNAVAILABLE;
     default:
-      return NexusErrorType.BOOTSTRAP_FAILED;
+      return Libs.NexusErrorType.BOOTSTRAP_FAILED;
   }
 }
 
 export function createHomeserverError(
-  type: HomeserverErrorType,
+  type: Libs.HomeserverErrorType,
   message: string,
   statusCode: number,
   data?: Record<string, unknown>,
@@ -84,7 +76,7 @@ export function createHomeserverError(
 }
 
 export function createCommonError(
-  type: CommonErrorType,
+  type: Libs.CommonErrorType,
   message: string,
   statusCode?: number,
   details?: Record<string, unknown>,
@@ -94,7 +86,7 @@ export function createCommonError(
 
 // Add a helper function for database errors
 export function createDatabaseError(
-  type: DatabaseErrorType,
+  type: Libs.DatabaseErrorType,
   message: string,
   statusCode?: number,
   details?: Record<string, unknown>,
@@ -103,7 +95,16 @@ export function createDatabaseError(
 }
 
 export function createSanitizationError(
-  type: SanitizationErrorType,
+  type: Libs.SanitizationErrorType,
+  message: string,
+  statusCode?: number,
+  details?: Record<string, unknown>,
+): AppError {
+  return new AppError(type, message, statusCode, details);
+}
+
+export function createStateError(
+  type: Libs.StateErrorType,
   message: string,
   statusCode?: number,
   details?: Record<string, unknown>,

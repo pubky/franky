@@ -187,7 +187,7 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
   /**
    * Delete a record by id.
    */
-  static async deleteById<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }, id: TId): Promise<void> {
+  static async deleteById<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }, id: TId) {
     try {
       await this.table.delete(id);
     } catch (error) {

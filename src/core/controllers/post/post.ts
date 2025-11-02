@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 
 export class PostController {
   private constructor() {} // Prevent instantiation
@@ -62,20 +61,6 @@ export class PostController {
    * @param params.deleterId - ID of the user deleting the post
    */
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {
-    const { pubky: authorId } = Core.parsePostCompositeId(postId);
-
-    if (authorId !== deleterId) {
-      throw Libs.createSanitizationError(
-        Libs.SanitizationErrorType.POST_NOT_FOUND,
-        'User is not the author of this post',
-        403,
-        {
-          postId,
-          deleterId,
-        },
-      );
-    }
-
     await Core.PostApplication.delete({ postId, deleterId });
   }
 }

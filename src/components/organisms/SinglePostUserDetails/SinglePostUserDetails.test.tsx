@@ -143,6 +143,10 @@ describe('SinglePostUserDetails - Snapshots', () => {
   });
 
   it('matches snapshot with different postId', () => {
+    const mockNow = new Date('2025-06-01T12:00:00Z');
+    vi.useFakeTimers();
+    vi.setSystemTime(mockNow);
+
     mockUseLiveQuery
       .mockReturnValueOnce({
         id: 'different1234567890',
@@ -156,6 +160,8 @@ describe('SinglePostUserDetails - Snapshots', () => {
 
     const { container } = render(<SinglePostUserDetails postId="different123:post2" />);
     expect(container).toMatchSnapshot();
+
+    vi.useRealTimers();
   });
 
   it('matches snapshot with recent post', () => {
