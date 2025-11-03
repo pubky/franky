@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogReplyPost - Snapshots > matches snapshot 1`] = `
+<div
+  class="bg-card rounded-md p-6 flex flex-col gap-4 w-full"
+>
+  <div
+    data-avatar-size="default"
+    data-testid="post-header"
+  >
+    snapshot-post-id
+  </div>
+  <div
+    data-testid="post-content"
+  >
+    snapshot-post-id
+  </div>
+</div>
+`;
+
+exports[`DialogReplyPost - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="bg-card rounded-md p-6 flex flex-col gap-4 w-full test-class"
+>
+  <div
+    data-avatar-size="default"
+    data-testid="post-header"
+  >
+    snapshot-post-id
+  </div>
+  <div
+    data-testid="post-content"
+  >
+    snapshot-post-id
+  </div>
+</div>
+`;

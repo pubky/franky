@@ -34,9 +34,23 @@ vi.mock('@/atoms', () => ({
 vi.mock('@/organisms', () => ({
   PostHeader: ({ postId }: { postId: string }) => <div data-testid="post-header">PostHeader {postId}</div>,
   PostContent: ({ postId }: { postId: string }) => <div data-testid="post-content">PostContent {postId}</div>,
-  PostActionsBar: ({ postId, className }: { postId: string; className?: string }) => (
+  PostActionsBar: ({
+    postId,
+    className,
+    onReplyClick,
+  }: {
+    postId: string;
+    className?: string;
+    onReplyClick?: () => void;
+  }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
+      {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+    </div>
+  ),
+  DialogReply: ({ postId, open }: { postId: string; open?: boolean }) => (
+    <div data-testid="dialog-reply" data-post-id={postId} data-open={open}>
+      DialogReply
     </div>
   ),
 }));

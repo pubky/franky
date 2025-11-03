@@ -11,7 +11,7 @@ interface PostReplyInputProps {
   onSuccess?: () => void;
 }
 
-export function SinglePostReplyInput({ postId }: PostReplyInputProps) {
+export function SinglePostReplyInput({ postId, onSuccess }: PostReplyInputProps) {
   const [replyContent, setReplyContent] = useState('');
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
@@ -27,6 +27,7 @@ export function SinglePostReplyInput({ postId }: PostReplyInputProps) {
       });
       // useLiveQuery in PostReplies will automatically update the replies list
       setReplyContent('');
+      onSuccess?.();
     } catch (error) {
       console.error('Failed to submit reply:', error);
     }

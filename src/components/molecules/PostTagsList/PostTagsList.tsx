@@ -61,6 +61,7 @@ export function PostTagsList({
     if (value.trim()) {
       onTagAdd?.(value.trim());
       setInputValue('');
+      if (addMode) setIsAdding(false);
     }
   };
 

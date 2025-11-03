@@ -8,9 +8,10 @@ import * as Atoms from '@/atoms';
 export interface PostHeaderProps {
   postId: string;
   className?: string;
+  avatarSize?: 'sm' | 'default' | 'lg' | 'xl';
 }
 
-export function PostHeader({ postId, className }: PostHeaderProps) {
+export function PostHeader({ postId, className, avatarSize = 'lg' }: PostHeaderProps) {
   const [userId] = postId.split(':');
 
   // Fetch post details to get indexed_at
@@ -36,7 +37,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
   return (
     <div className={Libs.cn('flex items-start justify-between w-full', className)}>
       <div className="flex items-center gap-3">
-        <Atoms.Avatar size="lg">
+        <Atoms.Avatar size={avatarSize}>
           <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>

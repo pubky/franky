@@ -56,7 +56,10 @@ export function PostActionsBar({
       <Atoms.Button
         variant="secondary"
         size="sm"
-        onClick={onReplyClick}
+        onClick={(e) => {
+          e.stopPropagation();
+          onReplyClick?.();
+        }}
         className="border-none"
         style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
         aria-label={`Reply to post (${postCounts.replies})`}

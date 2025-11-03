@@ -49,6 +49,9 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
           >
             Actions 
             post-123
+            <button>
+              Reply
+            </button>
           </div>
         </div>
       </div>
@@ -96,6 +99,9 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
           >
             Actions 
             post-789
+            <button>
+              Reply
+            </button>
           </div>
         </div>
       </div>
