@@ -26,7 +26,8 @@ export default defineConfig({
       commandDelay: defaultMs,
       ci: process.env['CI'],
       homeserverAdminUrl: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_URL']|| 'http://localhost:6288/generate_signup_token',
-      homeserverAdminPassword: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD'] || 'admin'
+      homeserverAdminPassword: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD'] || 'admin',
+      isMobile: false,
     },
 
     // Plugins

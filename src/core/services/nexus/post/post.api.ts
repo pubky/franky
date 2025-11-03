@@ -6,7 +6,7 @@ import * as Core from '@/core';
  * All API endpoints related to post operations
  */
 
-const PREFIX = 'post';
+const PREFIX = 'v0/post';
 
 export const postApi = {
   view: (params: Core.TPostViewParams) => {

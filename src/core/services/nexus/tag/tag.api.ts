@@ -6,7 +6,7 @@ import * as Core from '@/core';
  * All API endpoints related to tag operations
  */
 
-const PREFIX = 'tags';
+const PREFIX = 'v0/tags';
 
 export const tagApi = {
   view: (params: Core.TTagViewParams) => {

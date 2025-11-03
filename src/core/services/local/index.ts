@@ -15,3 +15,5 @@ export * from './tag';
 export * from './follow';
 export * from './user';
 export * from './stream';
+export * from './mute';
+export * from './notification';

@@ -1,59 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { Pubky } from '@/core';
-
-// Mock pubky-app-specs
-vi.mock('pubky-app-specs', () => ({
-  baseUriBuilder: vi.fn((pubky: string) => `pubky://${pubky}/pub/pubky.app/`),
-}));
-
-// Mock HomeserverService methods
-vi.mock('@/core/services/homeserver', () => ({
-  HomeserverService: {
-    list: vi.fn(),
-    delete: vi.fn(),
-    request: vi.fn(),
-  },
-  HomeserverAction: {
-    GET: 'GET',
-    POST: 'POST',
-    PUT: 'PUT',
-    DELETE: 'DELETE',
-  },
-}));
-
-// Mock Local services
-vi.mock('@/core/services/local', () => ({
-  Local: {
-    User: {
-      deleteAccount: vi.fn(),
-    },
-    Follow: {
-      create: vi.fn(),
-      delete: vi.fn(),
-    },
-  },
-}));
-
-let UserApplication: typeof import('./user').UserApplication;
-let Core: typeof import('@/core');
-
-beforeEach(async () => {
-  vi.clearAllMocks();
-  vi.resetModules();
-
-  Core = await import('@/core');
-  ({ UserApplication } = await import('./user'));
-});
+import * as Core from '@/core';
+import { UserApplication } from './user';
 
 describe('UserApplication.follow', () => {
-  const follower = 'pubky_follower' as Pubky;
-  const followee = 'pubky_followee' as Pubky;
+  const follower = 'pubky_follower' as Core.Pubky;
+  const followee = 'pubky_followee' as Core.Pubky;
   const followUrl = 'pubky://follower/pub/pubky.app/follow';
   const followJson = { foo: 'bar' } as Record<string, unknown>;
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should update local state on PUT and call homeserver', async () => {
-    const createSpy = vi.spyOn(Core.Local.Follow, 'create').mockResolvedValue(undefined as unknown as void);
-    const deleteSpy = vi.spyOn(Core.Local.Follow, 'delete').mockResolvedValue(undefined as unknown as void);
+    const createSpy = vi.spyOn(Core.LocalFollowService, 'create').mockResolvedValue(undefined as unknown as void);
+    const deleteSpy = vi.spyOn(Core.LocalFollowService, 'delete').mockResolvedValue(undefined as unknown as void);
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await UserApplication.follow({
@@ -70,8 +31,8 @@ describe('UserApplication.follow', () => {
   });
 
   it('should update local state on DELETE and call homeserver', async () => {
-    const createSpy = vi.spyOn(Core.Local.Follow, 'create').mockResolvedValue(undefined as unknown as void);
-    const deleteSpy = vi.spyOn(Core.Local.Follow, 'delete').mockResolvedValue(undefined as unknown as void);
+    const createSpy = vi.spyOn(Core.LocalFollowService, 'create').mockResolvedValue(undefined as unknown as void);
+    const deleteSpy = vi.spyOn(Core.LocalFollowService, 'delete').mockResolvedValue(undefined as unknown as void);
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await UserApplication.follow({
@@ -88,8 +49,8 @@ describe('UserApplication.follow', () => {
   });
 
   it('should not update local state for non-mutate methods but still call homeserver', async () => {
-    const createSpy = vi.spyOn(Core.Local.Follow, 'create').mockResolvedValue(undefined as unknown as void);
-    const deleteSpy = vi.spyOn(Core.Local.Follow, 'delete').mockResolvedValue(undefined as unknown as void);
+    const createSpy = vi.spyOn(Core.LocalFollowService, 'create').mockResolvedValue(undefined as unknown as void);
+    const deleteSpy = vi.spyOn(Core.LocalFollowService, 'delete').mockResolvedValue(undefined as unknown as void);
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await UserApplication.follow({
@@ -106,7 +67,7 @@ describe('UserApplication.follow', () => {
   });
 
   it('should propagate error when local create fails on PUT and not call homeserver', async () => {
-    const createSpy = vi.spyOn(Core.Local.Follow, 'create').mockRejectedValue(new Error('local-fail'));
+    const createSpy = vi.spyOn(Core.LocalFollowService, 'create').mockRejectedValue(new Error('local-fail'));
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await expect(
@@ -124,7 +85,7 @@ describe('UserApplication.follow', () => {
   });
 
   it('should propagate error when local delete fails on DELETE and not call homeserver', async () => {
-    const deleteSpy = vi.spyOn(Core.Local.Follow, 'delete').mockRejectedValue(new Error('local-delete-fail'));
+    const deleteSpy = vi.spyOn(Core.LocalFollowService, 'delete').mockRejectedValue(new Error('local-delete-fail'));
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
     await expect(
@@ -142,7 +103,7 @@ describe('UserApplication.follow', () => {
   });
 
   it('should propagate error when homeserver request fails', async () => {
-    vi.spyOn(Core.Local.Follow, 'create').mockResolvedValue(undefined as unknown as void);
+    vi.spyOn(Core.LocalFollowService, 'create').mockResolvedValue(undefined as unknown as void);
     const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
 
     await expect(
@@ -160,9 +121,13 @@ describe('UserApplication.follow', () => {
 });
 
 describe('UserApplication.deleteAccount', () => {
-  const pubky = 'test-pubky' as Pubky;
+  const pubky = 'test-pubky' as Core.Pubky;
   const baseDirectory = `pubky://${pubky}/pub/pubky.app/`;
   const profileUrl = `${baseDirectory}profile.json`;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes all files including profile.json', async () => {
     const fileList = [
@@ -178,18 +143,13 @@ describe('UserApplication.deleteAccount', () => {
 
     await UserApplication.deleteAccount({ pubky });
 
-    // Local data should be cleared first
     expect(localDeleteSpy).toHaveBeenCalledTimes(1);
-
     expect(listSpy).toHaveBeenCalledWith(baseDirectory);
     expect(deleteSpy).toHaveBeenCalledTimes(4);
 
-    // Should delete non-profile files first (in reverse alphanumeric order)
     expect(deleteSpy).toHaveBeenNthCalledWith(1, `${baseDirectory}tags/tag1`);
     expect(deleteSpy).toHaveBeenNthCalledWith(2, `${baseDirectory}posts/abc123`);
     expect(deleteSpy).toHaveBeenNthCalledWith(3, `${baseDirectory}follows/user1`);
-
-    // Profile should be deleted last
     expect(deleteSpy).toHaveBeenNthCalledWith(4, profileUrl);
   });
 
@@ -201,15 +161,10 @@ describe('UserApplication.deleteAccount', () => {
     vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
     const setProgress = vi.fn();
-
     await UserApplication.deleteAccount({ pubky, setProgress });
 
-    // Total files = 2 non-profile + 1 profile = 3
-    // After file1: 1/3 = 33%
     expect(setProgress).toHaveBeenNthCalledWith(1, 33);
-    // After file2: 2/3 = 67%
     expect(setProgress).toHaveBeenNthCalledWith(2, 67);
-    // After profile.json: 100%
     expect(setProgress).toHaveBeenNthCalledWith(3, 100);
   });
 
@@ -290,10 +245,55 @@ describe('UserApplication.deleteAccount', () => {
 
     await UserApplication.deleteAccount({ pubky });
 
-    // Should delete in reverse alphanumeric order (excluding profile)
     expect(deleteSpy).toHaveBeenNthCalledWith(1, `${baseDirectory}zzz`);
     expect(deleteSpy).toHaveBeenNthCalledWith(2, `${baseDirectory}mmm`);
     expect(deleteSpy).toHaveBeenNthCalledWith(3, `${baseDirectory}aaa`);
     expect(deleteSpy).toHaveBeenNthCalledWith(4, profileUrl);
+  });
+});
+
+describe('UserApplication.pollNotifications', () => {
+  const userId = 'pubky_user' as Core.Pubky;
+  const lastRead = 1234;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch notifications, persist, and return unread count', async () => {
+    const notifications = [
+      { timestamp: 2000, body: { type: 'a' } },
+      { timestamp: 1000, body: { type: 'b' } },
+    ] as unknown as Core.NexusNotification[];
+
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(notifications);
+    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(1);
+
+    const unread = await UserApplication.notifications({ userId, lastRead });
+
+    expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: lastRead });
+    expect(persistSpy).toHaveBeenCalledWith(notifications, lastRead);
+    expect(unread).toBe(1);
+  });
+
+  it('should bubble when NexusUserService.notifications fails and not persist', async () => {
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockRejectedValue(new Error('nexus-fail'));
+    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(0);
+
+    await expect(UserApplication.notifications({ userId, lastRead })).rejects.toThrow('nexus-fail');
+
+    expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: lastRead });
+    expect(persistSpy).not.toHaveBeenCalled();
+  });
+
+  it('should bubble when persisting unread count fails', async () => {
+    vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([] as unknown as Core.NexusNotification[]);
+    const persistSpy = vi
+      .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+      .mockRejectedValue(new Error('persist-fail'));
+
+    await expect(UserApplication.notifications({ userId, lastRead })).rejects.toThrow('persist-fail');
+
+    expect(persistSpy).toHaveBeenCalledOnce();
   });
 });

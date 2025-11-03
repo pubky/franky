@@ -177,7 +177,7 @@ export class HomeserverService {
    * @param {string} url - Pubky URL.
    * @param {Record<string, unknown>} [bodyJson] - JSON body to serialize and send.
    */
-  static async request(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>) {
+  static async request<T>(method: Core.HomeserverAction, url: string, bodyJson?: Record<string, unknown>): Promise<T> {
     const homeserver = this.getInstance();
     const response = await homeserver.fetch(url, {
       method,
@@ -189,6 +189,18 @@ export class HomeserverService {
         url,
       });
     }
+    if (method === Core.HomeserverAction.GET) {
+      try {
+        const text = await response.text();
+        // Handle empty body (204, 201, or anything else with an empty body)
+        if (!text) return undefined as T;
+        return JSON.parse(text) as T;
+      } catch {
+        // Return undefined on empty/invalid JSON
+        return undefined as T;
+      }
+    }
+    return undefined as T;
   }
 
   /**

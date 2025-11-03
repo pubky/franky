@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
+<div
+  class="cursor-pointer"
+>
+  <div
+    data-class-name="w-full"
+    data-testid="card"
+  >
+    <div
+      data-class-name="px-4 md:px-6 md:py-0"
+      data-testid="card-content"
+    >
+      <div
+        class="flex flex-col gap-4 md:gap-4 w-full"
+      >
+        <div
+          data-testid="post-header"
+        >
+          PostHeader 
+          post-123
+        </div>
+        <div
+          data-testid="post-content"
+        >
+          PostContent 
+          post-123
+        </div>
+        <div
+          class="flex flex-col md:flex-row items-stretch md:items-center gap-4 flex-wrap md:flex-nowrap justify-start md:justify-start"
+        >
+          <ul
+            data-testid="post-tags-list"
+          >
+            <li>
+              alpha
+            </li>
+            <li>
+              beta
+            </li>
+            <li>
+              gamma
+            </li>
+          </ul>
+          <div
+            data-class-name="justify-start w-full flex-1 md:justify-end"
+            data-testid="post-actions"
+          >
+            Actions 
+            post-123
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
+<div
+  class="cursor-pointer"
+>
+  <div
+    data-class-name="w-full"
+    data-testid="card"
+  >
+    <div
+      data-class-name="px-4 md:px-6 md:py-0"
+      data-testid="card-content"
+    >
+      <div
+        class="flex flex-col gap-4 md:gap-4 w-full"
+      >
+        <div
+          data-testid="post-header"
+        >
+          PostHeader 
+          post-789
+        </div>
+        <div
+          data-testid="post-content"
+        >
+          PostContent 
+          post-789
+        </div>
+        <div
+          class="flex flex-col md:flex-row items-stretch md:items-center gap-4 flex-wrap md:flex-nowrap justify-start md:justify-start"
+        >
+          <ul
+            data-testid="post-tags-list"
+          />
+          <div
+            data-class-name="justify-start w-full flex-1 md:justify-end"
+            data-testid="post-actions"
+          >
+            Actions 
+            post-789
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

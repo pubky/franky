@@ -142,3 +142,8 @@ export type NexusPost = {
   relationships: NexusPostRelationships;
   bookmark: NexusBookmark | null;
 };
+
+export type NexusNotification = {
+  timestamp: number;
+  body: Record<string, unknown>; // Generic object to handle all notification types
+};
