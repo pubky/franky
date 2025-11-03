@@ -1,0 +1,24 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SignInNavigation - Snapshots > matches snapshot 1`] = `
+<div
+  data-class-name="flex-col-reverse md:flex-row gap-3 lg:gap-6 justify-start"
+  data-testid="container"
+>
+  <div
+    data-class-name="flex-col gap-3 sm:flex-row w-auto sm:w-full justify-start items-start mx-0 sm:mx-auto"
+    data-testid="container"
+  >
+    <button
+      data-testid="restore-phrase"
+    >
+      Restore Phrase
+    </button>
+    <button
+      data-testid="restore-file"
+    >
+      Restore File
+    </button>
+  </div>
+</div>
+`;

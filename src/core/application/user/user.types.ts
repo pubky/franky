@@ -10,3 +10,14 @@ export type TDownloadDataParams = {
   pubky: Core.Pubky;
   setProgress?: (progress: number) => void;
 };
+
+export type TUserApplicationMuteParams = Core.TMuteParams & {
+  eventType: Core.HomeserverAction;
+  muteUrl: string;
+  muteJson: Record<string, unknown>;
+};
+
+export type TUserApplicationNotificationsParams = {
+  userId: Core.Pubky;
+  lastRead: number;
+};

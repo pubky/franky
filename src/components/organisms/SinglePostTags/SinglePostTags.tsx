@@ -25,7 +25,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
 
   const handleAddTag = async () => {
     try {
-      if (!inputValue.trim() || isAdding) return;
+      if (!inputValue.trim() || isAdding || !currentUserId) return;
       setIsAdding(true);
 
       await Core.TagController.create({ targetId: postId, label: inputValue.trim(), taggerId: currentUserId });
@@ -40,6 +40,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
 
   const handleToggleTag = async (tagLabel: string) => {
     try {
+      if (!currentUserId) return;
       const tag = tags?.find((t) => t.label === tagLabel);
       if (!tag) return;
 
