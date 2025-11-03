@@ -18,6 +18,7 @@ export class BootstrapApplication {
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
     ]);
+    console.log('lastRead', notificationList, lastRead);
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts(data.posts),

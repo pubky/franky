@@ -95,7 +95,10 @@ export function ensureHttpResponseOk({ ok, status, statusText }: Response) {
 export async function parseResponseOrThrow<T>(response: Response): Promise<T> {
   let data: unknown;
   try {
-    data = await response.json();
+    // TODO: FIx that one
+    if (response.status === 200) {
+      data = await response.json();
+    }
     return data as T;
   } catch (error) {
     throw Libs.createNexusError(Libs.NexusErrorType.INVALID_RESPONSE, 'Failed to parse response', 500, {

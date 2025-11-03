@@ -1,4 +1,4 @@
-import { PublicKey } from '@synonymdev/pubky';
+import { PublicKey, Keypair } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 
@@ -8,7 +8,10 @@ export type TPubkyParams = {
 
 export type TAuthenticatedData = TPubkyParams & {
   session: Core.SignupResult['session'];
-};
+}
+export interface TKeypairParams {
+  keypair: Keypair;
+}
 export interface TSignUpParams {
   keypair: Core.TKeyPair;
   signupToken: string;
