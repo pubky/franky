@@ -17,6 +17,12 @@ export class UserApplication {
     await Core.HomeserverService.request(eventType, followUrl, followJson);
   }
 
+  /**
+   * Downloads all user data from the homeserver and packages it into a ZIP file.
+   * Fetches files using pagination, formats JSON files with indentation, and preserves binary files.
+   * Automatically triggers a browser download of the generated ZIP file.
+   * @param params - Parameters containing user's public key and optional progress callback
+   */
   static async downloadData({ pubky, setProgress }: Core.TDownloadDataParams) {
     const baseDirectory = baseUriBuilder(pubky);
     const dataList: string[] = [];
@@ -68,7 +74,7 @@ export class UserApplication {
       }),
     );
 
-    // Generate zip blob
+    // Generate zip blob and trigger download
     const now = new Date();
     const formattedDateTime = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
 
