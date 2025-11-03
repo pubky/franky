@@ -33,7 +33,6 @@ export * from './PublicKeyCard';
 export * from './SinglePost';
 export * from './SinglePostContent';
 export * from './SinglePostCounts';
-export * from './SinglePostMain';
 export * from './SinglePostReplies';
 export * from './SinglePostReplyInput';
 export * from './SinglePostTags';
