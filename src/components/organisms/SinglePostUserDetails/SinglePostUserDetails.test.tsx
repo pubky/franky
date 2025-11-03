@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { SinglePostUserDetails } from './SinglePostUserDetails';
@@ -56,6 +56,9 @@ const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockDbUserDetailsGet = vi.mocked(Core.db.user_details.get);
 const mockDbPostDetailsGet = vi.mocked(Core.db.post_details.get);
 
+// Fixed "now" time for deterministic tests: 2024-03-15T10:00:00Z
+const FIXED_NOW = new Date('2024-03-15T10:00:00Z').getTime();
+
 describe('SinglePostUserDetails', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -92,9 +95,19 @@ describe('SinglePostUserDetails', () => {
 describe('SinglePostUserDetails - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Set fixed time for deterministic snapshot tests
+    vi.useFakeTimers();
+    vi.setSystemTime(FIXED_NOW);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('matches snapshot with user and post details', () => {
+    // 14 days before FIXED_NOW
+    const indexedAt = FIXED_NOW - 14 * 24 * 60 * 60 * 1000;
+
     mockUseLiveQuery
       .mockReturnValueOnce({
         id: '69deadbeef1234567890',
@@ -103,7 +116,7 @@ describe('SinglePostUserDetails - Snapshots', () => {
       }) // userDetails
       .mockReturnValueOnce({
         uri: 'pubky://author123/pub/example.com/posts/post1',
-        indexed_at: new Date('2024-01-01T12:00:00Z').getTime(),
+        indexed_at: indexedAt,
       }); // postDetails
 
     const { container } = render(<SinglePostUserDetails postId="author123:post1" />);
@@ -111,6 +124,9 @@ describe('SinglePostUserDetails - Snapshots', () => {
   });
 
   it('matches snapshot with no user image', () => {
+    // 14 days before FIXED_NOW
+    const indexedAt = FIXED_NOW - 14 * 24 * 60 * 60 * 1000;
+
     mockUseLiveQuery
       .mockReturnValueOnce({
         id: '69deadbeef1234567890',
@@ -119,7 +135,7 @@ describe('SinglePostUserDetails - Snapshots', () => {
       })
       .mockReturnValueOnce({
         uri: 'pubky://author123/pub/example.com/posts/post1',
-        indexed_at: new Date('2024-01-01T12:00:00Z').getTime(),
+        indexed_at: indexedAt,
       });
 
     const { container } = render(<SinglePostUserDetails postId="author123:post1" />);
@@ -127,6 +143,9 @@ describe('SinglePostUserDetails - Snapshots', () => {
   });
 
   it('matches snapshot with empty name', () => {
+    // 14 days before FIXED_NOW
+    const indexedAt = FIXED_NOW - 14 * 24 * 60 * 60 * 1000;
+
     mockUseLiveQuery
       .mockReturnValueOnce({
         id: '69deadbeef1234567890',
@@ -135,7 +154,7 @@ describe('SinglePostUserDetails - Snapshots', () => {
       })
       .mockReturnValueOnce({
         uri: 'pubky://author123/pub/example.com/posts/post1',
-        indexed_at: new Date('2024-01-01T12:00:00Z').getTime(),
+        indexed_at: indexedAt,
       });
 
     const { container } = render(<SinglePostUserDetails postId="author123:post1" />);
@@ -143,9 +162,8 @@ describe('SinglePostUserDetails - Snapshots', () => {
   });
 
   it('matches snapshot with different postId', () => {
-    const mockNow = new Date('2025-06-01T12:00:00Z');
-    vi.useFakeTimers();
-    vi.setSystemTime(mockNow);
+    // 5 days before FIXED_NOW
+    const indexedAt = FIXED_NOW - 5 * 24 * 60 * 60 * 1000;
 
     mockUseLiveQuery
       .mockReturnValueOnce({
@@ -155,18 +173,16 @@ describe('SinglePostUserDetails - Snapshots', () => {
       })
       .mockReturnValueOnce({
         uri: 'pubky://different123/pub/example.com/posts/post2',
-        indexed_at: new Date('2024-02-01T15:30:00Z').getTime(),
+        indexed_at: indexedAt,
       });
 
     const { container } = render(<SinglePostUserDetails postId="different123:post2" />);
     expect(container).toMatchSnapshot();
-
-    vi.useRealTimers();
   });
 
   it('matches snapshot with recent post', () => {
-    const recentDate = new Date();
-    recentDate.setMinutes(recentDate.getMinutes() - 5); // 5 minutes ago
+    // 5 minutes before FIXED_NOW
+    const indexedAt = FIXED_NOW - 5 * 60 * 1000;
 
     mockUseLiveQuery
       .mockReturnValueOnce({
@@ -176,7 +192,7 @@ describe('SinglePostUserDetails - Snapshots', () => {
       })
       .mockReturnValueOnce({
         uri: 'pubky://author123/pub/example.com/posts/post1',
-        indexed_at: recentDate.getTime(),
+        indexed_at: indexedAt,
       });
 
     const { container } = render(<SinglePostUserDetails postId="author123:post1" />);
@@ -184,6 +200,10 @@ describe('SinglePostUserDetails - Snapshots', () => {
   });
 
   it('matches snapshot with old post', () => {
+    // will use formatDistanceToNow because more than 24 hours before FIXED_NOW
+    // 4 years before FIXED_NOW
+    const indexedAt = FIXED_NOW - 4 * 365 * 24 * 60 * 60 * 1000;
+
     mockUseLiveQuery
       .mockReturnValueOnce({
         id: '69deadbeef1234567890',
@@ -192,7 +212,7 @@ describe('SinglePostUserDetails - Snapshots', () => {
       })
       .mockReturnValueOnce({
         uri: 'pubky://author123/pub/example.com/posts/post1',
-        indexed_at: new Date('2020-01-01T12:00:00Z').getTime(),
+        indexed_at: indexedAt,
       });
 
     const { container } = render(<SinglePostUserDetails postId="author123:post1" />);
