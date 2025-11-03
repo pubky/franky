@@ -1,0 +1,222 @@
+---
+description: Writing unit tests and snapshot tests for UI component rendering
+alwaysApply: false
+---
+# Unit Testing Guidelines
+
+This document outlines the essential rules and patterns for creating unit tests and snapshot tests for UI components in the Franky codebase.
+
+## File Naming
+
+1. **Create a new `.test.tsx` for new UI components**
+   - Each UI component should have a corresponding test file
+   - Example: `Button.tsx` → `Button.test.tsx`
+   - Place test files in the same directory as the component
+
+## Unit Test Structure
+
+### Sanity Tests
+
+2. **Add at least one sanity test to confirm UI renders with some expected element(s) and attributes**
+   - Verify the component renders without errors
+   - Check for essential elements and attributes that confirm correct rendering
+   - Example:
+     ```typescript
+     it('renders with default props', () => {
+       render(<Button>Default Button</Button>);
+       const button = screen.getByRole('button');
+       expect(button).toBeInTheDocument();
+       expect(button).toHaveAttribute('data-slot', 'button');
+     });
+     ```
+
+### Functional Tests
+
+3. **Functional tests for handling hover and click events**
+   - Test interactive behaviour like click handlers
+   - Test hover states by checking for appropriate CSS classes
+   - Example:
+     ```typescript
+     it('handles click events', () => {
+       const handleClick = vi.fn();
+       render(<Button onClick={handleClick}>Click me</Button>);
+       fireEvent.click(screen.getByRole('button'));
+       expect(handleClick).toHaveBeenCalledTimes(1);
+     });
+
+     it('handles hover states correctly', () => {
+       render(<Button variant="default">Hover Button</Button>);
+       const button = screen.getByRole('button');
+       expect(button).toHaveClass('hover:!bg-brand/30');
+     });
+     ```
+
+## Snapshot Test Structure
+
+### Organisation
+
+4. **Snapshot tests grouped in a single describe block, like `ComponentName - Snapshots`**
+   - All snapshot tests should be in a separate describe block
+   - Use the naming pattern: `ComponentName - Snapshots`
+   - Place snapshot tests after unit tests in the test file
+   - Example:
+     ```typescript
+     describe('Button - Snapshots', () => {
+       // All snapshot tests here
+     });
+     ```
+
+### Coverage
+
+5. **Snapshot tests for key states such as each Button size**
+   - Create snapshot tests for all meaningful prop combinations
+   - Test different sizes, variants, and states
+   - Each unique state/prop combination should have its own snapshot test
+   - Example:
+     ```typescript
+     it('matches snapshot for small size', () => {
+       const { container } = render(<Button size="sm">Small</Button>);
+       expect(container.firstChild).toMatchSnapshot();
+     });
+
+     it('matches snapshot for large size', () => {
+       const { container } = render(<Button size="lg">Large</Button>);
+       expect(container.firstChild).toMatchSnapshot();
+     });
+     ```
+
+### Snapshot Test Rules
+
+6. **Max one expect per snapshot test**
+   - Each snapshot test should contain exactly one `expect().toMatchSnapshot()` call
+   - Do not combine multiple snapshots in a single test
+   - Example (correct):
+     ```typescript
+     it('matches snapshot for secondary variant', () => {
+       const { container } = render(<Button variant="secondary">Secondary</Button>);
+       expect(container.firstChild).toMatchSnapshot();
+     });
+     ```
+   - Example (incorrect):
+     ```typescript
+     it('matches snapshots for all variants', () => {
+       const { container: defaultContainer } = render(<Button>Default</Button>);
+       expect(defaultContainer.firstChild).toMatchSnapshot();
+       const { container: secondaryContainer } = render(<Button variant="secondary">Secondary</Button>);
+       expect(secondaryContainer.firstChild).toMatchSnapshot(); // ❌ Multiple expects
+     });
+     ```
+
+7. **Never render the exact same element for multiple snapshot tests**
+   - Each snapshot test must render a different element configuration
+   - Avoid duplicate snapshots that would produce identical output
+   - Vary props, children, or state to ensure each snapshot is unique
+   - Example (incorrect):
+     ```typescript
+     it('matches snapshot with default props', () => {
+       const { container } = render(<Button>Default Button</Button>);
+       expect(container.firstChild).toMatchSnapshot();
+     });
+
+     it('matches snapshot for button element', () => {
+       const { container } = render(<Button>Default Button</Button>);
+       // ❌ Testing a subelement already covered by the snapshot above
+       const buttonText = container.querySelector('#button-text');
+       expect(buttonText).toMatchSnapshot();
+     });
+     ```
+
+## Test Optimisation
+
+8. **Minimise duplication of checks across unit and snapshot tests**
+   - Unit tests should focus on functional behaviour and logic
+   - Snapshot tests should focus on visual/structure differences
+   - Avoid checking the same attributes/classes in both unit and snapshot tests
+   - Exception: Overlapping checks are acceptable when they align with the single sanity test (from step 2), as this serves as the baseline validation
+   - Use unit tests for dynamic behaviour, snapshot tests for static structure
+
+## Mocking Rules
+
+9. **Never mock `@/libs`, always import the actual functions**
+   - Always use real implementations from `@/libs`
+   - Mock only external dependencies (Next.js, third-party libraries, etc.)
+   - If you need to spy on lib functions, use `vi.spyOn()` instead of mocking the module
+   - Example (correct):
+     ```typescript
+     import * as Libs from '@/libs';
+     // Use actual Logger, don't mock the entire module
+     vi.mock('@/libs', async (importOriginal) => {
+       const actual = await importOriginal<typeof import('@/libs')>();
+       return {
+         ...actual,
+         Logger: {
+           ...actual.Logger,
+           error: vi.fn(), // Only spy on specific methods if needed
+         },
+       };
+     });
+     ```
+
+## Testing Workflow
+
+10. **Always run new or edited tests in sandbox to generate snapshot files and check they pass, and fix if failing**
+   - Run tests after creating new test files: `npm test -- ComponentName.test.tsx`
+   - When adding new snapshot tests, update snapshots: `npm test -- ComponentName.test.tsx -u`
+   - Verify all tests pass before committing
+   - Review generated snapshot files to ensure they capture expected output
+   - Fix any failing tests before marking work as complete
+
+## Example Complete Test File Structure
+
+```typescript
+import React from 'react';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from './Button';
+
+describe('Button', () => {
+  // Sanity test
+  it('renders with default props', () => {
+    render(<Button>Default Button</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute('data-slot', 'button');
+  });
+
+  // Functional tests
+  it('handles click events', () => {
+    const handleClick = vi.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles hover states correctly', () => {
+    render(<Button variant="default">Hover Button</Button>);
+    const button = screen.getByRole('button');
+    expect(button).toHaveClass('hover:!bg-brand/30');
+  });
+});
+
+describe('Button - Snapshots', () => {
+  it('matches snapshot for small size', () => {
+    const { container } = render(<Button size="sm">Small</Button>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for large size', () => {
+    const { container } = render(<Button size="lg">Large</Button>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for secondary variant', () => {
+    const { container } = render(<Button variant="secondary">Secondary</Button>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for disabled state', () => {
+    const { container } = render(<Button disabled>Disabled</Button>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});
+```
