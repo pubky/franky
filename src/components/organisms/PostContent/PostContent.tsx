@@ -2,7 +2,6 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 
 export interface PostContentOrganismProps {
   postId: string;
@@ -21,10 +20,8 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
   }
 
   return (
-    <div className={Libs.cn('flex flex-col gap-3 rounded-2xl', className)}>
-      <p className="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line">
-        {postDetails.content}
-      </p>
+    <div className={className}>
+      <p className="text-base font-medium text-secondary-foreground whitespace-pre-wrap">{postDetails.content}</p>
     </div>
   );
 }

@@ -1,21 +1,17 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`PostContent - Snapshots > matches snapshot with empty content 1`] = `
-<div
-  class="flex flex-col gap-3 rounded-2xl"
->
+<div>
   <p
-    class="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line"
+    class="text-base font-medium text-secondary-foreground whitespace-pre-wrap"
   />
 </div>
 `;
 
 exports[`PostContent - Snapshots > matches snapshot with multiline content (preserves newlines) 1`] = `
-<div
-  class="flex flex-col gap-3 rounded-2xl"
->
+<div>
   <p
-    class="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line"
+    class="text-base font-medium text-secondary-foreground whitespace-pre-wrap"
   >
     Line 1
 Line 2
@@ -26,11 +22,9 @@ Line 3
 `;
 
 exports[`PostContent - Snapshots > matches snapshot with single-line content 1`] = `
-<div
-  class="flex flex-col gap-3 rounded-2xl"
->
+<div>
   <p
-    class="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line"
+    class="text-base font-medium text-secondary-foreground whitespace-pre-wrap"
   >
     One liner
   </p>
