@@ -2,9 +2,8 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostApplication {
-
   private constructor() {} // Prevent instantiation
-  
+
   static async create({ postUrl, postId, authorId, post }: Core.TCreatePostInput) {
     await Core.LocalPostService.create({ postId, authorId, post });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());

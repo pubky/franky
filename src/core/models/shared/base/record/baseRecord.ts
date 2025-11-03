@@ -10,10 +10,10 @@ import { ModelBase } from '@/core/models/shared/base/baseModel';
 export abstract class RecordModelBase<Id, Schema extends { id: Id }> extends ModelBase<Id, Schema> {
   /**
    * Bulk upsert many full records at once.
-   * 
+   *
    * Records must conform to the full schema type. This method will insert new records
    * or update existing ones based on their `id` field.
-   * 
+   *
    * @param records Array of complete schema objects to save
    * @returns Promise that resolves when the operation completes
    * @throws DatabaseError if the bulk operation fails

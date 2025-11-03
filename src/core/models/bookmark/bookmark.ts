@@ -16,4 +16,3 @@ export class BookmarkModel extends RecordModelBase<string, BookmarkModelSchema> 
     this.indexed_at = bookmark.indexed_at;
   }
 }
-

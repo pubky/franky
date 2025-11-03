@@ -5,7 +5,7 @@ import * as Libs from '@/libs';
 export class BookmarkNormalizer {
   private constructor() {}
 
-  static async to({pubky, postUrl}: {pubky: Core.Pubky, postUrl: string}): Promise<BookmarkResult> {
+  static async to({ authorPubky: pubky, postUrl }: Core.TDeleteBookmarkParams): Promise<BookmarkResult> {
     const builder = Core.PubkySpecsSingleton.get(pubky);
     const bookmark = builder.createBookmark(postUrl);
     Libs.Logger.debug('Bookmark validated', { bookmark });

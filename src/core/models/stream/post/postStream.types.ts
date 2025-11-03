@@ -2,6 +2,7 @@
 // - SORTING: timeline, total_engagement
 // - SOURCE: all, following, friends, bookmarks, post_replies, author, author_replies
 // - KIND: short, long, image, video, link, file
+// TODO: Not sure if we need to keep active that enum. The combinations are too many.
 export enum PostStreamTypes {
   // Bootstrap default list
   TIMELINE_ALL = 'timeline:all:all',
@@ -9,4 +10,6 @@ export enum PostStreamTypes {
   TIMELINE_FOLLOWING = 'timeline:following:all',
   TIMELINE_FRIENDS = 'timeline:friends:all',
   TIMELINE_PICTURES = 'timeline:all:image',
+  // Bookmarks
+  BOOKMARKS_ALL = 'bookmarks:all:all',
 }

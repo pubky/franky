@@ -3,14 +3,15 @@ import * as Core from '@/core';
 export class BookmarkController {
   private constructor() {} // Prevent instantiation
 
-  static async add({ postUrl }: { postUrl: string}) {
+  static async add({ postUrl }: Core.TBookmarkActionParams) {
     const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
-    const bookmark = await Core.BookmarkNormalizer.to({pubky, postUrl});
-    await Core.BookmarkApplication.add({ bookmark });
+    const bookmark = await Core.BookmarkNormalizer.to({ pubky, postUrl });
+    await Core.BookmarkApplication.add(bookmark);
   }
 
-  static async delete({ postUrl }: { postUrl: string}) {
-    await Core.BookmarkApplication.delete({ postUrl });
+  static async delete({ postUrl }: Core.TBookmarkActionParams) {
+    const authorPubky = Core.useAuthStore.getState().selectCurrentUserPubky();
+    await Core.BookmarkApplication.delete({ postUrl, authorPubky });
   }
 
   static async fetch() {

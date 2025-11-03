@@ -8,4 +8,3 @@ export interface BookmarkModelSchema {
 export const bookmarkTableSchema = `
   &id
 `;
-

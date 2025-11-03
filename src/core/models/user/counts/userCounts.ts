@@ -37,23 +37,11 @@ export class UserCountsModel
     return { id: data[0], ...data[1] };
   }
 
-  static async updateCounts(
-    userId: Core.Pubky,
-    countChanges: {
-      tagged?: number;
-      tags?: number;
-      unique_tags?: number;
-      posts?: number;
-      replies?: number;
-      following?: number;
-      followers?: number;
-      friends?: number;
-    },
-  ): Promise<void> {
+  static async updateCounts(userId: Core.Pubky, countChanges: Partial<Core.NexusUserCounts>): Promise<void> {
     const userCounts = await Core.UserCountsModel.findById(userId);
     if (!userCounts) return;
 
-    const updates: Partial<Core.UserCountsModelSchema> = {};
+    const updates: Partial<Core.NexusUserCounts> = {};
 
     if (countChanges.tagged !== undefined) {
       updates.tagged = Math.max(0, userCounts.tagged + countChanges.tagged);
@@ -79,7 +67,9 @@ export class UserCountsModel
     if (countChanges.friends !== undefined) {
       updates.friends = Math.max(0, userCounts.friends + countChanges.friends);
     }
-
+    if (countChanges.bookmarks !== undefined) {
+      updates.bookmarks = Math.max(0, userCounts.bookmarks + countChanges.bookmarks);
+    }
     if (Object.keys(updates).length > 0) {
       await this.update(userId, updates);
     }
