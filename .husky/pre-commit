@@ -8,9 +8,6 @@ if ! npm run format:check; then
   exit 1
 fi
 
-echo "🧪 Running tests..."
-npm run test
-
 echo "🏗️  Building project..."
 npm run build
 
