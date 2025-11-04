@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Config from '@/config';
 
 /**
  * Nexus Post Stream Service

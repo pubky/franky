@@ -6,16 +6,15 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
+import * as Config from '@/config';
 import * as Hooks from '@/hooks';
-
-const POSTS_PER_PAGE = 20;
 
 /**
  * Timeline
  *
  * Self-contained component that manages the timeline feed.
  * Handles fetching, loading, infinite scroll, and navigation to posts.
- * No props needed - completely self-contained.
+ * Uses cursor-based pagination with post_id and timestamp.
  */
 export function Timeline() {
   const [postIds, setPostIds] = useState<string[]>([]);
@@ -23,8 +22,20 @@ export function Timeline() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
   const router = useRouter();
+
+  /**
+   * Gets the timestamp from a post ID by looking up in IndexDB
+   */
+  const getTimestampFromPostId = async (postId: string): Promise<number | undefined> => {
+    try {
+      const postDetails = await Core.PostDetailsModel.findById(postId);
+      return postDetails?.indexed_at;
+    } catch (error) {
+      console.error('Failed to get timestamp from post ID', { postId, error });
+      return undefined;
+    }
+  };
 
   /**
    * Unified fetch function for both initial load and pagination
@@ -40,31 +51,40 @@ export function Timeline() {
         }
         setError(null);
 
-        // Calculate offset
-        const skip = isInitialLoad ? 0 : currentPage * POSTS_PER_PAGE;
+        let ids: string[] = [];
 
-        // Get post IDs from the stream
-        const ids = await Core.PostStreamApplication.getOrFetchStreamSlice({
-          streamId: Core.PostStreamTypes.TIMELINE_ALL,
-          limit: POSTS_PER_PAGE,
-          skip,
-        });
+        if (isInitialLoad) {
+          // Initial load - no cursor
+          ids = await Core.PostStreamApplication.getOrFetchStreamSlice({
+            streamId: Core.PostStreamTypes.TIMELINE_ALL,
+            limit: Config.NEXUS_POSTS_PER_PAGE,
+          });
+        } else {
+          // Pagination - use last post as cursor
+          const lastPostId = postIds[postIds.length - 1];
+          const timestamp = await getTimestampFromPostId(lastPostId);
+
+          ids = await Core.PostStreamApplication.getOrFetchStreamSlice({
+            streamId: Core.PostStreamTypes.TIMELINE_ALL,
+            limit: Config.NEXUS_POSTS_PER_PAGE,
+            post_id: lastPostId,
+            timestamp,
+          });
+        }
 
         // Update state based on load type
         if (isInitialLoad) {
           setPostIds(ids);
-          setCurrentPage(1);
         } else {
           if (ids.length === 0) {
             setHasMore(false);
             return;
           }
           setPostIds((prevIds) => [...prevIds, ...ids]);
-          setCurrentPage((prev) => prev + 1);
         }
 
         // Check if we have more posts available
-        if (ids.length < POSTS_PER_PAGE) {
+        if (ids.length < Config.NEXUS_POSTS_PER_PAGE) {
           setHasMore(false);
         }
       } catch (err) {
@@ -78,7 +98,7 @@ export function Timeline() {
         }
       }
     },
-    [currentPage],
+    [postIds],
   );
 
   // Initial fetch
