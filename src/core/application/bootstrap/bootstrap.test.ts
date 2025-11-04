@@ -309,6 +309,7 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
@@ -357,6 +358,7 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
@@ -371,7 +373,6 @@ describe('BootstrapApplication', () => {
 
       // First attempt - wait 5 seconds then fail
       await vi.advanceTimersByTimeAsync(5000);
-      await vi.runAllTimersAsync();
 
       // Second attempt - wait another 5 seconds then succeed
       await vi.advanceTimersByTimeAsync(5000);

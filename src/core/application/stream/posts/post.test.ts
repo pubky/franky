@@ -23,8 +23,10 @@ describe('PostStreamApplication', () => {
         limit: 10,
       });
 
-      expect(result).toHaveLength(10);
-      expect(result).toEqual(postIds.slice(0, 10));
+      expect(result.nextPageIds).toHaveLength(10);
+      expect(result.nextPageIds).toEqual(postIds.slice(0, 10));
+      expect(result.cacheMissPostIds).toEqual([]);
+      expect(result.timestamp).toBeUndefined();
     });
 
     it('should fetch from Nexus when cache is empty', async () => {
@@ -56,18 +58,28 @@ describe('PostStreamApplication', () => {
       // Mock Nexus service
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
 
+      // Create empty stream first (required for persistNewStreamChunk)
+      await Core.PostStreamModel.create(streamId, []);
+
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
       });
 
       // Should have fetched and cached posts
-      expect(result).toHaveLength(5);
-      expect(result).toEqual(['user-1:post-1', 'user-1:post-2', 'user-1:post-3', 'user-1:post-4', 'user-1:post-5']);
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds).toEqual([
+        'user-1:post-1',
+        'user-1:post-2',
+        'user-1:post-3',
+        'user-1:post-4',
+        'user-1:post-5',
+      ]);
+      expect(result.timestamp).toBe(1000004);
 
       // Verify posts were cached
       const cached = await Core.PostStreamModel.findById(streamId);
-      expect(cached?.stream).toEqual(result);
+      expect(cached?.stream).toEqual(result.nextPageIds);
     });
 
     it('should paginate using cursor (post_id and timestamp)', async () => {
@@ -126,8 +138,15 @@ describe('PostStreamApplication', () => {
       });
 
       // Should return newly fetched posts
-      expect(result).toHaveLength(5);
-      expect(result).toEqual(['user-1:post-6', 'user-1:post-7', 'user-1:post-8', 'user-1:post-9', 'user-1:post-10']);
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds).toEqual([
+        'user-1:post-6',
+        'user-1:post-7',
+        'user-1:post-8',
+        'user-1:post-9',
+        'user-1:post-10',
+      ]);
+      expect(result.timestamp).toBe(1000009);
 
       // Verify cache was updated
       const cached = await Core.PostStreamModel.findById(streamId);
@@ -163,7 +182,8 @@ describe('PostStreamApplication', () => {
         timestamp: 1000001,
       });
 
-      expect(result).toHaveLength(0);
+      expect(result.nextPageIds).toHaveLength(0);
+      expect(result.cacheMissPostIds).toEqual([]);
     });
 
     it('should handle posts from cache when cursor points to middle', async () => {
@@ -178,8 +198,10 @@ describe('PostStreamApplication', () => {
         post_id: 'user-1:post-5',
       });
 
-      expect(result).toHaveLength(10);
-      expect(result).toEqual(postIds.slice(5, 15)); // posts 6-15
+      expect(result.nextPageIds).toHaveLength(10);
+      expect(result.nextPageIds).toEqual(postIds.slice(5, 15)); // posts 6-15
+      expect(result.cacheMissPostIds).toEqual([]);
+      expect(result.timestamp).toBeUndefined();
     });
   });
 });

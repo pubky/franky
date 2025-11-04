@@ -81,6 +81,6 @@ export class LocalStreamPostsService {
     if (!postStream) {
       throw new Error(`Post stream not found: ${streamId}`);
     }
-    await Core.PostStreamModel.upsert(streamId, [ ...postStream.stream, ...posts ]);
+    await Core.PostStreamModel.upsert(streamId, [...postStream.stream, ...posts]);
   }
 }

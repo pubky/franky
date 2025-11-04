@@ -18,7 +18,7 @@ import * as Hooks from '@/hooks';
  */
 export function Timeline() {
   const [postIds, setPostIds] = useState<string[]>([]);
-  const [timestamp, setTimestamp] = useState<number>(0);
+  const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,13 +39,14 @@ export function Timeline() {
         }
         setError(null);
 
-        let ids: { nextPageIds: string[], timestamp: number | undefined };
+        let ids: { nextPageIds: string[]; timestamp: number | undefined };
 
         if (isInitialLoad) {
           // Initial load - no cursor
           ids = await Core.StreamPostsController.getOrFetchStreamSlice({
             streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            timestamp
+            timestamp,
+            limit: Config.NEXUS_POSTS_PER_PAGE,
           });
         } else {
           // Pagination - use last post as cursor
@@ -54,15 +55,16 @@ export function Timeline() {
           ids = await Core.StreamPostsController.getOrFetchStreamSlice({
             streamId: Core.PostStreamTypes.TIMELINE_ALL,
             post_id: lastPostId,
-            timestamp
+            timestamp,
           });
         }
 
         // Update state based on load type
         if (isInitialLoad) {
-          // TODO: Mutate the postIds appending the newPosts
-          setPostIds([...postIds, ...ids.nextPageIds]);
-          if (ids.timestamp) { setTimestamp(ids.timestamp); }
+          setPostIds(ids.nextPageIds);
+          if (ids.timestamp) {
+            setTimestamp(ids.timestamp);
+          }
         } else {
           if (ids.nextPageIds.length === 0) {
             setHasMore(false);
@@ -86,7 +88,7 @@ export function Timeline() {
         }
       }
     },
-    [postIds],
+    [postIds, timestamp],
   );
 
   // Initial fetch
