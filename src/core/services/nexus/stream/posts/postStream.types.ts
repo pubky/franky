@@ -75,3 +75,9 @@ export type TStreamQueryParams =
   | Core.TStreamAuthorRepliesParams
   | Core.TStreamAllParams
   | Core.TStreamPostsByIdsParams;
+
+export type TPostStreamFetchParams = {
+  streamId: Core.PostStreamTypes;
+  params: TStreamBase;
+  observer_id?: Core.Pubky;
+};

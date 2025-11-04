@@ -2,7 +2,13 @@ import * as Core from '@/core';
 
 export type TReadStreamPostsParams = {
   streamId: Core.PostStreamTypes;
+  post_id?: string;
+  timestamp: number;
   limit?: number;
-  post_id?: string; // Cursor for pagination - composite ID of the last post
-  timestamp?: number; // Timestamp for cursor-based pagination from Nexus
 };
+
+export type TPostPaginationResponse = {
+  nextPageIds: string[];
+  cacheMissPostIds: string[];
+  timestamp: number | undefined;
+}

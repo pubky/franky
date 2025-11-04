@@ -18,24 +18,12 @@ import * as Hooks from '@/hooks';
  */
 export function Timeline() {
   const [postIds, setPostIds] = useState<string[]>([]);
+  const [timestamp, setTimestamp] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const router = useRouter();
-
-  /**
-   * Gets the timestamp from a post ID by looking up in IndexDB
-   */
-  const getTimestampFromPostId = async (postId: string): Promise<number | undefined> => {
-    try {
-      const postDetails = await Core.PostDetailsModel.findById(postId);
-      return postDetails?.indexed_at;
-    } catch (error) {
-      console.error('Failed to get timestamp from post ID', { postId, error });
-      return undefined;
-    }
-  };
 
   /**
    * Unified fetch function for both initial load and pagination
@@ -51,40 +39,40 @@ export function Timeline() {
         }
         setError(null);
 
-        let ids: string[] = [];
+        let ids: { nextPageIds: string[], timestamp: number | undefined };
 
         if (isInitialLoad) {
           // Initial load - no cursor
-          ids = await Core.PostStreamApplication.getOrFetchStreamSlice({
+          ids = await Core.StreamPostsController.getOrFetchStreamSlice({
             streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            limit: Config.NEXUS_POSTS_PER_PAGE,
+            timestamp
           });
         } else {
           // Pagination - use last post as cursor
           const lastPostId = postIds[postIds.length - 1];
-          const timestamp = await getTimestampFromPostId(lastPostId);
 
-          ids = await Core.PostStreamApplication.getOrFetchStreamSlice({
+          ids = await Core.StreamPostsController.getOrFetchStreamSlice({
             streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            limit: Config.NEXUS_POSTS_PER_PAGE,
             post_id: lastPostId,
-            timestamp,
+            timestamp
           });
         }
 
         // Update state based on load type
         if (isInitialLoad) {
-          setPostIds(ids);
+          // TODO: Mutate the postIds appending the newPosts
+          setPostIds([...postIds, ...ids.nextPageIds]);
+          if (ids.timestamp) { setTimestamp(ids.timestamp); }
         } else {
-          if (ids.length === 0) {
+          if (ids.nextPageIds.length === 0) {
             setHasMore(false);
             return;
           }
-          setPostIds((prevIds) => [...prevIds, ...ids]);
+          setPostIds((prevIds) => [...prevIds, ...ids.nextPageIds]);
         }
 
         // Check if we have more posts available
-        if (ids.length < Config.NEXUS_POSTS_PER_PAGE) {
+        if (ids.nextPageIds.length < Config.NEXUS_POSTS_PER_PAGE) {
           setHasMore(false);
         }
       } catch (err) {

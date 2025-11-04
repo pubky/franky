@@ -24,8 +24,7 @@ export class BootstrapApplication {
     }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
-      // TODO: Create LocalPostService.persistPosts() to persist post data (not stream IDs)
-      // Core.LocalStreamPostsService no longer handles post persistence, only stream IDs
+      Core.LocalStreamPostsService.persistPosts(data.posts),
       Core.LocalStreamPostsService.upsert(Core.PostStreamTypes.TIMELINE_ALL, data.list.stream),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
