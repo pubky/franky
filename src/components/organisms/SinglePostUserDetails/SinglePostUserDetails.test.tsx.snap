@@ -78,7 +78,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with different pos
               data-size="sm"
               data-testid="typography"
             >
-              almost 2 years ago
+              5 days ago
             </div>
           </div>
         </div>
@@ -164,7 +164,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with empty name 1`
               data-size="sm"
               data-testid="typography"
             >
-              almost 2 years ago
+              14 days ago
             </div>
           </div>
         </div>
@@ -251,7 +251,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with no user image
               data-size="sm"
               data-testid="typography"
             >
-              almost 2 years ago
+              14 days ago
             </div>
           </div>
         </div>
@@ -339,7 +339,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with old post 1`] 
               data-size="sm"
               data-testid="typography"
             >
-              almost 6 years ago
+              almost 4 years ago
             </div>
           </div>
         </div>
@@ -515,7 +515,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with user and post
               data-size="sm"
               data-testid="typography"
             >
-              almost 2 years ago
+              14 days ago
             </div>
           </div>
         </div>
