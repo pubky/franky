@@ -15,6 +15,15 @@ export interface PostActionsBarProps {
   className?: string;
 }
 
+interface ActionButtonConfig {
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number; fill?: string }>;
+  count?: number;
+  onClick?: () => void;
+  ariaLabel: string;
+  className?: string;
+  iconProps?: { fill?: string };
+}
+
 export function PostActionsBar({
   postId,
   onTagClick,
@@ -37,74 +46,59 @@ export function PostActionsBar({
     return <div className="text-muted-foreground">Loading actions...</div>;
   }
 
+  const commonButtonProps = {
+    variant: 'secondary' as const,
+    size: 'sm' as const,
+    className: 'border-none shadow-xs-dark',
+  };
+
+  const actionButtons: ActionButtonConfig[] = [
+    {
+      icon: Libs.Tag,
+      count: postCounts.tags,
+      onClick: onTagClick,
+      ariaLabel: `Tag post (${postCounts.tags})`,
+    },
+    {
+      icon: Libs.MessageCircle,
+      count: postCounts.replies,
+      onClick: onReplyClick,
+      ariaLabel: `Reply to post (${postCounts.replies})`,
+    },
+    {
+      icon: Libs.Repeat,
+      count: postCounts.reposts,
+      onClick: onRepostClick,
+      ariaLabel: `Repost (${postCounts.reposts})`,
+    },
+    {
+      icon: Libs.Bookmark,
+      onClick: onBookmarkClick,
+      ariaLabel: isBookmarked ? 'Remove bookmark' : 'Add bookmark',
+      className: 'w-10',
+      iconProps: { fill: isBookmarked ? 'currentColor' : 'none' },
+    },
+    {
+      icon: Libs.Ellipsis,
+      onClick: onMoreClick,
+      ariaLabel: 'More options',
+    },
+  ];
+
   return (
-    <Atoms.Container className={Libs.cn('flex-row flex-1 w-auto items-center justify-end gap-2', className)}>
-      {/* Tag Button */}
-      <Atoms.Button
-        variant="secondary"
-        size="sm"
-        onClick={onTagClick}
-        className="border-none"
-        style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
-        aria-label={`Tag post (${postCounts.tags})`}
-      >
-        <Libs.Tag className="size-4 text-secondary-foreground" strokeWidth={2} />
-        <span className="text-xs font-bold leading-4 text-muted-foreground">{postCounts.tags}</span>
-      </Atoms.Button>
-
-      {/* Reply Button */}
-      <Atoms.Button
-        variant="secondary"
-        size="sm"
-        onClick={onReplyClick}
-        className="border-none"
-        style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
-        aria-label={`Reply to post (${postCounts.replies})`}
-      >
-        <Libs.MessageCircle className="size-4 text-secondary-foreground" strokeWidth={2} />
-        <span className="text-xs font-bold leading-4 text-muted-foreground">{postCounts.replies}</span>
-      </Atoms.Button>
-
-      {/* Repost Button */}
-      <Atoms.Button
-        variant="secondary"
-        size="sm"
-        onClick={onRepostClick}
-        className="border-none"
-        style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
-        aria-label={`Repost (${postCounts.reposts})`}
-      >
-        <Libs.Repeat className="size-4 text-secondary-foreground" strokeWidth={2} />
-        <span className="text-xs font-bold leading-4 text-muted-foreground">{postCounts.reposts}</span>
-      </Atoms.Button>
-
-      {/* Bookmark Button */}
-      <Atoms.Button
-        variant="secondary"
-        size="sm"
-        onClick={onBookmarkClick}
-        className="w-10 border-none"
-        style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
-        aria-label={isBookmarked ? 'Remove bookmark' : 'Add bookmark'}
-      >
-        <Libs.Bookmark
-          className="size-4 text-secondary-foreground"
-          strokeWidth={2}
-          fill={isBookmarked ? 'currentColor' : 'none'}
-        />
-      </Atoms.Button>
-
-      {/* More Button */}
-      <Atoms.Button
-        variant="secondary"
-        size="sm"
-        onClick={onMoreClick}
-        className="border-none"
-        style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
-        aria-label="More options"
-      >
-        <Libs.Ellipsis className="size-4 text-secondary-foreground" strokeWidth={2} />
-      </Atoms.Button>
-    </Atoms.Container>
+    <div className={Libs.cn('flex gap-2', className)}>
+      {actionButtons.map(({ icon: Icon, count, onClick, ariaLabel, className: buttonClassName, iconProps }, index) => (
+        <Atoms.Button
+          key={index}
+          {...commonButtonProps}
+          onClick={onClick}
+          className={Libs.cn(commonButtonProps.className, buttonClassName)}
+          aria-label={ariaLabel}
+        >
+          <Icon {...iconProps} />
+          {count !== undefined && <span className="text-xs font-bold leading-4 text-muted-foreground">{count}</span>}
+        </Atoms.Button>
+      ))}
+    </div>
   );
 }

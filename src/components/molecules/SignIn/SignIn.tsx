@@ -123,7 +123,7 @@ export const SignInContent = () => {
 
     await copyAuthUrlToClipboard();
 
-    const deeplink = `pubkyring://${url}`;
+    const deeplink = Libs.generatePubkyRingDeeplink(url, { encode: false });
 
     try {
       const openedWindow = window.open(deeplink, '_blank');
@@ -150,6 +150,11 @@ export const SignInContent = () => {
       window.location.href = fallbackUrl;
     }
   };
+
+  useEffect(() => {
+    // Clear onboarding storage when sign-in flow begins to prevent backup reminders from showing for existing users
+    Core.useOnboardingStore.getState().reset();
+  }, []);
 
   useEffect(() => {
     isMountedRef.current = true;

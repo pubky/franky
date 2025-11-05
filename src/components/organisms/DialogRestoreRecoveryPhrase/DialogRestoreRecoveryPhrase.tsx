@@ -101,6 +101,36 @@ function RestoreForm({
 }) {
   const handleWordChange = useCallback(
     (index: number, value: string) => {
+      // Check if the value contains multiple words (e.g. pasted from clipboard or inserted from Android keyboard suggestions)
+      // Split by common delimiters: spaces, newlines, tabs, commas
+      const words = value
+        .split(/[\s\n\t,]+/)
+        .map((word) => word.toLowerCase().trim())
+        .filter((word) => word !== '');
+
+      // If multiple words detected, distribute them across fields
+      if (words.length > 1) {
+        const newUserWords = [...userWords];
+        const newTouched = [...touched];
+        const newErrors = [...errors];
+
+        words.forEach((word, offset) => {
+          const targetIndex = index + offset;
+          if (targetIndex < 12) {
+            newUserWords[targetIndex] = word;
+            newTouched[targetIndex] = true;
+            // Clear error when distributing words
+            newErrors[targetIndex] = false;
+          }
+        });
+
+        onWordChange(newUserWords);
+        onTouchedChange(newTouched);
+        onErrorsChange(newErrors);
+        return;
+      }
+
+      // Handle single-word input
       const newUserWords = [...userWords];
       newUserWords[index] = value;
       onWordChange(newUserWords);

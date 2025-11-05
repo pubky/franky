@@ -33,24 +33,26 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
     return <div className="text-muted-foreground">Loading header...</div>;
   }
 
+  const timeAgo = Libs.timeAgo(new Date(postDetails.indexed_at));
+
   return (
-    <div className={Libs.cn('flex items-start justify-between w-full', className)}>
-      <div className="flex items-center gap-3">
-        <Atoms.Avatar size="lg">
+    <div className={Libs.cn('flex justify-between', className)}>
+      <div className="flex gap-3">
+        <Atoms.Avatar size="default">
           <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <div className="flex flex-col">
-          <span className="text-base leading-6 font-bold text-foreground">{userDetails.name}</span>
-          <span className="text-xs leading-4 font-medium tracking-[0.075em] uppercase text-muted-foreground">
+          <span className="text-base font-bold text-foreground">{userDetails.name}</span>
+          <span className="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground">
             @{Libs.formatPublicKey({ key: userId, length: 8 })}
           </span>
         </div>
       </div>
-      {Libs.timeAgo(new Date(postDetails.indexed_at)) && (
-        <div className="flex items-center gap-1 text-xs font-medium tracking-[0.075em] text-muted-foreground">
+      {timeAgo && (
+        <div className="flex items-center gap-1">
           <Libs.Clock className="size-4 text-muted-foreground" />
-          <span>{Libs.timeAgo(new Date(postDetails.indexed_at))}</span>
+          <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground">{timeAgo}</span>
         </div>
       )}
     </div>

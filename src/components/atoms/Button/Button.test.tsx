@@ -33,7 +33,7 @@ describe('Button', () => {
 
     rerender(<Button variant="destructive">Destructive</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('bg-destructive/60', 'text-white');
+    expect(button).toHaveClass('bg-destructive/60', 'text-destructive-foreground');
 
     rerender(<Button variant="link">Link</Button>);
     button = screen.getByRole('button');
@@ -55,7 +55,7 @@ describe('Button', () => {
 
     rerender(<Button size="lg">Large</Button>);
     button = screen.getByRole('button');
-    expect(button).toHaveClass('h-10', 'px-8');
+    expect(button).toHaveClass('h-auto', 'px-4', 'py-2.5', 'sm:px-8', 'sm:py-5');
 
     rerender(<Button size="icon">Icon</Button>);
     button = screen.getByRole('button');
