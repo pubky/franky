@@ -7,7 +7,7 @@ exports[`PostTagsList - Snapshots > matches snapshot with close buttons 1`] = `
   <button
     aria-label="bitcoin tag (21 posts)"
     aria-pressed="true"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="on"
     style="box-shadow: inset 0 0 0 1px #FF9900;"
     type="button"
@@ -41,19 +41,19 @@ exports[`PostTagsList - Snapshots > matches snapshot with close buttons 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
     />
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg border border-solid"
+      class="pointer-events-none absolute inset-0 rounded-md border border-solid"
       style="border-color: rgb(255, 153, 0);"
     />
   </button>
   <button
     aria-label="based tag (7 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -86,14 +86,14 @@ exports[`PostTagsList - Snapshots > matches snapshot with close buttons 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF0000;"
     />
   </button>
   <button
     aria-label="test tag (3 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -126,7 +126,7 @@ exports[`PostTagsList - Snapshots > matches snapshot with close buttons 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #00FF00;"
     />
   </button>
@@ -152,7 +152,7 @@ exports[`PostTagsList - Snapshots > matches snapshot with emoji picker 1`] = `
   <button
     aria-label="bitcoin tag (21 posts)"
     aria-pressed="true"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="on"
     style="box-shadow: inset 0 0 0 1px #FF9900;"
     type="button"
@@ -173,19 +173,19 @@ exports[`PostTagsList - Snapshots > matches snapshot with emoji picker 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
     />
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg border border-solid"
+      class="pointer-events-none absolute inset-0 rounded-md border border-solid"
       style="border-color: rgb(255, 153, 0);"
     />
   </button>
   <button
     aria-label="based tag (7 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -205,14 +205,14 @@ exports[`PostTagsList - Snapshots > matches snapshot with emoji picker 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF0000;"
     />
   </button>
   <button
     aria-label="test tag (3 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -232,7 +232,7 @@ exports[`PostTagsList - Snapshots > matches snapshot with emoji picker 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #00FF00;"
     />
   </button>
@@ -297,7 +297,7 @@ exports[`PostTagsList - Snapshots > matches snapshot with tags and input 1`] = `
   <button
     aria-label="bitcoin tag (21 posts)"
     aria-pressed="true"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="on"
     style="box-shadow: inset 0 0 0 1px #FF9900;"
     type="button"
@@ -318,19 +318,19 @@ exports[`PostTagsList - Snapshots > matches snapshot with tags and input 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
     />
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg border border-solid"
+      class="pointer-events-none absolute inset-0 rounded-md border border-solid"
       style="border-color: rgb(255, 153, 0);"
     />
   </button>
   <button
     aria-label="based tag (7 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -350,14 +350,14 @@ exports[`PostTagsList - Snapshots > matches snapshot with tags and input 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF0000;"
     />
   </button>
   <button
     aria-label="test tag (3 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -377,7 +377,7 @@ exports[`PostTagsList - Snapshots > matches snapshot with tags and input 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #00FF00;"
     />
   </button>
@@ -403,7 +403,7 @@ exports[`PostTagsList - Snapshots > matches snapshot without input 1`] = `
   <button
     aria-label="bitcoin tag (21 posts)"
     aria-pressed="true"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="on"
     style="box-shadow: inset 0 0 0 1px #FF9900;"
     type="button"
@@ -424,19 +424,19 @@ exports[`PostTagsList - Snapshots > matches snapshot without input 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF9900;"
     />
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg border border-solid"
+      class="pointer-events-none absolute inset-0 rounded-md border border-solid"
       style="border-color: rgb(255, 153, 0);"
     />
   </button>
   <button
     aria-label="based tag (7 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -456,14 +456,14 @@ exports[`PostTagsList - Snapshots > matches snapshot without input 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #FF0000;"
     />
   </button>
   <button
     aria-label="test tag (3 posts)"
     aria-pressed="false"
-    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
+    class="cursor-pointer inline-flex items-center justify-center bg-transparent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 min-w-9 group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg border-0 text-sm font-bold leading-5 text-white transition-all duration-200 hover:bg-transparent hover:text-white data-[state=on]:border data-[state=on]:border-solid data-[state=on]:bg-transparent data-[state=on]:text-white"
     data-state="off"
     type="button"
   >
@@ -483,7 +483,7 @@ exports[`PostTagsList - Snapshots > matches snapshot without input 1`] = `
     </span>
     <div
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+      class="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
       style="box-shadow: inset 0px 0px 8px 0px #00FF00;"
     />
   </button>
