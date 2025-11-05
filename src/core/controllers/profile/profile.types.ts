@@ -5,3 +5,8 @@ export type UserControllerNewData = Omit<Core.NexusUserDetails, 'id' | 'indexed_
 export type TReadProfileParams = {
   userId: Core.Pubky;
 };
+
+export type TDeleteAccountInput = {
+  pubky: Core.Pubky;
+  setProgress?: (progress: number) => void;
+};

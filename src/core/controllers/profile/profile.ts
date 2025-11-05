@@ -38,4 +38,8 @@ export class ProfileController {
 
     await Core.ProfileApplication.create({ profile: user, url: meta.url, pubky });
   }
+
+  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
+    await Core.ProfileApplication.deleteAccount({ pubky, setProgress });
+  }
 }

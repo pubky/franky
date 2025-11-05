@@ -14,10 +14,6 @@ export class UserController {
     });
   }
 
-  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
-    await Core.UserApplication.deleteAccount({ pubky, setProgress });
-  }
-
   static async mute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams) {
     const { meta, mute } = await Core.MuteNormalizer.to({ muter, mutee });
     await Core.UserApplication.mute({
