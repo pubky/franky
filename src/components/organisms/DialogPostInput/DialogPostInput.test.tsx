@@ -77,9 +77,9 @@ vi.mock('@/organisms', () => ({
         data-testid="post-button"
         onClick={onActionClick}
         disabled={isActionDisabled}
-        aria-label={variant === 'reply' ? 'Post reply' : 'Repost'}
+        aria-label={variant === 'reply' ? 'Post reply' : variant === 'repost' ? 'Repost' : 'Post'}
       >
-        {variant === 'reply' ? 'Post' : 'Repost'}
+        {variant === 'reply' ? 'Post' : variant === 'repost' ? 'Repost' : 'Post'}
       </button>
     </div>
   )),
@@ -115,6 +115,7 @@ vi.mock('@/hooks', () => ({
   useElementHeight: vi.fn(() => ({ ref: { current: null } })),
   usePostReply: vi.fn(),
   usePostRepost: vi.fn(),
+  usePostCreate: vi.fn(),
 }));
 
 vi.mock('@/libs', async (importOriginal) => {
@@ -131,6 +132,7 @@ const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockPostControllerCreate = vi.mocked(Core.PostController.create);
 const mockUsePostReply = vi.mocked(Hooks.usePostReply);
 const mockUsePostRepost = vi.mocked(Hooks.usePostRepost);
+const mockUsePostCreate = vi.mocked(Hooks.usePostCreate);
 
 describe('DialogPostInput', () => {
   beforeEach(() => {
@@ -146,6 +148,11 @@ describe('DialogPostInput', () => {
       repostContent: '',
       setRepostContent: vi.fn(),
       handleRepostSubmit: vi.fn(),
+    });
+    mockUsePostCreate.mockReturnValue({
+      postContent: '',
+      setPostContent: vi.fn(),
+      handlePostSubmit: vi.fn(),
     });
   });
 
@@ -250,6 +257,97 @@ describe('DialogPostInput', () => {
         },
         undefined,
       );
+    });
+  });
+
+  describe('New Post variant', () => {
+    it('renders with required props', () => {
+      render(<DialogPostInput variant="new" />);
+
+      expect(screen.getByTestId('post-header')).toBeInTheDocument();
+      expect(screen.getByTestId('textarea')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText("What's on your mind?")).toBeInTheDocument();
+      expect(screen.queryByTestId('post-reply-connector')).not.toBeInTheDocument();
+    });
+
+    it('does not show preview inside for new post variant', () => {
+      render(<DialogPostInput variant="new" />);
+
+      expect(screen.queryByTestId('dialog-post-preview')).not.toBeInTheDocument();
+    });
+
+    it('disables Post button when content is empty', () => {
+      mockUsePostCreate.mockReturnValue({
+        postContent: '',
+        setPostContent: vi.fn(),
+        handlePostSubmit: vi.fn(),
+      });
+
+      render(<DialogPostInput variant="new" />);
+
+      const postButton = screen.getByTestId('post-button');
+      expect(postButton).toBeDisabled();
+      expect(Organisms.DialogActionBar).toHaveBeenCalledWith(
+        {
+          variant: 'new',
+          isActionDisabled: true,
+          onActionClick: expect.any(Function),
+        },
+        undefined,
+      );
+    });
+
+    it('enables Post button when content is not empty', () => {
+      mockUsePostCreate.mockReturnValue({
+        postContent: 'Test post content',
+        setPostContent: vi.fn(),
+        handlePostSubmit: vi.fn(),
+      });
+
+      render(<DialogPostInput variant="new" />);
+
+      const postButton = screen.getByTestId('post-button');
+      expect(postButton).not.toBeDisabled();
+      expect(Organisms.DialogActionBar).toHaveBeenCalledWith(
+        {
+          variant: 'new',
+          isActionDisabled: false,
+          onActionClick: expect.any(Function),
+        },
+        undefined,
+      );
+    });
+
+    it('handles textarea value changes for new post', () => {
+      const setPostContent = vi.fn();
+      mockUsePostCreate.mockReturnValue({
+        postContent: '',
+        setPostContent,
+        handlePostSubmit: vi.fn(),
+      });
+
+      render(<DialogPostInput variant="new" />);
+
+      const textarea = screen.getByTestId('textarea');
+      fireEvent.change(textarea, { target: { value: 'Test post content' } });
+
+      expect(setPostContent).toHaveBeenCalledWith('Test post content');
+    });
+
+    it('handles Enter key submission for new post', async () => {
+      const handlePostSubmit = vi.fn();
+      mockUsePostCreate.mockReturnValue({
+        postContent: 'Test post content',
+        setPostContent: vi.fn(),
+        handlePostSubmit,
+      });
+
+      render(<DialogPostInput variant="new" />);
+
+      const textarea = screen.getByTestId('textarea');
+      fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+
+      expect(handlePostSubmit).toHaveBeenCalledTimes(1);
     });
   });
 

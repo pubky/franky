@@ -3,7 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export type DialogActionBarVariant = 'reply' | 'repost';
+export type DialogActionBarVariant = 'reply' | 'repost' | 'new';
 
 export interface DialogActionBarProps {
   variant: DialogActionBarVariant;
@@ -43,13 +43,13 @@ export function DialogActionBar({
   };
 
   const actionButtonConfig: ActionButtonConfig = {
-    icon: variant === 'reply' ? Libs.Send : Libs.Repeat,
+    icon: variant === 'reply' ? Libs.Send : variant === 'repost' ? Libs.Repeat : Libs.Send,
     onClick: onActionClick,
     disabled: isActionDisabled,
-    ariaLabel: variant === 'reply' ? 'Post reply' : 'Repost',
+    ariaLabel: variant === 'reply' ? 'Post reply' : variant === 'repost' ? 'Repost' : 'Post',
     className: Libs.cn(isActionDisabled && 'opacity-40'),
     showLabel: true,
-    labelText: variant === 'reply' ? 'Post' : 'Repost',
+    labelText: variant === 'reply' ? 'Post' : variant === 'repost' ? 'Repost' : 'Post',
   };
 
   const actionButtons: ActionButtonConfig[] = [

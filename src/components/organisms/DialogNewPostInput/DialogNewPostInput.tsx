@@ -1,0 +1,67 @@
+'use client';
+
+import { useState } from 'react';
+import * as Atoms from '@/atoms';
+import * as Core from '@/core';
+import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
+
+export interface DialogNewPostInputProps {
+  onSuccess?: () => void;
+}
+
+export function DialogNewPostInput({ onSuccess }: DialogNewPostInputProps) {
+  const [tags, setTags] = useState<Array<{ id: string; label: string }>>([]);
+  const { postContent, setPostContent, handlePostSubmit } = Hooks.usePostCreate({ onSuccess });
+  const { ref: containerRef } = Hooks.useElementHeight();
+  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      void handlePostSubmit();
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4 p-6 border border-dashed border-input rounded-md relative">
+      <Organisms.PostHeader postId={currentUserId} hideTime={true} />
+
+      {/* Input field */}
+      <div ref={containerRef}>
+        <Atoms.Textarea
+          placeholder="What's on your mind?"
+          className="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
+          value={postContent}
+          onChange={(e) => setPostContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={1}
+        />
+      </div>
+
+      <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
+        <Molecules.PostTagsList
+          tags={tags.map((tag) => ({ label: tag.label }))}
+          showInput={false}
+          showAddButton={true}
+          addMode={true}
+          showEmojiPicker={false}
+          showTagClose={true}
+          onTagAdd={(tag) => {
+            setTags([...tags, { id: `${Date.now()}`, label: tag }]);
+          }}
+          onTagClose={(tag, index) => {
+            setTags(tags.filter((_, i) => i !== index));
+          }}
+        />
+
+        <Organisms.DialogActionBar
+          variant="new"
+          onActionClick={handlePostSubmit}
+          isActionDisabled={!postContent.trim()}
+        />
+      </div>
+    </div>
+  );
+}

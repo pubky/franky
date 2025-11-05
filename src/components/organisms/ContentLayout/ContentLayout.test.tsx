@@ -90,10 +90,16 @@ vi.mock('@/molecules', () => ({
 }));
 
 // Mock the organisms
-vi.mock('@/organisms', () => ({
-  LeftSidebar: () => <div data-testid="left-sidebar">Left Sidebar</div>,
-  RightSidebar: () => <div data-testid="right-sidebar">Right Sidebar</div>,
-}));
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
+  return {
+    ...actual,
+    LeftSidebar: () => <div data-testid="left-sidebar">Left Sidebar</div>,
+    RightSidebar: () => <div data-testid="right-sidebar">Right Sidebar</div>,
+    FloatingActionButton: () => <div data-testid="floating-action-button">FAB</div>,
+    DialogNewPost: () => null,
+  };
+});
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {

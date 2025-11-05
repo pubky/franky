@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Organisms from '@/organisms';
 
 export interface ContentLayoutProps {
   children: React.ReactNode;
@@ -138,6 +139,9 @@ export function ContentLayout({
           {isMobile && rightDrawerContentMobile ? rightDrawerContentMobile : rightDrawerContent}
         </Molecules.FilterDrawer>
       )}
+
+      {/* Floating Action Button for creating new post */}
+      <Organisms.FloatingActionButton />
     </>
   );
 }
