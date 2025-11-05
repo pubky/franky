@@ -14,10 +14,6 @@ export class UserController {
     });
   }
 
-  static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
-    await Core.UserApplication.downloadData({ pubky, setProgress });
-  }
-
   static async mute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams) {
     const { meta, mute } = Core.MuteNormalizer.to({ muter, mutee });
     await Core.UserApplication.mute({

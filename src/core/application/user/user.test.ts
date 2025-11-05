@@ -2,11 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 import { UserApplication } from './user';
 
-// Mock pubky-app-specs
-vi.mock('pubky-app-specs', () => ({
-  baseUriBuilder: vi.fn((pubky: string) => `pubky://${pubky}/pub/pubky.app/`),
-}));
-
 describe('UserApplication.follow', () => {
   const follower = 'pubky_follower' as Core.Pubky;
   const followee = 'pubky_followee' as Core.Pubky;
@@ -122,27 +117,6 @@ describe('UserApplication.follow', () => {
     ).rejects.toThrow('homeserver-fail');
 
     expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, followUrl, followJson);
-  });
-});
-
-describe.todo('UserApplication.downloadData', () => {
-  // Note: Download data tests are skipped due to complexity of mocking browser APIs (JSZip, document, URL)
-  // The implementation can be manually tested in the browser
-  // Basic error handling test:
-
-  const pubky = 'test-pubky' as Core.Pubky;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should propagate error when list fails', async () => {
-    vi.spyOn(Core.HomeserverService, 'list').mockRejectedValue(new Error('list failed'));
-    const getSpy = vi.spyOn(Core.HomeserverService, 'get');
-
-    await expect(UserApplication.downloadData({ pubky })).rejects.toThrow('list failed');
-
-    expect(getSpy).not.toHaveBeenCalled();
   });
 });
 

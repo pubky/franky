@@ -6,11 +6,6 @@ export type TUserApplicationFollowParams = Core.TFollowParams & {
   followJson: Record<string, unknown>;
 };
 
-export type TDownloadDataParams = {
-  pubky: Core.Pubky;
-  setProgress?: (progress: number) => void;
-};
-
 export type TUserApplicationMuteParams = Core.TMuteParams & {
   eventType: Core.HomeserverAction;
   muteUrl: string;
