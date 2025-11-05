@@ -16,6 +16,7 @@ export * from './DialogDownloadPubkyRing';
 export * from './DialogFeedback';
 export * from './DialogPrivacy';
 export * from './DialogReply';
+export * from './DialogReplyActionBar';
 export * from './DialogReplyInput';
 export * from './DialogReplyPost';
 export * from './DialogCropImage';

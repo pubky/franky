@@ -1,10 +1,10 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { cn } from '@/libs';
 
 export interface ClickStopProps {
   children?: ReactNode;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
   'data-testid'?: string;
 }
 
@@ -18,11 +18,18 @@ export function ClickStop({
 }: ClickStopProps & React.HTMLAttributes<HTMLElement>) {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onClick?.(e);
+    if (onClick) {
+      onClick(e as React.MouseEvent<HTMLElement>);
+    }
   };
 
   return (
-    <Tag {...props} onClick={handleClick} className={cn(className)} data-testid={dataTestId || 'click-stop'}>
+    <Tag
+      {...(props as Record<string, unknown>)}
+      onClick={handleClick as unknown as React.MouseEventHandler<Element>}
+      className={cn(className)}
+      data-testid={dataTestId || 'click-stop'}
+    >
       {children}
     </Tag>
   );
