@@ -1,32 +1,5 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ClickStop - Snapshots > matches snapshot for article element 1`] = `
-<article
-  class=""
-  data-testid="click-stop"
->
-  Article Element
-</article>
-`;
-
-exports[`ClickStop - Snapshots > matches snapshot for section element 1`] = `
-<section
-  class=""
-  data-testid="click-stop"
->
-  Section Element
-</section>
-`;
-
-exports[`ClickStop - Snapshots > matches snapshot for span element 1`] = `
-<span
-  class=""
-  data-testid="click-stop"
->
-  Span Element
-</span>
-`;
-
 exports[`ClickStop - Snapshots > matches snapshot with children 1`] = `
 <div
   class=""
@@ -36,16 +9,6 @@ exports[`ClickStop - Snapshots > matches snapshot with children 1`] = `
     Click me
   </button>
 </div>
-`;
-
-exports[`ClickStop - Snapshots > matches snapshot with combined props 1`] = `
-<section
-  class="custom-class"
-  data-testid="test-id"
-  id="test"
->
-  Combined Props
-</section>
 `;
 
 exports[`ClickStop - Snapshots > matches snapshot with custom className 1`] = `

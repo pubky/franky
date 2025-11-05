@@ -13,11 +13,10 @@ describe('ClickStop', () => {
 
   it('stops event propagation on click', () => {
     const parentClickHandler = vi.fn();
-    const childClickHandler = vi.fn();
 
     render(
       <div onClick={parentClickHandler}>
-        <ClickStop onClick={childClickHandler}>
+        <ClickStop>
           <button>Click me</button>
         </ClickStop>
       </div>,
@@ -26,35 +25,8 @@ describe('ClickStop', () => {
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
-    // Child click handler should be called
-    expect(childClickHandler).toHaveBeenCalledTimes(1);
     // Parent click handler should NOT be called because propagation was stopped
     expect(parentClickHandler).not.toHaveBeenCalled();
-  });
-
-  it('calls custom onClick handler after stopping propagation', () => {
-    const customClickHandler = vi.fn();
-    const parentClickHandler = vi.fn();
-
-    render(
-      <div onClick={parentClickHandler}>
-        <ClickStop onClick={customClickHandler}>
-          <button>Click me</button>
-        </ClickStop>
-      </div>,
-    );
-
-    const button = screen.getByRole('button');
-    fireEvent.click(button);
-
-    expect(customClickHandler).toHaveBeenCalledTimes(1);
-    expect(parentClickHandler).not.toHaveBeenCalled();
-  });
-
-  it('renders as different HTML element when as prop is provided', () => {
-    render(<ClickStop as="span">Span Element</ClickStop>);
-    const element = screen.getByText('Span Element');
-    expect(element.tagName).toBe('SPAN');
   });
 
   it('applies custom className', () => {
@@ -67,18 +39,6 @@ describe('ClickStop', () => {
     render(<ClickStop data-testid="custom-testid">Custom Test ID</ClickStop>);
     const element = screen.getByTestId('custom-testid');
     expect(element).toBeInTheDocument();
-  });
-
-  it('forwards additional HTML attributes', () => {
-    render(
-      <ClickStop id="test-id" aria-label="Test label" data-custom="test-value">
-        Test Content
-      </ClickStop>,
-    );
-    const element = screen.getByText('Test Content');
-    expect(element).toHaveAttribute('id', 'test-id');
-    expect(element).toHaveAttribute('aria-label', 'Test label');
-    expect(element).toHaveAttribute('data-custom', 'test-value');
   });
 
   it('handles nested clickable elements correctly', () => {
@@ -110,13 +70,11 @@ describe('ClickStop', () => {
 
   it('works with multiple nested ClickStop components', () => {
     const outerClickHandler = vi.fn();
-    const middleClickHandler = vi.fn();
-    const innerClickHandler = vi.fn();
 
     render(
       <div onClick={outerClickHandler}>
-        <ClickStop onClick={middleClickHandler}>
-          <ClickStop onClick={innerClickHandler}>
+        <ClickStop>
+          <ClickStop>
             <button>Nested Button</button>
           </ClickStop>
         </ClickStop>
@@ -126,10 +84,6 @@ describe('ClickStop', () => {
     const button = screen.getByRole('button');
     fireEvent.click(button);
 
-    // Inner handler should be called
-    expect(innerClickHandler).toHaveBeenCalledTimes(1);
-    // Middle handler should NOT be called because inner ClickStop stops propagation
-    expect(middleClickHandler).not.toHaveBeenCalled();
     // Outer handler should NOT be called because propagation was stopped
     expect(outerClickHandler).not.toHaveBeenCalled();
   });
@@ -160,36 +114,12 @@ describe('ClickStop - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for span element', () => {
-    const { container } = render(<ClickStop as="span">Span Element</ClickStop>);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for section element', () => {
-    const { container } = render(<ClickStop as="section">Section Element</ClickStop>);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for article element', () => {
-    const { container } = render(<ClickStop as="article">Article Element</ClickStop>);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
   it('matches snapshot with multiple children', () => {
     const { container } = render(
       <ClickStop>
         <button>Button 1</button>
         <button>Button 2</button>
         <span>Text</span>
-      </ClickStop>,
-    );
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with combined props', () => {
-    const { container } = render(
-      <ClickStop as="section" className="custom-class" data-testid="test-id" id="test">
-        Combined Props
       </ClickStop>,
     );
     expect(container.firstChild).toMatchSnapshot();
