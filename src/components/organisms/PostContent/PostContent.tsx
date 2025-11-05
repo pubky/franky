@@ -21,7 +21,7 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
   }
 
   return (
-    <div className={Libs.cn('flex flex-col gap-3 rounded-xl', className)}>
+    <div className={Libs.cn('flex flex-col', className)}>
       <p className="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line">
         {postDetails.content}
       </p>

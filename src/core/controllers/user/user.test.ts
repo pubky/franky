@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { FollowResult } from 'pubky-app-specs';
 import { UserController } from './user';
 import * as Core from '@/core';
 
@@ -20,10 +21,10 @@ describe('UserController', () => {
       const mockToJson = vi.fn(() => mockFollowJson);
       const mockMeta = { url: 'https://example.com/follow' } as { url: string };
 
-      const toSpy = vi.spyOn(Core.FollowNormalizer, 'to').mockResolvedValue({
+      const toSpy = vi.spyOn(Core.FollowNormalizer, 'to').mockReturnValue({
         meta: mockMeta,
         follow: { toJson: mockToJson },
-      } as unknown as import('pubky-app-specs').FollowResult);
+      } as unknown as FollowResult);
 
       const followSpy = vi.spyOn(Core.UserApplication, 'follow').mockResolvedValue(undefined);
 
@@ -48,10 +49,10 @@ describe('UserController', () => {
       const mockToJson = vi.fn(() => mockFollowJson);
       const mockMeta = { url: 'https://example.com/unfollow' } as { url: string };
 
-      vi.spyOn(Core.FollowNormalizer, 'to').mockResolvedValue({
+      vi.spyOn(Core.FollowNormalizer, 'to').mockReturnValue({
         meta: mockMeta,
         follow: { toJson: mockToJson },
-      } as unknown as import('pubky-app-specs').FollowResult);
+      } as unknown as FollowResult);
 
       const followSpy = vi.spyOn(Core.UserApplication, 'follow').mockResolvedValue(undefined);
 
@@ -70,7 +71,9 @@ describe('UserController', () => {
       const follower = 'pubky-follower' as unknown as Core.Pubky;
       const followee = 'pubky-followee' as unknown as Core.Pubky;
 
-      vi.spyOn(Core.FollowNormalizer, 'to').mockRejectedValue(new Error('normalize-fail'));
+      vi.spyOn(Core.FollowNormalizer, 'to').mockImplementation(() => {
+        throw new Error('normalize-fail');
+      });
       const followSpy = vi.spyOn(Core.UserApplication, 'follow').mockResolvedValue(undefined);
 
       await expect(UserController.follow(Core.HomeserverAction.PUT, { follower, followee })).rejects.toThrow(
@@ -84,10 +87,10 @@ describe('UserController', () => {
       const follower = 'pubky-follower' as unknown as Core.Pubky;
       const followee = 'pubky-followee' as unknown as Core.Pubky;
 
-      vi.spyOn(Core.FollowNormalizer, 'to').mockResolvedValue({
+      vi.spyOn(Core.FollowNormalizer, 'to').mockReturnValue({
         meta: { url: 'https://example.com/follow' },
         follow: { toJson: () => ({}) },
-      } as unknown as import('pubky-app-specs').FollowResult);
+      } as unknown as FollowResult);
 
       vi.spyOn(Core.UserApplication, 'follow').mockRejectedValue(new Error('delegate-fail'));
 
