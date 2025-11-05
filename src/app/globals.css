@@ -59,6 +59,7 @@ body {
   --breakpoint-xsm: 23.4375rem;
   --shadow-2xs: 0 1px 0 0 oklch(0.118 0.014 284.115 / 0.05);
   --shadow-xs: 0 1px 2px 0 oklch(0.118 0.014 284.115 / 0.05);
+  --shadow-xs-dark: 0px 1px 2px 0px rgba(5, 5, 10, 0.2);
   --shadow-sm: 0 1px 3px 0 oklch(0.118 0.014 284.115 / 0.1), 0 1px 2px -1px oklch(0.118 0.014 284.115 / 0.1);
   --shadow-md: 0 4px 6px -1px oklch(0.118 0.014 284.115 / 0.1), 0 2px 4px -2px oklch(0.118 0.014 284.115 / 0.1);
   --shadow-lg: 0 10px 15px -3px oklch(0.118 0.014 284.115 / 0.1), 0 4px 6px -4px oklch(0.118 0.014 284.115 / 0.1);
@@ -129,6 +130,11 @@ body {
 }
 
 @layer utilities {
+  /* Shadow utilities */
+  .shadow-xs-dark {
+    box-shadow: var(--shadow-xs-dark);
+  }
+
   /* Thicker white caret for focused inputs (used by PostTagInput) */
   .caret-white {
     caret-color: white;
