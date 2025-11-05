@@ -2,10 +2,10 @@
 
 exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
 <div
-  class="flex items-start justify-between w-full"
+  class="flex justify-between"
 >
   <div
-    class="flex items-center gap-3"
+    class="flex gap-3"
   >
     <div
       data-testid="avatar"
@@ -24,12 +24,12 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       class="flex flex-col"
     >
       <span
-        class="text-base leading-6 font-bold text-foreground"
+        class="text-base font-bold text-foreground"
       >
         Snapshot User
       </span>
       <span
-        class="text-xs leading-4 font-medium tracking-[0.075em] uppercase text-muted-foreground"
+        class="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground"
       >
         @
         snap...rKey
@@ -37,7 +37,7 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
     </div>
   </div>
   <div
-    class="flex items-center gap-1 text-xs font-medium tracking-[0.075em] text-muted-foreground"
+    class="flex items-center gap-1"
   >
     <svg
       aria-hidden="true"
@@ -61,7 +61,9 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
         points="12 6 12 12 16 14"
       />
     </svg>
-    <span>
+    <span
+      class="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+    >
       2h
     </span>
   </div>

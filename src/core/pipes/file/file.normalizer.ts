@@ -5,7 +5,7 @@ import * as Libs from '@/libs';
 export class FileNormalizer {
   private constructor() {}
 
-  static async toBlob(blob: Uint8Array, pubky: Core.Pubky): Promise<BlobResult> {
+  static toBlob(blob: Uint8Array, pubky: Core.Pubky): BlobResult {
     const builder = Core.PubkySpecsSingleton.get(pubky);
     const result = builder.createBlob(blob);
 
@@ -14,7 +14,7 @@ export class FileNormalizer {
     return result;
   }
 
-  static async toFile(file: File, url: string, pubky: Core.Pubky): Promise<FileResult> {
+  static toFile(file: File, url: string, pubky: Core.Pubky): FileResult {
     const builder = Core.PubkySpecsSingleton.get(pubky);
     const result = builder.createFile(file.name, url, file.type, file.size);
 

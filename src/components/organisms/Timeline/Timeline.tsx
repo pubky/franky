@@ -125,7 +125,7 @@ export function Timeline() {
   // Posts list
   return (
     <Atoms.Container className="w-full mx-auto">
-      <div className="w-full space-y-4 mt-4">
+      <div className="space-y-4">
         {postIds.map((postId, index) => (
           <Organisms.PostMain key={`${postId}-${index}`} postId={postId} onClick={() => handlePostClick(postId)} />
         ))}

@@ -46,6 +46,11 @@ vi.mock('@/core', () => ({
       currentUserPubky: 'mock-user-pubkey-123',
     }),
   },
+  useOnboardingStore: {
+    getState: vi.fn().mockReturnValue({
+      reset: vi.fn(),
+    }),
+  },
 }));
 
 // Mock molecules

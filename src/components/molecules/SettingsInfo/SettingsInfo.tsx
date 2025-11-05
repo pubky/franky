@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as App from '@/app';
 
 export interface SettingsInfoProps {
@@ -27,10 +27,10 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title="Terms of Service & Privacy" subtitle="Please read our terms carefully." />
         <Atoms.FilterList>
-          <Molecules.DialogTerms
+          <Organisms.DialogTerms
             trigger={<Atoms.SidebarButton icon={Libs.FileText}>Terms of service</Atoms.SidebarButton>}
           />
-          <Molecules.DialogPrivacy
+          <Organisms.DialogPrivacy
             trigger={<Atoms.SidebarButton icon={Libs.LockKeyhole}>Privacy policy</Atoms.SidebarButton>}
           />
         </Atoms.FilterList>

@@ -1,11 +1,14 @@
 import { MuteResult } from 'pubky-app-specs';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 export class MuteNormalizer {
   private constructor() {}
 
-  static async to({ muter, mutee }: Core.TMuteParams): Promise<MuteResult> {
+  static to({ muter, mutee }: Core.TMuteParams): MuteResult {
     const builder = Core.PubkySpecsSingleton.get(muter);
-    return builder.createMute(mutee);
+    const result = builder.createMute(mutee);
+    Libs.Logger.debug('Mute validated', { result });
+    return result;
   }
 }
