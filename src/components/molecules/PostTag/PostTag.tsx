@@ -44,7 +44,7 @@ export function PostTag({
       pressed={selected}
       onClick={onClick}
       className={Libs.cn(
-        'group relative h-8 gap-1 rounded-lg px-3 backdrop-blur-lg',
+        'group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg',
         'border-0 text-sm font-bold leading-5 text-white',
         'transition-all duration-200',
         // Override Toggle default hover styles - keep text white
@@ -79,7 +79,7 @@ export function PostTag({
 
       {/* Hover shadow overlay - exactly as Figma */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 rounded-md opacity-0 transition-opacity group-hover:opacity-100"
         style={{
           boxShadow: `inset 0px 0px 8px 0px ${tagColor}`,
         }}
@@ -89,7 +89,7 @@ export function PostTag({
       {/* Selected border overlay */}
       {selected && (
         <div
-          className="pointer-events-none absolute inset-0 rounded-lg border border-solid"
+          className="pointer-events-none absolute inset-0 rounded-md border border-solid"
           style={{ borderColor: tagColor }}
           aria-hidden="true"
         />
