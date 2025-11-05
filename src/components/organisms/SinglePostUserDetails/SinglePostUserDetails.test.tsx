@@ -4,8 +4,6 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { SinglePostUserDetails } from './SinglePostUserDetails';
 import * as Core from '@/core';
 
-const FIXED_NOW = '2024-03-15T10:00:00Z';
-
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(),
