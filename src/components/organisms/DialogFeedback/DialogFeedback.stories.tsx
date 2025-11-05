@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import { DialogFeedback } from '@/components/molecules/DialogFeedback/DialogFeedback';
+import { DialogFeedback } from '@/components/organisms/DialogFeedback/DialogFeedback';
 
 const meta = {
-  title: 'Molecules/DialogFeedback',
+  title: 'Organisms/DialogFeedback',
   component: DialogFeedback,
   parameters: {
     layout: 'centered',
