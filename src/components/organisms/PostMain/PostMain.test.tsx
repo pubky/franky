@@ -28,6 +28,7 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
+  ClickStop: ({ children }: { children: React.ReactNode }) => <div data-testid="click-stop">{children}</div>,
 }));
 
 // Stub organisms composed inside PostMain

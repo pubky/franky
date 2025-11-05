@@ -27,28 +27,36 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
       <div
         class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
       >
-        <ul
-          data-testid="post-tags-list"
-        >
-          <li>
-            alpha
-          </li>
-          <li>
-            beta
-          </li>
-          <li>
-            gamma
-          </li>
-        </ul>
         <div
-          data-class-name="justify-start w-full flex-1 md:justify-end"
-          data-testid="post-actions"
+          data-testid="click-stop"
         >
-          Actions 
-          post-123
-          <button>
-            Reply
-          </button>
+          <ul
+            data-testid="post-tags-list"
+          >
+            <li>
+              alpha
+            </li>
+            <li>
+              beta
+            </li>
+            <li>
+              gamma
+            </li>
+          </ul>
+        </div>
+        <div
+          data-testid="click-stop"
+        >
+          <div
+            data-class-name="justify-start w-full flex-1 md:justify-end"
+            data-testid="post-actions"
+          >
+            Actions 
+            post-123
+            <button>
+              Reply
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -83,18 +91,26 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
       <div
         class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
       >
-        <ul
-          data-testid="post-tags-list"
-        />
         <div
-          data-class-name="justify-start w-full flex-1 md:justify-end"
-          data-testid="post-actions"
+          data-testid="click-stop"
         >
-          Actions 
-          post-789
-          <button>
-            Reply
-          </button>
+          <ul
+            data-testid="post-tags-list"
+          />
+        </div>
+        <div
+          data-testid="click-stop"
+        >
+          <div
+            data-class-name="justify-start w-full flex-1 md:justify-end"
+            data-testid="post-actions"
+          >
+            Actions 
+            post-789
+            <button>
+              Reply
+            </button>
+          </div>
         </div>
       </div>
     </div>
