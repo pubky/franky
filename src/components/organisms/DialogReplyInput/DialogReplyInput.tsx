@@ -43,7 +43,7 @@ export function DialogReplyInput({ postId, onSuccess }: DialogReplyInputProps) {
         </div>
       </div>
 
-      <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
+      <div className="flex justify-between items-center md:flex-row flex-col md:gap-0 gap-2">
         <Molecules.PostTagsList
           tags={tags.map((tag) => ({ label: tag.label }))}
           showInput={false}

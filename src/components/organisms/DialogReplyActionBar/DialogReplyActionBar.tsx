@@ -82,10 +82,10 @@ export function DialogReplyActionBar({
             aria-label={ariaLabel}
           >
             {showLabel ? (
-              <>
-                <Icon className="size-4 text-secondary-foreground mr-1.5" strokeWidth={2} />
+              <div className="flex items-center gap-2">
+                <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
                 <span className="text-xs font-bold leading-4 text-secondary-foreground">Post</span>
-              </>
+              </div>
             ) : (
               <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
             )}
