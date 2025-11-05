@@ -6,3 +6,4 @@ export * from './useElementHeight';
 export * from './useInfiniteScroll';
 export * from './useEnterSubmit';
 export * from './useLayoutReset';
+export * from './useRecoveryPhraseValidation';

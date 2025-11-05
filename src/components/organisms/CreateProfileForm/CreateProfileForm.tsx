@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
@@ -296,7 +297,7 @@ export const CreateProfileForm = () => {
                 </Atoms.Container>
               ))}
 
-              <Molecules.DialogAddLink
+              <Organisms.DialogAddLink
                 onSave={(label, url) => {
                   setLinks([...links, { label, url }]);
                 }}
@@ -375,7 +376,7 @@ export const CreateProfileForm = () => {
         />
       </Atoms.Container>
 
-      <Molecules.DialogCropImage
+      <Organisms.DialogCropImage
         open={cropDialogOpen}
         imageSrc={pendingAvatarPreview}
         fileName={pendingAvatarFile?.name ?? 'avatar.png'}

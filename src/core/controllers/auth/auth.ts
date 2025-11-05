@@ -13,7 +13,10 @@ export class AuthController {
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(pubky);
-    const notificationState = await Core.BootstrapApplication.initialize(pubky);
+    const {
+      meta: { url },
+    } = Core.NotificationNormalizer.to(pubky);
+    const notificationState = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notificationState);
     authStore.setAuthenticated(true);
   }
@@ -48,7 +51,10 @@ export class AuthController {
   static async authorizeAndBootstrap() {
     const authStore = Core.useAuthStore.getState();
     const pubky = authStore.currentUserPubky || '';
-    const notificationState = await Core.BootstrapApplication.initializeWithRetry(pubky);
+    const {
+      meta: { url },
+    } = Core.NotificationNormalizer.to(pubky);
+    const notificationState = await Core.BootstrapApplication.initializeWithRetry({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notificationState);
     authStore.setAuthenticated(true);
   }
@@ -92,7 +98,10 @@ export class AuthController {
     onboardingStore.reset();
     const pubky = publicKey.z32();
     authStore.setCurrentUserPubky(pubky);
-    const notificationState = await Core.BootstrapApplication.initialize(pubky);
+    const {
+      meta: { url },
+    } = Core.NotificationNormalizer.to(pubky);
+    const notificationState = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
     Core.useNotificationStore.getState().setState(notificationState);
     authStore.setAuthenticated(true);
   }
