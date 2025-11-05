@@ -78,7 +78,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with different pos
               data-size="sm"
               data-testid="typography"
             >
-              7 days ago
+              5 days ago
             </div>
           </div>
         </div>
@@ -339,7 +339,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with old post 1`] 
               data-size="sm"
               data-testid="typography"
             >
-              about 4 years ago
+              almost 4 years ago
             </div>
           </div>
         </div>

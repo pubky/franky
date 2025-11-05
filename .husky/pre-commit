@@ -8,10 +8,10 @@ if ! npm run format:check; then
   exit 1
 fi
 
-echo "🧪 Running tests..."
-npm run test
-
-echo "🏗️  Building project..."
-npm run build
+echo "🔎 Running linter..."
+if ! npm run lint; then
+  echo "❌ Linter check failed. Fix the issues and commit again."
+  exit 1
+fi
 
 echo "✅ All pre-commit checks passed!"

@@ -16,7 +16,7 @@ export class TagController {
     const { pubky, postId } = Core.parsePostCompositeId(targetId);
     const postUri = postUriBuilder(pubky, postId);
 
-    const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
+    const normalizedTag = Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
     // Use composite targetId for local persistence to align with delete flow and tests
@@ -40,7 +40,7 @@ export class TagController {
     const { pubky, postId } = Core.parsePostCompositeId(targetId);
     const postUri = postUriBuilder(pubky, postId);
 
-    const normalizedTag = await Core.TagNormalizer.to(postUri, label.trim(), taggerId);
+    const normalizedTag = Core.TagNormalizer.to(postUri, label.trim(), taggerId);
     const normalizedLabel = normalizedTag.tag.label.toLowerCase();
 
     await Core.TagApplication.delete({

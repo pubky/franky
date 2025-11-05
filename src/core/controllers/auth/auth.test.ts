@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { LastReadResult } from 'pubky-app-specs';
 import { AuthController } from './auth';
 import { HomeserverService } from '@/core/services/homeserver';
 import * as Core from '@/core';
@@ -276,11 +277,27 @@ describe('AuthController', () => {
   });
 
   describe('notification hydration flows', () => {
+    const TEST_PUBKY = '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y';
+
+    const getLastReadUrl = (pubky: string): string => {
+      return `pubky://${pubky}/pub/pubky.app/last_read`;
+    };
+
     // Ensure the controller uses our mocked notification store in this scope
     beforeEach(() => {
       vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
         setState: storeMocks.notificationInit,
       } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
+
+      // Mock NotificationNormalizer.to to avoid pubky validation errors
+      vi.spyOn(Core.NotificationNormalizer, 'to').mockImplementation(
+        (pubky: string) =>
+          ({
+            meta: {
+              url: getLastReadUrl(pubky),
+            },
+          }) as LastReadResult,
+      );
     });
 
     it('authorizeAndBootstrap should initialize with retry and setState notification store', async () => {
@@ -289,9 +306,25 @@ describe('AuthController', () => {
         .spyOn(Core.BootstrapApplication, 'initializeWithRetry')
         .mockResolvedValue(state);
 
+      // Mock auth store to return a valid pubky
+      const authStoreState: Core.AuthStore = {
+        currentUserPubky: TEST_PUBKY,
+        session: null,
+        isAuthenticated: false,
+        setSession: vi.fn(),
+        setCurrentUserPubky: vi.fn(),
+        setAuthenticated: vi.fn(),
+        reset: vi.fn(),
+        selectCurrentUserPubky: vi.fn(() => TEST_PUBKY),
+      };
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStoreState);
+
       await AuthController.authorizeAndBootstrap();
 
-      expect(initializeWithRetrySpy).toHaveBeenCalledWith('');
+      expect(initializeWithRetrySpy).toHaveBeenCalledWith({
+        pubky: TEST_PUBKY,
+        lastReadUrl: getLastReadUrl(TEST_PUBKY),
+      });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
     });
 
@@ -300,7 +333,7 @@ describe('AuthController', () => {
       const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(state);
 
       const publicKeyMock = {
-        z32: () => 'pubky-123',
+        z32: () => TEST_PUBKY,
         free: () => {},
         to_uint8array: () => new Uint8Array(),
         toUint8Array: () => new Uint8Array(),
@@ -308,7 +341,10 @@ describe('AuthController', () => {
 
       await AuthController.loginWithAuthUrl({ publicKey: publicKeyMock });
 
-      expect(initializeSpy).toHaveBeenCalledWith('pubky-123');
+      expect(initializeSpy).toHaveBeenCalledWith({
+        pubky: TEST_PUBKY,
+        lastReadUrl: getLastReadUrl(TEST_PUBKY),
+      });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
     });
   });
