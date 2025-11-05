@@ -40,20 +40,24 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
             <Organisms.PostHeader postId={postId} />
             <Organisms.PostContent postId={postId} />
             <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
-              <Molecules.PostTagsList
-                tags={tags}
-                showInput={false}
-                showAddButton={false}
-                addMode
-                showEmojiPicker={false}
-                showTagClose={false}
-              />
+              <Atoms.ClickStop>
+                <Molecules.PostTagsList
+                  tags={tags}
+                  showInput={false}
+                  showAddButton={false}
+                  addMode
+                  showEmojiPicker={false}
+                  showTagClose={false}
+                />
+              </Atoms.ClickStop>
 
-              <Organisms.PostActionsBar
-                postId={postId}
-                onReplyClick={handleReplyClick}
-                className="justify-start w-full flex-1 md:justify-end"
-              />
+              <Atoms.ClickStop>
+                <Organisms.PostActionsBar
+                  postId={postId}
+                  onReplyClick={handleReplyClick}
+                  className="justify-start w-full flex-1 md:justify-end"
+                />
+              </Atoms.ClickStop>
             </div>
           </Atoms.CardContent>
         </Atoms.Card>
