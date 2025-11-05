@@ -34,8 +34,7 @@ export function DialogReplyActionBar({
   const commonButtonProps = {
     variant: 'secondary' as const,
     size: 'sm' as const,
-    className: 'h-8 px-3 py-2 rounded-full border-none',
-    style: { boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' } as React.CSSProperties,
+    className: 'h-8 px-3 py-2 rounded-full border-none shadow-xs-dark',
   };
 
   const actionButtons: ActionButtonConfig[] = [

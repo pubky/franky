@@ -81,8 +81,7 @@ export function PostTagInput({
             variant="secondary"
             size="icon"
             onClick={onEmojiClick}
-            className="size-5 border-none p-1"
-            style={{ boxShadow: '0px 1px 2px 0px rgba(5, 5, 10, 0.2)' }}
+            className="size-5 border-none p-1 shadow-xs-dark"
             aria-label="Open emoji picker"
           >
             <Libs.Smile className="size-3" strokeWidth={2} />
