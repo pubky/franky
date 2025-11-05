@@ -5,7 +5,6 @@ exports[`DialogReplyPost - Snapshots > matches snapshot 1`] = `
   class="bg-card rounded-md p-6 flex flex-col gap-4 w-full"
 >
   <div
-    data-avatar-size="default"
     data-testid="post-header"
   >
     snapshot-post-id
@@ -23,7 +22,6 @@ exports[`DialogReplyPost - Snapshots > matches snapshot with custom className 1`
   class="bg-card rounded-md p-6 flex flex-col gap-4 w-full test-class"
 >
   <div
-    data-avatar-size="default"
     data-testid="post-header"
   >
     snapshot-post-id

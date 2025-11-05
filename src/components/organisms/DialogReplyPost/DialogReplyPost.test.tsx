@@ -1,14 +1,9 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DialogReplyPost } from './DialogReplyPost';
-import * as Organisms from '@/organisms';
 
 vi.mock('@/organisms', () => ({
-  PostHeader: vi.fn(({ postId, avatarSize }) => (
-    <div data-testid="post-header" data-avatar-size={avatarSize}>
-      {postId}
-    </div>
-  )),
+  PostHeader: vi.fn(({ postId }) => <div data-testid="post-header">{postId}</div>),
   PostContent: vi.fn(({ postId }) => <div data-testid="post-content">{postId}</div>),
 }));
 
@@ -39,19 +34,6 @@ describe('DialogReplyPost', () => {
     const { container } = render(<DialogReplyPost postId="test-post-id" className="custom-class" />);
 
     expect(container.firstChild).toHaveClass('custom-class');
-  });
-
-  it('passes avatarSize="default" to PostHeader', () => {
-    const { getByTestId } = render(<DialogReplyPost postId="test-post-id" />);
-
-    const postHeader = getByTestId('post-header');
-    expect(postHeader).toHaveAttribute('data-avatar-size', 'default');
-    expect(Organisms.PostHeader).toHaveBeenCalledTimes(1);
-    const callArgs = (Organisms.PostHeader as ReturnType<typeof vi.fn>).mock.calls[0][0];
-    expect(callArgs).toMatchObject({
-      postId: 'test-post-id',
-      avatarSize: 'default',
-    });
   });
 });
 

@@ -11,7 +11,7 @@ interface DialogReplyPostProps {
 export function DialogReplyPost({ postId, className }: DialogReplyPostProps) {
   return (
     <div className={Libs.cn('bg-card rounded-md p-6 flex flex-col gap-4 w-full', className)}>
-      <Organisms.PostHeader postId={postId} avatarSize="default" />
+      <Organisms.PostHeader postId={postId} />
       <Organisms.PostContent postId={postId} />
     </div>
   );
