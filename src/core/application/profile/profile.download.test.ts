@@ -6,6 +6,12 @@ vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: (pubky: string) => `pubky://${pubky}/pub/pubky.app/`,
 }));
 
+// Mock config
+vi.mock('@/config', () => ({
+  DB_NAME: 'test-db',
+  DB_VERSION: 1,
+}));
+
 // Mock the Env module
 vi.mock('@/libs/env', () => ({
   Env: {
@@ -82,8 +88,8 @@ describe('ProfileApplication.downloadData', () => {
 
   it('should pass Infinity as limit to HomeserverService.list', async () => {
     const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(['file1.json', 'file2.json']);
-    const mockResponse = new Response('{}', { status: 200 });
-    vi.spyOn(Core.HomeserverService, 'get').mockResolvedValue(mockResponse);
+    // Return a new Response for each call since Response body can only be read once
+    vi.spyOn(Core.HomeserverService, 'get').mockImplementation(async () => new Response('{}', { status: 200 }));
 
     await ProfileApplication.downloadData({ pubky });
 
