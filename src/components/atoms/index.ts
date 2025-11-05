@@ -16,6 +16,7 @@ export * from './List';
 export * from './PageHeader';
 export * from './PageSubtitle';
 export * from './Popover';
+export * from './PostReplyConnector';
 export * from './ReplyLine';
 export * from './SidebarButton';
 export * from './Textarea';

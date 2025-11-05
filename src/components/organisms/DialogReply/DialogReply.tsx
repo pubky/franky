@@ -18,12 +18,14 @@ export function DialogReply({ postId, open, onOpenChange }: DialogReplyProps) {
         </Atoms.DialogHeader>
         <Atoms.Container className="flex flex-col gap-3">
           <Organisms.DialogReplyPost postId={postId} />
-          <Organisms.DialogReplyInput
-            postId={postId}
-            onSuccess={() => {
-              onOpenChange?.(false);
-            }}
-          />
+          <div className="relative pl-6">
+            <Organisms.DialogReplyInput
+              postId={postId}
+              onSuccess={() => {
+                onOpenChange?.(false);
+              }}
+            />
+          </div>
         </Atoms.Container>
       </Atoms.DialogContent>
     </Atoms.Dialog>

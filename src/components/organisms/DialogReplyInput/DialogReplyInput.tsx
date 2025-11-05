@@ -27,6 +27,7 @@ export function DialogReplyInput({ postId, onSuccess }: DialogReplyInputProps) {
 
   return (
     <div className="flex flex-col gap-4 p-6 border border-dashed border-input rounded-md relative">
+      <Atoms.PostReplyConnector />
       <Organisms.PostHeader postId={currentUserId} hideTime={true} />
 
       {/* Input field */}
@@ -43,7 +44,7 @@ export function DialogReplyInput({ postId, onSuccess }: DialogReplyInputProps) {
         </div>
       </div>
 
-      <div className="flex justify-between items-center md:flex-row flex-col md:gap-0 gap-2">
+      <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
         <Molecules.PostTagsList
           tags={tags.map((tag) => ({ label: tag.label }))}
           showInput={false}
