@@ -16,7 +16,6 @@ export class NexusUserService {
   static async notifications(params: Core.TUserPaginationParams): Promise<Core.NexusNotification[]> {
     const url = Core.userApi.notifications(params);
     let notificationList = await Core.queryNexus<Core.NexusNotification[]>(url);
-    // TODO: FIx that one
     if (!notificationList) notificationList = [];
     Libs.Logger.debug(`Notifications fetched successfully!`);
     return notificationList;

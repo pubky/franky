@@ -9,20 +9,20 @@ export type TPubkyParams = {
 export type TAuthenticatedData = TPubkyParams & {
   session: Core.SignupResult['session'];
 }
-export interface TKeypairParams {
+export type TKeypairParams = {
   keypair: Keypair;
 }
-export interface TSignUpParams {
+export type TSignUpParams = {
   keypair: Core.TKeyPair;
   signupToken: string;
 }
-export interface TLoginWithMnemonicParams {
+export type TLoginWithMnemonicParams = {
   mnemonic: string;
 }
-export interface TLoginWithEncryptedFileParams {
+export type TLoginWithEncryptedFileParams = {
   encryptedFile: File;
   password: string;
 }
-export interface TLoginWithAuthUrlParams {
+export type TLoginWithAuthUrlParams = {
   publicKey: PublicKey;
 }

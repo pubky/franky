@@ -98,9 +98,6 @@ export class AuthController {
    * @throws Error if public key is not provided
    */
   static async loginWithAuthUrl({ publicKey }: Core.TLoginWithAuthUrlParams) {
-    if (!publicKey) {
-      throw new Error('Public key is required');
-    }
     const authStore = Core.useAuthStore.getState();
     const onboardingStore = Core.useOnboardingStore.getState();
     onboardingStore.reset();

@@ -18,7 +18,10 @@ export class BootstrapApplication {
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
     ]);
-    console.log('lastRead', notificationList, lastRead);
+    if (!data) {
+      // TODO: Maybe in the UI, we should redirect or show some special message to the user.
+      throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
+    }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts(data.posts),
