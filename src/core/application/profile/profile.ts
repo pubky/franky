@@ -35,7 +35,9 @@ export class ProfileApplication {
     await Core.Local.Profile.deleteAccount();
 
     const baseDirectory = baseUriBuilder(pubky);
-    const dataList = await Core.HomeserverService.list(baseDirectory);
+    // TODO: Using undefined, false, and Infinity here as a temporary workaround since
+    // homeserver.list does not yet support pagination. This ensures all files are deleted.
+    const dataList = await Core.HomeserverService.list(baseDirectory, undefined, false, Infinity);
 
     // Separate profile.json and other files
     const profileUrl = `${baseDirectory}profile.json`;

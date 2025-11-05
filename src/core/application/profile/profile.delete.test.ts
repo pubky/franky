@@ -56,7 +56,7 @@ describe('ProfileApplication.deleteAccount', () => {
     await ProfileApplication.deleteAccount({ pubky });
 
     expect(localDeleteSpy).toHaveBeenCalledTimes(1);
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory);
+    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
     expect(deleteSpy).toHaveBeenCalledTimes(4);
 
     expect(deleteSpy).toHaveBeenNthCalledWith(1, `${baseDirectory}tags/tag1`);
@@ -100,8 +100,9 @@ describe('ProfileApplication.deleteAccount', () => {
     const deleteSpy = vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
 
     await ProfileApplication.deleteAccount({ pubky });
-
-    expect(listSpy).toHaveBeenCalledWith(baseDirectory);
+    // TODO: Using undefined, false, and Infinity here as a temporary workaround since
+    // homeserver.list does not yet support pagination. This ensures all files are deleted.
+    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
     expect(deleteSpy).toHaveBeenCalledTimes(1);
     expect(deleteSpy).toHaveBeenCalledWith(profileUrl);
   });
@@ -161,5 +162,22 @@ describe('ProfileApplication.deleteAccount', () => {
     expect(deleteSpy).toHaveBeenNthCalledWith(2, `${baseDirectory}mmm`);
     expect(deleteSpy).toHaveBeenNthCalledWith(3, `${baseDirectory}aaa`);
     expect(deleteSpy).toHaveBeenNthCalledWith(4, profileUrl);
+  });
+
+  it('passes Infinity limit to ensure all files are listed regardless of count', async () => {
+    // Simulate a user with more than 500 files
+    const largeFileList = [
+      ...Array.from({ length: 600 }, (_, i) => `${baseDirectory}posts/post${i}`),
+      `${baseDirectory}profile.json`,
+    ];
+
+    vi.spyOn(Core.Local.Profile, 'deleteAccount').mockResolvedValue(undefined as unknown as void);
+    const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(largeFileList);
+    vi.spyOn(Core.HomeserverService, 'delete').mockResolvedValue(undefined as unknown as void);
+
+    await ProfileApplication.deleteAccount({ pubky });
+
+    // Verify that list was called with Infinity to get all files
+    expect(listSpy).toHaveBeenCalledWith(baseDirectory, undefined, false, Infinity);
   });
 });
