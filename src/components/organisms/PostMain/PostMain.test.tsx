@@ -18,8 +18,8 @@ vi.mock('@/libs', async (importOriginal) => {
 
 // Minimal atoms used by PostMain
 vi.mock('@/atoms', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" data-class-name={className}>
+  Card: ({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
+    <div data-testid="card" data-class-name={className} onClick={onClick}>
       {children}
     </div>
   ),

@@ -2,61 +2,57 @@
 
 exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 <div
-  class="cursor-pointer"
+  data-class-name="rounded-md py-0 cursor-pointer"
+  data-testid="card"
 >
   <div
-    data-class-name="rounded-md py-0"
-    data-testid="card"
+    data-class-name="p-6 flex flex-col gap-4"
+    data-testid="card-content"
   >
     <div
-      data-class-name="p-6 flex flex-col gap-4"
-      data-testid="card-content"
+      data-testid="post-header"
+    >
+      PostHeader 
+      post-123
+    </div>
+    <div
+      data-testid="post-content"
+    >
+      PostContent 
+      post-123
+    </div>
+    <div
+      class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
     >
       <div
-        data-testid="post-header"
+        data-testid="click-stop"
       >
-        PostHeader 
-        post-123
+        <ul
+          data-testid="post-tags-list"
+        >
+          <li>
+            alpha
+          </li>
+          <li>
+            beta
+          </li>
+          <li>
+            gamma
+          </li>
+        </ul>
       </div>
       <div
-        data-testid="post-content"
-      >
-        PostContent 
-        post-123
-      </div>
-      <div
-        class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
+        data-testid="click-stop"
       >
         <div
-          data-testid="click-stop"
+          data-class-name="justify-start w-full flex-1 md:justify-end"
+          data-testid="post-actions"
         >
-          <ul
-            data-testid="post-tags-list"
-          >
-            <li>
-              alpha
-            </li>
-            <li>
-              beta
-            </li>
-            <li>
-              gamma
-            </li>
-          </ul>
-        </div>
-        <div
-          data-testid="click-stop"
-        >
-          <div
-            data-class-name="justify-start w-full flex-1 md:justify-end"
-            data-testid="post-actions"
-          >
-            Actions 
-            post-123
-            <button>
-              Reply
-            </button>
-          </div>
+          Actions 
+          post-123
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>
@@ -66,51 +62,47 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
 <div
-  class="cursor-pointer"
+  data-class-name="rounded-md py-0 cursor-pointer"
+  data-testid="card"
 >
   <div
-    data-class-name="rounded-md py-0"
-    data-testid="card"
+    data-class-name="p-6 flex flex-col gap-4"
+    data-testid="card-content"
   >
     <div
-      data-class-name="p-6 flex flex-col gap-4"
-      data-testid="card-content"
+      data-testid="post-header"
+    >
+      PostHeader 
+      post-789
+    </div>
+    <div
+      data-testid="post-content"
+    >
+      PostContent 
+      post-789
+    </div>
+    <div
+      class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
     >
       <div
-        data-testid="post-header"
+        data-testid="click-stop"
       >
-        PostHeader 
-        post-789
+        <ul
+          data-testid="post-tags-list"
+        />
       </div>
       <div
-        data-testid="post-content"
-      >
-        PostContent 
-        post-789
-      </div>
-      <div
-        class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
+        data-testid="click-stop"
       >
         <div
-          data-testid="click-stop"
+          data-class-name="justify-start w-full flex-1 md:justify-end"
+          data-testid="post-actions"
         >
-          <ul
-            data-testid="post-tags-list"
-          />
-        </div>
-        <div
-          data-testid="click-stop"
-        >
-          <div
-            data-class-name="justify-start w-full flex-1 md:justify-end"
-            data-testid="post-actions"
-          >
-            Actions 
-            post-789
-            <button>
-              Reply
-            </button>
-          </div>
+          Actions 
+          post-789
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>

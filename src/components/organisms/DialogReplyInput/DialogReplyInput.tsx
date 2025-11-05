@@ -31,17 +31,15 @@ export function DialogReplyInput({ postId, onSuccess }: DialogReplyInputProps) {
       <Organisms.PostHeader postId={currentUserId} hideTime={true} />
 
       {/* Input field */}
-      <div className="flex gap-1 items-start w-full">
-        <div ref={containerRef} className="flex-1">
-          <Atoms.Textarea
-            placeholder="Write a reply..."
-            className="min-h-6 border-none bg-transparent p-0 text-base leading-6 font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
-            value={replyContent}
-            onChange={(e) => setReplyContent(e.target.value)}
-            onKeyDown={handleKeyDown}
-            rows={1}
-          />
-        </div>
+      <div ref={containerRef}>
+        <Atoms.Textarea
+          placeholder="Write a reply..."
+          className="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
+          value={replyContent}
+          onChange={(e) => setReplyContent(e.target.value)}
+          onKeyDown={handleKeyDown}
+          rows={1}
+        />
       </div>
 
       <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">

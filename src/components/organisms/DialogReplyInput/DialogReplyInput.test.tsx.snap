@@ -15,18 +15,12 @@ exports[`DialogReplyInput - Snapshots > matches snapshot in default state 1`] = 
     PostHeader 
     test-user-id:pubkey
   </div>
-  <div
-    class="flex gap-1 items-start w-full"
-  >
-    <div
-      class="flex-1"
-    >
-      <textarea
-        class="min-h-6 border-none bg-transparent p-0 text-base leading-6 font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
-        data-testid="textarea"
-        placeholder="Write a reply..."
-      />
-    </div>
+  <div>
+    <textarea
+      class="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
   </div>
   <div
     class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
@@ -70,18 +64,12 @@ exports[`DialogReplyInput - Snapshots > matches snapshot with user details 1`] =
     PostHeader 
     test-user-id:pubkey
   </div>
-  <div
-    class="flex gap-1 items-start w-full"
-  >
-    <div
-      class="flex-1"
-    >
-      <textarea
-        class="min-h-6 border-none bg-transparent p-0 text-base leading-6 font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
-        data-testid="textarea"
-        placeholder="Write a reply..."
-      />
-    </div>
+  <div>
+    <textarea
+      class="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
   </div>
   <div
     class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
@@ -125,18 +113,12 @@ exports[`DialogReplyInput - Snapshots > matches snapshot without user details 1`
     PostHeader 
     test-user-id:pubkey
   </div>
-  <div
-    class="flex gap-1 items-start w-full"
-  >
-    <div
-      class="flex-1"
-    >
-      <textarea
-        class="min-h-6 border-none bg-transparent p-0 text-base leading-6 font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
-        data-testid="textarea"
-        placeholder="Write a reply..."
-      />
-    </div>
+  <div>
+    <textarea
+      class="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
   </div>
   <div
     class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
