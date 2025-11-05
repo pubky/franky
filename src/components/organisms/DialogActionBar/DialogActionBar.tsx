@@ -3,13 +3,16 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export interface DialogReplyActionBarProps {
+export type DialogActionBarVariant = 'reply' | 'repost';
+
+export interface DialogActionBarProps {
+  variant: DialogActionBarVariant;
   onEmojiClick?: () => void;
   onImageClick?: () => void;
   onFileClick?: () => void;
   onArticleClick?: () => void;
-  onPostClick?: () => void;
-  isPostDisabled?: boolean;
+  onActionClick?: () => void;
+  isActionDisabled?: boolean;
   className?: string;
 }
 
@@ -20,21 +23,33 @@ interface ActionButtonConfig {
   disabled?: boolean;
   className?: string;
   showLabel?: boolean;
+  labelText?: string;
 }
 
-export function DialogReplyActionBar({
+export function DialogActionBar({
+  variant,
   onEmojiClick,
   onImageClick,
   onFileClick,
   onArticleClick,
-  onPostClick,
-  isPostDisabled = false,
+  onActionClick,
+  isActionDisabled = false,
   className,
-}: DialogReplyActionBarProps) {
+}: DialogActionBarProps) {
   const commonButtonProps = {
     variant: 'secondary' as const,
     size: 'sm' as const,
     className: 'h-8 px-3 py-2 rounded-full border-none shadow-xs-dark',
+  };
+
+  const actionButtonConfig: ActionButtonConfig = {
+    icon: variant === 'reply' ? Libs.Send : Libs.Repeat,
+    onClick: onActionClick,
+    disabled: isActionDisabled,
+    ariaLabel: variant === 'reply' ? 'Post reply' : 'Repost',
+    className: Libs.cn(isActionDisabled && 'opacity-40'),
+    showLabel: true,
+    labelText: variant === 'reply' ? 'Post' : 'Repost',
   };
 
   const actionButtons: ActionButtonConfig[] = [
@@ -58,20 +73,13 @@ export function DialogReplyActionBar({
       onClick: onArticleClick,
       ariaLabel: 'Add article',
     },
-    {
-      icon: Libs.Send,
-      onClick: onPostClick,
-      disabled: isPostDisabled,
-      ariaLabel: 'Post reply',
-      className: Libs.cn(isPostDisabled && 'opacity-40'),
-      showLabel: true,
-    },
+    actionButtonConfig,
   ];
 
   return (
     <div className={Libs.cn('flex gap-2 items-center justify-end', className)}>
       {actionButtons.map(
-        ({ icon: Icon, onClick, ariaLabel, disabled, className: buttonClassName, showLabel }, index) => (
+        ({ icon: Icon, onClick, ariaLabel, disabled, className: buttonClassName, showLabel, labelText }, index) => (
           <Atoms.Button
             key={index}
             {...commonButtonProps}
@@ -83,7 +91,7 @@ export function DialogReplyActionBar({
             {showLabel ? (
               <div className="flex items-center gap-2">
                 <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
-                <span className="text-xs font-bold leading-4 text-secondary-foreground">Post</span>
+                <span className="text-xs font-bold leading-4 text-secondary-foreground">{labelText}</span>
               </div>
             ) : (
               <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
