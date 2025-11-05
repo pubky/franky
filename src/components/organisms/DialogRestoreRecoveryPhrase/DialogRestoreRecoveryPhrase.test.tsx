@@ -264,6 +264,36 @@ describe('DialogRestoreRecoveryPhrase', () => {
       // Test that onBlur was triggered (indirect test)
       expect(firstInput).not.toHaveFocus();
     });
+
+    it('distributes 12 words across all fields when pasting space-delimited string into first field', () => {
+      render(<DialogRestoreRecoveryPhrase />);
+
+      const inputs = screen.getAllByTestId('word-input');
+      const firstInput = inputs[0];
+
+      const twelveWords = [
+        'ability',
+        'able',
+        'above',
+        'absent',
+        'accident',
+        'absorb',
+        'abstract',
+        'absurd',
+        'about',
+        'abuse',
+        'access',
+        'abandon',
+      ];
+
+      // Paste 12 words as a space-delimited string into the first field
+      fireEvent.change(firstInput, { target: { value: twelveWords.join(' ') } });
+
+      // Verify all 12 fields are populated with the correct words
+      inputs.forEach((input, index) => {
+        expect(input).toHaveValue(twelveWords[index]);
+      });
+    });
   });
 
   describe('Validation', () => {
