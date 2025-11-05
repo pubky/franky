@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
@@ -25,8 +26,8 @@ export const HomeActions = () => {
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <Atoms.FooterLinks className={Libs.cn('sm:pr-16 justify-end flex-row content-end', props.className)} {...props}>
-      By creating a Pubky account, you agree to the <Molecules.DialogTerms />, <Molecules.DialogPrivacy />, and confirm
-      you are <Molecules.DialogAge /> Pubky is powered by{' '}
+      By creating a Pubky account, you agree to the <Organisms.DialogTerms />, <Organisms.DialogPrivacy />, and confirm
+      you are <Organisms.DialogAge /> Pubky is powered by{' '}
       <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
         Pubky Core
       </Atoms.Link>{' '}
