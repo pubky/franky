@@ -235,7 +235,7 @@ exports[`EditProfile > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="flex flex-col gap-6 items-center lg:items-start"
+        class="flex flex-col gap-6 items-center"
       >
         <h2
           class="text-4xl leading-normal text-foreground font-bold"
@@ -548,7 +548,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
         </button>
       </div>
       <div
-        class="flex flex-col gap-6 items-center lg:items-start"
+        class="flex flex-col gap-6 items-center"
       >
         <h2
           class="text-4xl leading-normal text-foreground font-bold"
