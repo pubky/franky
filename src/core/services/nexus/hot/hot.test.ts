@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import { NexusHotService } from './hot';
+import { NexusHotService } from './hot.api';
 
 describe('NexusHotService', () => {
   beforeEach(() => {
