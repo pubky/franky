@@ -16,16 +16,11 @@ export class NexusHotService {
    * @returns Array of hot tags with metadata
    */
   static async fetch(params: Core.TTagHotParams): Promise<Core.NexusHotTag[]> {
-    try {
-      const url = Core.tagApi.hot(params);
-      const response = await Core.queryNexus<Core.NexusHotTag[]>(url);
+    const url = Core.tagApi.hot(params);
+    const response = await Core.queryNexus<Core.NexusHotTag[]>(url);
 
-      Libs.Logger.debug('Hot tags fetched successfully', { count: response?.length ?? 0 });
+    Libs.Logger.debug('Hot tags fetched successfully', { count: response?.length ?? 0 });
 
-      return response || [];
-    } catch (error) {
-      Libs.Logger.error('Failed to fetch hot tags from Nexus', error);
-      throw error;
-    }
+    return response || [];
   }
 }
