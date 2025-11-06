@@ -28,7 +28,12 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
       if (!inputValue.trim() || isAdding || !currentUserId) return;
       setIsAdding(true);
 
-      await Core.TagController.create({ targetId: postId, label: inputValue.trim(), taggerId: currentUserId });
+      await Core.TagController.create({
+        taggedId: postId,
+        label: inputValue.trim(),
+        taggerId: currentUserId,
+        taggedKind: Core.TagKind.POST,
+      });
       // useLiveQuery will automatically update tags
       setInputValue('');
     } catch (error) {
@@ -46,9 +51,19 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
 
       const isCurrentlyTagged = tag.relationship;
       if (isCurrentlyTagged) {
-        await Core.TagController.delete({ targetId: postId, label: tagLabel, taggerId: currentUserId });
+        await Core.TagController.delete({
+          taggedId: postId,
+          label: tagLabel,
+          taggerId: currentUserId,
+          taggedKind: Core.TagKind.POST,
+        });
       } else {
-        await Core.TagController.create({ targetId: postId, label: tagLabel, taggerId: currentUserId });
+        await Core.TagController.create({
+          taggedId: postId,
+          label: tagLabel,
+          taggerId: currentUserId,
+          taggedKind: Core.TagKind.POST,
+        });
       }
     } catch (error) {
       console.error('Failed to toggle tagger:', error);
