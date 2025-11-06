@@ -135,7 +135,7 @@ export class HomeserverService {
     }
   }
 
-  async signup(keypair: Core.TKeyPair, signupToken: string) {
+  async signup(keypair: Core.TKeyPair, signupToken: string): Promise<Core.TAuthenticateKeypairResult> {
     try {
       const homeserverPublicKey = Pubky.PublicKey.from(Config.HOMESERVER);
       Libs.Logger.debug('Signing up', {
@@ -296,7 +296,7 @@ export class HomeserverService {
     }
   }
 
-  async authenticateKeypair(keypair: Pubky.Keypair) {
+  async authenticateKeypair(keypair: Pubky.Keypair): Promise<Core.TAuthenticateKeypairResult | undefined> {
     try {
       const pubky = keypair.publicKey().z32();
       const secretKey = Libs.Identity.secretKeyToHex(keypair.secretKey());

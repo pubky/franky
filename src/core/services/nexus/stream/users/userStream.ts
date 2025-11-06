@@ -14,20 +14,14 @@ export class NexusUserStreamService {
    * @returns User stream data
    */
   static async fetchByIds(params: Core.TUserStreamUsersByIdsParams): Promise<Core.NexusUser[]> {
-    try {
-      if (params.user_ids.length === 0) {
-        return [];
-      }
-
-      const url = Core.userStreamApi.usersByIds(params);
-
-      const response = await Core.queryNexus<Core.NexusUser[]>(url.url, 'POST', JSON.stringify(url.body));
-      Libs.Logger.debug('Users fetched successfully', { response });
-
-      return response;
-    } catch (error) {
-      Libs.Logger.error('Failed to fetch users', error);
-      throw error;
+    if (params.user_ids.length === 0) {
+      return [];
     }
+    const url = Core.userStreamApi.usersByIds(params);
+    let response = await Core.queryNexus<Core.NexusUser[]>(url.url, 'POST', JSON.stringify(url.body));
+    if (!response) response = [];
+    Libs.Logger.debug('Users fetched successfully', { response });
+
+    return response;
   }
 }

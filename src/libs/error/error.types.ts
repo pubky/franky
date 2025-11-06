@@ -7,6 +7,7 @@ export enum NexusErrorType {
   BOOTSTRAP_FAILED = 'BOOTSTRAP_FAILED',
   NETWORK_ERROR = 'NETWORK_ERROR',
   INVALID_RESPONSE = 'INVALID_RESPONSE',
+  NO_CONTENT = 'NO_CONTENT',
 
   // TODO: Add more error types
 }
