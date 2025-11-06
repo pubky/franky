@@ -149,7 +149,10 @@ describe('NexusBootstrapService', () => {
 
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve(mockResponse),
+        text: () => Promise.resolve(JSON.stringify(mockResponse)),
+        headers: {
+          get: vi.fn(),
+        },
       });
 
       const result = await Core.NexusBootstrapService.fetch(pubky);
@@ -163,81 +166,34 @@ describe('NexusBootstrapService', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('should throw INVALID_REQUEST error on 400', async () => {
+    it('should propagate errors from queryNexus', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 400,
         statusText: 'Bad Request',
+        headers: {
+          get: vi.fn(),
+        },
       });
 
       await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
         type: Libs.NexusErrorType.INVALID_REQUEST,
         statusCode: 400,
-        details: expect.objectContaining({
-          statusCode: 400,
-          statusText: 'Bad Request',
-        }),
       });
     });
 
-    it('should throw RESOURCE_NOT_FOUND error on 404', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-        statusText: 'Not Found',
-      });
-
-      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
-        type: Libs.NexusErrorType.RESOURCE_NOT_FOUND,
-        statusCode: 404,
-      });
-    });
-
-    it('should throw INVALID_RESPONSE error on invalid JSON', async () => {
+    it('should return undefined when response is empty', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.reject(new Error('Invalid JSON')),
+        status: 204,
+        text: () => Promise.resolve(''),
+        headers: {
+          get: vi.fn(),
+        },
       });
 
-      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
-        type: Libs.NexusErrorType.INVALID_RESPONSE,
-        statusCode: 500,
-        details: expect.objectContaining({
-          error: expect.any(Error),
-        }),
-      });
-    });
-
-    it('should throw error on fetch failure', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network failure'));
-
-      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toThrow('Network failure');
-    });
-
-    it('should throw RATE_LIMIT_EXCEEDED on 429', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 429,
-        statusText: 'Too Many Requests',
-      });
-
-      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
-        type: Libs.NexusErrorType.RATE_LIMIT_EXCEEDED,
-        statusCode: 429,
-      });
-    });
-
-    it('should throw SERVICE_UNAVAILABLE on 503', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 503,
-        statusText: 'Service Unavailable',
-      });
-
-      await expect(Core.NexusBootstrapService.fetch(pubky)).rejects.toMatchObject({
-        type: Libs.NexusErrorType.SERVICE_UNAVAILABLE,
-        statusCode: 503,
-      });
+      const result = await Core.NexusBootstrapService.fetch(pubky);
+      expect(result).toBeUndefined();
     });
   });
 });
