@@ -31,6 +31,44 @@ export class ProfileApplication {
     }
   }
 
+  static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountParams) {
+    // Clear local IndexedDB data first
+    await Core.LocalProfileService.deleteAccount();
+
+    const baseDirectory = baseUriBuilder(pubky);
+    // TODO: Using undefined, false, and Infinity here as a temporary workaround since
+    // homeserver.list does not yet support pagination. This ensures all files are deleted.
+    const dataList = await Core.HomeserverService.list(baseDirectory, undefined, false, Infinity);
+
+    // Separate profile.json and other files
+    const profileUrl = `${baseDirectory}profile.json`;
+    const filesToDelete = dataList.filter((file) => file !== profileUrl);
+
+    // Sort remaining files alphanumerically and reverse
+    filesToDelete.sort().reverse();
+
+    // Total files including profile.json for progress calculation
+    const totalFiles = filesToDelete.length + 1;
+
+    // Delete each file (excluding profile.json) and update progress
+    for (let index = 0; index < filesToDelete.length; index++) {
+      await Core.HomeserverService.delete(filesToDelete[index]);
+
+      if (!setProgress) {
+        continue;
+      }
+
+      setProgress(Math.round(((index + 1) / totalFiles) * 100));
+    }
+
+    // Finally, delete profile.json and update progress to 100%
+    await Core.HomeserverService.delete(profileUrl);
+
+    if (setProgress) {
+      setProgress(100);
+    }
+  }
+
   /**
    * Downloads all user data from the homeserver and packages it into a ZIP file.
    * Fetches all files at once (using Infinity limit), formats JSON files with indentation, and preserves binary files.

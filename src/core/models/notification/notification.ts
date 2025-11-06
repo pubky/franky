@@ -71,4 +71,22 @@ export class NotificationModel {
       .sortBy('timestamp')
       .then((notifications) => notifications.slice(0, limit));
   }
+
+  /**
+   * Clear all notifications from the table.
+   */
+  static async clear(): Promise<void> {
+    try {
+      await this.table.clear();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.DELETE_FAILED,
+        `Failed to clear table ${this.table.name}`,
+        500,
+        {
+          error,
+        },
+      );
+    }
+  }
 }

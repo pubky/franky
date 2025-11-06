@@ -256,6 +256,16 @@ export class HomeserverService {
   }
 
   /**
+   * Deletes a file from the homeserver.
+   *
+   * @param {string} url - Pubky URL of the file to delete.
+   */
+  static async delete(url: string) {
+    await this.request(Core.HomeserverAction.DELETE, url);
+    Libs.Logger.debug('Delete successful', { url });
+  }
+
+  /**
    * Fetches a resource from the homeserver.
    *
    * @param {string} url - Pubky URL to fetch.
