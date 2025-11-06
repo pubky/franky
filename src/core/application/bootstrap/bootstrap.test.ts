@@ -198,6 +198,34 @@ describe('BootstrapApplication', () => {
       expect(persistNotificationsSpy).not.toHaveBeenCalled();
     });
 
+    it('should throw NO_CONTENT AppError when bootstrap data is empty (null)', async () => {
+      const nexusFetchSpy = vi
+        .spyOn(Core.NexusBootstrapService, 'fetch')
+        .mockResolvedValue(null as unknown as Core.NexusBootstrapResponse);
+      const homeserverRequestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockResolvedValue({ timestamp: MOCK_LAST_READ });
+      const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
+      const persistNotificationsSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount');
+
+      const params = getBootstrapParams(TEST_PUBKY);
+      await expect(BootstrapApplication.initialize(params)).rejects.toMatchObject({
+        name: 'AppError',
+        type: Libs.NexusErrorType.NO_CONTENT,
+        statusCode: 204,
+        message: 'No content found for bootstrap data',
+      });
+
+      expect(nexusFetchSpy).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+      expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
+      expect(persistUsersSpy).not.toHaveBeenCalled();
+      expect(persistPostsSpy).not.toHaveBeenCalled();
+      expect(persistNotificationsSpy).not.toHaveBeenCalled();
+    });
+
     it('should throw error when LocalPersistenceService fails', async () => {
       const mockBootstrapData: Core.NexusBootstrapResponse = emptyBootstrap();
 
@@ -262,7 +290,7 @@ describe('BootstrapApplication', () => {
     });
   });
 
-  describe('authorizeAndBootstrap', () => {
+  describe('initializeWithRetry', () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });

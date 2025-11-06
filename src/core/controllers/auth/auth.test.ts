@@ -1,11 +1,58 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { LastReadResult } from 'pubky-app-specs';
 import { AuthController } from './auth';
-import { HomeserverService } from '@/core/services/homeserver';
 import * as Core from '@/core';
-import { Identity } from '@/libs';
+import * as Libs from '@/libs';
 
 const TEST_SECRET_KEY = Buffer.from(new Uint8Array(32).fill(1)).toString('hex');
+const TEST_PUBKY = '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y';
+
+const getLastReadUrl = (pubky: string) => `pubky://${pubky}/pub/pubky.app/last_read`;
+
+const createMockKeypair = () =>
+  ({
+    pubky: vi.fn(() => ({ z32: () => 'test-pubky' })),
+    secretKey: vi.fn(() => new Uint8Array(32).fill(1)),
+    publicKey: vi.fn(() => ({ z32: () => 'test-pubky' })),
+    free: vi.fn(),
+  }) as unknown as import('@synonymdev/pubky').Keypair;
+
+const createMockPublicKey = () =>
+  ({
+    z32: () => TEST_PUBKY,
+    free: () => {},
+    to_uint8array: () => new Uint8Array(),
+    toUint8Array: () => new Uint8Array(),
+  }) as import('@synonymdev/pubky').PublicKey;
+
+const createMockEncryptedFile = () =>
+  new File([new Uint8Array([1, 2, 3, 4, 5])], 'recovery.bin', { type: 'application/octet-stream' });
+
+const setupOnboardingStore = () => {
+  vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue({
+    secretKey: TEST_SECRET_KEY,
+    reset: storeMocks.resetOnboardingStore,
+  } as unknown as Core.OnboardingStore);
+};
+
+const setupNotificationMocks = () => {
+  vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+    setState: storeMocks.notificationInit,
+  } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
+
+  vi.spyOn(Core.NotificationNormalizer, 'to').mockImplementation(
+    (pubky: string) => ({ meta: { url: getLastReadUrl(pubky) } }) as LastReadResult,
+  );
+};
+
+const setupAuthAndNotificationStores = () => {
+  const authStore = storeMocks.getAuthState();
+  vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+  vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+    setState: storeMocks.notificationInit,
+  } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
+  return authStore;
+};
 
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
@@ -64,11 +111,6 @@ vi.mock('@synonymdev/pubky', () => ({
   createRecoveryFile: vi.fn(() => new Uint8Array([1, 2, 3, 4, 5])),
 }));
 
-// Mock fetch for bootstrap service
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
-
-// Mock the Env module
 vi.mock('@/libs/env', () => ({
   Env: {
     NEXT_PUBLIC_HOMESERVER_ADMIN_URL: 'http://test-admin.com',
@@ -79,234 +121,23 @@ vi.mock('@/libs/env', () => ({
 describe('AuthController', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Mock bootstrap service fetch response
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: () =>
-        Promise.resolve({
-          users: [],
-          posts: [],
-          list: { stream: [] },
-        }),
-    });
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe('signUp', () => {
-    it('should successfully sign up a user and call setSession', async () => {
-      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
-      const keypair = Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
-      const signupToken = 'test-token';
-      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
-
-      const signupSpy = vi.spyOn(homeserverService, 'signup').mockResolvedValue({
-        pubky: keypair.pubky,
-        session: mockSession,
-      });
-
-      const result = await AuthController.signUp({ keypair, signupToken });
-
-      expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
-      // AuthController.signUp doesn't return anything, it just processes the signup
-      expect(result).toBeUndefined();
-
-      signupSpy.mockRestore();
-    });
-
-    it('should throw error if signup fails', async () => {
-      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
-      const keypair = Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
-      const signupToken = 'invalid-token';
-
-      const signupSpy = vi.spyOn(homeserverService, 'signup').mockRejectedValue(new Error('Signup failed'));
-
-      await expect(AuthController.signUp({ keypair, signupToken })).rejects.toThrow('Signup failed');
-      expect(signupSpy).toHaveBeenCalledWith(keypair, signupToken);
-
-      signupSpy.mockRestore();
-    });
-  });
-
-  describe('logout', () => {
+  describe('authorizeAndBootstrap', () => {
     beforeEach(() => {
-      // Mock document.cookie
-      Object.defineProperty(document, 'cookie', {
-        writable: true,
-        value: '',
-      });
-
-      // Mock window.location.href
-      Object.defineProperty(window, 'location', {
-        writable: true,
-        value: {
-          href: '',
-        },
-      });
-
-      storeMocks.resetAuthStore.mockClear();
-      storeMocks.resetOnboardingStore.mockClear();
+      setupNotificationMocks();
     });
 
-    it('should successfully logout user, clear stores, cookies and redirect', async () => {
-      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
-      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
-      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
-
-      // Set some cookies to test clearing
-      document.cookie = 'testCookie=value; path=/';
-      document.cookie = 'anotherCookie=anotherValue; path=/';
-
-      await AuthController.logout();
-
-      expect(logoutSpy).toHaveBeenCalled();
-      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
-      // AuthController.logout doesn't redirect, it just processes the logout
-      expect(window.location.href).toBe('');
-
-      clearDatabaseSpy.mockRestore();
-      logoutSpy.mockRestore();
-    });
-
-    it('should throw error when homeserver logout fails but still clear local state', async () => {
-      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
-      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockRejectedValue(new Error('Network error'));
-      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
-
-      // Should throw error when homeserver logout fails
-      await expect(AuthController.logout()).rejects.toThrow('Network error');
-      expect(logoutSpy).toHaveBeenCalled();
-
-      // clearDatabase is not called when homeserver logout fails because the error is thrown first
-      expect(clearDatabaseSpy).not.toHaveBeenCalled();
-
-      clearDatabaseSpy.mockRestore();
-      logoutSpy.mockRestore();
-    });
-
-    it('should clear all existing cookies', async () => {
-      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
-      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
-      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
-
-      // Set multiple cookies
-      document.cookie = 'session=abc123; path=/';
-      document.cookie = 'token=xyz789; path=/';
-      document.cookie = 'user=john; path=/';
-
-      await AuthController.logout();
-
-      // The actual implementation replaces cookie values with empty and sets expiry to past
-      // We can't easily test the exact cookie clearing behavior in jsdom
-      // but we can verify the method was called
-      expect(logoutSpy).toHaveBeenCalled();
-      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
-
-      clearDatabaseSpy.mockRestore();
-      logoutSpy.mockRestore();
-    });
-
-    it('should throw error if clearing the database fails', async () => {
-      const homeserverService = HomeserverService.getInstance(TEST_SECRET_KEY);
-      const logoutSpy = vi.spyOn(homeserverService, 'logout').mockResolvedValue(undefined);
-      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockRejectedValue(new Error('clear failed'));
-
-      // Should throw error when clearDatabase fails
-      await expect(AuthController.logout()).rejects.toThrow('clear failed');
-
-      expect(logoutSpy).toHaveBeenCalled();
-      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
-
-      clearDatabaseSpy.mockRestore();
-      logoutSpy.mockRestore();
-    });
-  });
-
-  describe('generateSignupToken', () => {
-    beforeEach(() => {
-      // Mock fetch globally
-      global.fetch = vi.fn();
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('should generate signup token successfully', async () => {
-      const mockToken = 'test-signup-token';
-
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        text: vi.fn().mockResolvedValue(mockToken),
-      });
-
-      const result = await AuthController.generateSignupToken();
-
-      expect(result).toBe(mockToken);
-      expect(global.fetch).toHaveBeenCalledWith('http://localhost:6288/generate_signup_token', {
-        method: 'GET',
-        headers: {
-          'X-Admin-Password': 'admin',
-        },
-      });
-    });
-
-    it('should throw error when fetch fails', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: false,
-        status: 401,
-        text: vi.fn().mockResolvedValue('Unauthorized'),
-      });
-
-      await expect(AuthController.generateSignupToken()).rejects.toThrow(
-        'Failed to generate signup token: 401 Unauthorized',
-      );
-    });
-
-    it('should throw error when no token is received', async () => {
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        text: vi.fn().mockResolvedValue(''),
-      });
-
-      await expect(AuthController.generateSignupToken()).rejects.toThrow('No token received from server');
-    });
-  });
-
-  describe('notification hydration flows', () => {
-    const TEST_PUBKY = '5a1diz4pghi47ywdfyfzpit5f3bdomzt4pugpbmq4rngdd4iub4y';
-
-    const getLastReadUrl = (pubky: string): string => {
-      return `pubky://${pubky}/pub/pubky.app/last_read`;
-    };
-
-    // Ensure the controller uses our mocked notification store in this scope
-    beforeEach(() => {
-      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
-        setState: storeMocks.notificationInit,
-      } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
-
-      // Mock NotificationNormalizer.to to avoid pubky validation errors
-      vi.spyOn(Core.NotificationNormalizer, 'to').mockImplementation(
-        (pubky: string) =>
-          ({
-            meta: {
-              url: getLastReadUrl(pubky),
-            },
-          }) as LastReadResult,
-      );
-    });
-
-    it('authorizeAndBootstrap should initialize with retry and setState notification store', async () => {
+    it('should initialize with retry and setState notification store', async () => {
       const state: Core.NotificationState = { unread: 2, lastRead: 123 };
       const initializeWithRetrySpy = vi
         .spyOn(Core.BootstrapApplication, 'initializeWithRetry')
         .mockResolvedValue(state);
 
-      // Mock auth store to return a valid pubky
       const authStoreState: Core.AuthStore = {
         currentUserPubky: TEST_PUBKY,
         session: null,
@@ -326,26 +157,384 @@ describe('AuthController', () => {
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
+      expect(authStoreState.setAuthenticated).toHaveBeenCalledWith(true);
     });
 
-    it('loginWithAuthUrl should initialize and setState notification store', async () => {
+    it('should throw error when pubky is not available', async () => {
+      const authStoreState: Core.AuthStore = {
+        currentUserPubky: null,
+        session: null,
+        isAuthenticated: false,
+        setSession: vi.fn(),
+        setCurrentUserPubky: vi.fn(),
+        setAuthenticated: vi.fn(),
+        reset: vi.fn(),
+        selectCurrentUserPubky: vi.fn(() => {
+          throw new Error('Current user pubky is not available. User may not be authenticated.');
+        }),
+      };
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStoreState);
+
+      await expect(AuthController.authorizeAndBootstrap()).rejects.toThrow(
+        'Current user pubky is not available. User may not be authenticated.',
+      );
+    });
+  });
+
+  describe('signUp', () => {
+    beforeEach(() => {
+      setupOnboardingStore();
+      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue({
+        last_read: { toJson: vi.fn(() => ({ timestamp: 1234567890 })) },
+        meta: { url: 'pubky://test-pubky/pub/pubky.app/last-read' },
+      } as unknown as LastReadResult);
+    });
+
+    it('should successfully sign up a user and call setSession', async () => {
+      const keypair = Libs.Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
+      const signupToken = 'test-token';
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+
+      const signUpSpy = vi.spyOn(Core.AuthApplication, 'signUp').mockResolvedValue({
+        pubky: keypair.pubky,
+        session: mockSession,
+      });
+
+      const authStore = storeMocks.getAuthState();
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+
+      const result = await AuthController.signUp({ keypair, signupToken });
+
+      expect(signUpSpy).toHaveBeenCalledWith({
+        keypair,
+        signupToken,
+        secretKey: TEST_SECRET_KEY,
+        lastRead: expect.objectContaining({
+          meta: expect.objectContaining({ url: expect.any(String) }),
+        }),
+      });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(keypair.pubky);
+      expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
+      expect(result).toBeUndefined();
+    });
+
+    it('should throw error if signup fails', async () => {
+      const keypair = Libs.Identity.keypairFromSecretKey(Buffer.from(new Uint8Array(32).fill(1)).toString('hex'));
+      const signupToken = 'invalid-token';
+
+      const signUpSpy = vi.spyOn(Core.AuthApplication, 'signUp').mockRejectedValue(new Error('Signup failed'));
+
+      await expect(AuthController.signUp({ keypair, signupToken })).rejects.toThrow('Signup failed');
+      expect(signUpSpy).toHaveBeenCalledWith({
+        keypair,
+        signupToken,
+        secretKey: TEST_SECRET_KEY,
+        lastRead: expect.objectContaining({
+          meta: expect.objectContaining({ url: expect.any(String) }),
+        }),
+      });
+    });
+  });
+
+  describe('loginWithMnemonic', () => {
+    beforeEach(() => {
+      setupOnboardingStore();
+      vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
+        meta: { url: 'pubky://test-pubky/pub/pubky.app/last_read' },
+      } as unknown as LastReadResult);
+    });
+
+    it('should successfully login with mnemonic and bootstrap', async () => {
+      const mnemonic = 'test mnemonic phrase';
+      const mockKeypair = createMockKeypair();
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+      const mockData = { pubky: 'test-pubky' as Core.Pubky, session: mockSession };
+      const mockState: Core.NotificationState = { unread: 0, lastRead: 123 };
+
+      const keypairSpy = vi.spyOn(Libs.Identity, 'pubkyKeypairFromMnemonic').mockReturnValue(mockKeypair);
+      const signInSpy = vi.spyOn(Core.AuthApplication, 'signIn').mockResolvedValue(mockData);
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(mockState);
+
+      const authStore = setupAuthAndNotificationStores();
+
+      await AuthController.loginWithMnemonic({ mnemonic });
+
+      expect(keypairSpy).toHaveBeenCalledWith(mnemonic);
+      expect(signInSpy).toHaveBeenCalledWith({ keypair: expect.any(Object), secretKey: TEST_SECRET_KEY });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith('test-pubky');
+      expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
+      expect(initializeSpy).toHaveBeenCalled();
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockState);
+    });
+
+    it('should not bootstrap if signIn returns undefined', async () => {
+      const mnemonic = 'test mnemonic phrase';
+      const mockKeypair = createMockKeypair();
+
+      vi.spyOn(Libs.Identity, 'pubkyKeypairFromMnemonic').mockReturnValue(mockKeypair);
+      vi.spyOn(Core.AuthApplication, 'signIn').mockResolvedValue(undefined);
+
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize');
+
+      await AuthController.loginWithMnemonic({ mnemonic });
+
+      expect(initializeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw error if signIn fails', async () => {
+      const mnemonic = 'test mnemonic phrase';
+      const mockKeypair = createMockKeypair();
+
+      vi.spyOn(Libs.Identity, 'pubkyKeypairFromMnemonic').mockReturnValue(mockKeypair);
+      vi.spyOn(Core.AuthApplication, 'signIn').mockRejectedValue(new Error('Authentication failed'));
+
+      await expect(AuthController.loginWithMnemonic({ mnemonic })).rejects.toThrow('Authentication failed');
+    });
+  });
+
+  describe('loginWithEncryptedFile', () => {
+    beforeEach(() => {
+      setupOnboardingStore();
+      vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
+        meta: { url: 'pubky://test-pubky/pub/pubky.app/last_read' },
+      } as unknown as LastReadResult);
+    });
+
+    it('should successfully login with encrypted file and bootstrap', async () => {
+      const encryptedFile = createMockEncryptedFile();
+      const password = 'test-password';
+      const mockKeypair = createMockKeypair();
+      const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
+      const mockData = { pubky: 'test-pubky' as Core.Pubky, session: mockSession };
+      const mockState: Core.NotificationState = { unread: 0, lastRead: 123 };
+
+      const decryptSpy = vi.spyOn(Libs.Identity, 'decryptRecoveryFile').mockResolvedValue(mockKeypair);
+      const signInSpy = vi.spyOn(Core.AuthApplication, 'signIn').mockResolvedValue(mockData);
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(mockState);
+
+      const authStore = setupAuthAndNotificationStores();
+
+      await AuthController.loginWithEncryptedFile({ encryptedFile, password });
+
+      expect(decryptSpy).toHaveBeenCalledWith(encryptedFile, password);
+      expect(signInSpy).toHaveBeenCalledWith({ keypair: expect.any(Object), secretKey: TEST_SECRET_KEY });
+      expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith('test-pubky');
+      expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
+      expect(initializeSpy).toHaveBeenCalled();
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockState);
+    });
+
+    it('should not bootstrap if signIn returns undefined', async () => {
+      const encryptedFile = createMockEncryptedFile();
+      const password = 'test-password';
+      const mockKeypair = createMockKeypair();
+
+      vi.spyOn(Libs.Identity, 'decryptRecoveryFile').mockResolvedValue(mockKeypair);
+      vi.spyOn(Core.AuthApplication, 'signIn').mockResolvedValue(undefined);
+
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize');
+
+      await AuthController.loginWithEncryptedFile({ encryptedFile, password });
+
+      expect(initializeSpy).not.toHaveBeenCalled();
+    });
+
+    it('should throw error if decryption fails', async () => {
+      const encryptedFile = createMockEncryptedFile();
+      const password = 'wrong-password';
+
+      vi.spyOn(Libs.Identity, 'decryptRecoveryFile').mockRejectedValue(new Error('Decryption failed'));
+
+      await expect(AuthController.loginWithEncryptedFile({ encryptedFile, password })).rejects.toThrow(
+        'Decryption failed',
+      );
+    });
+
+    it('should throw error if signIn fails', async () => {
+      const encryptedFile = createMockEncryptedFile();
+      const password = 'test-password';
+      const mockKeypair = createMockKeypair();
+
+      vi.spyOn(Libs.Identity, 'decryptRecoveryFile').mockResolvedValue(mockKeypair);
+      vi.spyOn(Core.AuthApplication, 'signIn').mockRejectedValue(new Error('Authentication failed'));
+
+      await expect(AuthController.loginWithEncryptedFile({ encryptedFile, password })).rejects.toThrow(
+        'Authentication failed',
+      );
+    });
+  });
+
+  describe('getAuthUrl', () => {
+    beforeEach(() => {
+      setupOnboardingStore();
+    });
+
+    it('should generate auth URL successfully', async () => {
+      const mockAuthUrl = {
+        url: 'https://example.com/auth?token=abc123',
+        promise: Promise.resolve({} as unknown as import('@synonymdev/pubky').PublicKey),
+      };
+      const generateAuthUrlSpy = vi.spyOn(Core.AuthApplication, 'generateAuthUrl').mockResolvedValue(mockAuthUrl);
+
+      const result = await AuthController.getAuthUrl();
+
+      expect(result).toEqual(mockAuthUrl);
+      expect(generateAuthUrlSpy).toHaveBeenCalledWith({ secretKey: TEST_SECRET_KEY });
+    });
+
+    it('should throw error when auth URL generation fails', async () => {
+      const generateAuthUrlSpy = vi
+        .spyOn(Core.AuthApplication, 'generateAuthUrl')
+        .mockRejectedValue(new Error('Failed to generate auth URL'));
+
+      await expect(AuthController.getAuthUrl()).rejects.toThrow('Failed to generate auth URL');
+      expect(generateAuthUrlSpy).toHaveBeenCalledWith({ secretKey: TEST_SECRET_KEY });
+    });
+  });
+
+  describe('loginWithAuthUrl', () => {
+    beforeEach(() => {
+      setupNotificationMocks();
+    });
+
+    it('should initialize and setState notification store', async () => {
       const state: Core.NotificationState = { unread: 0, lastRead: 456 };
       const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(state);
 
-      const publicKeyMock = {
-        z32: () => TEST_PUBKY,
-        free: () => {},
-        to_uint8array: () => new Uint8Array(),
-        toUint8Array: () => new Uint8Array(),
-      } as import('@synonymdev/pubky').PublicKey;
+      const publicKeyMock = createMockPublicKey();
+
+      const authStore = storeMocks.getAuthState();
+      setupOnboardingStore();
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
 
       await AuthController.loginWithAuthUrl({ publicKey: publicKeyMock });
 
+      expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
+      expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(TEST_PUBKY);
       expect(initializeSpy).toHaveBeenCalledWith({
         pubky: TEST_PUBKY,
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
       expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
+      expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
+    });
+
+    it('should throw error if bootstrap initialization fails', async () => {
+      const initializeSpy = vi
+        .spyOn(Core.BootstrapApplication, 'initialize')
+        .mockRejectedValue(new Error('Bootstrap failed'));
+
+      const publicKeyMock = createMockPublicKey();
+
+      const authStore = storeMocks.getAuthState();
+      setupOnboardingStore();
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(authStore as unknown as Core.AuthStore);
+
+      await expect(AuthController.loginWithAuthUrl({ publicKey: publicKeyMock })).rejects.toThrow('Bootstrap failed');
+      expect(initializeSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('logout', () => {
+    const createAuthStore = (): Core.AuthStore => ({
+      ...storeMocks.getAuthState(),
+      currentUserPubky: 'test-pubky' as Core.Pubky,
+      session: null,
+      isAuthenticated: false,
+      selectCurrentUserPubky: vi.fn(() => 'test-pubky' as Core.Pubky),
+    });
+
+    const createOnboardingStore = () =>
+      ({
+        secretKey: TEST_SECRET_KEY,
+        reset: storeMocks.resetOnboardingStore,
+      }) as unknown as Core.OnboardingStore;
+
+    beforeEach(() => {
+      Object.defineProperty(document, 'cookie', { writable: true, value: '' });
+      Object.defineProperty(window, 'location', { writable: true, value: { href: '' } });
+      storeMocks.resetAuthStore.mockClear();
+      storeMocks.resetOnboardingStore.mockClear();
+    });
+
+    it('should successfully logout user, clear stores, cookies and redirect', async () => {
+      const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+      const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
+      vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+
+      document.cookie = 'testCookie=value; path=/';
+      document.cookie = 'anotherCookie=anotherValue; path=/';
+
+      await AuthController.logout();
+
+      expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky', secretKey: TEST_SECRET_KEY });
+      expect(storeMocks.resetOnboardingStore).toHaveBeenCalled();
+      expect(storeMocks.resetAuthStore).toHaveBeenCalled();
+      expect(clearCookiesSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw error when homeserver logout fails but still clear local state', async () => {
+      const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockRejectedValue(new Error('Network error'));
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
+      vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+
+      await expect(AuthController.logout()).rejects.toThrow('Network error');
+      expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky', secretKey: TEST_SECRET_KEY });
+      expect(clearDatabaseSpy).not.toHaveBeenCalled();
+    });
+
+    it('should clear all existing cookies', async () => {
+      const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+      const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
+      vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+
+      document.cookie = 'session=abc123; path=/';
+      document.cookie = 'token=xyz789; path=/';
+      document.cookie = 'user=john; path=/';
+
+      await AuthController.logout();
+
+      expect(logoutSpy).toHaveBeenCalled();
+      expect(clearCookiesSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw error if clearing the database fails', async () => {
+      const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockResolvedValue(undefined);
+      const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockRejectedValue(new Error('clear failed'));
+      const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
+      vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
+
+      await expect(AuthController.logout()).rejects.toThrow('clear failed');
+      expect(logoutSpy).toHaveBeenCalled();
+      expect(clearCookiesSpy).toHaveBeenCalled();
+      expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('generateSignupToken', () => {
+    it('should generate signup token successfully', async () => {
+      const generateSignupTokenSpy = vi
+        .spyOn(Core.HomeserverService, 'generateSignupToken')
+        .mockResolvedValue('test-token');
+      const result = await AuthController.generateSignupToken();
+      expect(result).toBe('test-token');
+      expect(generateSignupTokenSpy).toHaveBeenCalled();
     });
   });
 });

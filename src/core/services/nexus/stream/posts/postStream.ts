@@ -16,9 +16,9 @@ export class NexusPostStreamService {
   static async fetch(params: Core.TReadStreamPostsParams): Promise<Core.NexusPost[]> {
     try {
       const url = Core.postStreamApi.all(params);
-      const response = await Core.queryNexus<Core.NexusPost[]>(url);
+      let response = await Core.queryNexus<Core.NexusPost[]>(url);
+      if (!response) response = [];
       Libs.Logger.debug('Posts fetched successfully', { response });
-
       return response;
     } catch (error) {
       Libs.Logger.error('Failed to fetch posts', error);
