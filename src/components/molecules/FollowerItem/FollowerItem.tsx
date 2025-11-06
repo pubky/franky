@@ -52,10 +52,7 @@ export function FollowerItem({ follower, onFollow, className }: FollowerItemProp
             >
               {follower.name}
             </Atoms.Typography>
-            <Atoms.Typography
-              size="xs"
-              className="text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap"
-            >
+            <Atoms.Typography className="text-xs text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap">
               {follower.pubky}
             </Atoms.Typography>
           </div>

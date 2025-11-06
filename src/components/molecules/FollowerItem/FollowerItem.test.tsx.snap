@@ -1,0 +1,560 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FollowerItem - Snapshots > matches snapshot with following user 1`] = `
+<div
+  class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
+>
+  <div
+    class="flex gap-2 items-start w-full lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial"
+    >
+      <div
+        data-class-name="size-8 shrink-0"
+        data-testid="avatar"
+      >
+        <img
+          alt="Matt Jones"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=1"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          MJ
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-start min-w-0 flex-1 lg:flex-initial lg:w-[132px]"
+      >
+        <p
+          data-class-name="font-bold leading-5 text-foreground overflow-hidden text-ellipsis whitespace-nowrap w-[85px]"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Matt Jones
+        </p>
+        <p
+          data-class-name="text-xs text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap"
+          data-testid="typography"
+        >
+          1RX3...KO43
+        </p>
+      </div>
+    </div>
+    <div
+      data-class-name="flex-1 justify-end shrink-0 lg:hidden"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex flex-wrap gap-3 items-center w-full lg:flex-nowrap lg:gap-6 lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial lg:flex-1"
+    >
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#004BFF"
+        data-testid="post-tag-bitcoin"
+      >
+        bitcoin
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#FF9900"
+        data-testid="post-tag-crypto"
+      >
+        crypto
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#FF0000"
+        data-testid="post-tag-hot"
+      >
+        hot
+      </div>
+    </div>
+    <div
+      data-class-name="hidden lg:flex shrink-0"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+    <button
+      data-class-name="size-8 rounded-full shadow-xs-dark p-1 shrink-0"
+      data-size="sm"
+      data-testid="follow-button"
+      data-variant="secondary"
+    >
+      <div
+        class="size-5"
+        data-testid="check-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot with many tags 1`] = `
+<div
+  class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
+>
+  <div
+    class="flex gap-2 items-start w-full lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial"
+    >
+      <div
+        data-class-name="size-8 shrink-0"
+        data-testid="avatar"
+      >
+        <img
+          alt="Matt Jones"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=1"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          MJ
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-start min-w-0 flex-1 lg:flex-initial lg:w-[132px]"
+      >
+        <p
+          data-class-name="font-bold leading-5 text-foreground overflow-hidden text-ellipsis whitespace-nowrap w-[85px]"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Matt Jones
+        </p>
+        <p
+          data-class-name="text-xs text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap"
+          data-testid="typography"
+        >
+          1RX3...KO43
+        </p>
+      </div>
+    </div>
+    <div
+      data-class-name="flex-1 justify-end shrink-0 lg:hidden"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex flex-wrap gap-3 items-center w-full lg:flex-nowrap lg:gap-6 lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial lg:flex-1"
+    >
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#000"
+        data-testid="post-tag-tag1"
+      >
+        tag1
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#111"
+        data-testid="post-tag-tag2"
+      >
+        tag2
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#222"
+        data-testid="post-tag-tag3"
+      >
+        tag3
+      </div>
+    </div>
+    <div
+      data-class-name="hidden lg:flex shrink-0"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+    <button
+      data-class-name="size-8 rounded-full shadow-xs-dark p-1 shrink-0"
+      data-size="sm"
+      data-testid="follow-button"
+      data-variant="secondary"
+    >
+      <div
+        class="size-5"
+        data-testid="check-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot with not following user 1`] = `
+<div
+  class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
+>
+  <div
+    class="flex gap-2 items-start w-full lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial"
+    >
+      <div
+        data-class-name="size-8 shrink-0"
+        data-testid="avatar"
+      >
+        <img
+          alt="Matt Jones"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=1"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          MJ
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-start min-w-0 flex-1 lg:flex-initial lg:w-[132px]"
+      >
+        <p
+          data-class-name="font-bold leading-5 text-foreground overflow-hidden text-ellipsis whitespace-nowrap w-[85px]"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Matt Jones
+        </p>
+        <p
+          data-class-name="text-xs text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap"
+          data-testid="typography"
+        >
+          1RX3...KO43
+        </p>
+      </div>
+    </div>
+    <div
+      data-class-name="flex-1 justify-end shrink-0 lg:hidden"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex flex-wrap gap-3 items-center w-full lg:flex-nowrap lg:gap-6 lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial lg:flex-1"
+    >
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#004BFF"
+        data-testid="post-tag-bitcoin"
+      >
+        bitcoin
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#FF9900"
+        data-testid="post-tag-crypto"
+      >
+        crypto
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#FF0000"
+        data-testid="post-tag-hot"
+      >
+        hot
+      </div>
+    </div>
+    <div
+      data-class-name="hidden lg:flex shrink-0"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+    <button
+      data-class-name="size-8 rounded-full shadow-xs-dark p-1 shrink-0"
+      data-size="sm"
+      data-testid="follow-button"
+      data-variant="secondary"
+    >
+      <div
+        class="size-5"
+        data-testid="user-round-plus-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot without avatar 1`] = `
+<div
+  class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
+>
+  <div
+    class="flex gap-2 items-start w-full lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial"
+    >
+      <div
+        data-class-name="size-8 shrink-0"
+        data-testid="avatar"
+      >
+        <img
+          alt="Matt Jones"
+          data-testid="avatar-image"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          MJ
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-start min-w-0 flex-1 lg:flex-initial lg:w-[132px]"
+      >
+        <p
+          data-class-name="font-bold leading-5 text-foreground overflow-hidden text-ellipsis whitespace-nowrap w-[85px]"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Matt Jones
+        </p>
+        <p
+          data-class-name="text-xs text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap"
+          data-testid="typography"
+        >
+          1RX3...KO43
+        </p>
+      </div>
+    </div>
+    <div
+      data-class-name="flex-1 justify-end shrink-0 lg:hidden"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex flex-wrap gap-3 items-center w-full lg:flex-nowrap lg:gap-6 lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial lg:flex-1"
+    >
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#004BFF"
+        data-testid="post-tag-bitcoin"
+      >
+        bitcoin
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#FF9900"
+        data-testid="post-tag-crypto"
+      >
+        crypto
+      </div>
+      <div
+        data-class-name="h-8 shrink-0"
+        data-color="#FF0000"
+        data-testid="post-tag-hot"
+      >
+        hot
+      </div>
+    </div>
+    <div
+      data-class-name="hidden lg:flex shrink-0"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+    <button
+      data-class-name="size-8 rounded-full shadow-xs-dark p-1 shrink-0"
+      data-size="sm"
+      data-testid="follow-button"
+      data-variant="secondary"
+    >
+      <div
+        class="size-5"
+        data-testid="check-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
+<div
+  class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
+>
+  <div
+    class="flex gap-2 items-start w-full lg:w-auto"
+  >
+    <div
+      class="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial"
+    >
+      <div
+        data-class-name="size-8 shrink-0"
+        data-testid="avatar"
+      >
+        <img
+          alt="Matt Jones"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=1"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          MJ
+        </div>
+      </div>
+      <div
+        class="flex flex-col items-start min-w-0 flex-1 lg:flex-initial lg:w-[132px]"
+      >
+        <p
+          data-class-name="font-bold leading-5 text-foreground overflow-hidden text-ellipsis whitespace-nowrap w-[85px]"
+          data-size="sm"
+          data-testid="typography"
+        >
+          Matt Jones
+        </p>
+        <p
+          data-class-name="text-xs text-muted-foreground font-medium uppercase tracking-[1.2px] leading-4 whitespace-pre-wrap"
+          data-testid="typography"
+        >
+          1RX3...KO43
+        </p>
+      </div>
+    </div>
+    <div
+      data-class-name="flex-1 justify-end shrink-0 lg:hidden"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex flex-wrap gap-3 items-center w-full lg:flex-nowrap lg:gap-6 lg:w-auto"
+  >
+    <div
+      data-class-name="hidden lg:flex shrink-0"
+      data-testid="user-stats"
+    >
+      <span
+        data-testid="tags-count"
+      >
+        761
+      </span>
+      <span
+        data-testid="posts-count"
+      >
+        158
+      </span>
+    </div>
+    <button
+      data-class-name="size-8 rounded-full shadow-xs-dark p-1 shrink-0"
+      data-size="sm"
+      data-testid="follow-button"
+      data-variant="secondary"
+    >
+      <div
+        class="size-5"
+        data-testid="check-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
