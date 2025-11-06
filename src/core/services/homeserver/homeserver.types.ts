@@ -15,6 +15,11 @@ export type TKeyPair = {
   secretKey: string;
 };
 
+export type TAuthenticateKeypairResult = {
+  pubky: Core.Pubky;
+  session: Session;
+};
+
 export enum HomeserverAction {
   GET = 'GET',
   POST = 'POST',

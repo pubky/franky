@@ -2,7 +2,6 @@ import { Table } from 'dexie';
 
 import * as Core from '@/core';
 import { TupleModelBase } from '@/core/models/shared/base/tuple/baseTuple';
-import { UserCountsFields, TUserCountsFields } from './userCounts.schema';
 
 export class UserCountsModel
   extends TupleModelBase<Core.Pubky, Core.UserCountsModelSchema>
@@ -38,57 +37,51 @@ export class UserCountsModel
     return { id: data[0], ...data[1] };
   }
 
-  /**
-   * Atomically adjust a specific count field for a user by a delta value.
-   * Supports both increment (positive delta) and decrement (negative delta).
-   *
-   * @param user - The user's public key
-   * @param key - The count field to modify
-   * @param by - The amount to add (positive) or subtract (negative).
-   */
-  static async updateCount(user: Core.Pubky, key: TUserCountsFields, by: number) {
-    await this.table
-      .where('id')
-      .equals(user)
-      .modify((row) => {
-        const record = row as unknown as Record<string, number>;
-        const current = Number(record[key] ?? 0);
-        const next = current + by;
-        record[key] = next < 0 ? 0 : next;
-      });
-  }
+  static async updateCounts(
+    userId: Core.Pubky,
+    countChanges: {
+      tagged?: number;
+      tags?: number;
+      unique_tags?: number;
+      posts?: number;
+      replies?: number;
+      following?: number;
+      followers?: number;
+      friends?: number;
+    },
+  ): Promise<void> {
+    const userCounts = await Core.UserCountsModel.findById(userId);
+    if (!userCounts) return;
 
-  // -------- Instance helpers --------
+    const updates: Partial<Core.UserCountsModelSchema> = {};
 
-  updateCount(key: TUserCountsFields, value: number) {
-    switch (key) {
-      case UserCountsFields.TAGGED:
-        this.tagged += value;
-        break;
-      case UserCountsFields.TAGS:
-        this.tags += value;
-        break;
-      case UserCountsFields.UNIQUE_TAGS:
-        this.unique_tags += value;
-        break;
-      case UserCountsFields.POSTS:
-        this.posts += value;
-        break;
-      case UserCountsFields.REPLIES:
-        this.replies += value;
-        break;
-      case UserCountsFields.FOLLOWING:
-        this.following += value;
-        break;
-      case UserCountsFields.FOLLOWERS:
-        this.followers += value;
-        break;
-      case UserCountsFields.FRIENDS:
-        this.friends += value;
-        break;
-      case UserCountsFields.BOOKMARKS:
-        this.bookmarks += value;
-        break;
+    if (countChanges.tagged !== undefined) {
+      updates.tagged = Math.max(0, userCounts.tagged + countChanges.tagged);
+    }
+    if (countChanges.tags !== undefined) {
+      updates.tags = Math.max(0, userCounts.tags + countChanges.tags);
+    }
+    if (countChanges.unique_tags !== undefined && countChanges.unique_tags !== 0) {
+      updates.unique_tags = Math.max(0, userCounts.unique_tags + countChanges.unique_tags);
+    }
+    if (countChanges.posts !== undefined) {
+      updates.posts = Math.max(0, userCounts.posts + countChanges.posts);
+    }
+    if (countChanges.replies !== undefined && countChanges.replies !== 0) {
+      updates.replies = Math.max(0, userCounts.replies + countChanges.replies);
+    }
+    if (countChanges.following !== undefined) {
+      updates.following = Math.max(0, userCounts.following + countChanges.following);
+    }
+    if (countChanges.followers !== undefined) {
+      updates.followers = Math.max(0, userCounts.followers + countChanges.followers);
+    }
+    if (countChanges.friends !== undefined) {
+      updates.friends = Math.max(0, userCounts.friends + countChanges.friends);
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await this.update(userId, updates);
     }
   }
 }

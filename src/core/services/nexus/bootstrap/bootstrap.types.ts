@@ -1,10 +1,10 @@
 import * as Core from '@/core';
 
-export interface NexusBootstrapResponse {
+export type NexusBootstrapResponse = {
   users: Core.NexusUser[];
   posts: Core.NexusPost[];
   list: Core.NexusBootstrapList;
-}
+};
 
 export type NexusBootstrapList = {
   stream: string[];

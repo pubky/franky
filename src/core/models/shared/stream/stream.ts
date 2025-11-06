@@ -169,4 +169,31 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
       );
     }
   }
+
+  /**
+   * Clears all streams from the table
+   * @param this - Context containing the table reference
+   * @returns Promise that resolves when all streams are cleared
+   * @throws {DatabaseError} When clearing fails
+   *
+   * @example
+   * ```typescript
+   * await PostStreamModel.clear();
+   * ```
+   */
+  static async clear<TId, TItem, TSchema extends BaseStreamModelSchema<TId, TItem>>(this: {
+    table: Table<TSchema>;
+  }): Promise<void> {
+    try {
+      await this.table.clear();
+      Libs.Logger.debug(`${this.table.name} cleared successfully`);
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.DELETE_FAILED,
+        `Failed to clear table ${this.table.name}`,
+        500,
+        { error },
+      );
+    }
+  }
 }

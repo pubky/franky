@@ -202,4 +202,22 @@ export abstract class ModelBase<Id, Schema extends { id: Id }> {
       );
     }
   }
+
+  /**
+   * Clear all records from the table.
+   */
+  static async clear<TId, TSchema extends { id: TId }>(this: { table: Table<TSchema> }): Promise<void> {
+    try {
+      await this.table.clear();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.DELETE_FAILED,
+        `Failed to clear table ${this.table.name}`,
+        500,
+        {
+          error,
+        },
+      );
+    }
+  }
 }
