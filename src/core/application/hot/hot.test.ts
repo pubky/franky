@@ -3,28 +3,26 @@ import * as Core from '@/core';
 import { HotApplication } from './hot';
 
 describe('HotApplication', () => {
-  beforeEach(async () => {
-    await Core.db.initialize();
-    await Core.TagStreamModel.table.clear();
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
   describe('getOrFetch', () => {
-    it('should fetch hot tags from Nexus and persist to IndexedDB', async () => {
-      const mockHotTags: Core.NexusHotTag[] = [
+    it('should fetch hot tags and return them', async () => {
+      const mockHotTags = [
         {
           label: 'bitcoin',
           tagged_count: 100,
           taggers_count: 2,
-          taggers_id: ['user1' as Core.Pubky, 'user2' as Core.Pubky],
+          taggers_id: ['user1', 'user2'],
         },
         {
           label: 'pubky',
           tagged_count: 50,
           taggers_count: 1,
-          taggers_id: ['user3' as Core.Pubky],
+          taggers_id: ['user3'],
         },
-      ];
+      ] as Core.NexusHotTag[];
 
       const params: Core.TTagHotParams = {
         timeframe: Core.UserStreamTimeframe.TODAY,
@@ -32,50 +30,23 @@ describe('HotApplication', () => {
       };
 
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
-      const upsertSpy = vi.spyOn(Core.LocalHotService, 'upsert');
 
       const result = await HotApplication.getOrFetch(params);
 
       expect(result).toEqual(mockHotTags);
       expect(fetchSpy).toHaveBeenCalledWith(params);
       expect(fetchSpy).toHaveBeenCalledOnce();
-      expect(upsertSpy).toHaveBeenCalledWith('today:all', mockHotTags);
     });
 
-    it('should return cached data if available and skip Nexus fetch', async () => {
-      const mockHotTags: Core.NexusHotTag[] = [
-        {
-          label: 'cached-tag',
-          tagged_count: 25,
-          taggers_count: 1,
-          taggers_id: ['user5' as Core.Pubky],
-        },
-      ];
-
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.TODAY,
-      };
-
-      // Pre-populate cache with key "today:all" (default timeframe:reach)
-      await Core.LocalHotService.upsert('today:all', mockHotTags);
-
-      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch');
-
-      const result = await HotApplication.getOrFetch(params);
-
-      expect(result).toEqual(mockHotTags);
-      expect(fetchSpy).not.toHaveBeenCalled();
-    });
-
-    it('should fetch from Nexus when cache is empty', async () => {
-      const mockHotTags: Core.NexusHotTag[] = [
+    it('should pass pagination params to service', async () => {
+      const mockHotTags = [
         {
           label: 'music',
           tagged_count: 75,
           taggers_count: 1,
-          taggers_id: ['user4' as Core.Pubky],
+          taggers_id: ['user4'],
         },
-      ];
+      ] as Core.NexusHotTag[];
 
       const params: Core.TTagHotParams = {
         reach: Core.UserStreamReach.FRIENDS,
@@ -85,28 +56,11 @@ describe('HotApplication', () => {
       };
 
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
-      const upsertSpy = vi.spyOn(Core.LocalHotService, 'upsert');
 
       const result = await HotApplication.getOrFetch(params);
 
       expect(result).toEqual(mockHotTags);
       expect(fetchSpy).toHaveBeenCalledWith(params);
-      expect(upsertSpy).toHaveBeenCalledWith('month:friends', mockHotTags);
-    });
-
-    it('should not persist empty results to cache', async () => {
-      const params: Core.TTagHotParams = {
-        timeframe: Core.UserStreamTimeframe.ALL_TIME,
-      };
-
-      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue([]);
-      const upsertSpy = vi.spyOn(Core.LocalHotService, 'upsert');
-
-      const result = await HotApplication.getOrFetch(params);
-
-      expect(result).toEqual([]);
-      expect(fetchSpy).toHaveBeenCalled();
-      expect(upsertSpy).not.toHaveBeenCalled();
     });
 
     it('should return empty array when service fails', async () => {
@@ -122,33 +76,32 @@ describe('HotApplication', () => {
       expect(result).toEqual([]);
     });
 
-    it('should use different cache keys for different params', async () => {
-      const mockHotTags: Core.NexusHotTag[] = [
-        {
-          label: 'test',
-          tagged_count: 10,
-          taggers_count: 1,
-          taggers_id: ['user1' as Core.Pubky],
-        },
-      ];
+    it('should handle different reach values', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
-      const upsertSpy = vi.spyOn(Core.LocalHotService, 'upsert');
 
-      // Different timeframe/reach combinations should use different cache keys
-      await HotApplication.getOrFetch({ timeframe: Core.UserStreamTimeframe.TODAY });
       await HotApplication.getOrFetch({
-        timeframe: Core.UserStreamTimeframe.THIS_MONTH,
+        reach: Core.UserStreamReach.FOLLOWING,
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      });
+      await HotApplication.getOrFetch({
         reach: Core.UserStreamReach.FRIENDS,
+        timeframe: Core.UserStreamTimeframe.TODAY,
       });
-      await HotApplication.getOrFetch({
-        timeframe: Core.UserStreamTimeframe.ALL_TIME,
-        reach: Core.UserStreamReach.FOLLOWERS,
-      });
+      await HotApplication.getOrFetch({ timeframe: Core.UserStreamTimeframe.TODAY });
 
       expect(fetchSpy).toHaveBeenCalledTimes(3);
-      expect(upsertSpy).toHaveBeenCalledWith('today:all', mockHotTags);
-      expect(upsertSpy).toHaveBeenCalledWith('month:friends', mockHotTags);
-      expect(upsertSpy).toHaveBeenCalledWith('all:followers', mockHotTags);
+    });
+
+    it('should handle different timeframe values', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      await HotApplication.getOrFetch({ timeframe: Core.UserStreamTimeframe.TODAY });
+      await HotApplication.getOrFetch({ timeframe: Core.UserStreamTimeframe.THIS_MONTH });
+      await HotApplication.getOrFetch({ timeframe: Core.UserStreamTimeframe.ALL_TIME });
+
+      expect(fetchSpy).toHaveBeenCalledTimes(3);
     });
   });
 });

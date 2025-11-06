@@ -12,18 +12,19 @@ describe('HotController', () => {
       const mockHotTags = [
         {
           label: 'bitcoin',
-          count: 100,
-          taggers: ['user1', 'user2'],
+          tagged_count: 100,
+          taggers_count: 2,
+          taggers_id: ['user1', 'user2'],
         },
         {
           label: 'pubky',
-          count: 50,
-          taggers: ['user3'],
+          tagged_count: 50,
+          taggers_count: 1,
+          taggers_id: ['user3'],
         },
       ] as Core.NexusHotTag[];
 
       const params: Core.TTagHotParams = {
-        reach: Core.UserStreamReach.ALL,
         timeframe: Core.UserStreamTimeframe.TODAY,
         limit: 10,
       };
@@ -77,7 +78,7 @@ describe('HotController', () => {
         reach: Core.UserStreamReach.FRIENDS,
         timeframe: Core.UserStreamTimeframe.TODAY,
       });
-      await HotController.getOrFetch({ reach: Core.UserStreamReach.ALL, timeframe: Core.UserStreamTimeframe.TODAY });
+      await HotController.getOrFetch({ timeframe: Core.UserStreamTimeframe.TODAY });
 
       expect(getOrFetchSpy).toHaveBeenCalledTimes(3);
     });

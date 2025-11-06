@@ -4,4 +4,3 @@ export * from './follow';
 export * from './stream';
 export * from './mute';
 export * from './notification';
-export * from './hot';

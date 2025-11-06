@@ -12,18 +12,19 @@ describe('NexusHotService', () => {
       const mockHotTags = [
         {
           label: 'bitcoin',
-          count: 100,
-          taggers: ['user1', 'user2'],
+          tagged_count: 100,
+          taggers_count: 2,
+          taggers_id: ['user1', 'user2'],
         },
         {
           label: 'pubky',
-          count: 50,
-          taggers: ['user3'],
+          tagged_count: 50,
+          taggers_count: 1,
+          taggers_id: ['user3'],
         },
       ] as Core.NexusHotTag[];
 
       const params: Core.TTagHotParams = {
-        reach: Core.UserStreamReach.ALL,
         timeframe: Core.UserStreamTimeframe.TODAY,
         limit: 10,
       };
@@ -40,8 +41,9 @@ describe('NexusHotService', () => {
       const mockHotTags = [
         {
           label: 'music',
-          count: 75,
-          taggers: ['user4'],
+          tagged_count: 75,
+          taggers_count: 1,
+          taggers_id: ['user4'],
         },
       ] as Core.NexusHotTag[];
 
@@ -89,7 +91,7 @@ describe('NexusHotService', () => {
 
       await NexusHotService.fetch({ reach: Core.UserStreamReach.FOLLOWING, timeframe: Core.UserStreamTimeframe.TODAY });
       await NexusHotService.fetch({ reach: Core.UserStreamReach.FRIENDS, timeframe: Core.UserStreamTimeframe.TODAY });
-      await NexusHotService.fetch({ reach: Core.UserStreamReach.ALL, timeframe: Core.UserStreamTimeframe.TODAY });
+      await NexusHotService.fetch({ timeframe: Core.UserStreamTimeframe.TODAY });
 
       expect(queryNexusSpy).toHaveBeenCalledTimes(3);
     });
