@@ -36,12 +36,12 @@ describe('PostTagsModel', () => {
     it('should save and remove a tag for a user', () => {
       const model = new Core.PostTagsModel({ id: testPostId1, tags: [] });
 
-      expect(() => model.saveTag('tech', testUserId1)).not.toThrow();
+      expect(model.addTagger('tech', testUserId1)).toBe(false); // Returns false because tag didn't exist
       const techTag = model.findByLabel('tech');
       expect(techTag).not.toBeNull();
       expect(techTag!.taggers.includes(testUserId1)).toBe(true);
 
-      expect(() => model.removeTag('tech', testUserId1)).not.toThrow();
+      expect(model.removeTagger('tech', testUserId1)).toBe(true); // Returns true because tag is deleted
       const techAfterRemove = model.findByLabel('tech');
       expect(techAfterRemove).toBeNull();
     });
@@ -68,13 +68,12 @@ describe('PostTagsModel', () => {
       const techExisting = model.findByLabel('tech');
       expect(techExisting).not.toBeNull();
       techExisting!.setRelationship(true);
-      expect(() => model.removeTag('tech', testUserId1)).not.toThrow();
+      expect(model.removeTagger('tech', testUserId1)).toBe(true);
       const techTagAfter = model.findByLabel('tech');
       // tag should be deleted because taggers_count is 0
       expect(techTagAfter).toBeNull();
 
-      // Removing a non-existent label should throw
-      expect(() => model.removeTag('nonexistent', testUserId1)).toThrow();
+      expect(model.removeTagger('nonexistent', testUserId1)).toBeNull();
     });
   });
 
