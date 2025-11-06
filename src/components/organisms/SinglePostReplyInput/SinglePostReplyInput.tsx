@@ -5,7 +5,6 @@ import * as Hooks from '@/hooks';
 
 interface PostReplyInputProps {
   postId: string;
-  onCancel?: () => void;
   onSuccess?: () => void;
 }
 

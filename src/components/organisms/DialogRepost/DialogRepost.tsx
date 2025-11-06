@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Shared from '@/shared/postActionVariants';
 
 interface DialogRepostProps {
   postId: string;
@@ -18,7 +19,7 @@ export function DialogRepost({ postId, open, onOpenChange }: DialogRepostProps) 
         </Atoms.DialogHeader>
         <Atoms.Container className="flex flex-col gap-3">
           <Organisms.DialogPostInput
-            variant="repost"
+            variant={Shared.POST_ACTION_VARIANT.REPOST}
             postId={postId}
             onSuccess={() => {
               onOpenChange?.(false);

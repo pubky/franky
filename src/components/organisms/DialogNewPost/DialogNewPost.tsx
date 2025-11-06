@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Shared from '@/shared/postActionVariants';
 
 interface DialogNewPostProps {
   open?: boolean;
@@ -17,7 +18,7 @@ export function DialogNewPost({ open, onOpenChange }: DialogNewPostProps) {
         </Atoms.DialogHeader>
         <Atoms.Container className="flex flex-col gap-3">
           <Organisms.DialogPostInput
-            variant="new"
+            variant={Shared.POST_ACTION_VARIANT.NEW}
             onSuccess={() => {
               onOpenChange?.(false);
             }}

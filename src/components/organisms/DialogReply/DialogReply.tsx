@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Shared from '@/shared/postActionVariants';
 
 interface DialogReplyProps {
   postId: string;
@@ -20,7 +21,7 @@ export function DialogReply({ postId, open, onOpenChange }: DialogReplyProps) {
           <Organisms.DialogPostPreview postId={postId} variant="reply" />
           <div className="relative pl-6">
             <Organisms.DialogPostInput
-              variant="reply"
+              variant={Shared.POST_ACTION_VARIANT.REPLY}
               postId={postId}
               onSuccess={() => {
                 onOpenChange?.(false);

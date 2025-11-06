@@ -7,6 +7,7 @@ export * from './useInfiniteScroll';
 export * from './useEnterSubmit';
 export * from './useLayoutReset';
 export * from './useRecoveryPhraseValidation';
+export * from './usePostAction';
 export * from './usePostReply';
 export * from './usePostRepost';
 export * from './usePostCreate';

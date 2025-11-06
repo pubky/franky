@@ -2,11 +2,10 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-export type DialogActionBarVariant = 'reply' | 'repost' | 'new';
+import * as Shared from '@/shared/postActionVariants';
 
 export interface DialogActionBarProps {
-  variant: DialogActionBarVariant;
+  variant: Shared.PostActionVariant;
   onEmojiClick?: () => void;
   onImageClick?: () => void;
   onFileClick?: () => void;
@@ -26,6 +25,27 @@ interface ActionButtonConfig {
   labelText?: string;
 }
 
+const VARIANT_CONFIG: Record<
+  Shared.PostActionVariant,
+  { icon: React.ComponentType<{ className?: string; strokeWidth?: number }>; ariaLabel: string; labelText: string }
+> = {
+  [Shared.POST_ACTION_VARIANT.REPLY]: {
+    icon: Libs.Send,
+    ariaLabel: 'Post reply',
+    labelText: 'Post',
+  },
+  [Shared.POST_ACTION_VARIANT.REPOST]: {
+    icon: Libs.Repeat,
+    ariaLabel: 'Repost',
+    labelText: 'Repost',
+  },
+  [Shared.POST_ACTION_VARIANT.NEW]: {
+    icon: Libs.Send,
+    ariaLabel: 'Post',
+    labelText: 'Post',
+  },
+};
+
 export function DialogActionBar({
   variant,
   onEmojiClick,
@@ -42,14 +62,16 @@ export function DialogActionBar({
     className: 'h-8 px-3 py-2 rounded-full border-none shadow-xs-dark',
   };
 
+  const variantConfig = VARIANT_CONFIG[variant];
+
   const actionButtonConfig: ActionButtonConfig = {
-    icon: variant === 'reply' ? Libs.Send : variant === 'repost' ? Libs.Repeat : Libs.Send,
+    icon: variantConfig.icon,
     onClick: onActionClick,
     disabled: isActionDisabled,
-    ariaLabel: variant === 'reply' ? 'Post reply' : variant === 'repost' ? 'Repost' : 'Post',
+    ariaLabel: variantConfig.ariaLabel,
     className: Libs.cn(isActionDisabled && 'opacity-40'),
     showLabel: true,
-    labelText: variant === 'reply' ? 'Post' : variant === 'repost' ? 'Repost' : 'Post',
+    labelText: variantConfig.labelText,
   };
 
   const actionButtons: ActionButtonConfig[] = [

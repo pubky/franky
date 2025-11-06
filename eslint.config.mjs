@@ -27,6 +27,12 @@ const eslintConfig = [
       'storybook/no-redundant-story-name': 'off',
     },
   },
+  {
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': 'off', // Turn off base rule as it conflicts with TypeScript version
+    },
+  },
 ];
 
 export default eslintConfig;
