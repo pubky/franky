@@ -63,7 +63,11 @@ Cypress.Commands.add(
         cy.wrap(recoveryPhrase).as(`recoveryPhrase-${profileName}`);
       });
 
-      cy.get('#backup-recovery-phrase-confirm-btn').click();
+      // Select button based on viewport (mobile or desktop)
+      const confirmBtnId = Cypress.env('isMobile')
+        ? '#backup-recovery-phrase-confirm-btn-mobile'
+        : '#backup-recovery-phrase-confirm-btn-desktop';
+      cy.get(confirmBtnId).click();
 
       // either skip phrase confirmation or confirm it
       if (backup?.includes(BackupType.RecoveryPhraseWithoutConfirmation)) {
@@ -135,7 +139,11 @@ function confirmRecoveryPhrase(recoveryPhrase: string): void {
     cy.get(`#backup-recovery-phrase-word-${word}-${alphaIndex + 1}`).click();
   });
   cy.get('#backup-recovery-phrase-validate-btn').click();
-  cy.get('#backup-recovery-phrase-finish-btn').click();
+  // Select button based on viewport (mobile or desktop)
+  const finishBtnId = Cypress.env('isMobile')
+    ? '#backup-recovery-phrase-finish-btn-mobile'
+    : '#backup-recovery-phrase-finish-btn-desktop';
+  cy.get(finishBtnId).click();
 }
 
 // Collect all 12 recovery phrase words
