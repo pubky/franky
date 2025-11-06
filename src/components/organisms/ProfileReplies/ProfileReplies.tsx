@@ -30,7 +30,7 @@ export function ProfileReplies({ className }: ProfileRepliesProps) {
   if (mockReplies.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.UsersRound2 size={48} className="text-brand" />}
+        icon={<Libs.UsersRound size={48} className="text-brand" />}
         title="No replies yet"
         description="Find a post in your feed to reply to."
         backgroundImage="/images/background-6.png"
