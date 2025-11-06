@@ -85,21 +85,21 @@ describe('ProfileHeader', () => {
   it('shows own profile actions when isOwnProfile is true', () => {
     render(<ProfileHeader {...defaultProps} />);
 
-    expect(screen.getByText('Edit profile')).toBeInTheDocument();
+    expect(screen.getByText('Edit')).toBeInTheDocument();
     expect(screen.getByText('Sign out')).toBeInTheDocument();
   });
 
   it('hides own profile actions when isOwnProfile is false', () => {
     render(<ProfileHeader {...defaultProps} isOwnProfile={false} />);
 
-    expect(screen.queryByText('Edit profile')).not.toBeInTheDocument();
+    expect(screen.queryByText('Edit')).not.toBeInTheDocument();
     expect(screen.queryByText('Sign out')).not.toBeInTheDocument();
   });
 
-  it('calls router.push when edit profile button is clicked', () => {
+  it('calls router.push when edit button is clicked', () => {
     render(<ProfileHeader {...defaultProps} />);
 
-    const editButton = screen.getByText('Edit profile');
+    const editButton = screen.getByText('Edit');
     fireEvent.click(editButton);
 
     expect(mockPush).toHaveBeenCalledWith('/edit-profile');
