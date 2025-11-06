@@ -120,7 +120,7 @@ describe('UserApplication.follow', () => {
   });
 });
 
-describe('UserApplication.pollNotifications', () => {
+describe('UserApplication.notifications', () => {
   const userId = 'pubky_user' as Core.Pubky;
   const lastRead = 1234;
 

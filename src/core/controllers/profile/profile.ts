@@ -38,4 +38,8 @@ export class ProfileController {
 
     await Core.ProfileApplication.create({ profile: user, url: meta.url, pubky });
   }
+
+  static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
+    await Core.ProfileApplication.downloadData({ pubky, setProgress });
+  }
 }
