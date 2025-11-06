@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
-import { XTwitter, Github2, Telegram, UsersRound2 } from './icons';
+import { XTwitter, Github2, Telegram, UsersRound2, YouTube } from './icons';
 
 describe('Custom Icons', () => {
   describe('XTwitter', () => {
@@ -144,6 +144,49 @@ describe('Custom Icons', () => {
       expect(path).toHaveAttribute('stroke-width', '1.5');
       expect(path).toHaveAttribute('stroke-linecap', 'round');
       expect(path).toHaveAttribute('stroke-linejoin', 'round');
+    });
+  });
+
+  describe('YouTube', () => {
+    it('should render correctly with default props', () => {
+      const { container } = render(<YouTube />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('width', '24');
+      expect(svg).toHaveAttribute('height', '24');
+      expect(svg).toHaveAttribute('viewBox', '0 0 16 16');
+      expect(svg).toHaveAttribute('fill', 'none');
+    });
+
+    it('should apply custom size', () => {
+      const { container } = render(<YouTube size={32} />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('width', '32');
+      expect(svg).toHaveAttribute('height', '32');
+    });
+
+    it('should apply custom className', () => {
+      const { container } = render(<YouTube className="custom-class" />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveClass('custom-class');
+    });
+
+    it('should apply additional props', () => {
+      const { container } = render(<YouTube data-testid="youtube-icon" />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('data-testid', 'youtube-icon');
+    });
+
+    it('should render the correct SVG content', () => {
+      const { container } = render(<YouTube />);
+      const path = container.querySelector('path');
+
+      expect(path).toBeInTheDocument();
+      expect(path).toHaveAttribute('fill', 'currentColor');
     });
   });
 

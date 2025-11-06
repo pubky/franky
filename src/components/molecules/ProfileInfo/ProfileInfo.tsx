@@ -23,7 +23,7 @@ const getLinkIcon = (url: string) => {
     return Libs.Telegram;
   }
   if (domain.includes('youtube.com')) {
-    return Libs.Video;
+    return Libs.YouTube;
   }
   return Libs.Link;
 };
