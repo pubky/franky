@@ -190,11 +190,11 @@ export function EditProfile() {
       </Atoms.Card>
 
       {/* Action Buttons */}
-      <div className="flex gap-4 justify-end">
+      <div className="flex gap-4 w-full justify-between">
         <Atoms.Button variant="secondary" size="lg" onClick={handleCancel} disabled={loading} className="px-8">
           Cancel
         </Atoms.Button>
-        <Atoms.Button variant="default" size="lg" onClick={handleSave} disabled={loading} className="px-8">
+        <Atoms.Button variant="secondary" size="lg" onClick={handleSave} disabled={loading} className="px-8">
           {loading ? 'Saving...' : 'Save Profile'}
         </Atoms.Button>
       </div>
