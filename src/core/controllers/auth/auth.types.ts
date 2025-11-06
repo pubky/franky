@@ -1,4 +1,4 @@
-import { PublicKey } from '@synonymdev/pubky';
+import { PublicKey, Keypair } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 
@@ -9,17 +9,20 @@ export type TPubkyParams = {
 export type TAuthenticatedData = TPubkyParams & {
   session: Core.SignupResult['session'];
 };
-export interface TSignUpParams {
+export type TKeypairParams = {
+  keypair: Keypair;
+};
+export type TSignUpParams = {
   keypair: Core.TKeyPair;
   signupToken: string;
-}
-export interface TLoginWithMnemonicParams {
+};
+export type TLoginWithMnemonicParams = {
   mnemonic: string;
-}
-export interface TLoginWithEncryptedFileParams {
+};
+export type TLoginWithEncryptedFileParams = {
   encryptedFile: File;
   password: string;
-}
-export interface TLoginWithAuthUrlParams {
+};
+export type TLoginWithAuthUrlParams = {
   publicKey: PublicKey;
-}
+};
