@@ -33,7 +33,7 @@ export class ProfileApplication {
 
   static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountParams) {
     // Clear local IndexedDB data first
-    await Core.Local.Profile.deleteAccount();
+    await Core.LocalProfileService.deleteAccount();
 
     const baseDirectory = baseUriBuilder(pubky);
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
