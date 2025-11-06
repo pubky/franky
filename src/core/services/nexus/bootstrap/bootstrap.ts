@@ -15,8 +15,8 @@ export class NexusBootstrapService {
    */
   static async fetch(pubky: Core.Pubky): Promise<Core.NexusBootstrapResponse | undefined> {
     const url = Core.bootstrapApi.get(pubky);
-      let data = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
-      Libs.Logger.debug('Bootstrap data fetched successfully', { data });
-      return data;
+    const data = await Core.queryNexus<Core.NexusBootstrapResponse>(url);
+    Libs.Logger.debug('Bootstrap data fetched successfully', { data });
+    return data;
   }
 }

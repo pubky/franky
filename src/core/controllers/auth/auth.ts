@@ -36,7 +36,7 @@ export class AuthController {
    */
   static async authorizeAndBootstrap() {
     const authStore = Core.useAuthStore.getState();
-    const pubky = authStore.currentUserPubky || '';
+    const pubky = authStore.selectCurrentUserPubky();
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);

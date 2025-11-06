@@ -132,7 +132,7 @@ export async function parseResponseOrThrow<T>(response: Response): Promise<T | u
 export async function queryNexus<T>(
   url: string,
   method: HttpMethod = 'GET',
-  body: BodyInit | null = null
+  body: BodyInit | null = null,
 ): Promise<T | undefined> {
   const response = await fetch(url, createFetchOptions(method, body));
   ensureHttpResponseOk(response);

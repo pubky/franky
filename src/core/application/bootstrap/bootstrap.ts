@@ -36,7 +36,7 @@ export class BootstrapApplication {
   }
 
   /**
-   * Fetches notification data from Nexus and determines which notifications
+   * Fetches the head of the notification data from Nexus and determines which notifications
    * are unread based on the user's last read timestamp from the homeserver.
    *
    * @private
