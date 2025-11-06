@@ -67,7 +67,7 @@ export function EditProfile() {
           Edit your <span className="text-brand">profile.</span>
         </Atoms.Heading>
         <div className="flex items-center gap-3">
-          <Atoms.Typography size="lg" className="text-base leading-normal font-medium text-[#D4D4DB]">
+          <Atoms.Typography size="lg" className="text-base leading-normal font-medium text-muted-foreground">
             Add your name, bio, links, and avatar.
           </Atoms.Typography>
           <Atoms.Badge variant="secondary" className="px-3 py-1 gap-2">
