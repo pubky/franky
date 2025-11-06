@@ -42,4 +42,8 @@ export class ProfileController {
   static async deleteAccount({ pubky, setProgress }: Core.TDeleteAccountInput) {
     await Core.ProfileApplication.deleteAccount({ pubky, setProgress });
   }
+
+  static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
+    await Core.ProfileApplication.downloadData({ pubky, setProgress });
+  }
 }

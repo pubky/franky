@@ -16,3 +16,8 @@ export type TDeleteAccountParams = {
   pubky: Pubky;
   setProgress?: (progress: number) => void;
 };
+
+export type TDownloadDataParams = {
+  pubky: Pubky;
+  setProgress?: (progress: number) => void;
+};

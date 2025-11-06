@@ -265,6 +265,18 @@ export class HomeserverService {
     Libs.Logger.debug('Delete successful', { url });
   }
 
+  /**
+   * Fetches a resource from the homeserver.
+   *
+   * @param {string} url - Pubky URL to fetch.
+   * @param {Core.FetchOptions} [options] - Optional fetch options.
+   * @returns {Promise<Response>} The fetch response.
+   */
+  static async get(url: string, options?: Core.FetchOptions): Promise<Response> {
+    const homeserver = this.getInstance();
+    return await homeserver.fetch(url, options);
+  }
+
   async logout(pubky: Core.Pubky) {
     try {
       const pubKey = Pubky.PublicKey.from(pubky);
