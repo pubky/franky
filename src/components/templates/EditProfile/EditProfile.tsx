@@ -150,7 +150,7 @@ export function EditProfile() {
           </div>
 
           {/* Avatar Section */}
-          <div className="flex flex-col gap-6 items-center lg:items-start">
+          <div className="flex flex-col gap-6 items-center">
             <Atoms.Heading level={2} size="xl" className="font-bold">
               Avatar
             </Atoms.Heading>
