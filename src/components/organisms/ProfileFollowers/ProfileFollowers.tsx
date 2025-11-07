@@ -112,7 +112,7 @@ export function ProfileFollowers({ className }: ProfileFollowersProps) {
   if (followers.length === 0) {
     return (
       <Molecules.ContentNotFound
-        icon={<Libs.UsersRound2 size={48} className="text-brand" />}
+        icon={<Libs.UsersRound size={48} className="text-brand" />}
         title={isOwnProfile ? 'Looking for followers?' : 'No followers yet'}
         description={
           isOwnProfile ? (

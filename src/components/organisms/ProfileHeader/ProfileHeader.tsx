@@ -127,7 +127,7 @@ export function ProfileHeader({
               className="h-8 px-3 py-2 text-xs font-bold"
             >
               <Libs.Pencil className="w-4 h-4" />
-              Edit profile
+              Edit
             </Atoms.Button>
           )}
 
@@ -137,7 +137,7 @@ export function ProfileHeader({
             onClick={handleCopyPubky}
             className="h-8 px-3 py-2 text-xs font-bold font-mono uppercase"
           >
-            <Libs.Key className="w-4 h-4" />
+            <Libs.KeyRound className="w-4 h-4" />
             {handle.length > 10 ? `${handle.slice(0, 4)}...${handle.slice(-4)}` : handle}
           </Atoms.Button>
 
