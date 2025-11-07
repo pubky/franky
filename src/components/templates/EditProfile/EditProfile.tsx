@@ -63,19 +63,19 @@ export function EditProfile() {
     <div className="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 py-12">
       {/* Header */}
       <div className="mb-6">
-        <Atoms.Heading level={1} className="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2">
+        <Atoms.Heading level={1} className="text-5xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2">
           Edit your <span className="text-brand">profile.</span>
         </Atoms.Heading>
-        <div className="flex items-center gap-3">
-          <Atoms.Typography size="lg" className="text-base leading-normal font-medium text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-3">
+          <Atoms.Typography size="lg" className="text-xl lg:text-2xl leading-normal font-light text-muted-foreground">
             Add your name, bio, links, and avatar.
           </Atoms.Typography>
-          <Atoms.Badge variant="secondary" className="px-3 py-1 gap-2">
+          <Atoms.Badge variant="secondary" className="px-3 py-2 gap-2 rounded-full text-xs">
             <Libs.Key size={14} />
             kls37...xri8o
           </Atoms.Badge>
           <button className="p-1.5 rounded-full hover:bg-muted transition-colors">
-            <Libs.HelpCircle size={20} />
+            <Libs.HelpCircle size={16} />
           </button>
         </div>
       </div>
