@@ -2,7 +2,7 @@
 
 exports[`ProfileMobileMenu > matches snapshot 1`] = `
 <div
-  class="fixed top-18 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
+  class="w-full overflow-x-auto fixed top-14 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
 >
   <div
     class="flex w-full items-center"
@@ -235,7 +235,7 @@ exports[`ProfileMobileMenu > matches snapshot 1`] = `
 
 exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
 <div
-  class="fixed top-18 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
+  class="w-full overflow-x-auto fixed top-14 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
 >
   <div
     class="flex w-full items-center"
