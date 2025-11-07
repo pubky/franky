@@ -22,24 +22,14 @@ export interface FollowerItemProps {
   className?: string;
 }
 
-export function FollowerItem({ follower, onFollow, className }: FollowerItemProps) {
+export function FollowerItem({ follower, onFollow }: FollowerItemProps) {
   const handleFollow = () => {
     onFollow?.(follower.id);
   };
 
   return (
-    <div
-      className={Libs.cn(
-        // Mobile: flex-col with gap-3 (two rows)
-        'flex flex-col gap-3',
-        // Desktop: single row layout
-        'lg:flex-row lg:items-center lg:justify-between lg:gap-0',
-        className,
-      )}
-    >
-      {/* Mobile: First row | Desktop: Left side */}
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-0">
       <div className="flex gap-2 items-start w-full lg:w-auto">
-        {/* Left: Avatar + Username + Pubky */}
         <div className="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial">
           <Atoms.Avatar className="size-8 shrink-0">
             <Atoms.AvatarImage src={follower.avatar} alt={follower.name} />
@@ -58,7 +48,6 @@ export function FollowerItem({ follower, onFollow, className }: FollowerItemProp
           </div>
         </div>
 
-        {/* Mobile: Stats on right | Desktop: hidden (will be in right section) */}
         <Molecules.UserStats
           tagsCount={follower.tagsCount}
           postsCount={follower.postsCount}
@@ -66,9 +55,7 @@ export function FollowerItem({ follower, onFollow, className }: FollowerItemProp
         />
       </div>
 
-      {/* Mobile: Second row | Desktop: Right side */}
       <div className="flex flex-wrap gap-3 items-center w-full lg:flex-nowrap lg:gap-6 lg:w-auto">
-        {/* Tags */}
         {follower.tags.length > 0 && (
           <div className="flex flex-1 gap-2 items-center min-w-0 lg:flex-initial lg:flex-1">
             {follower.tags.slice(0, 3).map((tag, index) => (
@@ -82,14 +69,12 @@ export function FollowerItem({ follower, onFollow, className }: FollowerItemProp
           </div>
         )}
 
-        {/* Desktop: Stats */}
         <Molecules.UserStats
           tagsCount={follower.tagsCount}
           postsCount={follower.postsCount}
           className="hidden lg:flex shrink-0"
         />
 
-        {/* Follow button */}
         <Atoms.Button
           onClick={handleFollow}
           variant={Atoms.ButtonVariant.SECONDARY}

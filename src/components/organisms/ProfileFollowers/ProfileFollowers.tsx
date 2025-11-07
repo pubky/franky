@@ -12,7 +12,6 @@ export interface ProfileFollowersProps {
   className?: string;
 }
 
-// Mock data matching Figma design
 const mockFollowers: Molecules.FollowerData[] = [
   {
     id: '1',
@@ -141,25 +140,14 @@ export function ProfileFollowers({ className }: ProfileFollowersProps) {
   }
 
   return (
-    <Atoms.Container className={Libs.cn('flex flex-col gap-3 lg:gap-6', className)}>
-      {/* Followers heading - only on mobile */}
+    <Atoms.Container className="flex flex-col">
       <Atoms.Heading level={5} size="lg" className="text-muted-foreground font-light lg:hidden">
         Followers
       </Atoms.Heading>
 
-      {/* Desktop: Single card with all followers */}
-      <Atoms.Card className="hidden lg:block p-6 rounded-md">
-        <div className="flex flex-col gap-3.5">
-          {followers.map((follower) => (
-            <Molecules.FollowerItem key={follower.id} follower={follower} onFollow={handleFollow} />
-          ))}
-        </div>
-      </Atoms.Card>
-
-      {/* Mobile: Individual cards for each follower */}
-      <div className="flex flex-col gap-3 lg:hidden">
+      <div className="flex flex-col gap-3 lg:gap-3.5 lg:p-6 lg:bg-card lg:rounded-md lg:shadow-sm">
         {followers.map((follower) => (
-          <Atoms.Card key={follower.id} className="p-6 rounded-md">
+          <Atoms.Card key={follower.id} className="p-6 rounded-md lg:p-0 lg:bg-transparent lg:border-0 lg:shadow-none">
             <Molecules.FollowerItem follower={follower} onFollow={handleFollow} />
           </Atoms.Card>
         ))}
