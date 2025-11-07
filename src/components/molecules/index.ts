@@ -30,7 +30,6 @@ export * from './PopoverInvite';
 export * from './PopoverInviteHomeserver';
 export * from './PopoverPublicKey';
 export * from './PopoverTradeoffs';
-export * from './ProfileAvatar';
 export * from './ProfileInfo';
 export * from './ProfileMenu';
 export * from './ProfileMobileMenu';
