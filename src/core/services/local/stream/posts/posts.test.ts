@@ -13,7 +13,7 @@ describe('LocalStreamPostsService', () => {
     it('should create a new stream with post IDs', async () => {
       const postIds = ['user1:post1', 'user2:post2', 'user3:post3'];
 
-      await Core.LocalStreamPostsService.upsert(streamId, postIds);
+      await Core.LocalStreamPostsService.upsert({ streamId, stream: postIds });
 
       const result = await Core.PostStreamModel.findById(streamId);
       expect(result).toBeTruthy();
@@ -25,10 +25,10 @@ describe('LocalStreamPostsService', () => {
       const updatedIds = ['user1:post1', 'user2:post2', 'user3:post3'];
 
       // Create initial stream
-      await Core.LocalStreamPostsService.upsert(streamId, initialIds);
+      await Core.LocalStreamPostsService.upsert({ streamId, stream: initialIds });
 
       // Update with more IDs
-      await Core.LocalStreamPostsService.upsert(streamId, updatedIds);
+      await Core.LocalStreamPostsService.upsert({ streamId, stream: updatedIds });
 
       const result = await Core.PostStreamModel.findById(streamId);
       expect(result).toBeTruthy();
@@ -36,7 +36,7 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should handle empty array', async () => {
-      await Core.LocalStreamPostsService.upsert(streamId, []);
+      await Core.LocalStreamPostsService.upsert({ streamId, stream: [] });
 
       const result = await Core.PostStreamModel.findById(streamId);
       expect(result).toBeTruthy();

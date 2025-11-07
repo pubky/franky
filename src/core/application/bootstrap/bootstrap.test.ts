@@ -158,10 +158,10 @@ describe('BootstrapApplication', () => {
       expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
       expect(nexusNotificationsSpy).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(persistUsersSpy).toHaveBeenCalledWith(mockBootstrapData.users);
-      expect(upsertPostsStreamSpy).toHaveBeenCalledWith(
-        Core.PostStreamTypes.TIMELINE_ALL,
-        mockBootstrapData.list.stream,
-      );
+      expect(upsertPostsStreamSpy).toHaveBeenCalledWith({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        stream: mockBootstrapData.list.stream,
+      });
       expect(upsertInfluencersStreamSpy).toHaveBeenCalledWith(
         Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
         mockBootstrapData.list.influencers,
@@ -309,7 +309,7 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
-      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue([]);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
@@ -358,7 +358,7 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.NexusUserService, 'notifications')
         .mockResolvedValue(mockNotifications);
       const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
-      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue([]);
       vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
       vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);

@@ -12,7 +12,7 @@ export class LocalStreamPostsService {
   /**
    * Save or update a stream of post IDs
    */
-  static async upsert(streamId: Core.PostStreamTypes, stream: string[]): Promise<void> {
+  static async upsert({ streamId, stream }: Core.TPostStreamUpsertParams): Promise<void> {
     await Core.PostStreamModel.upsert(streamId, stream);
   }
 
@@ -76,11 +76,11 @@ export class LocalStreamPostsService {
    * @param posts - Array of posts from Nexus API
    * @returns Array of composite post IDs (author:postId)
    */
-  static async persistNewStreamChunk(posts: string[], streamId: Core.PostStreamTypes) {
+  static async persistNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
     const postStream = await Core.PostStreamModel.findById(streamId);
     if (!postStream) {
       throw new Error(`Post stream not found: ${streamId}`);
     }
-    await Core.PostStreamModel.upsert(streamId, [...postStream.stream, ...posts]);
+    await Core.PostStreamModel.upsert(streamId, [...postStream.stream, ...stream]);
   }
 }

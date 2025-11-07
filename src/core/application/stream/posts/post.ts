@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
+import * as Libs from '@/libs';
 
 export class PostStreamApplication {
   private constructor() {}
@@ -13,28 +14,36 @@ export class PostStreamApplication {
     limit = Config.NEXUS_POSTS_PER_PAGE,
     post_id,
     timestamp,
-  }: Core.TReadStreamPostsParams): Promise<Core.TPostPaginationResponse> {
+  }: Core.TReadPostStreamChunkParams): Promise<Core.TPostStreamChunkResponse> {
     const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
     if (cachedStream) {
-      const nextPageIds = this.getStreamFromCache(post_id, limit, cachedStream);
+      const nextPageIds = this.getStreamFromCache({ postId: post_id, limit, cachedStream });
       if (nextPageIds) {
+        // Returning undefined the organisms knows that that stream chunk comes from cache
         return { nextPageIds, cacheMissPostIds: [], timestamp: undefined };
       }
     }
     return await this.fetchStreamFromNexus({ streamId, limit, post_id, timestamp });
   }
 
-  static async fetchMissingPostsFromNexus(postIds: string[]) {
-    const { url, body } = Core.postStreamApi.postsByIds({ post_ids: postIds /*, viewer_id */ });
+  static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
+    const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
     const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
-    await Core.LocalStreamPostsService.persistPosts(postBatch);
-    const cacheMissUserIds = await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author));
-    if (cacheMissUserIds.length > 0) {
-      const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
-        user_ids: cacheMissUserIds /*, viewer_id */,
-      });
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
-      await Core.LocalStreamUsersService.persistUsers(userBatch);
+    if (postBatch) {
+      await Core.LocalStreamPostsService.persistPosts(postBatch);
+      const cacheMissUserIds = postBatch
+        ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
+        : [];
+      if (cacheMissUserIds.length > 0) {
+        const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+          user_ids: cacheMissUserIds,
+          viewer_id: viewerId,
+        });
+        const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
+        if (userBatch) {
+          await Core.LocalStreamUsersService.persistUsers(userBatch);
+        }
+      }
     }
   }
 
@@ -42,12 +51,22 @@ export class PostStreamApplication {
   // Internal Helpers
   // ============================================================================
 
+  private static async getTimestampFromPostId(postId: string): Promise<number | undefined> {
+    try {
+      const postDetails = await Core.PostDetailsModel.findById(postId);
+      return postDetails?.indexed_at;
+    } catch (error) {
+      Libs.Logger.warn('Failed to get timestamp from post ID', { postId, error });
+      return undefined;
+    }
+  }
+
   private static async fetchStreamFromNexus({
     streamId,
     limit,
     post_id /*, timestamp*/,
-  }: Core.TReadStreamPostsParams): Promise<Core.TPostPaginationResponse> {
-    const start = post_id ? /*timestamp*/ await Core.LocalPostService.getField(post_id, 'indexed_at') : undefined;
+  }: Core.TReadPostStreamChunkParams): Promise<Core.TPostStreamChunkResponse> {
+    const start = post_id ? await this.getTimestampFromPostId(post_id) : undefined;
     // TODO: With the new endpoint, we have to adapt the next line and delete timestamp and composidePostIds
     const nexusPosts = await Core.NexusPostStreamService.fetch({ streamId, params: { limit, start } });
 
@@ -61,7 +80,7 @@ export class PostStreamApplication {
       Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
     );
     // TODO: Delete the addPost
-    await Core.LocalStreamPostsService.persistNewStreamChunk(compositePostIds, streamId);
+    await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });
     const cacheMissPostIds = await this.getNotPersistedPostsInCache(compositePostIds);
     // TODO: the timestamp we will get from
     return { nextPageIds: compositePostIds, cacheMissPostIds, timestamp };
@@ -78,11 +97,7 @@ export class PostStreamApplication {
     return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
   }
 
-  private static getStreamFromCache(
-    postId: string | undefined,
-    limit: number,
-    cachedStream: { stream: string[] },
-  ): string[] | null {
+  private static getStreamFromCache({ postId, limit, cachedStream }: Core.TCacheStreamParams): string[] | null {
     // TODO: Could be a case that it does not have sufficient posts, in which case we need to fetch more from Nexus
     // e.g. in the cache there is only limit - 5 posts and the missing ones we have to download
     // From now, if cache exists and has posts, return from cache

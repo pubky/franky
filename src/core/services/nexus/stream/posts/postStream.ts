@@ -30,6 +30,6 @@ export class NexusPostStreamService {
       default:
         throw new Error(`Invalid stream type: ${streamType}`);
     }
-    return await Core.queryNexus<Core.NexusPost[]>(nexusEndpoint);
+    return (await Core.queryNexus<Core.NexusPost[]>(nexusEndpoint)) || [];
   }
 }

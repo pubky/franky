@@ -1,14 +1,13 @@
 import * as Core from '@/core';
 
-export type TReadStreamPostsParams = {
+export type TReadPostStreamChunkParams = {
   streamId: Core.PostStreamTypes;
   post_id?: string;
   timestamp?: number;
   limit?: number;
 };
 
-export type TPostPaginationResponse = {
+export type TReadPostStreamChunkResponse = {
   nextPageIds: string[];
-  cacheMissPostIds: string[];
   timestamp: number | undefined;
 };
