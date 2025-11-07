@@ -139,14 +139,16 @@ export function EditProfile() {
               </div>
             ))}
 
-            <button
+            <Atoms.Button
+              variant="secondary"
+              size="sm"
               onClick={handleAddLink}
-              className="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
               disabled={loading}
+              className="gap-2 w-fit"
             >
               <Libs.Link size={16} />
               Add link
-            </button>
+            </Atoms.Button>
           </div>
 
           {/* Avatar Section */}
@@ -180,7 +182,13 @@ export function EditProfile() {
             </div>
 
             {avatar && (
-              <Atoms.Button variant="ghost" size="sm" onClick={handleDeleteAvatar} disabled={loading} className="gap-2">
+              <Atoms.Button
+                variant="secondary"
+                size="sm"
+                onClick={handleDeleteAvatar}
+                disabled={loading}
+                className="gap-2"
+              >
                 <Libs.Trash2 size={16} />
                 Delete
               </Atoms.Button>
