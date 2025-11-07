@@ -26,7 +26,7 @@ export function ProfileMobileMenu({ className, counts }: ProfileMobileMenuProps)
   return (
     <div
       className={Libs.cn(
-        'w-full overflow-x-auto fixed top-18 left-0 right-0 z-20 bg-background shadow-xl border-b border-border',
+        'w-full overflow-x-auto fixed top-14 left-0 right-0 z-20 bg-background shadow-xl border-b border-border',
         className,
       )}
     >
