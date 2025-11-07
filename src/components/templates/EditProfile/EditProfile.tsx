@@ -92,6 +92,7 @@ export function EditProfile() {
             <div>
               <Atoms.Label className="text-[11px] text-muted-foreground mb-2">NAME</Atoms.Label>
               <Molecules.InputField
+                variant="dashed"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
@@ -103,6 +104,7 @@ export function EditProfile() {
             <div>
               <Atoms.Label className="text-[11px] text-muted-foreground mb-2">BIO</Atoms.Label>
               <Molecules.TextareaField
+                variant="dashed"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Tell us about yourself"
@@ -123,6 +125,7 @@ export function EditProfile() {
               <div key={index} className="relative">
                 <Atoms.Label className="text-[11px] text-muted-foreground mb-2">{link.title}</Atoms.Label>
                 <Molecules.InputField
+                  variant="dashed"
                   value={link.url}
                   onChange={(e) => handleUpdateLink(index, e.target.value)}
                   placeholder={link.placeholder}

@@ -45,8 +45,8 @@ export function TextareaField({
 
   const textAreaClasses = Libs.cn('break-all w-full border-none resize-none px-5 py-4 h-25 !bg-transparent');
   const containerClasses = Libs.cn(
-    'flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium',
-    variant === 'dashed' && 'border-dashed !bg-alpha-90/10',
+    'flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium bg-alpha-90',
+    variant === 'dashed' && 'border-dashed',
   );
   const messageClasses = {
     default: 'text-muted-foreground',
