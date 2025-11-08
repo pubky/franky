@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfileMenu } from './ProfileMenu';
+import { ProfileCounts } from './profileMenu.shared';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -19,13 +20,14 @@ describe('ProfileMenu', () => {
   });
 
   it('displays counts when provided', () => {
-    const counts = {
+    const counts: ProfileCounts = {
+      notifications: 3,
       posts: 10,
       replies: 5,
-      tagged: 3,
       followers: 100,
       following: 50,
       friends: 20,
+      tagged: 3,
     };
     render(<ProfileMenu counts={counts} />);
     expect(screen.getByText('Posts')).toBeInTheDocument();

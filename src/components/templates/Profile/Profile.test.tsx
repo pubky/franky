@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Profile } from './Profile';
+import { ProfileCounts } from '@/molecules/ProfileMenu/profileMenu.shared';
 
 // Mock dependencies
 vi.mock('@/hooks', async (importOriginal) => {
@@ -38,13 +39,14 @@ describe('Profile', () => {
   });
 
   it('renders with profile counts', () => {
-    const counts = {
+    const counts: ProfileCounts = {
+      notifications: 3,
       posts: 10,
       replies: 5,
-      tagged: 3,
       followers: 100,
       following: 50,
       friends: 20,
+      tagged: 3,
     };
     render(
       <Profile profileCounts={counts}>
