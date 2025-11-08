@@ -33,13 +33,8 @@ describe('ProfileMobileMenu', () => {
   it('displays notifications count when provided', () => {
     render(<ProfileMobileMenu notificationsCount={3} />);
 
-    // Check for the count numbers in span elements
-    expect(screen.getAllByText('3')).toHaveLength(2); // notifications and tagged both have count 3
-    expect(screen.getByText('10')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('100')).toBeInTheDocument();
-    expect(screen.getByText('50')).toBeInTheDocument();
-    expect(screen.getByText('20')).toBeInTheDocument();
+    // Check for the notifications count number in span element
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 
   it('handles navigation when menu items are clicked', () => {

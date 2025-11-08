@@ -54,5 +54,6 @@ describe('Profile', () => {
       </Profile>,
     );
     expect(screen.getByText('Profile Content')).toBeInTheDocument();
+    expect(screen.getAllByTestId('count-number')).toHaveLength(7);
   });
 });

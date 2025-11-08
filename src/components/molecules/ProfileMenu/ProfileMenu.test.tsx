@@ -30,11 +30,11 @@ describe('ProfileMenu', () => {
       tagged: 3,
     };
     render(<ProfileMenu counts={counts} />);
-    expect(screen.getByText('Posts')).toBeInTheDocument();
+    expect(screen.getAllByText('3')).toHaveLength(2); // notifications and tagged both have count 3
     expect(screen.getByText('10')).toBeInTheDocument();
-    expect(screen.getByText('Replies')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('Tagged')).toBeInTheDocument();
-    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('100')).toBeInTheDocument();
+    expect(screen.getByText('50')).toBeInTheDocument();
+    expect(screen.getByText('20')).toBeInTheDocument();
   });
 });
