@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as Libs from '@/libs';
 import { PROFILE_MENU_ITEMS } from '@/molecules/ProfileMenu/profileMenu.shared';
-import { PROFILE_ROUTES } from '@/app';
 
 export interface ProfileMobileMenuProps {
   className?: string;
@@ -16,11 +15,6 @@ export function ProfileMobileMenu({ className, notificationsCount }: ProfileMobi
 
   const isSelected = (path: string) => pathname === path;
 
-  // Reorder menu items for mobile: Tagged first, then others
-  const taggedItem = PROFILE_MENU_ITEMS.find((item) => item.path === PROFILE_ROUTES.TAGGED);
-  const otherItems = PROFILE_MENU_ITEMS.filter((item) => item.path !== PROFILE_ROUTES.TAGGED);
-  const mobileMenuItems = taggedItem ? [taggedItem, ...otherItems] : PROFILE_MENU_ITEMS;
-
   return (
     <div
       className={Libs.cn(
@@ -29,10 +23,9 @@ export function ProfileMobileMenu({ className, notificationsCount }: ProfileMobi
       )}
     >
       <div className="flex w-full items-center">
-        {/* Menu items - Tagged is first on mobile with CircleUserRound icon */}
-        {mobileMenuItems.map((item) => {
-          // Use CircleUserRound icon for Tagged on mobile, otherwise use the item's icon
-          const Icon = item.path === PROFILE_ROUTES.TAGGED ? Libs.CircleUserRound : item.icon;
+        {/* Menu items */}
+        {PROFILE_MENU_ITEMS.map((item) => {
+          const Icon = item.icon;
           const selected = isSelected(item.path);
 
           return (
