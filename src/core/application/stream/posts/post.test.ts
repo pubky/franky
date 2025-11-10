@@ -3,376 +3,412 @@ import * as Core from '@/core';
 
 describe('PostStreamApplication', () => {
   const streamId = Core.PostStreamTypes.TIMELINE_ALL;
+  const DEFAULT_AUTHOR = 'user-1';
+  const BASE_TIMESTAMP = 1000000;
+
+  // ============================================================================
+  // Test Helpers
+  // ============================================================================
+
+  const createMockNexusPost = (
+    postId: string,
+    author: string = DEFAULT_AUTHOR,
+    timestamp: number = BASE_TIMESTAMP,
+    overrides?: Partial<Core.NexusPost>,
+  ): Core.NexusPost => ({
+    details: {
+      id: postId,
+      content: `Post ${postId} content`,
+      kind: 'short' as const,
+      uri: `https://pubky.app/${author}/pub/pubky.app/posts/${postId}`,
+      author,
+      indexed_at: timestamp,
+      attachments: null,
+      ...overrides?.details,
+    },
+    counts: {
+      replies: 0,
+      tags: 0,
+      unique_tags: 0,
+      reposts: 0,
+      ...overrides?.counts,
+    },
+    tags: [],
+    relationships: {
+      replied: null,
+      reposted: null,
+      mentioned: [],
+      ...overrides?.relationships,
+    },
+    bookmark: null,
+    ...overrides,
+  });
+
+  const createMockNexusPosts = (
+    count: number,
+    startIndex: number = 1,
+    author: string = DEFAULT_AUTHOR,
+    startTimestamp: number = BASE_TIMESTAMP,
+  ): Core.NexusPost[] => {
+    return Array.from({ length: count }, (_, i) => {
+      const postId = `post-${startIndex + i}`;
+      return createMockNexusPost(postId, author, startTimestamp + i);
+    });
+  };
+
+  const createMockNexusUser = (
+    userId: string = DEFAULT_AUTHOR,
+    overrides?: Partial<Core.NexusUser>,
+  ): Core.NexusUser => ({
+    details: {
+      id: userId,
+      name: `User ${userId}`,
+      bio: 'Bio',
+      links: null,
+      status: null,
+      image: null,
+      indexed_at: BASE_TIMESTAMP,
+      ...overrides?.details,
+    },
+    counts: {
+      tagged: 0,
+      tags: 0,
+      unique_tags: 0,
+      posts: 0,
+      replies: 0,
+      following: 0,
+      followers: 0,
+      friends: 0,
+      bookmarks: 0,
+      ...overrides?.counts,
+    },
+    tags: [],
+    relationship: {
+      following: false,
+      followed_by: false,
+      muted: false,
+      ...overrides?.relationship,
+    },
+    ...overrides,
+  });
+
+  const createPostDetails = async (postIds: string[], startTimestamp: number = BASE_TIMESTAMP) => {
+    return Promise.all(
+      postIds.map((postId, i) =>
+        Core.PostDetailsModel.create({
+          id: postId,
+          content: `Content for ${postId}`,
+          kind: 'short',
+          indexed_at: startTimestamp + i,
+          uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/post-${i + 1}`,
+          attachments: null,
+        }),
+      ),
+    );
+  };
+
+  const createStreamWithPosts = async (postIds: string[]) => {
+    await Core.PostStreamModel.create(streamId, postIds);
+  };
 
   beforeEach(async () => {
     // Clear all relevant tables
     await Core.PostStreamModel.table.clear();
     await Core.PostDetailsModel.table.clear();
+    await Core.UserDetailsModel.table.clear();
+    await Core.UserCountsModel.table.clear();
+    await Core.UserRelationshipsModel.table.clear();
+    await Core.UserTagsModel.table.clear();
     vi.clearAllMocks();
   });
 
-  describe('read', () => {
-    it('should return posts from cache when available', async () => {
+  describe('getOrFetchStreamSlice', () => {
+    it('should return posts from cache when available (no cursor)', async () => {
       // Create stream with posts
-      const postIds = Array.from({ length: 20 }, (_, i) => `post-${i + 1}`);
-      await Core.PostStreamModel.create(streamId, postIds);
+      const postIds = Array.from({ length: 20 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
 
-      // Create all posts in database
-      await Promise.all(
-        postIds.map((postId) =>
-          Core.PostDetailsModel.create({
-            id: `user-1:${postId}`,
-            content: `Content for ${postId}`,
-            kind: 'short',
-            indexed_at: Date.now(),
-            uri: `https://pubky.app/user-1/pub/pubky.app/posts/${postId}`,
-            attachments: null,
-          }),
-        ),
-      );
-
-      // Read first 10 posts
+      // Read first 10 posts (no cursor = initial load)
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        skip: 0,
       });
 
-      expect(result).toHaveLength(10);
-      expect(result).toEqual(postIds.slice(0, 10));
+      expect(result.nextPageIds).toHaveLength(10);
+      expect(result.nextPageIds).toEqual(postIds.slice(0, 10));
+      expect(result.cacheMissPostIds).toEqual([]);
+      expect(result.timestamp).toBeUndefined();
     });
 
     it('should fetch from Nexus when cache is empty', async () => {
-      const mockNexusPosts = Array.from({ length: 5 }, (_, i) => ({
-        details: {
-          id: `post-${i + 1}`,
-          content: `Post ${i + 1} content`,
-          kind: 'short' as const,
-          uri: `https://pubky.app/user-1/pub/pubky.app/posts/post-${i + 1}`,
-          author: 'user-1',
-          indexed_at: Date.now(),
-          attachments: null,
-        },
-        counts: {
-          replies: 0,
-          tags: 0,
-          unique_tags: 0,
-          reposts: 0,
-        },
-        author: {
-          details: {
-            name: 'Test User',
-            bio: 'Test bio',
-            id: 'user-1',
-            links: null,
-            status: null,
-            image: null,
-            indexed_at: Date.now(),
-          },
-          counts: {
-            tagged: 0,
-            tags: 0,
-            unique_tags: 0,
-            posts: 5,
-            replies: 0,
-            following: 0,
-            followers: 0,
-            friends: 0,
-            bookmarks: 0,
-          },
-          tags: [],
-          relationship: {
-            following: false,
-            followed_by: false,
-            muted: false,
-          },
-        },
-        tags: [],
-        relationships: {
-          replied: null,
-          reposted: null,
-          mentioned: [],
-        },
-        bookmark: null,
-      }));
+      const mockNexusPosts = createMockNexusPosts(5);
 
-      // Mock Nexus services
+      // Mock Nexus service
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
-      // Read posts (cache is empty, should fetch from Nexus)
-      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
-        streamId,
-        limit: 5,
-        skip: 0,
-      });
+      // Create empty stream first (required for persistNewStreamChunk)
+      await createStreamWithPosts([]);
 
-      // Build expected composite IDs
-      const expectedIds = mockNexusPosts.map((post) =>
-        Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
-      );
-
-      expect(result).toHaveLength(5);
-      expect(result).toEqual(expectedIds);
-
-      // Verify stream was created in cache
-      const cachedStream = await Core.PostStreamModel.findById(streamId);
-      expect(cachedStream).toBeTruthy();
-      expect(cachedStream!.stream).toEqual(expectedIds);
-    });
-
-    it('should fetch more posts from Nexus when cache is exhausted', async () => {
-      // Create stream with only 5 posts
-      await Core.PostStreamModel.create(streamId, ['post-1', 'post-2', 'post-3', 'post-4', 'post-5']);
-
-      // Create these posts in database
-      await Promise.all(
-        Array.from({ length: 5 }, (_, i) =>
-          Core.PostDetailsModel.create({
-            id: `user-1:post-${i + 1}`,
-            content: `Content for post-${i + 1}`,
-            kind: 'short',
-            indexed_at: Date.now(),
-            uri: `https://pubky.app/user-1/pub/pubky.app/posts/post-${i + 1}`,
-            attachments: null,
-          }),
-        ),
-      );
-
-      // Mock Nexus to return more posts
-      const mockNexusPosts = Array.from({ length: 5 }, (_, i) => ({
-        details: {
-          id: `post-${i + 6}`,
-          content: `Post ${i + 6} content`,
-          kind: 'short' as const,
-          uri: `https://pubky.app/user-1/pub/pubky.app/posts/post-${i + 6}`,
-          author: 'user-1',
-          indexed_at: Date.now(),
-          attachments: null,
-        },
-        counts: {
-          replies: 0,
-          tags: 0,
-          unique_tags: 0,
-          reposts: 0,
-        },
-        author: {
-          details: {
-            name: 'Test User',
-            bio: 'Test bio',
-            id: 'user-1',
-            links: null,
-            status: null,
-            image: null,
-            indexed_at: Date.now(),
-          },
-          counts: {
-            tagged: 0,
-            tags: 0,
-            unique_tags: 0,
-            posts: 10,
-            replies: 0,
-            following: 0,
-            followers: 0,
-            friends: 0,
-            bookmarks: 0,
-          },
-          tags: [],
-          relationship: {
-            following: false,
-            followed_by: false,
-            muted: false,
-          },
-        },
-        tags: [],
-        relationships: {
-          replied: null,
-          reposted: null,
-          mentioned: [],
-        },
-        bookmark: null,
-      }));
-
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
-
-      // Request posts beyond cache (offset 0, limit 10)
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        skip: 0,
       });
 
-      // Build expected composite IDs for new posts
-      const newCompositeIds = mockNexusPosts.map((post) =>
-        Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
-      );
+      // Should have fetched and cached posts
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds).toEqual([
+        `${DEFAULT_AUTHOR}:post-1`,
+        `${DEFAULT_AUTHOR}:post-2`,
+        `${DEFAULT_AUTHOR}:post-3`,
+        `${DEFAULT_AUTHOR}:post-4`,
+        `${DEFAULT_AUTHOR}:post-5`,
+      ]);
+      expect(result.timestamp).toBe(BASE_TIMESTAMP + 4);
+      // All posts should be cache misses since they're not persisted yet
+      expect(result.cacheMissPostIds).toHaveLength(5);
+      expect(result.cacheMissPostIds).toEqual(result.nextPageIds);
 
-      // Should have fetched more posts from Nexus
-      expect(result).toHaveLength(10);
-      expect(result).toEqual(['post-1', 'post-2', 'post-3', 'post-4', 'post-5', ...newCompositeIds]);
-
-      // Verify stream was updated in cache
-      const updatedStream = await Core.PostStreamModel.findById(streamId);
-      expect(updatedStream).toBeTruthy();
-      expect(updatedStream!.stream).toHaveLength(10);
+      // Verify posts were cached
+      const cached = await Core.PostStreamModel.findById(streamId);
+      expect(cached?.stream).toEqual(result.nextPageIds);
     });
 
-    it('should handle pagination with offset', async () => {
-      // Create stream with 20 posts
-      const postIds = Array.from({ length: 20 }, (_, i) => `post-${i + 1}`);
-      await Core.PostStreamModel.create(streamId, postIds);
+    it('should paginate using cursor (post_id and timestamp)', async () => {
+      // Create initial cache with 5 posts
+      const initialPostIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(initialPostIds);
+      await createPostDetails(initialPostIds);
 
-      // Create all posts in database
-      await Promise.all(
-        postIds.map((postId) =>
-          Core.PostDetailsModel.create({
-            id: `user-1:${postId}`,
-            content: `Content for ${postId}`,
-            kind: 'short',
-            indexed_at: Date.now(),
-            uri: `https://pubky.app/user-1/pub/pubky.app/posts/${postId}`,
-            attachments: null,
-          }),
-        ),
-      );
-
-      // Read posts with offset 10
-      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
-        streamId,
-        limit: 5,
-        skip: 10,
-      });
-
-      expect(result).toHaveLength(5);
-      expect(result).toEqual(['post-11', 'post-12', 'post-13', 'post-14', 'post-15']);
-    });
-
-    it('should clear corrupted cache and refetch when cache integrity fails', async () => {
-      // Create stream with duplicate posts (corrupted)
-      await Core.PostStreamModel.create(streamId, ['user-1:post-1', 'user-1:post-2', 'user-1:post-1']);
-
-      // Mock Nexus to return fresh posts
-      const mockNexusPosts = Array.from({ length: 2 }, (_, i) => ({
-        details: {
-          id: `post-${i + 1}`,
-          content: `New Post ${i + 1} content`,
-          kind: 'short' as const,
-          uri: `https://pubky.app/user-1/pub/pubky.app/posts/post-${i + 1}`,
-          author: 'user-1',
-          indexed_at: Date.now(),
-          attachments: null,
-        },
-        counts: {
-          replies: 0,
-          tags: 0,
-          unique_tags: 0,
-          reposts: 0,
-        },
-        author: {
-          details: {
-            name: 'Test User',
-            bio: 'Test bio',
-            id: 'user-1',
-            links: null,
-            status: null,
-            image: null,
-            indexed_at: Date.now(),
-          },
-          counts: {
-            tagged: 0,
-            tags: 0,
-            unique_tags: 0,
-            posts: 2,
-            replies: 0,
-            following: 0,
-            followers: 0,
-            friends: 0,
-            bookmarks: 0,
-          },
-          tags: [],
-          relationship: {
-            following: false,
-            followed_by: false,
-            muted: false,
-          },
-        },
-        tags: [],
-        relationships: {
-          replied: null,
-          reposted: null,
-          mentioned: [],
-        },
-        bookmark: null,
-      }));
-
+      // Mock more posts from Nexus
+      const mockNexusPosts = createMockNexusPosts(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
-      vi.spyOn(Core.NexusUserStreamService, 'fetchByIds').mockResolvedValue([]);
 
-      // Should detect corruption, clear cache, and refetch
+      // Paginate from last post
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
-        limit: 2,
-        skip: 0,
+        limit: 10,
+        post_id: `${DEFAULT_AUTHOR}:post-5`, // Last post in cache
+        timestamp: BASE_TIMESTAMP + 4, // Timestamp of last post
       });
 
-      // Build expected composite IDs
-      const expectedIds = mockNexusPosts.map((post) =>
-        Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
-      );
+      // Should return newly fetched posts
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds).toEqual([
+        `${DEFAULT_AUTHOR}:post-6`,
+        `${DEFAULT_AUTHOR}:post-7`,
+        `${DEFAULT_AUTHOR}:post-8`,
+        `${DEFAULT_AUTHOR}:post-9`,
+        `${DEFAULT_AUTHOR}:post-10`,
+      ]);
+      expect(result.timestamp).toBe(BASE_TIMESTAMP + 9);
 
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(expectedIds);
-
-      // Verify posts were persisted
-      const post1 = await Core.PostDetailsModel.findById(expectedIds[0]);
-      expect(post1).toBeTruthy();
+      // Verify cache was updated
+      const cached = await Core.PostStreamModel.findById(streamId);
+      expect(cached?.stream).toHaveLength(10);
     });
 
-    it('should return empty array when no posts are available', async () => {
-      // Mock Nexus to return empty array
+    it('should return empty array when no more posts available', async () => {
+      // Create cache with posts
+      const postIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
+      await createStreamWithPosts(postIds);
+      await createPostDetails(postIds);
+
+      // Mock empty response from Nexus
       vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        skip: 0,
+        post_id: `${DEFAULT_AUTHOR}:post-2`,
+        timestamp: BASE_TIMESTAMP + 1,
       });
 
-      expect(result).toEqual([]);
+      expect(result.nextPageIds).toHaveLength(0);
+      expect(result.cacheMissPostIds).toEqual([]);
     });
 
-    it('should stop fetching when Nexus returns no new posts', async () => {
-      // Create stream with 5 posts
-      await Core.PostStreamModel.create(streamId, ['post-1', 'post-2', 'post-3', 'post-4', 'post-5']);
+    it('WIP: should fetch from Nexus when cache has insufficient posts', async () => {
+      // Create cache with only 3 posts (less than limit of 10)
+      const cachedPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(cachedPostIds);
 
-      // Create these posts in database
-      await Promise.all(
-        Array.from({ length: 5 }, (_, i) =>
-          Core.PostDetailsModel.create({
-            id: `user-1:post-${i + 1}`,
-            content: `Content for post-${i + 1}`,
-            kind: 'short',
-            indexed_at: Date.now(),
-            uri: `https://pubky.app/user-1/pub/pubky.app/posts/post-${i + 1}`,
-            attachments: null,
-          }),
-        ),
-      );
+      // Mock more posts from Nexus
+      const mockNexusPosts = createMockNexusPosts(5, 4, DEFAULT_AUTHOR, BASE_TIMESTAMP + 3);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
 
-      // Mock Nexus to return empty (no more posts)
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
-
-      // Request 10 posts but only 5 exist
+      // Request 10 posts, but cache only has 3
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        skip: 0,
       });
 
-      // Should return only the 5 available posts
-      expect(result).toHaveLength(5);
-      expect(result).toEqual(['post-1', 'post-2', 'post-3', 'post-4', 'post-5']);
+      // Should return all cached posts (3) since getStreamFromCache returns null when insufficient
+      // and then fetch from Nexus
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.nextPageIds).toEqual([
+        `${DEFAULT_AUTHOR}:post-4`,
+        `${DEFAULT_AUTHOR}:post-5`,
+        `${DEFAULT_AUTHOR}:post-6`,
+        `${DEFAULT_AUTHOR}:post-7`,
+        `${DEFAULT_AUTHOR}:post-8`,
+      ]);
+    });
+
+    it('should handle error when getting timestamp from post ID', async () => {
+      // Create cache with posts
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+
+      // Mock getTimestampFromPostId to throw an error
+      vi.spyOn(Core.PostDetailsModel, 'findById').mockRejectedValue(new Error('Database error'));
+
+      // Mock Nexus posts
+      const mockNexusPosts = createMockNexusPosts(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+
+      // Try to paginate with a post_id that will cause an error
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        post_id: `${DEFAULT_AUTHOR}:post-5`,
+        timestamp: BASE_TIMESTAMP + 4,
+      });
+
+      // Should still work, fetching from Nexus with undefined start timestamp
+      expect(result.nextPageIds).toHaveLength(5);
+    });
+  });
+
+  describe('fetchMissingPostsFromNexus', () => {
+    const viewerId = 'user-viewer' as Core.Pubky;
+
+    it('should fetch and persist posts when postBatch exists', async () => {
+      const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
+      const mockNexusPosts = createMockNexusPosts(2);
+
+      // Mock queryNexus for posts
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockNexusPosts);
+
+      // Mock persistPosts
+      const persistPostsSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'persistPosts')
+        .mockResolvedValue(cacheMissPostIds);
+
+      // Mock getNotPersistedUsersInCache to return empty (all users already cached)
+      vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue([
+        { id: DEFAULT_AUTHOR } as Core.UserDetailsModelSchema,
+        { id: DEFAULT_AUTHOR } as Core.UserDetailsModelSchema,
+      ]);
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify queryNexus was called with correct parameters
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/posts/by_ids'),
+        'POST',
+        expect.stringContaining(JSON.stringify({ post_ids: cacheMissPostIds, viewer_id: viewerId })),
+      );
+      expect(persistPostsSpy).toHaveBeenCalledWith(mockNexusPosts);
+    });
+
+    it('should handle when postBatch is null/undefined', async () => {
+      const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
+
+      // Mock queryNexus to return undefined
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts');
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      expect(persistPostsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should fetch and persist users when cacheMissUserIds exist', async () => {
+      const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
+      const mockNexusPosts = createMockNexusPosts(1);
+      const mockNexusUsers = [createMockNexusUser(DEFAULT_AUTHOR)];
+
+      // Mock queryNexus for posts and users
+      const queryNexusSpy = vi
+        .spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce(mockNexusPosts) // First call for posts
+        .mockResolvedValueOnce(mockNexusUsers); // Second call for users
+
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(['user-1:post-1']);
+
+      // Mock getNotPersistedUsersInCache to return user-1 (not cached)
+      vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue([undefined]);
+
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue();
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify queryNexus was called twice (once for posts, once for users)
+      expect(queryNexusSpy).toHaveBeenCalledTimes(2);
+      expect(queryNexusSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.stringContaining('/stream/users/by_ids'),
+        'POST',
+        expect.stringContaining(JSON.stringify({ user_ids: [DEFAULT_AUTHOR], viewer_id: viewerId })),
+      );
+      expect(persistUsersSpy).toHaveBeenCalledWith(mockNexusUsers);
+    });
+
+    it('should handle when userBatch is null/undefined', async () => {
+      const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
+      const mockNexusPosts = createMockNexusPosts(1);
+
+      // Mock queryNexus for posts, then undefined for users
+      vi.spyOn(Core, 'queryNexus')
+        .mockResolvedValueOnce(mockNexusPosts) // First call for posts
+        .mockResolvedValueOnce(undefined); // Second call for users returns undefined
+
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(cacheMissPostIds);
+
+      // Mock getNotPersistedUsersInCache to return user-1 (not cached)
+      vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue([undefined]);
+
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers');
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      expect(persistUsersSpy).not.toHaveBeenCalled();
+    });
+
+    it('should not fetch users when all users are already cached', async () => {
+      const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
+      const mockNexusPosts = createMockNexusPosts(1);
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockNexusPosts);
+      vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue(cacheMissPostIds);
+
+      // Mock getNotPersistedUsersInCache to return empty array (all users cached)
+      vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue([
+        { id: DEFAULT_AUTHOR } as Core.UserDetailsModelSchema,
+      ]);
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus');
+
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Should only call queryNexus once (for posts), not for users when all users are cached
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
