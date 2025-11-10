@@ -10,4 +10,3 @@ export * from './useRecoveryPhraseValidation';
 export * from './usePostAction';
 export * from './usePostReply';
 export * from './usePostRepost';
-export * from './usePostCreate';
