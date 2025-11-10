@@ -11,3 +11,13 @@ export type TCreateProfileInput = {
   url: string;
   pubky: Pubky;
 };
+
+export type TDeleteAccountParams = {
+  pubky: Pubky;
+  setProgress?: (progress: number) => void;
+};
+
+export type TDownloadDataParams = {
+  pubky: Pubky;
+  setProgress?: (progress: number) => void;
+};

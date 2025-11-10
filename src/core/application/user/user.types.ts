@@ -11,6 +11,7 @@ export type TUserApplicationMuteParams = Core.TMuteParams & {
   muteUrl: string;
   muteJson: Record<string, unknown>;
 };
+
 export type TUserApplicationNotificationsParams = {
   userId: Core.Pubky;
   lastRead: number;

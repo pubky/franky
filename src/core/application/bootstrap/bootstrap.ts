@@ -7,21 +7,25 @@ export class BootstrapApplication {
 
   /**
    * Initialize application state from Nexus and notifications in parallel.
-   * Fetches data, persists users/posts/streams locally, computes unread notifications,
-   * and returns the composed NotificationState.
    *
-   * @param pubky - The user's public key identifier
-   * @returns Promise resolving to the current notification state with unread count and last read timestamp
+   * @param params - Bootstrap parameters
+   * @param params.pubky - The user's public key identifier
+   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
+   * @returns Promise resolving to notification state with unread count and last read timestamp
    */
   static async initialize(params: Core.TBootstrapParams): Promise<Core.NotificationState> {
     const [data, { notificationList, lastRead }] = await Promise.all([
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
     ]);
+    if (!data) {
+      // TODO: Maybe in the UI, we should redirect or show some special message to the user.
+      throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
+    }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts(data.posts),
-      Core.LocalStreamPostsService.upsert(Core.PostStreamTypes.TIMELINE_ALL, data.list.stream),
+      Core.LocalStreamPostsService.upsert({ streamId: Core.PostStreamTypes.TIMELINE_ALL, stream: data.list.stream }),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
@@ -32,12 +36,14 @@ export class BootstrapApplication {
   }
 
   /**
-   * Fetches notification data from Nexus and determines which notifications
-   * are unread based on the user's last read timestamp from the homeserver.
+   * Retrieves user's last read timestamp from homeserver and fetches notification data from Nexus and .
+   * Used internally by initialize() to get notification state.
    *
    * @private
-   * @param pubky - The user's public key identifier
-   * @returns Promise resolving to notification data and last read timestamp
+   * @param params - Bootstrap parameters
+   * @param params.pubky - The user's public key identifier
+   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
+   * @returns Promise resolving to notification list and last read timestamp
    */
   private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
     const { timestamp: userLastRead } = await Core.HomeserverService.request<{ timestamp: number }>(
@@ -53,12 +59,12 @@ export class BootstrapApplication {
 
   /**
    * Performs application bootstrap with retry logic.
-   * This method handles initial data synchronization and will retry the bootstrap
-   * (up to 3 attempts) with 5-second delays to allow Nexus indexing time for new users.
+   * Retries bootstrap up to 3 times with 5-second delays to allow Nexus time to index new users.
    *
-   * @param pubky - The user's public key identifier
-   * @returns Promise resolving to the notification state after successful bootstrap
-   * @throws Error when bootstrap fails after all retry attempts
+   * @param params - Bootstrap parameters
+   * @param params.pubky - The user's public key identifier
+   * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
+   * @returns Promise resolving to notification state after successful bootstrap
    */
   static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.NotificationState> {
     let success = false;
