@@ -129,7 +129,7 @@ function RecoveryStep1({
         ) : (
           <>
             <div className="contents md:hidden">
-              <Atoms.Button id="backup-recovery-phrase-confirm-btn" size="lg" onClick={() => setStep(2)}>
+              <Atoms.Button id="backup-recovery-phrase-confirm-btn-mobile" size="lg" onClick={() => setStep(2)}>
                 <Libs.ArrowRight className="h-4 w-4" />
                 Confirm recovery phrase
               </Atoms.Button>
@@ -157,7 +157,7 @@ function RecoveryStep1({
                 <Libs.EyeOff className="h-4 w-4" />
                 Hide recovery phrase
               </Atoms.Button>
-              <Atoms.Button size="lg" onClick={() => setStep(2)}>
+              <Atoms.Button id="backup-recovery-phrase-confirm-btn-desktop" size="lg" onClick={() => setStep(2)}>
                 <Libs.ArrowRight className="h-4 w-4" />
                 Confirm recovery phrase
               </Atoms.Button>
@@ -263,7 +263,7 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
       <Atoms.DialogFooter>
         <div className="contents md:hidden">
           <Atoms.DialogClose asChild>
-            <Atoms.Button id="backup-recovery-phrase-finish-btn" onClick={handleClose}>
+            <Atoms.Button id="backup-recovery-phrase-finish-btn-mobile" onClick={handleClose}>
               <Libs.ArrowRight className="h-4 w-4" />
               Finish
             </Atoms.Button>
@@ -281,7 +281,7 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
             </Atoms.Button>
           </Atoms.DialogClose>
           <Atoms.DialogClose asChild>
-            <Atoms.Button onClick={handleClose}>
+            <Atoms.Button id="backup-recovery-phrase-finish-btn-desktop" onClick={handleClose}>
               <Libs.ArrowRight className="h-4 w-4" />
               Finish
             </Atoms.Button>
