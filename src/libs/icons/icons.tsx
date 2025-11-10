@@ -81,3 +81,22 @@ export const UsersRound2 = ({ className, size = 24, ...props }: LucideProps) => 
     />
   </svg>
 );
+
+export const LineHorizontal = ({ className, size = 12, ...props }: LucideProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 12 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    {...props}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M12 12V11C5.92487 11 1 6.07513 1 0H0C0 6.62742 5.37258 12 12 12Z"
+      fill="currentColor"
+    />
+  </svg>
+);
