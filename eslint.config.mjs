@@ -26,7 +26,7 @@ const eslintConfig = [
     rules: {
       'storybook/no-redundant-story-name': 'off',
     },
-  },
+  }
 ];
 
 export default eslintConfig;

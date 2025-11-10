@@ -6,25 +6,24 @@ import * as Core from '@/core';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
+import * as Shared from '@/shared/postActionVariants';
 
-export type DialogPostInputVariant = 'reply' | 'repost';
+export type DialogPostInputVariant = Shared.PostActionVariant;
 
 export interface DialogPostInputProps {
   variant: DialogPostInputVariant;
-  postId: string;
+  postId?: string; // postId is optional for 'new' variant
   onSuccess?: () => void;
 }
 
 export function DialogPostInput({ variant, postId, onSuccess }: DialogPostInputProps) {
   const [tags, setTags] = useState<Array<{ id: string; label: string }>>([]);
 
-  // Hooks must be called unconditionally - we'll use the appropriate one based on variant
-  const replyHook = Hooks.usePostReply({ postId, onSuccess: variant === 'reply' ? onSuccess : undefined });
-  const repostHook = Hooks.usePostRepost({ postId, onSuccess: variant === 'repost' ? onSuccess : undefined });
-
-  const content = variant === 'reply' ? replyHook.replyContent : repostHook.repostContent;
-  const setContent = variant === 'reply' ? replyHook.setReplyContent : repostHook.setRepostContent;
-  const handleSubmit = variant === 'reply' ? replyHook.handleReplySubmit : repostHook.handleRepostSubmit;
+  const { content, setContent, handleSubmit } = Hooks.usePostAction({
+    variant,
+    postId,
+    onSuccess,
+  });
 
   const { ref: containerRef } = Hooks.useElementHeight();
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
@@ -36,13 +35,22 @@ export function DialogPostInput({ variant, postId, onSuccess }: DialogPostInputP
     }
   };
 
-  const placeholder = variant === 'reply' ? 'Write a reply...' : 'Optional comment';
-  const isActionDisabled = variant === 'reply' ? !content.trim() : false;
-  const showPreviewInside = variant === 'repost';
+  const placeholder = Shared.POST_ACTION_PLACEHOLDERS[variant];
+  const isActionDisabled = Shared.requiresContent(variant) ? !content.trim() : false;
+  const showReplyConnector = variant === Shared.POST_ACTION_VARIANT.REPLY;
+  const showPreviewInside = variant === Shared.POST_ACTION_VARIANT.REPOST;
+
+  const handleTagAdd = (tag: string) => {
+    setTags([...tags, { id: `${Date.now()}`, label: tag }]);
+  };
+
+  const handleTagClose = (tag: Molecules.PostTagsListTag, index: number) => {
+    setTags(tags.filter((_, i) => i !== index));
+  };
 
   return (
     <div className="flex flex-col gap-4 p-6 border border-dashed border-input rounded-md relative">
-      {variant === 'reply' && <Atoms.PostReplyConnector />}
+      {showReplyConnector && <Atoms.PostReplyConnector />}
       <Organisms.PostHeader postId={currentUserId} hideTime={true} />
 
       {/* Input field */}
@@ -58,7 +66,7 @@ export function DialogPostInput({ variant, postId, onSuccess }: DialogPostInputP
       </div>
 
       {/* Preview card - only shown inside for repost */}
-      {showPreviewInside && <Organisms.DialogPostPreview postId={postId} variant="repost" />}
+      {showPreviewInside && postId && <Organisms.DialogPostPreview postId={postId} variant="repost" />}
 
       <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
         <Molecules.PostTagsList
@@ -68,12 +76,8 @@ export function DialogPostInput({ variant, postId, onSuccess }: DialogPostInputP
           addMode={true}
           showEmojiPicker={false}
           showTagClose={true}
-          onTagAdd={(tag) => {
-            setTags([...tags, { id: `${Date.now()}`, label: tag }]);
-          }}
-          onTagClose={(tag, index) => {
-            setTags(tags.filter((_, i) => i !== index));
-          }}
+          onTagAdd={handleTagAdd}
+          onTagClose={handleTagClose}
         />
 
         <Organisms.DialogActionBar variant={variant} onActionClick={handleSubmit} isActionDisabled={isActionDisabled} />

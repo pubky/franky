@@ -51,6 +51,16 @@ describe('DialogActionBar', () => {
     expect(screen.getByTestId('button-repost')).toBeInTheDocument();
   });
 
+  it('renders all action buttons for new variant', () => {
+    render(<DialogActionBar variant="new" />);
+
+    expect(screen.getByTestId('button-add-emoji')).toBeInTheDocument();
+    expect(screen.getByTestId('button-add-image')).toBeInTheDocument();
+    expect(screen.getByTestId('button-add-file')).toBeInTheDocument();
+    expect(screen.getByTestId('button-add-article')).toBeInTheDocument();
+    expect(screen.getByTestId('button-post')).toBeInTheDocument();
+  });
+
   it('shows Post label for reply variant', () => {
     render(<DialogActionBar variant="reply" />);
 
@@ -63,6 +73,13 @@ describe('DialogActionBar', () => {
 
     const repostButton = screen.getByTestId('button-repost');
     expect(repostButton).toHaveTextContent('Repost');
+  });
+
+  it('shows Post label for new variant', () => {
+    render(<DialogActionBar variant="new" />);
+
+    const postButton = screen.getByTestId('button-post');
+    expect(postButton).toHaveTextContent('Post');
   });
 
   it('calls onActionClick when action button is clicked for reply', () => {
@@ -81,6 +98,16 @@ describe('DialogActionBar', () => {
 
     const repostButton = screen.getByTestId('button-repost');
     fireEvent.click(repostButton);
+
+    expect(onActionClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onActionClick when action button is clicked for new', () => {
+    const onActionClick = vi.fn();
+    render(<DialogActionBar variant="new" onActionClick={onActionClick} />);
+
+    const postButton = screen.getByTestId('button-post');
+    fireEvent.click(postButton);
 
     expect(onActionClick).toHaveBeenCalledTimes(1);
   });

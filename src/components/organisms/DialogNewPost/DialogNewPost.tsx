@@ -4,23 +4,21 @@ import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Shared from '@/shared/postActionVariants';
 
-interface DialogRepostProps {
-  postId: string;
+interface DialogNewPostProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-export function DialogRepost({ postId, open, onOpenChange }: DialogRepostProps) {
+export function DialogNewPost({ open, onOpenChange }: DialogNewPostProps) {
   return (
     <Atoms.Dialog open={open} onOpenChange={onOpenChange}>
-      <Atoms.DialogContent className="w-3xl" hiddenTitle="Repost">
+      <Atoms.DialogContent className="w-3xl" hiddenTitle="New Post">
         <Atoms.DialogHeader>
-          <Atoms.DialogTitle>Repost</Atoms.DialogTitle>
+          <Atoms.DialogTitle>New Post</Atoms.DialogTitle>
         </Atoms.DialogHeader>
         <Atoms.Container className="flex flex-col gap-3">
           <Organisms.DialogPostInput
-            variant={Shared.POST_ACTION_VARIANT.REPOST}
-            postId={postId}
+            variant={Shared.POST_ACTION_VARIANT.NEW}
             onSuccess={() => {
               onOpenChange?.(false);
             }}

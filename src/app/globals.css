@@ -64,6 +64,7 @@ body {
   --shadow-md: 0 4px 6px -1px oklch(0.118 0.014 284.115 / 0.1), 0 2px 4px -2px oklch(0.118 0.014 284.115 / 0.1);
   --shadow-lg: 0 10px 15px -3px oklch(0.118 0.014 284.115 / 0.1), 0 4px 6px -4px oklch(0.118 0.014 284.115 / 0.1);
   --shadow-xl: 0 20px 25px -5px oklch(0.118 0.014 284.115 / 0.1), 0 8px 10px -6px oklch(0.118 0.014 284.115 / 0.1);
+  --shadow-fab: 0px 20px 25px rgba(5, 5, 10, 0.5), 0px 8px 10px rgba(5, 5, 10, 0.25);
 }
 
 :root {
@@ -133,6 +134,9 @@ body {
   /* Shadow utilities */
   .shadow-xs-dark {
     box-shadow: var(--shadow-xs-dark);
+  }
+  .shadow-fab {
+    box-shadow: var(--shadow-fab);
   }
 
   /* Thicker white caret for focused inputs (used by PostTagInput) */
