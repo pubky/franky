@@ -2,48 +2,11 @@
 
 exports[`ProfileMobileMenu > matches snapshot 1`] = `
 <div
-  class="fixed top-18 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
+  class="w-full overflow-x-auto fixed top-14 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
 >
   <div
     class="flex w-full items-center"
   >
-    <a
-      aria-label="Tagged"
-      class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-muted-foreground border-b border-transparent"
-      href="/profile/tagged"
-    >
-      <div
-        class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-md"
-      >
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-circle-user-round shrink-0"
-          fill="none"
-          height="20"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M18 20a6 6 0 0 0-12 0"
-          />
-          <circle
-            cx="12"
-            cy="10"
-            r="4"
-          />
-          <circle
-            cx="12"
-            cy="12"
-            r="10"
-          />
-        </svg>
-      </div>
-    </a>
     <a
       aria-label="Notifications"
       class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-muted-foreground border-b border-transparent"
@@ -229,17 +192,6 @@ exports[`ProfileMobileMenu > matches snapshot 1`] = `
         </svg>
       </div>
     </a>
-  </div>
-</div>
-`;
-
-exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
-<div
-  class="fixed top-18 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
->
-  <div
-    class="flex w-full items-center"
-  >
     <a
       aria-label="Tagged"
       class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-muted-foreground border-b border-transparent"
@@ -250,7 +202,7 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-circle-user-round shrink-0"
+          class="lucide lucide-tag shrink-0"
           fill="none"
           height="20"
           stroke="currentColor"
@@ -262,17 +214,54 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M18 20a6 6 0 0 0-12 0"
+            d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
           />
           <circle
-            cx="12"
-            cy="10"
-            r="4"
+            cx="7.5"
+            cy="7.5"
+            fill="currentColor"
+            r=".5"
           />
-          <circle
-            cx="12"
-            cy="12"
-            r="10"
+        </svg>
+      </div>
+    </a>
+  </div>
+</div>
+`;
+
+exports[`ProfileMobileMenu > matches snapshot with notifications count 1`] = `
+<div
+  class="w-full overflow-x-auto fixed top-14 left-0 right-0 z-20 bg-background shadow-xl border-b border-border"
+>
+  <div
+    class="flex w-full items-center"
+  >
+    <a
+      aria-label="Notifications"
+      class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-muted-foreground border-b border-transparent"
+      href="/profile/notifications"
+    >
+      <div
+        class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-md"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-bell shrink-0"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M10.268 21a2 2 0 0 0 3.464 0"
+          />
+          <path
+            d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
           />
         </svg>
         <span
@@ -283,36 +272,6 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
       </div>
     </a>
     <a
-      aria-label="Notifications"
-      class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-muted-foreground border-b border-transparent"
-      href="/profile/notifications"
-    >
-      <div
-        class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-md"
-      >
-        <svg
-          aria-hidden="true"
-          class="lucide lucide-bell shrink-0"
-          fill="none"
-          height="20"
-          stroke="currentColor"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          width="20"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M10.268 21a2 2 0 0 0 3.464 0"
-          />
-          <path
-            d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"
-          />
-        </svg>
-      </div>
-    </a>
-    <a
       aria-current="page"
       aria-label="Posts"
       class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-foreground border-b border-white"
@@ -341,11 +300,6 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
             d="M15 3v4a2 2 0 0 0 2 2h4"
           />
         </svg>
-        <span
-          class="text-sm font-medium leading-normal"
-        >
-          10
-        </span>
       </div>
     </a>
     <a
@@ -373,11 +327,6 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
             d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"
           />
         </svg>
-        <span
-          class="text-sm font-medium leading-normal"
-        >
-          5
-        </span>
       </div>
     </a>
     <a
@@ -413,11 +362,6 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
             d="M22 20c0-3.37-2-6.5-4-8a5 5 0 0 0-.45-8.3"
           />
         </svg>
-        <span
-          class="text-sm font-medium leading-normal"
-        >
-          100
-        </span>
       </div>
     </a>
     <a
@@ -444,11 +388,6 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
             stroke-width="1.5"
           />
         </svg>
-        <span
-          class="text-sm font-medium leading-normal"
-        >
-          50
-        </span>
       </div>
     </a>
     <a
@@ -485,11 +424,39 @@ exports[`ProfileMobileMenu > matches snapshot with counts 1`] = `
             d="m15 18-2-2"
           />
         </svg>
-        <span
-          class="text-sm font-medium leading-normal"
+      </div>
+    </a>
+    <a
+      aria-label="Tagged"
+      class="flex flex-1 justify-center items-center gap-2 px-0 py-1.5 transition-all relative text-muted-foreground border-b border-transparent"
+      href="/profile/tagged"
+    >
+      <div
+        class="flex items-center justify-center gap-2 px-2.5 py-2 rounded-md"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-tag shrink-0"
+          fill="none"
+          height="20"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="20"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          20
-        </span>
+          <path
+            d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+          />
+          <circle
+            cx="7.5"
+            cy="7.5"
+            fill="currentColor"
+            r=".5"
+          />
+        </svg>
       </div>
     </a>
   </div>

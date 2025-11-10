@@ -30,25 +30,11 @@ describe('ProfileMobileMenu', () => {
     expect(screen.getByLabelText('Friends')).toBeInTheDocument();
   });
 
-  it('displays counts when provided', () => {
-    const counts = {
-      notifications: 3,
-      posts: 10,
-      replies: 5,
-      followers: 100,
-      following: 50,
-      friends: 20,
-      tagged: 3,
-    };
-    render(<ProfileMobileMenu counts={counts} />);
+  it('displays notifications count when provided', () => {
+    render(<ProfileMobileMenu notificationsCount={3} />);
 
-    // Check for the count numbers in span elements
-    expect(screen.getAllByText('3')).toHaveLength(2); // notifications and tagged both have count 3
-    expect(screen.getByText('10')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('100')).toBeInTheDocument();
-    expect(screen.getByText('50')).toBeInTheDocument();
-    expect(screen.getByText('20')).toBeInTheDocument();
+    // Check for the notifications count number in span element
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 
   it('handles navigation when menu items are clicked', () => {
@@ -100,16 +86,8 @@ describe('ProfileMobileMenu', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with counts', () => {
-    const counts = {
-      posts: 10,
-      replies: 5,
-      tagged: 3,
-      followers: 100,
-      following: 50,
-      friends: 20,
-    };
-    const { container } = render(<ProfileMobileMenu counts={counts} />);
+  it('matches snapshot with notifications count', () => {
+    const { container } = render(<ProfileMobileMenu notificationsCount={3} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

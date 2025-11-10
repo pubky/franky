@@ -28,7 +28,9 @@ export function ProfileMenu({ className, counts }: ProfileMenuProps) {
                 <Atoms.FilterItemIcon icon={Icon} />
                 <Atoms.FilterItemLabel className="flex-1">{item.label}</Atoms.FilterItemLabel>
                 {count !== undefined && (
-                  <span className={isSelected ? 'text-foreground' : 'text-muted-foreground'}>{count}</span>
+                  <span data-testid="count-number" className={isSelected ? 'text-foreground' : 'text-muted-foreground'}>
+                    {count}
+                  </span>
                 )}
               </Atoms.FilterItem>
             </Link>

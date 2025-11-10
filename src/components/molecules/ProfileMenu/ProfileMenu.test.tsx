@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfileMenu } from './ProfileMenu';
+import { ProfileCounts } from './profileMenu.shared';
 
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
@@ -19,20 +20,21 @@ describe('ProfileMenu', () => {
   });
 
   it('displays counts when provided', () => {
-    const counts = {
+    const counts: ProfileCounts = {
+      notifications: 3,
       posts: 10,
       replies: 5,
-      tagged: 3,
       followers: 100,
       following: 50,
       friends: 20,
+      tagged: 3,
     };
     render(<ProfileMenu counts={counts} />);
-    expect(screen.getByText('Posts')).toBeInTheDocument();
+    expect(screen.getAllByText('3')).toHaveLength(2); // notifications and tagged both have count 3
     expect(screen.getByText('10')).toBeInTheDocument();
-    expect(screen.getByText('Replies')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('Tagged')).toBeInTheDocument();
-    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('100')).toBeInTheDocument();
+    expect(screen.getByText('50')).toBeInTheDocument();
+    expect(screen.getByText('20')).toBeInTheDocument();
   });
 });

@@ -1,8 +1,9 @@
+import { ProfileCounts } from '@/molecules/ProfileMenu/profileMenu.shared';
 import * as Templates from '@/templates';
 
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   // TODO: Fetch actual profile data here
-  const mockProfileCounts = {
+  const mockProfileCounts: ProfileCounts = {
     notifications: 3,
     posts: 10,
     replies: 5,

@@ -63,19 +63,19 @@ export function EditProfile() {
     <div className="max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl w-full m-auto px-6 xl:px-0 py-12">
       {/* Header */}
       <div className="mb-6">
-        <Atoms.Heading level={1} className="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2">
+        <Atoms.Heading level={1} className="text-5xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2">
           Edit your <span className="text-brand">profile.</span>
         </Atoms.Heading>
-        <div className="flex items-center gap-3">
-          <Atoms.Typography size="lg" className="text-base leading-normal font-medium text-[#D4D4DB]">
+        <div className="flex flex-wrap items-center gap-3">
+          <Atoms.Typography size="lg" className="text-xl lg:text-2xl leading-normal font-light text-muted-foreground">
             Add your name, bio, links, and avatar.
           </Atoms.Typography>
-          <Atoms.Badge variant="secondary" className="px-3 py-1 gap-2">
+          <Atoms.Badge variant="secondary" className="px-3 py-2 gap-2 rounded-full text-xs">
             <Libs.Key size={14} />
             kls37...xri8o
           </Atoms.Badge>
           <button className="p-1.5 rounded-full hover:bg-muted transition-colors">
-            <Libs.HelpCircle size={20} />
+            <Libs.HelpCircle size={16} />
           </button>
         </div>
       </div>
@@ -92,6 +92,7 @@ export function EditProfile() {
             <div>
               <Atoms.Label className="text-[11px] text-muted-foreground mb-2">NAME</Atoms.Label>
               <Molecules.InputField
+                variant="dashed"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
@@ -103,6 +104,7 @@ export function EditProfile() {
             <div>
               <Atoms.Label className="text-[11px] text-muted-foreground mb-2">BIO</Atoms.Label>
               <Molecules.TextareaField
+                variant="dashed"
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Tell us about yourself"
@@ -123,6 +125,7 @@ export function EditProfile() {
               <div key={index} className="relative">
                 <Atoms.Label className="text-[11px] text-muted-foreground mb-2">{link.title}</Atoms.Label>
                 <Molecules.InputField
+                  variant="dashed"
                   value={link.url}
                   onChange={(e) => handleUpdateLink(index, e.target.value)}
                   placeholder={link.placeholder}
@@ -139,14 +142,16 @@ export function EditProfile() {
               </div>
             ))}
 
-            <button
+            <Atoms.Button
+              variant="secondary"
+              size="sm"
               onClick={handleAddLink}
-              className="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
               disabled={loading}
+              className="gap-2 w-fit"
             >
               <Libs.Link size={16} />
               Add link
-            </button>
+            </Atoms.Button>
           </div>
 
           {/* Avatar Section */}
@@ -180,7 +185,13 @@ export function EditProfile() {
             </div>
 
             {avatar && (
-              <Atoms.Button variant="ghost" size="sm" onClick={handleDeleteAvatar} disabled={loading} className="gap-2">
+              <Atoms.Button
+                variant="secondary"
+                size="sm"
+                onClick={handleDeleteAvatar}
+                disabled={loading}
+                className="gap-2"
+              >
                 <Libs.Trash2 size={16} />
                 Delete
               </Atoms.Button>
@@ -190,11 +201,11 @@ export function EditProfile() {
       </Atoms.Card>
 
       {/* Action Buttons */}
-      <div className="flex gap-4 justify-end">
+      <div className="flex gap-4 w-full justify-between">
         <Atoms.Button variant="secondary" size="lg" onClick={handleCancel} disabled={loading} className="px-8">
           Cancel
         </Atoms.Button>
-        <Atoms.Button variant="default" size="lg" onClick={handleSave} disabled={loading} className="px-8">
+        <Atoms.Button variant="secondary" size="lg" onClick={handleSave} disabled={loading} className="px-8">
           {loading ? 'Saving...' : 'Save Profile'}
         </Atoms.Button>
       </div>

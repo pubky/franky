@@ -8,17 +8,11 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import { PROFILE_ROUTES } from '@/app';
+import { ProfileCounts } from '@/molecules/ProfileMenu/profileMenu.shared';
 
 export interface ProfileProps {
   children: React.ReactNode;
-  profileCounts?: {
-    posts?: number;
-    replies?: number;
-    tagged?: number;
-    followers?: number;
-    following?: number;
-    friends?: number;
-  };
+  profileCounts?: ProfileCounts;
   profileInfo?: {
     name?: string;
     handle?: string;
@@ -51,7 +45,7 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
       </div>
 
       {/* Mobile menu - visible only on mobile, full width */}
-      <Molecules.ProfileMobileMenu counts={profileCounts} className="lg:hidden" />
+      <Molecules.ProfileMobileMenu notificationsCount={profileCounts?.notifications} className="lg:hidden" />
 
       <div className={Libs.cn(isTaggedPage ? 'mt-6 lg:mt-0' : 'mt-36 lg:mt-0')}>
         <Organisms.ContentLayout
@@ -68,7 +62,7 @@ export function Profile({ children, profileCounts, profileInfo }: ProfileProps) 
   );
 }
 
-export function ProfileLeftSidebar({ counts }: { counts?: ProfileProps['profileCounts'] }) {
+export function ProfileLeftSidebar({ counts }: { counts?: ProfileCounts }) {
   return (
     <div className="flex flex-col gap-8 w-full">
       {/* Menu Section */}

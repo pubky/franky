@@ -8,7 +8,7 @@ exports[`EditProfile > matches snapshot 1`] = `
     class="mb-6"
   >
     <h1
-      class="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2"
+      class="text-5xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2"
       data-testid="heading-1"
     >
       Edit your 
@@ -19,16 +19,16 @@ exports[`EditProfile > matches snapshot 1`] = `
       </span>
     </h1>
     <div
-      class="flex items-center gap-3"
+      class="flex flex-wrap items-center gap-3"
     >
       <p
-        class="text-base leading-normal font-medium text-[#D4D4DB]"
+        class="text-xl lg:text-2xl leading-normal font-light text-muted-foreground"
         data-testid="typography"
       >
         Add your name, bio, links, and avatar.
       </p>
       <div
-        class="inline-flex items-center justify-center rounded-md border text-sm font-semibold leading-5 w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
+        class="inline-flex items-center justify-center border font-semibold w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-2 gap-2 rounded-full text-xs"
         data-slot="badge"
         data-variant="secondary"
       >
@@ -66,13 +66,13 @@ exports[`EditProfile > matches snapshot 1`] = `
           aria-hidden="true"
           class="lucide lucide-circle-help"
           fill="none"
-          height="20"
+          height="16"
           stroke="currentColor"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           viewBox="0 0 24 24"
-          width="20"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <circle
@@ -115,7 +115,7 @@ exports[`EditProfile > matches snapshot 1`] = `
             NAME
           </label>
           <div
-            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90 pl-2 border-dashed h-12 text-base"
             data-testid="container"
           >
             <input
@@ -137,7 +137,7 @@ exports[`EditProfile > matches snapshot 1`] = `
             BIO
           </label>
           <div
-            class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium"
+            class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium bg-alpha-90 border-dashed"
             data-testid="container"
           >
             <textarea
@@ -172,7 +172,7 @@ exports[`EditProfile > matches snapshot 1`] = `
             WEBSITE
           </label>
           <div
-            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90 pl-2 border-dashed h-12 text-base"
             data-testid="container"
           >
             <input
@@ -195,7 +195,7 @@ exports[`EditProfile > matches snapshot 1`] = `
             X (TWITTER)
           </label>
           <div
-            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90 pl-2 border-dashed h-12 text-base"
             data-testid="container"
           >
             <input
@@ -209,7 +209,10 @@ exports[`EditProfile > matches snapshot 1`] = `
           </div>
         </div>
         <button
-          class="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 px-3 has-[>svg]:px-2.5 gap-2 w-fit"
+          data-size="sm"
+          data-slot="button"
+          data-variant="secondary"
         >
           <svg
             aria-hidden="true"
@@ -291,7 +294,7 @@ exports[`EditProfile > matches snapshot 1`] = `
     </div>
   </div>
   <div
-    class="flex gap-4 justify-end"
+    class="flex gap-4 w-full justify-between"
   >
     <button
       class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-auto gap-2 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal px-8"
@@ -302,10 +305,10 @@ exports[`EditProfile > matches snapshot 1`] = `
       Cancel
     </button>
     <button
-      class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand h-auto gap-2 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal px-8"
+      class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-auto gap-2 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal px-8"
       data-size="lg"
       data-slot="button"
-      data-variant="default"
+      data-variant="secondary"
     >
       Save Profile
     </button>
@@ -321,7 +324,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
     class="mb-6"
   >
     <h1
-      class="text-2xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2"
+      class="text-5xl lg:text-[60px] lg:leading-[100%] font-bold text-white mb-2"
       data-testid="heading-1"
     >
       Edit your 
@@ -332,16 +335,16 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
       </span>
     </h1>
     <div
-      class="flex items-center gap-3"
+      class="flex flex-wrap items-center gap-3"
     >
       <p
-        class="text-base leading-normal font-medium text-[#D4D4DB]"
+        class="text-xl lg:text-2xl leading-normal font-light text-muted-foreground"
         data-testid="typography"
       >
         Add your name, bio, links, and avatar.
       </p>
       <div
-        class="inline-flex items-center justify-center rounded-md border text-sm font-semibold leading-5 w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-1 gap-2"
+        class="inline-flex items-center justify-center border font-semibold w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 px-3 py-2 gap-2 rounded-full text-xs"
         data-slot="badge"
         data-variant="secondary"
       >
@@ -379,13 +382,13 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
           aria-hidden="true"
           class="lucide lucide-circle-help"
           fill="none"
-          height="20"
+          height="16"
           stroke="currentColor"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           viewBox="0 0 24 24"
-          width="20"
+          width="16"
           xmlns="http://www.w3.org/2000/svg"
         >
           <circle
@@ -428,7 +431,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
             NAME
           </label>
           <div
-            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90 pl-2 border-dashed h-12 text-base"
             data-testid="container"
           >
             <input
@@ -450,7 +453,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
             BIO
           </label>
           <div
-            class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium"
+            class="mx-auto flex flex-1 cursor-pointer w-full items-center flex-row border gap-0 rounded-md font-medium bg-alpha-90 border-dashed"
             data-testid="container"
           >
             <textarea
@@ -485,7 +488,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
             WEBSITE
           </label>
           <div
-            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90 pl-2 border-dashed h-12 text-base"
             data-testid="container"
           >
             <input
@@ -508,7 +511,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
             X (TWITTER)
           </label>
           <div
-            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent pl-2 h-12 text-base"
+            class="flex cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90 pl-2 border-dashed h-12 text-base"
             data-testid="container"
           >
             <input
@@ -522,7 +525,10 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
           </div>
         </div>
         <button
-          class="flex items-center gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+          class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 px-3 has-[>svg]:px-2.5 gap-2 w-fit"
+          data-size="sm"
+          data-slot="button"
+          data-variant="secondary"
         >
           <svg
             aria-hidden="true"
@@ -604,7 +610,7 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
     </div>
   </div>
   <div
-    class="flex gap-4 justify-end"
+    class="flex gap-4 w-full justify-between"
   >
     <button
       class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-auto gap-2 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal px-8"
@@ -615,10 +621,10 @@ exports[`EditProfile > matches snapshot with loading state 1`] = `
       Cancel
     </button>
     <button
-      class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs bg-brand/16 text-brand hover:!bg-brand/30 border-brand h-auto gap-2 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal px-8"
+      class="inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-auto gap-2 py-2.5 sm:px-8 sm:py-5 text-sm font-bold leading-normal px-8"
       data-size="lg"
       data-slot="button"
-      data-variant="default"
+      data-variant="secondary"
     >
       Save Profile
     </button>
