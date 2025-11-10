@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Pubky } from '@/core';
 
+const mockFile = vi.fn();
+const mockFolder = vi.fn();
+const mockGenerateAsync = vi.fn();
+const mockJSZipConstructor = vi.fn();
+
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({
   baseUriBuilder: (pubky: string) => `pubky://${pubky}/pub/pubky.app/`,
@@ -31,12 +36,7 @@ vi.mock('@/core/services/homeserver', () => ({
 // Mock JSZip
 vi.mock('jszip', () => {
   return {
-    default: vi.fn().mockImplementation(() => ({
-      folder: vi.fn().mockReturnValue({
-        file: vi.fn(),
-      }),
-      generateAsync: vi.fn().mockResolvedValue(new Blob(['test'])),
-    })),
+    default: mockJSZipConstructor,
   };
 });
 
@@ -47,18 +47,28 @@ const mockRemoveChild = vi.fn();
 const mockClick = vi.fn();
 const mockCreateObjectURL = vi.fn().mockReturnValue('blob:mock-url');
 const mockRevokeObjectURL = vi.fn();
+let mockAnchorElement: { href: string; download: string; click: typeof mockClick };
 
 beforeEach(() => {
   // Reset mocks
   vi.clearAllMocks();
 
+  mockFolder.mockReturnValue({
+    file: mockFile,
+  });
+  mockGenerateAsync.mockResolvedValue(new Blob(['test']));
+  mockJSZipConstructor.mockImplementation(() => ({
+    folder: mockFolder,
+    generateAsync: mockGenerateAsync,
+  }));
+
   // Setup DOM mocks
-  const mockElement = {
+  mockAnchorElement = {
     href: '',
     download: '',
     click: mockClick,
   };
-  mockCreateElement.mockReturnValue(mockElement);
+  mockCreateElement.mockReturnValue(mockAnchorElement);
 
   global.document = {
     createElement: mockCreateElement,
@@ -85,6 +95,52 @@ beforeEach(async () => {
 
 describe('ProfileApplication.downloadData', () => {
   const pubky = 'test-pubky' as Pubky;
+
+  it('should package files into a zip and trigger download', async () => {
+    const dataUrls = [`pubky://${pubky}/pub/pubky.app/profile.json`, `pubky://${pubky}/pub/pubky.app/avatar.png`];
+
+    vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(dataUrls);
+    vi.spyOn(Core.HomeserverService, 'get').mockImplementation(async (url: string) => {
+      if (url.endsWith('profile.json')) {
+        return new Response(JSON.stringify({ name: 'Test User' }), { status: 200 });
+      } else {
+        return new Response(new Uint8Array([1, 2, 3]), { status: 200 });
+      }
+    });
+
+    const setProgress = vi.fn();
+
+    await ProfileApplication.downloadData({ pubky, setProgress });
+
+    expect(mockJSZipConstructor).toHaveBeenCalledTimes(1);
+    expect(mockFolder).toHaveBeenCalledWith('data');
+    expect(mockFile).toHaveBeenCalledTimes(2);
+
+    const [jsonFileName, jsonContent] = mockFile.mock.calls[0];
+    expect(jsonFileName).toBe('pub/pubky.app/profile.json');
+    expect(jsonContent).toBe('{\n  "name": "Test User"\n}');
+
+    const [binaryFileName, binaryContent, binaryOptions] = mockFile.mock.calls[1];
+    expect(binaryFileName).toBe('pub/pubky.app/avatar.png');
+    expect(binaryContent).toBeInstanceOf(Uint8Array);
+    expect(Array.from(binaryContent as Uint8Array)).toEqual([1, 2, 3]);
+    expect(binaryOptions).toEqual({ binary: true });
+
+    expect(mockGenerateAsync).toHaveBeenCalledWith({ type: 'blob' });
+    expect(mockCreateObjectURL).toHaveBeenCalledWith(expect.any(Blob));
+
+    expect(mockCreateElement).toHaveBeenCalledWith('a');
+    expect(mockAppendChild).toHaveBeenCalledWith(mockAnchorElement);
+    expect(mockAnchorElement.href).toBe('blob:mock-url');
+    expect(mockAnchorElement.download).toMatch(/^test-pubky_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}_pubky\.app\.zip$/);
+    expect(mockClick).toHaveBeenCalledTimes(1);
+    expect(mockRemoveChild).toHaveBeenCalledWith(mockAnchorElement);
+    expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
+
+    const progressValues = setProgress.mock.calls.map(([value]) => value);
+    expect(progressValues).toEqual(expect.arrayContaining([50, 100]));
+    expect(progressValues[progressValues.length - 1]).toBe(100);
+  });
 
   it('should pass Infinity as limit to HomeserverService.list', async () => {
     const listSpy = vi.spyOn(Core.HomeserverService, 'list').mockResolvedValue(['file1.json', 'file2.json']);
