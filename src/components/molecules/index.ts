@@ -51,6 +51,7 @@ export * from './SettingsSectionCard';
 export * from './SettingsSwitchItem';
 export * from './SettingsSwitchGroup';
 export * from './SignIn';
+export * from './StatusPicker';
 export * from './OnboardingLayout';
 export * from './TextareaField';
 export * from './TimelineEmpty';

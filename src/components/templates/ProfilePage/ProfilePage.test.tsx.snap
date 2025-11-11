@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePage > matches snapshot 1`] = `
+<div>
+  <div
+    data-testid="profile-page-header"
+  >
+    <div>
+      Satoshi Nakamoto
+    </div>
+    <div>
+      Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.
+    </div>
+    <div>
+      1QX7GKW3abcdef1234567890
+    </div>
+    <div>
+      🌴
+    </div>
+    <div>
+      Vacationing
+    </div>
+    <button>
+      Edit
+    </button>
+    <button>
+      Copy Key
+    </button>
+    <button>
+      Link
+    </button>
+    <button>
+      Sign out
+    </button>
+    <button>
+      Status
+    </button>
+  </div>
+</div>
+`;
