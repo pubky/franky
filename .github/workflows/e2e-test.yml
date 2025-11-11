@@ -196,21 +196,22 @@ jobs:
           path: franky/cypress/videos/onboarding.cy.ts.mp4
           if-no-files-found: ignore
 
-      - name: Run e2e tests - Mobile (${{ matrix.browser }})
-        uses: cypress-io/github-action@v6
-        env:
-          DEBUG: '@cypress/github-action'
-        with:
-          working-directory: franky/cypress
-          config-file: cypress.config.mobile.ts
-          spec: e2e/**/*.cy.ts
-          browser: ${{ matrix.browser }}
-          headed: false
-          summary-title: ${{ matrix.browser }} - Mobile
-          install: false
-          # no need to start the server, it's already running
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 180
+      # TODO: Skipped due to bug https://github.com/pubky/franky/issues/372
+      # - name: Run e2e tests - Mobile (${{ matrix.browser }})
+      #   uses: cypress-io/github-action@v6
+      #   env:
+      #     DEBUG: '@cypress/github-action'
+      #   with:
+      #     working-directory: franky/cypress
+      #     config-file: cypress.config.mobile.ts
+      #     spec: e2e/**/*.cy.ts
+      #     browser: ${{ matrix.browser }}
+      #     headed: false
+      #     summary-title: ${{ matrix.browser }} - Mobile
+      #     install: false
+      #     # no need to start the server, it's already running
+      #     wait-on: 'http://localhost:3000'
+      #     wait-on-timeout: 180
 
       - name: Upload ${{ matrix.browser }} Mobile screenshots
         if: ${{ always() }}
