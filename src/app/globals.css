@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'react-quill-new/dist/quill.snow.css';
 
 body {
   font-family: 'Inter Tight', sans-serif;
@@ -137,6 +138,111 @@ body {
   }
   .shadow-fab {
     box-shadow: var(--shadow-fab);
+  }
+
+  /* ReactQuill custom styling for article editor */
+  .ql-snow .ql-toolbar {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    flex-wrap: nowrap;
+  }
+
+  .ql-snow .ql-formats {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .ql-snow .ql-toolbar .ql-separator {
+    display: none;
+  }
+
+  .ql-snow .ql-stroke {
+    stroke: var(--secondary-foreground);
+  }
+
+  .ql-snow .ql-fill {
+    fill: var(--secondary-foreground);
+  }
+
+  .ql-snow .ql-picker-label {
+    color: var(--secondary-foreground);
+  }
+
+  .ql-snow .ql-picker-label:hover {
+    color: var(--secondary-foreground);
+  }
+
+  .ql-snow .ql-picker-label.ql-active {
+    color: var(--secondary-foreground);
+  }
+
+  .ql-snow .ql-toolbar button {
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ql-snow .ql-toolbar button:hover,
+  .ql-snow .ql-toolbar button:focus {
+    color: var(--secondary-foreground);
+    opacity: 0.7;
+  }
+
+  .ql-snow .ql-toolbar button.ql-active {
+    opacity: 1;
+  }
+
+  .ql-snow .ql-toolbar button svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .ql-snow .ql-container {
+    border: none;
+    background-color: transparent;
+    font-family: 'Inter Tight', sans-serif;
+  }
+
+  .ql-snow .ql-editor {
+    min-height: 8rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5rem;
+    color: var(--secondary-foreground);
+    padding: 0;
+  }
+
+  .ql-snow .ql-editor.ql-blank::before {
+    color: var(--muted-foreground);
+    font-style: normal;
+    font-size: 1rem;
+    font-weight: 500;
+    left: 0;
+    right: 0;
+  }
+
+  .ql-snow .ql-editor p,
+  .ql-snow .ql-editor ol,
+  .ql-snow .ql-editor ul,
+  .ql-snow .ql-editor pre,
+  .ql-snow .ql-editor blockquote,
+  .ql-snow .ql-editor h1,
+  .ql-snow .ql-editor h2,
+  .ql-snow .ql-editor h3,
+  .ql-snow .ql-editor h4,
+  .ql-snow .ql-editor h5,
+  .ql-snow .ql-editor h6 {
+    color: var(--secondary-foreground);
   }
 
   /* Thicker white caret for focused inputs (used by PostTagInput) */

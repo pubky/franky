@@ -14,9 +14,10 @@ export interface DialogPostInputProps {
   variant: DialogPostInputVariant;
   postId?: string; // postId is optional for 'new' variant
   onSuccess?: () => void;
+  onArticleClick?: () => void;
 }
 
-export function DialogPostInput({ variant, postId, onSuccess }: DialogPostInputProps) {
+export function DialogPostInput({ variant, postId, onSuccess, onArticleClick }: DialogPostInputProps) {
   const [tags, setTags] = useState<Array<{ id: string; label: string }>>([]);
 
   const { content, setContent, handleSubmit } = Hooks.usePostAction({
@@ -80,7 +81,12 @@ export function DialogPostInput({ variant, postId, onSuccess }: DialogPostInputP
           onTagClose={handleTagClose}
         />
 
-        <Organisms.DialogActionBar variant={variant} onActionClick={handleSubmit} isActionDisabled={isActionDisabled} />
+        <Organisms.DialogActionBar
+          variant={variant}
+          onActionClick={handleSubmit}
+          onArticleClick={onArticleClick}
+          isActionDisabled={isActionDisabled}
+        />
       </div>
     </div>
   );

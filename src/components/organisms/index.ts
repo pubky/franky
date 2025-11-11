@@ -20,6 +20,7 @@ export * from './DialogRepost';
 export * from './DialogNewPost';
 export * from './DialogPostInput';
 export * from './DialogActionBar';
+export * from './DialogArticleInput';
 export * from './DialogPostPreview';
 export * from './FloatingActionButton';
 export * from './DialogRestoreEncryptedFile';
