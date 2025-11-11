@@ -13,12 +13,10 @@ export class HotTagsModel {
 
   id: string;
   tags: NexusHotTag[];
-  cached_at: number;
 
   constructor(data: HotTagsModelSchema) {
     this.id = data.id;
     this.tags = data.tags;
-    this.cached_at = data.cached_at;
   }
 
   /**
@@ -31,7 +29,6 @@ export class HotTagsModel {
       const data: HotTagsModelSchema = {
         id,
         tags,
-        cached_at: Date.now(),
       };
       await this.table.put(data);
       Libs.Logger.debug('Hot tags upserted successfully', { id, count: tags.length });

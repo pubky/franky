@@ -28,7 +28,7 @@ export class BootstrapApplication {
       Core.LocalStreamPostsService.upsert({ streamId: Core.PostStreamTypes.TIMELINE_ALL, stream: data.list.stream }),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
-      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.Timeframe.TODAY, Core.Reach.ALL), data.list.hot_tags),
+      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);
 

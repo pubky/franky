@@ -22,27 +22,7 @@ export class HotApplication {
       const timeframe = params.timeframe || Core.UserStreamTimeframe.TODAY;
       const reach = params.reach || 'all';
 
-      // Map UserStreamTimeframe to Timeframe
-      const mappedTimeframe =
-        timeframe === Core.UserStreamTimeframe.THIS_MONTH
-          ? Core.Timeframe.MONTH
-          : timeframe === Core.UserStreamTimeframe.ALL_TIME
-            ? Core.Timeframe.ALL
-            : Core.Timeframe.TODAY;
-
-      // Map reach string to Reach enum
-      const mappedReach =
-        reach === Core.UserStreamReach.FOLLOWERS
-          ? Core.Reach.FOLLOWERS
-          : reach === Core.UserStreamReach.FOLLOWING
-            ? Core.Reach.FOLLOWING
-            : reach === Core.UserStreamReach.FRIENDS
-              ? Core.Reach.FRIENDS
-              : reach === Core.UserStreamReach.WOT
-                ? Core.Reach.WOT
-                : Core.Reach.ALL;
-
-      const id = Core.buildHotTagsId(mappedTimeframe, mappedReach);
+      const id = Core.buildHotTagsId(timeframe, reach);
 
       // Skip cache for pagination
       if (params.skip && params.skip > 0) {
