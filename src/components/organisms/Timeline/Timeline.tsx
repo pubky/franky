@@ -44,18 +44,19 @@ export function Timeline() {
         if (isInitialLoad) {
           // Initial load - no cursor
           ids = await Core.StreamPostsController.getOrFetchStreamSlice({
-            streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            timestamp,
-            limit: Config.NEXUS_POSTS_PER_PAGE,
+            streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+            // TODO: Temporal fix
+            streamTail: timestamp || 0,
           });
         } else {
           // Pagination - use last post as cursor
           const lastPostId = postIds[postIds.length - 1];
 
           ids = await Core.StreamPostsController.getOrFetchStreamSlice({
-            streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            post_id: lastPostId,
-            timestamp,
+            streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+            lastPostId,
+            // TODO: Temporal fix. Cannot be 0
+            streamTail: timestamp || 0,
           });
         }
 

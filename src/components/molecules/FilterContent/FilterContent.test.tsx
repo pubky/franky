@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterContent, type ContentTab } from './FilterContent';
-import { CONTENT } from '@/core/stores/filters/filters.types';
+import { CONTENT } from '@/core/stores/home/home.types';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -28,7 +28,7 @@ describe('FilterContent', () => {
     const onTabChange = vi.fn();
     render(<FilterContent onTabChange={onTabChange} />);
 
-    const tabs: ContentTab[] = ['all', 'posts', 'articles', 'images', 'videos', 'links', 'files'];
+    const tabs: ContentTab[] = ['all', 'short', 'long', 'images', 'videos', 'links', 'files'];
 
     tabs.forEach((tab) => {
       // capitalize first letter
@@ -113,12 +113,12 @@ describe('FilterContent - Snapshots', () => {
   });
 
   it('matches snapshot with Posts content selected tab', () => {
-    const { container } = render(<FilterContent selectedTab={CONTENT.POSTS} />);
+    const { container } = render(<FilterContent selectedTab={CONTENT.SHORT} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with Articles content selected tab', () => {
-    const { container } = render(<FilterContent selectedTab={CONTENT.ARTICLES} />);
+    const { container } = render(<FilterContent selectedTab={CONTENT.LONG} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

@@ -2,7 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import { LAYOUT, type LayoutType } from '@/core/stores/filters/filters.types';
+import { LAYOUT, type LayoutType } from '@/core/stores/home/home.types';
 
 export type LayoutTab = LayoutType;
 

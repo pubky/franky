@@ -9,7 +9,7 @@ export interface LeftSidebarProps {
 }
 
 export function LeftSidebar({ className }: LeftSidebarProps) {
-  const { reach, setReach, sort, setSort, content, setContent, layout, setLayout } = Core.useFiltersStore();
+  const { reach, setReach, sort, setSort, content, setContent, layout, setLayout } = Core.useHomeStore();
 
   return (
     <div

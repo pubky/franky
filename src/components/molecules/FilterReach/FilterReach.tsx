@@ -2,7 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import { REACH, type ReachType } from '@/core/stores/filters/filters.types';
+import { REACH, type ReachType } from '@/core/stores/home/home.types';
 
 export type ReachTab = ReachType;
 
@@ -15,7 +15,7 @@ const tabs: { key: ReachTab; label: string; icon: React.ComponentType<{ classNam
   { key: REACH.ALL, label: 'All', icon: Libs.Radio },
   { key: REACH.FOLLOWING, label: 'Following', icon: Libs.UsersRound2 },
   { key: REACH.FRIENDS, label: 'Friends', icon: Libs.HeartHandshake },
-  { key: REACH.ME, label: 'Me', icon: Libs.UserRound },
+  // { key: REACH.ME, label: 'Me', icon: Libs.UserRound },
 ];
 
 export function FilterReach({ selectedTab = REACH.ALL, onTabChange }: ReachProps) {

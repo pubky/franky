@@ -1,9 +1,8 @@
 import * as Core from '@/core';
-import * as Config from '@/config';
 import * as Libs from '@/libs';
 
 export class PostStreamApplication {
-  private constructor() {}
+  private constructor() { }
 
   // ============================================================================
   // Public API
@@ -11,19 +10,23 @@ export class PostStreamApplication {
 
   static async getOrFetchStreamSlice({
     streamId,
-    limit = Config.NEXUS_POSTS_PER_PAGE,
-    post_id,
-    timestamp,
-  }: Core.TReadPostStreamChunkParams): Promise<Core.TPostStreamChunkResponse> {
-    const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
-    if (cachedStream) {
-      const nextPageIds = this.getStreamFromCache({ postId: post_id, limit, cachedStream });
-      if (nextPageIds) {
-        // Returning undefined the organisms knows that that stream chunk comes from cache
-        return { nextPageIds, cacheMissPostIds: [], timestamp: undefined };
+    streamTail,
+    lastPostId,
+    limit,
+    viewerId,
+  }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
+    // Avoid the indexdb query for engagement streams
+    if (streamId.split(':')[0] === Core.StreamSorting.TIMELINE) {
+      const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
+      if (cachedStream) {
+        const nextPageIds = this.getStreamFromCache({ lastPostId, limit, cachedStream });
+        if (nextPageIds) {
+          // Returning undefined the organisms knows that that stream chunk comes from cache
+          return { nextPageIds, cacheMissPostIds: [], timestamp: undefined };
+        }
       }
     }
-    return await this.fetchStreamFromNexus({ streamId, limit, post_id, timestamp });
+    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, viewerId, lastPostId });
   }
 
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
@@ -51,6 +54,7 @@ export class PostStreamApplication {
   // Internal Helpers
   // ============================================================================
 
+  // TODO: Delete fn because the below reason
   private static async getTimestampFromPostId(postId: string): Promise<number | undefined> {
     try {
       const postDetails = await Core.PostDetailsModel.findById(postId);
@@ -64,11 +68,23 @@ export class PostStreamApplication {
   private static async fetchStreamFromNexus({
     streamId,
     limit,
-    post_id /*, timestamp*/,
-  }: Core.TReadPostStreamChunkParams): Promise<Core.TPostStreamChunkResponse> {
-    const start = post_id ? await this.getTimestampFromPostId(post_id) : undefined;
+    streamTail,
+    viewerId,
+    // TODO: Temporal fix. It has to be deleted. we have to get the timestamp from the UI
+    lastPostId,
+  }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
+    // TODO: DELETE FROM
+    const streamTailUndefined = lastPostId ? await this.getTimestampFromPostId(lastPostId) : streamTail;
+    if (!streamTailUndefined) {
+      throw new Error('Stream tail is required');
+    }
+    streamTail = streamTailUndefined;
+    // TODO: DELETE FINISH
+
+    // START of the fn
+    const { params, invokeEndpoint } = Core.createNexusParams(streamId, streamTail, limit, viewerId);
     // TODO: With the new endpoint, we have to adapt the next line and delete timestamp and composidePostIds
-    const nexusPosts = await Core.NexusPostStreamService.fetch({ streamId, params: { limit, start } });
+    const nexusPosts = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params });
 
     // Handle empty response
     if (nexusPosts.length === 0) {
@@ -97,14 +113,14 @@ export class PostStreamApplication {
     return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
   }
 
-  private static getStreamFromCache({ postId, limit, cachedStream }: Core.TCacheStreamParams): string[] | null {
+  private static getStreamFromCache({ lastPostId, limit, cachedStream }: Core.TCacheStreamParams): string[] | null {
     // TODO: Could be a case that it does not have sufficient posts, in which case we need to fetch more from Nexus
     // e.g. in the cache there is only limit - 5 posts and the missing ones we have to download
     // From now, if cache exists and has posts, return from cache
-    if (!postId && cachedStream.stream.length >= limit) {
+    if (!lastPostId && cachedStream.stream.length >= limit) {
       return cachedStream.stream.slice(0, limit);
     }
-    const postIndex = postId ? cachedStream.stream.indexOf(postId) : -1;
+    const postIndex = lastPostId ? cachedStream.stream.indexOf(lastPostId) : -1;
     if (postIndex !== -1 && postIndex + 1 + limit <= cachedStream.stream.length) {
       return cachedStream.stream.slice(postIndex + 1, postIndex + 1 + limit);
     }

@@ -1,4 +1,4 @@
-// Filter constants
+// Home constants
 export const LAYOUT = {
   COLUMNS: 'columns',
   WIDE: 'wide',
@@ -6,41 +6,43 @@ export const LAYOUT = {
 } as const;
 
 export const SORT = {
-  RECENT: 'recent',
-  POPULARITY: 'popularity',
+  TIMELINE: 'timeline',
+  ENGAGEMENT: 'total_engagement',
 } as const;
 
+// The value of each variant have to be identical to postStreamApi function names
+// Like this, the reach value will invoke the specific API endpoint
 export const REACH = {
   ALL: 'all',
   FOLLOWING: 'following',
   FRIENDS: 'friends',
-  ME: 'me',
+  //ME: 'me',
 } as const;
 
 export const CONTENT = {
   ALL: 'all',
-  POSTS: 'posts',
-  ARTICLES: 'articles',
+  SHORT: 'short',
+  LONG: 'long',
   IMAGES: 'images',
   VIDEOS: 'videos',
   LINKS: 'links',
   FILES: 'files',
 } as const;
 
-// Filter types
+// Home types
 export type LayoutType = (typeof LAYOUT)[keyof typeof LAYOUT];
 export type SortType = (typeof SORT)[keyof typeof SORT];
 export type ReachType = (typeof REACH)[keyof typeof REACH];
 export type ContentType = (typeof CONTENT)[keyof typeof CONTENT];
 
-export interface FiltersState {
+export interface HomeState {
   layout: LayoutType;
   sort: SortType;
   reach: ReachType;
   content: ContentType;
 }
 
-export interface FiltersActions {
+export interface HomeActions {
   setLayout: (layout: LayoutType) => void;
   setSort: (sort: SortType) => void;
   setReach: (reach: ReachType) => void;
@@ -48,21 +50,22 @@ export interface FiltersActions {
   reset: () => void;
 }
 
-export type FiltersStore = FiltersState & FiltersActions;
+export type HomeStore = HomeState & HomeActions;
 
 // Initial state
-export const filtersInitialState: FiltersState = {
+export const homeInitialState: HomeState = {
   layout: LAYOUT.COLUMNS,
-  sort: SORT.RECENT,
+  sort: SORT.TIMELINE,
   reach: REACH.ALL,
   content: CONTENT.ALL,
 };
 
 // Action types for DevTools
-export enum FiltersActionTypes {
-  SET_LAYOUT = 'filters/setLayout',
-  SET_SORT = 'filters/setSort',
-  SET_REACH = 'filters/setReach',
-  SET_CONTENT = 'filters/setContent',
-  RESET = 'filters/reset',
+export enum HomeActionTypes {
+  SET_HOME_LAYOUT = 'SET_HOME_LAYOUT',
+  SET_HOME_SORT = 'SET_HOME_SORT',
+  SET_HOME_REACH = 'SET_HOME_REACH',
+  SET_HOME_CONTENT = 'SET_HOME_CONTENT',
+  RESET_HOME = 'RESET_HOME',
 }
+

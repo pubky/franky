@@ -2,7 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import { SORT, type SortType } from '@/core/stores/filters/filters.types';
+import { SORT, type SortType } from '@/core/stores/home/home.types';
 
 export type SortTab = SortType;
 
@@ -12,11 +12,11 @@ interface SortProps {
 }
 
 const tabs: { key: SortTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: SORT.RECENT, label: 'Recent', icon: Libs.SquareAsterisk },
-  { key: SORT.POPULARITY, label: 'Popularity', icon: Libs.Flame },
+  { key: SORT.TIMELINE, label: 'Recent', icon: Libs.SquareAsterisk },
+  { key: SORT.ENGAGEMENT, label: 'Popularity', icon: Libs.Flame },
 ];
 
-export function FilterSort({ selectedTab = SORT.RECENT, onTabChange }: SortProps) {
+export function FilterSort({ selectedTab = SORT.TIMELINE, onTabChange }: SortProps) {
   const handleTabClick = (tab: SortTab) => {
     onTabChange?.(tab);
   };

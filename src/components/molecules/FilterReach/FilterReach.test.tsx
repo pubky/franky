@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterReach, type ReachTab } from './FilterReach';
-import { REACH } from '@/core/stores/filters/filters.types';
+import { REACH } from '@/core/stores/home/home.types';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -30,11 +30,11 @@ describe('FilterReach', () => {
     const mockOnTabChange = vi.fn();
     render(<FilterReach onTabChange={mockOnTabChange} />);
 
-    const tabs: ReachTab[] = ['all', 'following', 'friends', 'me'];
+    const tabs: ReachTab[] = ['all', 'following', 'friends'];
 
     tabs.forEach((tab) => {
       const element = screen.getByText(
-        tab === 'all' ? 'All' : tab === 'following' ? 'Following' : tab === 'friends' ? 'Friends' : 'Me',
+        tab === 'all' ? 'All' : tab === 'following' ? 'Following' : tab === 'friends' ? 'Friends' : '',
       );
 
       fireEvent.click(element);
@@ -61,11 +61,6 @@ describe('FilterReach - Snapshots', () => {
 
   it('matches snapshot with Friends content selected tab', () => {
     const { container } = render(<FilterReach selectedTab={REACH.FRIENDS} />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with Me content selected tab', () => {
-    const { container } = render(<FilterReach selectedTab={REACH.ME} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -1,12 +1,93 @@
 // Post Stream ID Pattern: sorting:source:kind
-// - SORTING: timeline, total_engagement
-// - SOURCE: all, following, friends, bookmarks, post_replies, author, author_replies
-// - KIND: short, long, image, video, link, file
+// - SORTING: timeline (recent), total_engagement (popularity)
+// - SOURCE: all, following, friends, me, bookmarks, post_replies, author, author_replies
+// - KIND: all, short (posts), long (articles), image, video, link, file
 export enum PostStreamTypes {
-  // Bootstrap default list
-  TIMELINE_ALL = 'timeline:all:all',
-  // Other lists, persisted after user navigation
-  TIMELINE_FOLLOWING = 'timeline:following:all',
-  TIMELINE_FRIENDS = 'timeline:friends:all',
-  TIMELINE_PICTURES = 'timeline:all:image',
+  // ============================================
+  // TIMELINE (Recent) - ALL Sources
+  // ============================================
+  TIMELINE_ALL_ALL = 'timeline:all:all',
+  TIMELINE_ALL_SHORT = 'timeline:all:short',
+  TIMELINE_ALL_LONG = 'timeline:all:long',
+  TIMELINE_ALL_IMAGE = 'timeline:all:image',
+  TIMELINE_ALL_VIDEO = 'timeline:all:video',
+  TIMELINE_ALL_LINK = 'timeline:all:link',
+  TIMELINE_ALL_FILE = 'timeline:all:file',
+
+  // ============================================
+  // TIMELINE (Recent) - FOLLOWING Source
+  // ============================================
+  TIMELINE_FOLLOWING_ALL = 'timeline:following:all',
+  TIMELINE_FOLLOWING_SHORT = 'timeline:following:short',
+  TIMELINE_FOLLOWING_LONG = 'timeline:following:long',
+  TIMELINE_FOLLOWING_IMAGE = 'timeline:following:image',
+  TIMELINE_FOLLOWING_VIDEO = 'timeline:following:video',
+  TIMELINE_FOLLOWING_LINK = 'timeline:following:link',
+  TIMELINE_FOLLOWING_FILE = 'timeline:following:file',
+
+  // ============================================
+  // TIMELINE (Recent) - FRIENDS Source
+  // ============================================
+  TIMELINE_FRIENDS_ALL = 'timeline:friends:all',
+  TIMELINE_FRIENDS_SHORT = 'timeline:friends:short',
+  TIMELINE_FRIENDS_LONG = 'timeline:friends:long',
+  TIMELINE_FRIENDS_IMAGE = 'timeline:friends:image',
+  TIMELINE_FRIENDS_VIDEO = 'timeline:friends:video',
+  TIMELINE_FRIENDS_LINK = 'timeline:friends:link',
+  TIMELINE_FRIENDS_FILE = 'timeline:friends:file',
+
+  // ============================================
+  // TIMELINE (Recent) - ME Source
+  // ============================================
+  TIMELINE_ME_ALL = 'timeline:me:all',
+  TIMELINE_ME_SHORT = 'timeline:me:short',
+  TIMELINE_ME_LONG = 'timeline:me:long',
+  TIMELINE_ME_IMAGE = 'timeline:me:image',
+  TIMELINE_ME_VIDEO = 'timeline:me:video',
+  TIMELINE_ME_LINK = 'timeline:me:link',
+  TIMELINE_ME_FILE = 'timeline:me:file',
+
+  // ============================================
+  // TOTAL_ENGAGEMENT (Popularity) - ALL Sources
+  // ============================================
+  POPULARITY_ALL_ALL = 'total_engagement:all:all',
+  POPULARITY_ALL_SHORT = 'total_engagement:all:short',
+  POPULARITY_ALL_LONG = 'total_engagement:all:long',
+  POPULARITY_ALL_IMAGE = 'total_engagement:all:image',
+  POPULARITY_ALL_VIDEO = 'total_engagement:all:video',
+  POPULARITY_ALL_LINK = 'total_engagement:all:link',
+  POPULARITY_ALL_FILE = 'total_engagement:all:file',
+
+  // ============================================
+  // TOTAL_ENGAGEMENT (Popularity) - FOLLOWING Source
+  // ============================================
+  POPULARITY_FOLLOWING_ALL = 'total_engagement:following:all',
+  POPULARITY_FOLLOWING_SHORT = 'total_engagement:following:short',
+  POPULARITY_FOLLOWING_LONG = 'total_engagement:following:long',
+  POPULARITY_FOLLOWING_IMAGE = 'total_engagement:following:image',
+  POPULARITY_FOLLOWING_VIDEO = 'total_engagement:following:video',
+  POPULARITY_FOLLOWING_LINK = 'total_engagement:following:link',
+  POPULARITY_FOLLOWING_FILE = 'total_engagement:following:file',
+
+  // ============================================
+  // TOTAL_ENGAGEMENT (Popularity) - FRIENDS Source
+  // ============================================
+  POPULARITY_FRIENDS_ALL = 'total_engagement:friends:all',
+  POPULARITY_FRIENDS_SHORT = 'total_engagement:friends:short',
+  POPULARITY_FRIENDS_LONG = 'total_engagement:friends:long',
+  POPULARITY_FRIENDS_IMAGE = 'total_engagement:friends:image',
+  POPULARITY_FRIENDS_VIDEO = 'total_engagement:friends:video',
+  POPULARITY_FRIENDS_LINK = 'total_engagement:friends:link',
+  POPULARITY_FRIENDS_FILE = 'total_engagement:friends:file',
+
+  // ============================================
+  // TOTAL_ENGAGEMENT (Popularity) - ME Source
+  // ============================================
+  POPULARITY_ME_ALL = 'total_engagement:me:all',
+  POPULARITY_ME_SHORT = 'total_engagement:me:short',
+  POPULARITY_ME_LONG = 'total_engagement:me:long',
+  POPULARITY_ME_IMAGE = 'total_engagement:me:image',
+  POPULARITY_ME_VIDEO = 'total_engagement:me:video',
+  POPULARITY_ME_LINK = 'total_engagement:me:link',
+  POPULARITY_ME_FILE = 'total_engagement:me:file',
 }

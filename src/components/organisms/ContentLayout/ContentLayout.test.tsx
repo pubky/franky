@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ContentLayout } from './ContentLayout';
 
-// Mock the filters store
+// Mock the home store
 vi.mock('@/core', () => ({
-  useFiltersStore: () => ({
+  useHomeStore: () => ({
     layout: 'columns',
     setLayout: vi.fn(),
     reach: 'all',

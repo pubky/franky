@@ -1,19 +1,19 @@
 import { create } from 'zustand';
 import { persist, devtools } from 'zustand/middleware';
-import { FiltersStore, filtersInitialState } from './filters.types';
-import { createFiltersActions } from './filters.actions';
+import { HomeStore, homeInitialState } from './home.types';
+import { createHomeActions } from './home.actions';
 
 // Store creation
-export const useFiltersStore = create<FiltersStore>()(
+export const useHomeStore = create<HomeStore>()(
   devtools(
     persist(
       (set) => ({
-        ...filtersInitialState,
-        ...createFiltersActions(set),
+        ...homeInitialState,
+        ...createHomeActions(set),
       }),
       {
-        name: 'filters-store',
-        // Persist all filter states
+        name: 'home-store',
+        // Persist all home states
         partialize: (state) => ({
           layout: state.layout,
           sort: state.sort,
@@ -23,8 +23,9 @@ export const useFiltersStore = create<FiltersStore>()(
       },
     ),
     {
-      name: 'filters-store',
+      name: 'home-store',
       enabled: process.env.NODE_ENV === 'development',
     },
   ),
 );
+

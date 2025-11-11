@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterSort, type SortTab } from './FilterSort';
-import { SORT } from '@/core/stores/filters/filters.types';
+import { SORT } from '@/core/stores/home/home.types';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -30,10 +30,10 @@ describe('FilterSort', () => {
     const mockOnTabChange = vi.fn();
     render(<FilterSort onTabChange={mockOnTabChange} />);
 
-    const tabs: SortTab[] = ['recent', 'popularity'];
+    const tabs: SortTab[] = ['timeline', 'total_engagement'];
 
     tabs.forEach((tab) => {
-      const element = screen.getByText(tab === 'recent' ? 'Recent' : 'Popularity');
+      const element = screen.getByText(tab === 'timeline' ? 'Recent' : 'Popularity');
 
       fireEvent.click(element);
       expect(mockOnTabChange).toHaveBeenCalledWith(tab);
@@ -42,7 +42,7 @@ describe('FilterSort', () => {
 
   it('handles tab switching correctly', () => {
     const mockOnTabChange = vi.fn();
-    render(<FilterSort selectedTab={SORT.RECENT} onTabChange={mockOnTabChange} />);
+    render(<FilterSort selectedTab={SORT.TIMELINE} onTabChange={mockOnTabChange} />);
 
     // Click on popularity tab
     const popularityElement = screen.getByText('Popularity');
@@ -53,7 +53,7 @@ describe('FilterSort', () => {
   });
 
   it('renders with different selected tabs', () => {
-    const { rerender } = render(<FilterSort selectedTab="recent" />);
+    const { rerender } = render(<FilterSort selectedTab={SORT.TIMELINE} />);
 
     let recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     let popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
@@ -62,7 +62,7 @@ describe('FilterSort', () => {
     expect(popularityItem).toBeInTheDocument();
 
     // Rerender with different selected tab
-    rerender(<FilterSort selectedTab="popularity" />);
+    rerender(<FilterSort selectedTab={SORT.ENGAGEMENT} />);
 
     recentItem = screen.getByText('Recent').closest('[data-testid="filter-item"]');
     popularityItem = screen.getByText('Popularity').closest('[data-testid="filter-item"]');
@@ -79,12 +79,12 @@ describe('FilterSort - Snapshots', () => {
   });
 
   it('matches snapshot with Recent content selected tab', () => {
-    const { container } = render(<FilterSort selectedTab={SORT.RECENT} />);
+    const { container } = render(<FilterSort selectedTab={SORT.TIMELINE} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with Popularity content selected tab', () => {
-    const { container } = render(<FilterSort selectedTab={SORT.POPULARITY} />);
+    const { container } = render(<FilterSort selectedTab={SORT.ENGAGEMENT} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

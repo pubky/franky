@@ -34,7 +34,7 @@ export function ContentLayout({
   showRightMobileButton = true,
   className,
 }: ContentLayoutProps) {
-  const { layout } = Core.useFiltersStore();
+  const { layout } = Core.useHomeStore();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
