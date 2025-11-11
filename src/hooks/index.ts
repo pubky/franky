@@ -8,3 +8,4 @@ export * from './useEnterSubmit';
 export * from './useLayoutReset';
 export * from './useRecoveryPhraseValidation';
 export * from './usePostReply';
+export * from './usePostRepost';

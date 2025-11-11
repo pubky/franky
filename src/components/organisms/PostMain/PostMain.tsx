@@ -16,6 +16,7 @@ export interface PostMainProps {
 
 export function PostMain({ postId, onClick, className }: PostMainProps) {
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
+  const [repostDialogOpen, setRepostDialogOpen] = useState(false);
 
   // Fetch post tags
   const postTags = useLiveQuery(async () => {
@@ -30,6 +31,10 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
 
   const handleReplyClick = () => {
     setReplyDialogOpen(true);
+  };
+
+  const handleRepostClick = () => {
+    setRepostDialogOpen(true);
   };
 
   return (
@@ -54,6 +59,7 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
               <Organisms.PostActionsBar
                 postId={postId}
                 onReplyClick={handleReplyClick}
+                onRepostClick={handleRepostClick}
                 className="justify-start w-full flex-1 md:justify-end"
               />
             </Atoms.ClickStop>
@@ -61,6 +67,7 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
         </Atoms.CardContent>
       </Atoms.Card>
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChange={setReplyDialogOpen} />
+      <Organisms.DialogRepost postId={postId} open={repostDialogOpen} onOpenChange={setRepostDialogOpen} />
     </>
   );
 }

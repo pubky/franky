@@ -46,7 +46,7 @@ export function PostHeader({ postId, className, hideTime = false }: PostHeaderPr
   const timeAgo = !hideTime && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
-    <div className={Libs.cn('flex justify-between', className)}>
+    <div className={Libs.cn('flex justify-between items-start ', className)}>
       <div className="flex gap-3">
         <Atoms.Avatar size="default">
           <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />

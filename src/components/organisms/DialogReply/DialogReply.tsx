@@ -17,9 +17,10 @@ export function DialogReply({ postId, open, onOpenChange }: DialogReplyProps) {
           <Atoms.DialogTitle>Reply</Atoms.DialogTitle>
         </Atoms.DialogHeader>
         <Atoms.Container className="flex flex-col gap-3">
-          <Organisms.DialogReplyPost postId={postId} />
+          <Organisms.DialogPostPreview postId={postId} variant="reply" />
           <div className="relative pl-6">
-            <Organisms.DialogReplyInput
+            <Organisms.DialogPostInput
+              variant="reply"
               postId={postId}
               onSuccess={() => {
                 onOpenChange?.(false);
