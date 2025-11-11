@@ -32,7 +32,7 @@ export class UserStreamApplication {
   }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
     // Build composite ID for IndexedDB lookup: 'userId:streamType'
     const streamType = Core.getStreamTypeFromStreamId(streamId);
-    const compositeStreamId = Core.buildUserStreamCompositeId({ userId: user_id, streamType });
+    const compositeStreamId = Core.buildUserCompositeId({ userId: user_id, streamType });
 
     // Try cache first
     const cachedStream = await Core.LocalStreamUsersService.findById(compositeStreamId);
@@ -107,7 +107,7 @@ export class UserStreamApplication {
 
     // Build composite ID for IndexedDB storage: 'userId:streamType'
     const streamType = Core.getStreamTypeFromStreamId(streamId);
-    const compositeStreamId = Core.buildUserStreamCompositeId({ userId: user_id, streamType });
+    const compositeStreamId = Core.buildUserCompositeId({ userId: user_id, streamType });
 
     // Check if stream exists in cache
     const existingStream = await Core.LocalStreamUsersService.findById(compositeStreamId);

@@ -17,13 +17,13 @@ export type UserStreamIdParts = {
  * Format: userId:streamType
  *
  * @example
- * buildUserStreamCompositeId({
+ * buildUserCompositeId({
  *   userId: 'user-ABC',
  *   streamType: 'followers'
  * })
  * // Returns: 'user-ABC:followers'
  */
-export function buildUserStreamCompositeId({ userId, streamType }: UserStreamIdParts): string {
+export function buildUserCompositeId({ userId, streamType }: UserStreamIdParts): string {
   return `${userId}${USER_STREAM_ID_DELIMITER}${streamType}`;
 }
 
@@ -31,10 +31,10 @@ export function buildUserStreamCompositeId({ userId, streamType }: UserStreamIdP
  * Parse a composite user stream ID back into its parts
  *
  * @example
- * parseUserStreamCompositeId('user-ABC:followers')
+ * parseUserCompositeId('user-ABC:followers')
  * // Returns: { userId: 'user-ABC', streamType: 'followers' }
  */
-export function parseUserStreamCompositeId(compositeId: string): UserStreamIdParts {
+export function parseUserCompositeId(compositeId: string): UserStreamIdParts {
   const sep = compositeId.indexOf(USER_STREAM_ID_DELIMITER);
   if (sep <= 0 || sep === compositeId.length - 1) {
     throw new Error(`Invalid user stream composite ID: ${compositeId}`);

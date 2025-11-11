@@ -25,11 +25,11 @@ export class BootstrapApplication {
     // Build composite IDs for user streams (format: 'userId:streamType')
     const influencersStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
     const recommendedStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.RECOMMENDED);
-    const influencersCompositeId = Core.buildUserStreamCompositeId({
+    const influencersCompositeId = Core.buildUserCompositeId({
       userId: params.pubky,
       streamType: influencersStreamType,
     });
-    const recommendedCompositeId = Core.buildUserStreamCompositeId({
+    const recommendedCompositeId = Core.buildUserCompositeId({
       userId: params.pubky,
       streamType: recommendedStreamType,
     });

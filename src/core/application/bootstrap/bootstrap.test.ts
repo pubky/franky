@@ -180,11 +180,11 @@ const assertCommonCalls = (
   // Check composite IDs are built correctly (format: 'userId:streamType')
   const influencersStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
   const recommendedStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.RECOMMENDED);
-  const influencersCompositeId = Core.buildUserStreamCompositeId({
+  const influencersCompositeId = Core.buildUserCompositeId({
     userId: TEST_PUBKY,
     streamType: influencersStreamType,
   });
-  const recommendedCompositeId = Core.buildUserStreamCompositeId({
+  const recommendedCompositeId = Core.buildUserCompositeId({
     userId: TEST_PUBKY,
     streamType: recommendedStreamType,
   });
