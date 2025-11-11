@@ -2,15 +2,12 @@ import * as Core from '@/core';
 import * as Config from '@/config';
 
 /**
- * Following Stream Application
+ * User Stream Application
  *
- * Manages following stream data flow between Nexus API and local cache.
- * Handles following lists with cache-first strategy.
- *
- * This is a completely independent system separate from the followers stream
- * and the existing user system.
+ * Manages user stream data flow between Nexus API and local cache.
+ * Handles followers, following, friends, and other user stream types with cache-first strategy.
  */
-export class FollowingStreamApplication {
+export class UserStreamApplication {
   private constructor() {}
 
   // ============================================================================
@@ -18,11 +15,11 @@ export class FollowingStreamApplication {
   // ============================================================================
 
   /**
-   * Get or fetch a slice of a following stream
+   * Get or fetch a slice of a user stream (followers, following, friends, etc.)
    * Uses cache-first strategy with fallback to Nexus API
    *
-   * @param streamId - Following stream identifier (e.g., 'following:today:all')
-   * @param user_id - ID of the user whose following are being fetched
+   * @param streamId - User stream identifier (e.g., 'followers:today:all', 'following:today:all')
+   * @param user_id - ID of the user whose stream is being fetched
    * @param skip - Number of users to skip (for pagination)
    * @param limit - Number of users to return
    * @returns Next page of user IDs, cache miss IDs, and pagination offset
@@ -32,9 +29,13 @@ export class FollowingStreamApplication {
     user_id,
     skip = 0,
     limit = Config.NEXUS_USERS_PER_PAGE,
-  }: Core.TReadFollowingStreamChunkParams): Promise<Core.TFollowingStreamChunkResponse> {
+  }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
+    // Build composite ID for IndexedDB lookup: 'userId:streamType'
+    const streamType = Core.getStreamTypeFromStreamId(streamId);
+    const compositeStreamId = Core.buildUserStreamCompositeId({ userId: user_id, streamType });
+
     // Try cache first
-    const cachedStream = await Core.LocalStreamFollowingService.findById(streamId);
+    const cachedStream = await Core.LocalStreamUsersService.findById(compositeStreamId);
     if (cachedStream) {
       const nextPageIds = this.getStreamFromCache({ skip, limit, cachedStream });
       if (nextPageIds) {
@@ -54,7 +55,7 @@ export class FollowingStreamApplication {
    * @param cacheMissUserIds - Array of user IDs that need to be fetched
    * @param viewerId - Optional viewer ID for relationship data
    */
-  static async fetchMissingUsersFromNexus({ cacheMissUserIds, viewerId }: Core.TMissingFollowingParams): Promise<void> {
+  static async fetchMissingUsersFromNexus({ cacheMissUserIds, viewerId }: Core.TMissingUsersParams): Promise<void> {
     if (cacheMissUserIds.length === 0) {
       return;
     }
@@ -66,7 +67,7 @@ export class FollowingStreamApplication {
 
     const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
     if (userBatch) {
-      await Core.LocalStreamFollowingService.persistUsers(userBatch);
+      await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }
 
@@ -75,7 +76,7 @@ export class FollowingStreamApplication {
   // ============================================================================
 
   /**
-   * Fetch following stream from Nexus API
+   * Fetch user stream from Nexus API
    * Persists both stream IDs and full user data
    *
    * @private
@@ -85,9 +86,9 @@ export class FollowingStreamApplication {
     user_id,
     skip = 0,
     limit = Config.NEXUS_USERS_PER_PAGE,
-  }: Core.TReadFollowingStreamChunkParams): Promise<Core.TFollowingStreamChunkResponse> {
-    // Fetch from Nexus
-    const nexusUsers = await Core.NexusFollowingStreamService.fetch({
+  }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
+    // Fetch from Nexus using unified service
+    const nexusUsers = await Core.NexusUserStreamService.fetch({
       streamId,
       user_id,
       params: { skip, limit },
@@ -102,17 +103,21 @@ export class FollowingStreamApplication {
     const userIds = nexusUsers.map((user) => user.details.id);
 
     // Persist full user data to IndexedDB
-    await Core.LocalStreamFollowingService.persistUsers(nexusUsers);
+    await Core.LocalStreamUsersService.persistUsers(nexusUsers);
+
+    // Build composite ID for IndexedDB storage: 'userId:streamType'
+    const streamType = Core.getStreamTypeFromStreamId(streamId);
+    const compositeStreamId = Core.buildUserStreamCompositeId({ userId: user_id, streamType });
 
     // Check if stream exists in cache
-    const existingStream = await Core.LocalStreamFollowingService.findById(streamId);
+    const existingStream = await Core.LocalStreamUsersService.findById(compositeStreamId);
 
     if (existingStream) {
       // Append to existing stream
-      await Core.LocalStreamFollowingService.persistNewStreamChunk({ stream: userIds, streamId });
+      await Core.LocalStreamUsersService.persistNewStreamChunk({ stream: userIds, streamId: compositeStreamId });
     } else {
       // Create new stream
-      await Core.LocalStreamFollowingService.upsert({ streamId, stream: userIds });
+      await Core.LocalStreamUsersService.upsert({ streamId: compositeStreamId, stream: userIds });
     }
 
     // Identify users not yet in cache (shouldn't be any now, but keep for consistency)
@@ -125,7 +130,7 @@ export class FollowingStreamApplication {
   }
 
   /**
-   * Get following stream slice from cache
+   * Get user stream slice from cache
    * Returns null if cache doesn't have sufficient data
    *
    * @private
@@ -134,7 +139,7 @@ export class FollowingStreamApplication {
     skip = 0,
     limit,
     cachedStream,
-  }: Core.TCacheFollowingStreamParams): Core.Pubky[] | null {
+  }: Core.TCacheUserStreamParams): Core.Pubky[] | null {
     // Check if cache has enough data for the requested range
     const endIndex = skip + limit;
     if (cachedStream.stream.length >= endIndex) {

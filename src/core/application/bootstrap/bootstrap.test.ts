@@ -177,14 +177,26 @@ const assertCommonCalls = (
     streamId: Core.PostStreamTypes.TIMELINE_ALL,
     stream: bootstrapData.list.stream,
   });
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-    bootstrapData.list.influencers,
-  );
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.RECOMMENDED,
-    bootstrapData.list.recommended,
-  );
+  // Check composite IDs are built correctly (format: 'userId:streamType')
+  const influencersStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
+  const recommendedStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.RECOMMENDED);
+  const influencersCompositeId = Core.buildUserStreamCompositeId({
+    userId: TEST_PUBKY,
+    streamType: influencersStreamType,
+  });
+  const recommendedCompositeId = Core.buildUserStreamCompositeId({
+    userId: TEST_PUBKY,
+    streamType: recommendedStreamType,
+  });
+
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: influencersCompositeId,
+    stream: bootstrapData.list.influencers,
+  });
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: recommendedCompositeId,
+    stream: bootstrapData.list.recommended,
+  });
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
   expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
 };

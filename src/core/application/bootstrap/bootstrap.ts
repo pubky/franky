@@ -22,12 +22,24 @@ export class BootstrapApplication {
       // TODO: Maybe in the UI, we should redirect or show some special message to the user.
       throw Libs.createNexusError(Libs.NexusErrorType.NO_CONTENT, 'No content found for bootstrap data', 204);
     }
+    // Build composite IDs for user streams (format: 'userId:streamType')
+    const influencersStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
+    const recommendedStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.RECOMMENDED);
+    const influencersCompositeId = Core.buildUserStreamCompositeId({
+      userId: params.pubky,
+      streamType: influencersStreamType,
+    });
+    const recommendedCompositeId = Core.buildUserStreamCompositeId({
+      userId: params.pubky,
+      streamType: recommendedStreamType,
+    });
+
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts(data.posts),
       Core.LocalStreamPostsService.upsert({ streamId: Core.PostStreamTypes.TIMELINE_ALL, stream: data.list.stream }),
-      Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
-      Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
+      Core.LocalStreamUsersService.upsert({ streamId: influencersCompositeId, stream: data.list.influencers }),
+      Core.LocalStreamUsersService.upsert({ streamId: recommendedCompositeId, stream: data.list.recommended }),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);

@@ -52,6 +52,18 @@ export type TUserStreamUsersByIdsParams = {
 };
 
 /**
+ * Parameters for fetching user stream from Nexus (unified for followers, following, friends, etc.)
+ */
+export type TFetchUserStreamParams = {
+  streamId: Core.UserStreamTypes;
+  user_id: Core.Pubky;
+  params: {
+    skip: number;
+    limit: number;
+  };
+};
+
+/**
  * Union type of all supported user stream parameter shapes
  * Provides type safety for buildUserStreamUrl function
  */

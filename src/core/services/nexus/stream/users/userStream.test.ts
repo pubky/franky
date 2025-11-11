@@ -304,3 +304,170 @@ describe('Users Stream API - Error Control', () => {
     });
   });
 });
+
+describe('NexusUserStreamService.fetch', () => {
+  const mockUserId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
+
+  describe('streamId parsing and routing', () => {
+    it('should parse followers streamId correctly', () => {
+      const streamId = Core.UserStreamTypes.TODAY_FOLLOWERS_ALL;
+      const streamParts = streamId.split(':');
+
+      expect(streamParts[0]).toBe('followers');
+      expect(streamParts[1]).toBe('today');
+      expect(streamParts[2]).toBe('all');
+    });
+
+    it('should parse following streamId correctly', () => {
+      const streamId = Core.UserStreamTypes.TODAY_FOLLOWING_ALL;
+      const streamParts = streamId.split(':');
+
+      expect(streamParts[0]).toBe('following');
+      expect(streamParts[1]).toBe('today');
+      expect(streamParts[2]).toBe('all');
+    });
+
+    it('should parse friends streamId correctly', () => {
+      const streamId = Core.UserStreamTypes.TODAY_FRIENDS_ALL;
+      const streamParts = streamId.split(':');
+
+      expect(streamParts[0]).toBe('friends');
+      expect(streamParts[1]).toBe('today');
+      expect(streamParts[2]).toBe('all');
+    });
+  });
+
+  describe('URL generation via userStreamApi', () => {
+    it('should generate correct followers URL', () => {
+      const url = userStreamApi.followers({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toContain('v0/stream/users?');
+      expect(url).toContain('source=followers');
+      expect(url).toContain(`user_id=${mockUserId}`);
+      expect(url).toContain('skip=0');
+      expect(url).toContain('limit=10');
+    });
+
+    it('should generate correct following URL', () => {
+      const url = userStreamApi.following({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toContain('v0/stream/users?');
+      expect(url).toContain('source=following');
+      expect(url).toContain(`user_id=${mockUserId}`);
+      expect(url).toContain('skip=0');
+      expect(url).toContain('limit=10');
+    });
+
+    it('should generate correct friends URL', () => {
+      const url = userStreamApi.friends({
+        user_id: mockUserId,
+        skip: 5,
+        limit: 20,
+      });
+
+      expect(url).toContain('source=friends');
+      expect(url).toContain('skip=5');
+      expect(url).toContain('limit=20');
+    });
+
+    it('should generate correct muted URL', () => {
+      const url = userStreamApi.muted({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toContain('source=muted');
+    });
+
+    it('should generate correct recommended URL', () => {
+      const url = userStreamApi.recommended({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toContain('source=recommended');
+    });
+  });
+
+  describe('Parameter handling', () => {
+    it('should handle pagination parameters', () => {
+      const url = userStreamApi.followers({
+        user_id: mockUserId,
+        skip: 10,
+        limit: 20,
+      });
+
+      expect(url).toContain('skip=10');
+      expect(url).toContain('limit=20');
+    });
+
+    it('should handle zero skip', () => {
+      const url = userStreamApi.followers({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 5,
+      });
+
+      expect(url).toContain('skip=0');
+      expect(url).toContain('limit=5');
+    });
+
+    it('should handle optional viewer_id', () => {
+      const viewerId = 'viewer-pubky-id';
+      const url = userStreamApi.followers({
+        user_id: mockUserId,
+        viewer_id: viewerId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toContain(`viewer_id=${viewerId}`);
+    });
+
+    it('should handle undefined viewer_id', () => {
+      const url = userStreamApi.followers({
+        user_id: mockUserId,
+        viewer_id: undefined,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).not.toContain('viewer_id=');
+    });
+  });
+
+  describe('URL structure validation', () => {
+    it('should always start with v0/stream/users?', () => {
+      const url = userStreamApi.followers({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toMatch(/v0\/stream\/users\?/);
+    });
+
+    it('should have proper query parameter format', () => {
+      const url = userStreamApi.following({
+        user_id: mockUserId,
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(url).toMatch(/source=following/);
+      expect(url).toMatch(/user_id=/);
+      expect(url).toMatch(/skip=0/);
+      expect(url).toMatch(/limit=10/);
+    });
+  });
+});
