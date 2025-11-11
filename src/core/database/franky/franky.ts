@@ -16,6 +16,7 @@ import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
+import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.schema';
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
 
 export class AppDatabase extends Dexie {
@@ -39,6 +40,8 @@ export class AppDatabase extends Dexie {
   post_streams!: Dexie.Table<PostStreamModelSchema>;
   user_streams!: Dexie.Table<UserStreamModelSchema>;
   tag_streams!: Dexie.Table<TagStreamModelSchema>;
+  // Hot tags
+  hot_tags!: Dexie.Table<HotTagsModelSchema>;
   constructor(databaseName: string = Config.DB_NAME) {
     super(databaseName);
 
@@ -62,6 +65,8 @@ export class AppDatabase extends Dexie {
         post_streams: postStreamTableSchema,
         user_streams: userStreamTableSchema,
         tag_streams: tagStreamTableSchema,
+        // Hot tags
+        hot_tags: hotTagsTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(

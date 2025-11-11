@@ -29,6 +29,9 @@ describe('HotApplication', () => {
         limit: 10,
       };
 
+      // Mock cache miss
+      vi.spyOn(Core.LocalHotService, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
 
       const result = await HotApplication.getOrFetch(params);
@@ -55,6 +58,7 @@ describe('HotApplication', () => {
         limit: 20,
       };
 
+      // When skip > 0, bypasses cache
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
 
       const result = await HotApplication.getOrFetch(params);
@@ -69,6 +73,7 @@ describe('HotApplication', () => {
         timeframe: Core.UserStreamTimeframe.TODAY,
       };
 
+      vi.spyOn(Core.LocalHotService, 'findById').mockResolvedValue(null);
       vi.spyOn(Core.NexusHotService, 'fetch').mockRejectedValue(new Error('service-fail'));
 
       const result = await HotApplication.getOrFetch(params);
@@ -78,6 +83,9 @@ describe('HotApplication', () => {
 
     it('should handle different reach values', async () => {
       const mockHotTags = [] as Core.NexusHotTag[];
+
+      vi.spyOn(Core.LocalHotService, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
 
       await HotApplication.getOrFetch({
@@ -95,6 +103,9 @@ describe('HotApplication', () => {
 
     it('should handle different timeframe values', async () => {
       const mockHotTags = [] as Core.NexusHotTag[];
+
+      vi.spyOn(Core.LocalHotService, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
 
       await HotApplication.getOrFetch({ timeframe: Core.UserStreamTimeframe.TODAY });
