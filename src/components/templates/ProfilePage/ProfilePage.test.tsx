@@ -10,111 +10,104 @@ vi.mock('next/navigation', () => ({
   })),
 }));
 
-// Mock the atoms
-vi.mock('@/atoms', () => ({
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className}>{children}</div>
-  ),
-  Heading: ({
-    children,
-    level,
-    size,
-    className,
-  }: {
-    children: React.ReactNode;
-    level?: number;
-    size?: string;
-    className?: string;
-  }) => (
-    <h1 data-level={level} data-size={size} className={className}>
-      {children}
-    </h1>
-  ),
-  Button: ({
-    children,
-    variant,
-    size,
-    onClick,
-    id,
-    className,
-  }: {
-    children: React.ReactNode;
-    variant?: string;
-    size?: string;
-    onClick?: () => void;
-    id?: string;
-    className?: string;
-  }) => (
-    <button onClick={onClick} data-variant={variant} data-size={size} id={id} className={className}>
-      {children}
-    </button>
-  ),
-  Typography: ({ children, size, className }: { children: React.ReactNode; size?: string; className?: string }) => (
-    <span data-size={size} className={className}>
-      {children}
-    </span>
-  ),
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div className={className} data-testid="card">
-      {children}
-    </div>
-  ),
-}));
-
 // Mock organisms
 vi.mock('@/organisms', () => ({
-  ContentLayout: ({ children }: { children: React.ReactNode }) => <div data-testid="content-layout">{children}</div>,
+  ProfilePageHeader: ({
+    name,
+    bio,
+    publicKey,
+    emoji,
+    status,
+    onEdit,
+    onCopyPublicKey,
+    onLinkClick,
+    onSignOut,
+    onStatusClick,
+  }: {
+    name: string;
+    bio?: string;
+    publicKey: string;
+    emoji?: string;
+    status: string;
+    onEdit?: () => void;
+    onCopyPublicKey?: () => void;
+    onLinkClick?: () => void;
+    onSignOut?: () => void;
+    onStatusClick?: () => void;
+  }) => (
+    <div data-testid="profile-page-header">
+      <div>{name}</div>
+      {bio && <div>{bio}</div>}
+      <div>{publicKey}</div>
+      {emoji && <div>{emoji}</div>}
+      <div>{status}</div>
+      {onEdit && <button onClick={onEdit}>Edit</button>}
+      {onCopyPublicKey && <button onClick={onCopyPublicKey}>Copy Key</button>}
+      {onLinkClick && <button onClick={onLinkClick}>Link</button>}
+      {onSignOut && <button onClick={onSignOut}>Sign out</button>}
+      {onStatusClick && <button onClick={onStatusClick}>Status</button>}
+    </div>
+  ),
 }));
 
 describe('ProfilePage', () => {
   it('renders without errors', () => {
     render(<ProfilePage />);
-    expect(screen.getByText('Profile')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-page-header')).toBeInTheDocument();
   });
 
-  it('displays the Profile heading correctly', () => {
+  it('displays ProfilePageHeader with correct props', () => {
     render(<ProfilePage />);
-    const heading = screen.getByText('Profile');
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveAttribute('data-level', '1');
-    expect(heading).toHaveAttribute('data-size', 'xl');
-    expect(heading).toHaveClass('text-2xl');
+
+    expect(screen.getByText('Satoshi Nakamoto')).toBeInTheDocument();
+    expect(
+      screen.getByText('Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.'),
+    ).toBeInTheDocument();
+    expect(screen.getByText('1QX7GKW3abcdef1234567890')).toBeInTheDocument();
+    expect(screen.getByText('🌴')).toBeInTheDocument();
+    expect(screen.getByText('Vacationing')).toBeInTheDocument();
   });
 
-  it('displays description message', () => {
+  it('renders all action buttons', () => {
     render(<ProfilePage />);
-    expect(screen.getByText('View and manage your profile information and activity.')).toBeInTheDocument();
+
+    expect(screen.getByText('Edit')).toBeInTheDocument();
+    expect(screen.getByText('Copy Key')).toBeInTheDocument();
+    expect(screen.getByText('Link')).toBeInTheDocument();
+    expect(screen.getByText('Sign out')).toBeInTheDocument();
+    expect(screen.getByText('Status')).toBeInTheDocument();
   });
 
-  it('renders logout button with correct props', () => {
-    render(<ProfilePage />);
-    const logoutButton = screen.getByText('Logout');
-    expect(logoutButton).toBeInTheDocument();
-    expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
-    expect(logoutButton).toHaveAttribute('data-size', 'default');
-    expect(logoutButton).toHaveAttribute('id', 'profile-logout-btn');
-  });
-
-  it('navigates to logout page when logout button is clicked', async () => {
+  it('navigates to logout page when sign out is clicked', async () => {
     const { useRouter } = await import('next/navigation');
     const mockPush = vi.fn();
     (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
 
     render(<ProfilePage />);
-    const logoutButton = screen.getByText('Logout');
-    fireEvent.click(logoutButton);
+    const signOutButton = screen.getByText('Sign out');
+    fireEvent.click(signOutButton);
 
     expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
   });
 
-  it('renders container structure correctly', () => {
+  it('calls handlers when buttons are clicked', () => {
     render(<ProfilePage />);
-    expect(screen.getByTestId('content-layout')).toBeInTheDocument();
+
+    const editButton = screen.getByText('Edit');
+    fireEvent.click(editButton);
+
+    const copyKeyButton = screen.getByText('Copy Key');
+    fireEvent.click(copyKeyButton);
+
+    const linkButton = screen.getByText('Link');
+    fireEvent.click(linkButton);
+
+    const statusButton = screen.getByText('Status');
+    fireEvent.click(statusButton);
   });
 
-  it('renders 3 content cards', () => {
-    render(<ProfilePage />);
-    const cards = screen.getAllByTestId('card');
-    expect(cards).toHaveLength(3);
+  it('matches snapshot', () => {
+    const { container } = render(<ProfilePage />);
+    expect(container).toMatchSnapshot();
   });
 });

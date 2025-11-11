@@ -49,6 +49,7 @@ export * from './SettingsSwitchItem';
 export * from './SettingsSwitchGroup';
 export * from './SideDrawer';
 export * from './SignIn';
+export * from './StatusPicker';
 export * from './OnboardingLayout';
 export * from './TextareaField';
 export * from './TimelineEmpty';
