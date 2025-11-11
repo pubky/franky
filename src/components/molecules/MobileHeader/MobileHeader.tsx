@@ -19,12 +19,7 @@ export function MobileHeader({
   className,
 }: MobileHeaderProps) {
   return (
-    <div
-      className={Libs.cn(
-        'lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20',
-        className,
-      )}
-    >
+    <div className={Libs.cn('lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm', className)}>
       <div className="flex items-center justify-between px-4 py-4">
         {/* Left icon - filters */}
         {showLeftButton ? (

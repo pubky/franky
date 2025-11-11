@@ -32,7 +32,7 @@ export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps)
     return (
       <div
         className={Libs.cn(
-          'w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors',
+          'w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors',
           className,
         )}
         {...divProps}
@@ -48,7 +48,7 @@ export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps)
   return (
     <button
       className={Libs.cn(
-        'w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors',
+        'w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors',
         className,
       )}
       {...buttonProps}

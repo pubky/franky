@@ -37,7 +37,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           />
         </svg>
         <h2
-          class="text-2xl font-bold text-foreground"
+          class="text-2xl font-bold leading-8 text-foreground"
           data-testid="heading-2"
         >
           Sign out from Pubky
@@ -113,7 +113,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           />
         </svg>
         <h2
-          class="text-2xl font-bold text-foreground"
+          class="text-2xl font-bold leading-8 text-foreground"
           data-testid="heading-2"
         >
           Edit your profile
@@ -191,7 +191,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           />
         </svg>
         <h2
-          class="text-2xl font-bold text-foreground"
+          class="text-2xl font-bold leading-8 text-foreground"
           data-testid="heading-2"
         >
           Back up your account
@@ -273,7 +273,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           />
         </svg>
         <h2
-          class="text-2xl font-bold text-foreground"
+          class="text-2xl font-bold leading-8 text-foreground"
           data-testid="heading-2"
         >
           Download your data
@@ -364,7 +364,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
           />
         </svg>
         <h2
-          class="text-2xl font-bold text-destructive"
+          class="text-2xl font-bold leading-8 text-destructive"
           data-testid="heading-2"
         >
           Delete your account

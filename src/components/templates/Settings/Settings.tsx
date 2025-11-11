@@ -15,18 +15,13 @@ export function Settings({ children }: SettingsProps) {
 
   return (
     <>
-      {/* Mobile menu - visible only on mobile, full width */}
-      <div className="lg:hidden">
-        <Molecules.SettingsMobileMenu />
-      </div>
+      <Molecules.SettingsMobileMenu className="lg:hidden" />
 
       <Organisms.ContentLayout
         showLeftMobileButton={false}
         showRightMobileButton={false}
         leftSidebarContent={<SettingsLeftSidebar />}
         rightSidebarContent={<SettingsRightSidebar />}
-        leftDrawerContent={<SettingsLeftDrawer />}
-        rightDrawerContent={<SettingsRightDrawer />}
         className="lg:pt-0 pt-[145px]"
       >
         {children}
@@ -49,12 +44,4 @@ export function SettingsRightSidebar() {
       <Molecules.SettingsInfo />
     </div>
   );
-}
-
-export function SettingsLeftDrawer() {
-  return <Molecules.SettingsMenu />;
-}
-
-export function SettingsRightDrawer() {
-  return <Molecules.SettingsInfo />;
 }

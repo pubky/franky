@@ -6,7 +6,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
     class="flex flex-col gap-6"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2 bg-background"
+      class="mx-auto w-full flex flex-col gap-0 bg-background"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -16,7 +16,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         data-testid="filter-header"
       >
         <h2
-          class="text-2xl text-muted-foreground font-light"
+          class="text-2xl leading-8 text-muted-foreground font-light"
           data-testid="heading-2"
         >
           Terms of Service & Privacy
@@ -28,7 +28,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         </p>
       </div>
       <div
-        class="mx-auto w-full flex flex-col gap-2"
+        class="mx-auto w-full flex flex-col gap-0"
         data-slot="filter-list"
         data-testid="filter-list"
       >
@@ -36,7 +36,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           aria-controls="radix-«r0»"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+          class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
           data-as-child="true"
           data-slot="dialog-trigger"
           data-state="closed"
@@ -82,7 +82,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           aria-controls="radix-«r0»"
           aria-expanded="false"
           aria-haspopup="dialog"
-          class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+          class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
           data-as-child="true"
           data-slot="dialog-trigger"
           data-state="closed"
@@ -127,7 +127,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="mx-auto w-full flex flex-col gap-2 bg-background"
+      class="mx-auto w-full flex flex-col gap-0 bg-background"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -137,14 +137,14 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         data-testid="filter-header"
       >
         <h2
-          class="text-2xl text-muted-foreground font-light"
+          class="text-2xl leading-8 text-muted-foreground font-light"
           data-testid="heading-2"
         >
           FAQ
         </h2>
       </div>
       <div
-        class="mx-auto w-full flex flex-col gap-2"
+        class="mx-auto w-full flex flex-col gap-0"
         data-slot="filter-list"
         data-testid="filter-list"
       >
@@ -322,7 +322,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           href="/settings/help"
         >
           <button
-            class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+            class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
           >
             <svg
               aria-hidden="true"
@@ -359,7 +359,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="mx-auto w-full flex flex-col gap-2 bg-background"
+      class="mx-auto w-full flex flex-col gap-0 bg-background"
       data-slot="filter-root"
       data-testid="filter-root"
     >
@@ -369,7 +369,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         data-testid="filter-header"
       >
         <h2
-          class="text-2xl text-muted-foreground font-light"
+          class="text-2xl leading-8 text-muted-foreground font-light"
           data-testid="heading-2"
         >
           Version

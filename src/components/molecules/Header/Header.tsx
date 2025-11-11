@@ -86,7 +86,16 @@ export function HeaderNavigationButtons({
   const pathname = usePathname();
   const counterString = counter > 21 ? '21+' : counter.toString();
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => {
+    // Exact match
+    if (pathname === path) return true;
+
+    // Check if current path starts with the route path (for nested routes)
+    // This handles cases like /settings/account, /profile/posts, etc.
+    if (pathname.startsWith(path + '/')) return true;
+
+    return false;
+  };
 
   return (
     <Atoms.Container className="hidden w-auto flex-row items-center justify-start gap-3 lg:flex">
@@ -131,9 +140,9 @@ export function HeaderNavigationButtons({
       </Atoms.Link>
 
       <Atoms.Link id="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
-        <Atoms.Avatar className="w-12 h-12 cursor-pointer">
+        <Atoms.Avatar size="lg">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
-          <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
+          <Atoms.AvatarFallback active={isActive(App.APP_ROUTES.PROFILE)}>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (
           <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">

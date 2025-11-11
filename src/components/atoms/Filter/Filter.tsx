@@ -9,7 +9,7 @@ function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTML
     <Atoms.Container
       data-slot="filter-root"
       data-testid="filter-root"
-      className={Libs.cn('flex flex-col gap-2 bg-background', className)}
+      className={Libs.cn('flex flex-col gap-0 bg-background', className)}
       {...props}
     >
       {children}
@@ -46,7 +46,7 @@ function FilterList({ className, children, ...props }: React.HTMLAttributes<HTML
     <Atoms.Container
       data-slot="filter-list"
       data-testid="filter-list"
-      className={Libs.cn('flex flex-col gap-2', className)}
+      className={Libs.cn('flex flex-col gap-0', className)}
       {...props}
     >
       {children}
@@ -72,11 +72,11 @@ function FilterItem({
       data-testid="filter-item"
       data-selected={isSelected ? 'true' : 'false'}
       className={Libs.cn(
-        'cursor-pointer flex gap-2 items-center text-base font-medium transition-colors',
+        'cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full',
         isSelected ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80',
         className,
       )}
-      size="sm"
+      size="base"
       onClick={onClick}
       {...props}
     >

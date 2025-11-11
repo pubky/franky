@@ -76,7 +76,7 @@ export function InputField({
     <>
       <Atoms.Container
         className={Libs.cn(
-          'cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent',
+          'cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md bg-alpha-90',
           icon && iconPosition === 'left' ? 'pl-4.5' : 'pl-2',
           containerClasses,
           statusClasses[status],

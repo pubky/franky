@@ -2,7 +2,7 @@
 
 exports[`SidebarButton - Snapshots > matches snapshot with FileText icon 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
 >
   <svg
     aria-hidden="true"
@@ -43,7 +43,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with FileText icon 1`] = `
 
 exports[`SidebarButton - Snapshots > matches snapshot with LockKeyhole icon 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
 >
   <svg
     aria-hidden="true"
@@ -84,7 +84,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with LockKeyhole icon 1`] 
 
 exports[`SidebarButton - Snapshots > matches snapshot with Users icon 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
 >
   <svg
     aria-hidden="true"
@@ -125,7 +125,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with Users icon 1`] = `
 exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] = `
 <button
   aria-label="Test button"
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
   data-testid="test"
 >
   <svg
@@ -167,7 +167,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] 
 
 exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors"
 >
   <svg
     aria-hidden="true"
@@ -214,7 +214,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] 
 
 exports[`SidebarButton - Snapshots > matches snapshot with custom className 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors custom-class"
+  class="w-full h-8 flex items-center justify-center gap-2 py-2 px-3 rounded-full border border-input bg-input/30 hover:bg-secondary/80 cursor-pointer transition-colors custom-class"
 >
   <svg
     aria-hidden="true"

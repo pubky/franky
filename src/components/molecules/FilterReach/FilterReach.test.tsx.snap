@@ -2,7 +2,7 @@
 
 exports[`FilterReach - Snapshots > matches snapshot with All content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -12,19 +12,19 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Reach
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -67,7 +67,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -95,7 +95,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -133,7 +133,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -172,7 +172,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
 
 exports[`FilterReach - Snapshots > matches snapshot with Following content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -182,19 +182,19 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Reach
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -237,7 +237,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -265,7 +265,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -303,7 +303,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -342,7 +342,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
 
 exports[`FilterReach - Snapshots > matches snapshot with Friends content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -352,19 +352,19 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Reach
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -407,7 +407,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -435,7 +435,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -473,7 +473,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -512,7 +512,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
 
 exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -522,19 +522,19 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Reach
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -577,7 +577,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -605,7 +605,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -643,7 +643,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -682,7 +682,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
 
 exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="mx-auto w-full flex flex-col gap-0 bg-background"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -692,19 +692,19 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl leading-8 text-muted-foreground font-light"
       data-testid="heading-2"
     >
       Reach
     </h2>
   </div>
   <div
-    class="mx-auto w-full flex flex-col gap-2"
+    class="mx-auto w-full flex flex-col gap-0"
     data-slot="filter-list"
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -747,7 +747,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -775,7 +775,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
@@ -813,7 +813,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="cursor-pointer flex gap-2 items-center text-base font-medium leading-6 py-1 transition-colors w-full text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"

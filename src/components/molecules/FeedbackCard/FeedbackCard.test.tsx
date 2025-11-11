@@ -61,24 +61,18 @@ describe('FeedbackCard', () => {
     expect(document.querySelector('.lucide-user')).toBeInTheDocument();
   });
 
-  it('renders user name correctly', () => {
-    render(<FeedbackCard />);
-
-    const userName = screen.getByText('Your Name');
-    expect(userName).toHaveClass('text-base', 'font-bold', 'text-foreground');
-  });
-
   it('renders feedback question correctly', () => {
     render(<FeedbackCard />);
 
     const question = screen.getByText('What do you think about Pubky?');
     expect(question).toHaveClass(
-      'text-sm',
+      'text-xl',
+      'font-medium',
       'text-muted-foreground',
       'cursor-pointer',
       'hover:text-foreground',
       'transition-colors',
-      'leading-snug',
+      'leading-6',
     );
   });
 
@@ -86,7 +80,7 @@ describe('FeedbackCard', () => {
     render(<FeedbackCard />);
 
     const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-2');
+    expect(container).toHaveClass('flex', 'flex-col', 'gap-1');
   });
 
   it('applies correct feedback form classes', () => {
@@ -96,20 +90,29 @@ describe('FeedbackCard', () => {
     expect(feedbackForm).toHaveClass(
       'flex',
       'flex-col',
-      'gap-3',
-      'p-5',
-      'rounded-lg',
+      'gap-4',
+      'p-6',
+      'rounded-md',
       'border-dashed',
       'border',
-      'border-border/50',
+      'border-input',
     );
   });
 
-  it('applies correct user info classes', () => {
+  it('renders icon wrapper with correct classes', () => {
     render(<FeedbackCard />);
 
-    const userInfo = screen.getByText('Your Name').closest('div')?.parentElement;
-    expect(userInfo).toHaveClass('flex', 'items-center', 'gap-2');
+    const avatar = screen.getByTestId('avatar');
+    const iconWrapper = avatar.parentElement;
+    expect(iconWrapper).toHaveClass(
+      'flex',
+      'items-center',
+      'justify-center',
+      'size-12',
+      'p-2',
+      'rounded-md',
+      'shadow-xs',
+    );
   });
 
   it('renders with correct data structure', () => {
@@ -117,7 +120,6 @@ describe('FeedbackCard', () => {
 
     // Verify all expected elements are present
     expect(screen.getByText('Feedback')).toBeInTheDocument();
-    expect(screen.getByText('Your Name')).toBeInTheDocument();
     expect(screen.getByText('What do you think about Pubky?')).toBeInTheDocument();
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
     expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
@@ -135,10 +137,10 @@ describe('FeedbackCard', () => {
     render(<FeedbackCard />);
 
     const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('gap-2');
+    expect(container).toHaveClass('gap-1');
 
     const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
-    expect(feedbackForm).toHaveClass('gap-3', 'p-5');
+    expect(feedbackForm).toHaveClass('gap-4', 'p-6');
   });
 });
 
@@ -160,10 +162,11 @@ describe('FeedbackCard - Snapshots', () => {
     expect(feedbackForm).toMatchSnapshot();
   });
 
-  it('matches snapshot for user info section', () => {
+  it('matches snapshot for icon wrapper', () => {
     render(<FeedbackCard />);
 
-    const userInfo = screen.getByText('Your Name').closest('div');
-    expect(userInfo).toMatchSnapshot();
+    const avatar = screen.getByTestId('avatar');
+    const iconWrapper = avatar.parentElement;
+    expect(iconWrapper).toMatchSnapshot();
   });
 });
