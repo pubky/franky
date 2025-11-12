@@ -128,17 +128,20 @@ When making significant changes to:
 ## 📚 External Resources
 
 ### Design & UI
+
 - [Shadcn UI Documentation](https://ui.shadcn.com/)
 - [Figma Project](https://www.figma.com/design/01ZvjSPZnKTNmaEWz0yJsq/shadcn_ui-PUBKY)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Radix UI](https://www.radix-ui.com/)
 
 ### Core Technology
+
 - [Dexie.js Documentation](https://dexie.org/) - IndexedDB wrapper
 - [Next.js Documentation](https://nextjs.org/docs)
 - [React Testing Library](https://testing-library.com/react)
 
 ### Project Documentation
+
 - [../AGENTS.md](../AGENTS.md) - Main AI development context (start here for overview)
 - [../docs/adr/](../docs/adr/) - Architecture Decision Records
 - [../docs/snapshot-testing.md](../docs/snapshot-testing.md) - Snapshot testing philosophy

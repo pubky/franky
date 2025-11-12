@@ -1,4 +1,3 @@
-
 import * as path from 'path';
 
 export const defaultBackupFilename = (): string => {
@@ -26,7 +25,7 @@ export const interceptNetworkRequest = (interceptedRequests: NetworkRequest[]) =
       timestamp: new Date().toISOString(),
       method: req.method,
       url: req.url,
-      requestBody: req.body
+      requestBody: req.body,
     };
     interceptedRequests.push(requestData);
   });
@@ -51,5 +50,7 @@ export const verifyNotificationCounter = (expectedCount = '1') => {
  * Useful for commands that may need extra time in local development
  */
 export const extendedTimeout = (): Partial<Cypress.Timeoutable> => {
-  return Cypress.env('ci') ? { timeout: Cypress.config('defaultCommandTimeout') * 1.2 } : { timeout: Cypress.config('defaultCommandTimeout') * 2 };
+  return Cypress.env('ci')
+    ? { timeout: Cypress.config('defaultCommandTimeout') * 1.2 }
+    : { timeout: Cypress.config('defaultCommandTimeout') * 2 };
 };
