@@ -14,7 +14,7 @@ interface RootContainerProps {
 
 export function RootContainer({ children }: RootContainerProps) {
   return (
-    <Atoms.Container as="html" lang="en">
+    <Atoms.Container as="html">
       <Atoms.Container as="body" className={`${interTight.variable} antialiased`}>
         <Molecules.PageContainer>{children}</Molecules.PageContainer>
       </Atoms.Container>

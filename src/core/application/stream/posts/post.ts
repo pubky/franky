@@ -2,7 +2,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 
 export class PostStreamApplication {
-  private constructor() { }
+  private constructor() {}
 
   // ============================================================================
   // Public API
@@ -18,15 +18,22 @@ export class PostStreamApplication {
     // Avoid the indexdb query for engagement streams
     if (streamId.split(':')[0] === Core.StreamSorting.TIMELINE) {
       const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
+
       if (cachedStream) {
-        const nextPageIds = this.getStreamFromCache({ lastPostId, limit, cachedStream });
-        if (nextPageIds) {
-          // Returning undefined the organisms knows that that stream chunk comes from cache
-          return { nextPageIds, cacheMissPostIds: [], timestamp: undefined };
+        const cacheResult = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
+
+        if (cacheResult) {
+          return { nextPageIds: cacheResult.postIds, cacheMissPostIds: [], timestamp: cacheResult.timestamp };
         }
       }
+
+      // If this is an initial load (no lastPostId) and cache doesn't exist or is empty,
+      // force fetching from the beginning by setting streamTail to 0
+      if (!lastPostId && (!cachedStream || cachedStream.stream.length === 0)) {
+        streamTail = 0;
+      }
     }
-    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, viewerId, lastPostId });
+    return await this.fetchStreamFromNexus({ streamId, limit, streamTail, viewerId });
   }
 
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
@@ -71,14 +78,15 @@ export class PostStreamApplication {
     streamTail,
     viewerId,
     // TODO: Temporal fix. It has to be deleted. we have to get the timestamp from the UI
-    lastPostId,
+    // lastPostId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
     // TODO: DELETE FROM
-    const streamTailUndefined = lastPostId ? await this.getTimestampFromPostId(lastPostId) : streamTail;
-    if (!streamTailUndefined) {
-      throw new Error('Stream tail is required');
-    }
-    streamTail = streamTailUndefined;
+    // const streamTailUndefined = lastPostId ? await this.getTimestampFromPostId(lastPostId) : streamTail;
+    // if (!streamTailUndefined) {
+    //   // throw new Error('Stream tail is required');
+    //   return { nextPageIds: [], cacheMissPostIds: [], timestamp: undefined };
+    // }
+    // streamTail = streamTailUndefined;
     // TODO: DELETE FINISH
 
     // START of the fn
@@ -113,17 +121,40 @@ export class PostStreamApplication {
     return userIds.filter((_userId, index) => existingUserIds[index] === undefined);
   }
 
-  private static getStreamFromCache({ lastPostId, limit, cachedStream }: Core.TCacheStreamParams): string[] | null {
+  private static async getStreamFromCache({
+    lastPostId,
+    limit,
+    cachedStream,
+  }: Core.TCacheStreamParams): Promise<{ postIds: string[]; timestamp: number | undefined } | null> {
     // TODO: Could be a case that it does not have sufficient posts, in which case we need to fetch more from Nexus
     // e.g. in the cache there is only limit - 5 posts and the missing ones we have to download
     // From now, if cache exists and has posts, return from cache
+    let postIds: string[] | null = null;
+
     if (!lastPostId && cachedStream.stream.length >= limit) {
-      return cachedStream.stream.slice(0, limit);
+      postIds = cachedStream.stream.slice(0, limit);
+    } else if (lastPostId) {
+      const postIndex = cachedStream.stream.indexOf(lastPostId);
+
+      if (postIndex === -1) {
+        return null;
+      }
+
+      if (postIndex + 1 + limit <= cachedStream.stream.length) {
+        postIds = cachedStream.stream.slice(postIndex + 1, postIndex + 1 + limit);
+      } else {
+        return null;
+      }
     }
-    const postIndex = lastPostId ? cachedStream.stream.indexOf(lastPostId) : -1;
-    if (postIndex !== -1 && postIndex + 1 + limit <= cachedStream.stream.length) {
-      return cachedStream.stream.slice(postIndex + 1, postIndex + 1 + limit);
+
+    if (!postIds || postIds.length === 0) {
+      return null;
     }
-    return null;
+
+    // Get timestamp from the last post in the slice for pagination
+    const lastPostInSlice = postIds[postIds.length - 1];
+    const timestamp = await this.getTimestampFromPostId(lastPostInSlice);
+
+    return { postIds, timestamp };
   }
 }
