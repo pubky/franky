@@ -2,6 +2,14 @@ import * as Core from '@/core';
 import * as Config from '@/config';
 
 /**
+ * Internal type for fetchStreamFromNexus parameters
+ * Extends the public params type with optional cached stream data
+ */
+type TFetchStreamFromNexusParams = Core.TReadUserStreamChunkParams & {
+  cachedStream?: { stream: Core.Pubky[] } | null;
+};
+
+/**
  * User Stream Application
  *
  * Manages user stream data flow between Nexus API and local cache.
@@ -41,7 +49,7 @@ export class UserStreamApplication {
     }
 
     // Cache miss - fetch from Nexus
-    return await this.fetchStreamFromNexus({ streamId, skip, limit, viewerId });
+    return await this.fetchStreamFromNexus({ streamId, skip, limit, viewerId, cachedStream });
   }
 
   /**
@@ -82,7 +90,8 @@ export class UserStreamApplication {
     skip = 0,
     limit = Config.NEXUS_USERS_PER_PAGE,
     viewerId,
-  }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
+    cachedStream,
+  }: TFetchStreamFromNexusParams): Promise<Core.TUserStreamChunkResponse> {
     const nexusUsers = await Core.NexusUserStreamService.fetch({
       streamId,
       params: { skip, limit, viewer_id: viewerId },
@@ -99,16 +108,9 @@ export class UserStreamApplication {
     // Persist full user data to IndexedDB
     await Core.LocalStreamUsersService.persistUsers(nexusUsers);
 
-    // Check if stream exists in cache (streamId is already the composite ID)
-    const existingStream = await Core.LocalStreamUsersService.findById(streamId);
-
-    if (existingStream) {
-      // Append to existing stream
-      await Core.LocalStreamUsersService.persistNewStreamChunk({ stream: userIds, streamId });
-    } else {
-      // Create new stream
-      await Core.LocalStreamUsersService.upsert({ streamId, stream: userIds });
-    }
+    // Upsert stream (append to existing or create new)
+    const updatedStream = cachedStream ? [...cachedStream.stream, ...userIds] : userIds;
+    await Core.LocalStreamUsersService.upsert({ streamId, stream: updatedStream });
 
     // Identify users not yet in cache (shouldn't be any now, but keep for consistency)
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(userIds);

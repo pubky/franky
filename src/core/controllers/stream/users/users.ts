@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Config from '@/config';
 
 /**
  * Stream User Controller
@@ -22,7 +21,7 @@ export class StreamUserController {
   static async getOrFetchStreamSlice({
     streamId,
     skip,
-    limit = Config.NEXUS_USERS_PER_PAGE,
+    limit,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TReadUserStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
 

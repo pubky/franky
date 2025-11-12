@@ -78,20 +78,4 @@ export class LocalStreamUsersService {
 
     return userIds;
   }
-
-  /**
-   * Append new user IDs to an existing user stream
-   * Used for pagination - adds next page of users to the end of the stream
-   *
-   * @param stream - Array of new user IDs to append
-   * @param streamId - ID of the stream to update
-   * @throws Error if stream does not exist
-   */
-  static async persistNewStreamChunk({ stream, streamId }: Core.TUserStreamUpsertParams): Promise<void> {
-    const userStream = await Core.UserStreamModel.findById(streamId);
-    if (!userStream) {
-      throw new Error(`User stream not found: ${streamId}`);
-    }
-    await Core.UserStreamModel.upsert(streamId, [...userStream.stream, ...stream]);
-  }
 }
