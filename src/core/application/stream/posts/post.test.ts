@@ -137,6 +137,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       expect(result.nextPageIds).toHaveLength(10);
@@ -157,6 +159,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should have fetched and cached posts
@@ -195,6 +199,7 @@ describe('PostStreamApplication', () => {
         limit: 10,
         streamTail: staleTimestamp, // Passing old timestamp
         lastPostId: undefined, // Initial load (no pagination cursor)
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should detect no cache and force streamTail to 0 (fetch from beginning)
@@ -230,8 +235,9 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        post_id: `${DEFAULT_AUTHOR}:post-5`, // Last post in cache
-        timestamp: BASE_TIMESTAMP + 4, // Timestamp of last post
+        lastPostId: `${DEFAULT_AUTHOR}:post-5`, // Last post in cache
+        streamTail: BASE_TIMESTAMP + 4, // Timestamp of last post
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should return newly fetched posts
@@ -262,8 +268,9 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        post_id: `${DEFAULT_AUTHOR}:post-2`,
-        timestamp: BASE_TIMESTAMP + 1,
+        lastPostId: `${DEFAULT_AUTHOR}:post-2`,
+        streamTail: BASE_TIMESTAMP + 1,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       expect(result.nextPageIds).toHaveLength(0);
@@ -283,6 +290,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should return all cached posts (3) since getStreamFromCache returns null when insufficient
@@ -313,8 +322,9 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        post_id: `${DEFAULT_AUTHOR}:post-5`,
-        timestamp: BASE_TIMESTAMP + 4,
+        lastPostId: `${DEFAULT_AUTHOR}:post-5`,
+        streamTail: BASE_TIMESTAMP + 4,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should still work, fetching from Nexus with undefined start timestamp
@@ -334,8 +344,9 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        post_id: `${DEFAULT_AUTHOR}:post-999`, // Not in cache
-        timestamp: BASE_TIMESTAMP + 999,
+        lastPostId: `${DEFAULT_AUTHOR}:post-999`, // Not in cache
+        streamTail: BASE_TIMESTAMP + 999,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should fetch from Nexus
@@ -351,6 +362,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should return all cached posts
@@ -373,8 +386,9 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        post_id: `${DEFAULT_AUTHOR}:post-3`,
-        timestamp: BASE_TIMESTAMP + 2,
+        lastPostId: `${DEFAULT_AUTHOR}:post-3`,
+        streamTail: BASE_TIMESTAMP + 2,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should fetch from Nexus since cache doesn't have enough
@@ -400,6 +414,8 @@ describe('PostStreamApplication', () => {
         Core.PostStreamApplication.getOrFetchStreamSlice({
           streamId,
           limit: 10,
+          streamTail: 0,
+          viewerId: DEFAULT_AUTHOR,
         }),
       ).rejects.toThrow('Network error');
     });
@@ -421,6 +437,8 @@ describe('PostStreamApplication', () => {
         Core.PostStreamApplication.getOrFetchStreamSlice({
           streamId,
           limit: 10,
+          streamTail: 0,
+          viewerId: DEFAULT_AUTHOR,
         }),
       ).rejects.toThrow('Failed to persist stream chunk');
     });
@@ -445,6 +463,8 @@ describe('PostStreamApplication', () => {
         Core.PostStreamApplication.getOrFetchStreamSlice({
           streamId,
           limit: 10,
+          streamTail: 0,
+          viewerId: DEFAULT_AUTHOR,
         }),
       ).rejects.toThrow('Database query failed');
 
@@ -469,6 +489,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       expect(result.nextPageIds).toHaveLength(3);
@@ -487,6 +509,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 0,
+        streamTail: 0,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should return empty array when limit is 0 (from cache, not from Nexus)
@@ -518,7 +542,8 @@ describe('PostStreamApplication', () => {
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 10,
-        timestamp: BASE_TIMESTAMP,
+        streamTail: BASE_TIMESTAMP,
+        viewerId: DEFAULT_AUTHOR,
       });
 
       // Should fetch from Nexus (timestamp is ignored when post_id is not provided)

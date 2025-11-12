@@ -356,7 +356,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
       expect(mocks.persistPosts).toHaveBeenCalledWith([]);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
-        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: [],
       });
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, [
@@ -383,7 +383,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistUsers).toHaveBeenCalledWith([]);
       expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
-        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: ['post-1'],
       });
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
@@ -407,7 +407,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
       expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
-        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: [],
       });
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
@@ -438,7 +438,7 @@ describe('BootstrapApplication', () => {
 
       expect(mocks.upsertPostsStream).toHaveBeenCalledTimes(1);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
-        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: ['post-1'],
       });
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
