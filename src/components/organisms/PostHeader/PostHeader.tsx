@@ -33,14 +33,8 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
     }
   }, [userId]);
 
-  // Use fallback/mock data if user details don't exist
-  const displayUserDetails = userDetails || {
-    name: 'User',
-    bio: '',
-  };
-
-  // Only show loading if we need post details for time
-  if (!hideTime && !postDetails) {
+  // Show loading if user details or post details (when needed) are not available
+  if (!userDetails || (!hideTime && !postDetails)) {
     return <div className="text-muted-foreground">Loading header...</div>;
   }
 
@@ -51,12 +45,10 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
       <div className="flex gap-3">
         <Atoms.Avatar size="default">
           <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
-          <Atoms.AvatarFallback>
-            {Libs.extractInitials({ name: displayUserDetails.name, maxLength: 2 })}
-          </Atoms.AvatarFallback>
+          <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <div className="flex flex-col">
-          <span className="text-base font-bold text-foreground">{displayUserDetails.name}</span>
+          <span className="text-base font-bold text-foreground">{userDetails.name}</span>
           <div className="flex items-center gap-2 min-w-0">
             <span className="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground whitespace-nowrap">
               @{Libs.formatPublicKey({ key: userId, length: 8 })}

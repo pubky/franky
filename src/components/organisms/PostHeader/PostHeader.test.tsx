@@ -81,14 +81,14 @@ describe('PostHeader', () => {
     expect(container.querySelector('[data-testid="clock-icon"]')).not.toBeInTheDocument();
   });
 
-  it('shows fallback User when user details are not available and hideTime is true', () => {
-    // When hideTime is true and userDetails is null, should show fallback "User"
-    mockUseLiveQuery.mockReturnValueOnce(null);
+  it('shows loading when user details are not available and hideTime is true', () => {
+    // When hideTime is true and userDetails is null, should show loading state
+    mockUseLiveQuery.mockReturnValueOnce(null); // postDetails query (returns null when hideTime is true)
+    mockUseLiveQuery.mockReturnValueOnce(null); // userDetails query (returns null)
 
-    render(<PostHeader postId="userpubkykey:post456" hideTime={true} />);
+    const { container } = render(<PostHeader postId="userpubkykey:post456" hideTime={true} />);
 
-    expect(screen.getByTestId('avatar')).toBeInTheDocument();
-    expect(screen.getByText('User')).toBeInTheDocument();
+    expect(container.firstChild).toHaveTextContent('Loading header...');
   });
 });
 
