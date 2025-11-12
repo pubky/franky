@@ -41,7 +41,7 @@ vi.mock('@/molecules', () => ({
     </button>
   ),
   MobileFooter: () => <div data-testid="mobile-footer">Mobile Footer</div>,
-  FilterDrawer: ({
+  SideDrawer: ({
     open,
     onOpenChangeAction,
     children,
@@ -52,7 +52,7 @@ vi.mock('@/molecules', () => ({
     children: React.ReactNode;
     position?: 'left' | 'right';
   }) => (
-    <div data-testid={`filter-drawer-${position}`} data-open={open}>
+    <div data-testid={`side-drawer-${position}`} data-open={open}>
       <button onClick={() => onOpenChangeAction(false)}>Close</button>
       {children}
     </div>

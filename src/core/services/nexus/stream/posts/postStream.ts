@@ -13,8 +13,6 @@ export class NexusPostStreamService {
    * @returns Post stream data
    */
   static async fetch({ params, invokeEndpoint }: Core.TPostStreamFetchParams): Promise<Core.NexusPost[]> {
-    console.log('post streaminvokeEndpoint', invokeEndpoint);
-    console.log('params', params);
     let nexusEndpoint: string;
     switch (invokeEndpoint) {
       case 'all':
@@ -22,7 +20,7 @@ export class NexusPostStreamService {
         break;
       case 'following':
       case 'friends':
-        // TODO: from now, always is going to be 
+        // TODO: from now, always is going to be
         if (!params.viewer_id) {
           throw new Error('Viewer ID is required for friends stream');
         }

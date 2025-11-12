@@ -23,4 +23,3 @@ export const createHomeActions = (set: ZustandSet<HomeStore>): HomeActions => ({
     set(homeInitialState, false, HomeActionTypes.RESET_HOME);
   },
 });
-

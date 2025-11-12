@@ -1,0 +1,370 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div
+    class="flex flex-col gap-2"
+    data-slot="filter-header"
+    data-testid="filter-header"
+    id="«rr»"
+  >
+    <h2
+      class="text-2xl text-muted-foreground font-light"
+      data-testid="heading-2"
+    >
+      Test Filter
+    </h2>
+  </div>
+  <div
+    aria-labelledby="«rr»"
+    class=""
+    data-testid="custom-test-id"
+    role="radiogroup"
+  >
+    <div
+      class="mx-auto w-full flex flex-col gap-2"
+      data-slot="filter-list"
+      data-testid="filter-list"
+    >
+      <p
+        aria-checked="true"
+        aria-label="Option 1"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        data-selected="true"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="0"
+      >
+        <svg
+          data-testid="mock-icon-1"
+        />
+        <span
+          class=""
+        >
+          Option 1
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-label="Option 2"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-2"
+        />
+        <span
+          class=""
+        >
+          Option 2
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-label="Option 3"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-3"
+        />
+        <span
+          class=""
+        >
+          Option 3
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div
+    class="flex flex-col gap-2"
+    data-slot="filter-header"
+    data-testid="filter-header"
+    id="«ro»"
+  >
+    <h2
+      class="text-2xl text-muted-foreground font-light"
+      data-testid="heading-2"
+    >
+      Test Filter
+    </h2>
+  </div>
+  <div
+    aria-labelledby="«ro»"
+    class=""
+    data-testid="filter-test filter-radiogroup"
+    role="radiogroup"
+  >
+    <div
+      class="mx-auto w-full flex flex-col gap-2"
+      data-slot="filter-list"
+      data-testid="filter-list"
+    >
+      <p
+        aria-checked="true"
+        aria-label="Option 1"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        data-selected="true"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="0"
+      >
+        <svg
+          data-testid="mock-icon-1"
+        />
+        <span
+          class=""
+        >
+          Option 1
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-label="Option 2"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-2"
+        />
+        <span
+          class=""
+        >
+          Option 2
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-label="Option 3"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-3"
+        />
+        <span
+          class=""
+        >
+          Option 3
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div
+    class="flex flex-col gap-2"
+    data-slot="filter-header"
+    data-testid="filter-header"
+    id="«rq»"
+  >
+    <h2
+      class="text-2xl text-muted-foreground font-light"
+      data-testid="heading-2"
+    >
+      Test Filter
+    </h2>
+  </div>
+  <div
+    aria-labelledby="«rq»"
+    class=""
+    data-testid="filter-test filter-radiogroup"
+    role="radiogroup"
+  >
+    <div
+      class="mx-auto w-full flex flex-col gap-2"
+      data-slot="filter-list"
+      data-testid="filter-list"
+    >
+      <p
+        aria-checked="true"
+        aria-label="Option 1"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        data-selected="true"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="0"
+      >
+        <svg
+          data-testid="mock-icon-1"
+        />
+        <span
+          class=""
+        >
+          Option 1
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-disabled="true"
+        aria-label="Option 2"
+        class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-2"
+        />
+        <span
+          class=""
+        >
+          Option 2
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-label="Option 3"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-3"
+        />
+        <span
+          class=""
+        >
+          Option 3
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`] = `
+<div
+  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div
+    class="flex flex-col gap-2"
+    data-slot="filter-header"
+    data-testid="filter-header"
+    id="«rp»"
+  >
+    <h2
+      class="text-2xl text-muted-foreground font-light"
+      data-testid="heading-2"
+    >
+      Test Filter
+    </h2>
+  </div>
+  <div
+    aria-labelledby="«rp»"
+    class=""
+    data-testid="filter-test filter-radiogroup"
+    role="radiogroup"
+  >
+    <div
+      class="mx-auto w-full flex flex-col gap-2"
+      data-slot="filter-list"
+      data-testid="filter-list"
+    >
+      <p
+        aria-checked="false"
+        aria-label="Option 1"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-1"
+        />
+        <span
+          class=""
+        >
+          Option 1
+        </span>
+      </p>
+      <p
+        aria-checked="true"
+        aria-label="Option 2"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        data-selected="true"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="0"
+      >
+        <svg
+          data-testid="mock-icon-2"
+        />
+        <span
+          class=""
+        >
+          Option 2
+        </span>
+      </p>
+      <p
+        aria-checked="false"
+        aria-label="Option 3"
+        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+      >
+        <svg
+          data-testid="mock-icon-3"
+        />
+        <span
+          class=""
+        >
+          Option 3
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+`;

@@ -37,17 +37,6 @@ export enum PostStreamTypes {
   TIMELINE_FRIENDS_FILE = 'timeline:friends:file',
 
   // ============================================
-  // TIMELINE (Recent) - ME Source
-  // ============================================
-  TIMELINE_ME_ALL = 'timeline:me:all',
-  TIMELINE_ME_SHORT = 'timeline:me:short',
-  TIMELINE_ME_LONG = 'timeline:me:long',
-  TIMELINE_ME_IMAGE = 'timeline:me:image',
-  TIMELINE_ME_VIDEO = 'timeline:me:video',
-  TIMELINE_ME_LINK = 'timeline:me:link',
-  TIMELINE_ME_FILE = 'timeline:me:file',
-
-  // ============================================
   // TOTAL_ENGAGEMENT (Popularity) - ALL Sources
   // ============================================
   POPULARITY_ALL_ALL = 'total_engagement:all:all',
@@ -79,15 +68,4 @@ export enum PostStreamTypes {
   POPULARITY_FRIENDS_VIDEO = 'total_engagement:friends:video',
   POPULARITY_FRIENDS_LINK = 'total_engagement:friends:link',
   POPULARITY_FRIENDS_FILE = 'total_engagement:friends:file',
-
-  // ============================================
-  // TOTAL_ENGAGEMENT (Popularity) - ME Source
-  // ============================================
-  POPULARITY_ME_ALL = 'total_engagement:me:all',
-  POPULARITY_ME_SHORT = 'total_engagement:me:short',
-  POPULARITY_ME_LONG = 'total_engagement:me:long',
-  POPULARITY_ME_IMAGE = 'total_engagement:me:image',
-  POPULARITY_ME_VIDEO = 'total_engagement:me:video',
-  POPULARITY_ME_LINK = 'total_engagement:me:link',
-  POPULARITY_ME_FILE = 'total_engagement:me:file',
 }

@@ -174,7 +174,7 @@ const assertCommonCalls = (
   expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
   expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
   expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
-    streamId: Core.PostStreamTypes.TIMELINE_ALL,
+    streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
     stream: bootstrapData.list.stream,
   });
   expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
@@ -313,7 +313,7 @@ describe('BootstrapApplication', () => {
 
       expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
-        streamId: Core.PostStreamTypes.TIMELINE_ALL,
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: bootstrapData.list.stream,
       });
     });

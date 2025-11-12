@@ -68,4 +68,3 @@ export enum HomeActionTypes {
   SET_HOME_CONTENT = 'SET_HOME_CONTENT',
   RESET_HOME = 'RESET_HOME',
 }
-
