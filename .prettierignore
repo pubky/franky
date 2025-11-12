@@ -25,6 +25,7 @@ coverage/
 # IDE
 .vscode/
 .idea/
+.cursor/
 
 # Test snapshots (to avoid reformatting)
 **/__snapshots__/
@@ -37,4 +38,3 @@ public/
 
 # Generated files
 next-env.d.ts
-
