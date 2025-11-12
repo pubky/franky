@@ -2,9 +2,9 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ContentLayout } from './ContentLayout';
 
-// Mock the filters store
+// Mock the home store
 vi.mock('@/core', () => ({
-  useFiltersStore: () => ({
+  useHomeStore: () => ({
     layout: 'columns',
     setLayout: vi.fn(),
     reach: 'all',
@@ -41,7 +41,7 @@ vi.mock('@/molecules', () => ({
     </button>
   ),
   MobileFooter: () => <div data-testid="mobile-footer">Mobile Footer</div>,
-  FilterDrawer: ({
+  SideDrawer: ({
     open,
     onOpenChangeAction,
     children,
@@ -52,7 +52,7 @@ vi.mock('@/molecules', () => ({
     children: React.ReactNode;
     position?: 'left' | 'right';
   }) => (
-    <div data-testid={`filter-drawer-${position}`} data-open={open}>
+    <div data-testid={`side-drawer-${position}`} data-open={open}>
       <button onClick={() => onOpenChangeAction(false)}>Close</button>
       {children}
     </div>

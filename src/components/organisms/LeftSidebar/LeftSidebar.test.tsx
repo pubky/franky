@@ -2,9 +2,9 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { LeftSidebar } from './LeftSidebar';
 
-// Mock the filters store
+// Mock the home store
 vi.mock('@/core', () => ({
-  useFiltersStore: () => ({
+  useHomeStore: () => ({
     reach: 'all',
     setReach: vi.fn(),
     sort: 'recent',
