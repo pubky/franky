@@ -122,6 +122,8 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     persistNotificationsError,
   } = config;
 
+  vi.clearAllMocks();
+
   return {
     nexusFetch: vi
       .spyOn(Core.NexusBootstrapService, 'fetch')
@@ -191,6 +193,7 @@ const assertCommonCalls = (
 
 describe('BootstrapApplication', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllMocks();
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
@@ -198,6 +201,7 @@ describe('BootstrapApplication', () => {
   });
 
   afterEach(() => {
+    vi.clearAllMocks();
     vi.restoreAllMocks();
   });
 
@@ -423,10 +427,16 @@ describe('BootstrapApplication', () => {
           hot_tags: [],
         },
       };
+      vi.clearAllMocks();
       const mocks = setupMocks({ bootstrapData });
+
+      vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
+        meta: { url: MOCK_LAST_READ_URL },
+      } as LastReadResult);
 
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
+      expect(mocks.upsertPostsStream).toHaveBeenCalledTimes(1);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
         streamId: Core.PostStreamTypes.TIMELINE_ALL,
         stream: ['post-1'],

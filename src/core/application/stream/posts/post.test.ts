@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as Core from '@/core';
 
 describe('PostStreamApplication', () => {
@@ -112,13 +112,18 @@ describe('PostStreamApplication', () => {
   };
 
   beforeEach(async () => {
-    // Clear all relevant tables
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+
     await Core.PostStreamModel.table.clear();
     await Core.PostDetailsModel.table.clear();
     await Core.UserDetailsModel.table.clear();
     await Core.UserCountsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
     await Core.UserTagsModel.table.clear();
+  });
+
+  afterEach(async () => {
     vi.clearAllMocks();
   });
 
@@ -476,14 +481,21 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
 
+      // Ensure no Nexus fetch is called (should use cache only)
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
+
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
         limit: 0,
       });
 
-      // Should return empty array when limit is 0
+      // Should return empty array when limit is 0 (from cache, not from Nexus)
+      // getStreamFromCache returns [] when limit is 0, which is truthy, so it returns early
       expect(result.nextPageIds).toHaveLength(0);
       expect(result.cacheMissPostIds).toEqual([]);
+      expect(result.timestamp).toBeUndefined();
+      // Should not fetch from Nexus when cache has data and limit is 0
+      expect(nexusFetchSpy).not.toHaveBeenCalled();
     });
 
     it('should handle when timestamp is provided but post_id is not', async () => {
