@@ -9,13 +9,17 @@ import * as Hooks from '@/hooks';
 
 interface DialogReplyInputProps {
   postId: string;
-  onSuccess?: () => void;
+  onSuccessAction: () => void;
 }
 
-export function DialogReplyInput({ postId, onSuccess }: DialogReplyInputProps) {
+const MAX_CHARACTER_LENGTH = 2000;
+
+export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputProps) {
   const [tags, setTags] = useState<Array<{ id: string; label: string }>>([]);
-  const { replyContent, setReplyContent, handleReplySubmit } = Hooks.usePostReply({ postId, onSuccess });
-  const { ref: containerRef } = Hooks.useElementHeight();
+  const { replyContent, setReplyContent, handleReplySubmit } = Hooks.usePostReply({
+    postId,
+    onSuccess: onSuccessAction,
+  });
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -25,40 +29,66 @@ export function DialogReplyInput({ postId, onSuccess }: DialogReplyInputProps) {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= MAX_CHARACTER_LENGTH) {
+      setReplyContent(value);
+    }
+  };
+
+  const handleTagAdd = (tag: string) => {
+    const normalizedTag = tag.trim().toLowerCase();
+    setTags((prevTags) => {
+      const isDuplicate = prevTags.some((existingTag) => existingTag.label.toLowerCase() === normalizedTag);
+      if (!isDuplicate) {
+        return [...prevTags, { id: `${Date.now()}`, label: tag.trim() }];
+      }
+      return prevTags;
+    });
+  };
+
+  const handleTagClose = (_tag: unknown, index: number) => {
+    setTags((prevTags) => prevTags.filter((_, i) => i !== index));
+  };
+
   return (
-    <div className="flex flex-col gap-4 p-6 border border-dashed border-input rounded-md relative">
+    <div className="flex flex-col p-6 border border-dashed border-input rounded-md relative">
       <Atoms.PostReplyConnector />
-      <Organisms.PostHeader postId={currentUserId} hideTime={true} />
-
-      {/* Input field */}
-      <div ref={containerRef}>
-        <Atoms.Textarea
-          placeholder="Write a reply..."
-          className="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none"
-          value={replyContent}
-          onChange={(e) => setReplyContent(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows={1}
-        />
-      </div>
-
-      <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
-        <Molecules.PostTagsList
-          tags={tags.map((tag) => ({ label: tag.label }))}
-          showInput={false}
-          showAddButton={true}
-          addMode={true}
-          showEmojiPicker={false}
-          showTagClose={true}
-          onTagAdd={(tag) => {
-            setTags([...tags, { id: `${Date.now()}`, label: tag }]);
-          }}
-          onTagClose={(tag, index) => {
-            setTags(tags.filter((_, i) => i !== index));
-          }}
+      <div className="flex flex-col gap-4">
+        <Organisms.PostHeader
+          postId={currentUserId}
+          hideTime={true}
+          characterCount={replyContent.length}
+          maxLength={MAX_CHARACTER_LENGTH}
         />
 
-        <Organisms.DialogReplyActionBar onPostClick={handleReplySubmit} isPostDisabled={!replyContent.trim()} />
+        {/* Input field */}
+        <div>
+          <Atoms.Textarea
+            placeholder="Write a reply..."
+            className="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none break-all"
+            value={replyContent}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            maxLength={MAX_CHARACTER_LENGTH}
+            rows={1}
+          />
+        </div>
+
+        <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-4">
+          <Molecules.PostTagsList
+            tags={tags.map((tag) => ({ label: tag.label }))}
+            showInput={false}
+            showAddButton={true}
+            addMode={true}
+            showEmojiPicker={false}
+            showTagClose={true}
+            onTagAdd={handleTagAdd}
+            onTagClose={handleTagClose}
+          />
+
+          <Organisms.DialogReplyActionBar onPostClick={handleReplySubmit} isPostDisabled={!replyContent.trim()} />
+        </div>
       </div>
     </div>
   );

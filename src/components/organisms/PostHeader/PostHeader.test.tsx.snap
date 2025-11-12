@@ -28,12 +28,16 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       >
         Snapshot User
       </span>
-      <span
-        class="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground"
+      <div
+        class="flex items-center gap-2 min-w-0"
       >
-        @
-        snap...rKey
-      </span>
+        <span
+          class="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground whitespace-nowrap"
+        >
+          @
+          snap...rKey
+        </span>
+      </div>
     </div>
   </div>
   <div

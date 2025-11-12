@@ -60,7 +60,7 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
           </div>
         </Atoms.CardContent>
       </Atoms.Card>
-      <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChange={setReplyDialogOpen} />
+      <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />
     </>
   );
 }

@@ -7,7 +7,7 @@ export function PostReplyConnector() {
       <div className="absolute left-[-12px] top-[-13px] h-[35px] w-px border-l border-secondary" />
       {/* Horizontal connector at avatar level */}
       <div className="absolute left-[-12px] top-[22px]">
-        <Libs.LineHorizontal className="fill-secondary" />
+        <Libs.LineHorizontal />
       </div>
     </div>
   );

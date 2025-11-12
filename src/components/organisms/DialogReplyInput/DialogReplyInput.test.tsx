@@ -124,6 +124,8 @@ const mockPostControllerCreate = vi.mocked(Core.PostController.create);
 const mockUsePostReply = vi.mocked(Hooks.usePostReply);
 
 describe('DialogReplyInput', () => {
+  const mockOnSuccess = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseLiveQuery.mockReturnValue({ name: 'Test User' });
@@ -136,7 +138,7 @@ describe('DialogReplyInput', () => {
   });
 
   it('renders with required postId prop', () => {
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     expect(screen.getByTestId('post-header')).toBeInTheDocument();
     expect(screen.getByTestId('textarea')).toBeInTheDocument();
@@ -144,19 +146,21 @@ describe('DialogReplyInput', () => {
   });
 
   it('renders PostHeader with correct props', () => {
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     expect(Organisms.PostHeader).toHaveBeenCalledWith(
       {
         postId: 'test-user-id:pubkey',
         hideTime: true,
+        characterCount: 0,
+        maxLength: 2000,
       },
       undefined,
     );
   });
 
   it('renders PostTagsList with correct props', () => {
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const tagsList = screen.getByTestId('post-tags-list');
     expect(tagsList).toBeInTheDocument();
@@ -178,7 +182,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit: vi.fn(),
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
     fireEvent.change(textarea, { target: { value: 'Test reply content' } });
@@ -194,7 +198,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit,
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
@@ -210,7 +214,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit,
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true });
@@ -226,7 +230,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit,
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
@@ -247,7 +251,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit,
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
@@ -268,7 +272,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit,
     });
 
-    render(<DialogReplyInput postId="test-post-123" onSuccess={onSuccess} />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={onSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
     fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
@@ -285,7 +289,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit: vi.fn(),
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const postButton = screen.getByTestId('post-button');
     expect(postButton).toBeDisabled();
@@ -305,7 +309,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit: vi.fn(),
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const postButton = screen.getByTestId('post-button');
     expect(postButton).not.toBeDisabled();
@@ -319,7 +323,7 @@ describe('DialogReplyInput', () => {
   });
 
   it('handles tag addition', () => {
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
@@ -328,7 +332,7 @@ describe('DialogReplyInput', () => {
   });
 
   it('handles tag removal', () => {
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     // Add a tag first
     const addButton = screen.getByTestId('add-tag-button');
@@ -349,7 +353,7 @@ describe('DialogReplyInput', () => {
       handleReplySubmit,
     });
 
-    render(<DialogReplyInput postId="test-post-123" />);
+    render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const postButton = screen.getByTestId('post-button');
     fireEvent.click(postButton);
@@ -361,6 +365,8 @@ describe('DialogReplyInput', () => {
 });
 
 describe('DialogReplyInput - Snapshots', () => {
+  const mockOnSuccess = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseLiveQuery.mockReturnValue({ name: 'Snapshot User' });
@@ -372,7 +378,7 @@ describe('DialogReplyInput - Snapshots', () => {
   });
 
   it('matches snapshot in default state', () => {
-    const { container } = render(<DialogReplyInput postId="snapshot-post-id" />);
+    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccess={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -383,7 +389,7 @@ describe('DialogReplyInput - Snapshots', () => {
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
     });
-    const { container } = render(<DialogReplyInput postId="snapshot-post-id" />);
+    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccess={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -394,7 +400,7 @@ describe('DialogReplyInput - Snapshots', () => {
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
     });
-    const { container } = render(<DialogReplyInput postId="snapshot-post-id" />);
+    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccess={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

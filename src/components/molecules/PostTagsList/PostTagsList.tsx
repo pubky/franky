@@ -56,12 +56,22 @@ export function PostTagsList({
 }: PostTagsListProps) {
   const [inputValue, setInputValue] = React.useState('');
   const [isAdding, setIsAdding] = React.useState(addMode ? false : showInput);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  // Refocus input after clearing value in addMode (for adding multiple tags in a row)
+  React.useEffect(() => {
+    if (addMode && isAdding && inputValue === '' && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [addMode, isAdding, inputValue]);
 
   const handleTagSubmit = (value: string) => {
     if (value.trim()) {
       onTagAdd?.(value.trim());
       setInputValue('');
-      if (addMode) setIsAdding(false);
+      if (!addMode) {
+        setIsAdding(false);
+      }
     }
   };
 
@@ -93,6 +103,7 @@ export function PostTagsList({
       {/* Add tag input */}
       {(showInput || isAdding) && (
         <Molecules.PostTagInput
+          ref={inputRef}
           value={inputValue}
           onChange={setInputValue}
           onSubmit={handleTagSubmit}

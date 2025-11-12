@@ -213,11 +213,11 @@ describe('Custom Icons', () => {
       expect(svg).toHaveAttribute('height', '16');
     });
 
-    it('should apply custom className', () => {
-      const { container } = render(<LineHorizontal className="custom-class" />);
+    it('should have fill-secondary class hardcoded', () => {
+      const { container } = render(<LineHorizontal />);
       const svg = container.querySelector('svg');
 
-      expect(svg).toHaveClass('custom-class');
+      expect(svg).toHaveClass('fill-secondary');
     });
 
     it('should apply additional props', () => {
@@ -232,9 +232,9 @@ describe('Custom Icons', () => {
       const path = container.querySelector('path');
 
       expect(path).toBeInTheDocument();
-      expect(path).toHaveAttribute('fill', 'currentColor');
       expect(path).toHaveAttribute('fill-rule', 'evenodd');
       expect(path).toHaveAttribute('clip-rule', 'evenodd');
+      // Note: fill is handled via CSS classes, not as an attribute
     });
   });
 });

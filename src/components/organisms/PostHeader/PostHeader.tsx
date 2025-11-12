@@ -7,11 +7,12 @@ import * as Atoms from '@/atoms';
 
 export interface PostHeaderProps {
   postId: string;
-  className?: string;
   hideTime?: boolean;
+  characterCount?: number;
+  maxLength?: number;
 }
 
-export function PostHeader({ postId, className, hideTime = false }: PostHeaderProps) {
+export function PostHeader({ postId, hideTime = false, characterCount, maxLength }: PostHeaderProps) {
   // Extract userId from postId (format: userId:postId or just userId if hideTime is true)
   const userId = hideTime ? postId : postId.split(':')[0];
 
@@ -46,7 +47,7 @@ export function PostHeader({ postId, className, hideTime = false }: PostHeaderPr
   const timeAgo = !hideTime && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
-    <div className={Libs.cn('flex justify-between', className)}>
+    <div className="flex justify-between">
       <div className="flex gap-3">
         <Atoms.Avatar size="default">
           <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
@@ -56,9 +57,16 @@ export function PostHeader({ postId, className, hideTime = false }: PostHeaderPr
         </Atoms.Avatar>
         <div className="flex flex-col">
           <span className="text-base font-bold text-foreground">{displayUserDetails.name}</span>
-          <span className="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground">
-            @{Libs.formatPublicKey({ key: userId, length: 8 })}
-          </span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground whitespace-nowrap">
+              @{Libs.formatPublicKey({ key: userId, length: 8 })}
+            </span>
+            {characterCount !== undefined && maxLength !== undefined && (
+              <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground whitespace-nowrap flex-shrink-0">
+                {characterCount}/{maxLength}
+              </span>
+            )}
+          </div>
         </div>
       </div>
       {timeAgo && (
