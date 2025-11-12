@@ -57,7 +57,7 @@ exports[`PopoverBackup - Snapshots > matches snapshot for PopoverBackup with cus
         Why is this important?
       </h4>
       <p
-        class="text-sm text-muted-foreground font-medium leading-light"
+        class="leading-light text-sm font-medium text-muted-foreground"
         data-size="sm"
         data-testid="typography"
       >
@@ -125,7 +125,7 @@ exports[`PopoverBackup - Snapshots > matches snapshot for default PopoverBackup 
         Why is this important?
       </h4>
       <p
-        class="text-sm text-muted-foreground font-medium leading-light"
+        class="leading-light text-sm font-medium text-muted-foreground"
         data-size="sm"
         data-testid="typography"
       >

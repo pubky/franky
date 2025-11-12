@@ -9,7 +9,7 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="p-6 flex flex-col gap-4"
+      data-class-name="flex flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -25,7 +25,7 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
         post-123
       </div>
       <div
-        class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
+        class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
       >
         <ul
           data-testid="post-tags-list"
@@ -61,7 +61,7 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="p-6 flex flex-col gap-4"
+      data-class-name="flex flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -77,7 +77,7 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
         post-789
       </div>
       <div
-        class="flex justify-between md:flex-row flex-col md:gap-0 gap-2"
+        class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
       >
         <ul
           data-testid="post-tags-list"

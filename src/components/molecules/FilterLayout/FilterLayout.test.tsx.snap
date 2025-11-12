@@ -12,7 +12,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Layout
@@ -24,14 +24,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-columns3 lucide-columns-3 w-5 h-5"
+        class="lucide lucide-columns3 lucide-columns-3 h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -63,14 +63,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-menu w-5 h-5"
+        class="lucide lucide-menu h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -98,14 +98,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       </span>
     </p>
     <p
-      class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+      class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layout-grid w-5 h-5"
+        class="lucide lucide-layout-grid h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -167,7 +167,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Layout
@@ -179,14 +179,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-columns3 lucide-columns-3 w-5 h-5"
+        class="lucide lucide-columns3 lucide-columns-3 h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -218,14 +218,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-menu w-5 h-5"
+        class="lucide lucide-menu h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -253,14 +253,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       </span>
     </p>
     <p
-      class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+      class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layout-grid w-5 h-5"
+        class="lucide lucide-layout-grid h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -322,7 +322,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Layout
@@ -334,14 +334,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-columns3 lucide-columns-3 w-5 h-5"
+        class="lucide lucide-columns3 lucide-columns-3 h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -373,14 +373,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-menu w-5 h-5"
+        class="lucide lucide-menu h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -408,14 +408,14 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+      class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layout-grid w-5 h-5"
+        class="lucide lucide-layout-grid h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"

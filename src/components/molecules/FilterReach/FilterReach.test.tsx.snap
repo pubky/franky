@@ -12,7 +12,7 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -24,14 +24,14 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-radio w-5 h-5"
+        class="lucide lucide-radio h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -67,13 +67,13 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
-        class="w-5 h-5"
+        class="h-5 w-5"
         fill="none"
         height="24"
         viewBox="0 0 20 20"
@@ -95,14 +95,14 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-heart-handshake w-5 h-5"
+        class="lucide lucide-heart-handshake h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -133,14 +133,14 @@ exports[`FilterReach - Snapshots > matches snapshot with All content selected ta
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-user-round w-5 h-5"
+        class="lucide lucide-user-round h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -182,7 +182,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -194,14 +194,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-radio w-5 h-5"
+        class="lucide lucide-radio h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -237,13 +237,13 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
-        class="w-5 h-5"
+        class="h-5 w-5"
         fill="none"
         height="24"
         viewBox="0 0 20 20"
@@ -265,14 +265,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-heart-handshake w-5 h-5"
+        class="lucide lucide-heart-handshake h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -303,14 +303,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Following content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-user-round w-5 h-5"
+        class="lucide lucide-user-round h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -352,7 +352,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -364,14 +364,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-radio w-5 h-5"
+        class="lucide lucide-radio h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -407,13 +407,13 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
-        class="w-5 h-5"
+        class="h-5 w-5"
         fill="none"
         height="24"
         viewBox="0 0 20 20"
@@ -435,14 +435,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-heart-handshake w-5 h-5"
+        class="lucide lucide-heart-handshake h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -473,14 +473,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-user-round w-5 h-5"
+        class="lucide lucide-user-round h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -522,7 +522,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -534,14 +534,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-radio w-5 h-5"
+        class="lucide lucide-radio h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -577,13 +577,13 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
-        class="w-5 h-5"
+        class="h-5 w-5"
         fill="none"
         height="24"
         viewBox="0 0 20 20"
@@ -605,14 +605,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-heart-handshake w-5 h-5"
+        class="lucide lucide-heart-handshake h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -643,14 +643,14 @@ exports[`FilterReach - Snapshots > matches snapshot with Me content selected tab
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-user-round w-5 h-5"
+        class="lucide lucide-user-round h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -692,7 +692,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -704,14 +704,14 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-radio w-5 h-5"
+        class="lucide lucide-radio h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -747,13 +747,13 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
-        class="w-5 h-5"
+        class="h-5 w-5"
         fill="none"
         height="24"
         viewBox="0 0 20 20"
@@ -775,14 +775,14 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-heart-handshake w-5 h-5"
+        class="lucide lucide-heart-handshake h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -813,14 +813,14 @@ exports[`FilterReach - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-user-round w-5 h-5"
+        class="lucide lucide-user-round h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"

@@ -2,7 +2,7 @@
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
 <div
-  class="w-full h-8 justify-between items-center inline-flex"
+  class="inline-flex h-8 w-full items-center justify-between"
 >
   <p
     class="text-sm text-foreground font-semibold"
@@ -12,7 +12,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
   </p>
   <button
     aria-checked="true"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
     data-state="checked"
     id="test-switch"
     role="switch"
@@ -29,7 +29,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when checked 1`] = `
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
 <div
-  class="w-full h-8 justify-between items-center inline-flex"
+  class="inline-flex h-8 w-full items-center justify-between"
 >
   <p
     class="text-sm text-foreground font-semibold"
@@ -39,7 +39,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
   </p>
   <button
     aria-checked="false"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
     data-disabled=""
     data-state="unchecked"
     disabled=""
@@ -59,7 +59,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot when disabled 1`] = `
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="w-full h-8 justify-between items-center inline-flex custom-item"
+  class="inline-flex h-8 w-full items-center justify-between custom-item"
 >
   <p
     class="text-sm text-foreground font-semibold"
@@ -69,7 +69,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className
   </p>
   <button
     aria-checked="false"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
     data-state="unchecked"
     id="test-switch"
     role="switch"
@@ -86,7 +86,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with custom className
 
 exports[`SettingsSwitchItem - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="w-full h-8 justify-between items-center inline-flex"
+  class="inline-flex h-8 w-full items-center justify-between"
 >
   <p
     class="text-sm text-foreground font-semibold"
@@ -96,7 +96,7 @@ exports[`SettingsSwitchItem - Snapshots > matches snapshot with default props 1`
   </p>
   <button
     aria-checked="false"
-    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+    class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
     data-state="unchecked"
     id="test-switch"
     role="switch"

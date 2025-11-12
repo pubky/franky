@@ -12,7 +12,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
@@ -24,14 +24,14 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-square-asterisk w-5 h-5"
+        class="lucide lucide-square-asterisk h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -66,14 +66,14 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-flame w-5 h-5"
+        class="lucide lucide-flame h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -110,7 +110,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
@@ -122,14 +122,14 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-square-asterisk w-5 h-5"
+        class="lucide lucide-square-asterisk h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -164,14 +164,14 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-flame w-5 h-5"
+        class="lucide lucide-flame h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -208,7 +208,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
@@ -220,14 +220,14 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-square-asterisk w-5 h-5"
+        class="lucide lucide-square-asterisk h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -262,14 +262,14 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-flame w-5 h-5"
+        class="lucide lucide-flame h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"

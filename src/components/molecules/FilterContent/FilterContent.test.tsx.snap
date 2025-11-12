@@ -7,14 +7,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   data-testid="filter-list"
 >
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-layers w-5 h-5"
+      class="lucide lucide-layers h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -42,14 +42,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-sticky-note w-5 h-5"
+      class="lucide lucide-sticky-note h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -74,14 +74,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-newspaper w-5 h-5"
+      class="lucide lucide-newspaper h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -116,14 +116,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-image w-5 h-5"
+      class="lucide lucide-image h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -158,14 +158,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-circle-play w-5 h-5"
+      class="lucide lucide-circle-play h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -192,14 +192,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-link w-5 h-5"
+      class="lucide lucide-link h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -224,14 +224,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-download w-5 h-5"
+      class="lucide lucide-download h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -263,14 +263,14 @@ exports[`FilterContent > applies correct icon classes 1`] = `
 
 exports[`FilterContent > applies correct styling classes 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-layers w-5 h-5"
+    class="lucide lucide-layers h-5 w-5"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -301,14 +301,14 @@ exports[`FilterContent > applies correct styling classes 1`] = `
 
 exports[`FilterContent > applies correct styling classes 2`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-sticky-note w-5 h-5"
+    class="lucide lucide-sticky-note h-5 w-5"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -341,14 +341,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
   data-testid="filter-list"
 >
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-layers w-5 h-5"
+      class="lucide lucide-layers h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -376,14 +376,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-sticky-note w-5 h-5"
+      class="lucide lucide-sticky-note h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -408,14 +408,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-newspaper w-5 h-5"
+      class="lucide lucide-newspaper h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -450,14 +450,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-image w-5 h-5"
+      class="lucide lucide-image h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -492,14 +492,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-circle-play w-5 h-5"
+      class="lucide lucide-circle-play h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -526,14 +526,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-link w-5 h-5"
+      class="lucide lucide-link h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -558,14 +558,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
     </span>
   </p>
   <p
-    class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
   >
     <svg
       aria-hidden="true"
-      class="lucide lucide-download w-5 h-5"
+      class="lucide lucide-download h-5 w-5"
       fill="none"
       height="24"
       stroke="currentColor"
@@ -597,14 +597,14 @@ exports[`FilterContent > renders with correct icons 1`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 1`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-layers w-5 h-5"
+    class="lucide lucide-layers h-5 w-5"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -635,14 +635,14 @@ exports[`FilterContent > rerenders with different selected tabs 1`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 2`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-sticky-note w-5 h-5"
+    class="lucide lucide-sticky-note h-5 w-5"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -670,14 +670,14 @@ exports[`FilterContent > rerenders with different selected tabs 2`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 3`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-layers w-5 h-5"
+    class="lucide lucide-layers h-5 w-5"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -708,14 +708,14 @@ exports[`FilterContent > rerenders with different selected tabs 3`] = `
 
 exports[`FilterContent > rerenders with different selected tabs 4`] = `
 <p
-  class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
 >
   <svg
     aria-hidden="true"
-    class="lucide lucide-circle-play w-5 h-5"
+    class="lucide lucide-circle-play h-5 w-5"
     fill="none"
     height="24"
     stroke="currentColor"
@@ -755,7 +755,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -767,14 +767,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -802,14 +802,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -834,14 +834,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -876,14 +876,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -918,14 +918,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -952,14 +952,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -984,14 +984,14 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1034,7 +1034,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -1046,14 +1046,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1081,14 +1081,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1113,14 +1113,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1155,14 +1155,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1197,14 +1197,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1231,14 +1231,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1263,14 +1263,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1313,7 +1313,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -1325,14 +1325,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1360,14 +1360,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1392,14 +1392,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1434,14 +1434,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1476,14 +1476,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1510,14 +1510,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1542,14 +1542,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1592,7 +1592,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -1604,14 +1604,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1639,14 +1639,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1671,14 +1671,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1713,14 +1713,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1755,14 +1755,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1789,14 +1789,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1821,14 +1821,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1871,7 +1871,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -1883,14 +1883,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1918,14 +1918,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1950,14 +1950,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -1992,14 +1992,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2034,14 +2034,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2068,14 +2068,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2100,14 +2100,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2150,7 +2150,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -2162,14 +2162,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2197,14 +2197,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2229,14 +2229,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2271,14 +2271,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2313,14 +2313,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2347,14 +2347,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2379,14 +2379,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2429,7 +2429,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -2441,14 +2441,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2476,14 +2476,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2508,14 +2508,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2550,14 +2550,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2592,14 +2592,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2626,14 +2626,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2658,14 +2658,14 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2708,7 +2708,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-header"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Content
@@ -2720,14 +2720,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     data-testid="filter-list"
   >
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-layers w-5 h-5"
+        class="lucide lucide-layers h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2755,14 +2755,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-sticky-note w-5 h-5"
+        class="lucide lucide-sticky-note h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2787,14 +2787,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-newspaper w-5 h-5"
+        class="lucide lucide-newspaper h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2829,14 +2829,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-image w-5 h-5"
+        class="lucide lucide-image h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2871,14 +2871,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-play w-5 h-5"
+        class="lucide lucide-circle-play h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2905,14 +2905,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-link w-5 h-5"
+        class="lucide lucide-link h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -2937,14 +2937,14 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       </span>
     </p>
     <p
-      class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-download w-5 h-5"
+        class="lucide lucide-download h-5 w-5"
         fill="none"
         height="24"
         stroke="currentColor"
