@@ -78,9 +78,34 @@ export class LocalStreamPostsService {
    */
   static async persistNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
     const postStream = await Core.PostStreamModel.findById(streamId);
+
     if (!postStream) {
-      throw new Error(`Post stream not found: ${streamId}`);
+      // If stream doesn't exist (e.g., database was deleted), create it with the new chunk
+      await Core.PostStreamModel.upsert(streamId, stream);
+      return;
     }
-    await Core.PostStreamModel.upsert(streamId, [...postStream.stream, ...stream]);
+
+    // Check for duplicates before adding
+    const existingIds = new Set(postStream.stream);
+    const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
+
+    // Combine existing and new posts
+    const combinedStream = [...postStream.stream, ...newPostsToAdd];
+
+    // Sort by timestamp (indexed_at) in descending order (most recent first)
+    // Use bulk fetch to get all post details at once
+    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
+
+    // Map post IDs with their timestamps
+    const postTimestamps = combinedStream.map((postId, index) => ({
+      postId,
+      timestamp: posts[index]?.indexed_at || 0,
+    }));
+
+    const sortedStream = postTimestamps
+      .sort((a, b) => b.timestamp - a.timestamp) // Descending order
+      .map((item) => item.postId);
+
+    await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
 }

@@ -8,7 +8,7 @@ import * as Core from '@/core';
  * Useful for pages that don't support WIDE layout mode
  */
 export function useLayoutReset() {
-  const { setLayout } = Core.useFiltersStore();
+  const { setLayout } = Core.useHomeStore();
 
   useEffect(() => {
     setLayout(Core.LAYOUT.COLUMNS);

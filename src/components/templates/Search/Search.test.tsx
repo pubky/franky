@@ -48,7 +48,7 @@ vi.mock('@/molecules', () => ({
 
 // Mock the Core module - REQUIRED: stores
 vi.mock('@/core', () => ({
-  useFiltersStore: vi.fn(() => ({
+  useHomeStore: vi.fn(() => ({
     layout: 'columns',
     setLayout: vi.fn(),
     reach: 'all',
