@@ -309,29 +309,35 @@ describe('NexusUserStreamService.fetch', () => {
   const mockUserId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
 
   describe('streamId parsing and routing', () => {
-    it('should parse followers streamId correctly', () => {
-      const streamId = Core.UserStreamTypes.TODAY_FOLLOWERS_ALL;
+    it('should parse followers composite streamId correctly', () => {
+      const streamId = Core.buildUserCompositeId({ userId: 'user-123', reach: 'followers' });
       const streamParts = streamId.split(':');
 
-      expect(streamParts[0]).toBe('followers');
-      expect(streamParts[1]).toBe('today');
-      expect(streamParts[2]).toBe('all');
+      expect(streamParts[0]).toBe('user-123');
+      expect(streamParts[1]).toBe('followers');
     });
 
-    it('should parse following streamId correctly', () => {
-      const streamId = Core.UserStreamTypes.TODAY_FOLLOWING_ALL;
+    it('should parse following composite streamId correctly', () => {
+      const streamId = Core.buildUserCompositeId({ userId: 'user-456', reach: 'following' });
       const streamParts = streamId.split(':');
 
-      expect(streamParts[0]).toBe('following');
-      expect(streamParts[1]).toBe('today');
-      expect(streamParts[2]).toBe('all');
+      expect(streamParts[0]).toBe('user-456');
+      expect(streamParts[1]).toBe('following');
     });
 
-    it('should parse friends streamId correctly', () => {
-      const streamId = Core.UserStreamTypes.TODAY_FRIENDS_ALL;
+    it('should parse friends composite streamId correctly', () => {
+      const streamId = Core.buildUserCompositeId({ userId: 'user-789', reach: 'friends' });
       const streamParts = streamId.split(':');
 
-      expect(streamParts[0]).toBe('friends');
+      expect(streamParts[0]).toBe('user-789');
+      expect(streamParts[1]).toBe('friends');
+    });
+
+    it('should parse influencers enum streamId correctly', () => {
+      const streamId = Core.UserStreamTypes.TODAY_INFLUENCERS_ALL;
+      const streamParts = streamId.split(':');
+
+      expect(streamParts[0]).toBe('influencers');
       expect(streamParts[1]).toBe('today');
       expect(streamParts[2]).toBe('all');
     });
