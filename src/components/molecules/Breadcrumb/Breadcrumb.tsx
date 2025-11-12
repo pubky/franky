@@ -50,7 +50,7 @@ const breadcrumbSeparatorVariants = cva('text-muted-foreground shrink-0', {
 export const Breadcrumb = React.forwardRef<HTMLElement, Types.BreadcrumbProps>(
   ({ className, size, children, ...props }, ref) => (
     <nav ref={ref} aria-label="breadcrumb" className={Libs.cn(breadcrumbVariants({ size }), className)} {...props}>
-      <ol className="flex items-center flex-wrap gap-inherit">{children}</ol>
+      <ol className="gap-inherit flex flex-wrap items-center">{children}</ol>
     </nav>
   ),
 );
@@ -62,7 +62,7 @@ export const BreadcrumbList = React.forwardRef<HTMLOListElement, React.Component
     <ol
       ref={ref}
       className={Libs.cn(
-        'flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5',
+        'flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5',
         className,
       )}
       {...props}
@@ -78,8 +78,8 @@ export const BreadcrumbItem = React.forwardRef<HTMLLIElement, Types.BreadcrumbIt
 
     const content = (
       <>
-        <span className="font-bold text-sm leading-5 font-sans">{children}</span>
-        {dropdown && <Libs.ChevronDown className="w-[15px] h-[15px]" />}
+        <span className="font-sans text-sm leading-5 font-bold">{children}</span>
+        {dropdown && <Libs.ChevronDown className="h-[15px] w-[15px]" />}
       </>
     );
 
@@ -128,7 +128,7 @@ export const BreadcrumbSeparator = React.forwardRef<HTMLLIElement, Types.Breadcr
       className={Libs.cn(breadcrumbSeparatorVariants({ size }), className)}
       {...props}
     >
-      {icon || <Libs.ChevronRight className="w-full h-full" />}
+      {icon || <Libs.ChevronRight className="h-full w-full" />}
     </li>
   ),
 );

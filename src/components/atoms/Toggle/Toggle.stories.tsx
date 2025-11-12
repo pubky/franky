@@ -225,7 +225,7 @@ export const AccessibilityExample: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <div>
-        <label htmlFor="notifications" className="block text-sm font-medium mb-2">
+        <label htmlFor="notifications" className="mb-2 block text-sm font-medium">
           Notifications
         </label>
         <Toggle id="notifications" aria-label="Toggle notifications">
@@ -233,7 +233,7 @@ export const AccessibilityExample: Story = {
         </Toggle>
       </div>
       <div>
-        <label htmlFor="dark-mode" className="block text-sm font-medium mb-2">
+        <label htmlFor="dark-mode" className="mb-2 block text-sm font-medium">
           Dark Mode
         </label>
         <Toggle id="dark-mode" aria-label="Toggle dark mode">

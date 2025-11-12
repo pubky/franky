@@ -29,8 +29,8 @@ export const SettingsSection = React.memo(function SettingsSection({
   iconClassName,
 }: SettingsSectionProps) {
   return (
-    <div className="flex-col justify-start items-start flex">
-      <div className="justify-start items-center gap-2 inline-flex pb-6">
+    <div className="flex flex-col items-start justify-start">
+      <div className="inline-flex items-center justify-start gap-2 pb-6">
         <Icon size={24} className={iconClassName} />
         <Atoms.Heading level={2} size="lg" className={titleClassName}>
           {title}
@@ -38,7 +38,7 @@ export const SettingsSection = React.memo(function SettingsSection({
       </div>
       <Atoms.Typography
         size="md"
-        className="text-base-secondary-foreground text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+        className="text-base-secondary-foreground pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
       >
         {description}
       </Atoms.Typography>

@@ -171,7 +171,7 @@ export const ScanContent = () => {
         <ScanHeader isMobile={false} />
         <Molecules.ContentCard layout="column">
           <Atoms.Container className="items-center justify-center">
-            <div className="bg-foreground rounded-lg p-4 w-[220px] h-[220px] flex items-center justify-center">
+            <div className="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4">
               {isLoading || !url ? (
                 <Atoms.Container className="items-center gap-2">
                   <Libs.Loader2 className="h-8 w-8 animate-spin text-background" />
@@ -191,10 +191,10 @@ export const ScanContent = () => {
       <Atoms.Container size="container" className="md:hidden">
         <ScanHeader isMobile={true} />
         <Molecules.ContentCard layout="column">
-          <Atoms.Container className="flex-col lg:flex-row gap-12 items-center justify-center">
+          <Atoms.Container className="flex-col items-center justify-center gap-12 lg:flex-row">
             <Image src="/images/logo-pubky-ring.svg" alt="Pubky Ring" width={137} height={30} />
             <Atoms.Button
-              className="w-full h-[60px] rounded-full"
+              className="h-[60px] w-full rounded-full"
               size="lg"
               onClick={handleMobileAuth}
               disabled={isLoading || !url}

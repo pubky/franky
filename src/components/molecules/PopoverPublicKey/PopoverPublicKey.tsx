@@ -14,7 +14,7 @@ export function PopoverPublicKey({ ...props }: React.HTMLAttributes<HTMLDivEleme
           <Atoms.Heading level={4} size="sm" className="text-popover-foreground">
             Why not a normal user @handle?
           </Atoms.Heading>
-          <Atoms.Typography size="sm" className="text-sm text-muted-foreground font-medium leading-light">
+          <Atoms.Typography size="sm" className="leading-light text-sm font-medium text-muted-foreground">
             This user handle is a cryptographic public key, making it unique and platform-independent. No need for a
             centralized username registry.
           </Atoms.Typography>

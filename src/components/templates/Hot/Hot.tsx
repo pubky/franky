@@ -50,7 +50,7 @@ export function Hot() {
       </Atoms.Typography>
 
       {/* Lorem ipsum content */}
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="mt-4 flex flex-col gap-4">
         <Atoms.Card className="p-6">
           <Atoms.Heading level={3} size="lg" className="mb-4">
             What&apos;s Hot

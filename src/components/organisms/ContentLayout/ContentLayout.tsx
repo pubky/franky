@@ -89,7 +89,7 @@ export function ContentLayout({
       <div
         className={Libs.cn(
           'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
-          'w-full pb-12 m-auto px-6 xl:px-0',
+          'm-auto w-full px-6 pb-12 xl:px-0',
           'pt-20 lg:pt-0', // Add top padding on mobile for fixed header
           className,
         )}
@@ -99,7 +99,7 @@ export function ContentLayout({
           {showLeftSidebar && layout !== Core.LAYOUT.WIDE && leftSidebarContent && (
             <div
               className={Libs.cn(
-                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[144px] self-start h-fit',
+                'sticky top-[144px] hidden h-fit w-[180px] flex-col items-start justify-start gap-6 self-start lg:flex',
               )}
             >
               {leftSidebarContent}
@@ -107,13 +107,13 @@ export function ContentLayout({
           )}
 
           {/* Main content area - grows to fill space */}
-          <div className="flex-1 flex flex-col gap-6">{children}</div>
+          <div className="flex flex-1 flex-col gap-6">{children}</div>
 
           {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (
             <div
               className={Libs.cn(
-                'w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start sticky top-[144px] self-start max-h-[calc(100vh-168px)] overflow-y-auto',
+                'sticky top-[144px] hidden max-h-[calc(100vh-168px)] w-[180px] flex-col items-start justify-start gap-6 self-start overflow-y-auto lg:flex',
               )}
             >
               {rightSidebarContent}

@@ -27,14 +27,14 @@ const FAQ_QUESTIONS: Molecules.FAQAccordionItem[] = [
     answer: (
       <>
         When you signed up, you were prompted to back up your identity using one of the following:
-        <ul className="list-disc ml-6 mt-2">
+        <ul className="mt-2 ml-6 list-disc">
           <li>Recovery file (.pkarr)</li>
           <li>Recovery phrase (mnemonic)</li>
           <li>QR code</li>
         </ul>
         <br />
         To restore with a .pkarr file:
-        <ol className="list-decimal ml-6 mt-2">
+        <ol className="mt-2 ml-6 list-decimal">
           <li>Select the file you saved.</li>
           <li>Enter your password.</li>
           <li>Click &quot;Sign In&quot;.</li>
@@ -48,7 +48,7 @@ const FAQ_QUESTIONS: Molecules.FAQAccordionItem[] = [
     answer: (
       <>
         Pubky is built for self-sovereign, decentralized social interaction. Key differences:
-        <ul className="list-disc ml-6 mt-2">
+        <ul className="mt-2 ml-6 list-disc">
           <li>You are the algorithm: customize what you see with semantic tags and curation.</li>
           <li>No email or phone required: your identity is your public key.</li>
           <li>Full control over your social graph via tagging and trust models.</li>
@@ -80,21 +80,21 @@ export function Help({ className }: HelpProps) {
   return (
     <Molecules.SettingsSectionCard className={className}>
       {/* FAQ Section */}
-      <div className="justify-start items-center gap-2 inline-flex">
+      <div className="inline-flex items-center justify-start gap-2">
         <Libs.HelpCircle size={24} />
-        <h2 className="text-2xl font-bold leading-8 text-foreground">FAQ</h2>
+        <h2 className="text-2xl leading-8 font-bold text-foreground">FAQ</h2>
       </div>
-      <p className="text-base font-medium leading-6 text-foreground">Frequently asked questions from Pubky users</p>
+      <p className="text-base leading-6 font-medium text-foreground">Frequently asked questions from Pubky users</p>
       <Molecules.FAQAccordion items={FAQ_QUESTIONS} />
 
-      <Molecules.SettingsDivider className="w-full h-px bg-white/10 my-6" />
+      <Molecules.SettingsDivider className="my-6 h-px w-full bg-white/10" />
 
       {/* User Guide Section */}
-      <div className="justify-start items-center gap-2 inline-flex">
+      <div className="inline-flex items-center justify-start gap-2">
         <Libs.FileText size={24} />
-        <h2 className="text-2xl font-bold leading-8 text-foreground">User Guide</h2>
+        <h2 className="text-2xl leading-8 font-bold text-foreground">User Guide</h2>
       </div>
-      <p className="text-base font-medium leading-6 text-foreground">
+      <p className="text-base leading-6 font-medium text-foreground">
         The Pubky User Guide will help you navigate through the app, utilize its key features, and get the most out of
         your Pubky experience.
       </p>
@@ -103,14 +103,14 @@ export function Help({ className }: HelpProps) {
         User Guide
       </Atoms.Button>
 
-      <Molecules.SettingsDivider className="w-full h-px bg-white/10 my-6" />
+      <Molecules.SettingsDivider className="my-6 h-px w-full bg-white/10" />
 
       {/* Support Section */}
-      <div className="justify-start items-center gap-2 inline-flex">
+      <div className="inline-flex items-center justify-start gap-2">
         <Libs.MessageCircle size={24} />
-        <h2 className="text-2xl font-bold leading-8 text-foreground">Support</h2>
+        <h2 className="text-2xl leading-8 font-bold text-foreground">Support</h2>
       </div>
-      <p className="text-base font-medium leading-6 text-foreground">
+      <p className="text-base leading-6 font-medium text-foreground">
         Cannot find the answer you&apos;re looking for? Pubky support will help you out in no time.
       </p>
       <Atoms.Button id="support-btn" variant="secondary" size="default" onClick={handleSupportClick}>

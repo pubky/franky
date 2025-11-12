@@ -38,7 +38,7 @@ export function FilterLayout({ selectedTab = LAYOUT.COLUMNS, onTabChange, onClos
               key={key}
               isSelected={isSelected}
               onClick={disabled ? undefined : () => handleTabClick(key)}
-              className={disabled ? 'opacity-20 cursor-default' : ''}
+              className={disabled ? 'cursor-default opacity-20' : ''}
             >
               <Atoms.FilterItemIcon icon={Icon} />
               <Atoms.FilterItemLabel>{label}</Atoms.FilterItemLabel>

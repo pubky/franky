@@ -65,18 +65,18 @@ export function PostTagInput({
         autoFocus={autoFocus}
         aria-label="Add new tag"
         className={Libs.cn(
-          'flex-1 bg-transparent text-sm font-bold leading-5 outline-none caret-white',
-          'border-none shadow-none ring-0 focus:ring-0 focus:outline-none focus:ring-offset-0 hover:outline-none',
-          'p-0 h-6',
+          'flex-1 bg-transparent text-sm leading-5 font-bold caret-white outline-none',
+          'border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
+          'h-6 p-0',
           showEmojiPicker ? 'pr-6' : undefined,
-          'placeholder:text-input placeholder:font-bold',
+          'placeholder:font-bold placeholder:text-input',
           value ? 'text-secondary-foreground' : 'text-input',
         )}
       />
 
       {/* Emoji inside dashed area (both sizes) */}
       {showEmojiPicker && (
-        <div className="pointer-events-auto absolute right-1 top-1/2 -translate-y-1/2">
+        <div className="pointer-events-auto absolute top-1/2 right-1 -translate-y-1/2">
           <Atoms.Button
             variant="secondary"
             size="icon"

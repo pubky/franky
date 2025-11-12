@@ -70,7 +70,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
         </Atoms.Button>
       </Atoms.DialogTrigger>
       <Atoms.DialogContent
-        className="p-8 rounded-xl border bg-popover max-w-xl sm:p-6 sm:rounded-lg"
+        className="max-w-xl rounded-xl border bg-popover p-8 sm:rounded-lg sm:p-6"
         hiddenTitle="Add link"
       >
         <Atoms.DialogHeader className="pr-6">
@@ -128,7 +128,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
             <Atoms.Button
               variant="outline"
               size="lg"
-              className="rounded-full border border-border bg-background sm:size-default flex-1"
+              className="sm:size-default flex-1 rounded-full border border-border bg-background"
             >
               Cancel
             </Atoms.Button>
@@ -136,7 +136,7 @@ export function DialogAddLink({ onSave }: { onSave: (label: string, url: string)
           <Atoms.DialogClose asChild>
             <Atoms.Button
               size="lg"
-              className="rounded-full text-brand border-brand sm:size-default flex-1"
+              className="sm:size-default flex-1 rounded-full border-brand text-brand"
               onClick={handleSave}
               disabled={!isValid}
             >

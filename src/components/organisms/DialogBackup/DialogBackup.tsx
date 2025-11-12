@@ -20,23 +20,23 @@ interface BackupMethodCardProps {
 
 function BackupMethodCard({ title, imageSrc, imageAlt, dialog }: BackupMethodCardProps) {
   return (
-    <Atoms.Card className="w-full py-0 px-0 flex-[1_0_0] flex-col gap-3 md:gap-6">
+    <Atoms.Card className="w-full flex-[1_0_0] flex-col gap-3 px-0 py-0 md:gap-6">
       {/* Card Header */}
-      <div className="px-6 py-0 flex flex-col gap-2 pt-5 md:pt-6">
-        <Atoms.Typography size="md" className="text-base font-bold text-card-foreground leading-none">
+      <div className="flex flex-col gap-2 px-6 py-0 pt-5 md:pt-6">
+        <Atoms.Typography size="md" className="text-base leading-none font-bold text-card-foreground">
           {title}
         </Atoms.Typography>
       </div>
 
       {/* Card Content */}
-      <div className="px-24 md:px-6 py-0 flex flex-col gap-2">
-        <div className="aspect-square w-full flex items-center justify-center">
-          <Image src={imageSrc} alt={imageAlt} width={192} height={192} className="w-full h-full object-cover" />
+      <div className="flex flex-col gap-2 px-24 py-0 md:px-6">
+        <div className="flex aspect-square w-full items-center justify-center">
+          <Image src={imageSrc} alt={imageAlt} width={192} height={192} className="h-full w-full object-cover" />
         </div>
       </div>
 
       {/* Card Footer */}
-      <div className="px-6 py-0 flex flex-col gap-2 pb-5 md:pb-6">{dialog}</div>
+      <div className="flex flex-col gap-2 px-6 py-0 pb-5 md:pb-6">{dialog}</div>
     </Atoms.Card>
   );
 }
@@ -51,13 +51,13 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
           <Atoms.Button
             id="backup-btn"
             variant="outline"
-            className="text-primary-foreground hover:text-primary-foreground text-xs font-bold border shadow-sm"
+            className="border text-xs font-bold text-primary-foreground shadow-sm hover:text-primary-foreground"
           >
             Backup
           </Atoms.Button>
         </Atoms.DialogTrigger>
       )}
-      <Atoms.DialogContent className="max-w-sm md:max-w-xl p-6 md:p-8" hiddenTitle="Back up your pubky">
+      <Atoms.DialogContent className="max-w-sm p-6 md:max-w-xl md:p-8" hiddenTitle="Back up your pubky">
         <Atoms.DialogHeader>
           <Atoms.DialogTitle id="backup-dialog-title" className="text-xl md:text-2xl">
             Back up your pubky
@@ -67,7 +67,7 @@ export function DialogBackup({ open, onOpenChange }: DialogBackupProps = {}) {
             multiple backup methods if you wish.
           </Atoms.DialogDescription>
         </Atoms.DialogHeader>
-        <Atoms.Container className="md:flex-row flex-col gap-3">
+        <Atoms.Container className="flex-col gap-3 md:flex-row">
           <BackupMethodCard
             title="Recovery phrase"
             imageSrc="/images/note.png"

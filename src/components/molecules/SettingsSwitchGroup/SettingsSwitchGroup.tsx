@@ -12,7 +12,7 @@ export function SettingsSwitchGroup({ children, className }: SettingsSwitchGroup
   return (
     <div
       className={Libs.cn(
-        'w-full p-6 bg-white/5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex',
+        'inline-flex w-full flex-col items-start justify-start gap-6 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]',
         className,
       )}
     >

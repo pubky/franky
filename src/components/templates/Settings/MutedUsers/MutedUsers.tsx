@@ -25,21 +25,21 @@ export function MutedUsers({ className }: MutedUsersProps) {
       description="Here is an overview of all users you muted. You can choose to unmute users if you want."
       className={className}
     >
-      <div className="w-full flex-col inline-flex gap-3">
+      <div className="inline-flex w-full flex-col gap-3">
         {isLoading ? (
           <div className="w-full">
-            <p className="text-base font-medium leading-6 text-muted-foreground">Loading...</p>
+            <p className="text-base leading-6 font-medium text-muted-foreground">Loading...</p>
           </div>
         ) : mutedUsers && mutedUsers.length > 0 ? (
           <>
             {mutedUsers.map((mutedUser) => (
               <div key={mutedUser?.id} className="w-full">
-                <div className="flex-col md:flex-row justify-start gap-4 inline-flex w-full">
-                  <div className="flex gap-2 w-full">
-                    <Atoms.Avatar className="w-12 h-12">
+                <div className="inline-flex w-full flex-col justify-start gap-4 md:flex-row">
+                  <div className="flex w-full gap-2">
+                    <Atoms.Avatar className="h-12 w-12">
                       <Atoms.AvatarFallback>{mutedUser?.name?.[0] || 'U'}</Atoms.AvatarFallback>
                     </Atoms.Avatar>
-                    <div className="flex-col justify-center items-start inline-flex">
+                    <div className="inline-flex flex-col items-start justify-center">
                       <span className="text-base font-semibold">{mutedUser?.name || 'Unknown User'}</span>
                       <span className="text-sm text-muted-foreground">{mutedUser?.id || ''}</span>
                     </div>
@@ -55,7 +55,7 @@ export function MutedUsers({ className }: MutedUsersProps) {
             ))}
             {mutedUsers.length > 1 && (
               <>
-                <Molecules.SettingsDivider className="w-full h-px bg-white/10 my-6" />
+                <Molecules.SettingsDivider className="my-6 h-px w-full bg-white/10" />
                 <Atoms.Button variant="secondary" size="default" onClick={() => {}} className="w-[180px]">
                   <Libs.VolumeX size={16} />
                   Unmute all users
@@ -64,7 +64,7 @@ export function MutedUsers({ className }: MutedUsersProps) {
             )}
           </>
         ) : (
-          <h2 className="text-2xl font-normal leading-8 opacity-20 text-center flex self-center mt-5">
+          <h2 className="mt-5 flex self-center text-center text-2xl leading-8 font-normal opacity-20">
             No muted users yet
           </h2>
         )}

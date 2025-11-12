@@ -15,7 +15,7 @@ export interface SettingsSwitchItemProps {
 
 export function SettingsSwitchItem({ id, label, checked, disabled, onChange, className }: SettingsSwitchItemProps) {
   return (
-    <div className={Libs.cn('w-full h-8 justify-between items-center inline-flex', className)}>
+    <div className={Libs.cn('inline-flex h-8 w-full items-center justify-between', className)}>
       <Atoms.Typography size="sm" className="font-semibold">
         {label}
       </Atoms.Typography>
