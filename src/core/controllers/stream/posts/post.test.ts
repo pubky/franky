@@ -172,5 +172,198 @@ describe('StreamPostsController', () => {
       expect(result.timestamp).toBeUndefined();
       expect(result.nextPageIds).toEqual(nextPageIds);
     });
+
+    it('should propagate error when selectCurrentUserPubky throws (user not authenticated)', async () => {
+      // Set up spies to verify they're not called
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice');
+      const fetchMissingPostsSpy = vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus');
+
+      // Mock selectCurrentUserPubky to throw error (user not authenticated)
+      const authError = new Error('Current user pubky is not available. User may not be authenticated.');
+      vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockImplementation(() => {
+        throw authError;
+      });
+
+      // Should propagate the error
+      await expect(
+        StreamPostsController.getOrFetchStreamSlice({
+          streamId,
+          streamTail: 0,
+        }),
+      ).rejects.toThrow('Current user pubky is not available. User may not be authenticated.');
+
+      // Should not call getOrFetchStreamSlice when viewerId can't be retrieved
+      expect(getOrFetchStreamSliceSpy).not.toHaveBeenCalled();
+      expect(fetchMissingPostsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should propagate error when PostStreamApplication.getOrFetchStreamSlice throws', async () => {
+      // Mock selectCurrentUserPubky to return viewerId
+      vi.spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky').mockReturnValue(viewerId);
+
+      // Mock getOrFetchStreamSlice to throw error
+      const applicationError = new Error('Network error');
+      const getOrFetchStreamSliceSpy = vi
+        .spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice')
+        .mockRejectedValue(applicationError);
+
+      // Set up spy to verify it's not called
+      const fetchMissingPostsSpy = vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus');
+
+      // Should propagate the error
+      await expect(
+        StreamPostsController.getOrFetchStreamSlice({
+          streamId,
+          streamTail: 0,
+        }),
+      ).rejects.toThrow('Network error');
+
+      // Verify getOrFetchStreamSlice was called (error happened during execution)
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamTail: 0,
+        lastPostId: undefined,
+        viewerId,
+      });
+
+      // Should not call fetchMissingPostsFromNexus when getOrFetchStreamSlice fails
+      expect(fetchMissingPostsSpy).not.toHaveBeenCalled();
+    });
+
+    it('should propagate error when fetchMissingPostsFromNexus throws', async () => {
+      const nextPageIds = ['user-1:post-1', 'user-1:post-2'];
+      const cacheMissPostIds = ['user-1:post-3', 'user-1:post-4'];
+      const timestamp = 1000000;
+
+      // Mock getOrFetchStreamSlice to return cache misses
+      vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds,
+        timestamp,
+      });
+
+      // Mock fetchMissingPostsFromNexus to throw error
+      const fetchError = new Error('Failed to fetch missing posts');
+      vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus').mockRejectedValue(fetchError);
+
+      // Should propagate the error
+      await expect(
+        StreamPostsController.getOrFetchStreamSlice({
+          streamId,
+          streamTail: 0,
+        }),
+      ).rejects.toThrow('Failed to fetch missing posts');
+
+      // Verify fetchMissingPostsFromNexus was called
+      expect(Core.PostStreamApplication.fetchMissingPostsFromNexus).toHaveBeenCalledWith({
+        cacheMissPostIds,
+        viewerId,
+      });
+    });
+
+    it('should handle when lastPostId is provided and streamTail is 0', async () => {
+      const nextPageIds = ['user-1:post-5', 'user-1:post-6'];
+      const lastPostId = 'user-1:post-4';
+      const streamTail = 0;
+
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp: 1000005,
+      });
+
+      const result = await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        lastPostId,
+        streamTail,
+      });
+
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        lastPostId,
+        streamTail,
+        viewerId,
+      });
+      expect(result.nextPageIds).toEqual(nextPageIds);
+    });
+
+    it('WIP: should handle tags parameter when provided', async () => {
+      const nextPageIds = ['user-1:post-1'];
+      const tags = ['tag1', 'tag2'];
+
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp: undefined,
+      });
+
+      await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        streamTail: 0,
+        tags,
+      });
+
+      // Note: tags parameter is not currently used in the implementation
+      // This test verifies the method accepts it without error
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamTail: 0,
+        lastPostId: undefined,
+        viewerId,
+      });
+    });
+
+    it('should handle engagement:all:images streamId', async () => {
+      const engagementStreamId = 'engagement:all:images' as Core.PostStreamTypes;
+      const nextPageIds = ['user-1:post-1', 'user-1:post-2'];
+      const timestamp = 1000000;
+
+      const getOrFetchStreamSliceSpy = vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp,
+      });
+
+      const result = await StreamPostsController.getOrFetchStreamSlice({
+        streamId: engagementStreamId,
+        streamTail: 0,
+      });
+
+      expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
+        streamId: engagementStreamId,
+        limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamTail: 0,
+        lastPostId: undefined,
+        viewerId,
+      });
+      expect(result).toEqual({
+        nextPageIds,
+        timestamp,
+      });
+    });
+
+    it('should call selectCurrentUserPubky exactly once per request', async () => {
+      const nextPageIds = ['user-1:post-1'];
+      const selectCurrentUserPubkySpy = vi
+        .spyOn(Core.useAuthStore.getState(), 'selectCurrentUserPubky')
+        .mockReturnValue(viewerId);
+
+      vi.spyOn(Core.PostStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds,
+        cacheMissPostIds: [],
+        timestamp: undefined,
+      });
+
+      await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        streamTail: 0,
+      });
+
+      // Should be called exactly once to get viewerId
+      expect(selectCurrentUserPubkySpy).toHaveBeenCalledTimes(1);
+    });
   });
 });
