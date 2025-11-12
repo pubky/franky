@@ -13,7 +13,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     id="«rp»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -33,7 +33,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       <p
         aria-checked="false"
         aria-label="All"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -42,7 +42,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-radio w-5 h-5"
+          class="lucide lucide-radio h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -80,7 +80,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       <p
         aria-checked="false"
         aria-label="Following"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -88,7 +88,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         tabindex="-1"
       >
         <svg
-          class="w-5 h-5"
+          class="h-5 w-5"
           fill="none"
           height="24"
           viewBox="0 0 20 20"
@@ -112,7 +112,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       <p
         aria-checked="true"
         aria-label="Friends"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -121,7 +121,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-heart-handshake w-5 h-5"
+          class="lucide lucide-heart-handshake h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -169,7 +169,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     id="«rn»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -189,7 +189,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       <p
         aria-checked="false"
         aria-label="All"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -198,7 +198,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-radio w-5 h-5"
+          class="lucide lucide-radio h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -236,7 +236,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       <p
         aria-checked="true"
         aria-label="Following"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -244,7 +244,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         tabindex="0"
       >
         <svg
-          class="w-5 h-5"
+          class="h-5 w-5"
           fill="none"
           height="24"
           viewBox="0 0 20 20"
@@ -268,7 +268,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       <p
         aria-checked="false"
         aria-label="Friends"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -277,7 +277,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-heart-handshake w-5 h-5"
+          class="lucide lucide-heart-handshake h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -325,7 +325,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     id="«ro»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -345,7 +345,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       <p
         aria-checked="false"
         aria-label="All"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -354,7 +354,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-radio w-5 h-5"
+          class="lucide lucide-radio h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -392,7 +392,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       <p
         aria-checked="false"
         aria-label="Following"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -400,7 +400,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         tabindex="-1"
       >
         <svg
-          class="w-5 h-5"
+          class="h-5 w-5"
           fill="none"
           height="24"
           viewBox="0 0 20 20"
@@ -424,7 +424,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       <p
         aria-checked="true"
         aria-label="Friends"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -433,7 +433,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-heart-handshake w-5 h-5"
+          class="lucide lucide-heart-handshake h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -481,7 +481,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     id="«rm»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Reach
@@ -501,7 +501,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       <p
         aria-checked="true"
         aria-label="All"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -510,7 +510,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-radio w-5 h-5"
+          class="lucide lucide-radio h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -548,7 +548,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       <p
         aria-checked="false"
         aria-label="Following"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -556,7 +556,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         tabindex="-1"
       >
         <svg
-          class="w-5 h-5"
+          class="h-5 w-5"
           fill="none"
           height="24"
           viewBox="0 0 20 20"
@@ -580,7 +580,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       <p
         aria-checked="false"
         aria-label="Friends"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -589,7 +589,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-heart-handshake w-5 h-5"
+          class="lucide lucide-heart-handshake h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"

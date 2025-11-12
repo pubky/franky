@@ -13,7 +13,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     id="«rr»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Test Filter
@@ -33,7 +33,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
       <p
         aria-checked="true"
         aria-label="Option 1"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -52,7 +52,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
       <p
         aria-checked="false"
         aria-label="Option 2"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -71,7 +71,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
       <p
         aria-checked="false"
         aria-label="Option 3"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -105,7 +105,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     id="«ro»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Test Filter
@@ -125,7 +125,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
       <p
         aria-checked="true"
         aria-label="Option 1"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -144,7 +144,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
       <p
         aria-checked="false"
         aria-label="Option 2"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -163,7 +163,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
       <p
         aria-checked="false"
         aria-label="Option 3"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -197,7 +197,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     id="«rq»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Test Filter
@@ -217,7 +217,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
       <p
         aria-checked="true"
         aria-label="Option 1"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -237,7 +237,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         aria-checked="false"
         aria-disabled="true"
         aria-label="Option 2"
-        class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+        class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -256,7 +256,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
       <p
         aria-checked="false"
         aria-label="Option 3"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -290,7 +290,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     id="«rp»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Test Filter
@@ -310,7 +310,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
       <p
         aria-checked="false"
         aria-label="Option 1"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -329,7 +329,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
       <p
         aria-checked="true"
         aria-label="Option 2"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -348,7 +348,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
       <p
         aria-checked="false"
         aria-label="Option 3"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
