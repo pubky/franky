@@ -14,32 +14,31 @@ export class StreamUserController {
   /**
    * Get or fetch a slice of a user stream (followers, following, friends, etc.)
    *
-   * @param streamId - User stream identifier
-   * @param user_id - ID of the user whose stream is being fetched
+   * @param streamId - Composite user stream identifier (userId:reach) e.g., 'user123:followers'
    * @param skip - Number of users to skip (for pagination)
    * @param limit - Number of users to return
    * @returns Next page of user IDs and pagination offset
    */
   static async getOrFetchStreamSlice({
     streamId,
-    user_id,
     skip,
     limit = Config.NEXUS_USERS_PER_PAGE,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TReadUserStreamChunkResponse> {
+    const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
+
     const {
       nextPageIds,
       cacheMissUserIds,
       skip: nextSkip,
     } = await Core.UserStreamApplication.getOrFetchStreamSlice({
       streamId,
-      user_id,
       skip,
       limit,
+      viewerId,
     });
 
     // Background fetch for missing users (non-blocking)
     if (cacheMissUserIds.length > 0) {
-      const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
       await Core.UserStreamApplication.fetchMissingUsersFromNexus({
         cacheMissUserIds,
         viewerId,

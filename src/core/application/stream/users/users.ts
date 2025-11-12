@@ -18,24 +18,20 @@ export class UserStreamApplication {
    * Get or fetch a slice of a user stream (followers, following, friends, etc.)
    * Uses cache-first strategy with fallback to Nexus API
    *
-   * @param streamId - User stream identifier (e.g., 'followers:today:all', 'following:today:all')
-   * @param user_id - ID of the user whose stream is being fetched
+   * @param streamId - User stream identifier (e.g., 'user123:followers', 'influencers:today:all')
    * @param skip - Number of users to skip (for pagination)
    * @param limit - Number of users to return
+   * @param viewerId - The current authenticated user (for relationship data)
    * @returns Next page of user IDs, cache miss IDs, and pagination offset
    */
   static async getOrFetchStreamSlice({
     streamId,
-    user_id,
-    skip = 0,
-    limit = Config.NEXUS_USERS_PER_PAGE,
+    skip,
+    limit,
+    viewerId,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
-    // Build composite ID for IndexedDB lookup: 'userId:streamType'
-    const streamType = Core.getStreamTypeFromStreamId(streamId);
-    const compositeStreamId = Core.buildUserCompositeId({ userId: user_id, streamType });
-
     // Try cache first
-    const cachedStream = await Core.LocalStreamUsersService.findById(compositeStreamId);
+    const cachedStream = await Core.LocalStreamUsersService.findById(streamId);
     if (cachedStream) {
       const nextPageIds = this.getStreamFromCache({ skip, limit, cachedStream });
       if (nextPageIds) {
@@ -45,7 +41,7 @@ export class UserStreamApplication {
     }
 
     // Cache miss - fetch from Nexus
-    return await this.fetchStreamFromNexus({ streamId, user_id, skip, limit });
+    return await this.fetchStreamFromNexus({ streamId, skip, limit, viewerId });
   }
 
   /**
@@ -83,15 +79,13 @@ export class UserStreamApplication {
    */
   private static async fetchStreamFromNexus({
     streamId,
-    user_id,
     skip = 0,
     limit = Config.NEXUS_USERS_PER_PAGE,
+    viewerId,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
-    // Fetch from Nexus using unified service
     const nexusUsers = await Core.NexusUserStreamService.fetch({
       streamId,
-      user_id,
-      params: { skip, limit },
+      params: { skip, limit, viewer_id: viewerId },
     });
 
     // Handle empty response
@@ -105,19 +99,15 @@ export class UserStreamApplication {
     // Persist full user data to IndexedDB
     await Core.LocalStreamUsersService.persistUsers(nexusUsers);
 
-    // Build composite ID for IndexedDB storage: 'userId:streamType'
-    const streamType = Core.getStreamTypeFromStreamId(streamId);
-    const compositeStreamId = Core.buildUserCompositeId({ userId: user_id, streamType });
-
-    // Check if stream exists in cache
-    const existingStream = await Core.LocalStreamUsersService.findById(compositeStreamId);
+    // Check if stream exists in cache (streamId is already the composite ID)
+    const existingStream = await Core.LocalStreamUsersService.findById(streamId);
 
     if (existingStream) {
       // Append to existing stream
-      await Core.LocalStreamUsersService.persistNewStreamChunk({ stream: userIds, streamId: compositeStreamId });
+      await Core.LocalStreamUsersService.persistNewStreamChunk({ stream: userIds, streamId });
     } else {
       // Create new stream
-      await Core.LocalStreamUsersService.upsert({ streamId: compositeStreamId, stream: userIds });
+      await Core.LocalStreamUsersService.upsert({ streamId, stream: userIds });
     }
 
     // Identify users not yet in cache (shouldn't be any now, but keep for consistency)

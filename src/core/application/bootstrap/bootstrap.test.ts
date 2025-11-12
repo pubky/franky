@@ -177,24 +177,13 @@ const assertCommonCalls = (
     streamId: Core.PostStreamTypes.TIMELINE_ALL,
     stream: bootstrapData.list.stream,
   });
-  // Check composite IDs are built correctly (format: 'userId:streamType')
-  const influencersStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL);
-  const recommendedStreamType = Core.getStreamTypeFromStreamId(Core.UserStreamTypes.RECOMMENDED);
-  const influencersCompositeId = Core.buildUserCompositeId({
-    userId: TEST_PUBKY,
-    streamType: influencersStreamType,
-  });
-  const recommendedCompositeId = Core.buildUserCompositeId({
-    userId: TEST_PUBKY,
-    streamType: recommendedStreamType,
-  });
-
+  // Check user streams are stored with UserStreamTypes directly
   expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
-    streamId: influencersCompositeId,
+    streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
     stream: bootstrapData.list.influencers,
   });
   expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
-    streamId: recommendedCompositeId,
+    streamId: Core.UserStreamTypes.RECOMMENDED,
     stream: bootstrapData.list.recommended,
   });
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);

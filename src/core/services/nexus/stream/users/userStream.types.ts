@@ -52,15 +52,13 @@ export type TUserStreamUsersByIdsParams = {
 };
 
 /**
- * Parameters for fetching user stream from Nexus (unified for followers, following, friends, etc.)
+ * Parameters for fetching user stream from Nexus
+ * streamId: Composite stream identifier (e.g., 'user123:followers', 'influencers:today:all')
+ * params: Pagination parameters
  */
 export type TFetchUserStreamParams = {
-  streamId: Core.UserStreamTypes;
-  user_id: Core.Pubky;
-  params: {
-    skip: number;
-    limit: number;
-  };
+  streamId: Core.UserStreamId;
+  params: TUserStreamBase;
 };
 
 /**

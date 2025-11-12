@@ -9,8 +9,8 @@ export enum UserStreamTypes {
   // Active users in the UI. We get randomly, preview=true param active in nexus
   TODAY_INFLUENCERS_ALL = 'influencers:today:all',
   RECOMMENDED = 'recommended:all:all',
-  // Other lists, persisted after user navigation
-  TODAY_FOLLOWERS_ALL = 'followers:today:all',
-  TODAY_FOLLOWING_ALL = 'following:today:all',
-  TODAY_FRIENDS_ALL = 'friends:today:all',
 }
+
+export type UserStreamCompositeId = string; // Format: userId:reach (e.g., 'user123:followers')
+
+export type UserStreamId = UserStreamTypes | UserStreamCompositeId;
