@@ -1,7 +1,7 @@
-import { Pubky, BaseStreamModelSchema } from '@/core';
+import { Pubky, BaseStreamModelSchema, UserStreamId } from '@/core';
 
-// Using string instead of UserStreamTypes enum to support composite IDs like 'userId:followers'
-export type UserStreamModelSchema = BaseStreamModelSchema<string, Pubky>;
+// Using UserStreamId to support composite IDs like 'userId:followers'
+export type UserStreamModelSchema = BaseStreamModelSchema<UserStreamId, Pubky>;
 
 // Schema for Dexie table
 export const userStreamTableSchema = '&id, *stream';

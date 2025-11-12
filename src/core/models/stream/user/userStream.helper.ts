@@ -1,6 +1,6 @@
 import { Pubky } from '@/core';
 import { UserStreamModelSchema } from './userStream.schema';
-import { UserStreamCompositeId } from './userStream.types';
+import { UserStreamCompositeId, UserStreamId } from './userStream.types';
 
 export const USER_STREAM_ID_DELIMITER = ':' as const;
 
@@ -46,7 +46,7 @@ export function parseUserCompositeId(compositeId: string): UserStreamIdParts {
   };
 }
 
-export const createDefaultUserStream = (id: string, stream: Pubky[] = []): UserStreamModelSchema => {
+export const createDefaultUserStream = (id: UserStreamId, stream: Pubky[] = []): UserStreamModelSchema => {
   return {
     id,
     stream,

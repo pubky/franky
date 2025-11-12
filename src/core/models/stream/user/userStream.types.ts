@@ -1,3 +1,5 @@
+import type { Pubky, UserStreamSource } from '@/core';
+
 // User Stream ID Pattern: source:timeframe:reach
 // - SOURCE: followers, following, friends, muted, most_followed, influencers, recommended, post_replies
 // - TIMEFRAME: today, this_month, all_time, all
@@ -11,6 +13,8 @@ export enum UserStreamTypes {
   RECOMMENDED = 'recommended:all:all',
 }
 
-export type UserStreamCompositeId = string; // Format: userId:reach (e.g., 'user123:followers')
+// Composite ID format: userId:reach (e.g., 'user123:followers')
+// Template literal type enforces the colon separator
+export type UserStreamCompositeId = `${Pubky}:${UserStreamSource}`;
 
 export type UserStreamId = UserStreamTypes | UserStreamCompositeId;

@@ -18,10 +18,6 @@ type TFetchStreamFromNexusParams = Core.TReadUserStreamChunkParams & {
 export class UserStreamApplication {
   private constructor() {}
 
-  // ============================================================================
-  // Public API
-  // ============================================================================
-
   /**
    * Get or fetch a slice of a user stream (followers, following, friends, etc.)
    * Uses cache-first strategy with fallback to Nexus API
@@ -74,10 +70,6 @@ export class UserStreamApplication {
       await Core.LocalStreamUsersService.persistUsers(userBatch);
     }
   }
-
-  // ============================================================================
-  // Internal Helpers
-  // ============================================================================
 
   /**
    * Fetch user stream from Nexus API
