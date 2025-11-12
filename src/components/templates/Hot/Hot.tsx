@@ -14,7 +14,7 @@ import { HotLeftSidebar, HotRightSidebar, HotLeftDrawer, HotRightDrawer } from '
 
 export function Hot() {
   const router = useRouter();
-  const { reach, setReach } = Core.useFiltersStore();
+  const { reach, setReach } = Core.useHomeStore();
   const [timeframe, setTimeframe] = useState<'today' | 'thisMonth' | 'allTime'>('today');
 
   // Reset to column layout on mount (this page doesn't support wide)

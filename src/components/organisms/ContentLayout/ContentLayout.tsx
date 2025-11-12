@@ -1,23 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Types from './ContentLayout.types';
 
-export interface ContentLayoutProps {
-  children: React.ReactNode;
-  leftSidebarContent?: React.ReactNode;
-  rightSidebarContent?: React.ReactNode;
-  leftDrawerContent?: React.ReactNode;
-  rightDrawerContent?: React.ReactNode;
-  leftDrawerContentMobile?: React.ReactNode;
-  rightDrawerContentMobile?: React.ReactNode;
-  showLeftSidebar?: boolean;
-  showRightSidebar?: boolean;
-  showLeftMobileButton?: boolean;
-  showRightMobileButton?: boolean;
-  className?: string;
+/**
+ * Reusable sticky sidebar component for left and right sidebars
+ */
+function StickySidebar({ children }: Types.StickySidebarProps) {
+  return (
+    <Atoms.Container
+      overrideDefaults
+      className={Libs.cn(
+        'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
+        'top-[147px]', // 144px + 3px for the header
+        'w-full max-w-[180px]',
+      )}
+    >
+      {children}
+    </Atoms.Container>
+  );
 }
 
 export function ContentLayout({
@@ -33,39 +40,11 @@ export function ContentLayout({
   showLeftMobileButton = true,
   showRightMobileButton = true,
   className,
-}: ContentLayoutProps) {
-  const { layout } = Core.useFiltersStore();
+}: Types.ContentLayoutProps) {
+  const { layout } = Core.useHomeStore();
   const [drawerFilterOpen, setDrawerFilterOpen] = useState(false);
   const [drawerRightOpen, setDrawerRightOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detect mobile viewport and close drawers when switching to desktop view
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth < 1024;
-      setIsMobile(mobile);
-
-      // Close drawers when viewport is >= lg breakpoint (1024px)
-      if (!mobile) {
-        setDrawerFilterOpen(false);
-        setDrawerRightOpen(false);
-      }
-    };
-
-    // Set initial state
-    handleResize();
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Close drawers when switching from wide to column layout
-  useEffect(() => {
-    if (layout !== Core.LAYOUT.WIDE) {
-      setDrawerFilterOpen(false);
-      setDrawerRightOpen(false);
-    }
-  }, [layout]);
+  const isMobile = Hooks.useIsMobile();
 
   return (
     <>
@@ -86,7 +65,8 @@ export function ContentLayout({
       )}
 
       {/* Main content grid with responsive max-widths */}
-      <div
+      <Atoms.Container
+        overrideDefaults
         className={Libs.cn(
           'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
           'm-auto w-full px-6 pb-12 xl:px-0',
@@ -94,49 +74,37 @@ export function ContentLayout({
           className,
         )}
       >
-        <div className="flex gap-6">
+        <Atoms.Container overrideDefaults className="flex gap-6">
           {/* Left sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showLeftSidebar && layout !== Core.LAYOUT.WIDE && leftSidebarContent && (
-            <div
-              className={Libs.cn(
-                'sticky top-[144px] hidden h-fit w-[180px] flex-col items-start justify-start gap-6 self-start lg:flex',
-              )}
-            >
-              {leftSidebarContent}
-            </div>
+            <StickySidebar>{leftSidebarContent}</StickySidebar>
           )}
 
           {/* Main content area - grows to fill space */}
-          <div className="flex flex-1 flex-col gap-6">{children}</div>
+          <Atoms.Container className="w-full flex-1 gap-6">{children}</Atoms.Container>
 
           {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (
-            <div
-              className={Libs.cn(
-                'sticky top-[144px] hidden max-h-[calc(100vh-168px)] w-[180px] flex-col items-start justify-start gap-6 self-start overflow-y-auto lg:flex',
-              )}
-            >
-              {rightSidebarContent}
-            </div>
+            <StickySidebar>{rightSidebarContent}</StickySidebar>
           )}
-        </div>
-      </div>
+        </Atoms.Container>
+      </Atoms.Container>
 
       {/* Mobile footer navigation */}
       <Molecules.MobileFooter />
 
-      {/* Drawer for filters - slides in from left */}
+      {/* Drawer for left sidebar - slides in from left */}
       {(leftDrawerContent || leftDrawerContentMobile) && (
-        <Molecules.FilterDrawer open={drawerFilterOpen} onOpenChangeAction={setDrawerFilterOpen} position="left">
+        <Molecules.SideDrawer open={drawerFilterOpen} onOpenChangeAction={setDrawerFilterOpen} position="left">
           {isMobile && leftDrawerContentMobile ? leftDrawerContentMobile : leftDrawerContent}
-        </Molecules.FilterDrawer>
+        </Molecules.SideDrawer>
       )}
 
       {/* Drawer for right sidebar - slides in from right */}
       {(rightDrawerContent || rightDrawerContentMobile) && (
-        <Molecules.FilterDrawer open={drawerRightOpen} onOpenChangeAction={setDrawerRightOpen} position="right">
+        <Molecules.SideDrawer open={drawerRightOpen} onOpenChangeAction={setDrawerRightOpen} position="right">
           {isMobile && rightDrawerContentMobile ? rightDrawerContentMobile : rightDrawerContent}
-        </Molecules.FilterDrawer>
+        </Molecules.SideDrawer>
       )}
     </>
   );
