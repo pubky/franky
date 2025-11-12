@@ -1,0 +1,103 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfileFollowers - Snapshots > matches snapshot with followers 1`] = `
+<div
+  data-class-name="flex flex-col gap-3 lg:gap-6"
+  data-testid="container"
+>
+  <h5
+    data-class-name="text-muted-foreground font-light lg:hidden"
+    data-testid="heading"
+  >
+    Followers
+  </h5>
+  <div
+    data-class-name="hidden lg:block p-6 rounded-md"
+    data-testid="card"
+  >
+    <div
+      class="flex flex-col gap-3.5"
+    >
+      <div
+        data-testid="follower-item-1"
+      >
+        Matt Jones
+      </div>
+      <div
+        data-testid="follower-item-2"
+      >
+        Carl Smith
+      </div>
+      <div
+        data-testid="follower-item-3"
+      >
+        Username
+      </div>
+      <div
+        data-testid="follower-item-4"
+      >
+        Anna Pleb
+      </div>
+      <div
+        data-testid="follower-item-5"
+      >
+        Jack Anderson
+      </div>
+    </div>
+  </div>
+  <div
+    class="flex flex-col gap-3 lg:hidden"
+  >
+    <div
+      data-class-name="p-6 rounded-md"
+      data-testid="card"
+    >
+      <div
+        data-testid="follower-item-1"
+      >
+        Matt Jones
+      </div>
+    </div>
+    <div
+      data-class-name="p-6 rounded-md"
+      data-testid="card"
+    >
+      <div
+        data-testid="follower-item-2"
+      >
+        Carl Smith
+      </div>
+    </div>
+    <div
+      data-class-name="p-6 rounded-md"
+      data-testid="card"
+    >
+      <div
+        data-testid="follower-item-3"
+      >
+        Username
+      </div>
+    </div>
+    <div
+      data-class-name="p-6 rounded-md"
+      data-testid="card"
+    >
+      <div
+        data-testid="follower-item-4"
+      >
+        Anna Pleb
+      </div>
+    </div>
+    <div
+      data-class-name="p-6 rounded-md"
+      data-testid="card"
+    >
+      <div
+        data-testid="follower-item-5"
+      >
+        Jack Anderson
+      </div>
+    </div>
+  </div>
+</div>
+`;
