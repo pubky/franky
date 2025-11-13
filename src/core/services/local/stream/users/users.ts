@@ -54,17 +54,7 @@ export class LocalStreamUsersService {
       userIds.push(userId);
       userCounts.push([userId, user.counts]);
       userRelationships.push([userId, user.relationship]);
-
-      // Convert tags to NexusTag format
-      const nexusTags = user.tags.map((tag) => ({
-        label: tag.label,
-        taggers: tag.taggers,
-        taggers_count: tag.taggers_count,
-        relationship: tag.relationship,
-      }));
-      userTags.push([userId, nexusTags]);
-
-      // User details already in correct format
+      userTags.push([userId, user.tags]);
       userDetails.push(user.details);
     }
 

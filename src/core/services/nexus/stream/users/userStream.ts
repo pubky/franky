@@ -22,19 +22,11 @@ export class NexusUserStreamService {
     // Type-safe dispatch - apiParams type is correctly mapped via UserStreamApiParamsMap
     switch (reach) {
       case 'followers':
-        url = Core.userStreamApi.followers(apiParams as Core.TUserStreamWithUserIdParams);
-        break;
       case 'following':
-        url = Core.userStreamApi.following(apiParams as Core.TUserStreamWithUserIdParams);
-        break;
       case 'friends':
-        url = Core.userStreamApi.friends(apiParams as Core.TUserStreamWithUserIdParams);
-        break;
       case 'muted':
-        url = Core.userStreamApi.muted(apiParams as Core.TUserStreamWithUserIdParams);
-        break;
       case 'recommended':
-        url = Core.userStreamApi.recommended(apiParams as Core.TUserStreamWithUserIdParams);
+        url = Core.userStreamApi[reach](apiParams as Core.TUserStreamWithUserIdParams);
         break;
       case 'influencers':
         url = Core.userStreamApi.influencers(apiParams as Core.TUserStreamInfluencersParams);

@@ -41,7 +41,7 @@ export function createNexusParams(
     const [source, timeframe, reach] = parts;
 
     // Influencers need timeframe and reach in params
-    if (source === 'influencers') {
+    if (source === Core.UserStreamSource.INFLUENCERS) {
       return {
         reach: source,
         apiParams: {
