@@ -111,12 +111,17 @@ describe('Identity', () => {
         writable: true,
       });
 
-      // Mock Blob
+      // Mock Blob constructor
+      const MockBlobConstructor = vi.fn(function (
+        this: { content: BlobPart[]; options: BlobPropertyBag },
+        content: BlobPart[],
+        options: BlobPropertyBag,
+      ) {
+        this.content = content;
+        this.options = options;
+      });
       Object.defineProperty(global, 'Blob', {
-        value: vi.fn().mockImplementation((content, options) => ({
-          content,
-          options,
-        })),
+        value: MockBlobConstructor,
         writable: true,
       });
     });
@@ -254,12 +259,17 @@ describe('Identity', () => {
         writable: true,
       });
 
-      // Mock Blob
+      // Mock Blob constructor
+      const MockBlobConstructor = vi.fn(function (
+        this: { content: BlobPart[]; options: BlobPropertyBag },
+        content: BlobPart[],
+        options: BlobPropertyBag,
+      ) {
+        this.content = content;
+        this.options = options;
+      });
       Object.defineProperty(global, 'Blob', {
-        value: vi.fn().mockImplementation((content, options) => ({
-          content,
-          options,
-        })),
+        value: MockBlobConstructor,
         writable: true,
       });
     });
@@ -286,10 +296,11 @@ describe('Identity', () => {
 
     it('should handle errors gracefully', async () => {
       // Mock Blob to throw an error
+      const FailingBlobConstructor = vi.fn(function (this: object) {
+        throw new Error('Blob creation failed');
+      });
       Object.defineProperty(global, 'Blob', {
-        value: vi.fn().mockImplementation(() => {
-          throw new Error('Blob creation failed');
-        }),
+        value: FailingBlobConstructor,
         writable: true,
       });
 
