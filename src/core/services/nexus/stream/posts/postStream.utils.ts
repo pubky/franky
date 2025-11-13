@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 
-export function createNexusParams(
+export function createPostStreamParams(
   streamId: Core.PostStreamTypes,
   streamTail: number,
   limit: number,

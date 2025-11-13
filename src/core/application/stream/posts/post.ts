@@ -90,7 +90,7 @@ export class PostStreamApplication {
     // TODO: DELETE FINISH
 
     // START of the fn
-    const { params, invokeEndpoint } = Core.createNexusParams(streamId, streamTail, limit, viewerId);
+    const { params, invokeEndpoint } = Core.createPostStreamParams(streamId, streamTail, limit, viewerId);
     // TODO: With the new endpoint, we have to adapt the next line and delete timestamp and composidePostIds
     const nexusPosts = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params });
 

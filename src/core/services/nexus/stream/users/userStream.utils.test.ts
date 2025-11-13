@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import * as Core from '@/core';
-import { createNexusParams } from './userStream.utils';
+import { createUserStreamParams } from './userStream.utils';
 
-describe('createNexusParams', () => {
+describe('createUserStreamParams', () => {
   const baseParams: Core.TUserStreamBase = {
     skip: 0,
     limit: 20,
@@ -16,7 +16,7 @@ describe('createNexusParams', () => {
     it('should parse followers composite ID correctly', () => {
       const streamId = 'user-123:followers' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('followers');
       expect(result.apiParams).toEqual({
@@ -29,7 +29,7 @@ describe('createNexusParams', () => {
     it('should parse following composite ID correctly', () => {
       const streamId = 'user-456:following' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('following');
       expect(result.apiParams).toEqual({
@@ -42,7 +42,7 @@ describe('createNexusParams', () => {
     it('should parse friends composite ID correctly', () => {
       const streamId = 'user-789:friends' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('friends');
       expect(result.apiParams).toEqual({
@@ -55,7 +55,7 @@ describe('createNexusParams', () => {
     it('should parse muted composite ID correctly', () => {
       const streamId = 'user-abc:muted' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('muted');
       expect(result.apiParams).toEqual({
@@ -68,7 +68,7 @@ describe('createNexusParams', () => {
     it('should handle user IDs with special characters', () => {
       const streamId = 'user_with-special.chars:followers' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('followers');
       expect(result.apiParams).toHaveProperty('user_id', 'user_with-special.chars');
@@ -82,7 +82,7 @@ describe('createNexusParams', () => {
         viewer_id: 'viewer-xyz' as Core.Pubky,
       };
 
-      const result = createNexusParams(streamId, paramsWithViewer);
+      const result = createUserStreamParams(streamId, paramsWithViewer);
 
       expect(result.apiParams).toEqual({
         user_id: 'user-123',
@@ -100,7 +100,7 @@ describe('createNexusParams', () => {
         preview: true,
       };
 
-      const result = createNexusParams(streamId, paramsWithPreview);
+      const result = createUserStreamParams(streamId, paramsWithPreview);
 
       expect(result.apiParams).toHaveProperty('preview', true);
     });
@@ -114,7 +114,7 @@ describe('createNexusParams', () => {
     it('should parse influencers stream ID correctly', () => {
       const streamId = Core.UserStreamTypes.TODAY_INFLUENCERS_ALL;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('influencers');
       expect(result.apiParams).toEqual({
@@ -128,7 +128,7 @@ describe('createNexusParams', () => {
     it('should parse recommended stream ID correctly', () => {
       const streamId = Core.UserStreamTypes.RECOMMENDED;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('recommended');
       expect(result.apiParams).toEqual({
@@ -140,7 +140,7 @@ describe('createNexusParams', () => {
     it('should handle influencers with different timeframe', () => {
       const streamId = 'influencers:this_month:followers' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('influencers');
       expect(result.apiParams).toEqual({
@@ -154,7 +154,7 @@ describe('createNexusParams', () => {
     it('should handle influencers with different reach', () => {
       const streamId = 'influencers:today:following' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('influencers');
       expect(result.apiParams).toEqual({
@@ -173,7 +173,7 @@ describe('createNexusParams', () => {
         viewer_id: 'viewer-abc' as Core.Pubky,
       };
 
-      const result = createNexusParams(streamId, paramsWithViewer);
+      const result = createUserStreamParams(streamId, paramsWithViewer);
 
       expect(result.apiParams).toEqual({
         skip: 5,
@@ -187,7 +187,7 @@ describe('createNexusParams', () => {
     it('should handle 3-part non-influencers format', () => {
       const streamId = 'recommended:all:all' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('recommended');
       expect(result.apiParams).toEqual(baseParams);
@@ -202,7 +202,7 @@ describe('createNexusParams', () => {
     it('should throw error for invalid format (1 part)', () => {
       const streamId = 'invalid-stream-id' as Core.UserStreamId;
 
-      expect(() => createNexusParams(streamId, baseParams)).toThrow(
+      expect(() => createUserStreamParams(streamId, baseParams)).toThrow(
         'Invalid stream ID: "invalid-stream-id". Expected 2 or 3 parts separated by ":"',
       );
     });
@@ -210,7 +210,7 @@ describe('createNexusParams', () => {
     it('should throw error for invalid format (4+ parts)', () => {
       const streamId = 'part1:part2:part3:part4' as Core.UserStreamId;
 
-      expect(() => createNexusParams(streamId, baseParams)).toThrow(
+      expect(() => createUserStreamParams(streamId, baseParams)).toThrow(
         'Invalid stream ID: "part1:part2:part3:part4". Expected 2 or 3 parts separated by ":"',
       );
     });
@@ -218,14 +218,14 @@ describe('createNexusParams', () => {
     it('should throw error for empty streamId', () => {
       const streamId = '' as Core.UserStreamId;
 
-      expect(() => createNexusParams(streamId, baseParams)).toThrow();
+      expect(() => createUserStreamParams(streamId, baseParams)).toThrow();
     });
 
     it('should handle empty parts gracefully', () => {
       // This would create userId="" or reach=""
       const streamId = ':followers' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('followers');
       expect(result.apiParams).toHaveProperty('user_id', '');
@@ -234,7 +234,7 @@ describe('createNexusParams', () => {
     it('should handle trailing colon', () => {
       const streamId = 'user-123:' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       expect(result.reach).toBe('');
       expect(result.apiParams).toHaveProperty('user_id', 'user-123');
@@ -249,7 +249,7 @@ describe('createNexusParams', () => {
     it('should return correct apiParams type for followers', () => {
       const streamId = 'user-123:followers' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       // Type check: should have user_id property
       expect(result.apiParams).toHaveProperty('user_id');
@@ -259,7 +259,7 @@ describe('createNexusParams', () => {
     it('should return correct apiParams type for influencers', () => {
       const streamId = Core.UserStreamTypes.TODAY_INFLUENCERS_ALL;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       // Type check: should have timeframe and reach properties
       expect(result.apiParams).toHaveProperty('timeframe');
@@ -271,7 +271,7 @@ describe('createNexusParams', () => {
     it('should return correct apiParams type for most_followed', () => {
       const streamId = 'most_followed:all:all' as Core.UserStreamId;
 
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       // Type check: should only have base params
       expect(result.apiParams).toEqual(baseParams);
@@ -286,49 +286,49 @@ describe('createNexusParams', () => {
   describe('all UserStreamSource enum values', () => {
     it('should handle followers', () => {
       const streamId = 'user-123:followers' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('followers');
     });
 
     it('should handle following', () => {
       const streamId = 'user-123:following' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('following');
     });
 
     it('should handle friends', () => {
       const streamId = 'user-123:friends' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('friends');
     });
 
     it('should handle muted', () => {
       const streamId = 'user-123:muted' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('muted');
     });
 
     it('should handle recommended', () => {
       const streamId = 'recommended:all:all' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('recommended');
     });
 
     it('should handle influencers', () => {
       const streamId = 'influencers:today:all' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('influencers');
     });
 
     it('should handle most_followed', () => {
       const streamId = 'most_followed:all:all' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('most_followed');
     });
 
     it('should handle post_replies', () => {
       const streamId = 'post_replies:all:all' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
       expect(result.reach).toBe('post_replies');
     });
   });
@@ -340,7 +340,7 @@ describe('createNexusParams', () => {
   describe('integration with userStreamApi', () => {
     it('should generate parameters compatible with userStreamApi.followers', () => {
       const streamId = 'user-123:followers' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       // Should be able to call userStreamApi with these params
       const url = Core.userStreamApi.followers(result.apiParams as Core.TUserStreamWithUserIdParams);
@@ -351,7 +351,7 @@ describe('createNexusParams', () => {
 
     it('should generate parameters compatible with userStreamApi.influencers', () => {
       const streamId = Core.UserStreamTypes.TODAY_INFLUENCERS_ALL;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       // Should be able to call userStreamApi with these params
       const url = Core.userStreamApi.influencers(result.apiParams as Core.TUserStreamInfluencersParams);
@@ -361,7 +361,7 @@ describe('createNexusParams', () => {
 
     it('should generate parameters compatible with userStreamApi.mostFollowed', () => {
       const streamId = 'most_followed:all:all' as Core.UserStreamId;
-      const result = createNexusParams(streamId, baseParams);
+      const result = createUserStreamParams(streamId, baseParams);
 
       // Should be able to call userStreamApi with these params
       const url = Core.userStreamApi.mostFollowed(result.apiParams as Core.TUserStreamBase);

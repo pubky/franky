@@ -15,7 +15,7 @@ export class NexusUserStreamService {
    * @returns Array of NexusUser objects
    */
   static async fetch({ streamId, params }: Core.TFetchUserStreamParams): Promise<Core.NexusUser[]> {
-    const { reach, apiParams } = Core.createNexusParams(streamId, params);
+    const { reach, apiParams } = Core.createUserStreamParams(streamId, params);
 
     let url: string;
 

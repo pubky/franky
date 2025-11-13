@@ -17,11 +17,11 @@ const DELIMITER = ':';
  * @returns Object with reach and correctly typed apiParams for that reach
  *
  * @example
- * const { reach, apiParams } = createNexusParams('user123:followers', { skip: 0, limit: 20 });
+ * const { reach, apiParams } = createUserStreamParams('user123:followers', { skip: 0, limit: 20 });
  * // reach: 'followers', apiParams: TUserStreamWithUserIdParams (inferred!)
  * const url = userStreamApi[reach](apiParams); // Fully type-safe!
  */
-export function createNexusParams(
+export function createUserStreamParams(
   streamId: Core.UserStreamId,
   baseParams: Core.TUserStreamBase,
 ): NexusParamsResult<ReachType> {
