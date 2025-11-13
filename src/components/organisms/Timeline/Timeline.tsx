@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -15,6 +16,7 @@ import * as Hooks from '@/hooks';
  * Self-contained component that manages the timeline feed.
  * Handles fetching, loading, infinite scroll, and navigation to posts.
  * Uses cursor-based pagination with post_id and timestamp.
+ * Automatically updates when global filters change.
  */
 export function Timeline() {
   const [postIds, setPostIds] = useState<string[]>([]);
@@ -23,79 +25,137 @@ export function Timeline() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
+
+  // Use ref to always have access to the latest postIds
+  const postIdsRef = useRef<string[]>([]);
+
   const router = useRouter();
 
+  // Get current streamId based on global filters
+  const streamId = Hooks.useStreamIdFromFilters();
+
   /**
-   * Unified fetch function for both initial load and pagination
+   * Sets the appropriate loading state based on load type
+   */
+  const setLoadingState = useCallback((isInitialLoad: boolean, isLoading: boolean) => {
+    if (isInitialLoad) {
+      setLoading(isLoading);
+    } else {
+      setLoadingMore(isLoading);
+    }
+  }, []);
+
+  /**
+   * Fetches post IDs from the stream controller
+   */
+  const fetchStreamSlice = useCallback(
+    async (isInitialLoad: boolean) => {
+      // Determine if this is an engagement stream (uses skip) or timeline (uses timestamp)
+      const isEngagementStream = streamId.split(':')[0] === Core.SORT.ENGAGEMENT;
+
+      if (isInitialLoad) {
+        return await Core.StreamPostsController.getOrFetchStreamSlice({
+          streamId,
+          lastPostId: undefined,
+          streamTail: 0, // For initial load: always start at 0
+        });
+      }
+
+      // Get the latest postIds from ref
+      const currentPostIds = postIdsRef.current;
+      const lastPostId = currentPostIds[currentPostIds.length - 1];
+
+      // For engagement streams: streamTail = number of posts loaded (skip count)
+      // For timeline streams: streamTail = timestamp of last post
+      const streamTail = isEngagementStream ? currentPostIds.length : timestamp!;
+
+      return await Core.StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        lastPostId: lastPostId,
+        streamTail,
+      });
+    },
+    [streamId, timestamp], // Removed postIds from dependencies
+  );
+
+  /**
+   * Updates post state after fetching
+   */
+  const updatePostState = useCallback(
+    (ids: { nextPageIds: string[]; timestamp: number | undefined }, isInitialLoad: boolean) => {
+      if (isInitialLoad) {
+        setPostIds(ids.nextPageIds);
+        postIdsRef.current = ids.nextPageIds; // Update ref
+        // Always update timestamp on initial load, even if undefined (resets stale timestamp)
+        setTimestamp(ids.timestamp);
+        return;
+      }
+
+      // Pagination flow
+      if (ids.nextPageIds.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setPostIds((prevIds) => {
+        const newIds = [...prevIds, ...ids.nextPageIds];
+        postIdsRef.current = newIds; // Update ref
+        return newIds;
+      });
+      // Update timestamp for pagination if provided
+      if (ids.timestamp !== undefined) {
+        setTimestamp(ids.timestamp);
+      }
+    },
+    [],
+  );
+
+  /**
+   * Checks if there are more posts to load
+   */
+  const checkHasMore = useCallback((fetchedCount: number) => {
+    if (fetchedCount < Config.NEXUS_POSTS_PER_PAGE) {
+      setHasMore(false);
+    }
+  }, []);
+
+  /**
+   * Main fetch function - orchestrates the fetching process
    */
   const fetchPosts = useCallback(
     async (isInitialLoad: boolean) => {
       try {
-        // Set appropriate loading state
-        if (isInitialLoad) {
-          setLoading(true);
-        } else {
-          setLoadingMore(true);
-        }
         setError(null);
+        setLoadingState(isInitialLoad, true);
 
-        let ids: { nextPageIds: string[]; timestamp: number | undefined };
-
-        if (isInitialLoad) {
-          // Initial load - no cursor
-          ids = await Core.StreamPostsController.getOrFetchStreamSlice({
-            streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            timestamp,
-            limit: Config.NEXUS_POSTS_PER_PAGE,
-          });
-        } else {
-          // Pagination - use last post as cursor
-          const lastPostId = postIds[postIds.length - 1];
-
-          ids = await Core.StreamPostsController.getOrFetchStreamSlice({
-            streamId: Core.PostStreamTypes.TIMELINE_ALL,
-            post_id: lastPostId,
-            timestamp,
-          });
-        }
-
-        // Update state based on load type
-        if (isInitialLoad) {
-          setPostIds(ids.nextPageIds);
-          if (ids.timestamp) {
-            setTimestamp(ids.timestamp);
-          }
-        } else {
-          if (ids.nextPageIds.length === 0) {
-            setHasMore(false);
-            return;
-          }
-          setPostIds((prevIds) => [...prevIds, ...ids.nextPageIds]);
-        }
-
-        // Check if we have more posts available
-        if (ids.nextPageIds.length < Config.NEXUS_POSTS_PER_PAGE) {
-          setHasMore(false);
-        }
+        const ids = await fetchStreamSlice(isInitialLoad);
+        updatePostState(ids, isInitialLoad);
+        checkHasMore(ids.nextPageIds.length);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch posts');
-        console.error('Error fetching posts:', err);
+        // TODO: show alert to the user
+        throw err;
       } finally {
-        if (isInitialLoad) {
-          setLoading(false);
-        } else {
-          setLoadingMore(false);
-        }
+        setLoadingState(isInitialLoad, false);
       }
     },
-    [postIds, timestamp],
+    [setLoadingState, fetchStreamSlice, updatePostState, checkHasMore],
   );
 
-  // Initial fetch
+  const clearState = useCallback(() => {
+    setPostIds([]);
+    postIdsRef.current = []; // Clear ref
+    setTimestamp(undefined);
+    setHasMore(true);
+    setError(null);
+  }, []);
+
+  // Initial fetch and refetch when streamId changes (filters change)
   useEffect(() => {
+    clearState();
     fetchPosts(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [streamId]);
 
   // Load more posts function
   const loadMorePosts = useCallback(async () => {
@@ -134,8 +194,8 @@ export function Timeline() {
 
   // Posts list
   return (
-    <Atoms.Container className="w-full mx-auto">
-      <div className="space-y-4">
+    <Atoms.Container>
+      <Atoms.Container overrideDefaults className="space-y-4">
         {postIds.map((postId, index) => (
           <Organisms.PostMain key={`${postId}-${index}`} postId={postId} onClick={() => handlePostClick(postId)} />
         ))}
@@ -150,8 +210,8 @@ export function Timeline() {
         {!hasMore && !loadingMore && postIds.length > 0 && <Molecules.TimelineEndMessage />}
 
         {/* Infinite scroll sentinel */}
-        <div ref={sentinelRef} style={{ height: '20px' }} />
-      </div>
+        <Atoms.Container overrideDefaults className="h-[20px]" ref={sentinelRef} />
+      </Atoms.Container>
     </Atoms.Container>
   );
 }

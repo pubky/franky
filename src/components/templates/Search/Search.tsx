@@ -11,7 +11,7 @@ import * as Hooks from '@/hooks';
 
 export function Search() {
   const router = useRouter();
-  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useHomeStore();
 
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();

@@ -2,9 +2,9 @@ import * as Core from '@/core';
 
 export type TReadPostStreamChunkParams = {
   streamId: Core.PostStreamTypes;
-  post_id?: string;
-  timestamp?: number;
-  limit?: number;
+  streamTail: number;
+  lastPostId?: string;
+  tags?: string[];
 };
 
 export type TReadPostStreamChunkResponse = {

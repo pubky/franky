@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import * as Core from '@/core';
 
 describe('LocalStreamPostsService', () => {
-  const streamId = Core.PostStreamTypes.TIMELINE_ALL;
+  const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
   const DEFAULT_AUTHOR = 'user-1';
   const BASE_TIMESTAMP = 1000000;
-  const NON_EXISTENT_STREAM_ID = Core.PostStreamTypes.TIMELINE_FOLLOWING;
+  const NON_EXISTENT_STREAM_ID = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL;
 
   // ============================================================================
   // Test Helpers
@@ -238,13 +238,23 @@ describe('LocalStreamPostsService', () => {
       await verifyStream([...initialStream, ...newChunk]);
     });
 
-    it('should throw error when stream does not exist', async () => {
-      await expect(
-        Core.LocalStreamPostsService.persistNewStreamChunk({
-          streamId: NON_EXISTENT_STREAM_ID,
-          stream: [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')],
-        }),
-      ).rejects.toThrow(`Post stream not found: ${NON_EXISTENT_STREAM_ID}`);
+    it('should create stream when it does not exist', async () => {
+      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1'), buildCompositePostId(DEFAULT_AUTHOR, 'post-2')];
+
+      // Verify stream doesn't exist
+      const beforeStream = await Core.PostStreamModel.findById(NON_EXISTENT_STREAM_ID);
+      expect(beforeStream).toBeNull();
+
+      // Persist to non-existent stream - should create it
+      await Core.LocalStreamPostsService.persistNewStreamChunk({
+        streamId: NON_EXISTENT_STREAM_ID,
+        stream: newChunk,
+      });
+
+      // Verify stream was created with the posts
+      const afterStream = await Core.PostStreamModel.findById(NON_EXISTENT_STREAM_ID);
+      expect(afterStream).not.toBeNull();
+      expect(afterStream?.stream).toEqual(newChunk);
     });
 
     it('should handle appending to empty stream', async () => {

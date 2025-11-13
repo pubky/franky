@@ -40,9 +40,9 @@ export type TStreamBase = Core.TPaginationParams &
     // The content viewer (for personalization like bookmarks, relationships)
     viewer_id?: Core.Pubky;
     sorting?: Core.StreamSorting;
+    kind?: StreamKind;
     order?: StreamOrder;
     tags?: string[]; // Max 5 tags
-    kind?: StreamKind;
   };
 
 // Specific parameter types for each source
@@ -77,7 +77,7 @@ export type TStreamQueryParams =
   | Core.TStreamPostsByIdsParams;
 
 export type TPostStreamFetchParams = {
-  streamId: Core.PostStreamTypes;
   params: TStreamBase;
-  observer_id?: Core.Pubky;
+  invokeEndpoint: string;
+  // observer_id?: Core.Pubky;
 };

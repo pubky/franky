@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
 
 describe('PostStreamApplication', () => {
-  const streamId = Core.PostStreamTypes.TIMELINE_ALL;
+  const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
   const DEFAULT_AUTHOR = 'user-1';
   const BASE_TIMESTAMP = 1000000;
 
@@ -169,6 +169,44 @@ describe('PostStreamApplication', () => {
       expect(result.cacheMissPostIds).toEqual(result.nextPageIds);
 
       // Verify posts were cached
+      const cached = await Core.PostStreamModel.findById(streamId);
+      expect(cached?.stream).toEqual(result.nextPageIds);
+    });
+
+    it('should fetch from beginning when database is deleted (no cache with stale timestamp)', async () => {
+      // Simulate scenario: User had posts, then deleted database
+      // Timeline still has old timestamp in state, but no cache exists
+      const mockNexusPosts = createMockNexusPosts(5);
+      const staleTimestamp = BASE_TIMESTAMP + 100; // Old timestamp from before DB deletion
+
+      // Mock Nexus service to track what parameters it receives
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+
+      // No cache exists (database was deleted) - stream doesn't exist at all
+      // But we're passing a stale streamTail from previous session
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamTail: staleTimestamp, // Passing old timestamp
+        lastPostId: undefined, // Initial load (no pagination cursor)
+      });
+
+      // Should detect no cache and force streamTail to 0 (fetch from beginning)
+      // When streamTail=0, we don't set 'start' parameter - this fetches most recent posts
+      expect(nexusFetchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          params: expect.not.objectContaining({
+            start: expect.anything(), // start should NOT be set when streamTail=0
+          }),
+        }),
+      );
+
+      // Should have fetched and cached posts
+      expect(result.nextPageIds).toHaveLength(5);
+      expect(result.timestamp).toBe(BASE_TIMESTAMP + 4);
+
+      // Verify stream was created with posts
       const cached = await Core.PostStreamModel.findById(streamId);
       expect(cached?.stream).toEqual(result.nextPageIds);
     });
