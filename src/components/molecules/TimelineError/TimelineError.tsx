@@ -11,7 +11,7 @@ interface TimelineErrorProps {
  */
 export function TimelineError({ message }: TimelineErrorProps) {
   return (
-    <Atoms.Container className="flex justify-center items-center py-4">
+    <Atoms.Container className="flex items-center justify-center py-4">
       <Atoms.Typography size="sm" className="text-destructive">
         Error loading more posts: {message}
       </Atoms.Typography>

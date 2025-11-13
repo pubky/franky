@@ -129,7 +129,7 @@ export const AllVariants: Story = {
     children: 'All Variants',
   },
   render: () => (
-    <div className="space-y-4 w-64">
+    <div className="w-64 space-y-4">
       <SidebarButton icon={FileText} onClick={fn()}>
         Terms of service
       </SidebarButton>

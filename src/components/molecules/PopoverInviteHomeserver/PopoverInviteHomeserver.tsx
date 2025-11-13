@@ -20,10 +20,10 @@ export function PopoverInviteHomeserver({ className = 'hover:bg-brand/10' }: Pop
             <Atoms.Heading level={4} size="sm" className="text-popover-foreground">
               Don&apos;t have an invite yet?
             </Atoms.Heading>
-            <Atoms.Typography size="sm" className="text-muted-foreground font-medium">
+            <Atoms.Typography size="sm" className="font-medium text-muted-foreground">
               Ask the Pubky team for your invite code to access the Pubky homeserver.
             </Atoms.Typography>
-            <Atoms.Typography size="sm" className="text-muted-foreground font-medium">
+            <Atoms.Typography size="sm" className="font-medium text-muted-foreground">
               A homeserver is a storage provider that hosts your pubky-app-related data. Prefer to use another provider
               or host yourself? Support for custom homeservers is coming soon.
             </Atoms.Typography>

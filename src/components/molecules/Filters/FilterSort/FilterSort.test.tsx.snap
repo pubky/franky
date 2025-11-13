@@ -13,7 +13,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     id="«r7»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
@@ -33,7 +33,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       <p
         aria-checked="false"
         aria-label="Recent"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -42,7 +42,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-square-asterisk w-5 h-5"
+          class="lucide lucide-square-asterisk h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -79,7 +79,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       <p
         aria-checked="true"
         aria-label="Popularity"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -88,7 +88,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-flame w-5 h-5"
+          class="lucide lucide-flame h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -127,7 +127,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     id="«r6»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
@@ -147,7 +147,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       <p
         aria-checked="true"
         aria-label="Recent"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -156,7 +156,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-square-asterisk w-5 h-5"
+          class="lucide lucide-square-asterisk h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -193,7 +193,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       <p
         aria-checked="false"
         aria-label="Popularity"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -202,7 +202,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-flame w-5 h-5"
+          class="lucide lucide-flame h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -241,7 +241,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     id="«r5»"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
@@ -261,7 +261,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       <p
         aria-checked="true"
         aria-label="Recent"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -270,7 +270,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-square-asterisk w-5 h-5"
+          class="lucide lucide-square-asterisk h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -307,7 +307,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       <p
         aria-checked="false"
         aria-label="Popularity"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -316,7 +316,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-flame w-5 h-5"
+          class="lucide lucide-flame h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"

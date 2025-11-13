@@ -313,7 +313,7 @@ describe('PublicKeyCard', () => {
     render(<PublicKeyCard />);
 
     const actionSection = screen.getByTestId('action-section');
-    expect(actionSection.className).toContain('flex-col items-start gap-3 justify-start w-full');
+    expect(actionSection.className).toContain('w-full flex-col items-start justify-start gap-3');
   });
 
   it('has correct copy button variant', () => {

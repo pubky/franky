@@ -24,7 +24,7 @@ export function DialogDeleteAccount({ isOpen, onOpenChangeAction }: DialogDelete
         <Atoms.DialogHeader>
           <Atoms.DialogTitle>Delete Account</Atoms.DialogTitle>
         </Atoms.DialogHeader>
-        <Atoms.Typography className="text-base font-normal leading-6 tracking-wide text-white/80">
+        <Atoms.Typography className="text-base leading-6 font-normal tracking-wide text-white/80">
           Are you sure? Your account information cannot be recovered.
         </Atoms.Typography>
         <Atoms.DialogFooter>

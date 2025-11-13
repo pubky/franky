@@ -21,18 +21,18 @@ export function MobileHeader({
   return (
     <div
       className={Libs.cn(
-        'lg:hidden fixed top-0 left-0 right-0 z-30 bg-background/80 backdrop-blur-sm border-b border-border/20',
+        'fixed top-0 right-0 left-0 z-30 border-b border-border/20 bg-background/80 backdrop-blur-sm lg:hidden',
         className,
       )}
     >
       <div className="flex items-center justify-between px-4 py-4">
         {/* Left icon - filters */}
         {showLeftButton ? (
-          <button onClick={onLeftIconClick} className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+          <button onClick={onLeftIconClick} className="rounded-full p-2 transition-colors hover:bg-secondary/10">
             <Libs.SlidersHorizontal className="h-6 w-6" />
           </button>
         ) : (
-          <div className="w-10 h-10" />
+          <div className="h-10 w-10" />
         )}
 
         {/* Center - Logo */}
@@ -40,11 +40,11 @@ export function MobileHeader({
 
         {/* Right icon - community info */}
         {showRightButton ? (
-          <button onClick={onRightIconClick} className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+          <button onClick={onRightIconClick} className="rounded-full p-2 transition-colors hover:bg-secondary/10">
             <Libs.Activity className="h-6 w-6" />
           </button>
         ) : (
-          <div className="w-10 h-10" />
+          <div className="h-10 w-10" />
         )}
       </div>
     </div>

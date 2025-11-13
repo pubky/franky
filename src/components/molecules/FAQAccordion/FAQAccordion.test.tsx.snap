@@ -2,11 +2,11 @@
 
 exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content 1`] = `
 <div
-  class="w-full flex-col gap-4 flex"
+  class="flex w-full flex-col gap-4"
   data-orientation="vertical"
 >
   <div
-    class="w-full border border-border rounded-lg overflow-hidden"
+    class="w-full overflow-hidden rounded-lg border border-border"
     data-orientation="vertical"
     data-state="closed"
   >
@@ -17,7 +17,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content
       <button
         aria-controls="radix-«r0»"
         aria-expanded="false"
-        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -25,13 +25,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content
         type="button"
       >
         <span
-          class="text-base font-semibold text-left"
+          class="text-left text-base font-semibold"
         >
           Complex question
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
           fill="none"
           height="20"
           stroke="currentColor"
@@ -64,11 +64,11 @@ exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content
 
 exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="w-full flex-col gap-4 flex custom-faq-class"
+  class="flex w-full flex-col gap-4 custom-faq-class"
   data-orientation="vertical"
 >
   <div
-    class="w-full border border-border rounded-lg overflow-hidden"
+    class="w-full overflow-hidden rounded-lg border border-border"
     data-orientation="vertical"
     data-state="closed"
   >
@@ -79,7 +79,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       <button
         aria-controls="radix-«r0»"
         aria-expanded="false"
-        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -87,13 +87,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
         type="button"
       >
         <span
-          class="text-base font-semibold text-left"
+          class="text-left text-base font-semibold"
         >
           What is Pubky?
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
           fill="none"
           height="20"
           stroke="currentColor"
@@ -122,7 +122,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
     />
   </div>
   <div
-    class="w-full border border-border rounded-lg overflow-hidden"
+    class="w-full overflow-hidden rounded-lg border border-border"
     data-orientation="vertical"
     data-state="closed"
   >
@@ -133,7 +133,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       <button
         aria-controls="radix-«r0»"
         aria-expanded="false"
-        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -141,13 +141,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
         type="button"
       >
         <span
-          class="text-base font-semibold text-left"
+          class="text-left text-base font-semibold"
         >
           How do I sign up?
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
           fill="none"
           height="20"
           stroke="currentColor"
@@ -180,11 +180,11 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
 
 exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="w-full flex-col gap-4 flex"
+  class="flex w-full flex-col gap-4"
   data-orientation="vertical"
 >
   <div
-    class="w-full border border-border rounded-lg overflow-hidden"
+    class="w-full overflow-hidden rounded-lg border border-border"
     data-orientation="vertical"
     data-state="closed"
   >
@@ -195,7 +195,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-controls="radix-«r0»"
         aria-expanded="false"
-        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -203,13 +203,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
         type="button"
       >
         <span
-          class="text-base font-semibold text-left"
+          class="text-left text-base font-semibold"
         >
           What is Pubky?
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
           fill="none"
           height="20"
           stroke="currentColor"
@@ -238,7 +238,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
     />
   </div>
   <div
-    class="w-full border border-border rounded-lg overflow-hidden"
+    class="w-full overflow-hidden rounded-lg border border-border"
     data-orientation="vertical"
     data-state="closed"
   >
@@ -249,7 +249,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-controls="radix-«r0»"
         aria-expanded="false"
-        class="w-full px-6 py-4 flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer group"
+        class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
@@ -257,13 +257,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
         type="button"
       >
         <span
-          class="text-base font-semibold text-left"
+          class="text-left text-base font-semibold"
         >
           How do I sign up?
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down transition-transform flex-shrink-0 ml-4 group-data-[state=open]:rotate-180"
+          class="lucide lucide-chevron-down ml-4 flex-shrink-0 transition-transform group-data-[state=open]:rotate-180"
           fill="none"
           height="20"
           stroke="currentColor"
@@ -296,7 +296,7 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`FAQAccordion - Snapshots > matches snapshot with empty items 1`] = `
 <div
-  class="w-full flex-col gap-4 flex"
+  class="flex w-full flex-col gap-4"
   data-orientation="vertical"
 />
 `;

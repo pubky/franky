@@ -2,13 +2,13 @@
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-section"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12 custom-section"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="justify-start items-center gap-2 inline-flex"
+      class="inline-flex items-center justify-start gap-2"
     >
       <svg
         aria-hidden="true"
@@ -33,7 +33,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with custom classNam
         />
       </svg>
       <h2
-        class="text-2xl font-bold leading-8 text-foreground"
+        class="text-2xl leading-8 font-bold text-foreground"
       >
         Test Section
       </h2>
@@ -47,13 +47,13 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with custom classNam
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="justify-start items-center gap-2 inline-flex"
+      class="inline-flex items-center justify-start gap-2"
     >
       <svg
         aria-hidden="true"
@@ -78,13 +78,13 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`]
         />
       </svg>
       <h2
-        class="text-2xl font-bold leading-8 text-foreground"
+        class="text-2xl leading-8 font-bold text-foreground"
       >
         Test Section
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-secondary-foreground"
+      class="text-base leading-6 font-medium text-secondary-foreground"
     >
       Test description
     </p>
@@ -97,13 +97,13 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with description 1`]
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="justify-start items-center gap-2 inline-flex"
+      class="inline-flex items-center justify-start gap-2"
     >
       <svg
         aria-hidden="true"
@@ -128,7 +128,7 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 
         />
       </svg>
       <h2
-        class="text-2xl font-bold leading-8 text-foreground"
+        class="text-2xl leading-8 font-bold text-foreground"
       >
         Test Section
       </h2>
@@ -142,10 +142,10 @@ exports[`SettingsSectionCard - Snapshots > matches snapshot with icon and title 
 
 exports[`SettingsSectionCard - Snapshots > matches snapshot without icon and title 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div>
       Test content only

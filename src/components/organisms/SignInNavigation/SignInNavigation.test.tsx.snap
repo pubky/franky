@@ -2,11 +2,11 @@
 
 exports[`SignInNavigation - Snapshots > matches snapshot 1`] = `
 <div
-  data-class-name="flex-col-reverse md:flex-row gap-3 lg:gap-6 justify-start"
+  data-class-name="flex-col-reverse justify-start gap-3 md:flex-row lg:gap-6"
   data-testid="container"
 >
   <div
-    data-class-name="flex-col gap-3 sm:flex-row w-auto sm:w-full justify-start items-start mx-0 sm:mx-auto"
+    data-class-name="mx-0 w-auto flex-col items-start justify-start gap-3 sm:mx-auto sm:w-full sm:flex-row"
     data-testid="container"
   >
     <button

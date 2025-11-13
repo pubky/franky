@@ -25,7 +25,7 @@ export function HotTags({ tags, onTagClick, onSeeAll, maxTags = 5, ...props }: H
 
   return (
     <Atoms.Container className="flex flex-col gap-2 bg-background" {...props}>
-      <Atoms.Heading level={2} size="lg" className="text-muted-foreground font-light">
+      <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
         Hot Tags
       </Atoms.Heading>
 

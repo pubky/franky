@@ -13,7 +13,7 @@ export function HotLeftSidebar({ reach, setReach, timeframe, setTimeframe }: Hot
   return (
     <>
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
-      <div className="self-start sticky top-[100px] w-full">
+      <div className="sticky top-[100px] w-full self-start">
         <FilterTimeframe selectedTab={timeframe} onTabChange={setTimeframe} />
       </div>
     </>
@@ -24,7 +24,7 @@ export function HotRightSidebar() {
   return (
     <>
       <Molecules.WhoToFollow />
-      <div className="self-start sticky top-[100px]">
+      <div className="sticky top-[100px] self-start">
         <Molecules.FeedbackCard />
       </div>
     </>

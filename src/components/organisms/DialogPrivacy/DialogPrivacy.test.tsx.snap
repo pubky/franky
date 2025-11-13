@@ -9,7 +9,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
     data-testid="dialog-trigger"
   >
     <span
-      class="text-brand font-medium cursor-pointer"
+      class="cursor-pointer font-medium text-brand"
       data-testid="typography"
     >
       Privacy Policy
@@ -30,7 +30,7 @@ exports[`DialogPrivacy - Snapshots > matches snapshot for default DialogPrivacy 
       </h2>
     </div>
     <div
-      class="h-[320px] pr-4 overflow-y-auto"
+      class="h-[320px] overflow-y-auto pr-4"
       data-testid="container"
     >
       <div

@@ -241,11 +241,11 @@ export const KeyboardNavigationDemo: Story = {
             setLastAction(`Selected: ${value}`);
           }}
         />
-        <div className="text-sm space-y-2">
+        <div className="space-y-2 text-sm">
           <p className="text-muted-foreground">
             <strong>Try keyboard navigation:</strong>
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-1">
+          <ul className="list-inside list-disc space-y-1 text-muted-foreground">
             <li>Tab to focus, then use Arrow keys to navigate</li>
             <li>Press Space or Enter to select</li>
             <li>Press Home/End to jump to first/last</li>
@@ -323,19 +323,19 @@ export const AllStates: Story = {
     return (
       <div className="space-y-8">
         <div>
-          <h3 className="text-sm font-semibold mb-2">First Item Selected</h3>
+          <h3 className="mb-2 text-sm font-semibold">First Item Selected</h3>
           <FilterRadioGroup title="Filter" items={sampleItems} selectedValue="recent" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold mb-2">Middle Item Selected</h3>
+          <h3 className="mb-2 text-sm font-semibold">Middle Item Selected</h3>
           <FilterRadioGroup title="Filter" items={sampleItems} selectedValue="popular" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold mb-2">Last Item Selected</h3>
+          <h3 className="mb-2 text-sm font-semibold">Last Item Selected</h3>
           <FilterRadioGroup title="Filter" items={sampleItems} selectedValue="featured" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold mb-2">With Disabled Item</h3>
+          <h3 className="mb-2 text-sm font-semibold">With Disabled Item</h3>
           <FilterRadioGroup title="Filter" items={sampleItemsWithDisabled} selectedValue="option1" />
         </div>
       </div>

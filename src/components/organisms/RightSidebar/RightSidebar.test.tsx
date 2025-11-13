@@ -99,7 +99,7 @@ describe('RightSidebar - Snapshots', () => {
   });
 
   it('matches snapshot with different styling', () => {
-    const { container } = render(<RightSidebar className="bg-secondary/10 border-l border-border" />);
+    const { container } = render(<RightSidebar className="border-l border-border bg-secondary/10" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
