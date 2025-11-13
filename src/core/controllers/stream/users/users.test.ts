@@ -29,13 +29,12 @@ describe('StreamUserController', () => {
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         skip: 0,
-        limit: 10,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         viewerId,
       });
       expect(fetchMissingUsersSpy).not.toHaveBeenCalled();
@@ -63,13 +62,12 @@ describe('StreamUserController', () => {
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         skip: 0,
-        limit: 10,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         viewerId,
       });
       expect(Core.useAuthStore.getState().selectCurrentUserPubky).toHaveBeenCalled();
@@ -83,10 +81,9 @@ describe('StreamUserController', () => {
       });
     });
 
-    it('should pass streamId, skip, limit correctly to application layer', async () => {
+    it('should pass streamId and skip correctly to application layer', async () => {
       const streamId = Core.buildUserCompositeId({ userId: targetUserId, reach: 'following' });
       const skip = 20;
-      const limit = 15;
 
       const getOrFetchStreamSliceSpy = vi.spyOn(Core.UserStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
         nextPageIds: [],
@@ -97,13 +94,12 @@ describe('StreamUserController', () => {
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip,
-        limit,
       });
 
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         skip,
-        limit,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         viewerId,
       });
     });
@@ -124,18 +120,17 @@ describe('StreamUserController', () => {
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         skip: 0,
-        limit: 10,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         viewerId: customViewerId,
       });
     });
 
-    it('should use default limit when not provided', async () => {
+    it('should use Config.NEXUS_USERS_PER_PAGE as limit', async () => {
       const streamId = Core.buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
 
       const getOrFetchStreamSliceSpy = vi.spyOn(Core.UserStreamApplication, 'getOrFetchStreamSlice').mockResolvedValue({
@@ -147,7 +142,6 @@ describe('StreamUserController', () => {
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: Config.NEXUS_USERS_PER_PAGE,
       });
 
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
@@ -172,7 +166,6 @@ describe('StreamUserController', () => {
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       expect(fetchMissingUsersSpy).not.toHaveBeenCalled();
@@ -190,7 +183,6 @@ describe('StreamUserController', () => {
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       expect(result.skip).toBeUndefined();
@@ -208,13 +200,12 @@ describe('StreamUserController', () => {
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         skip: 0,
-        limit: 10,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         viewerId,
       });
     });
@@ -238,7 +229,6 @@ describe('StreamUserController', () => {
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
         skip: 0,
-        limit: 10,
       });
 
       // Result should be returned immediately (background fetch runs after await)

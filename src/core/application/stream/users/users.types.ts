@@ -5,11 +5,20 @@ import * as Core from '@/core';
  * streamId can be:
  * - A composite ID (userId:reach) e.g., 'user123:followers', 'user456:following'
  * - A UserStreamType (source:timeframe:reach) e.g., 'influencers:today:all', 'recommended:all:all'
- * viewerId: The current authenticated user (for relationship data)
+ *
+ * Note: limit is not included as it's controlled by Config.NEXUS_USERS_PER_PAGE
+ * viewerId is not included as it's extracted from auth store by the controller
  */
 export type TReadUserStreamChunkParams = {
   streamId: Core.UserStreamId;
   skip: number;
+};
+
+/**
+ * Internal parameters for fetching user stream (extends public params with limit and viewerId)
+ * Used internally by application layer - limit comes from Config.NEXUS_USERS_PER_PAGE
+ */
+export type TFetchUserStreamChunkParams = TReadUserStreamChunkParams & {
   limit: number;
   viewerId?: Core.Pubky;
 };

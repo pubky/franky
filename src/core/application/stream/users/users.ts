@@ -3,9 +3,9 @@ import * as Config from '@/config';
 
 /**
  * Internal type for fetchStreamFromNexus parameters
- * Extends the public params type with optional cached stream data
+ * Extends the internal fetch params type with optional cached stream data
  */
-type TFetchStreamFromNexusParams = Core.TReadUserStreamChunkParams & {
+type TFetchStreamFromNexusParams = Core.TFetchUserStreamChunkParams & {
   cachedStream?: { stream: Core.Pubky[] } | null;
 };
 
@@ -33,7 +33,7 @@ export class UserStreamApplication {
     skip,
     limit,
     viewerId,
-  }: Core.TReadUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
+  }: Core.TFetchUserStreamChunkParams): Promise<Core.TUserStreamChunkResponse> {
     // Try cache first
     const cachedStream = await Core.LocalStreamUsersService.findById(streamId);
     if (cachedStream) {
