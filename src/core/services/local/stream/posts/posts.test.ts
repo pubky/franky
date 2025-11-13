@@ -631,6 +631,7 @@ describe('LocalStreamPostsService', () => {
       ]);
     });
 
+    // note: franky does not handle duplicates within new chunk, although it shouldn't need to because nexus ensures it
     it('should handle duplicates within new chunk itself', async () => {
       const initialStream = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
       // New chunk contains duplicates

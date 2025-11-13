@@ -338,6 +338,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.persistNotifications).toHaveBeenCalledWith([], MOCK_LAST_READ);
     });
 
+    // note: this case should never happen because nexus ensures that users and posts are always returned together
     it('should handle bootstrap data with users but no posts', async () => {
       const bootstrapData: Core.NexusBootstrapResponse = {
         users: createMockBootstrapData().users,
@@ -365,6 +366,7 @@ describe('BootstrapApplication', () => {
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });
 
+    // note: this case should never happen because nexus ensures that users and posts are always returned together
     it('should handle bootstrap data with posts but no users', async () => {
       const bootstrapData: Core.NexusBootstrapResponse = {
         users: [],
