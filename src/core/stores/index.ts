@@ -1,5 +1,5 @@
 export * from './onboarding';
 export * from './auth';
-export * from './filters';
+export * from './home';
 export * from './notification';
 export * from './stores.types';

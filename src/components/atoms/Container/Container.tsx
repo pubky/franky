@@ -1,45 +1,48 @@
-import { ReactNode } from 'react';
+import { forwardRef } from 'react';
 import { cn } from '@/libs';
+import * as Types from './Container.types';
 
-interface ContainerProps {
-  as?: 'div' | 'section' | 'article' | 'main' | 'header' | 'footer' | 'aside' | 'nav' | 'body' | 'html' | 'figure';
-  children?: ReactNode;
-  className?: React.HTMLAttributes<HTMLDivElement>['className'];
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'container' | 'default';
-  display?: 'flex' | 'grid' | 'block';
-  'data-testid'?: string;
-}
+export const Container = forwardRef<HTMLDivElement | HTMLHtmlElement | HTMLBodyElement, Types.ContainerProps>(
+  function Container(
+    {
+      as = 'div',
+      size = 'default',
+      display = 'flex',
+      overrideDefaults = false,
+      'data-testid': dataTestId,
+      ...props
+    }: Types.ContainerProps,
+    ref,
+  ) {
+    const defaultClasses = 'mx-auto w-full flex-col';
+    const displayClasses = {
+      flex: 'flex',
+      grid: 'grid',
+      block: 'block',
+    };
+    const sizeClasses = {
+      default: '',
+      sm: 'max-w-screen-sm',
+      md: 'max-w-screen-md',
+      lg: 'max-w-screen-lg',
+      xl: 'max-w-screen-xl',
+      container: 'container',
+    };
 
-export function Container({
-  as: Tag = 'div',
-  size = 'default',
-  display = 'flex',
-  'data-testid': dataTestId,
-  ...props
-}: ContainerProps &
-  React.HTMLAttributes<HTMLDivElement> &
-  React.HTMLAttributes<HTMLHtmlElement> &
-  React.HTMLAttributes<HTMLBodyElement>) {
-  const defaultClasses = 'mx-auto w-full flex-col';
-  const displayClasses = {
-    flex: 'flex',
-    grid: 'grid',
-    block: 'block',
-  };
-  const sizeClasses = {
-    default: '',
-    sm: 'max-w-screen-sm',
-    md: 'max-w-screen-md',
-    lg: 'max-w-screen-lg',
-    xl: 'max-w-screen-xl',
-    container: 'container',
-  };
+    const containerClassName = overrideDefaults
+      ? cn(props.className)
+      : cn(defaultClasses, displayClasses[display], sizeClasses[size], props.className);
 
-  const containerClassName = cn(defaultClasses, displayClasses[display], sizeClasses[size], props.className);
+    const Tag = (as || 'div') as React.ElementType;
 
-  return (
-    <Tag {...props} data-testid={dataTestId || 'container'} className={containerClassName}>
-      {props.children}
-    </Tag>
-  );
-}
+    // Only pass ref when component is a div
+    const elementProps: Types.ContainerElementProps = {
+      ...props,
+      'data-testid': dataTestId || 'container',
+      className: containerClassName,
+      ref: ref as React.Ref<HTMLDivElement>,
+    };
+
+    return <Tag {...elementProps}>{props.children}</Tag>;
+  },
+);

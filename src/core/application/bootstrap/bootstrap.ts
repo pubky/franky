@@ -25,7 +25,10 @@ export class BootstrapApplication {
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
       Core.LocalStreamPostsService.persistPosts(data.posts),
-      Core.LocalStreamPostsService.upsert({ streamId: Core.PostStreamTypes.TIMELINE_ALL, stream: data.list.stream }),
+      Core.LocalStreamPostsService.upsert({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+        stream: data.list.stream,
+      }),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
