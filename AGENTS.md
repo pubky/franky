@@ -5,6 +5,7 @@ This document serves as the central index for AI-assisted development in the Fra
 ## Purpose
 
 This file establishes:
+
 - **Architectural patterns** and decision rationale
 - **Development standards** for consistency
 - **Testing guidelines** for quality
@@ -64,6 +65,7 @@ UI → Controllers → Application → Services → Models
 ```
 
 **Key rules:**
+
 - UI only interacts with controllers
 - Business logic lives in application layer
 - Services handle all IO boundaries
@@ -75,6 +77,7 @@ UI → Controllers → Application → Services → Models
 ### 2. Local-First Design
 
 All write operations:
+
 1. Commit to local Dexie store first
 2. Update UI immediately
 3. Sync to homeserver in background
@@ -85,12 +88,14 @@ All write operations:
 ### 3. Component Development
 
 Follow atomic design principles:
+
 - **Atoms**: Base components (Button, Input, Badge)
 - **Molecules**: Simple compositions (SearchBar, PostCard)
 - **Organisms**: Complex features (PostFeed, UserProfile)
 - **Templates**: Page layouts
 
 **Standards:**
+
 - Shadcn UI components as base (check first before creating)
 - 100% visual parity with Figma designs
 - Complete test coverage (unit + snapshot)
@@ -101,6 +106,7 @@ Follow atomic design principles:
 ### 4. Testing Requirements
 
 All components must have:
+
 - ✅ At least one sanity test (renders correctly)
 - ✅ Functional tests for interactions (click, hover)
 - ✅ Snapshot tests for visual states
@@ -112,6 +118,7 @@ All components must have:
 ### 5. Error Handling
 
 Use `AppError` consistently across all layers:
+
 - Models throw `DatabaseError`
 - Services throw layer-specific errors
 - Application orchestrates and maps errors
@@ -126,6 +133,7 @@ ADRs document key architectural choices. They capture the **why** behind decisio
 **Format**: `docs/adr/NNNN-title-in-kebab-case.md`
 
 **Current ADRs:**
+
 - [0001: Local-First Writes](docs/adr/0001-local-first-writes.md) - Why writes go local-first
 - [0002: Composite Post IDs](docs/adr/0002-composite-post-ids.md) - author:postId format
 - [0003: Streams as Caches](docs/adr/0003-streams-as-caches.md) - Stream caching strategy
@@ -150,6 +158,7 @@ This project uses MCP servers for enhanced AI capabilities:
 ### Setup
 
 See `.cursor/mcp-setup.md` for complete configuration instructions including:
+
 - Authentication requirements
 - Rate limits
 - Environment variables
@@ -160,6 +169,7 @@ See `.cursor/mcp-setup.md` for complete configuration instructions including:
 ### Cursor
 
 Cursor users benefit from automatic context loading via:
+
 - `.cursor/rules/*.mdc` files (automation rules)
 - All `.cursor/*.md` files (documentation)
 - Configured MCP servers in `.cursor/mcp.json`
@@ -167,6 +177,7 @@ Cursor users benefit from automatic context loading via:
 ### Other AI IDEs (Claude Code, Windsurf, etc.)
 
 For non-Cursor IDEs:
+
 1. Start with this file (AGENTS.md)
 2. Read documentation in reading order above
 3. Check `.cursor/rules/*.mdc` files for automation patterns
@@ -181,7 +192,7 @@ For non-Cursor IDEs:
 ❌ **Don't skip snapshot tests** - Visual regression matters  
 ❌ **Don't commit untested code** - Run tests in sandbox first  
 ❌ **Don't duplicate logic across layers** - Single responsibility per layer  
-❌ **Don't return un-normalized data** - Pipes must normalize external shapes  
+❌ **Don't return un-normalized data** - Pipes must normalize external shapes
 
 ## Common Development Workflows
 
@@ -331,4 +342,3 @@ When you make significant changes to:
 **Remember**: This documentation system maintains consistency and quality. Keep it updated as the project evolves, and use it as your source of truth when generating or reviewing code.
 
 **For AI assistants**: You are encouraged to reference specific sections of this documentation in your responses to users to build trust and ensure consistency.
-

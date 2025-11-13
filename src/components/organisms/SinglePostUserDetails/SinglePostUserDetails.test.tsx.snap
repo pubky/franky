@@ -11,7 +11,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with different pos
       data-testid="container"
     >
       <div
-        class="w-12 h-12"
+        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
@@ -48,7 +48,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with different pos
             diff...7890
           </div>
           <div
-            class="flex flex-row gap-1 items-center"
+            class="flex flex-row items-center gap-1"
             data-testid="container"
           >
             <svg
@@ -99,7 +99,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with empty name 1`
       data-testid="container"
     >
       <div
-        class="w-12 h-12"
+        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
@@ -134,7 +134,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with empty name 1`
             69de...7890
           </div>
           <div
-            class="flex flex-row gap-1 items-center"
+            class="flex flex-row items-center gap-1"
             data-testid="container"
           >
             <svg
@@ -185,7 +185,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with no user image
       data-testid="container"
     >
       <div
-        class="w-12 h-12"
+        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
@@ -221,7 +221,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with no user image
             69de...7890
           </div>
           <div
-            class="flex flex-row gap-1 items-center"
+            class="flex flex-row items-center gap-1"
             data-testid="container"
           >
             <svg
@@ -272,7 +272,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with old post 1`] 
       data-testid="container"
     >
       <div
-        class="w-12 h-12"
+        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
@@ -309,7 +309,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with old post 1`] 
             69de...7890
           </div>
           <div
-            class="flex flex-row gap-1 items-center"
+            class="flex flex-row items-center gap-1"
             data-testid="container"
           >
             <svg
@@ -360,7 +360,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with recent post 1
       data-testid="container"
     >
       <div
-        class="w-12 h-12"
+        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
@@ -397,7 +397,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with recent post 1
             69de...7890
           </div>
           <div
-            class="flex flex-row gap-1 items-center"
+            class="flex flex-row items-center gap-1"
             data-testid="container"
           >
             <svg
@@ -448,7 +448,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with user and post
       data-testid="container"
     >
       <div
-        class="w-12 h-12"
+        class="h-12 w-12"
         data-testid="avatar"
       >
         <img
@@ -485,7 +485,7 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with user and post
             69de...7890
           </div>
           <div
-            class="flex flex-row gap-1 items-center"
+            class="flex flex-row items-center gap-1"
             data-testid="container"
           >
             <svg

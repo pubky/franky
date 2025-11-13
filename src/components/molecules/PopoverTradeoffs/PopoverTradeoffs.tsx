@@ -17,7 +17,7 @@ export function PopoverTradeoffs({ ...props }: React.HTMLAttributes<HTMLDivEleme
             </Atoms.Heading>
           </Atoms.Container>
           <Atoms.Container className="flex gap-4">
-            <ul className="list-disc list-inside text-muted-foreground text-sm">
+            <ul className="list-inside list-disc text-sm text-muted-foreground">
               <li>Less secure than mobile keychain</li>
               <li>Browser-based key generation</li>
               <li>Suboptimal sign-in experience</li>

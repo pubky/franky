@@ -6,7 +6,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with different postId 1`]
   data-testid="container"
 >
   <div
-    class="hidden lg:flex gap-2"
+    class="hidden gap-2 lg:flex"
     data-testid="container"
   >
     <input
@@ -17,10 +17,10 @@ exports[`SinglePostTags - Snapshots > matches snapshot with different postId 1`]
     />
   </div>
   <div
-    class="flex flex-row lg:flex-col flex-wrap gap-2 lg:pt-2"
+    class="flex flex-row flex-wrap gap-2 lg:flex-col lg:pt-2"
   >
     <div
-      class="lg:hidden flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity border-dashed h-6"
+      class="flex h-6 cursor-pointer items-center gap-1 border-dashed transition-opacity hover:opacity-80 lg:hidden"
       data-testid="badge"
       data-variant="outline"
     >
@@ -55,7 +55,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
   data-testid="container"
 >
   <div
-    class="hidden lg:flex gap-2"
+    class="hidden gap-2 lg:flex"
     data-testid="container"
   >
     <input
@@ -66,13 +66,13 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
     />
   </div>
   <div
-    class="flex flex-row lg:flex-col flex-wrap gap-2 lg:pt-2"
+    class="flex flex-row flex-wrap gap-2 lg:flex-col lg:pt-2"
   >
     <div
-      class="flex flex-row gap-2 items-center"
+      class="flex flex-row items-center gap-2"
     >
       <div
-        class="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+        class="flex cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
         data-testid="badge"
         data-variant="default"
       >
@@ -86,7 +86,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
         </span>
       </div>
       <button
-        class="hidden lg:flex rounded-full w-8 h-8 p-0"
+        class="hidden h-8 w-8 rounded-full p-0 lg:flex"
         data-size="sm"
         data-testid="button"
         data-variant="secondary"
@@ -115,7 +115,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
         </svg>
       </button>
       <div
-        class="hidden lg:flex items-center -space-x-2"
+        class="hidden items-center -space-x-2 lg:flex"
       >
         <a
           class="relative"
@@ -124,7 +124,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
           style="z-index: 10; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -145,7 +145,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
           style="z-index: 11; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -166,7 +166,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
           style="z-index: 12; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -187,7 +187,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
           style="z-index: 13; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -208,7 +208,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
           style="z-index: 14; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -223,7 +223,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
           </div>
         </a>
         <div
-          class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity text-xs font-medium"
+          class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black text-xs font-medium text-white transition-opacity hover:opacity-80"
           style="z-index: 15;"
         >
           +
@@ -232,7 +232,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with many taggers 1`] = `
       </div>
     </div>
     <div
-      class="lg:hidden flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity border-dashed h-6"
+      class="flex h-6 cursor-pointer items-center gap-1 border-dashed transition-opacity hover:opacity-80 lg:hidden"
       data-testid="badge"
       data-variant="outline"
     >
@@ -267,7 +267,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with no tags 1`] = `
   data-testid="container"
 >
   <div
-    class="hidden lg:flex gap-2"
+    class="hidden gap-2 lg:flex"
     data-testid="container"
   >
     <input
@@ -278,10 +278,10 @@ exports[`SinglePostTags - Snapshots > matches snapshot with no tags 1`] = `
     />
   </div>
   <div
-    class="flex flex-row lg:flex-col flex-wrap gap-2 lg:pt-2"
+    class="flex flex-row flex-wrap gap-2 lg:flex-col lg:pt-2"
   >
     <div
-      class="lg:hidden flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity border-dashed h-6"
+      class="flex h-6 cursor-pointer items-center gap-1 border-dashed transition-opacity hover:opacity-80 lg:hidden"
       data-testid="badge"
       data-variant="outline"
     >
@@ -316,7 +316,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
   data-testid="container"
 >
   <div
-    class="hidden lg:flex gap-2"
+    class="hidden gap-2 lg:flex"
     data-testid="container"
   >
     <input
@@ -327,13 +327,13 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
     />
   </div>
   <div
-    class="flex flex-row lg:flex-col flex-wrap gap-2 lg:pt-2"
+    class="flex flex-row flex-wrap gap-2 lg:flex-col lg:pt-2"
   >
     <div
-      class="flex flex-row gap-2 items-center"
+      class="flex flex-row items-center gap-2"
     >
       <div
-        class="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+        class="flex cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
         data-testid="badge"
         data-variant="default"
       >
@@ -347,7 +347,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
         </span>
       </div>
       <button
-        class="hidden lg:flex rounded-full w-8 h-8 p-0"
+        class="hidden h-8 w-8 rounded-full p-0 lg:flex"
         data-size="sm"
         data-testid="button"
         data-variant="secondary"
@@ -376,7 +376,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
         </svg>
       </button>
       <div
-        class="hidden lg:flex items-center -space-x-2"
+        class="hidden items-center -space-x-2 lg:flex"
       >
         <a
           class="relative"
@@ -385,7 +385,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
           style="z-index: 10; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -406,7 +406,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
           style="z-index: 11; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -427,7 +427,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
           style="z-index: 12; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -444,10 +444,10 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-row gap-2 items-center"
+      class="flex flex-row items-center gap-2"
     >
       <div
-        class="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+        class="flex cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
         data-testid="badge"
         data-variant="secondary"
       >
@@ -461,7 +461,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
         </span>
       </div>
       <button
-        class="hidden lg:flex rounded-full w-8 h-8 p-0"
+        class="hidden h-8 w-8 rounded-full p-0 lg:flex"
         data-size="sm"
         data-testid="button"
         data-variant="secondary"
@@ -490,7 +490,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
         </svg>
       </button>
       <div
-        class="hidden lg:flex items-center -space-x-2"
+        class="hidden items-center -space-x-2 lg:flex"
       >
         <a
           class="relative"
@@ -499,7 +499,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
           style="z-index: 10; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));"
         >
           <div
-            class="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            class="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80"
             data-testid="avatar"
           >
             <img
@@ -516,7 +516,7 @@ exports[`SinglePostTags - Snapshots > matches snapshot with tags 1`] = `
       </div>
     </div>
     <div
-      class="lg:hidden flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity border-dashed h-6"
+      class="flex h-6 cursor-pointer items-center gap-1 border-dashed transition-opacity hover:opacity-80 lg:hidden"
       data-testid="badge"
       data-variant="outline"
     >

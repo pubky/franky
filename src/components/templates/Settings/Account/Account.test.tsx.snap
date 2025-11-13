@@ -2,16 +2,16 @@
 
 exports[`Account - Snapshots > matches snapshot 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="flex-col justify-start items-start flex"
+      class="flex flex-col items-start justify-start"
     >
       <div
-        class="justify-start items-center gap-2 inline-flex pb-6"
+        class="inline-flex items-center justify-start gap-2 pb-6"
       >
         <svg
           aria-hidden="true"
@@ -44,7 +44,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+        class="pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
         data-testid="typography"
       >
         Sign out to protect your account from unauthorized access.
@@ -84,13 +84,13 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="w-full h-px bg-white/10 my-6"
+      class="my-6 h-px w-full bg-white/10"
     />
     <div
-      class="flex-col justify-start items-start flex"
+      class="flex flex-col items-start justify-start"
     >
       <div
-        class="justify-start items-center gap-2 inline-flex pb-6"
+        class="inline-flex items-center justify-start gap-2 pb-6"
       >
         <svg
           aria-hidden="true"
@@ -120,7 +120,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+        class="pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
         data-testid="typography"
       >
         Update your bio or user picture, so friends can find you easier.
@@ -157,13 +157,13 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="w-full h-px bg-white/10 my-6"
+      class="my-6 h-px w-full bg-white/10"
     />
     <div
-      class="flex-col justify-start items-start flex"
+      class="flex flex-col items-start justify-start"
     >
       <div
-        class="justify-start items-center gap-2 inline-flex pb-6"
+        class="inline-flex items-center justify-start gap-2 pb-6"
       >
         <svg
           aria-hidden="true"
@@ -198,7 +198,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+        class="pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
         data-testid="typography"
       >
         You have already completed the backup, or closed your browser before doing so. Your recovery file and seed phrase have been deleted.
@@ -241,13 +241,13 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="w-full h-px bg-white/10 my-6"
+      class="my-6 h-px w-full bg-white/10"
     />
     <div
-      class="flex-col justify-start items-start flex"
+      class="flex flex-col items-start justify-start"
     >
       <div
-        class="justify-start items-center gap-2 inline-flex pb-6"
+        class="inline-flex items-center justify-start gap-2 pb-6"
       >
         <svg
           aria-hidden="true"
@@ -280,7 +280,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+        class="pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
         data-testid="typography"
       >
         Your data on Pubky is yours. Export your account data to use it elsewhere.
@@ -320,13 +320,13 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
     </div>
     <div
       aria-hidden="true"
-      class="w-full h-px bg-white/10 my-6"
+      class="my-6 h-px w-full bg-white/10"
     />
     <div
-      class="flex-col justify-start items-start flex"
+      class="flex flex-col items-start justify-start"
     >
       <div
-        class="justify-start items-center gap-2 inline-flex pb-6"
+        class="inline-flex items-center justify-start gap-2 pb-6"
       >
         <svg
           aria-hidden="true"
@@ -371,7 +371,7 @@ exports[`Account - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <p
-        class="text-base font-medium leading-6 pb-6 text-[#D4D4DB]"
+        class="pb-6 text-base leading-6 font-medium text-[#D4D4DB]"
         data-testid="typography"
       >
         Deleting your account will remove all of your posts, tags, profile information, contacts, custom streams, and settings or preferences.

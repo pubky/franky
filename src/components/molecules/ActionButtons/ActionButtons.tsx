@@ -18,7 +18,7 @@ export function ActionButtons({
   ...props
 }: ActionButtonsProps) {
   return (
-    <Atoms.Container className={Libs.cn('gap-3 flex-row sm:items-center', className)} {...props}>
+    <Atoms.Container className={Libs.cn('flex-row gap-3 sm:items-center', className)} {...props}>
       <Atoms.Button id="sign-in-btn" variant="secondary" className="w-[158px] sm:w-auto" size="lg" onClick={onSignIn}>
         <Libs.LogIn className="mr-2 h-4 w-4" />
         {signInText}

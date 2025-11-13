@@ -22,7 +22,7 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
 
   return (
     <div className={Libs.cn('flex flex-col', className)}>
-      <p className="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line">
+      <p className="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground">
         {postDetails.content}
       </p>
     </div>

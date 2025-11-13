@@ -135,11 +135,11 @@ export const KeyboardNavigationDemo: Story = {
             setLastAction(`Selected: ${tab}`);
           }}
         />
-        <div className="text-sm space-y-2">
+        <div className="space-y-2 text-sm">
           <p className="text-muted-foreground">
             <strong>Try keyboard navigation:</strong>
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-1">
+          <ul className="list-inside list-disc space-y-1 text-muted-foreground">
             <li>Tab to focus, then use Arrow keys to navigate</li>
             <li>Press Space or Enter to select</li>
             <li>Press Home/End to jump to first/last</li>

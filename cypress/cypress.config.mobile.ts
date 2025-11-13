@@ -13,7 +13,6 @@ export default defineConfig({
     env: {
       ...baseConfig.e2e?.env,
       isMobile: true,
-    }
-  }
+    },
+  },
 });
-

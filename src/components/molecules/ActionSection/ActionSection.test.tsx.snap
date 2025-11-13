@@ -2,11 +2,11 @@
 
 exports[`ActionSection - Snapshots > matches snapshot with action containing icon 1`] = `
 <div
-  class="mx-auto flex gap-6 w-full flex-row"
+  class="mx-auto flex w-full flex-row gap-6"
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
+    class="mx-auto flex w-full flex-col items-start justify-start gap-4"
     data-testid="container"
   />
   <div
@@ -29,11 +29,11 @@ exports[`ActionSection - Snapshots > matches snapshot with action containing ico
 
 exports[`ActionSection - Snapshots > matches snapshot with children 1`] = `
 <div
-  class="mx-auto flex gap-6 w-full flex-row"
+  class="mx-auto flex w-full flex-row gap-6"
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
+    class="mx-auto flex w-full flex-col items-start justify-start gap-4"
     data-testid="container"
   >
     <div>
@@ -45,11 +45,11 @@ exports[`ActionSection - Snapshots > matches snapshot with children 1`] = `
 
 exports[`ActionSection - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="mx-auto flex gap-6 w-full flex-row custom-actions"
+  class="mx-auto flex w-full flex-row gap-6 custom-actions"
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
+    class="mx-auto flex w-full flex-col items-start justify-start gap-4"
     data-testid="container"
   />
 </div>
@@ -57,11 +57,11 @@ exports[`ActionSection - Snapshots > matches snapshot with custom className 1`] 
 
 exports[`ActionSection - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto flex gap-6 w-full flex-row"
+  class="mx-auto flex w-full flex-row gap-6"
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
+    class="mx-auto flex w-full flex-col items-start justify-start gap-4"
     data-testid="container"
   />
 </div>
@@ -69,11 +69,11 @@ exports[`ActionSection - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`ActionSection - Snapshots > matches snapshot with multiple actions 1`] = `
 <div
-  class="mx-auto flex gap-6 w-full flex-row"
+  class="mx-auto flex w-full flex-row gap-6"
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
+    class="mx-auto flex w-full flex-col items-start justify-start gap-4"
     data-testid="container"
   />
   <div
@@ -100,11 +100,11 @@ exports[`ActionSection - Snapshots > matches snapshot with multiple actions 1`] 
 
 exports[`ActionSection - Snapshots > matches snapshot with single action 1`] = `
 <div
-  class="mx-auto flex gap-6 w-full flex-row"
+  class="mx-auto flex w-full flex-row gap-6"
   data-testid="container"
 >
   <div
-    class="mx-auto flex flex-col items-start gap-4 justify-start w-full"
+    class="mx-auto flex w-full flex-col items-start justify-start gap-4"
     data-testid="container"
   />
   <div

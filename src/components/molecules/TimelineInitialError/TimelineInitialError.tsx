@@ -11,7 +11,7 @@ interface TimelineInitialErrorProps {
  */
 export function TimelineInitialError({ message }: TimelineInitialErrorProps) {
   return (
-    <Atoms.Container className="flex justify-center items-center py-8">
+    <Atoms.Container className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-destructive">
         Error: {message}
       </Atoms.Typography>

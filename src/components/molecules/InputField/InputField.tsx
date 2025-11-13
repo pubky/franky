@@ -76,26 +76,26 @@ export function InputField({
     <>
       <Atoms.Container
         className={Libs.cn(
-          'cursor-pointer w-full mx-0 mb-2 items-center flex-row border gap-0 rounded-md !bg-alpha-90/10 bg-transparent',
+          '!bg-alpha-90/10 mx-0 mb-2 w-full cursor-pointer flex-row items-center gap-0 rounded-md border bg-transparent',
           icon && iconPosition === 'left' ? 'pl-4.5' : 'pl-2',
           containerClasses,
           statusClasses[status],
-          loading && 'text-brand border-brand',
+          loading && 'border-brand text-brand',
           sizeClasses[size],
           className,
         )}
       >
         {loading && (
-          <Atoms.Container className="justify-center items-center w-auto">
+          <Atoms.Container className="w-auto items-center justify-center">
             {loadingIcon ?? (
-              <Libs.Loader2 className="h-4 w-4 text-brand animate-spin linear infinite" data-testid="loading-icon" />
+              <Libs.Loader2 className="linear infinite h-4 w-4 animate-spin text-brand" data-testid="loading-icon" />
             )}
           </Atoms.Container>
         )}
         {!loading && icon && iconPosition === 'left' && (
           <Atoms.Container
             onClick={onClickIcon}
-            className={Libs.cn('w-auto justify-center items-center cursor-pointer')}
+            className={Libs.cn('w-auto cursor-pointer items-center justify-center')}
           >
             {icon}
           </Atoms.Container>
@@ -103,7 +103,7 @@ export function InputField({
         <Atoms.Input
           id={id}
           type="text"
-          className={Libs.cn('w-full !bg-transparent border-none')}
+          className={Libs.cn('w-full border-none !bg-transparent')}
           value={loading ? loadingText : value}
           placeholder={placeholder}
           disabled={disabled || loading}
@@ -117,7 +117,7 @@ export function InputField({
         {!loading && icon && iconPosition === 'right' && (
           <Atoms.Container
             onClick={onClickIcon}
-            className={Libs.cn('w-auto justify-center items-center cursor-pointer mr-5')}
+            className={Libs.cn('mr-5 w-auto cursor-pointer items-center justify-center')}
           >
             {icon}
           </Atoms.Container>

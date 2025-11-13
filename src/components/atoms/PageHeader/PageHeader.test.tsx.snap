@@ -2,7 +2,7 @@
 
 exports[`PageHeader - Snapshots > matches snapshot with complex children 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
   data-testid="container"
 >
   <h1>
@@ -16,7 +16,7 @@ exports[`PageHeader - Snapshots > matches snapshot with complex children 1`] = `
 
 exports[`PageHeader - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2 custom-header"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6 custom-header"
   data-testid="container"
 >
   Custom header
@@ -25,7 +25,7 @@ exports[`PageHeader - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`PageHeader - Snapshots > matches snapshot with data-testid prop 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
   data-testid="page-header"
 >
   Header with test ID
@@ -34,7 +34,7 @@ exports[`PageHeader - Snapshots > matches snapshot with data-testid prop 1`] = `
 
 exports[`PageHeader - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
   data-testid="container"
 >
   Header content
@@ -43,7 +43,7 @@ exports[`PageHeader - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`PageHeader - Snapshots > matches snapshot with id prop 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
   data-testid="container"
   id="header-id"
 >
@@ -53,7 +53,7 @@ exports[`PageHeader - Snapshots > matches snapshot with id prop 1`] = `
 
 exports[`PageHeader - Snapshots > matches snapshot with nested children 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
   data-testid="container"
 >
   <div>
@@ -75,7 +75,7 @@ exports[`PageHeader - Snapshots > matches snapshot with nested children 1`] = `
 
 exports[`PageHeader - Snapshots > matches snapshot with simple content 1`] = `
 <div
-  class="mx-auto w-full flex-col flex gap-3 pb-6 pt-2"
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6"
   data-testid="container"
 >
   Simple content

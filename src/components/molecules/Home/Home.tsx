@@ -25,7 +25,7 @@ export const HomeActions = () => {
 
 export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <Atoms.FooterLinks className={Libs.cn('sm:pr-16 justify-end flex-row content-end', props.className)} {...props}>
+    <Atoms.FooterLinks className={Libs.cn('flex-row content-end justify-end sm:pr-16', props.className)} {...props}>
       By creating a Pubky account, you agree to the <Organisms.DialogTerms />, <Organisms.DialogPrivacy />, and confirm
       you are <Organisms.DialogAge /> Pubky is powered by{' '}
       <Atoms.Link href={Config.PUBKY_CORE_URL} target="_blank">
@@ -39,7 +39,7 @@ export const HomeFooter = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) =
 export const HomeSectionTitle = () => {
   return (
     <Atoms.Container className="flex-row items-start gap-2">
-      <Atoms.Typography size="md" className="text-brand font-light sm:text-2xl self-center">
+      <Atoms.Typography size="md" className="self-center font-light text-brand sm:text-2xl">
         Pubky requires an invite code
       </Atoms.Typography>
       <Molecules.PopoverInvite />

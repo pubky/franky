@@ -6,7 +6,7 @@ This document captures the intent, boundaries, responsibilities, and operating m
 
 ## Purpose and scope
 
-Core is the *domain layer* of the application. It is *UI-agnostic* and provides a *stable API* for the rest of the app
+Core is the _domain layer_ of the application. It is _UI-agnostic_ and provides a _stable API_ for the rest of the app
 
 - The UI interacts only with controllers.
 - Controllers invoke pipes for normalization/validation, stores for state, and application workflows for business logic.
@@ -18,8 +18,8 @@ Core is the *domain layer* of the application. It is *UI-agnostic* and provides 
 
 This layered design ensures strict separation of concerns, testability, and codebase resilience.
 
-
 ## Architectural flow (high-level)
+
 1. _UI_ — User interacts with the app
 2. _controllers_ — Translate intent
    1. Invoke _pipes_ for normalization and validation
@@ -32,11 +32,12 @@ This layered design ensures strict separation of concerns, testability, and code
 5. _models_ — Dexie-based persistence layer (indexedDB)
 
 ## Layer responsibilities (global duties)
+
 - _controllers/_: Inbound boundary from the UI. Shape and guard requests; invoke use-cases. No direct IO.
 - _pipes/_: Normalize/validate inputs. Enforce `pubky-app-specs` to shield domain logic from external data shapes.
 - _application/_: Orchestrate business workflows. Sequence local and remote IO. Apply retries/backoff and invariants
 - _services/_: IO boundaries.
-  - _local_ handles persistence and cache integrity (Dexie).  
+  - _local_ handles persistence and cache integrity (Dexie).
   - _homeserver_ handles network sessions and PUT/DEL/GET operations.
   - _nexus_ handles read operations.
 - _models/_: Typed, minimal Dexie-backed tables with consistent CRUD primitives
@@ -45,6 +46,7 @@ This layered design ensures strict separation of concerns, testability, and code
 - _index.ts_: The canonical public surface of `@/core` by re-exporting submodules.
 
 ### Allowed dependencies (who may call whom)
+
 - UI → controllers
 - controllers → pipes, application, stores
 - application → services (local, homeserver, nexus)
@@ -68,9 +70,11 @@ This layered design ensures strict separation of concerns, testability, and code
 IO boundaries are the seams where side effects occur. They are isolated to ensure testability, swapability, and fault tolerance.
 
 ### Inbound boundary (from UI)
+
 - controllers: Accept UI intent, perform light validation via pipes, then invoke application.
 
 ### Outbound boundaries (to the outside world)
+
 - `services/homeserver`: Session/auth, HTTP requests for writes (PUT/POST/DELETE/GET), blob uploads, auth URL creation, signup token generation. Maps errors to domain errors.
 - `services/nexus`: HTTP reads for bootstrap, streams, users, posts, tags, search, files. Encodes pagination and stop semantics.
 - `services/local`: The exclusive interface to Dexie models. Manages multi-table consistency (counts, relationships, TTL), stream cache integrity, and local-first write operations with eventual consistency guarantees.
@@ -80,6 +84,7 @@ IO boundaries are the seams where side effects occur. They are isolated to ensur
 The write model is local-first, ensuring immediate responsiveness for the user.
 
 Design implications:
+
 - UI reflects local state immediately; eventual consistency with the homeserver and nexus.
 - Reconciliation occurs via periodic retries or explicit repair flows.
 - Rollback (compensation) is optional and applied only when strict consistency is required.
@@ -87,11 +92,13 @@ Design implications:
 ### Data model
 
 Tables (representative; see code for full schemas and indexes):
-- user_*: `user_details`, `user_counts`, `user_relationships`, `user_connections`, `user_tags`, `user_ttl`
-- post_*: `post_details`, `post_counts`, `post_relationships`, `post_tags`, `post_ttl`
+
+- user\_\*: `user_details`, `user_counts`, `user_relationships`, `user_connections`, `user_tags`, `user_ttl`
+- post\_\*: `post_details`, `post_counts`, `post_relationships`, `post_tags`, `post_ttl`
 - streams: `post_streams` (IDs), `user_streams` (Pubky), `tag_streams` (hot tags)
 
 Conventions:
+
 - Composite IDs for posts: `author:postId` unify joins and references across the domain.
 - TTL rows exist per entity domain to support expiry policies.
 - Stream rows preserve order and are updated via dedicated stream models; integrity checks precede usage.

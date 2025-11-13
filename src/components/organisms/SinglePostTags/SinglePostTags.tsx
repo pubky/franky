@@ -79,7 +79,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
   return (
     <Atoms.Container className="flex flex-col">
       {/* Desktop input - hidden on mobile */}
-      <Atoms.Container className="hidden lg:flex gap-2">
+      <Atoms.Container className="hidden gap-2 lg:flex">
         <Atoms.Input
           placeholder="add tag"
           className="flex-1"
@@ -91,17 +91,17 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
       </Atoms.Container>
 
       {/* Tags container */}
-      <div className="flex flex-row lg:flex-col flex-wrap gap-2 lg:pt-2">
+      <div className="flex flex-row flex-wrap gap-2 lg:flex-col lg:pt-2">
         {tags?.map((tag, tagIndex) => {
           const visibleTaggers = tag.taggers.slice(0, MAX_VISIBLE_USERS);
           const remainingCount = Math.max(0, tag.taggers.length - MAX_VISIBLE_USERS);
           const isCurrentUserTagger = tag.relationship;
 
           return (
-            <div key={`${tag.label}-${tagIndex}`} className="flex flex-row gap-2 items-center">
+            <div key={`${tag.label}-${tagIndex}`} className="flex flex-row items-center gap-2">
               <Atoms.Badge
                 variant={isCurrentUserTagger ? 'default' : 'secondary'}
-                className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+                className="flex cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
                 onClick={() => handleToggleTag(tag.label)}
               >
                 {tag.label}
@@ -114,14 +114,14 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
               <Atoms.Button
                 variant="secondary"
                 size="sm"
-                className="hidden lg:flex rounded-full w-8 h-8 p-0"
+                className="hidden h-8 w-8 rounded-full p-0 lg:flex"
                 onClick={() => console.log('TODO: perform search with tag', tag.label)}
               >
                 <Libs.Search className="h-4 w-4" />
               </Atoms.Button>
 
               {/* User avatars - only show on desktop */}
-              <div className="hidden lg:flex items-center -space-x-2">
+              <div className="hidden items-center -space-x-2 lg:flex">
                 {visibleTaggers.map((taggerId, index) => {
                   // Generate fallback initials from tagger ID
                   const fallbackInitials = taggerId.slice(0, 2).toUpperCase();
@@ -136,7 +136,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
                       className="relative"
                       style={{ zIndex: 10 + index, filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))' }}
                     >
-                      <Atoms.Avatar className="w-8 h-8 cursor-pointer hover:opacity-80 transition-opacity">
+                      <Atoms.Avatar className="h-8 w-8 cursor-pointer transition-opacity hover:opacity-80">
                         <Atoms.AvatarImage src={undefined} />
                         <Atoms.AvatarFallback>{fallbackInitials}</Atoms.AvatarFallback>
                       </Atoms.Avatar>
@@ -145,7 +145,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
                 })}
                 {remainingCount > 0 && (
                   <div
-                    className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity text-xs font-medium"
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-black text-xs font-medium text-white transition-opacity hover:opacity-80"
                     style={{ zIndex: 15 }}
                   >
                     +{remainingCount}
@@ -159,7 +159,7 @@ export const SinglePostTags = ({ postId }: PostTagsProps) => {
         {/* Add tag button - only show on mobile */}
         <Atoms.Badge
           variant="outline"
-          className="lg:hidden flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity border-dashed h-6"
+          className="flex h-6 cursor-pointer items-center gap-1 border-dashed transition-opacity hover:opacity-80 lg:hidden"
           onClick={() => console.log('TODO: show add tag modal')}
         >
           <Libs.Plus className="h-3 w-3" />

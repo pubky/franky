@@ -16,13 +16,13 @@ export function ButtonFilters({ onClick, className, position = 'left' }: ButtonF
   const Icon = isLeft ? Libs.Settings2 : Libs.Lightbulb;
 
   return (
-    <div className={Libs.cn('z-10 fixed top-[150px]', positionClasses)}>
+    <div className={Libs.cn('fixed top-[150px] z-10', positionClasses)}>
       <Atoms.Button
         variant="secondary"
         size="icon"
         onClick={onClick}
         className={Libs.cn(
-          'hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90',
+          'hidden bg-secondary px-4 py-3 shadow-xl hover:bg-secondary/90 lg:inline-flex',
           roundedClasses,
           className,
         )}

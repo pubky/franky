@@ -63,8 +63,8 @@ export function SideDrawer({ open, onOpenChangeAction, children, position = 'lef
       {/* Drawer */}
       <div
         className={Libs.cn(
-          'fixed top-0 h-full z-50',
-          'bg-background p-4 sm:p-4 md:p-12 shadow-xl',
+          'fixed top-0 z-50 h-full',
+          'bg-background p-4 shadow-xl sm:p-4 md:p-12',
           'transition-transform duration-300 ease-in-out',
           widthClasses,
           positionClasses,

@@ -2,13 +2,13 @@
 
 exports[`Privacy - Snapshots > matches snapshot 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="justify-start items-center gap-2 inline-flex"
+      class="inline-flex items-center justify-start gap-2"
     >
       <svg
         aria-hidden="true"
@@ -31,21 +31,21 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         />
       </svg>
       <h2
-        class="text-2xl font-bold leading-8 text-foreground"
+        class="text-2xl leading-8 font-bold text-foreground"
       >
         Privacy and Safety
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-secondary-foreground"
+      class="text-base leading-6 font-medium text-secondary-foreground"
     >
       Privacy is not a crime. Manage your visibility and safety on Pubky.
     </p>
     <div
-      class="w-full p-6 bg-white/5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-6 inline-flex"
+      class="inline-flex w-full flex-col items-start justify-start gap-6 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]"
     >
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -55,7 +55,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-state="checked"
           id="show-confirmation-switch"
           role="switch"
@@ -69,7 +69,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -79,7 +79,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="true"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-state="checked"
           id="blur-censored-switch"
           role="switch"
@@ -93,7 +93,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -103,7 +103,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="false"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-disabled=""
           data-state="unchecked"
           disabled=""
@@ -120,7 +120,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -130,7 +130,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="false"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-disabled=""
           data-state="unchecked"
           disabled=""
@@ -147,7 +147,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -157,7 +157,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="false"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-disabled=""
           data-state="unchecked"
           disabled=""
@@ -174,7 +174,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -184,7 +184,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="false"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-disabled=""
           data-state="unchecked"
           disabled=""
@@ -201,7 +201,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -211,7 +211,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="false"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-disabled=""
           data-state="unchecked"
           disabled=""
@@ -228,7 +228,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </button>
       </div>
       <div
-        class="w-full h-8 justify-between items-center inline-flex"
+        class="inline-flex h-8 w-full items-center justify-between"
       >
         <p
           class="text-sm text-foreground font-semibold"
@@ -238,7 +238,7 @@ exports[`Privacy - Snapshots > matches snapshot 1`] = `
         </p>
         <button
           aria-checked="false"
-          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:bg-[#BABAC1] data-[state=checked]:border-2 data-[state=checked]:border-transparent"
+          class="peer inline-flex h-8 w-[52px] shrink-0 cursor-pointer items-center rounded-full p-1 transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 bg-white/10 data-[state=checked]:border-2 data-[state=checked]:border-transparent data-[state=checked]:bg-[#BABAC1]"
           data-disabled=""
           data-state="unchecked"
           disabled=""

@@ -28,7 +28,7 @@ export function Search() {
           <>
             <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
             <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />
-            <div className="self-start sticky top-[100px] flex flex-col gap-6">
+            <div className="sticky top-[100px] flex flex-col gap-6 self-start">
               <Molecules.FilterContent selectedTab={content} onTabChange={setContent} />
               <Molecules.FilterLayout selectedTab={layout} onTabChange={setLayout} />
             </div>
@@ -48,7 +48,7 @@ export function Search() {
                 { name: 'opensource', count: 289 },
               ]}
             />
-            <div className="self-start sticky top-[100px]">
+            <div className="sticky top-[100px] self-start">
               <Molecules.FeedbackCard />
             </div>
           </>
@@ -76,7 +76,7 @@ export function Search() {
           Welcome to the Search page. Search for posts, users, and tags.
         </Atoms.Typography>
 
-        <div className="flex flex-col gap-4 mt-4">
+        <div className="mt-4 flex flex-col gap-4">
           {[1, 2, 3].map((i) => (
             <Atoms.Card key={i} className="p-6">
               <Atoms.Typography size="md" className="text-muted-foreground">
