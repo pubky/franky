@@ -16,7 +16,7 @@ export class LocalHotService {
    * @param tags - Array of hot tags to store
    */
   static async upsert(id: string, tags: Core.NexusHotTag[]): Promise<void> {
-    await Core.HotTagsModel.upsert(id, tags);
+    await Core.HotTagsModel.upsert({ id, tags });
   }
 
   /**
