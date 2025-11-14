@@ -108,7 +108,7 @@ export class PostStreamApplication {
     const compositePostIds = nexusPosts.map((post) =>
       Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
     );
-    
+
     // Do not persist any stream related with engagement sorting
     if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT) {
       await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });

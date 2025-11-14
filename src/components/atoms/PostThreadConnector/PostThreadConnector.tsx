@@ -4,6 +4,21 @@ interface PostThreadConnectorProps {
   'data-testid'?: string;
 }
 
+// Rounded corner SVG component (from Figma design)
+const RoundedCorner = () => (
+  <svg
+    width="12"
+    height="12"
+    viewBox="0 0 12 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className="block size-full"
+    preserveAspectRatio="none"
+  >
+    <path d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z" fill="#303034" />
+  </svg>
+);
+
 export const PostThreadConnector = ({
   height,
   variant = 'regular',
@@ -11,21 +26,6 @@ export const PostThreadConnector = ({
 }: PostThreadConnectorProps) => {
   // Use a minimum height to prevent invisible render
   const effectiveHeight = height || 96;
-
-  // Rounded corner SVG component (from Figma design)
-  const RoundedCorner = () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 12 12"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="block size-full"
-      preserveAspectRatio="none"
-    >
-      <path d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z" fill="#303034" />
-    </svg>
-  );
 
   if (variant === 'last') {
     return (

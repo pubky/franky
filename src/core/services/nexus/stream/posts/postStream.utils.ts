@@ -25,7 +25,7 @@ export function createNexusParams(
 function handleNotCommonStreamParams(authorId: string, postId: string | undefined) {
   const extraParams: Record<string, string> = {};
   extraParams.author_id = authorId;
-  
+
   if (postId) {
     extraParams.post_id = postId;
   }
