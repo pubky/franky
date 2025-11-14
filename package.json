@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:https": "next dev --experimental-https",
+    "dev": "next dev --webpack",
+    "dev:https": "next dev --experimental-https --webpack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
