@@ -19,9 +19,17 @@ const meta: Meta<typeof MobileHeader> = {
       action: 'leftIconClick',
       description: 'Function called when the left icon (filters) is clicked',
     },
-    className: {
-      control: 'text',
-      description: 'Additional CSS classes to apply',
+    onRightIconClick: {
+      action: 'rightIconClick',
+      description: 'Function called when the right icon (community info) is clicked',
+    },
+    showLeftButton: {
+      control: 'boolean',
+      description: 'Whether to show the left button (filters)',
+    },
+    showRightButton: {
+      control: 'boolean',
+      description: 'Whether to show the right button (community info)',
     },
   },
   args: {
@@ -37,8 +45,9 @@ export const Default: Story = {
   args: {},
 };
 
-export const WithCustomClassName: Story = {
+export const WithoutButtons: Story = {
   args: {
-    className: 'bg-primary/10',
+    showLeftButton: false,
+    showRightButton: false,
   },
 };

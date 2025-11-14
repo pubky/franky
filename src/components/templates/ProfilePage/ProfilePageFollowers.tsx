@@ -1,0 +1,14 @@
+'use client';
+
+export function ProfilePageFollowers() {
+  return (
+    <div className="mt-6 flex flex-col gap-4 lg:mt-0">
+      <h1 className="text-2xl font-bold text-foreground">Followers</h1>
+      <p className="text-base text-muted-foreground">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat.
+      </p>
+    </div>
+  );
+}
