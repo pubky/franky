@@ -5,3 +5,4 @@ export * from './profile';
 export * from './stream';
 export * from './mute';
 export * from './notification';
+export * from './hot';

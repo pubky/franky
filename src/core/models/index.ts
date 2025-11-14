@@ -3,5 +3,6 @@ export * from './user';
 export * from './stream';
 export * from './shared';
 export * from './notification';
+export * from './hot';
 export * from './models.types';
 export * from './models.defaults';

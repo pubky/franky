@@ -31,7 +31,7 @@ export class BootstrapApplication {
       }),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
       Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
-      Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
+      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);
 
