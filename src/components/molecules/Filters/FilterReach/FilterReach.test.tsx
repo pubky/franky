@@ -63,7 +63,7 @@ describe('FilterReach', () => {
   });
 });
 
-describe('FilterReach - Accessibility', () => {
+describe('FilterReach - Keyboard Navigation', () => {
   it('manages tabIndex correctly for keyboard navigation', () => {
     render(<FilterReach selectedTab={REACH.FRIENDS} />);
 
