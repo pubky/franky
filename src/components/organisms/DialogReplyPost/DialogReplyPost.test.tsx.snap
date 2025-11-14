@@ -7,7 +7,7 @@ exports[`DialogReplyPost - Snapshots > matches snapshot 1`] = `
   data-testid="card"
 >
   <div
-    class="px-6 p-6 flex flex-col gap-4"
+    class="px-6 flex flex-col gap-4 p-6"
     data-slot="card-content"
   >
     <div
@@ -31,7 +31,7 @@ exports[`DialogReplyPost - Snapshots > matches snapshot with custom className 1`
   data-testid="card"
 >
   <div
-    class="px-6 p-6 flex flex-col gap-4"
+    class="px-6 flex flex-col gap-4 p-6"
     data-slot="card-content"
   >
     <div
