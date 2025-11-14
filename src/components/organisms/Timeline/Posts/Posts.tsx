@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLiveQuery } from 'dexie-react-hooks';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -9,7 +10,7 @@ import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Hooks from '@/hooks';
-import { TimelinePostReplies } from '../PostReplies/PostReplies';
+import * as Libs from '@/libs';
 
 /**
  * PostWithReplies
@@ -23,10 +24,18 @@ interface PostWithRepliesProps {
 }
 
 function PostWithReplies({ postId, onPostClick }: PostWithRepliesProps) {
+  // Check if post has replies by querying post_counts
+  const postCounts = useLiveQuery(() => {
+    // TODO: move to controller function
+    return Core.db.post_counts.get(postId);
+  }, [postId]);
+  const hasReplies = postCounts?.replies && postCounts.replies > 0 ? true : false;
+
   return (
     <Atoms.Container overrideDefaults className="flex flex-col">
       <Organisms.PostMain postId={postId} onClick={() => onPostClick(postId)} isReply={false} />
-      <TimelinePostReplies postId={postId} onPostClick={onPostClick} />
+      {/* Only render replies component if post has replies */}
+      {hasReplies && <Organisms.TimelinePostReplies postId={postId} onPostClick={onPostClick} />}
     </Atoms.Container>
   );
 }
@@ -156,8 +165,12 @@ export function TimelinePosts() {
         checkHasMore(ids.nextPageIds.length);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch posts');
-        // TODO: show alert to the user
-        throw err;
+        Libs.Logger.error('Failed to fetch posts', err);
+        // Don't throw - just log and show error state
+        // If it's pagination, stop trying to load more
+        if (!isInitialLoad) {
+          setHasMore(false);
+        }
       } finally {
         setLoadingState(isInitialLoad, false);
       }

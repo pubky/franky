@@ -44,11 +44,12 @@ export class StreamPostsController {
     streamId,
     streamTail,
     lastPostId,
+    limit = Config.NEXUS_POSTS_PER_PAGE,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
     const { nextPageIds, cacheMissPostIds, timestamp } = await Core.PostStreamApplication.getOrFetchStreamSlice({
       streamId,
-      limit: Config.NEXUS_POSTS_PER_PAGE,
+      limit,
       streamTail,
       lastPostId,
       viewerId,

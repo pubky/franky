@@ -5,6 +5,7 @@ export type TReadPostStreamChunkParams = {
   streamTail: number;
   lastPostId?: string;
   tags?: string[];
+  limit?: number;
 };
 
 export type TReadPostStreamChunkResponse = {

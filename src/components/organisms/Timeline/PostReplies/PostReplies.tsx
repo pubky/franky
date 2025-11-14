@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Libs from '@/libs';
 
 /**
  * TimelinePostReplies
@@ -17,19 +18,57 @@ interface TimelinePostRepliesProps {
 }
 
 export function TimelinePostReplies({ postId, onPostClick }: TimelinePostRepliesProps) {
-  // Get post details to retrieve the URI
-  const postDetails = useLiveQuery(() => Core.db.post_details.get(postId), [postId]);
+  // Watch for changes in post_counts to trigger refetch when replies count changes
+  const postCounts = useLiveQuery(() => {
+    // TODO: move to controller function
+    return Core.db.post_counts.get(postId);
+  }, [postId]);
 
-  // Fetch reply IDs for this post
+  // Get post details to retrieve the URI
+  const postDetails = useLiveQuery(() => {
+    // TODO: move to controller function
+    return Core.db.post_details.get(postId);
+  }, [postId]);
+
+  // Fetch the latest 3 reply IDs directly from IndexedDB
+  // This will re-run whenever postCounts.replies changes
   const replyIds = useLiveQuery(
     async () => {
-      if (!postDetails?.uri) return [];
+      // Only fetch if there are replies and we have the post URI
+      if (!postCounts?.replies || postCounts.replies === 0 || !postDetails?.uri) {
+        return [];
+      }
 
-      const replyRelationships = await Core.db.post_relationships.where('replied').equals(postDetails.uri).toArray();
+      try {
+        // TODO: move to controller function
+        // Query post_relationships to find replies to this post
+        const replyRelationships = await Core.db.post_relationships.where('replied').equals(postDetails.uri).toArray();
 
-      return replyRelationships.map((rel) => rel.id);
+        // TODO: move to controller function
+        // Get post_details for each reply to sort by timestamp
+        const replyDetailsPromises = replyRelationships.map(async (rel) => {
+          // TODO: move to controller function
+          return Core.db.post_details
+            .get(rel.id)
+            .then((details) => ({ id: rel.id, indexed_at: details?.indexed_at || 0 }));
+        });
+
+        const repliesWithTimestamps = await Promise.all(replyDetailsPromises);
+
+        // Sort by indexed_at descending (most recent first) and take first 3
+        const latest3Replies = repliesWithTimestamps
+          .sort((a, b) => b.indexed_at - a.indexed_at)
+          .slice(0, 3)
+          .map((reply) => reply.id);
+
+        return latest3Replies;
+      } catch (error) {
+        // Silently handle errors - don't show replies if there's an issue
+        Libs.Logger.error('Failed to fetch post replies:', error);
+        return [];
+      }
     },
-    [postDetails?.uri],
+    [postId, postCounts?.replies, postDetails?.uri], // Re-fetch when any of these change
     [],
   );
 
