@@ -66,11 +66,9 @@ export function ProfilePageHeader({
               </a>
             </Atoms.Button>
           )}
-          <Atoms.Button variant="secondary" size="sm" onClick={onSignOut} asChild>
-            <a role="button">
-              <Icons.LogOut className="size-4" />
-              Sign out
-            </a>
+          <Atoms.Button variant="secondary" size="sm" onClick={onSignOut}>
+            <Icons.LogOut className="size-4" />
+            Sign out
           </Atoms.Button>
           <Molecules.StatusPicker emoji={emoji} status={status} onClick={onStatusClick} />
         </div>
