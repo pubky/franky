@@ -34,12 +34,14 @@ export const Playground: Story = {
   render: (args) => <FilterTimeframe {...args} />,
 };
 
-export const Interactive: Story = {
-  render: () => {
-    const [selected, setSelected] = useState<TimeframeTab>('today');
+const InteractiveComponent = () => {
+  const [selected, setSelected] = useState<TimeframeTab>('today');
 
-    return <FilterTimeframe selectedTab={selected} onTabChange={setSelected} />;
-  },
+  return <FilterTimeframe selectedTab={selected} onTabChange={setSelected} />;
+};
+
+export const Interactive: Story = {
+  render: () => <InteractiveComponent />,
   parameters: {
     docs: {
       description: {

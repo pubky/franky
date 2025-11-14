@@ -64,13 +64,13 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with different pos
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <path
+                d="M12 6v6l4 2"
+              />
               <circle
                 cx="12"
                 cy="12"
                 r="10"
-              />
-              <polyline
-                points="12 6 12 12 16 14"
               />
             </svg>
             <div
@@ -150,13 +150,13 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with empty name 1`
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <path
+                d="M12 6v6l4 2"
+              />
               <circle
                 cx="12"
                 cy="12"
                 r="10"
-              />
-              <polyline
-                points="12 6 12 12 16 14"
               />
             </svg>
             <div
@@ -237,13 +237,13 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with no user image
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <path
+                d="M12 6v6l4 2"
+              />
               <circle
                 cx="12"
                 cy="12"
                 r="10"
-              />
-              <polyline
-                points="12 6 12 12 16 14"
               />
             </svg>
             <div
@@ -325,13 +325,13 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with old post 1`] 
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <path
+                d="M12 6v6l4 2"
+              />
               <circle
                 cx="12"
                 cy="12"
                 r="10"
-              />
-              <polyline
-                points="12 6 12 12 16 14"
               />
             </svg>
             <div
@@ -413,13 +413,13 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with recent post 1
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <path
+                d="M12 6v6l4 2"
+              />
               <circle
                 cx="12"
                 cy="12"
                 r="10"
-              />
-              <polyline
-                points="12 6 12 12 16 14"
               />
             </svg>
             <div
@@ -501,13 +501,13 @@ exports[`SinglePostUserDetails - Snapshots > matches snapshot with user and post
               width="24"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <path
+                d="M12 6v6l4 2"
+              />
               <circle
                 cx="12"
                 cy="12"
                 r="10"
-              />
-              <polyline
-                points="12 6 12 12 16 14"
               />
             </svg>
             <div
