@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePageLayoutWrapper > matches snapshot 1`] = `
+<div
+  class="mx-auto w-full max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl px-6 pb-12 xl:px-0 pt-0"
+>
+  <div>
+    Test Content
+  </div>
+</div>
+`;

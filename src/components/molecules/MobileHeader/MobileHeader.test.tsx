@@ -26,10 +26,11 @@ describe('MobileHeader', () => {
     expect(document.querySelector('.lucide-activity')).toBeInTheDocument();
   });
 
-  it('renders with custom className', () => {
-    render(<MobileHeader className="custom-header" />);
+  it('renders with outer container classes', () => {
+    const { container } = render(<MobileHeader />);
+    const outerContainer = container.firstChild as HTMLElement;
 
-    expect(screen.getByTestId('logo')).toBeInTheDocument();
+    expect(outerContainer).toHaveClass('sticky', 'top-0', 'z-30', 'bg-background', 'shadow-xs-dark', 'lg:hidden');
   });
 
   it('renders with custom onLeftIconClick', () => {
@@ -52,21 +53,25 @@ describe('MobileHeader', () => {
     render(<MobileHeader />);
 
     const innerContainer = screen.getByTestId('logo').closest('div')?.parentElement;
-    expect(innerContainer).toHaveClass('flex', 'items-center', 'justify-between', 'px-4', 'py-4');
+    expect(innerContainer).toHaveClass('flex', 'items-center', 'justify-between', 'py-3');
   });
 
   it('applies correct classes to left button', () => {
     render(<MobileHeader />);
 
     const leftButton = document.querySelector('.lucide-sliders-horizontal')?.closest('button');
-    expect(leftButton).toHaveClass('p-2', 'hover:bg-secondary/10', 'rounded-full', 'transition-colors');
+    expect(leftButton).toHaveClass('rounded-full', 'border-none', 'size-9');
+    expect(leftButton).toHaveAttribute('data-variant', 'ghost');
+    expect(leftButton).toHaveAttribute('data-size', 'icon');
   });
 
   it('applies correct classes to right button', () => {
     render(<MobileHeader />);
 
     const rightButton = document.querySelector('.lucide-activity')?.closest('button');
-    expect(rightButton).toHaveClass('p-2', 'hover:bg-secondary/10', 'rounded-full', 'transition-colors');
+    expect(rightButton).toHaveClass('rounded-full', 'border-none', 'size-9');
+    expect(rightButton).toHaveAttribute('data-variant', 'ghost');
+    expect(rightButton).toHaveAttribute('data-size', 'icon');
   });
 
   it('renders logo component', () => {
@@ -102,8 +107,9 @@ describe('MobileHeader', () => {
     const leftButton = document.querySelector('.lucide-sliders-horizontal')?.closest('button');
     const rightButton = document.querySelector('.lucide-activity')?.closest('button');
 
-    expect(leftButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
-    expect(rightButton).toHaveClass('hover:bg-secondary/10', 'transition-colors');
+    // Ghost variant has hover:bg-accent/50
+    expect(leftButton).toHaveClass('hover:bg-accent/50', 'transition-all');
+    expect(rightButton).toHaveClass('hover:bg-accent/50', 'transition-all');
   });
 });
 
@@ -113,9 +119,10 @@ describe('MobileHeader - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<MobileHeader className="custom-header" />);
-    expect(container.firstChild).toMatchSnapshot();
+  it('matches snapshot with padding container', () => {
+    const { container } = render(<MobileHeader />);
+    const paddingContainer = container.querySelector('.px-6');
+    expect(paddingContainer).toMatchSnapshot();
   });
 
   it('matches snapshot with custom onLeftIconClick', () => {

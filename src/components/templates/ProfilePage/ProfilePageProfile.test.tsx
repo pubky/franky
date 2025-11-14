@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ProfilePage } from './ProfilePage';
+import { ProfilePageProfile } from './ProfilePageProfile';
 import * as App from '@/app';
 
 // Mock next/navigation
@@ -50,14 +50,14 @@ vi.mock('@/organisms', () => ({
   ),
 }));
 
-describe('ProfilePage', () => {
+describe('ProfilePageProfile', () => {
   it('renders without errors', () => {
-    render(<ProfilePage />);
+    render(<ProfilePageProfile />);
     expect(screen.getByTestId('profile-page-header')).toBeInTheDocument();
   });
 
   it('displays ProfilePageHeader with correct props', () => {
-    render(<ProfilePage />);
+    render(<ProfilePageProfile />);
 
     expect(screen.getByText('Satoshi Nakamoto')).toBeInTheDocument();
     expect(
@@ -68,14 +68,10 @@ describe('ProfilePage', () => {
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
   });
 
-  it('renders all action buttons', () => {
-    render(<ProfilePage />);
-
-    expect(screen.getByText('Edit')).toBeInTheDocument();
-    expect(screen.getByText('Copy Key')).toBeInTheDocument();
-    expect(screen.getByText('Link')).toBeInTheDocument();
-    expect(screen.getByText('Sign out')).toBeInTheDocument();
-    expect(screen.getByText('Status')).toBeInTheDocument();
+  it('is hidden on large screens', () => {
+    const { container } = render(<ProfilePageProfile />);
+    const wrapper = container.firstChild as HTMLElement;
+    expect(wrapper).toHaveClass('lg:hidden');
   });
 
   it('navigates to logout page when sign out is clicked', async () => {
@@ -83,31 +79,15 @@ describe('ProfilePage', () => {
     const mockPush = vi.fn();
     (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
 
-    render(<ProfilePage />);
+    render(<ProfilePageProfile />);
     const signOutButton = screen.getByText('Sign out');
     fireEvent.click(signOutButton);
 
     expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
   });
 
-  it('calls handlers when buttons are clicked', () => {
-    render(<ProfilePage />);
-
-    const editButton = screen.getByText('Edit');
-    fireEvent.click(editButton);
-
-    const copyKeyButton = screen.getByText('Copy Key');
-    fireEvent.click(copyKeyButton);
-
-    const linkButton = screen.getByText('Link');
-    fireEvent.click(linkButton);
-
-    const statusButton = screen.getByText('Status');
-    fireEvent.click(statusButton);
-  });
-
   it('matches snapshot', () => {
-    const { container } = render(<ProfilePage />);
+    const { container } = render(<ProfilePageProfile />);
     expect(container).toMatchSnapshot();
   });
 });
