@@ -1,24 +1,35 @@
 import * as Core from '@/core';
 
 export function createNexusParams(
-  streamId: Core.PostStreamTypes,
+  streamId: Core.PostStreamId,
   streamTail: number,
   limit: number,
   viewerId?: Core.Pubky,
 ): Core.TPostStreamFetchParams {
   // TODO: TBD how to add tags to the streamsId in indexdb.
   // From now, idea is to add with ',' character. Pubky-app-specs is going to restrict a tag with that character
-  const [sorting, invokeEndpoint, content] = streamId.split(':');
+  const [sorting, invokeEndpoint, content] = breakDownStreamId(streamId);
+
   const params: Core.TStreamBase = {};
   params.viewer_id = viewerId;
   params.sorting = parseSorting(sorting);
-  params.kind = parseContent(content);
-  //   if (!isReplyStream(invokeEndpoint)) {
-  //     params.order = Core.StreamOrder.DESCENDING;
-  //   }
+  if (content) {
+    params.kind = parseContent(content);
+  }
+  const extraParams = handleNotCommonStreamParams(sorting, content);
   params.limit = limit;
   setStreamPagination(params, streamTail);
-  return { params, invokeEndpoint };
+  return { params, invokeEndpoint, extraParams };
+}
+
+function handleNotCommonStreamParams(authorId: string, postId: string | undefined) {
+  const extraParams: Record<string, string> = {};
+  extraParams.author_id = authorId;
+  
+  if (postId) {
+    extraParams.post_id = postId;
+  }
+  return extraParams;
 }
 
 function setStreamPagination(params: Core.TStreamBase, streamTail: number) {
@@ -31,6 +42,22 @@ function setStreamPagination(params: Core.TStreamBase, streamTail: number) {
     }
     // If streamTail is 0, don't set start - this will fetch the most recent posts
   }
+}
+
+// TODO: Still edge cases to cover
+// - Replies stream do not handle now the sorting and kind
+// - Author replies and author streams do not handle now the kind
+function breakDownStreamId(streamId: Core.PostStreamId): [string, string, string | undefined] {
+  const [sorting, invokeEndpoint, kind] = streamId.split(':');
+  if (kind) {
+    if (sorting === Core.StreamSource.REPLIES) {
+      return [invokeEndpoint, sorting, kind];
+    }
+    return [sorting, invokeEndpoint, kind];
+  }
+  // That case covers Core.StreamSource.AUTHOR_REPLIES and Core.StreamSource.AUTHOR
+  // i.e. author_replies:[pubky] or author:[pubky]
+  return [invokeEndpoint, sorting, undefined];
 }
 
 function parseSorting(sorting: string): Core.StreamSorting | undefined {

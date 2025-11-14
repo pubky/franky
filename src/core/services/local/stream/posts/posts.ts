@@ -16,18 +16,43 @@ export class LocalStreamPostsService {
     await Core.PostStreamModel.upsert(streamId, stream);
   }
 
+  static async bulkSave(postStreams: Core.TPostStreamUpsertParams[]): Promise<void> {
+    await Promise.all(postStreams.map(({ streamId, stream }) => this.upsert({ streamId, stream })));
+  }
+
   /**
    * Get a stream of post IDs by stream ID
    */
-  static async findById(streamId: Core.PostStreamTypes): Promise<{ stream: string[] } | null> {
+  static async findById(streamId: Core.PostStreamId): Promise<{ stream: string[] } | null> {
     return await Core.PostStreamModel.findById(streamId);
   }
 
   /**
    * Delete a stream from cache
    */
-  static async deleteById(streamId: Core.PostStreamTypes): Promise<void> {
+  static async deleteById(streamId: Core.PostStreamId): Promise<void> {
     await Core.PostStreamModel.deleteById(streamId);
+  }
+
+  /**
+   * Adds a reply post to the post replies map if the post is a reply
+   * 
+   * @param repliedUri - The URI of the parent post being replied to (optional)
+   * @param replyPostId - The composite post ID of the reply post
+   * @param postReplies - The map of reply stream IDs to arrays of reply post IDs
+   */
+  private static addReplyToStream(
+    repliedUri: string | null | undefined,
+    replyPostId: string,
+    postReplies: Record<Core.ReplyStreamCompositeId, string[]>,
+  ): void {
+    if (!repliedUri) return;
+
+    const parentCompositePostId = Core.buildPostIdFromPubkyUri(repliedUri);
+    if (!parentCompositePostId) return;
+
+    const replyStreamId = Core.buildPostReplyStreamId(parentCompositePostId);
+    postReplies[replyStreamId] = [...(postReplies[replyStreamId] || []), replyPostId];
   }
 
   static async persistPosts(posts: Core.NexusPost[]): Promise<string[]> {
@@ -37,6 +62,7 @@ export class LocalStreamPostsService {
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
 
     const compositePostIds: string[] = [];
+    const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
 
     for (const post of posts) {
       // Build composite ID to ensure uniqueness (authorId:postId)
@@ -58,6 +84,9 @@ export class LocalStreamPostsService {
       // eslint-disable-next-line
       const { author, ...detailsWithoutAuthor } = post.details;
       postDetails.push({ ...detailsWithoutAuthor, id: postId });
+
+      // Add reply to the post replies map if this post is a reply
+      this.addReplyToStream(post.relationships.replied, postId, postReplies);
     }
 
     await Promise.all([
@@ -66,6 +95,17 @@ export class LocalStreamPostsService {
       Core.PostTagsModel.bulkSave(postTags),
       Core.PostRelationshipsModel.bulkSave(postRelationships),
     ]);
+    
+    if (Object.keys(postReplies).length > 0) {
+      await Promise.all(
+        Object.entries(postReplies).map(async ([parentCompositePostId, postIds]) => {
+          await this.upsert({
+            streamId: parentCompositePostId as Core.PostStreamId,
+            stream: postIds,
+          });
+        }),
+      );
+    }
     return compositePostIds;
   }
 

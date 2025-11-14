@@ -1,7 +1,7 @@
 import * as Core from '@/core';
 
 export type TReadPostStreamChunkParams = {
-  streamId: Core.PostStreamTypes;
+  streamId: Core.PostStreamId;
   streamTail: number;
   lastPostId?: string;
   tags?: string[];
