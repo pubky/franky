@@ -33,7 +33,7 @@ vi.mock('@/core', async (importOriginal) => {
       showWelcomeDialog: false,
       setShowWelcomeDialog: vi.fn(),
     })),
-    useFiltersStore: vi.fn(() => ({
+    useHomeStore: vi.fn(() => ({
       layout: 'columns',
       setLayout: vi.fn(),
       reach: 'all',

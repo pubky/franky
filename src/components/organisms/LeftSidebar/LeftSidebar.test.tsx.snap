@@ -2,7 +2,7 @@
 
 exports[`LeftSidebar - Snapshots > matches snapshot with all filters in different states 1`] = `
 <div
-  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start"
+  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex"
   data-testid="left-sidebar"
 >
   <div
@@ -20,7 +20,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with all filters in differen
     </button>
   </div>
   <div
-    class="self-start sticky top-[100px] flex flex-col gap-6"
+    class="sticky top-[100px] flex flex-col gap-6 self-start"
   >
     <div
       data-testid="filter-root"
@@ -42,7 +42,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with all filters in differen
 
 exports[`LeftSidebar - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start custom-sidebar"
+  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex custom-sidebar"
   data-testid="left-sidebar"
 >
   <div
@@ -60,7 +60,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with custom className 1`] = 
     </button>
   </div>
   <div
-    class="self-start sticky top-[100px] flex flex-col gap-6"
+    class="sticky top-[100px] flex flex-col gap-6 self-start"
   >
     <div
       data-testid="filter-root"
@@ -82,7 +82,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with custom className 1`] = 
 
 exports[`LeftSidebar - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start"
+  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex"
   data-testid="left-sidebar"
 >
   <div
@@ -100,7 +100,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with default props 1`] = `
     </button>
   </div>
   <div
-    class="self-start sticky top-[100px] flex flex-col gap-6"
+    class="sticky top-[100px] flex flex-col gap-6 self-start"
   >
     <div
       data-testid="filter-root"
@@ -122,7 +122,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`LeftSidebar - Snapshots > matches snapshot with different filter states 1`] = `
 <div
-  class="w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start"
+  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex"
   data-testid="left-sidebar"
 >
   <div
@@ -140,7 +140,7 @@ exports[`LeftSidebar - Snapshots > matches snapshot with different filter states
     </button>
   </div>
   <div
-    class="self-start sticky top-[100px] flex flex-col gap-6"
+    class="sticky top-[100px] flex flex-col gap-6 self-start"
   >
     <div
       data-testid="filter-root"

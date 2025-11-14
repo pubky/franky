@@ -9,13 +9,13 @@ import * as Core from '@/core';
  * No props needed - uses global filters store.
  */
 export function HomeLeftSidebar() {
-  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useHomeStore();
 
   return (
     <>
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
       <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />
-      <div className="self-start sticky top-[100px] flex flex-col gap-6 w-full">
+      <div className="sticky top-[100px] flex w-full flex-col gap-6 self-start">
         <Molecules.FilterContent selectedTab={content} onTabChange={setContent} />
         <Molecules.FilterLayout selectedTab={layout} onTabChange={setLayout} />
       </div>
@@ -50,7 +50,7 @@ export function HomeRightSidebar() {
  * No props needed - uses global filters store.
  */
 export function HomeLeftDrawer() {
-  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+  const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useHomeStore();
 
   return (
     <div className="flex flex-col gap-6">
@@ -90,7 +90,7 @@ export function HomeRightDrawer() {
  * Note: Mobile version doesn't show layout filter.
  */
 export function HomeLeftDrawerMobile() {
-  const { reach, setReach, sort, setSort, content, setContent } = Core.useFiltersStore();
+  const { reach, setReach, sort, setSort, content, setContent } = Core.useHomeStore();
 
   return (
     <div className="flex flex-col gap-6">

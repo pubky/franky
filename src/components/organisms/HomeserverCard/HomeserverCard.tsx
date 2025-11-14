@@ -44,7 +44,7 @@ export function HomeserverCard() {
       action: (
         <Atoms.Button
           variant="outline"
-          className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/16"
+          className="h-10 rounded-full border-brand bg-transparent px-4 text-white hover:bg-brand/16"
           onClick={() => toastInstance.dismiss()}
         >
           OK
@@ -90,17 +90,17 @@ export function HomeserverCard() {
         }}
       >
         <Atoms.Container className="gap-1">
-          <Atoms.Heading level={3} size="lg" className="gap-1 flex flex-row items-center">
+          <Atoms.Heading level={3} size="lg" className="flex flex-row items-center gap-1">
             Invite code for Pubky homeserver
             <Molecules.PopoverInviteHomeserver />
           </Atoms.Heading>
-          <Atoms.Typography size="sm" className="text-secondary-foreground opacity-80 font-medium text-base">
+          <Atoms.Typography size="sm" className="text-base font-medium text-secondary-foreground opacity-80">
             You get 1GB of storage, used for your posts, photos, videos, and your profile.
           </Atoms.Typography>
         </Atoms.Container>
 
-        <Atoms.Container className="gap-3 w-full flex-col mt-3">
-          <Atoms.Container className="flex-col items-start gap-3 justify-start w-full">
+        <Atoms.Container className="mt-3 w-full flex-col gap-3">
+          <Atoms.Container className="w-full flex-col items-start justify-start gap-3">
             <Molecules.InputField
               id="invite-code-input"
               value={inviteCode}
@@ -114,12 +114,12 @@ export function HomeserverCard() {
               className="w-full max-w-[576px]"
             />
           </Atoms.Container>
-          <Atoms.Container className="flex-col md:flex-row gap-3 items-start md:items-center mt-3">
+          <Atoms.Container className="mt-3 flex-col items-start gap-3 md:flex-row md:items-center">
             <Atoms.Button variant={'secondary'} className="rounded-full" onClick={() => {}} disabled={true}>
               <Libs.Server className="mr-2 h-4 w-4" />
               Custom homeserver
             </Atoms.Button>
-            <Atoms.Typography className="text-base-secondary-foreground text-base opacity-80 font-normal">
+            <Atoms.Typography className="text-base-secondary-foreground text-base font-normal opacity-80">
               Using a different homeserver will be possible soon.
             </Atoms.Typography>
           </Atoms.Container>

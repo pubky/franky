@@ -162,8 +162,8 @@ For components that accept complex children:
 
 ```typescript
 createSnapshotChildren(Card, [
-  { 
-    name: 'complete-card', 
+  {
+    name: 'complete-card',
     children: (
       <>
         <CardHeader>

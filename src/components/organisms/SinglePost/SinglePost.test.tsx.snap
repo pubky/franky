@@ -5,7 +5,7 @@ exports[`SinglePost - Snapshots > matches snapshot with all props provided 1`] =
   class="relative"
 >
   <div
-    class="absolute -left-12 top-0"
+    class="absolute top-0 -left-12"
   >
     <div
       data-height="100"
@@ -15,15 +15,15 @@ exports[`SinglePost - Snapshots > matches snapshot with all props provided 1`] =
     </div>
   </div>
   <div
-    class="p-6 rounded-lg cursor-pointer"
+    class="rounded-lg p-6 cursor-pointer"
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>
@@ -86,15 +86,15 @@ exports[`SinglePost - Snapshots > matches snapshot with clickable false explicit
   class="relative"
 >
   <div
-    class="p-6 rounded-lg "
+    class="rounded-lg p-6 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>
@@ -157,15 +157,15 @@ exports[`SinglePost - Snapshots > matches snapshot with clickable true 1`] = `
   class="relative"
 >
   <div
-    class="p-6 rounded-lg cursor-pointer"
+    class="rounded-lg p-6 cursor-pointer"
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>
@@ -228,15 +228,15 @@ exports[`SinglePost - Snapshots > matches snapshot with default props 1`] = `
   class="relative"
 >
   <div
-    class="p-6 rounded-lg "
+    class="rounded-lg p-6 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>
@@ -299,15 +299,15 @@ exports[`SinglePost - Snapshots > matches snapshot with different postId 1`] = `
   class="relative"
 >
   <div
-    class="p-6 rounded-lg "
+    class="rounded-lg p-6 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>
@@ -370,15 +370,15 @@ exports[`SinglePost - Snapshots > matches snapshot with isReply false explicitly
   class="relative"
 >
   <div
-    class="p-6 rounded-lg "
+    class="rounded-lg p-6 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>
@@ -441,7 +441,7 @@ exports[`SinglePost - Snapshots > matches snapshot with isReply true 1`] = `
   class="relative"
 >
   <div
-    class="absolute -left-12 top-0"
+    class="absolute top-0 -left-12"
   >
     <div
       data-height="100"
@@ -451,15 +451,15 @@ exports[`SinglePost - Snapshots > matches snapshot with isReply true 1`] = `
     </div>
   </div>
   <div
-    class="p-6 rounded-lg "
+    class="rounded-lg p-6 "
     data-testid="card"
   >
     <div
-      class="grid grid-cols-1 lg:grid-cols-3 gap-4"
+      class="grid grid-cols-1 gap-4 lg:grid-cols-3"
       data-testid="container"
     >
       <div
-        class="flex flex-col lg:col-span-2 gap-4"
+        class="flex flex-col gap-4 lg:col-span-2"
         data-testid="container"
       >
         <div>

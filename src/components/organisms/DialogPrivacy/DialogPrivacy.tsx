@@ -11,7 +11,7 @@ export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
   const baseCSS = 'text-muted-foreground text-base font-normal';
 
   const defaultTrigger = (
-    <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
+    <Atoms.Typography as="span" size="sm" className="cursor-pointer font-medium text-brand">
       Privacy Policy
     </Atoms.Typography>
   );
@@ -23,7 +23,7 @@ export function DialogPrivacy({ trigger }: DialogPrivacyProps) {
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Privacy Policy</Atoms.DialogTitle>
         </Atoms.DialogHeader>
-        <Atoms.Container className="h-[320px] pr-4 overflow-y-auto">
+        <Atoms.Container className="h-[320px] overflow-y-auto pr-4">
           <Atoms.Container className="flex-col gap-4">
             {/** Section 1 */}
             <Atoms.Typography className={baseCSS}>Effective Date: June 19, 2025</Atoms.Typography>

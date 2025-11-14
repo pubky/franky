@@ -86,7 +86,7 @@ exports[`DialogAddLink - Snapshots > matches snapshot for default DialogAddLink 
     </button>
   </div>
   <div
-    class="p-8 rounded-xl border bg-popover max-w-xl sm:p-6 sm:rounded-lg"
+    class="max-w-xl rounded-xl border bg-popover p-8 sm:rounded-lg sm:p-6"
     data-testid="dialog-content"
   >
     <div
@@ -191,7 +191,7 @@ exports[`DialogAddLink - Snapshots > matches snapshot for default DialogAddLink 
         data-testid="dialog-close"
       >
         <button
-          class="rounded-full border border-border bg-background sm:size-default flex-1"
+          class="sm:size-default flex-1 rounded-full border border-border bg-background"
           data-size="lg"
           data-testid="button-outline"
         >
@@ -203,7 +203,7 @@ exports[`DialogAddLink - Snapshots > matches snapshot for default DialogAddLink 
         data-testid="dialog-close"
       >
         <button
-          class="rounded-full text-brand border-brand sm:size-default flex-1"
+          class="sm:size-default flex-1 rounded-full border-brand text-brand"
           data-size="lg"
           data-testid="button-default"
           disabled=""

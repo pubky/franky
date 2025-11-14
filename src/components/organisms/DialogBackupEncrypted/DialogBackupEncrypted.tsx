@@ -45,7 +45,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         <Atoms.DialogDescription>
           Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud
           provider.{' '}
-          <span className="text-foreground font-bold">
+          <span className="font-bold text-foreground">
             <span className="hidden sm:inline">Never share this file with anyone.</span>
             <span className="sm:hidden">Never share this file and password with anyone.</span>
           </span>
@@ -54,7 +54,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
 
       <Atoms.Container className="gap-6">
         <Atoms.Container>
-          <Atoms.Label htmlFor="password" className="text-xs font-medium tracking-widest text-muted-foreground pb-4">
+          <Atoms.Label htmlFor="password" className="pb-4 text-xs font-medium tracking-widest text-muted-foreground">
             PASSWORD
           </Atoms.Label>
           <Atoms.Container>
@@ -65,7 +65,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4"
+                className="bg-opacity-90 h-14 rounded-md border border-dashed px-5 py-4 shadow-sm"
                 placeholder="Enter a strong password"
                 autoComplete="new-password"
                 aria-describedby="password-help"
@@ -74,7 +74,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
             <Atoms.Typography
               id="password-help"
               size="sm"
-              className="text-muted-foreground text-xs font-medium leading-none"
+              className="text-xs leading-none font-medium text-muted-foreground"
             >
               We recommend to use 8 characters or more with uppercase, lowercase, numbers, and symbols.
             </Atoms.Typography>
@@ -83,7 +83,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
 
         <Atoms.Container className="items-start">
           {password && (
-            <Atoms.Container className="flex-row items-center gap-3 justify-start">
+            <Atoms.Container className="flex-row items-center justify-start gap-3">
               {[1, 2, 3, 4, 5].map((index) => (
                 <div
                   key={index}
@@ -104,7 +104,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
         <Atoms.Container>
           <Atoms.Label
             htmlFor="confirmPassword"
-            className="text-xs font-medium tracking-widest text-muted-foreground pb-4"
+            className="pb-4 text-xs font-medium tracking-widest text-muted-foreground"
           >
             REPEAT PASSWORD
           </Atoms.Label>
@@ -115,7 +115,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className={`h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4 ${
+              className={`bg-opacity-90 h-14 rounded-md border border-dashed px-5 py-4 shadow-sm ${
                 confirmPassword && !passwordsMatch ? 'border-destructive' : ''
               }`}
               placeholder="Repeat your password"
@@ -127,7 +127,7 @@ function RecoveryStep1({ setStep }: { setStep: (step: number) => void }) {
               <Atoms.Typography
                 id="confirm-password-error"
                 size="sm"
-                className="text-destructive text-xs font-medium leading-3 pt-3"
+                className="pt-3 text-xs leading-3 font-medium text-destructive"
               >
                 Passwords do not match
               </Atoms.Typography>
@@ -175,8 +175,8 @@ function RecoveryStep2({ handleClose }: { handleClose: () => void }) {
       </Atoms.DialogHeader>
 
       <Atoms.Container>
-        <Atoms.Container className="w-full bg-card rounded-md p-12 flex items-center justify-center">
-          <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="w-48 h-48" />
+        <Atoms.Container className="flex w-full items-center justify-center rounded-md bg-card p-12">
+          <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="h-48 w-48" />
         </Atoms.Container>
       </Atoms.Container>
 

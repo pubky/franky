@@ -23,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 export const HeaderContainerStory: Story = {
   render: () => (
     <HeaderContainer>
-      <div className="flex items-center justify-between w-full">
+      <div className="flex w-full items-center justify-between">
         <HeaderTitle currentTitle="Welcome to Pubky" />
         <HeaderHome />
       </div>
@@ -70,7 +70,7 @@ export const HeaderNavigationButtonsWithHighCounter: Story = {
 export const CompleteHeader: Story = {
   render: () => (
     <HeaderContainer>
-      <div className="flex items-center justify-between w-full">
+      <div className="flex w-full items-center justify-between">
         <HeaderTitle currentTitle="Home" />
         <HeaderSignIn />
       </div>

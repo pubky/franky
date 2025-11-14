@@ -1,5 +1,5 @@
 export * from './atoms';
-export * from './molecules';
+
 // Note: Avoid star-export name collisions between molecules and organisms
 export {
   AlertBackup,

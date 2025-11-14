@@ -22,7 +22,7 @@ export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps)
   const buttonContent = (
     <>
       <Icon className="h-4 w-4" />
-      <span className="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]">{children}</span>
+      <span className="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]">{children}</span>
     </>
   );
 
@@ -32,7 +32,7 @@ export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps)
     return (
       <div
         className={Libs.cn(
-          'w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors',
+          'flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80',
           className,
         )}
         {...divProps}
@@ -48,7 +48,7 @@ export function SidebarButton(props: SidebarButtonProps | SidebarButtonDivProps)
   return (
     <button
       className={Libs.cn(
-        'w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors',
+        'flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80',
         className,
       )}
       {...buttonProps}

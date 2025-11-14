@@ -17,7 +17,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
   return (
     <header
       className={Libs.cn(
-        'sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] backdrop-blur-sm py-6',
+        'sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] py-6 backdrop-blur-sm',
         className,
       )}
     >
@@ -25,7 +25,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
         size="container"
         className={Libs.cn(
           'flex flex-row flex-wrap items-center justify-between gap-4 sm:gap-6',
-          'px-4 sm:px-6 py-4 sm:py-6',
+          'px-4 py-4 sm:px-6 sm:py-6',
         )}
       >
         <Atoms.Container
@@ -41,8 +41,8 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
 
 export const HeaderTitle = ({ currentTitle }: { currentTitle: string }) => {
   return (
-    <Atoms.Container className="flex-1 hidden md:flex">
-      <Atoms.Heading level={2} size="lg" className="text-muted-foreground font-normal">
+    <Atoms.Container className="hidden flex-1 md:flex">
+      <Atoms.Heading level={2} size="lg" className="font-normal text-muted-foreground">
         {currentTitle}
       </Atoms.Heading>
     </Atoms.Container>
@@ -57,16 +57,16 @@ export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElem
   return (
     <Atoms.Container
       data-testid="header-social-links"
-      className={Libs.cn('hidden md:flex flex-row justify-end gap-6 mr-6', props.className)}
+      className={Libs.cn('mr-6 hidden flex-row justify-end gap-6 md:flex', props.className)}
     >
       <Atoms.Link href={Config.GITHUB_URL} target="_blank" variant="muted" size="default">
-        <Libs.Github2 className="w-6 h-6" />
+        <Libs.Github2 className="h-6 w-6" />
       </Atoms.Link>
       <Atoms.Link href={Config.TWITTER_GETPUBKY_URL} target="_blank" variant="muted" size="default">
-        <Libs.XTwitter className="w-6 h-6" />
+        <Libs.XTwitter className="h-6 w-6" />
       </Atoms.Link>
       <Atoms.Link href={Config.TELEGRAM_URL} target="_blank" variant="muted" size="default">
-        <Libs.Telegram className="w-6 h-6" />
+        <Libs.Telegram className="h-6 w-6" />
       </Atoms.Link>
     </Atoms.Container>
   );
@@ -92,7 +92,7 @@ export function HeaderNavigationButtons({
     <Atoms.Container className="hidden w-auto flex-row items-center justify-start gap-3 lg:flex">
       <Atoms.Link href={App.APP_ROUTES.HOME}>
         <Atoms.Button
-          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
+          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
           variant="secondary"
           size="icon"
         >
@@ -102,7 +102,7 @@ export function HeaderNavigationButtons({
 
       <Atoms.Link href={App.APP_ROUTES.HOT}>
         <Atoms.Button
-          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.HOT) ? '' : 'border bg-transparent')}
+          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.HOT) ? '' : 'border bg-transparent')}
           variant="secondary"
           size="icon"
         >
@@ -112,7 +112,7 @@ export function HeaderNavigationButtons({
 
       <Atoms.Link href={App.APP_ROUTES.BOOKMARKS}>
         <Atoms.Button
-          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.BOOKMARKS) ? '' : 'border bg-transparent')}
+          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.BOOKMARKS) ? '' : 'border bg-transparent')}
           variant="secondary"
           size="icon"
         >
@@ -122,7 +122,7 @@ export function HeaderNavigationButtons({
 
       <Atoms.Link href={App.APP_ROUTES.SETTINGS}>
         <Atoms.Button
-          className={Libs.cn('w-12 h-12', isActive(App.APP_ROUTES.SETTINGS) ? '' : 'border bg-transparent')}
+          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.SETTINGS) ? '' : 'border bg-transparent')}
           variant="secondary"
           size="icon"
         >
@@ -131,12 +131,12 @@ export function HeaderNavigationButtons({
       </Atoms.Link>
 
       <Atoms.Link id="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
-        <Atoms.Avatar className="w-12 h-12 cursor-pointer">
+        <Atoms.Avatar className="h-12 w-12 cursor-pointer">
           <Atoms.AvatarImage src={avatarImage} alt="Profile" />
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (
-          <Atoms.Badge className={`absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5`} variant="secondary">
+          <Atoms.Badge className={`absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand`} variant="secondary">
             <Atoms.Typography className={`text-primary-foreground ${counter > 21 ? 'text-xs' : ''}`} size="sm">
               {counterString}
             </Atoms.Typography>

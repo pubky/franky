@@ -32,7 +32,7 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
                 <div className="text-sm text-muted-foreground opacity-50">{user.pubky}</div>
               </div>
             </div>
-            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 hover:bg-secondary/30 transition-colors">
+            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/20 transition-colors hover:bg-secondary/30">
               <Libs.UserPlus className="h-5 w-5" />
             </button>
           </div>

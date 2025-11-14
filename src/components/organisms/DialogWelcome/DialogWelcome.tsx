@@ -46,7 +46,7 @@ export function DialogWelcome() {
   return (
     <Atoms.Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
       <Atoms.DialogContent className="sm:max-w-xl" hiddenTitle="Welcome to Pubky!">
-        <Atoms.DialogHeader className="text-left pr-6 gap-0 mb-6">
+        <Atoms.DialogHeader className="mb-6 gap-0 pr-6 text-left">
           <Atoms.DialogTitle id="welcome-title">Welcome to Pubky!</Atoms.DialogTitle>
           <Atoms.DialogDescription className="font-medium">
             Your keys, your content, your rules.
@@ -54,22 +54,22 @@ export function DialogWelcome() {
         </Atoms.DialogHeader>
         <Atoms.Container className="max-h-[420px] overflow-y-auto">
           <Atoms.Container className="flex flex-col gap-6">
-            <Atoms.Card className="self-stretch p-6 bg-card rounded-lg flex flex-col sm:flex-row justify-center sm:justify-start items-center sm:items-start gap-6 overflow-hidden">
-              <Atoms.Avatar className="w-24 h-24">
+            <Atoms.Card className="flex flex-col items-center justify-center gap-6 self-stretch overflow-hidden rounded-lg bg-card p-6 sm:flex-row sm:items-start sm:justify-start">
+              <Atoms.Avatar className="h-24 w-24">
                 <Atoms.AvatarImage src={avatarImage} />
                 <Atoms.AvatarFallback className="text-4xl">{initials}</Atoms.AvatarFallback>
               </Atoms.Avatar>
-              <Atoms.Container className="flex flex-col justify-center sm:justify-start items-center sm:items-start">
+              <Atoms.Container className="flex flex-col items-center justify-center sm:items-start sm:justify-start">
                 <Atoms.Typography size="lg">{userDetails.name}</Atoms.Typography>
-                <Atoms.Typography size="sm" className="text-center sm:text-left text-muted-foreground font-medium">
+                <Atoms.Typography size="sm" className="text-center font-medium text-muted-foreground sm:text-left">
                   {userDetails.bio}
                 </Atoms.Typography>
                 <Atoms.Button
                   variant="secondary"
-                  className="rounded-full gap-2 w-fit h-8 mt-2"
+                  className="mt-2 h-8 w-fit gap-2 rounded-full"
                   onClick={handleCopyToClipboard}
                 >
-                  <Libs.Key className="w-4 h-4" />
+                  <Libs.Key className="h-4 w-4" />
                   {displayPublicKey || '...'}
                 </Atoms.Button>
               </Atoms.Container>

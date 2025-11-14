@@ -25,11 +25,11 @@ export function ButtonsNavigation({
   hiddenContinueButton = false,
 }: ButtonsNavigationProps) {
   return (
-    <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between', className)}>
+    <Atoms.Container className={Libs.cn('flex-row justify-between gap-3 lg:gap-6', className)}>
       <Atoms.Button
         id={`${id}-back-btn`}
         size="lg"
-        className="rounded-full flex-1 md:flex-0 w-full"
+        className="w-full flex-1 rounded-full md:flex-0"
         variant={'secondary'}
         onClick={onHandleBackButton}
         disabled={backButtonDisabled}
@@ -41,7 +41,7 @@ export function ButtonsNavigation({
         <Atoms.Button
           id={`${id}-continue-btn`}
           size="lg"
-          className="rounded-full flex-1 md:flex-0 w-full"
+          className="w-full flex-1 rounded-full md:flex-0"
           onClick={onHandleContinueButton}
           disabled={continueButtonDisabled}
         >

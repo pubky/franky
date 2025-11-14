@@ -39,14 +39,14 @@ const complexAnswerItems: FAQAccordionItem[] = [
     answer: (
       <>
         When you signed up, you were prompted to back up your identity using one of the following:
-        <ul className="list-disc ml-6 mt-2">
+        <ul className="mt-2 ml-6 list-disc">
           <li>Recovery file (.pkarr)</li>
           <li>Recovery phrase (mnemonic)</li>
           <li>QR code</li>
         </ul>
         <br />
         To restore with a .pkarr file:
-        <ol className="list-decimal ml-6 mt-2">
+        <ol className="mt-2 ml-6 list-decimal">
           <li>Select the file you saved.</li>
           <li>Enter your password.</li>
           <li>Click &quot;Sign In&quot;.</li>
@@ -60,7 +60,7 @@ const complexAnswerItems: FAQAccordionItem[] = [
     answer: (
       <>
         Pubky offers several unique features:
-        <ul className="list-disc ml-6 mt-2">
+        <ul className="mt-2 ml-6 list-disc">
           <li>You are the algorithm: customize what you see</li>
           <li>No email or phone required</li>
           <li>Full control over your social graph</li>

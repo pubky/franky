@@ -23,7 +23,7 @@ export function ProfilePageHeader({
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 items-center lg:items-start p-6 lg:p-0 bg-card lg:bg-transparent rounded-lg lg:rounded-none">
+    <div className="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0">
       <div className="relative lg:px-4">
         <Atoms.Avatar className="size-16 lg:size-36">
           {avatarUrl ? (
@@ -37,13 +37,13 @@ export function ProfilePageHeader({
         <Atoms.AvatarEmojiBadge emoji={emoji} />
       </div>
 
-      <div className="flex flex-col gap-5 flex-1">
+      <div className="flex flex-1 flex-col gap-5">
         <div className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}>
-          <h1 className="text-2xl lg:text-6xl font-bold text-white">{name}</h1>
-          {bio && <p className="text-sm lg:text-base font-medium text-secondary-foreground">{bio}</p>}
+          <h1 className="text-2xl font-bold text-white lg:text-6xl">{name}</h1>
+          {bio && <p className="text-sm font-medium text-secondary-foreground lg:text-base">{bio}</p>}
         </div>
 
-        <div className="flex flex-wrap gap-3 items-center justify-center lg:justify-start">
+        <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
           <Atoms.Button variant="secondary" size="sm" onClick={onEdit}>
             <Icons.Pencil className="size-4" />
             Edit

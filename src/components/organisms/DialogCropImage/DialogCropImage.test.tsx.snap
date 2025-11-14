@@ -5,7 +5,7 @@ exports[`DialogCropImage > matches snapshot with image loaded 1`] = `
   data-testid="dialog"
 >
   <div
-    class="bg-popover border-border p-8 sm:p-6 max-w-xl gap-6 rounded-2xl"
+    class="max-w-xl gap-6 rounded-2xl border-border bg-popover p-8 sm:p-6"
     data-testid="dialog-content"
   >
     <div
@@ -45,7 +45,7 @@ exports[`DialogCropImage > matches snapshot with image loaded 1`] = `
         class="flex items-center gap-4"
       >
         <span
-          class="text-xs font-medium uppercase tracking-wide text-muted-foreground"
+          class="text-xs font-medium tracking-wide text-muted-foreground uppercase"
           id="zoom-label"
         >
           Zoom

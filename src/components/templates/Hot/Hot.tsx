@@ -14,7 +14,7 @@ import { HotLeftSidebar, HotRightSidebar, HotLeftDrawer, HotRightDrawer } from '
 
 export function Hot() {
   const router = useRouter();
-  const { reach, setReach } = Core.useFiltersStore();
+  const { reach, setReach } = Core.useHomeStore();
   const [timeframe, setTimeframe] = useState<'today' | 'thisMonth' | 'allTime'>('today');
 
   // Reset to column layout on mount (this page doesn't support wide)
@@ -50,7 +50,7 @@ export function Hot() {
       </Atoms.Typography>
 
       {/* Lorem ipsum content */}
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="mt-4 flex flex-col gap-4">
         <Atoms.Card className="p-6">
           <Atoms.Heading level={3} size="lg" className="mb-4">
             What&apos;s Hot

@@ -13,7 +13,7 @@ export function StatusPicker({ emoji, status, onClick }: StatusPickerProps) {
       variant="ghost"
       size="sm"
       onClick={onClick}
-      className="px-0 gap-1 border-none shadow-none hover:bg-transparent"
+      className="gap-1 border-none px-0 shadow-none hover:bg-transparent"
     >
       <span className="text-base leading-none">{emoji}</span>
       <span className="text-base font-bold text-white">{status}</span>

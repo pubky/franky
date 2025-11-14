@@ -41,16 +41,16 @@ export function Language({ className }: LanguageProps) {
       description="Choose your preferred language for the Pubky interface."
       className={className}
     >
-      <div className="w-full p-6 bg-white/5 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)] rounded-2xl flex-col justify-start items-start gap-2 inline-flex">
-        <p className="text-xs font-bold uppercase text-muted-foreground">Display language</p>
+      <div className="inline-flex w-full flex-col items-start justify-start gap-2 rounded-2xl bg-white/5 p-6 shadow-[0px_20px_40px_0px_rgba(5,5,10,0.50)]">
+        <p className="text-xs font-bold text-muted-foreground uppercase">Display language</p>
 
         <div ref={dropdownRef} className="relative w-full">
           {/* Dropdown trigger */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={Libs.cn(
-              'flex items-center justify-between w-full px-4 py-2 text-lg font-light leading-7 tracking-wide cursor-pointer',
-              'hover:opacity-80 transition-opacity',
+              'flex w-full cursor-pointer items-center justify-between px-4 py-2 text-lg leading-7 font-light tracking-wide',
+              'transition-opacity hover:opacity-80',
             )}
           >
             <span className="flex items-center gap-2">
@@ -67,9 +67,9 @@ export function Language({ className }: LanguageProps) {
           {isOpen && (
             <div
               className={Libs.cn(
-                'absolute left-0 right-0 top-full mt-2 z-50',
-                'bg-popover border border-border rounded-lg shadow-lg',
-                'py-2 animate-in fade-in-0 zoom-in-95 duration-200',
+                'absolute top-full right-0 left-0 z-50 mt-2',
+                'rounded-lg border border-border bg-popover shadow-lg',
+                'animate-in py-2 duration-200 fade-in-0 zoom-in-95',
               )}
             >
               {languages.map((lang) => (
@@ -83,8 +83,8 @@ export function Language({ className }: LanguageProps) {
                   }}
                   disabled={lang.disabled}
                   className={Libs.cn(
-                    'flex items-center gap-3 w-full px-4 py-3 text-left transition-colors',
-                    lang.disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-accent cursor-pointer',
+                    'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors',
+                    lang.disabled ? 'cursor-not-allowed opacity-40' : 'cursor-pointer hover:bg-accent',
                     selectedLanguage === lang.code && 'bg-accent/50',
                   )}
                 >
