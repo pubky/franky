@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import * as Config from '@/config';
 
 /**
  * Stream User Controller
