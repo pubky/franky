@@ -18,14 +18,29 @@ vi.mock('@/libs', async (importOriginal) => {
 
 // Minimal atoms used by PostMain
 vi.mock('@/atoms', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" data-class-name={className}>
+  Container: ({
+    children,
+    className,
+    onClick,
+    ...props
+  }: React.PropsWithChildren<{ className?: string; onClick?: () => void; [key: string]: unknown }>) => (
+    <div data-testid="container" data-class-name={className} onClick={onClick} {...props}>
       {children}
     </div>
   ),
+  Card: vi.fn(({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="card" data-class-name={className}>
+      {children}
+    </div>
+  )),
   CardContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="card-content" data-class-name={className}>
       {children}
+    </div>
+  ),
+  PostThreadConnector: ({ height, variant }: { height: number; variant?: string }) => (
+    <div data-testid="thread-connector" data-height={height} data-variant={variant}>
+      ThreadConnector
     </div>
   ),
 }));
@@ -59,6 +74,14 @@ vi.mock('@/core', () => ({
   },
 }));
 
+// Mock useElementHeight hook
+vi.mock('@/hooks', () => ({
+  useElementHeight: vi.fn(() => ({
+    ref: vi.fn(),
+    height: 150,
+  })),
+}));
+
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 
 describe('PostMain', () => {
@@ -79,14 +102,37 @@ describe('PostMain', () => {
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 
-  it('invokes onClick handler when root is clicked', () => {
+  it('invokes onClick handler when clickable area is clicked', () => {
     mockUseLiveQuery.mockReturnValue({ tags: [] });
     const onClick = vi.fn();
 
-    const { container } = render(<PostMain postId="post-abc" onClick={onClick} />);
+    render(<PostMain postId="post-abc" onClick={onClick} />);
 
-    fireEvent.click(container.firstChild as HTMLElement);
-    expect(onClick).toHaveBeenCalledTimes(1);
+    // Click the cursor-pointer div (second child of relative container)
+    const clickableArea = screen.getByTestId('card').parentElement;
+    if (clickableArea) {
+      fireEvent.click(clickableArea);
+      expect(onClick).toHaveBeenCalledTimes(1);
+    }
+  });
+
+  it('does not render thread connector when isReply is false', () => {
+    mockUseLiveQuery.mockReturnValue({ tags: [] });
+
+    render(<PostMain postId="post-123" isReply={false} />);
+
+    expect(screen.queryByTestId('thread-connector')).not.toBeInTheDocument();
+  });
+
+  it('renders thread connector when isReply is true', () => {
+    mockUseLiveQuery.mockReturnValue({ tags: [] });
+
+    render(<PostMain postId="post-123" isReply={true} />);
+
+    const connector = screen.getByTestId('thread-connector');
+    expect(connector).toBeInTheDocument();
+    expect(connector).toHaveAttribute('data-height', '150');
+    expect(connector).toHaveAttribute('data-variant', 'regular');
   });
 });
 
@@ -102,6 +148,20 @@ describe('PostMain - Snapshots', () => {
     mockUseLiveQuery.mockReturnValue({ tags: [] });
 
     const { container } = render(<PostMain postId="post-789" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with isReply true', () => {
+    mockUseLiveQuery.mockReturnValue({ tags: [{ label: 'alpha' }] });
+
+    const { container } = render(<PostMain postId="post-reply-123" isReply={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with isReply false', () => {
+    mockUseLiveQuery.mockReturnValue({ tags: [{ label: 'alpha' }] });
+
+    const { container } = render(<PostMain postId="post-no-reply-456" isReply={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

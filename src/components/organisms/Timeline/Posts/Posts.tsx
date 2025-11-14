@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
 import * as Atoms from '@/atoms';
@@ -9,6 +9,27 @@ import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Hooks from '@/hooks';
+import { TimelinePostReplies } from '../PostReplies/PostReplies';
+
+/**
+ * PostWithReplies
+ *
+ * Renders a single post and conditionally renders its replies below it (flat structure, 1 level only).
+ * Uses useLiveQuery to reactively check if the post has replies.
+ */
+interface PostWithRepliesProps {
+  postId: string;
+  onPostClick: (postId: string) => void;
+}
+
+function PostWithReplies({ postId, onPostClick }: PostWithRepliesProps) {
+  return (
+    <Atoms.Container overrideDefaults className="flex flex-col">
+      <Organisms.PostMain postId={postId} onClick={() => onPostClick(postId)} isReply={false} />
+      <TimelinePostReplies postId={postId} onPostClick={onPostClick} />
+    </Atoms.Container>
+  );
+}
 
 /**
  * Timeline
@@ -18,7 +39,7 @@ import * as Hooks from '@/hooks';
  * Uses cursor-based pagination with post_id and timestamp.
  * Automatically updates when global filters change.
  */
-export function Timeline() {
+export function TimelinePosts() {
   const [postIds, setPostIds] = useState<string[]>([]);
   const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -98,9 +119,11 @@ export function Timeline() {
       }
 
       setPostIds((prevIds) => {
-        const newIds = [...prevIds, ...ids.nextPageIds];
-        postIdsRef.current = newIds; // Update ref
-        return newIds;
+        // Deduplicate by creating a Set and then converting back to array
+        const combined = [...prevIds, ...ids.nextPageIds];
+        const uniqueIds = Array.from(new Set(combined));
+        postIdsRef.current = uniqueIds; // Update ref
+        return uniqueIds;
       });
       // Update timestamp for pagination if provided
       if (ids.timestamp !== undefined) {
@@ -196,8 +219,8 @@ export function Timeline() {
   return (
     <Atoms.Container>
       <Atoms.Container overrideDefaults className="space-y-4">
-        {postIds.map((postId, index) => (
-          <Organisms.PostMain key={`${postId}-${index}`} postId={postId} onClick={() => handlePostClick(postId)} />
+        {postIds.map((postId) => (
+          <PostWithReplies key={`main_${postId}`} postId={postId} onPostClick={handlePostClick} />
         ))}
 
         {/* Loading More Indicator */}
