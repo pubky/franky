@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { FilterSort, type SortTab } from './FilterSort';
-import { SORT } from '@/core/stores/home/home.types';
+import { FilterSort } from './FilterSort';
+import { SORT, type SortType } from '@/core/stores/home/home.types';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -30,7 +30,7 @@ describe('FilterSort', () => {
     const mockOnTabChange = vi.fn();
     render(<FilterSort onTabChange={mockOnTabChange} />);
 
-    const tabs: SortTab[] = ['timeline', 'total_engagement'];
+    const tabs: SortType[] = ['timeline', 'total_engagement'];
 
     tabs.forEach((tab) => {
       const element = screen.getByText(tab === 'timeline' ? 'Recent' : 'Popularity');

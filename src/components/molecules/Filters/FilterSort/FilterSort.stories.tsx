@@ -35,12 +35,14 @@ export const Playground: Story = {
   render: (args) => <FilterSort {...args} />,
 };
 
-export const Interactive: Story = {
-  render: () => {
-    const [selected, setSelected] = useState<Core.SortType>('timeline');
+const InteractiveComponent = () => {
+  const [selected, setSelected] = useState<Core.SortType>('timeline');
 
-    return <FilterSort selectedTab={selected} onTabChange={setSelected} />;
-  },
+  return <FilterSort selectedTab={selected} onTabChange={setSelected} />;
+};
+
+export const Interactive: Story = {
+  render: () => <InteractiveComponent />,
   parameters: {
     docs: {
       description: {

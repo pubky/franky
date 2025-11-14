@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/nextjs-vite';
-import { create } from 'storybook/internal/theming';
+import { create } from 'storybook/theming';
 import '../src/app/globals.css';
 
 // Custom background theme matching app's background color from globals.css

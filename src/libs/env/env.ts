@@ -17,33 +17,30 @@ const envSchema = z.object({
   NEXT_PUBLIC_DB_NAME: z.string().default('franky'),
   NEXT_PUBLIC_DB_VERSION: z
     .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive())
     .default('2')
-    .transform((val) => (typeof val === 'string' ? parseInt(val, 10) : val)),
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_DEBUG_MODE: z
     .string()
-    .transform((val) => val === 'true')
-    .pipe(z.boolean())
     .default('false')
-    .transform((val) => (typeof val === 'string' ? val === 'true' : val)),
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
 
   NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app'),
   NEXT_PUBLIC_CDN_URL: z.string().url().default('https://nexus.staging.pubky.app/static'),
 
   NEXT_PUBLIC_SYNC_TTL: z
     .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive())
     .default('300000') // 5 minutes in milliseconds
-    .transform((val) => (typeof val === 'string' ? parseInt(val, 10) : val)),
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_TESTNET: z
     .string()
+    .default('false')
     .transform((val) => val === 'true')
-    .pipe(z.boolean())
-    .default('false'),
+    .pipe(z.boolean()),
 
   NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app'),
 
@@ -121,7 +118,7 @@ function parseEnv(): z.infer<typeof envSchema> {
     return parsed;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const details = error.errors.reduce(
+      const details = error.issues.reduce(
         (acc, err) => {
           acc[err.path.join('.')] = err.message;
           return acc;

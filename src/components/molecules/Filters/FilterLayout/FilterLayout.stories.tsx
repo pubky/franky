@@ -35,12 +35,14 @@ export const Playground: Story = {
   render: (args) => <FilterLayout {...args} />,
 };
 
-export const Interactive: Story = {
-  render: () => {
-    const [selected, setSelected] = useState<Core.LayoutType>('columns');
+const InteractiveComponent = () => {
+  const [selected, setSelected] = useState<Core.LayoutType>('columns');
 
-    return <FilterLayout selectedTab={selected} onTabChange={setSelected} />;
-  },
+  return <FilterLayout selectedTab={selected} onTabChange={setSelected} />;
+};
+
+export const Interactive: Story = {
+  render: () => <InteractiveComponent />,
   parameters: {
     docs: {
       description: {
