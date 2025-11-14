@@ -75,7 +75,7 @@ describe('Stream API URL Generation', () => {
         limit: 20,
       });
 
-      expect(url).toContain('source=replies');
+      expect(url).toContain('source=post_replies');
       expect(url).toContain(`author_id=${mockAuthorId}`);
       expect(url).toContain(`post_id=${mockPostId}`);
       expect(url).toContain(`viewer_id=${mockViewerId}`);
@@ -297,16 +297,18 @@ describe('Stream API URL Generation', () => {
   });
 
   describe('PostStreamApiEndpoint type', () => {
-    it('should have exactly 9 endpoints', () => {
+    it('should have exactly 11 endpoints (including aliases)', () => {
       const endpointKeys = Object.keys(postStreamApi);
-      expect(endpointKeys).toHaveLength(9);
+      expect(endpointKeys).toHaveLength(11);
       expect(endpointKeys).toContain('following');
       expect(endpointKeys).toContain('followers');
       expect(endpointKeys).toContain('friends');
       expect(endpointKeys).toContain('bookmarks');
-      expect(endpointKeys).toContain('postReplies');
+      expect(endpointKeys).toContain('replies');
+      expect(endpointKeys).toContain('postReplies'); // Alias for replies
       expect(endpointKeys).toContain('author');
-      expect(endpointKeys).toContain('authorReplies');
+      expect(endpointKeys).toContain('author_replies');
+      expect(endpointKeys).toContain('authorReplies'); // Alias for author_replies
       expect(endpointKeys).toContain('postsByIds');
       expect(endpointKeys).toContain('all');
     });
