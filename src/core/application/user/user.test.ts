@@ -165,3 +165,85 @@ describe('UserApplication.notifications', () => {
     expect(persistSpy).toHaveBeenCalledOnce();
   });
 });
+
+describe('UserApplication.tags', () => {
+  const userId = 'pubky_user' as Core.Pubky;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should delegate to NexusUserService with correct params', async () => {
+    const mockTags = [
+      { label: 'developer', taggers: [] as Core.Pubky[], taggers_count: 0, relationship: false },
+    ] as Core.NexusTag[];
+
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'tags').mockResolvedValue(mockTags);
+
+    const result = await UserApplication.tags({
+      user_id: userId,
+      skip_tags: 5,
+      limit_tags: 20,
+    });
+
+    expect(result).toEqual(mockTags);
+    expect(nexusSpy).toHaveBeenCalledWith({
+      user_id: userId,
+      skip_tags: 5,
+      limit_tags: 20,
+    });
+  });
+
+  it('should propagate errors from service layer', async () => {
+    vi.spyOn(Core.NexusUserService, 'tags').mockRejectedValue(new Error('Service unavailable'));
+
+    await expect(
+      UserApplication.tags({
+        user_id: userId,
+        skip_tags: 0,
+        limit_tags: 10,
+      }),
+    ).rejects.toThrow('Service unavailable');
+  });
+});
+
+describe('UserApplication.taggers', () => {
+  const userId = 'pubky_user' as Core.Pubky;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should delegate to NexusUserService with correct params', async () => {
+    const mockTaggers = [] as Core.NexusUser[];
+    const nexusSpy = vi.spyOn(Core.NexusUserService, 'taggers').mockResolvedValue(mockTaggers);
+
+    const result = await UserApplication.taggers({
+      user_id: userId,
+      label: 'rust & wasm',
+      skip: 10,
+      limit: 5,
+    });
+
+    expect(result).toEqual(mockTaggers);
+    expect(nexusSpy).toHaveBeenCalledWith({
+      user_id: userId,
+      label: 'rust & wasm',
+      skip: 10,
+      limit: 5,
+    });
+  });
+
+  it('should propagate errors from service layer', async () => {
+    vi.spyOn(Core.NexusUserService, 'taggers').mockRejectedValue(new Error('Network error'));
+
+    await expect(
+      UserApplication.taggers({
+        user_id: userId,
+        label: 'developer',
+        skip: 0,
+        limit: 10,
+      }),
+    ).rejects.toThrow('Network error');
+  });
+});

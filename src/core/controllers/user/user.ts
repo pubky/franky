@@ -33,4 +33,12 @@ export class UserController {
     const unread = await Core.UserApplication.notifications({ userId, lastRead });
     notificationStore.setUnread(unread);
   }
+
+  static async tags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {
+    return await Core.UserApplication.tags(params);
+  }
+
+  static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+    return await Core.UserApplication.taggers(params);
+  }
 }
