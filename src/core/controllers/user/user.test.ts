@@ -142,4 +142,81 @@ describe('UserController', () => {
       expect(setUnread).not.toHaveBeenCalled();
     });
   });
+
+  describe('tags', () => {
+    it('should delegate to UserApplication with correct params', async () => {
+      const userId = 'pubky-user' as unknown as Core.Pubky;
+      const mockTags = [
+        { label: 'developer', taggers: [] as Core.Pubky[], taggers_count: 0, relationship: false },
+      ] as Core.NexusTag[];
+
+      const tagsSpy = vi.spyOn(Core.UserApplication, 'tags').mockResolvedValue(mockTags);
+
+      const result = await UserController.tags({
+        user_id: userId,
+        skip_tags: 5,
+        limit_tags: 20,
+      });
+
+      expect(result).toEqual(mockTags);
+      expect(tagsSpy).toHaveBeenCalledWith({
+        user_id: userId,
+        skip_tags: 5,
+        limit_tags: 20,
+      });
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const userId = 'pubky-user' as unknown as Core.Pubky;
+
+      vi.spyOn(Core.UserApplication, 'tags').mockRejectedValue(new Error('Application error'));
+
+      await expect(
+        UserController.tags({
+          user_id: userId,
+          skip_tags: 0,
+          limit_tags: 10,
+        }),
+      ).rejects.toThrow('Application error');
+    });
+  });
+
+  describe('taggers', () => {
+    it('should delegate to UserApplication with correct params', async () => {
+      const userId = 'pubky-user' as unknown as Core.Pubky;
+      const mockTaggers = [] as Core.NexusUser[];
+
+      const taggersSpy = vi.spyOn(Core.UserApplication, 'taggers').mockResolvedValue(mockTaggers);
+
+      const result = await UserController.taggers({
+        user_id: userId,
+        label: 'rust & wasm',
+        skip: 10,
+        limit: 5,
+      });
+
+      expect(result).toEqual(mockTaggers);
+      expect(taggersSpy).toHaveBeenCalledWith({
+        user_id: userId,
+        label: 'rust & wasm',
+        skip: 10,
+        limit: 5,
+      });
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const userId = 'pubky-user' as unknown as Core.Pubky;
+
+      vi.spyOn(Core.UserApplication, 'taggers').mockRejectedValue(new Error('Application error'));
+
+      await expect(
+        UserController.taggers({
+          user_id: userId,
+          label: 'developer',
+          skip: 0,
+          limit: 10,
+        }),
+      ).rejects.toThrow('Application error');
+    });
+  });
 });

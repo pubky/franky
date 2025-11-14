@@ -20,4 +20,32 @@ export class NexusUserService {
     Libs.Logger.debug(`Notifications fetched successfully!`);
     return notificationList;
   }
+
+  /**
+   * Retrieves tags for a user from Nexus API
+   *
+   * @param params - Parameters containing user ID and pagination options
+   * @returns Array of tags assigned to the user
+   */
+  static async tags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {
+    const url = Core.userApi.tags(params);
+    let tagList = await Core.queryNexus<Core.NexusTag[]>(url);
+    if (!tagList) tagList = [];
+    Libs.Logger.debug(`User tags fetched successfully! Returned ${tagList.length} tags`);
+    return tagList;
+  }
+
+  /**
+   * Retrieves taggers for a specific tag label on a user from Nexus API
+   *
+   * @param params - Parameters containing user ID, label, and pagination options
+   * @returns Array of users who tagged the user with the specified label
+   */
+  static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
+    const url = Core.userApi.taggers(params);
+    let taggerList = await Core.queryNexus<Core.NexusUser[]>(url);
+    if (!taggerList) taggerList = [];
+    Libs.Logger.debug(`User taggers fetched successfully! Returned ${taggerList.length} taggers`);
+    return taggerList;
+  }
 }
