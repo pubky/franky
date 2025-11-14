@@ -27,7 +27,7 @@ export function Settings({ children }: SettingsProps) {
         rightSidebarContent={<SettingsRightSidebar />}
         leftDrawerContent={<SettingsLeftDrawer />}
         rightDrawerContent={<SettingsRightDrawer />}
-        className="lg:pt-0 pt-[145px]"
+        className="pt-[145px] lg:pt-0"
       >
         {children}
       </Organisms.ContentLayout>
@@ -37,7 +37,7 @@ export function Settings({ children }: SettingsProps) {
 
 export function SettingsLeftSidebar() {
   return (
-    <div className="self-start sticky top-[100px] w-full">
+    <div className="sticky top-[100px] w-full self-start">
       <Molecules.SettingsMenu />
     </div>
   );
@@ -45,7 +45,7 @@ export function SettingsLeftSidebar() {
 
 export function SettingsRightSidebar() {
   return (
-    <div className="self-start sticky top-[100px]">
+    <div className="sticky top-[100px] self-start">
       <Molecules.SettingsInfo />
     </div>
   );

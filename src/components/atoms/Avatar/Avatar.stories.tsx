@@ -107,28 +107,28 @@ export const AllSizes: Story = {
           <AvatarImage src="https://github.com/shadcn.png" alt="Small" />
           <AvatarFallback>SM</AvatarFallback>
         </Avatar>
-        <p className="text-xs mt-1">Small (24px)</p>
+        <p className="mt-1 text-xs">Small (24px)</p>
       </div>
       <div className="text-center">
         <Avatar size="default">
           <AvatarImage src="https://github.com/shadcn.png" alt="Default" />
           <AvatarFallback>DF</AvatarFallback>
         </Avatar>
-        <p className="text-xs mt-1">Default (40px)</p>
+        <p className="mt-1 text-xs">Default (40px)</p>
       </div>
       <div className="text-center">
         <Avatar size="lg">
           <AvatarImage src="https://github.com/shadcn.png" alt="Large" />
           <AvatarFallback>LG</AvatarFallback>
         </Avatar>
-        <p className="text-xs mt-1">Large (48px)</p>
+        <p className="mt-1 text-xs">Large (48px)</p>
       </div>
       <div className="text-center">
         <Avatar size="xl">
           <AvatarImage src="https://github.com/shadcn.png" alt="Extra Large" />
           <AvatarFallback>XL</AvatarFallback>
         </Avatar>
-        <p className="text-xs mt-1">Extra Large (64px)</p>
+        <p className="mt-1 text-xs">Extra Large (64px)</p>
       </div>
     </div>
   ),
@@ -212,16 +212,16 @@ export const CustomStyledFallback: Story = {
   render: () => (
     <div className="flex gap-3">
       <Avatar>
-        <AvatarFallback className="bg-blue-100 text-blue-600 font-semibold">JD</AvatarFallback>
+        <AvatarFallback className="bg-blue-100 font-semibold text-blue-600">JD</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback className="bg-green-100 text-green-600 font-semibold">SM</AvatarFallback>
+        <AvatarFallback className="bg-green-100 font-semibold text-green-600">SM</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback className="bg-purple-100 text-purple-600 font-semibold">AL</AvatarFallback>
+        <AvatarFallback className="bg-purple-100 font-semibold text-purple-600">AL</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback className="bg-red-100 text-red-600 font-semibold">MJ</AvatarFallback>
+        <AvatarFallback className="bg-red-100 font-semibold text-red-600">MJ</AvatarFallback>
       </Avatar>
     </div>
   ),
@@ -266,7 +266,7 @@ export const AvatarStack: Story = {
 // Real-world Examples
 export const UserProfile: Story = {
   render: () => (
-    <div className="flex items-center gap-3 p-4 border rounded-lg">
+    <div className="flex items-center gap-3 rounded-lg border p-4">
       <Avatar size="lg">
         <AvatarImage src="https://github.com/shadcn.png" alt="John Doe" />
         <AvatarFallback>JD</AvatarFallback>
@@ -289,7 +289,7 @@ export const UserProfile: Story = {
 
 export const CommentSection: Story = {
   render: () => (
-    <div className="space-y-3 p-4 border rounded-lg">
+    <div className="space-y-3 rounded-lg border p-4">
       <div className="flex gap-3">
         <Avatar size="sm">
           <AvatarImage src="https://github.com/vercel.png" alt="Sarah" />
@@ -378,7 +378,7 @@ export const AccessibilityExample: Story = {
   render: () => (
     <div className="space-y-4">
       <div>
-        <label htmlFor="user-avatar" className="block text-sm font-medium mb-2">
+        <label htmlFor="user-avatar" className="mb-2 block text-sm font-medium">
           User Avatar
         </label>
         <Avatar id="user-avatar" aria-label="User profile picture">
@@ -387,7 +387,7 @@ export const AccessibilityExample: Story = {
         </Avatar>
       </div>
       <div>
-        <label htmlFor="team-avatar" className="block text-sm font-medium mb-2">
+        <label htmlFor="team-avatar" className="mb-2 block text-sm font-medium">
           Team Member
         </label>
         <Avatar id="team-avatar" aria-label="Team member avatar">

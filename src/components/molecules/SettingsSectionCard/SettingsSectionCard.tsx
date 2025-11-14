@@ -15,18 +15,18 @@ export function SettingsSectionCard({ icon: Icon, title, description, children, 
   return (
     <div
       className={Libs.cn(
-        'p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex',
+        'inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12',
         className,
       )}
     >
-      <div className="w-full flex-col justify-start items-start gap-3 flex">
+      <div className="flex w-full flex-col items-start justify-start gap-3">
         {Icon && title && (
-          <div className="justify-start items-center gap-2 inline-flex">
+          <div className="inline-flex items-center justify-start gap-2">
             <Icon size={24} />
-            <h2 className="text-2xl font-bold leading-8 text-foreground">{title}</h2>
+            <h2 className="text-2xl leading-8 font-bold text-foreground">{title}</h2>
           </div>
         )}
-        {description && <p className="text-base font-medium leading-6 text-secondary-foreground">{description}</p>}
+        {description && <p className="text-base leading-6 font-medium text-secondary-foreground">{description}</p>}
         {children}
       </div>
     </div>

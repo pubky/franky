@@ -90,11 +90,11 @@ export const WithComplexContent: Story = {
         <SideDrawer open={open} onOpenChangeAction={setOpen} position="left">
           <div className="space-y-6">
             <div>
-              <h2 className="text-xl font-semibold mb-4">Advanced Options</h2>
+              <h2 className="mb-4 text-xl font-semibold">Advanced Options</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Category</label>
-                  <select className="w-full p-2 border rounded">
+                  <label className="mb-2 block text-sm font-medium">Category</label>
+                  <select className="w-full rounded border p-2">
                     <option>All Categories</option>
                     <option>Technology</option>
                     <option>Design</option>
@@ -102,14 +102,14 @@ export const WithComplexContent: Story = {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Date Range</label>
+                  <label className="mb-2 block text-sm font-medium">Date Range</label>
                   <div className="space-y-2">
-                    <input type="date" className="w-full p-2 border rounded" />
-                    <input type="date" className="w-full p-2 border rounded" />
+                    <input type="date" className="w-full rounded border p-2" />
+                    <input type="date" className="w-full rounded border p-2" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Tags</label>
+                  <label className="mb-2 block text-sm font-medium">Tags</label>
                   <div className="space-y-2">
                     <label className="flex items-center space-x-2">
                       <input type="checkbox" />

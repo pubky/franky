@@ -27,7 +27,7 @@ export function List({
     <Tag
       data-testid={dataTestId || 'list'}
       {...props}
-      className={cn('ml-6 text-muted-foreground text-base font-normal', variantClasses[variant], className)}
+      className={cn('ml-6 text-base font-normal text-muted-foreground', variantClasses[variant], className)}
     >
       {children}
     </Tag>

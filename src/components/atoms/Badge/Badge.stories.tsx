@@ -195,7 +195,7 @@ export const Interactive: Story = {
           Clickable Badge
         </a>
       </Badge>
-      <Badge className="cursor-pointer hover:opacity-80 transition-opacity">Hover Badge</Badge>
+      <Badge className="cursor-pointer transition-opacity hover:opacity-80">Hover Badge</Badge>
     </div>
   ),
   parameters: {
@@ -229,9 +229,9 @@ export const LongText: Story = {
 export const CustomStyling: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
-      <Badge className="bg-blue-100 text-blue-800 border-blue-200">Custom Blue</Badge>
-      <Badge className="bg-green-100 text-green-800 border-green-200">Custom Green</Badge>
-      <Badge className="bg-purple-100 text-purple-800 border-purple-200">Custom Purple</Badge>
+      <Badge className="border-blue-200 bg-blue-100 text-blue-800">Custom Blue</Badge>
+      <Badge className="border-green-200 bg-green-100 text-green-800">Custom Green</Badge>
+      <Badge className="border-purple-200 bg-purple-100 text-purple-800">Custom Purple</Badge>
     </div>
   ),
   parameters: {
@@ -246,9 +246,9 @@ export const CustomStyling: Story = {
 // Real-world Examples
 export const UserProfile: Story = {
   render: () => (
-    <div className="p-4 border rounded-lg space-y-3">
+    <div className="space-y-3 rounded-lg border p-4">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+        <div className="h-10 w-10 rounded-full bg-gray-200"></div>
         <div>
           <p className="font-semibold">John Doe</p>
           <div className="flex gap-2">
@@ -270,8 +270,8 @@ export const UserProfile: Story = {
 
 export const ProductCard: Story = {
   render: () => (
-    <div className="p-4 border rounded-lg space-y-3">
-      <div className="flex justify-between items-start">
+    <div className="space-y-3 rounded-lg border p-4">
+      <div className="flex items-start justify-between">
         <h3 className="font-semibold">Premium Plan</h3>
         <Badge variant="destructive">Sale</Badge>
       </div>
@@ -296,7 +296,7 @@ export const AccessibilityExample: Story = {
   render: () => (
     <div className="space-y-4">
       <div>
-        <label htmlFor="status-badge" className="block text-sm font-medium mb-2">
+        <label htmlFor="status-badge" className="mb-2 block text-sm font-medium">
           Status
         </label>
         <Badge id="status-badge" aria-label="Current status: Active">
@@ -305,7 +305,7 @@ export const AccessibilityExample: Story = {
         </Badge>
       </div>
       <div>
-        <label htmlFor="priority-badge" className="block text-sm font-medium mb-2">
+        <label htmlFor="priority-badge" className="mb-2 block text-sm font-medium">
           Priority Level
         </label>
         <Badge id="priority-badge" variant="destructive" aria-label="High priority task">

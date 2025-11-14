@@ -31,7 +31,7 @@ export const InstallCard = () => {
             height={48}
           />
         </Atoms.Container>
-        <Atoms.Typography className="text-secondary-foreground opacity-80 font-medium text-base">
+        <Atoms.Typography className="text-base font-medium text-secondary-foreground opacity-80">
           Download and install the mobile app to start creating your account.
         </Atoms.Typography>
       </Atoms.Container>
@@ -82,12 +82,12 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
   };
 
   return (
-    <Atoms.Container className={Libs.cn('flex-col-reverse md:flex-row gap-3 lg:gap-6', props.className)}>
-      <Atoms.Container className="items-center gap-1 flex-row">
+    <Atoms.Container className={Libs.cn('flex-col-reverse gap-3 md:flex-row lg:gap-6', props.className)}>
+      <Atoms.Container className="flex-row items-center gap-1">
         <Atoms.Button
           id="create-keys-in-browser-btn"
           variant="outline"
-          className="rounded-full flex-1 md:flex-none"
+          className="flex-1 rounded-full md:flex-none"
           onClick={handleCreate}
         >
           <Libs.AppWindow className="mr-2 h-4 w-4" />
@@ -105,7 +105,7 @@ export const InstallNavigation = ({ ...props }: React.HTMLAttributes<HTMLDivElem
 
 export function StoreButtons({ className }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <Atoms.Container className={Libs.cn('flex-row gap-4 justify-around sm:justify-start', className)}>
+    <Atoms.Container className={Libs.cn('flex-row justify-around gap-4 sm:justify-start', className)}>
       <Organisms.DialogDownloadPubkyRing store="apple" />
       <Organisms.DialogDownloadPubkyRing store="android" />
     </Atoms.Container>

@@ -7,7 +7,7 @@ exports[`BackupMethodCard - Snapshots > matches snapshot for default BackupMetho
   data-testid="content-card"
 >
   <div
-    class="items-center gap-1 flex-row"
+    class="flex-row items-center gap-1"
     data-testid="container"
   >
     <div
@@ -23,18 +23,18 @@ exports[`BackupMethodCard - Snapshots > matches snapshot for default BackupMetho
     </div>
   </div>
   <div
-    class="max-w-[576px] mx-0"
+    class="mx-0 max-w-[576px]"
     data-testid="container"
   >
     <div
-      class="text-secondary-foreground opacity-80 font-medium text-base"
+      class="text-base font-medium text-secondary-foreground opacity-80"
       data-size="sm"
       data-testid="typography"
     >
       Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can also choose to do this later.
     </div>
     <div
-      class="flex-row mt-6 gap-3 flex-wrap"
+      class="mt-6 flex-row flex-wrap gap-3"
       data-testid="container"
     >
       <div

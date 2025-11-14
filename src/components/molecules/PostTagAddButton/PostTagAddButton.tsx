@@ -16,7 +16,7 @@ export function PostTagAddButton({ onClick, className }: PostTagAddButtonProps) 
       variant="outline"
       size="sm"
       className={Libs.cn(
-        'size-8 !min-w-8 p-0 rounded-md border-dashed bg-transparent hover:bg-transparent transition-opacity hover:opacity-80',
+        'size-8 !min-w-8 rounded-md border-dashed bg-transparent p-0 transition-opacity hover:bg-transparent hover:opacity-80',
         className,
       )}
       aria-label="Add new tag"

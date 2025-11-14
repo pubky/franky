@@ -71,7 +71,7 @@ export function DialogCropImage({ open, imageSrc, fileName, fileType, onClose, o
       }}
     >
       <Atoms.DialogContent
-        className="bg-popover border-border p-8 sm:p-6 max-w-xl gap-6 rounded-2xl"
+        className="max-w-xl gap-6 rounded-2xl border-border bg-popover p-8 sm:p-6"
         showCloseButton={false}
         hiddenTitle="Cropped Image"
       >
@@ -113,7 +113,7 @@ export function DialogCropImage({ open, imageSrc, fileName, fileType, onClose, o
           </div>
 
           <div className="flex items-center gap-4">
-            <span id="zoom-label" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <span id="zoom-label" className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
               Zoom
             </span>
             <input

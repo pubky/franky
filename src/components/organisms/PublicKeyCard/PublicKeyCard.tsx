@@ -103,13 +103,13 @@ export function PublicKeyCard() {
         height: 192,
       }}
     >
-      <Atoms.Container className="items-center gap-1 flex-row">
+      <Atoms.Container className="flex-row items-center gap-1">
         <Atoms.Heading level={3} size="lg">
           Your pubky
         </Atoms.Heading>
         <Molecules.PopoverPublicKey />
       </Atoms.Container>
-      <Molecules.ActionSection actions={actions} className="flex-col items-start gap-3 justify-start w-full">
+      <Molecules.ActionSection actions={actions} className="w-full flex-col items-start justify-start gap-3">
         <Molecules.InputField
           value={pubky}
           variant="dashed"

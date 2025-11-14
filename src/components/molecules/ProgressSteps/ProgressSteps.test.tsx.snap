@@ -2,23 +2,23 @@
 
 exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with custom className 1`] = `
 <div
-  class="mx-auto w-full flex-col hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background custom-progress"
+  class="mx-auto w-full flex-col sticky top-0 z-10 mt-1 hidden flex-1 items-center gap-4 bg-background lg:flex custom-progress"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex items-center gap-0 flex-row"
+    class="mx-auto w-full flex flex-row items-center gap-0"
     data-testid="container"
   >
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -41,7 +41,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with cus
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -49,28 +49,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with cus
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform bg-foreground text-background"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out bg-foreground text-background"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           2
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -78,28 +78,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with cus
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           3
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -107,21 +107,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with cus
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           4
@@ -134,23 +134,23 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with cus
 
 exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with final step 1`] = `
 <div
-  class="mx-auto w-full flex-col hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background"
+  class="mx-auto w-full flex-col sticky top-0 z-10 mt-1 hidden flex-1 items-center gap-4 bg-background lg:flex"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex items-center gap-0 flex-row"
+    class="mx-auto w-full flex flex-row items-center gap-0"
     data-testid="container"
   >
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -173,7 +173,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -181,21 +181,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -218,7 +218,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -226,21 +226,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -263,7 +263,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -271,21 +271,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -308,7 +308,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -316,21 +316,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform bg-foreground text-background"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out bg-foreground text-background"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           5
@@ -343,30 +343,30 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with fin
 
 exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with initial step 1`] = `
 <div
-  class="mx-auto w-full flex-col hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background"
+  class="mx-auto w-full flex-col sticky top-0 z-10 mt-1 hidden flex-1 items-center gap-4 bg-background lg:flex"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex items-center gap-0 flex-row"
+    class="mx-auto w-full flex flex-row items-center gap-0"
     data-testid="container"
   >
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform bg-foreground text-background"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out bg-foreground text-background"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           1
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -374,28 +374,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with ini
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           2
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -403,28 +403,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with ini
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           3
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -432,28 +432,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with ini
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           4
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -461,21 +461,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with ini
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           5
@@ -488,23 +488,23 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with ini
 
 exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with middle step 1`] = `
 <div
-  class="mx-auto w-full flex-col hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background"
+  class="mx-auto w-full flex-col sticky top-0 z-10 mt-1 hidden flex-1 items-center gap-4 bg-background lg:flex"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex items-center gap-0 flex-row"
+    class="mx-auto w-full flex flex-row items-center gap-0"
     data-testid="container"
   >
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -527,7 +527,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -535,21 +535,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -572,7 +572,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -580,28 +580,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform bg-foreground text-background"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out bg-foreground text-background"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           3
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -609,28 +609,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           4
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -638,21 +638,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           5
@@ -665,23 +665,23 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with mid
 
 exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with partial steps 1`] = `
 <div
-  class="mx-auto w-full flex-col hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background"
+  class="mx-auto w-full flex-col sticky top-0 z-10 mt-1 hidden flex-1 items-center gap-4 bg-background lg:flex"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex items-center gap-0 flex-row"
+    class="mx-auto w-full flex flex-row items-center gap-0"
     data-testid="container"
   >
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border bg-transparent text-white border-white"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border border-white bg-transparent text-white"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all ease-in-out flex items-center justify-center animate-in fade-in zoom-in duration-500"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all ease-in-out animate-in duration-500 fade-in zoom-in"
           data-testid="container"
         >
           <svg
@@ -704,7 +704,7 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with par
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -712,28 +712,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with par
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out translate-x-0"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out translate-x-0"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform bg-foreground text-background"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out bg-foreground text-background"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           2
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -741,28 +741,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with par
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           3
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -770,28 +770,28 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with par
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           4
         </div>
       </div>
       <div
-        class="mx-auto flex-col flex relative w-28 xl:w-40 h-px overflow-hidden"
+        class="mx-auto flex-col flex relative h-px w-28 overflow-hidden xl:w-40"
         data-testid="container"
       >
         <div
@@ -799,21 +799,21 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with par
           data-testid="container"
         />
         <div
-          class="mx-auto w-full flex-col flex absolute inset-0 bg-white transform transition-all duration-500 ease-out -translate-x-full"
+          class="mx-auto w-full flex-col flex absolute inset-0 transform bg-white transition-all duration-500 ease-out -translate-x-full"
           data-testid="container"
         />
       </div>
     </div>
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform border text-muted-foreground"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out border text-muted-foreground"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           5
@@ -826,23 +826,23 @@ exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with par
 
 exports[`ProgressSteps - Snapshots > matches snapshot for ProgressSteps with single step 1`] = `
 <div
-  class="mx-auto w-full flex-col hidden lg:flex items-center gap-4 mt-1 flex-1 sticky top-0 z-10 bg-background"
+  class="mx-auto w-full flex-col sticky top-0 z-10 mt-1 hidden flex-1 items-center gap-4 bg-background lg:flex"
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex items-center gap-0 flex-row"
+    class="mx-auto w-full flex flex-row items-center gap-0"
     data-testid="container"
   >
     <div
-      class="mx-auto w-full flex items-center flex-row"
+      class="mx-auto w-full flex flex-row items-center"
       data-testid="container"
     >
       <div
-        class="mx-auto flex-col flex items-center justify-center w-8 h-8 rounded-full font-bold transition-all duration-500 ease-in-out transform bg-foreground text-background"
+        class="mx-auto flex-col flex h-8 w-8 transform items-center justify-center rounded-full font-bold transition-all duration-500 ease-in-out bg-foreground text-background"
         data-testid="container"
       >
         <div
-          class="mx-auto w-full flex-col transition-all duration-500 ease-in-out flex items-center justify-center"
+          class="mx-auto w-full flex-col flex items-center justify-center transition-all duration-500 ease-in-out"
           data-testid="container"
         >
           1

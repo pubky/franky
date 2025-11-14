@@ -29,7 +29,7 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
         Snapshot User
       </span>
       <span
-        class="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground"
+        class="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground uppercase"
       >
         @
         snap...rKey

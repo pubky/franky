@@ -7,7 +7,7 @@ import * as Atoms from '@/atoms';
  */
 export function TimelineEmpty() {
   return (
-    <Atoms.Container className="flex justify-center items-center py-8">
+    <Atoms.Container className="flex items-center justify-center py-8">
       <Atoms.Typography size="md" className="text-muted-foreground">
         No posts found
       </Atoms.Typography>

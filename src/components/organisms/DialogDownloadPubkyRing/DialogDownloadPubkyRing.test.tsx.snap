@@ -55,7 +55,7 @@ exports[`DialogDownloadPubkyRing - Snapshots > matches snapshot for android stor
       data-testid="container"
     >
       <div
-        class="flex-row gap-8 items-center"
+        class="flex-row items-center gap-8"
         data-testid="container"
       >
         <img
@@ -70,7 +70,7 @@ exports[`DialogDownloadPubkyRing - Snapshots > matches snapshot for android stor
           data-testid="container"
         >
           <div
-            class="bg-foreground rounded-lg p-4 w-[192px] h-[192px] flex items-center justify-center"
+            class="flex h-[192px] w-[192px] items-center justify-center rounded-lg bg-foreground p-4"
             data-testid="container"
           >
             <svg
@@ -92,7 +92,7 @@ exports[`DialogDownloadPubkyRing - Snapshots > matches snapshot for android stor
             </svg>
           </div>
           <div
-            class="justify-between items-center"
+            class="items-center justify-between"
             data-testid="container"
           >
             <a
@@ -172,7 +172,7 @@ exports[`DialogDownloadPubkyRing - Snapshots > matches snapshot for apple store 
       data-testid="container"
     >
       <div
-        class="flex-row gap-8 items-center"
+        class="flex-row items-center gap-8"
         data-testid="container"
       >
         <img
@@ -187,7 +187,7 @@ exports[`DialogDownloadPubkyRing - Snapshots > matches snapshot for apple store 
           data-testid="container"
         >
           <div
-            class="bg-foreground rounded-lg p-4 w-[192px] h-[192px] flex items-center justify-center"
+            class="flex h-[192px] w-[192px] items-center justify-center rounded-lg bg-foreground p-4"
             data-testid="container"
           >
             <svg
@@ -209,7 +209,7 @@ exports[`DialogDownloadPubkyRing - Snapshots > matches snapshot for apple store 
             </svg>
           </div>
           <div
-            class="justify-between items-center"
+            class="items-center justify-between"
             data-testid="container"
           >
             <a

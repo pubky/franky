@@ -2,11 +2,11 @@
 
 exports[`AlertBackup - Snapshot > matches snapshot for default AlertBackup 1`] = `
 <div
-  class="px-6 py-3 bg-brand rounded-lg flex-row items-center gap-3"
+  class="flex-row items-center gap-3 rounded-lg bg-brand px-6 py-3"
   data-testid="container"
 >
   <div
-    class="flex-row flex-1 gap-3 items-center"
+    class="flex-1 flex-row items-center gap-3"
     data-testid="container"
   >
     <svg
@@ -33,7 +33,7 @@ exports[`AlertBackup - Snapshot > matches snapshot for default AlertBackup 1`] =
       />
     </svg>
     <p
-      class="font-bold text-primary-foreground whitespace-nowrap"
+      class="font-bold whitespace-nowrap text-primary-foreground"
       data-size="sm"
       data-testid="typography"
     >

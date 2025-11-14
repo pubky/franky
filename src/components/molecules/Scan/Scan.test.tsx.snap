@@ -34,7 +34,7 @@ exports[`Scan Components - Snapshots > ScanContent - Snapshots > matches snapsho
       data-testid="container"
     >
       <div
-        class="bg-foreground rounded-lg p-4 w-[220px] h-[220px] flex items-center justify-center"
+        class="flex h-[220px] w-[220px] items-center justify-center rounded-lg bg-foreground p-4"
       >
         <div
           class="items-center gap-2"

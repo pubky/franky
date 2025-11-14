@@ -286,7 +286,7 @@ export const MAX_POST_LENGTH = 2000;
 //       });
 //   });
 
-  // confirm delete in modal
+// confirm delete in modal
 //   cy.get('#modal-root')
 //     .should('be.visible')
 //     .within(() => {
@@ -315,7 +315,7 @@ const waitForPostToBeDeleted = (postContent: string, attempts: number = 5, first
 
 export const checkPostIsNotAtTopOfFeed = ({
   postContent,
-  refreshIfPostExists = false
+  refreshIfPostExists = false,
 }: {
   postContent: string;
   refreshIfPostExists?: boolean;
@@ -380,7 +380,7 @@ export const waitForFeedToLoad = (postContent?: string) => {
     if (attempts <= 0)
       assert(
         false,
-        "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'"
+        "Timeline still shows 'Welcome to your feed', 'Loading' after 5 seconds, or 'Checking for new content'",
       );
 
     cy.get('#posts-feed')
@@ -479,7 +479,7 @@ export const addImage = () => {
     const imagePath = Cypress.config('fixturesFolder') + '/mustache-you.png';
     cy.get('#fileInput').selectFile(
       imagePath,
-      { force: true } // force to bypass visibility check of hidden input field
+      { force: true }, // force to bypass visibility check of hidden input field
     );
   });
 };
