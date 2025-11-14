@@ -11,6 +11,7 @@ import * as Core from '@/core';
  */
 export type TReadUserStreamChunkParams = {
   streamId: Core.UserStreamId;
+  limit: number;
   skip: number;
 };
 

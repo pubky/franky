@@ -28,6 +28,7 @@ describe('StreamUserController', () => {
 
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -61,6 +62,7 @@ describe('StreamUserController', () => {
 
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -93,6 +95,7 @@ describe('StreamUserController', () => {
 
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip,
       });
 
@@ -119,6 +122,7 @@ describe('StreamUserController', () => {
 
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -141,6 +145,7 @@ describe('StreamUserController', () => {
 
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -165,6 +170,7 @@ describe('StreamUserController', () => {
 
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -182,6 +188,7 @@ describe('StreamUserController', () => {
 
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -199,6 +206,7 @@ describe('StreamUserController', () => {
 
       await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 
@@ -228,6 +236,7 @@ describe('StreamUserController', () => {
 
       const result = await StreamUserController.getOrFetchStreamSlice({
         streamId,
+        limit: Config.NEXUS_USERS_PER_PAGE,
         skip: 0,
       });
 

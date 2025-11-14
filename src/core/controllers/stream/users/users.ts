@@ -21,6 +21,7 @@ export class StreamUserController {
    */
   static async getOrFetchStreamSlice({
     streamId,
+    limit,
     skip,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TReadUserStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
@@ -32,7 +33,7 @@ export class StreamUserController {
     } = await Core.UserStreamApplication.getOrFetchStreamSlice({
       streamId,
       skip,
-      limit: Config.NEXUS_USERS_PER_PAGE,
+      limit,
       viewerId,
     });
 
