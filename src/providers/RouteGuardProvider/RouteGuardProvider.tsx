@@ -67,9 +67,9 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
   // Show loading spinner while determining authentication status or route access
   if (isLoading || !isRouteAccessible) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand mx-auto"></div>
+          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-brand"></div>
           <p className="mt-2 text-muted-foreground">{isLoading ? 'Loading...' : 'Checking access...'}</p>
         </div>
       </div>

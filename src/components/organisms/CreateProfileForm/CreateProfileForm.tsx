@@ -212,9 +212,9 @@ export const CreateProfileForm = () => {
   return (
     <>
       <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="create-profile-form">
-        <Atoms.Card className="bg-card rounded-md p-6 md:p-12 lg:flex lg:gap-12 lg:flex-row">
+        <Atoms.Card className="rounded-md bg-card p-6 md:p-12 lg:flex lg:flex-row lg:gap-12">
           {/* Profile Section */}
-          <Atoms.Container className="gap-6 w-full">
+          <Atoms.Container className="w-full gap-6">
             <Atoms.Container className="gap-3">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
                 Profile
@@ -256,7 +256,7 @@ export const CreateProfileForm = () => {
           </Atoms.Container>
 
           {/* Links Section */}
-          <Atoms.Container className="gap-6 w-full mt-6 lg:mt-0">
+          <Atoms.Container className="mt-6 w-full gap-6 lg:mt-0">
             <Atoms.Container className="gap-3">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
                 Links
@@ -306,17 +306,17 @@ export const CreateProfileForm = () => {
           </Atoms.Container>
 
           {/* Avatar Section */}
-          <Atoms.Container className="gap-6 w-full mt-6 lg:mt-0">
+          <Atoms.Container className="mt-6 w-full gap-6 lg:mt-0">
             <Atoms.Container className="gap-3 md:text-center">
               <Atoms.Heading level={3} size="xl" className="text-2xl">
                 Avatar
               </Atoms.Heading>
             </Atoms.Container>
 
-            <Atoms.Container className="justify-center flex-row">
+            <Atoms.Container className="flex-row justify-center">
               <Atoms.Avatar
                 key={avatarPreview ? 'with-image' : 'without-image'}
-                className="h-48 w-48 bg-muted cursor-pointer"
+                className="h-48 w-48 cursor-pointer bg-muted"
                 onClick={handleChooseFileClick}
                 role="button"
                 aria-label="Choose avatar image"
@@ -337,7 +337,7 @@ export const CreateProfileForm = () => {
               <Atoms.Button
                 variant="secondary"
                 size="sm"
-                className="rounded-full mx-auto"
+                className="mx-auto rounded-full"
                 onClick={avatarPreview ? handleDeleteAvatar : handleChooseFileClick}
               >
                 {avatarPreview ? (

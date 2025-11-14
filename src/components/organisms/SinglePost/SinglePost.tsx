@@ -17,17 +17,17 @@ export function SinglePost({ postId, clickable = false, isReply = false, onClick
   return (
     <div className="relative">
       {isReply && (
-        <div className="absolute -left-12 top-0">
+        <div className="absolute top-0 -left-12">
           <Atoms.ReplyLine height={postHeight} />
         </div>
       )}
       <Atoms.Card
         ref={cardRef}
-        className={`p-6 rounded-lg ${clickable ? 'cursor-pointer' : ''}`}
+        className={`rounded-lg p-6 ${clickable ? 'cursor-pointer' : ''}`}
         onClick={clickable ? onClick : undefined}
       >
-        <Atoms.Container className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Atoms.Container className="flex flex-col lg:col-span-2 gap-4">
+        <Atoms.Container className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <Atoms.Container className="flex flex-col gap-4 lg:col-span-2">
             <div onClick={(e) => e.stopPropagation()}>
               <Organisms.SinglePostUserDetails postId={postId} />
             </div>

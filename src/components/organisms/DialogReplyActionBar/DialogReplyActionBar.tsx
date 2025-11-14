@@ -69,7 +69,7 @@ export function DialogReplyActionBar({
   ];
 
   return (
-    <div className={Libs.cn('flex gap-2 items-center justify-end', className)}>
+    <div className={Libs.cn('flex items-center justify-end gap-2', className)}>
       {actionButtons.map(
         ({ icon: Icon, onClick, ariaLabel, disabled, className: buttonClassName, showLabel }, index) => (
           <Atoms.Button
@@ -83,7 +83,7 @@ export function DialogReplyActionBar({
             {showLabel ? (
               <div className="flex items-center gap-2">
                 <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
-                <span className="text-xs font-bold leading-4 text-secondary-foreground">Post</span>
+                <span className="text-xs leading-4 font-bold text-secondary-foreground">Post</span>
               </div>
             ) : (
               <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />

@@ -17,18 +17,18 @@ export const BackupMethodCard = () => {
         height: 192,
       }}
     >
-      <Atoms.Container className="items-center gap-1 flex-row">
+      <Atoms.Container className="flex-row items-center gap-1">
         <Atoms.Heading level={2} size="lg">
           Choose backup method
         </Atoms.Heading>
         <Molecules.PopoverBackup />
       </Atoms.Container>
-      <Atoms.Container className="max-w-[576px] mx-0">
-        <Atoms.Typography size="sm" className="text-secondary-foreground opacity-80 font-medium text-base">
+      <Atoms.Container className="mx-0 max-w-[576px]">
+        <Atoms.Typography size="sm" className="text-base font-medium text-secondary-foreground opacity-80">
           Safely back up and store the secret seed for your pubky. Which backup method do you prefer? You can also
           choose to do this later.
         </Atoms.Typography>
-        <Atoms.Container className="flex-row mt-6 gap-3 flex-wrap">
+        <Atoms.Container className="mt-6 flex-row flex-wrap gap-3">
           <Organisms.DialogBackupPhrase>
             <Atoms.Button id="backup-recovery-phrase-btn" variant="secondary" className="gap-2">
               <Libs.FileText className="h-4 w-4" />

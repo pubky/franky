@@ -97,14 +97,14 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button id="restore-encrypted-file-btn" variant="outline" className="rounded-full w-auto md:flex-none">
+        <Atoms.Button id="restore-encrypted-file-btn" variant="outline" className="w-auto rounded-full md:flex-none">
           <Libs.FileUp className="mr-2 h-4 w-4" />
           <span>Use encrypted file</span>
         </Atoms.Button>
       </Atoms.DialogTrigger>
-      <Atoms.DialogContent className="gap-6 p-8 max-w-full overflow-hidden" hiddenTitle="Restore with encrypted file">
+      <Atoms.DialogContent className="max-w-full gap-6 overflow-hidden p-8" hiddenTitle="Restore with encrypted file">
         <Atoms.DialogHeader className="space-y-1.5 pr-6">
-          <Atoms.DialogTitle className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
+          <Atoms.DialogTitle className="text-2xl leading-8 font-bold sm:text-xl sm:leading-7">
             Restore with encrypted file
           </Atoms.DialogTitle>
           <Atoms.DialogDescription className="text-sm leading-5">
@@ -120,11 +120,11 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
             </Atoms.Label>
 
             <Atoms.Container
-              className="relative border-2 border-dashed border-border rounded-lg px-4 py-3 flex items-center justify-between hover:bg-card/80 transition-colors cursor-pointer flex-row w-full overflow-hidden gap-3"
+              className="relative flex w-full cursor-pointer flex-row items-center justify-between gap-3 overflow-hidden rounded-lg border-2 border-dashed border-border px-4 py-3 transition-colors hover:bg-card/80"
               onClick={handleFileSelect}
             >
               <span
-                className={`flex-1 min-w-0 block truncate font-medium ${
+                className={`block min-w-0 flex-1 truncate font-medium ${
                   selectedFile?.name ? 'text-foreground' : 'text-muted-foreground'
                 }`}
                 title={selectedFile ? selectedFile.name : undefined}
@@ -136,7 +136,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
                 type="button"
                 variant="secondary"
                 size="sm"
-                className="gap-2 shrink-0"
+                className="shrink-0 gap-2"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleFileSelect();
@@ -172,7 +172,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm p-4"
+              className="bg-opacity-90 h-14 rounded-md border border-dashed p-4 shadow-sm"
               placeholder="Enter your password"
               autoComplete="current-password"
               disabled={isRestoring}
@@ -181,8 +181,8 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
 
           {/* Error Message */}
           {error && (
-            <Atoms.Container className="p-3 rounded-md bg-destructive/10 border border-destructive/20">
-              <Atoms.Typography size="sm" className="text-destructive text-xs font-medium">
+            <Atoms.Container className="rounded-md border border-destructive/20 bg-destructive/10 p-3">
+              <Atoms.Typography size="sm" className="text-xs font-medium text-destructive">
                 {error}
               </Atoms.Typography>
             </Atoms.Container>
@@ -190,11 +190,11 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
         </Atoms.Container>
 
         {/* Action Buttons */}
-        <Atoms.Container className="gap-4 sm:gap-3 md:flex-row justify-between">
+        <Atoms.Container className="justify-between gap-4 sm:gap-3 md:flex-row">
           <DialogClose asChild>
             <Atoms.Button
               variant="outline"
-              className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+              className="order-2 h-10 flex-1 rounded-full px-4 py-2.5 md:order-0 md:px-12 md:py-6"
               onClick={handleReset}
               disabled={isRestoring}
             >
@@ -203,7 +203,7 @@ export function DialogRestoreEncryptedFile({ onRestore }: { onRestore: () => voi
           </DialogClose>
           <Atoms.Button
             id="encrypted-file-restore-btn"
-            className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+            className="order-1 h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6"
             onClick={handleRestore}
             disabled={!isFormValid()}
           >

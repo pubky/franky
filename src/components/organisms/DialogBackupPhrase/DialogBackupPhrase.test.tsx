@@ -492,20 +492,20 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
           {step === 1 && (
             <div>
               <div data-testid="dialog-header" className="space-y-1.5 pr-6">
-                <h2 data-testid="dialog-title" className="text-2xl font-bold leading-8 sm:text-xl sm:leading-7">
+                <h2 data-testid="dialog-title" className="text-2xl leading-8 font-bold sm:text-xl sm:leading-7">
                   Backup recovery phrase
                 </h2>
-                <p data-testid="dialog-description" className="text-sm leading-5 max-w-[530px]">
+                <p data-testid="dialog-description" className="max-w-[530px] text-sm leading-5">
                   Use the recovery phrase below to recover your account at a later date. Write down these 12 words in
                   the correct order and store them in a safe place.{' '}
-                  <span className="text-brand font-bold">Never share this recovery phrase with anyone.</span>
+                  <span className="font-bold text-brand">Never share this recovery phrase with anyone.</span>
                 </p>
               </div>
 
               <div data-testid="container" className={isHidden ? 'blur-xs' : ''}>
-                <div data-testid="container" className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div data-testid="container" className="grid grid-cols-2 gap-3 md:grid-cols-3">
                   {recoveryWords.map((word, index) => (
-                    <div key={index} className="items-center gap-3 rounded-md bg-secondary p-4 flex-row">
+                    <div key={index} className="flex-row items-center gap-3 rounded-md bg-secondary p-4">
                       <span
                         data-testid="badge"
                         data-variant="outline"
@@ -519,20 +519,20 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
                 </div>
               </div>
 
-              <div data-testid="container" className="gap-4 sm:gap-3 md:flex-row justify-between">
+              <div data-testid="container" className="justify-between gap-4 sm:gap-3 md:flex-row">
                 {isHidden ? (
                   <>
                     <div data-testid="dialog-close" data-as-child={true}>
                       <button
                         data-testid="button-outline"
-                        className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                        className="order-2 h-10 flex-1 rounded-full px-4 py-2.5 md:order-0 md:px-12 md:py-6"
                       >
                         Cancel
                       </button>
                     </div>
                     <button
                       data-testid="button-default"
-                      className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      className="order-1 h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6"
                       onClick={() => {
                         setIsHidden(!isHidden);
                         setStep(1);
@@ -548,7 +548,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
                   <>
                     <button
                       data-testid="button-outline"
-                      className="order-2 md:order-0 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      className="order-2 h-10 flex-1 rounded-full px-4 py-2.5 md:order-0 md:px-12 md:py-6"
                       onClick={() => {
                         setIsHidden(!isHidden);
                         setStep(1);
@@ -561,7 +561,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
                     </button>
                     <button
                       data-testid="button-default"
-                      className="order-1 flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+                      className="order-1 h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6"
                       onClick={() => setStep(2)}
                     >
                       <div data-testid="arrow-right-icon" className="mr-2 h-4 w-4">
@@ -595,7 +595,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
     return (
       <>
         <div data-testid="dialog-header" className="space-y-1.5 pr-6">
-          <h2 data-testid="dialog-title" className="text-2xl sm:text-[24px] font-bold">
+          <h2 data-testid="dialog-title" className="text-2xl font-bold sm:text-[24px]">
             Confirm recovery phrase
           </h2>
           <p data-testid="dialog-description" className="text-sm text-muted-foreground">
@@ -604,15 +604,15 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
         </div>
 
         <div data-testid="container" className="space-y-6">
-          <div data-testid="container" className="flex-wrap gap-2 flex-row">
+          <div data-testid="container" className="flex-row flex-wrap gap-2">
             {remainingWords.map(({ word, index, isUsed }) => (
               <button
                 data-testid={`button-${isUsed ? 'secondary' : 'outline'}`}
                 key={`${word}-${index}`}
                 className={`rounded-full ${
                   isUsed
-                    ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                    : 'dark:border-transparent bg-secondary cursor-pointer'
+                    ? 'cursor-not-allowed border bg-transparent text-muted-foreground opacity-40'
+                    : 'cursor-pointer bg-secondary dark:border-transparent'
                 }`}
                 onClick={() => !isUsed && handleWordClick(word)}
                 disabled={isUsed}
@@ -622,7 +622,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
             ))}
           </div>
 
-          <div data-testid="container" className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div data-testid="container" className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {userWords.map((word, i) => {
               const isCorrect = word !== '' && word === recoveryWords[i];
               const isError = errors[i];
@@ -643,8 +643,8 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
           </div>
         </div>
 
-        <div data-testid="container" className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
-          <button data-testid="button-outline" className="rounded-full flex-1" onClick={() => setStep(1)}>
+        <div data-testid="container" className="flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4">
+          <button data-testid="button-outline" className="flex-1 rounded-full" onClick={() => setStep(1)}>
             <div data-testid="arrow-left-icon" className="mr-2 h-4 w-4">
               ArrowLeft
             </div>
@@ -652,7 +652,7 @@ describe('DialogBackupPhrase - Identical Words Test', () => {
           </button>
           <button
             data-testid="button-default"
-            className="rounded-full flex-1"
+            className="flex-1 rounded-full"
             onClick={() => {
               if (validateWords()) {
                 setStep(3);

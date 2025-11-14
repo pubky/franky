@@ -29,10 +29,10 @@ export const ProfileNavigation = ({
   };
 
   return (
-    <Atoms.Container className={Libs.cn('flex-row gap-3 lg:gap-6 justify-between py-6', className)}>
+    <Atoms.Container className={Libs.cn('flex-row justify-between gap-3 py-6 lg:gap-6', className)}>
       <Atoms.Button
         size="lg"
-        className="rounded-full flex-1 md:flex-0 w-full"
+        className="w-full flex-1 rounded-full md:flex-0"
         variant={'secondary'}
         onClick={onHandleBackButton}
         disabled={backButtonDisabled}
@@ -44,7 +44,7 @@ export const ProfileNavigation = ({
         <Atoms.Button
           id="profile-finish-btn"
           size="lg"
-          className="rounded-full flex-1 md:flex-0 w-full"
+          className="w-full flex-1 rounded-full md:flex-0"
           onClick={onHandleContinueButton}
           disabled={continueButtonDisabled}
         >

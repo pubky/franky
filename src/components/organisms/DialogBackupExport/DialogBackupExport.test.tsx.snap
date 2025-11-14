@@ -19,7 +19,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     data-testid="dialog-content"
   >
     <div
-      class="hidden lg:flex flex-col gap-6"
+      class="hidden flex-col gap-6 lg:flex"
     >
       <div
         data-testid="dialog-header"
@@ -42,7 +42,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
         </p>
       </div>
       <div
-        class="justify-between items-start"
+        class="items-start justify-between"
         data-testid="container"
       >
         <div
@@ -65,7 +65,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
             data-testid="container"
           >
             <div
-              class="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center"
+              class="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
               data-testid="container"
             >
               <div
@@ -112,7 +112,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
       </div>
     </div>
     <div
-      class="flex lg:hidden flex-col gap-6"
+      class="flex flex-col gap-6 lg:hidden"
     >
       <div
         data-testid="dialog-header"
@@ -163,7 +163,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
     data-testid="dialog-content"
   >
     <div
-      class="hidden lg:flex flex-col gap-6"
+      class="hidden flex-col gap-6 lg:flex"
     >
       <div
         data-testid="dialog-header"
@@ -186,7 +186,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
         </p>
       </div>
       <div
-        class="justify-between items-start"
+        class="items-start justify-between"
         data-testid="container"
       >
         <div
@@ -209,7 +209,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
             data-testid="container"
           >
             <div
-              class="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center"
+              class="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
               data-testid="container"
             >
               <div
@@ -256,7 +256,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for DialogBackupExpor
       </div>
     </div>
     <div
-      class="flex lg:hidden flex-col gap-6"
+      class="flex flex-col gap-6 lg:hidden"
     >
       <div
         data-testid="dialog-header"
@@ -307,7 +307,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
     data-testid="dialog-content"
   >
     <div
-      class="hidden lg:flex flex-col gap-6"
+      class="hidden flex-col gap-6 lg:flex"
     >
       <div
         data-testid="dialog-header"
@@ -328,7 +328,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
         </p>
       </div>
       <div
-        class="justify-between items-start"
+        class="items-start justify-between"
         data-testid="container"
       >
         <div
@@ -351,7 +351,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
             data-testid="container"
           >
             <div
-              class="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center"
+              class="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]"
               data-testid="container"
             >
               <div
@@ -398,7 +398,7 @@ exports[`DialogBackupExport - Snapshots > matches snapshot for default DialogBac
       </div>
     </div>
     <div
-      class="flex lg:hidden flex-col gap-6"
+      class="flex flex-col gap-6 lg:hidden"
     >
       <div
         data-testid="dialog-header"

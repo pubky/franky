@@ -52,7 +52,7 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
   };
 
   return (
-    <div className="flex flex-col p-6 border border-dashed border-input rounded-md relative">
+    <div className="relative flex flex-col rounded-md border border-dashed border-input p-6">
       <Atoms.PostReplyConnector />
       <div className="flex flex-col gap-4">
         <Organisms.PostHeader
@@ -66,7 +66,7 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
         <div>
           <Atoms.Textarea
             placeholder="Write a reply..."
-            className="min-h-6 border-none bg-transparent p-0 text-base font-medium text-secondary-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none shadow-none break-all"
+            className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             value={replyContent}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
@@ -75,7 +75,7 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
           />
         </div>
 
-        <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-4">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:gap-0">
           <Molecules.PostTagsList
             tags={tags.map((tag) => ({ label: tag.label }))}
             showInput={false}

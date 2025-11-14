@@ -24,8 +24,8 @@ export function MobileFooter({ className }: MobileFooterProps) {
   ];
 
   return (
-    <div className={Libs.cn('pb-20 flex justify-center lg:hidden', className)}>
-      <div className="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3">
+    <div className={Libs.cn('flex justify-center pb-20 lg:hidden', className)}>
+      <div className="fixed bottom-0 z-40 flex w-full max-w-[380px] items-center justify-between overflow-x-auto bg-gradient-to-t from-background via-background/95 to-transparent px-3 py-4 sm:max-w-[600px] md:max-w-[720px]">
         {navItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -34,7 +34,7 @@ export function MobileFooter({ className }: MobileFooterProps) {
               href={item.href}
               aria-label={item.label}
               className={Libs.cn(
-                'p-3 rounded-full backdrop-blur-sm transition-all',
+                'rounded-full p-3 backdrop-blur-sm transition-all',
                 isActive(item.href) ? 'bg-secondary/30' : 'bg-secondary/20 hover:bg-secondary/25',
               )}
             >
@@ -46,7 +46,7 @@ export function MobileFooter({ className }: MobileFooterProps) {
           id="footer-nav-profile-btn"
           href={App.APP_ROUTES.PROFILE}
           aria-label="Profile"
-          className="flex-shrink-0 relative"
+          className="relative flex-shrink-0"
         >
           <Atoms.Avatar className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}>
             <Atoms.AvatarImage src="https://i.pravatar.cc/150?img=68" alt="Profile" />

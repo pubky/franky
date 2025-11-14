@@ -77,7 +77,7 @@ exports[`Home - Snapshots > matches snapshot for HomeSectionTitle with default p
   data-testid="container"
 >
   <p
-    class="text-brand font-light sm:text-2xl self-center"
+    class="self-center font-light text-brand sm:text-2xl"
     data-size="md"
     data-testid="typography"
   >

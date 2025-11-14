@@ -4,7 +4,7 @@ export function DialogAge() {
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
+        <Atoms.Typography as="span" size="sm" className="cursor-pointer font-medium text-brand">
           over 18 years old.
         </Atoms.Typography>
       </Atoms.DialogTrigger>
@@ -12,9 +12,9 @@ export function DialogAge() {
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Age minimum: 18</Atoms.DialogTitle>
         </Atoms.DialogHeader>
-        <Atoms.Container className="h-full pr-4 overflow-y-auto">
+        <Atoms.Container className="h-full overflow-y-auto pr-4">
           <Atoms.Container className="gap-4">
-            <Atoms.Typography size="sm" className="text-muted-foreground font-normal">
+            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
               You can only use Pubky if you are over 18 years old.
             </Atoms.Typography>
           </Atoms.Container>

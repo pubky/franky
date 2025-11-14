@@ -10,7 +10,7 @@ declare global {
         profileName: string,
         profileBio?: string,
         backup?: BackupType[],
-        pubkyAlias?: string
+        pubkyAlias?: string,
       ): Chainable<void>;
       backupRecoveryFile(passcode?: string): Chainable<void>;
       deleteDownloadsFolder(): Chainable<void>;
@@ -35,7 +35,7 @@ declare global {
       findPostInFeed(
         postIdx?: number,
         filterText?: string,
-        checkIndexed?: CheckIndexed
+        checkIndexed?: CheckIndexed,
       ): Chainable<JQuery<HTMLElement>>;
     }
   }

@@ -45,7 +45,7 @@ export function PostTag({
       onClick={onClick}
       className={Libs.cn(
         'group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg',
-        'border-0 text-sm font-bold leading-5 text-white',
+        'border-0 text-sm leading-5 font-bold text-white',
         'transition-all duration-200',
         // Override Toggle default hover styles - keep text white
         'hover:bg-transparent hover:text-white',

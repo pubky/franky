@@ -24,7 +24,7 @@ export function SinglePostUserDetails({ postId }: PostUserDetailsProps) {
   return (
     <Atoms.Container className="flex items-center gap-3">
       <Atoms.Container className="flex flex-row gap-4">
-        <Atoms.Avatar className="w-12 h-12">
+        <Atoms.Avatar className="h-12 w-12">
           <Atoms.AvatarImage src={userDetails.image || undefined} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name || '' }) || 'U'}</Atoms.AvatarFallback>
         </Atoms.Avatar>
@@ -36,7 +36,7 @@ export function SinglePostUserDetails({ postId }: PostUserDetailsProps) {
             <Atoms.Typography size="sm" className="text-muted-foreground uppercase">
               {Libs.formatPublicKey({ key: userDetails.id, length: 8 })}
             </Atoms.Typography>
-            <Atoms.Container className="flex flex-row gap-1 items-center">
+            <Atoms.Container className="flex flex-row items-center gap-1">
               <Libs.Clock className="h-4 w-4 text-muted-foreground" />
               <Atoms.Typography size="sm" className="text-muted-foreground">
                 {Libs.timeAgo(indexedAt)}

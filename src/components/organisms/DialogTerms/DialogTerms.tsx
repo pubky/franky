@@ -13,7 +13,7 @@ export function DialogTerms({ trigger }: DialogTermsProps) {
   const baseCSSItalic = 'text-muted-foreground text-base font-normal italic';
 
   const defaultTrigger = (
-    <Atoms.Typography as="span" size="sm" className="text-brand font-medium cursor-pointer">
+    <Atoms.Typography as="span" size="sm" className="cursor-pointer font-medium text-brand">
       Terms of Service
     </Atoms.Typography>
   );
@@ -25,7 +25,7 @@ export function DialogTerms({ trigger }: DialogTermsProps) {
         <Atoms.DialogHeader className="pr-6">
           <Atoms.DialogTitle>Terms of Service</Atoms.DialogTitle>
         </Atoms.DialogHeader>
-        <Atoms.Container className="h-[320px] pr-4 overflow-y-auto">
+        <Atoms.Container className="h-[320px] overflow-y-auto pr-4">
           <Atoms.Container className="flex-col gap-4">
             {/** Section 1 */}
             <Atoms.Typography className={baseCSS}>

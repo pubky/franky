@@ -2,13 +2,13 @@
 
 exports[`MutedUsers - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex custom-muted"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12 custom-muted"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="justify-start items-center gap-2 inline-flex"
+      class="inline-flex items-center justify-start gap-2"
     >
       <svg
         aria-hidden="true"
@@ -40,21 +40,21 @@ exports[`MutedUsers - Snapshots > matches snapshot with custom className 1`] = `
         />
       </svg>
       <h2
-        class="text-2xl font-bold leading-8 text-foreground"
+        class="text-2xl leading-8 font-bold text-foreground"
       >
         Muted users
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-secondary-foreground"
+      class="text-base leading-6 font-medium text-secondary-foreground"
     >
       Here is an overview of all users you muted. You can choose to unmute users if you want.
     </p>
     <div
-      class="w-full flex-col inline-flex gap-3"
+      class="inline-flex w-full flex-col gap-3"
     >
       <h2
-        class="text-2xl font-normal leading-8 opacity-20 text-center flex self-center mt-5"
+        class="mt-5 flex self-center text-center text-2xl leading-8 font-normal opacity-20"
       >
         No muted users yet
       </h2>
@@ -65,13 +65,13 @@ exports[`MutedUsers - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
 <div
-  class="p-8 md:p-12 bg-[#1D1D20] rounded-md flex-col justify-start items-start gap-12 inline-flex"
+  class="inline-flex flex-col items-start justify-start gap-12 rounded-md bg-[#1D1D20] p-8 md:p-12"
 >
   <div
-    class="w-full flex-col justify-start items-start gap-3 flex"
+    class="flex w-full flex-col items-start justify-start gap-3"
   >
     <div
-      class="justify-start items-center gap-2 inline-flex"
+      class="inline-flex items-center justify-start gap-2"
     >
       <svg
         aria-hidden="true"
@@ -103,21 +103,21 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
         />
       </svg>
       <h2
-        class="text-2xl font-bold leading-8 text-foreground"
+        class="text-2xl leading-8 font-bold text-foreground"
       >
         Muted users
       </h2>
     </div>
     <p
-      class="text-base font-medium leading-6 text-secondary-foreground"
+      class="text-base leading-6 font-medium text-secondary-foreground"
     >
       Here is an overview of all users you muted. You can choose to unmute users if you want.
     </p>
     <div
-      class="w-full flex-col inline-flex gap-3"
+      class="inline-flex w-full flex-col gap-3"
     >
       <h2
-        class="text-2xl font-normal leading-8 opacity-20 text-center flex self-center mt-5"
+        class="mt-5 flex self-center text-center text-2xl leading-8 font-normal opacity-20"
       >
         No muted users yet
       </h2>

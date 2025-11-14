@@ -34,11 +34,11 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
 
   return (
     <>
-      <Atoms.Card className={Libs.cn('rounded-md py-0 cursor-pointer', className)} onClick={onClick}>
-        <Atoms.CardContent className="p-6 flex flex-col gap-4">
+      <Atoms.Card className={Libs.cn('cursor-pointer rounded-md py-0', className)} onClick={onClick}>
+        <Atoms.CardContent className="flex flex-col gap-4 p-6">
           <Organisms.PostHeader postId={postId} />
           <Organisms.PostContent postId={postId} />
-          <div className="flex justify-between md:flex-row flex-col md:gap-0 gap-2">
+          <div className="flex flex-col justify-between gap-2 md:flex-row md:gap-0">
             <Atoms.ClickStop>
               <Molecules.PostTagsList
                 tags={tags}
@@ -54,7 +54,7 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
               <Organisms.PostActionsBar
                 postId={postId}
                 onReplyClick={handleReplyClick}
-                className="justify-start w-full flex-1 md:justify-end"
+                className="w-full flex-1 justify-start md:justify-end"
               />
             </Atoms.ClickStop>
           </div>

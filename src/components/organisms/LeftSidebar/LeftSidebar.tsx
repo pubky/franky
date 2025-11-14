@@ -14,11 +14,11 @@ export function LeftSidebar({ className }: LeftSidebarProps) {
   return (
     <div
       data-testid="left-sidebar"
-      className={Libs.cn('w-[180px] hidden lg:flex flex-col gap-6 justify-start items-start', className)}
+      className={Libs.cn('hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex', className)}
     >
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
       <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />
-      <div className="self-start sticky top-[100px] flex flex-col gap-6">
+      <div className="sticky top-[100px] flex flex-col gap-6 self-start">
         <Molecules.FilterContent selectedTab={content} onTabChange={setContent} />
         <Molecules.FilterLayout selectedTab={layout} onTabChange={setLayout} />
       </div>

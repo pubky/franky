@@ -60,20 +60,20 @@ export function DialogBackupExport({ mnemonic, children }: DialogBackupExportPro
       )}
       <Atoms.DialogContent className="max-w-md" hiddenTitle={dialogTitle}>
         {/* Desktop version - hidden on mobile, shown on desktop */}
-        <div className="hidden lg:flex flex-col gap-6">
+        <div className="hidden flex-col gap-6 lg:flex">
           <Atoms.DialogHeader>
             <Atoms.DialogTitle>{dialogTitle}</Atoms.DialogTitle>
             <Atoms.DialogDescription>{descriptionContent}</Atoms.DialogDescription>
           </Atoms.DialogHeader>
 
-          <Atoms.Container className="justify-between items-start">
+          <Atoms.Container className="items-start justify-between">
             <Atoms.Container className="flex-row gap-8">
               <Atoms.Container>
                 <Image src="/images/pubky-ring-phone.png" alt="App preview" width={250} height={430} />
               </Atoms.Container>
 
               <Atoms.Container className="gap-6">
-                <Atoms.Container className="mx-0 bg-foreground rounded-lg p-[9px] w-[192px] h-[192px] items-center">
+                <Atoms.Container className="mx-0 h-[192px] w-[192px] items-center rounded-lg bg-foreground p-[9px]">
                   <QRCodeSVG value={qrValue} size={174} />
                 </Atoms.Container>
                 <Atoms.Container className="gap-4">
@@ -90,7 +90,7 @@ export function DialogBackupExport({ mnemonic, children }: DialogBackupExportPro
         </div>
 
         {/* Mobile version - shown on mobile, hidden on desktop */}
-        <div className="flex lg:hidden flex-col gap-6">
+        <div className="flex flex-col gap-6 lg:hidden">
           <Atoms.DialogHeader>
             <Atoms.DialogTitle>{dialogTitle}</Atoms.DialogTitle>
             <Atoms.DialogDescription>{mobileDescription}</Atoms.DialogDescription>

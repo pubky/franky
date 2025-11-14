@@ -49,12 +49,12 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
         </Atoms.Avatar>
         <div className="flex flex-col">
           <span className="text-base font-bold text-foreground">{userDetails.name}</span>
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground whitespace-nowrap">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase">
               @{Libs.formatPublicKey({ key: userId, length: 8 })}
             </span>
             {characterCount !== undefined && maxLength !== undefined && (
-              <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground whitespace-nowrap flex-shrink-0">
+              <span className="flex-shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground">
                 {characterCount}/{maxLength}
               </span>
             )}
