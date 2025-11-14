@@ -64,7 +64,7 @@ vi.mock('@/organisms', () => ({
       Mocked AlertBackup
     </div>
   ),
-  Timeline: () => <div data-testid="timeline">Mocked Timeline</div>,
+  TimelinePosts: () => <div data-testid="timeline-posts">Mocked TimelinePosts</div>,
 }));
 
 // Mock hooks - REQUIRED: custom hooks with complex logic
