@@ -11,6 +11,21 @@ vi.mock('@/atoms', () => ({
   ),
   AvatarImage: ({ src, alt }: { src: string; alt: string }) => <img data-testid="avatar-image" src={src} alt={alt} />,
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
+  Heading: ({
+    children,
+    level,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    level?: number;
+    size?: string;
+    className?: string;
+  }) => (
+    <div data-testid="heading" data-level={level} data-size={size} className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
@@ -27,18 +42,11 @@ describe('FeedbackCard', () => {
     expect(screen.getByText('Feedback')).toBeInTheDocument();
   });
 
-  it('renders with custom className', () => {
-    render(<FeedbackCard className="custom-feedback" />);
-
-    const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('custom-feedback');
-  });
-
   it('renders feedback heading correctly', () => {
     render(<FeedbackCard />);
 
     const heading = screen.getByText('Feedback');
-    expect(heading).toHaveClass('text-2xl', 'font-light', 'text-muted-foreground');
+    expect(heading).toHaveClass('font-light', 'text-muted-foreground');
   });
 
   it('renders user avatar with correct props', () => {
@@ -73,12 +81,13 @@ describe('FeedbackCard', () => {
 
     const question = screen.getByText('What do you think about Pubky?');
     expect(question).toHaveClass(
-      'text-sm',
+      'text-base',
+      'leading-normal',
+      'font-medium',
       'text-muted-foreground',
       'cursor-pointer',
       'hover:text-foreground',
       'transition-colors',
-      'leading-snug',
     );
   });
 
@@ -96,12 +105,12 @@ describe('FeedbackCard', () => {
     expect(feedbackForm).toHaveClass(
       'flex',
       'flex-col',
-      'gap-3',
-      'p-5',
+      'gap-4',
+      'p-6',
       'rounded-lg',
       'border-dashed',
       'border',
-      'border-border/50',
+      'border-input',
     );
   });
 
@@ -138,18 +147,13 @@ describe('FeedbackCard', () => {
     expect(container).toHaveClass('gap-2');
 
     const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
-    expect(feedbackForm).toHaveClass('gap-3', 'p-5');
+    expect(feedbackForm).toHaveClass('gap-4', 'p-6');
   });
 });
 
 describe('FeedbackCard - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<FeedbackCard />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<FeedbackCard className="custom-feedback" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 

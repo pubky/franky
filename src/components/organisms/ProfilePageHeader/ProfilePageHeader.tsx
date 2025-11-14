@@ -39,8 +39,14 @@ export function ProfilePageHeader({
 
       <div className="flex flex-col gap-5 flex-1">
         <div className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}>
-          <h1 className="text-2xl lg:text-6xl font-bold text-white">{name}</h1>
-          {bio && <p className="text-sm lg:text-base font-medium text-secondary-foreground">{bio}</p>}
+          <Atoms.Typography as="h1" size="lg" className="text-white lg:text-6xl">
+            {name}
+          </Atoms.Typography>
+          {bio && (
+            <Atoms.Typography as="p" size="sm" className="font-medium text-secondary-foreground lg:text-base">
+              {bio}
+            </Atoms.Typography>
+          )}
         </div>
 
         <div className="flex flex-wrap gap-3 items-center justify-center lg:justify-start">
