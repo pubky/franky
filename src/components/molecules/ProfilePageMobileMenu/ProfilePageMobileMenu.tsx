@@ -44,7 +44,7 @@ export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: Profil
             >
               <button
                 onClick={() => onPageChangeAction(item.pageType)}
-                className={Libs.cn('px-2.5 py-2')}
+                className="px-2.5 py-2"
                 aria-label={item.label}
                 aria-current={isSelected ? 'page' : undefined}
               >

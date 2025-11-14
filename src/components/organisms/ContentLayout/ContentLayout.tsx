@@ -70,7 +70,7 @@ export function ContentLayout({
         className={Libs.cn(
           'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
           'm-auto w-full px-6 pb-12 xl:px-0',
-          'pt-0', // Add top padding on mobile for fixed header
+          'pt-0',
           className,
         )}
       >

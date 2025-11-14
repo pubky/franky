@@ -78,7 +78,7 @@ describe('ProfilePageHeader', () => {
     const onSignOut = vi.fn();
     render(<ProfilePageHeader {...mockProps} onSignOut={onSignOut} />);
 
-    const signOutButton = screen.getByText('Sign out').closest('a');
+    const signOutButton = screen.getByText('Sign out').closest('button');
     fireEvent.click(signOutButton!);
 
     expect(onSignOut).toHaveBeenCalledTimes(1);
