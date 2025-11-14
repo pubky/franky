@@ -69,10 +69,10 @@ exports[`FilterContent > applies correct icon classes 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+        d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
       />
       <path
-        d="M15 3v4a2 2 0 0 0 2 2h4"
+        d="M15 3v5a1 1 0 0 0 1 1h5"
       />
     </svg>
     <span
@@ -196,13 +196,13 @@ exports[`FilterContent > applies correct icon classes 1`] = `
       width="24"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <path
+        d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+      />
       <circle
         cx="12"
         cy="12"
         r="10"
-      />
-      <polygon
-        points="10 8 16 12 10 16 10 8"
       />
     </svg>
     <span
@@ -356,10 +356,10 @@ exports[`FilterContent > applies correct styling classes 2`] = `
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+      d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
     />
     <path
-      d="M15 3v4a2 2 0 0 0 2 2h4"
+      d="M15 3v5a1 1 0 0 0 1 1h5"
     />
   </svg>
   <span
@@ -439,10 +439,10 @@ exports[`FilterContent > renders with correct icons 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+        d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
       />
       <path
-        d="M15 3v4a2 2 0 0 0 2 2h4"
+        d="M15 3v5a1 1 0 0 0 1 1h5"
       />
     </svg>
     <span
@@ -566,13 +566,13 @@ exports[`FilterContent > renders with correct icons 1`] = `
       width="24"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <path
+        d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+      />
       <circle
         cx="12"
         cy="12"
         r="10"
-      />
-      <polygon
-        points="10 8 16 12 10 16 10 8"
       />
     </svg>
     <span
@@ -726,10 +726,10 @@ exports[`FilterContent > rerenders with different selected tabs 2`] = `
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+      d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
     />
     <path
-      d="M15 3v4a2 2 0 0 0 2 2h4"
+      d="M15 3v5a1 1 0 0 0 1 1h5"
     />
   </svg>
   <span
@@ -806,13 +806,13 @@ exports[`FilterContent > rerenders with different selected tabs 4`] = `
     width="24"
     xmlns="http://www.w3.org/2000/svg"
   >
+    <path
+      d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+    />
     <circle
       cx="12"
       cy="12"
       r="10"
-    />
-    <polygon
-      points="10 8 16 12 10 16 10 8"
     />
   </svg>
   <span
@@ -833,7 +833,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«ra»"
+    id="_r_a_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -843,7 +843,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     </h2>
   </div>
   <div
-    aria-labelledby="«ra»"
+    aria-labelledby="_r_a_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -916,10 +916,10 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -1043,13 +1043,13 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -1148,7 +1148,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rc»"
+    id="_r_c_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1158,7 +1158,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     </h2>
   </div>
   <div
-    aria-labelledby="«rc»"
+    aria-labelledby="_r_c_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -1231,10 +1231,10 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -1358,13 +1358,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -1463,7 +1463,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rg»"
+    id="_r_g_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1473,7 +1473,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     </h2>
   </div>
   <div
-    aria-labelledby="«rg»"
+    aria-labelledby="_r_g_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -1546,10 +1546,10 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -1673,13 +1673,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -1778,7 +1778,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rd»"
+    id="_r_d_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -1788,7 +1788,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     </h2>
   </div>
   <div
-    aria-labelledby="«rd»"
+    aria-labelledby="_r_d_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -1861,10 +1861,10 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -1988,13 +1988,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -2093,7 +2093,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rf»"
+    id="_r_f_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -2103,7 +2103,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     </h2>
   </div>
   <div
-    aria-labelledby="«rf»"
+    aria-labelledby="_r_f_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -2176,10 +2176,10 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -2303,13 +2303,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -2408,7 +2408,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rb»"
+    id="_r_b_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -2418,7 +2418,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     </h2>
   </div>
   <div
-    aria-labelledby="«rb»"
+    aria-labelledby="_r_b_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -2491,10 +2491,10 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -2618,13 +2618,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -2723,7 +2723,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«re»"
+    id="_r_e_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -2733,7 +2733,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     </h2>
   </div>
   <div
-    aria-labelledby="«re»"
+    aria-labelledby="_r_e_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -2806,10 +2806,10 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -2933,13 +2933,13 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span
@@ -3038,7 +3038,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r9»"
+    id="_r_9_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -3048,7 +3048,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="«r9»"
+    aria-labelledby="_r_9_"
     class=""
     data-testid="filter-content-radiogroup"
     role="radiogroup"
@@ -3121,10 +3121,10 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"
+            d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"
           />
           <path
-            d="M15 3v4a2 2 0 0 0 2 2h4"
+            d="M15 3v5a1 1 0 0 0 1 1h5"
           />
         </svg>
         <span
@@ -3248,13 +3248,13 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
+          <path
+            d="M9 9.003a1 1 0 0 1 1.517-.859l4.997 2.997a1 1 0 0 1 0 1.718l-4.997 2.997A1 1 0 0 1 9 14.996z"
+          />
           <circle
             cx="12"
             cy="12"
             r="10"
-          />
-          <polygon
-            points="10 8 16 12 10 16 10 8"
           />
         </svg>
         <span

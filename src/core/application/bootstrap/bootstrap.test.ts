@@ -122,6 +122,8 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     persistNotificationsError,
   } = config;
 
+  vi.clearAllMocks();
+
   return {
     nexusFetch: vi
       .spyOn(Core.NexusBootstrapService, 'fetch')
@@ -191,6 +193,7 @@ const assertCommonCalls = (
 
 describe('BootstrapApplication', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllMocks();
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
@@ -198,6 +201,7 @@ describe('BootstrapApplication', () => {
   });
 
   afterEach(() => {
+    vi.clearAllMocks();
     vi.restoreAllMocks();
   });
 
@@ -332,6 +336,117 @@ describe('BootstrapApplication', () => {
       expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
       expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
       expect(mocks.persistNotifications).toHaveBeenCalledWith([], MOCK_LAST_READ);
+    });
+
+    // note: this case should never happen because nexus ensures that users and posts are always returned together
+    it('should handle bootstrap data with users but no posts', async () => {
+      const bootstrapData: Core.NexusBootstrapResponse = {
+        users: createMockBootstrapData().users,
+        posts: [],
+        list: {
+          stream: [],
+          influencers: ['user-1'],
+          recommended: [],
+          hot_tags: [],
+        },
+      };
+      const mocks = setupMocks({ bootstrapData });
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
+      expect(mocks.persistPosts).toHaveBeenCalledWith([]);
+      expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+        stream: [],
+      });
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, [
+        'user-1',
+      ]);
+      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+    });
+
+    // note: this case should never happen because nexus ensures that users and posts are always returned together
+    it('should handle bootstrap data with posts but no users', async () => {
+      const bootstrapData: Core.NexusBootstrapResponse = {
+        users: [],
+        posts: createMockBootstrapData().posts,
+        list: {
+          stream: ['post-1'],
+          influencers: [],
+          recommended: [],
+          hot_tags: [],
+        },
+      };
+      const mocks = setupMocks({ bootstrapData });
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mocks.persistUsers).toHaveBeenCalledWith([]);
+      expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+      expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+        stream: ['post-1'],
+      });
+      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+    });
+
+    it('should handle bootstrap data with users and posts but empty lists', async () => {
+      const bootstrapData: Core.NexusBootstrapResponse = {
+        users: createMockBootstrapData().users,
+        posts: createMockBootstrapData().posts,
+        list: {
+          stream: [],
+          influencers: [],
+          recommended: [],
+          hot_tags: [],
+        },
+      };
+      const mocks = setupMocks({ bootstrapData });
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
+      expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+      expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+        stream: [],
+      });
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.RECOMMENDED, []);
+      expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, []);
+      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+    });
+
+    it('should handle bootstrap data with partial lists (some empty, some populated)', async () => {
+      const bootstrapData: Core.NexusBootstrapResponse = {
+        users: createMockBootstrapData().users,
+        posts: createMockBootstrapData().posts,
+        list: {
+          stream: ['post-1'],
+          influencers: [],
+          recommended: ['user-2'],
+          hot_tags: [],
+        },
+      };
+      vi.clearAllMocks();
+      const mocks = setupMocks({ bootstrapData });
+
+      vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
+        meta: { url: MOCK_LAST_READ_URL },
+      } as LastReadResult);
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(mocks.upsertPostsStream).toHaveBeenCalledTimes(1);
+      expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
+        streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
+        stream: ['post-1'],
+      });
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.RECOMMENDED, ['user-2']);
+      expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, []);
+      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });
   });
 

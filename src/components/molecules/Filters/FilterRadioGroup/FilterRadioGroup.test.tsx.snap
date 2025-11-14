@@ -10,7 +10,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rr»"
+    id="_r_r_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="«rr»"
+    aria-labelledby="_r_r_"
     class=""
     data-testid="custom-test-id"
     role="radiogroup"
@@ -102,7 +102,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«ro»"
+    id="_r_o_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -112,7 +112,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="«ro»"
+    aria-labelledby="_r_o_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -194,7 +194,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rq»"
+    id="_r_q_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -204,7 +204,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="«rq»"
+    aria-labelledby="_r_q_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -287,7 +287,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«rp»"
+    id="_r_p_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -297,7 +297,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     </h2>
   </div>
   <div
-    aria-labelledby="«rp»"
+    aria-labelledby="_r_p_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
