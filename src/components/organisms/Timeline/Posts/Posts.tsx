@@ -25,10 +25,7 @@ interface PostWithRepliesProps {
 
 function PostWithReplies({ postId, onPostClick }: PostWithRepliesProps) {
   // Check if post has replies by querying post_counts
-  const postCounts = useLiveQuery(() => {
-    // TODO: move to controller function
-    return Core.db.post_counts.get(postId);
-  }, [postId]);
+  const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ postId }), [postId]);
   const hasReplies = postCounts?.replies && postCounts.replies > 0 ? true : false;
 
   return (
