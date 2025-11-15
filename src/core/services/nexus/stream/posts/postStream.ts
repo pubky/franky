@@ -27,7 +27,7 @@ export class NexusPostStreamService {
         nexusEndpoint = Core.postStreamApi[invokeEndpoint]({ ...params, observer_id: params.viewer_id });
         break;
       case Core.StreamSource.REPLIES:
-        nexusEndpoint = Core.postStreamApi.replies({ ...params, ...extraParams } as Core.TStreamPostRepliesParams);
+        nexusEndpoint = Core.postStreamApi[invokeEndpoint]({ ...params, ...extraParams } as Core.TStreamPostRepliesParams);
         break;
       case Core.StreamSource.AUTHOR:
       case Core.StreamSource.AUTHOR_REPLIES:

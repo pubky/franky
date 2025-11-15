@@ -12,6 +12,7 @@ import * as Config from '@/config';
 // of streams should be /home/[external_user_id]. If we want logged user post stream,
 // the url of streams should be /home.
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 export class StreamPostsController {
   private constructor() {} // Prevent instantiation
 
@@ -22,6 +23,7 @@ export class StreamPostsController {
    * @param params.streamId - Unique identifier for the stream (e.g., 'timeline:all:all', 'engagement:all:images')
    * @param params.streamTail - Identifier of the last post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
    * @param params.lastPostId - Post ID of the last post in the current page. We use to get the chunk of the stream from the cache.
+   * @param params.limit - Limit of posts to fetch. Default is Config.NEXUS_POSTS_PER_PAGE.
    *
    * @returns Promise resolving to stream slice response containing:
    * - nextPageIds: Array of post IDs for the current page
@@ -44,11 +46,12 @@ export class StreamPostsController {
     streamId,
     streamTail,
     lastPostId,
+    limit = Config.NEXUS_POSTS_PER_PAGE,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
     const { nextPageIds, cacheMissPostIds, timestamp } = await Core.PostStreamApplication.getOrFetchStreamSlice({
       streamId,
-      limit: Config.NEXUS_POSTS_PER_PAGE,
+      limit,
       streamTail,
       lastPostId,
       viewerId,
