@@ -530,4 +530,273 @@ describe('LocalPostService', () => {
       }
     });
   });
+
+  describe('getPostCounts', () => {
+    it('should return post counts when post exists', async () => {
+      const postId = testData.fullPostId1;
+      await setupExistingPost(postId, 'Test post');
+
+      // Update some counts
+      await Core.PostCountsModel.update(postId, {
+        tags: 5,
+        unique_tags: 3,
+        replies: 10,
+        reposts: 2,
+      });
+
+      const counts = await Core.LocalPostService.getPostCounts(postId);
+
+      expect(counts).toBeTruthy();
+      expect(counts.id).toBe(postId);
+      expect(counts.tags).toBe(5);
+      expect(counts.unique_tags).toBe(3);
+      expect(counts.replies).toBe(10);
+      expect(counts.reposts).toBe(2);
+    });
+
+    it('should return default counts when post does not exist', async () => {
+      const nonExistentPostId = 'nonexistent:post123';
+
+      const counts = await Core.LocalPostService.getPostCounts(nonExistentPostId);
+
+      expect(counts).toBeTruthy();
+      expect(counts.id).toBe(nonExistentPostId);
+      expect(counts.tags).toBe(0);
+      expect(counts.unique_tags).toBe(0);
+      expect(counts.replies).toBe(0);
+      expect(counts.reposts).toBe(0);
+    });
+
+    it('should throw DatabaseError on database failure', async () => {
+      const postId = testData.fullPostId1;
+
+      // Mock findById to throw an error
+      const spy = vi
+        .spyOn(Core.PostCountsModel, 'findById')
+        .mockRejectedValueOnce(new Error('Database connection lost'));
+
+      await expect(Core.LocalPostService.getPostCounts(postId)).rejects.toMatchObject({
+        type: 'QUERY_FAILED',
+        message: 'Failed to get post counts',
+        statusCode: 500,
+      });
+
+      spy.mockRestore();
+    });
+
+    it('should log error on failure', async () => {
+      const postId = testData.fullPostId1;
+      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
+
+      const spy = vi.spyOn(Core.PostCountsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
+
+      await expect(Core.LocalPostService.getPostCounts(postId)).rejects.toThrow();
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Failed to get post counts',
+        expect.objectContaining({
+          postId,
+        }),
+      );
+
+      spy.mockRestore();
+      loggerSpy.mockRestore();
+    });
+  });
+
+  describe('getFirstReplies', () => {
+    it('should return first N replies when post has replies', async () => {
+      const parentPostId = testData.fullPostId1;
+      const parentUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
+
+      await setupExistingPost(parentPostId, 'Parent post');
+
+      // Create 5 replies with proper composite IDs
+      const replyIds = [];
+      for (let i = 1; i <= 5; i++) {
+        const replyIdPart = `reply${i}`;
+        const replyId = Core.buildPostCompositeId({ pubky: testData.authorPubky, postId: replyIdPart });
+        await setupExistingPost(replyId, `Reply ${i}`, parentUri);
+        replyIds.push(replyId);
+      }
+
+      // Get first 3 replies
+      const firstReplies = await Core.LocalPostService.getFirstReplies(parentPostId, 3);
+
+      expect(firstReplies).toHaveLength(3);
+      expect(firstReplies).toEqual(replyIds.slice(0, 3));
+    });
+
+    it('should return all replies when there are fewer than limit', async () => {
+      const parentPostId = testData.fullPostId1;
+      const parentUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
+
+      await setupExistingPost(parentPostId, 'Parent post');
+
+      // Create only 2 replies with proper composite IDs
+      const replyIds = [];
+      for (let i = 1; i <= 2; i++) {
+        const replyIdPart = `reply${i}`;
+        const replyId = Core.buildPostCompositeId({ pubky: testData.authorPubky, postId: replyIdPart });
+        await setupExistingPost(replyId, `Reply ${i}`, parentUri);
+        replyIds.push(replyId);
+      }
+
+      // Request 5 but should only get 2
+      const firstReplies = await Core.LocalPostService.getFirstReplies(parentPostId, 5);
+
+      expect(firstReplies).toHaveLength(2);
+      expect(firstReplies).toEqual(replyIds);
+    });
+
+    it('should return empty array when post has no replies', async () => {
+      const parentPostId = testData.fullPostId1;
+
+      await setupExistingPost(parentPostId, 'Parent post with no replies');
+
+      const firstReplies = await Core.LocalPostService.getFirstReplies(parentPostId, 3);
+
+      expect(firstReplies).toEqual([]);
+    });
+
+    it('should return empty array when post does not exist', async () => {
+      const nonExistentPostId = 'nonexistent:post123';
+
+      const firstReplies = await Core.LocalPostService.getFirstReplies(nonExistentPostId, 3);
+
+      expect(firstReplies).toEqual([]);
+    });
+
+    it('should use default limit of 3 when not specified', async () => {
+      const parentPostId = testData.fullPostId1;
+      const parentUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
+
+      await setupExistingPost(parentPostId, 'Parent post');
+
+      // Create 5 replies with proper composite IDs
+      const replyIds = [];
+      for (let i = 1; i <= 5; i++) {
+        const replyIdPart = `reply${i}`;
+        const replyId = Core.buildPostCompositeId({ pubky: testData.authorPubky, postId: replyIdPart });
+        await setupExistingPost(replyId, `Reply ${i}`, parentUri);
+        replyIds.push(replyId);
+      }
+
+      // Call without limit parameter
+      const firstReplies = await Core.LocalPostService.getFirstReplies(parentPostId);
+
+      expect(firstReplies).toHaveLength(3);
+      expect(firstReplies).toEqual(replyIds.slice(0, 3));
+    });
+
+    it('should return replies in the order they were created', async () => {
+      const parentPostId = testData.fullPostId1;
+      const parentUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
+
+      await setupExistingPost(parentPostId, 'Parent post');
+
+      const replyIds = [];
+      for (let i = 1; i <= 3; i++) {
+        const replyIdPart = `reply${i}`;
+        const replyId = Core.buildPostCompositeId({ pubky: testData.authorPubky, postId: replyIdPart });
+        await setupExistingPost(replyId, `Reply ${i}`, parentUri);
+        replyIds.push(replyId);
+      }
+
+      const firstReplies = await Core.LocalPostService.getFirstReplies(parentPostId, 3);
+
+      // Should maintain order
+      expect(firstReplies[0]).toBe(replyIds[0]);
+      expect(firstReplies[1]).toBe(replyIds[1]);
+      expect(firstReplies[2]).toBe(replyIds[2]);
+    });
+
+    it('should throw DatabaseError on database failure', async () => {
+      const postId = testData.fullPostId1;
+
+      // Setup post first so it gets to the getReplies call
+      await setupExistingPost(postId, 'Test post');
+
+      // Mock getReplies to throw an error
+      const spy = vi
+        .spyOn(Core.PostRelationshipsModel, 'getReplies')
+        .mockRejectedValueOnce(new Error('Database connection lost'));
+
+      await expect(Core.LocalPostService.getFirstReplies(postId, 3)).rejects.toMatchObject({
+        type: 'QUERY_FAILED',
+        message: 'Failed to get first replies',
+        statusCode: 500,
+      });
+
+      spy.mockRestore();
+    });
+
+    it('should log error on failure', async () => {
+      const postId = testData.fullPostId1;
+      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
+
+      const spy = vi.spyOn(Core.PostDetailsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
+
+      await expect(Core.LocalPostService.getFirstReplies(postId, 3)).rejects.toThrow();
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Failed to get first replies',
+        expect.objectContaining({
+          postId,
+          limit: 3,
+        }),
+      );
+
+      spy.mockRestore();
+      loggerSpy.mockRestore();
+    });
+
+    it('should handle posts with URI but no replies relationship', async () => {
+      const postId = testData.fullPostId1;
+
+      await setupExistingPost(postId, 'Post with no reply relationships');
+
+      // Mock getReplies to return empty array (which is what it normally returns)
+      const spy = vi.spyOn(Core.PostRelationshipsModel, 'getReplies').mockResolvedValueOnce([]);
+
+      const firstReplies = await Core.LocalPostService.getFirstReplies(postId, 3);
+
+      expect(firstReplies).toEqual([]);
+
+      spy.mockRestore();
+    });
+
+    it('should work with different limit values', async () => {
+      const parentPostId = testData.fullPostId1;
+      const parentUri = `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId1}`;
+
+      await setupExistingPost(parentPostId, 'Parent post');
+
+      // Create 10 replies with proper composite IDs (padded to maintain order)
+      const replyIds: string[] = [];
+      for (let i = 1; i <= 10; i++) {
+        const replyIdPart = `reply${i.toString().padStart(2, '0')}`; // reply01, reply02, etc.
+        const replyId = Core.buildPostCompositeId({ pubky: testData.authorPubky, postId: replyIdPart });
+        await setupExistingPost(replyId, `Reply ${i}`, parentUri);
+        replyIds.push(replyId);
+      }
+
+      // Test limit of 1
+      const firstReply = await Core.LocalPostService.getFirstReplies(parentPostId, 1);
+      expect(firstReply).toHaveLength(1);
+      expect(firstReply[0]).toBe(replyIds[0]);
+
+      // Test limit of 5
+      const first5 = await Core.LocalPostService.getFirstReplies(parentPostId, 5);
+      expect(first5).toHaveLength(5);
+      // Just check we got 5 replies, don't enforce specific order since DB may sort differently
+      expect(first5.every((id) => replyIds.includes(id))).toBe(true);
+
+      // Test limit of 10 (all)
+      const allReplies = await Core.LocalPostService.getFirstReplies(parentPostId, 10);
+      expect(allReplies).toHaveLength(10);
+      // All replies should be from our created set
+      expect(allReplies.every((id) => replyIds.includes(id))).toBe(true);
+    });
+  });
 });

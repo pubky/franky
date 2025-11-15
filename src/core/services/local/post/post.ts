@@ -169,6 +169,64 @@ export class LocalPostService {
   }
 
   /**
+   * Get post counts for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post counts or undefined if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+    try {
+      const counts = await Core.PostCountsModel.findById(postId);
+      return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
+    } catch (error) {
+      Libs.Logger.error('Failed to get post counts', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post counts', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Get the first N replies for a post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @param limit - Maximum number of replies to return (default: 3)
+   * @returns Array of reply post IDs (first N replies)
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async getFirstReplies(postId: string, limit: number = 3): Promise<string[]> {
+    try {
+      // Get post details to retrieve the URI
+      const postDetails = await Core.PostDetailsModel.findById(postId);
+      if (!postDetails?.uri) {
+        return [];
+      }
+
+      // Query post_relationships to find replies to this post
+      // Simply take the first N replies (they're already in the order they were indexed)
+      const replyRelationships = await Core.PostRelationshipsModel.getReplies(postDetails.uri);
+
+      if (!replyRelationships || replyRelationships.length === 0) {
+        return [];
+      }
+
+      // Take the first N replies and extract their IDs
+      return replyRelationships.slice(0, limit).map((rel) => rel.id);
+    } catch (error) {
+      Libs.Logger.error('Failed to get first replies', { postId, limit, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get first replies', 500, {
+        error,
+        postId,
+        limit,
+      });
+    }
+  }
+
+  /**
    * Helper method to update post counts safely
    */
   private static async updatePostCount(
