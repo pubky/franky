@@ -1,0 +1,37 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TimelinePostReplies > Snapshots > should match snapshot when rendering no replies 1`] = `<div />`;
+
+exports[`TimelinePostReplies > Snapshots > should match snapshot when rendering replies 1`] = `
+<div>
+  <div
+    class="ml-3"
+    data-testid="container"
+  >
+    <div
+      data-testid="post-thread-spacer"
+    />
+    <div
+      data-is-last-reply="false"
+      data-is-reply="true"
+      data-testid="post-main-author:reply1"
+    />
+    <div
+      data-testid="post-thread-spacer"
+    />
+    <div
+      data-is-last-reply="false"
+      data-is-reply="true"
+      data-testid="post-main-author:reply2"
+    />
+    <div
+      data-testid="post-thread-spacer"
+    />
+    <div
+      data-is-last-reply="true"
+      data-is-reply="true"
+      data-testid="post-main-author:reply3"
+    />
+  </div>
+</div>
+`;
