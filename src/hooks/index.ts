@@ -8,6 +8,7 @@ export * from './useEnterSubmit';
 export * from './useIsMobile';
 export * from './useLayoutReset';
 export * from './useRecoveryPhraseValidation';
+export * from './usePostReply';
 export * from './useStreamIdFromFilters';
 export * from './useControlledState';
 export * from './useRadiogroupKeyboard';

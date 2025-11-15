@@ -1,8 +1,6 @@
 'use client';
 
-import { useState } from 'react';
 import * as Atoms from '@/atoms';
-import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
 interface PostReplyInputProps {
@@ -11,26 +9,9 @@ interface PostReplyInputProps {
   onSuccess?: () => void;
 }
 
-export function SinglePostReplyInput({ postId }: PostReplyInputProps) {
-  const [replyContent, setReplyContent] = useState('');
-  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+export function SinglePostReplyInput({ postId, onSuccess }: PostReplyInputProps) {
+  const { replyContent, setReplyContent, handleReplySubmit } = Hooks.usePostReply({ postId, onSuccess });
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
-
-  const handleReplySubmit = async () => {
-    if (!replyContent.trim() || !postId || !currentUserId) return;
-
-    try {
-      await Core.PostController.create({
-        parentPostId: postId,
-        content: replyContent.trim(),
-        authorId: currentUserId,
-      });
-      // useLiveQuery in PostReplies will automatically update the replies list
-      setReplyContent('');
-    } catch (error) {
-      console.error('Failed to submit reply:', error);
-    }
-  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {

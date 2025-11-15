@@ -79,6 +79,13 @@ describe('PostTagInput', () => {
     const input = screen.getByPlaceholderText('custom placeholder');
     expect(input).toBeInTheDocument();
   });
+
+  it('forwards ref correctly', () => {
+    const ref = vi.fn();
+    render(<PostTagInput ref={ref} />);
+
+    expect(ref).toHaveBeenCalledWith(expect.any(HTMLInputElement));
+  });
 });
 
 describe('PostTagInput - Snapshots', () => {
