@@ -18,7 +18,7 @@ export function Home() {
       >
         <Organisms.AlertBackup />
         <Molecules.HomeHeader />
-        <Organisms.Timeline />
+        <Organisms.TimelinePosts />
       </Organisms.ContentLayout>
     </>
   );

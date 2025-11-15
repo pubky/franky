@@ -8,7 +8,7 @@ exports[`SinglePost - Snapshots > matches snapshot with all props provided 1`] =
     class="absolute top-0 -left-12"
   >
     <div
-      data-height="100"
+      data-height="0"
       data-testid="reply-line"
     >
       ReplyLine
@@ -444,7 +444,7 @@ exports[`SinglePost - Snapshots > matches snapshot with isReply true 1`] = `
     class="absolute top-0 -left-12"
   >
     <div
-      data-height="100"
+      data-height="0"
       data-testid="reply-line"
     >
       ReplyLine

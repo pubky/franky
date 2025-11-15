@@ -36,7 +36,7 @@ export class LocalStreamPostsService {
 
   /**
    * Adds a reply post to the post replies map if the post is a reply
-   * 
+   *
    * @param repliedUri - The URI of the parent post being replied to (optional)
    * @param replyPostId - The composite post ID of the reply post
    * @param postReplies - The map of reply stream IDs to arrays of reply post IDs
@@ -95,7 +95,7 @@ export class LocalStreamPostsService {
       Core.PostTagsModel.bulkSave(postTags),
       Core.PostRelationshipsModel.bulkSave(postRelationships),
     ]);
-    
+
     if (Object.keys(postReplies).length > 0) {
       await Promise.all(
         Object.entries(postReplies).map(async ([parentCompositePostId, postIds]) => {
