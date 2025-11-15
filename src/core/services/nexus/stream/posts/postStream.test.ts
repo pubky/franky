@@ -68,14 +68,14 @@ describe('Stream API URL Generation', () => {
 
   describe('Post replies requiring author_id and post_id', () => {
     it('should generate correct post replies URL', () => {
-      const url = postStreamApi.postReplies({
+      const url = postStreamApi.post_replies({
         author_id: mockAuthorId,
         post_id: mockPostId,
         viewer_id: mockViewerId,
         limit: 20,
       });
 
-      expect(url).toContain('source=replies');
+      expect(url).toContain('source=post_replies');
       expect(url).toContain(`author_id=${mockAuthorId}`);
       expect(url).toContain(`post_id=${mockPostId}`);
       expect(url).toContain(`viewer_id=${mockViewerId}`);
@@ -98,7 +98,7 @@ describe('Stream API URL Generation', () => {
     });
 
     it('should generate correct author replies URL', () => {
-      const url = postStreamApi.authorReplies({
+      const url = postStreamApi.author_replies({
         author_id: mockAuthorId,
         tags: ['tech', 'ai', 'machine-learning'],
         order: StreamOrder.DESCENDING,
