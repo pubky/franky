@@ -179,14 +179,15 @@ const assertCommonCalls = (
     streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
     stream: bootstrapData.list.stream,
   });
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-    bootstrapData.list.influencers,
-  );
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.RECOMMENDED,
-    bootstrapData.list.recommended,
-  );
+  // Check user streams are stored with UserStreamTypes directly
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+    stream: bootstrapData.list.influencers,
+  });
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.RECOMMENDED,
+    stream: bootstrapData.list.recommended,
+  });
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
   expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
 };

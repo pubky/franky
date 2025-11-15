@@ -52,6 +52,16 @@ export type TUserStreamUsersByIdsParams = {
 };
 
 /**
+ * Parameters for fetching user stream from Nexus
+ * streamId: Composite stream identifier (e.g., 'user123:followers', 'influencers:today:all')
+ * params: Pagination parameters
+ */
+export type TFetchUserStreamParams = {
+  streamId: Core.UserStreamId;
+  params: TUserStreamBase;
+};
+
+/**
  * Union type of all supported user stream parameter shapes
  * Provides type safety for buildUserStreamUrl function
  */

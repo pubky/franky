@@ -1,5 +1,7 @@
+import type { Pubky, UserStreamCompositeReach } from '@/core';
+
 // User Stream ID Pattern: source:timeframe:reach
-// - SOURCE: followers, following, friends, muted, most_followed, influencers, recommended, post_replies
+// - SOURCE: followers, following, friends, muted, most_followed, influencers, recommended, post_replies, wot
 // - TIMEFRAME: today, this_month, all_time, all
 // - REACH (Supported in 'influencers' source): followers, following, friends, wot (u8), all
 //
@@ -9,8 +11,10 @@ export enum UserStreamTypes {
   // Active users in the UI. We get randomly, preview=true param active in nexus
   TODAY_INFLUENCERS_ALL = 'influencers:today:all',
   RECOMMENDED = 'recommended:all:all',
-  // Other lists, persisted after user navigation
-  TODAY_FOLLOWERS_ALL = 'followers:today:all',
-  TODAY_FOLLOWING_ALL = 'following:today:all',
-  TODAY_FRIENDS_ALL = 'friends:today:all',
+  // TODO: Add all possible cases
 }
+
+// Composite ID format: userId:reach (e.g., 'user123:followers')
+export type UserStreamCompositeId = `${Pubky}:${UserStreamCompositeReach}`;
+
+export type UserStreamId = UserStreamTypes | UserStreamCompositeId;

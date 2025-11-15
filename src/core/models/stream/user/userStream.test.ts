@@ -1,25 +1,47 @@
 import { db } from '@/core/database';
+import * as Core from '@/core';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { createDefaultUserStream } from './userStream.helper';
+import {
+  createDefaultUserStream,
+  buildUserCompositeId,
+  parseUserCompositeId,
+  USER_STREAM_ID_DELIMITER,
+} from './userStream.helper';
 import { UserStreamModel } from './userStream';
 import { UserStreamTypes } from './userStream.types';
 
 describe('UserStreamModel', () => {
+  const targetUserId = 'user-target' as Core.Pubky;
+
   beforeEach(async () => {
     await db.initialize();
+    await UserStreamModel.table.clear();
   });
 
   describe('constructor', () => {
-    it('should create a user stream with all properties', () => {
-      const streamData = createDefaultUserStream(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+    it('should create a user stream with composite ID', () => {
+      const streamId = buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
+      const streamData = createDefaultUserStream(streamId, ['follower-1', 'follower-2']);
       const { id, stream } = new UserStreamModel(streamData);
 
-      expect(id).toBe(UserStreamTypes.TODAY_FOLLOWERS_ALL);
-      expect(stream).toEqual(['user1', 'user2']);
+      expect(id).toBe(streamId);
+      expect(stream).toEqual(['follower-1', 'follower-2']);
+    });
+
+    it('should create a user stream with enum ID', () => {
+      const streamData = createDefaultUserStream(UserStreamTypes.TODAY_INFLUENCERS_ALL, [
+        'influencer-1',
+        'influencer-2',
+      ]);
+      const { id, stream } = new UserStreamModel(streamData);
+
+      expect(id).toBe(UserStreamTypes.TODAY_INFLUENCERS_ALL);
+      expect(stream).toEqual(['influencer-1', 'influencer-2']);
     });
 
     it('should handle empty users array', () => {
-      const streamData = createDefaultUserStream(UserStreamTypes.TODAY_FOLLOWERS_ALL, []);
+      const streamId = buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
+      const streamData = createDefaultUserStream(streamId, []);
       const { stream } = new UserStreamModel(streamData);
 
       expect(stream).toEqual([]);
@@ -27,38 +49,198 @@ describe('UserStreamModel', () => {
   });
 
   describe('upsert', () => {
-    it('should save user stream to database', async () => {
-      await UserStreamModel.upsert(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+    it('should save user stream with composite ID to database', async () => {
+      const streamId = buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
+      await UserStreamModel.upsert(streamId, ['follower-1', 'follower-2']);
 
-      const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
+      const foundStream = await UserStreamModel.findById(streamId);
       expect(foundStream).toBeTruthy();
-      expect(foundStream!.stream).toEqual(['user1', 'user2']);
+      expect(foundStream!.stream).toEqual(['follower-1', 'follower-2']);
+    });
+
+    it('should save user stream with enum ID to database', async () => {
+      await UserStreamModel.upsert(UserStreamTypes.TODAY_INFLUENCERS_ALL, ['influencer-1', 'influencer-2']);
+
+      const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_INFLUENCERS_ALL);
+      expect(foundStream).toBeTruthy();
+      expect(foundStream!.stream).toEqual(['influencer-1', 'influencer-2']);
+    });
+
+    it('should update existing stream', async () => {
+      const streamId = buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
+      await UserStreamModel.upsert(streamId, ['follower-1']);
+      await UserStreamModel.upsert(streamId, ['follower-2', 'follower-3']);
+
+      const foundStream = await UserStreamModel.findById(streamId);
+      expect(foundStream!.stream).toEqual(['follower-2', 'follower-3']);
     });
   });
 
   describe('findById', () => {
-    it('should find user stream by id', async () => {
-      await UserStreamModel.upsert(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+    it('should find user stream by composite ID', async () => {
+      const streamId = buildUserCompositeId({ userId: targetUserId, reach: 'following' });
+      await UserStreamModel.upsert(streamId, ['following-1', 'following-2']);
 
-      const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
+      const foundStream = await UserStreamModel.findById(streamId);
       expect(foundStream).toBeTruthy();
-      expect(foundStream!.stream).toEqual(['user1', 'user2']);
+      expect(foundStream!.stream).toEqual(['following-1', 'following-2']);
+    });
+
+    it('should find user stream by enum ID', async () => {
+      await UserStreamModel.upsert(UserStreamTypes.RECOMMENDED, ['recommended-1', 'recommended-2']);
+
+      const foundStream = await UserStreamModel.findById(UserStreamTypes.RECOMMENDED);
+      expect(foundStream).toBeTruthy();
+      expect(foundStream!.stream).toEqual(['recommended-1', 'recommended-2']);
     });
 
     it('should return null for non-existent stream', async () => {
-      const foundStream = await UserStreamModel.findById('non-existent' as UserStreamTypes);
+      const streamId = buildUserCompositeId({ userId: 'non-existent', reach: 'followers' });
+      const foundStream = await UserStreamModel.findById(streamId);
       expect(foundStream).toBeNull();
     });
   });
 
   describe('deleteById', () => {
-    it('should delete user stream by id', async () => {
-      await UserStreamModel.upsert(UserStreamTypes.TODAY_FOLLOWERS_ALL, ['user1', 'user2']);
+    it('should delete user stream by composite ID', async () => {
+      const streamId = buildUserCompositeId({ userId: targetUserId, reach: 'followers' });
+      await UserStreamModel.upsert(streamId, ['follower-1', 'follower-2']);
 
-      await UserStreamModel.deleteById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
+      await UserStreamModel.deleteById(streamId);
 
-      const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_FOLLOWERS_ALL);
+      const foundStream = await UserStreamModel.findById(streamId);
       expect(foundStream).toBeNull();
     });
+
+    it('should delete user stream by enum ID', async () => {
+      await UserStreamModel.upsert(UserStreamTypes.TODAY_INFLUENCERS_ALL, ['influencer-1']);
+
+      await UserStreamModel.deleteById(UserStreamTypes.TODAY_INFLUENCERS_ALL);
+
+      const foundStream = await UserStreamModel.findById(UserStreamTypes.TODAY_INFLUENCERS_ALL);
+      expect(foundStream).toBeNull();
+    });
+  });
+});
+
+describe('buildUserCompositeId', () => {
+  it('should build correct format (userId:reach)', () => {
+    const userId = 'user-123' as Core.Pubky;
+    const reach = 'followers';
+
+    const compositeId = buildUserCompositeId({ userId, reach });
+
+    expect(compositeId).toBe('user-123:followers');
+  });
+
+  it('should handle all UserStreamSource enum values', () => {
+    const userId = 'user-123' as Core.Pubky;
+
+    expect(buildUserCompositeId({ userId, reach: 'followers' })).toBe('user-123:followers');
+    expect(buildUserCompositeId({ userId, reach: 'following' })).toBe('user-123:following');
+    expect(buildUserCompositeId({ userId, reach: 'friends' })).toBe('user-123:friends');
+    expect(buildUserCompositeId({ userId, reach: 'muted' })).toBe('user-123:muted');
+  });
+
+  it('should use correct delimiter', () => {
+    const userId = 'user-123' as Core.Pubky;
+    const reach = 'followers';
+
+    const compositeId = buildUserCompositeId({ userId, reach });
+
+    expect(compositeId).toContain(USER_STREAM_ID_DELIMITER);
+    expect(compositeId.split(USER_STREAM_ID_DELIMITER)).toHaveLength(2);
+  });
+
+  it('should handle special characters in userId', () => {
+    const userId = 'user_with-special.chars' as Core.Pubky;
+    const reach = 'followers';
+
+    const compositeId = buildUserCompositeId({ userId, reach });
+
+    expect(compositeId).toBe('user_with-special.chars:followers');
+  });
+});
+
+describe('parseUserCompositeId', () => {
+  it('should parse valid composite IDs correctly', () => {
+    const compositeId = 'user-123:followers';
+
+    const result = parseUserCompositeId(compositeId);
+
+    expect(result.userId).toBe('user-123');
+    expect(result.reach).toBe('followers');
+  });
+
+  it('should handle all reach types', () => {
+    expect(parseUserCompositeId('user-123:followers').reach).toBe('followers');
+    expect(parseUserCompositeId('user-123:following').reach).toBe('following');
+    expect(parseUserCompositeId('user-123:friends').reach).toBe('friends');
+    expect(parseUserCompositeId('user-123:muted').reach).toBe('muted');
+  });
+
+  it('should throw error for invalid format (no colon)', () => {
+    const invalidId = 'user-123-followers';
+
+    expect(() => parseUserCompositeId(invalidId)).toThrow('Invalid user stream composite ID');
+  });
+
+  it('should throw error for empty parts (colon at start)', () => {
+    const invalidId = ':followers';
+
+    expect(() => parseUserCompositeId(invalidId)).toThrow('Invalid user stream composite ID');
+  });
+
+  it('should throw error for empty parts (colon at end)', () => {
+    const invalidId = 'user-123:';
+
+    expect(() => parseUserCompositeId(invalidId)).toThrow('Invalid user stream composite ID');
+  });
+
+  it('should handle special characters in userId', () => {
+    const compositeId = 'user_with-special.chars:followers';
+
+    const result = parseUserCompositeId(compositeId);
+
+    expect(result.userId).toBe('user_with-special.chars');
+  });
+
+  it('should handle multiple colons by taking first as delimiter', () => {
+    const compositeId = 'user:with:colons:followers';
+
+    const result = parseUserCompositeId(compositeId);
+
+    expect(result.userId).toBe('user');
+    expect(result.reach).toBe('with:colons:followers');
+  });
+});
+
+describe('createDefaultUserStream', () => {
+  it('should create stream with UserStreamId (composite)', () => {
+    const streamId = buildUserCompositeId({ userId: 'user-123', reach: 'followers' });
+    const stream: Core.Pubky[] = ['follower-1', 'follower-2'];
+
+    const result = createDefaultUserStream(streamId, stream);
+
+    expect(result.id).toBe(streamId);
+    expect(result.stream).toEqual(stream);
+  });
+
+  it('should create stream with UserStreamId (enum)', () => {
+    const streamId = UserStreamTypes.TODAY_INFLUENCERS_ALL;
+    const stream: Core.Pubky[] = ['influencer-1'];
+
+    const result = createDefaultUserStream(streamId, stream);
+
+    expect(result.id).toBe(streamId);
+    expect(result.stream).toEqual(stream);
+  });
+
+  it('should default stream to empty array', () => {
+    const streamId = buildUserCompositeId({ userId: 'user-123', reach: 'followers' });
+
+    const result = createDefaultUserStream(streamId);
+
+    expect(result.stream).toEqual([]);
   });
 });
