@@ -1,0 +1,79 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TimelinePosts > Snapshots > should match snapshot for empty state 1`] = `
+<div>
+  <div
+    data-testid="timeline-empty"
+  >
+    No posts
+  </div>
+</div>
+`;
+
+exports[`TimelinePosts > Snapshots > should match snapshot for error state 1`] = `
+<div>
+  <div
+    data-testid="timeline-initial-error"
+  >
+    Error: 
+    Network error
+  </div>
+</div>
+`;
+
+exports[`TimelinePosts > Snapshots > should match snapshot for loading state 1`] = `
+<div>
+  <div
+    data-testid="timeline-loading"
+  >
+    Loading...
+  </div>
+</div>
+`;
+
+exports[`TimelinePosts > Snapshots > should match snapshot with posts 1`] = `
+<div>
+  <div
+    data-testid="container"
+  >
+    <div
+      class="space-y-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col"
+        data-testid="container"
+      >
+        <div
+          data-testid="post-author1:post1"
+        />
+      </div>
+      <div
+        class="flex flex-col"
+        data-testid="container"
+      >
+        <div
+          data-testid="post-author2:post2"
+        />
+      </div>
+      <div
+        class="flex flex-col"
+        data-testid="container"
+      >
+        <div
+          data-testid="post-author3:post3"
+        />
+      </div>
+      <div
+        data-testid="timeline-end-message"
+      >
+        End of timeline
+      </div>
+      <div
+        class="h-[20px]"
+        data-testid="container"
+      />
+    </div>
+  </div>
+</div>
+`;
