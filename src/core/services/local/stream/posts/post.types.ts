@@ -1,6 +1,6 @@
 import * as Core from '@/core';
 
 export type TPostStreamUpsertParams = {
-  streamId: Core.PostStreamTypes;
+  streamId: Core.PostStreamId;
   stream: string[];
 };

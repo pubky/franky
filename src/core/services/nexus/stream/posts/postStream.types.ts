@@ -11,7 +11,7 @@ export enum StreamSource {
   FOLLOWERS = 'followers',
   FRIENDS = 'friends',
   BOOKMARKS = 'bookmarks',
-  REPLIES = 'replies',
+  REPLIES = 'post_replies',
   AUTHOR = 'author',
   AUTHOR_REPLIES = 'author_replies',
 }
@@ -79,5 +79,6 @@ export type TStreamQueryParams =
 export type TPostStreamFetchParams = {
   params: TStreamBase;
   invokeEndpoint: string;
+  extraParams: Record<string, string>;
   // observer_id?: Core.Pubky;
 };

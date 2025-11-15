@@ -90,9 +90,9 @@ export class PostStreamApplication {
     // TODO: DELETE FINISH
 
     // START of the fn
-    const { params, invokeEndpoint } = Core.createNexusParams(streamId, streamTail, limit, viewerId);
+    const { params, invokeEndpoint, extraParams } = Core.createNexusParams(streamId, streamTail, limit, viewerId);
     // TODO: With the new endpoint, we have to adapt the next line and delete timestamp and composidePostIds
-    const nexusPosts = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params });
+    const nexusPosts = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
     // Handle empty response
     if (nexusPosts.length === 0) {
@@ -103,8 +103,11 @@ export class PostStreamApplication {
     const compositePostIds = nexusPosts.map((post) =>
       Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
     );
-    // TODO: Delete the addPost
-    await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });
+    
+    // Do not persist any stream related with engagement sorting
+    if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT) {
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });
+    }
     const cacheMissPostIds = await this.getNotPersistedPostsInCache(compositePostIds);
     // TODO: the timestamp we will get from
     return { nextPageIds: compositePostIds, cacheMissPostIds, timestamp };

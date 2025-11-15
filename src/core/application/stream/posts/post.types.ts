@@ -1,7 +1,7 @@
 import * as Core from '@/core';
 
 export type TFetchStreamParams = {
-  streamId: Core.PostStreamTypes;
+  streamId: Core.PostStreamId;
   streamTail: number;
   limit: number;
   viewerId: Core.Pubky;
@@ -10,7 +10,7 @@ export type TFetchStreamParams = {
 };
 
 export type TInitialStreamParams = {
-  streamId: Core.PostStreamTypes;
+  streamId: Core.PostStreamId;
   limit: number;
   cachedStream: { stream: string[] } | null;
 };

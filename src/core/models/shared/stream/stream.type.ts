@@ -7,7 +7,7 @@
  * @example
  * ```typescript
  * // For a post stream
- * type PostStreamSchema = BaseStreamModelSchema<PostStreamTypes, string>;
+ * type PostStreamSchema = BaseStreamModelSchema<PostStreamId, string>;
  *
  * // For a tag stream
  * type TagStreamSchema = BaseStreamModelSchema<TagStreamTypes, NexusHotTag>;

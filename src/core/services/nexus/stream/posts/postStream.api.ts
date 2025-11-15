@@ -55,7 +55,7 @@ export const postStreamApi = {
     buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, Core.STREAM_PREFIX.POSTS),
 
   // Post replies requiring author_id and post_id
-  postReplies: (params: Core.TStreamPostRepliesParams) =>
+  post_replies: (params: Core.TStreamPostRepliesParams) =>
     buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS),
 
   // Author posts requiring author_id
@@ -63,7 +63,7 @@ export const postStreamApi = {
     buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS),
 
   // Author replies requiring author_id
-  authorReplies: (params: Core.TStreamAuthorRepliesParams) =>
+  author_replies: (params: Core.TStreamAuthorRepliesParams) =>
     buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS),
 
   // Posts by IDs (POST request)
