@@ -32,7 +32,12 @@ export function TimelinePostReplies({ postId, onPostClick }: TimelinePostReplies
 
       try {
         // Use controller to get first 3 replies
-        return await Core.PostController.getFirstReplies({ postId, limit: 3 });
+        return await Core.StreamPostsController.getOrFetchStreamSlice({
+          streamId: `${Core.StreamSource.REPLIES}:${postId}`,
+          streamTail: 0,
+          lastPostId: undefined,
+          limit: 3,
+        }).then((response) => response.nextPageIds);
       } catch (error) {
         // Silently handle errors - don't show replies if there's an issue
         Libs.Logger.error('Failed to fetch post replies:', error);
