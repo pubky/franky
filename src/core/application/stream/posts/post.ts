@@ -15,8 +15,8 @@ export class PostStreamApplication {
     limit,
     viewerId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
-    // Avoid the indexdb query for engagement streams
-    if (streamId.split(':')[0] === Core.StreamSorting.TIMELINE) {
+    // Avoid the indexdb query for engagement streams even we do not persist
+    if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT) {
       const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
 
       if (cachedStream) {
