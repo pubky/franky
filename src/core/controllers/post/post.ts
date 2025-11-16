@@ -88,15 +88,4 @@ export class PostController {
   static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
     return await Core.LocalPostService.getPostCounts(postId);
   }
-
-  /**
-   * Get the first N replies for a post
-   * @param params - Parameters object
-   * @param params.postId - ID of the post to get replies for
-   * @param params.limit - Maximum number of replies to return (default: 3)
-   * @returns Array of reply post IDs (first N replies)
-   */
-  static async getFirstReplies({ postId, limit = 3 }: { postId: string; limit?: number }): Promise<string[]> {
-    return await Core.LocalPostService.getFirstReplies(postId, limit);
-  }
 }
