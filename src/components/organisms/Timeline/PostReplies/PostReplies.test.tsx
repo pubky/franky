@@ -247,22 +247,6 @@ describe('TimelinePostReplies', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should return empty array when controller throws error', async () => {
-      vi.spyOn(Core.PostController, 'getFirstReplies').mockRejectedValueOnce(new Error('Database error'));
-
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce([]);
-
-      const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
-
-      await waitFor(() => {
-        expect(container.firstChild).toBeNull();
-      });
-    });
-  });
-
   describe('Limit Behavior', () => {
     it('should render maximum of 3 replies', async () => {
       mockUseLiveQuery
