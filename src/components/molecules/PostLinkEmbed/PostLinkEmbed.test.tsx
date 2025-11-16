@@ -1,0 +1,149 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { PostLinkEmbed } from './PostLinkEmbed';
+
+vi.mock('@/atoms', () => ({
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
+}));
+
+describe('PostLinkEmbed', () => {
+  describe('YouTube URL parsing', () => {
+    it('renders YouTube embed for standard youtube.com URL', () => {
+      render(<PostLinkEmbed content="Check out this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders YouTube embed for youtu.be URL', () => {
+      render(<PostLinkEmbed content="Watch this: https://youtu.be/dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders YouTube embed for mobile youtube.com URL', () => {
+      render(<PostLinkEmbed content="Mobile link: https://m.youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders YouTube embed for youtube-nocookie.com URL', () => {
+      render(<PostLinkEmbed content="Privacy link: https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders YouTube embed for embed URL format', () => {
+      render(<PostLinkEmbed content="Embed: https://www.youtube.com/embed/dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('handles YouTube URL with trailing punctuation', () => {
+      render(<PostLinkEmbed content="Check this out: https://www.youtube.com/watch?v=dQw4w9WgXcQ!" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('handles YouTube URL with additional parameters', () => {
+      render(<PostLinkEmbed content="Timestamped: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=123s" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('does not render embed for invalid YouTube video ID', () => {
+      render(<PostLinkEmbed content="Invalid: https://www.youtube.com/watch?v=invalid" />);
+
+      expect(screen.queryByTitle('YouTube video player')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for YouTube URL without video ID', () => {
+      render(<PostLinkEmbed content="No ID: https://www.youtube.com/channel/UC123" />);
+
+      expect(screen.queryByTitle('YouTube video player')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('YouTube iframe attributes', () => {
+    it('sets correct iframe attributes for YouTube embed', () => {
+      render(<PostLinkEmbed content="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toHaveAttribute('width', '100%');
+      expect(iframe).toHaveAttribute('height', '315');
+      expect(iframe).toHaveAttribute('allowFullScreen');
+      expect(iframe).toHaveAttribute(
+        'allow',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+      );
+      expect(iframe).toHaveClass('rounded-md');
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('does not render embed for content without URLs', () => {
+      render(<PostLinkEmbed content="Just some regular text without any links" />);
+
+      expect(screen.queryByTestId('container')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for empty content', () => {
+      render(<PostLinkEmbed content="" />);
+
+      expect(screen.queryByTestId('container')).not.toBeInTheDocument();
+    });
+
+    it('handles malformed URLs gracefully', () => {
+      render(<PostLinkEmbed content="Bad URL: https://not-a-real-url-format" />);
+
+      expect(screen.queryByTestId('container')).not.toBeInTheDocument();
+    });
+
+    it('handles content with multiple URLs, uses first one', () => {
+      render(
+        <PostLinkEmbed content="First: https://www.youtube.com/watch?v=dQw4w9WgXcQ Second: https://www.example.com" />,
+      );
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('handles URLs without protocol', () => {
+      render(<PostLinkEmbed content="No protocol: youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTitle('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+  });
+});
+
+describe('PostLinkEmbed - Snapshots', () => {
+  it('matches snapshot for YouTube embed', () => {
+    const { container } = render(<PostLinkEmbed content="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for no embed (no URL)', () => {
+    const { container } = render(<PostLinkEmbed content="Just some text without links" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

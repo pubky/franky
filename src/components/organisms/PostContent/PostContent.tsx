@@ -2,7 +2,9 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Libs from '@/libs';
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
+import * as Utils from '@/libs/utils';
 
 export interface PostContentOrganismProps {
   postId: string;
@@ -21,10 +23,12 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
   }
 
   return (
-    <div className={Libs.cn('flex flex-col', className)}>
+    <Atoms.Container className={Utils.cn('gap-3', className)}>
       <p className="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground">
         {postDetails.content}
       </p>
-    </div>
+
+      <Molecules.PostLinkEmbed content={postDetails.content} />
+    </Atoms.Container>
   );
 }
