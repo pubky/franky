@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { TimelinePostReplies } from './PostReplies';
-import * as Core from '@/core';
 
 // Mock dependencies
 vi.mock('dexie-react-hooks');
