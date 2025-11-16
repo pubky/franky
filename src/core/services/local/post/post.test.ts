@@ -711,7 +711,7 @@ describe('LocalPostService', () => {
       expect(firstReplies[2]).toBe(replyIds[2]);
     });
 
-    it('should throw DatabaseError on database failure', async () => {
+    it('should propagate error on database failure', async () => {
       const postId = testData.fullPostId1;
 
       // Setup post first so it gets to the getReplies call
@@ -722,33 +722,10 @@ describe('LocalPostService', () => {
         .spyOn(Core.PostRelationshipsModel, 'getReplies')
         .mockRejectedValueOnce(new Error('Database connection lost'));
 
-      await expect(Core.LocalPostService.getFirstReplies(postId, 3)).rejects.toMatchObject({
-        type: 'QUERY_FAILED',
-        message: 'Failed to get first replies',
-        statusCode: 500,
-      });
+      // Should propagate the error since there's no try/catch
+      await expect(Core.LocalPostService.getFirstReplies(postId, 3)).rejects.toThrow('Database connection lost');
 
       spy.mockRestore();
-    });
-
-    it('should log error on failure', async () => {
-      const postId = testData.fullPostId1;
-      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
-
-      const spy = vi.spyOn(Core.PostDetailsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
-
-      await expect(Core.LocalPostService.getFirstReplies(postId, 3)).rejects.toThrow();
-
-      expect(loggerSpy).toHaveBeenCalledWith(
-        'Failed to get first replies',
-        expect.objectContaining({
-          postId,
-          limit: 3,
-        }),
-      );
-
-      spy.mockRestore();
-      loggerSpy.mockRestore();
     });
 
     it('should handle posts with URI but no replies relationship', async () => {

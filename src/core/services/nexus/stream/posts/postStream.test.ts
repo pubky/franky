@@ -297,20 +297,18 @@ describe('Stream API URL Generation', () => {
   });
 
   describe('PostStreamApiEndpoint type', () => {
-    it('should have exactly 11 endpoints (including aliases)', () => {
+    it('should have exactly 9 endpoints', () => {
       const endpointKeys = Object.keys(postStreamApi);
-      expect(endpointKeys).toHaveLength(11);
+      expect(endpointKeys).toHaveLength(9);
+      expect(endpointKeys).toContain('all');
       expect(endpointKeys).toContain('following');
       expect(endpointKeys).toContain('followers');
       expect(endpointKeys).toContain('friends');
       expect(endpointKeys).toContain('bookmarks');
-      expect(endpointKeys).toContain('replies');
-      expect(endpointKeys).toContain('postReplies'); // Alias for replies
+      expect(endpointKeys).toContain('post_replies');
       expect(endpointKeys).toContain('author');
       expect(endpointKeys).toContain('author_replies');
-      expect(endpointKeys).toContain('authorReplies'); // Alias for author_replies
       expect(endpointKeys).toContain('postsByIds');
-      expect(endpointKeys).toContain('all');
     });
   });
 });

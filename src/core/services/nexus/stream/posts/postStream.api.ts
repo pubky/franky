@@ -58,20 +58,12 @@ export const postStreamApi = {
   post_replies: (params: Core.TStreamPostRepliesParams) =>
     buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS),
 
-  // Alias for replies (for backwards compatibility)
-  postReplies: (params: Core.TStreamPostRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS),
-
   // Author posts requiring author_id
   author: (params: Core.TStreamAuthorParams) =>
     buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS),
 
   // Author replies requiring author_id
   author_replies: (params: Core.TStreamAuthorRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS),
-
-  // Alias for author_replies (for backwards compatibility)
-  authorReplies: (params: Core.TStreamAuthorRepliesParams) =>
     buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS),
 
   // Posts by IDs (POST request)
