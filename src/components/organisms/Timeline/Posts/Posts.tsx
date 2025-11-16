@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useLiveQuery } from 'dexie-react-hooks';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -11,31 +10,6 @@ import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
-
-/**
- * PostWithReplies
- *
- * Renders a single post and conditionally renders its replies below it (flat structure, 1 level only).
- * Uses useLiveQuery to reactively check if the post has replies.
- */
-interface PostWithRepliesProps {
-  postId: string;
-  onPostClick: (postId: string) => void;
-}
-
-function PostWithReplies({ postId, onPostClick }: PostWithRepliesProps) {
-  // Check if post has replies by querying post_counts
-  const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ postId }), [postId]);
-  const hasReplies = postCounts?.replies && postCounts.replies > 0 ? true : false;
-
-  return (
-    <Atoms.Container overrideDefaults className="flex flex-col">
-      <Organisms.PostMain postId={postId} onClick={() => onPostClick(postId)} isReply={false} />
-      {/* Only render replies component if post has replies */}
-      {hasReplies && <Organisms.TimelinePostReplies postId={postId} onPostClick={onPostClick} />}
-    </Atoms.Container>
-  );
-}
 
 /**
  * Timeline
@@ -230,7 +204,10 @@ export function TimelinePosts() {
     <Atoms.Container>
       <Atoms.Container overrideDefaults className="space-y-4">
         {postIds.map((postId) => (
-          <PostWithReplies key={`main_${postId}`} postId={postId} onPostClick={handlePostClick} />
+          <Atoms.Container key={`main_${postId}`}>
+            <Organisms.PostMain postId={postId} onClick={() => handlePostClick(postId)} isReply={false} />
+            <Organisms.TimelinePostReplies postId={postId} onPostClick={handlePostClick} />
+          </Atoms.Container>
         ))}
 
         {/* Loading More Indicator */}

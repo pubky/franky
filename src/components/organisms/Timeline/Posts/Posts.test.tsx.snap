@@ -41,27 +41,33 @@ exports[`TimelinePosts > Snapshots > should match snapshot with posts 1`] = `
       data-testid="container"
     >
       <div
-        class="flex flex-col"
         data-testid="container"
       >
         <div
           data-testid="post-author1:post1"
         />
+        <div
+          data-testid="replies-author1:post1"
+        />
       </div>
       <div
-        class="flex flex-col"
         data-testid="container"
       >
         <div
           data-testid="post-author2:post2"
         />
+        <div
+          data-testid="replies-author2:post2"
+        />
       </div>
       <div
-        class="flex flex-col"
         data-testid="container"
       >
         <div
           data-testid="post-author3:post3"
+        />
+        <div
+          data-testid="replies-author3:post3"
         />
       </div>
       <div

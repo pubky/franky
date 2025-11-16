@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Atoms from '@/atoms';
@@ -18,35 +18,38 @@ interface TimelinePostRepliesProps {
 }
 
 export function TimelinePostReplies({ postId, onPostClick }: TimelinePostRepliesProps) {
+  const [replyIds, setReplyIds] = useState<string[]>([]);
+
   // Watch for changes in post_counts to trigger refetch when replies count changes
   const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ postId }), [postId]);
 
-  // Fetch the first 3 reply IDs using the controller
-  // This will re-run whenever postCounts.replies changes
-  const replyIds = useLiveQuery(
-    async () => {
-      // Only fetch if there are replies
-      if (!postCounts?.replies || postCounts.replies === 0) {
-        return [];
-      }
-
+  const fetchReplies = useCallback(
+    async (repliesCount: number) => {
       try {
-        // Use controller to get first 3 replies
-        return await Core.StreamPostsController.getOrFetchStreamSlice({
+        const response = await Core.StreamPostsController.getOrFetchStreamSlice({
           streamId: `${Core.StreamSource.REPLIES}:${postId}`,
           streamTail: 0,
           lastPostId: undefined,
-          limit: 3,
-        }).then((response) => response.nextPageIds);
+          limit: repliesCount > 3 ? 3 : repliesCount,
+        });
+        setReplyIds(response.nextPageIds);
       } catch (error) {
         // Silently handle errors - don't show replies if there's an issue
         Libs.Logger.error('Failed to fetch post replies:', error);
-        return [];
+        setReplyIds([]);
       }
     },
-    [postId, postCounts?.replies], // Re-fetch when postId or reply count changes
-    [],
+    [postId],
   );
+
+  useEffect(() => {
+    if (!postCounts?.replies || postCounts.replies < 1) {
+      setReplyIds([]);
+      return;
+    }
+
+    fetchReplies(postCounts.replies);
+  }, [postId, postCounts?.replies, fetchReplies]);
 
   const hasReplies = replyIds && replyIds.length > 0;
 

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { TimelinePostReplies } from './PostReplies';
+import * as Core from '@/core';
 
 // Mock dependencies
 vi.mock('dexie-react-hooks');
@@ -59,14 +60,18 @@ describe('TimelinePostReplies', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock StreamPostsController.getOrFetchStreamSlice
+    vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+      nextPageIds: [],
+      timestamp: undefined,
+    });
   });
 
   describe('Rendering', () => {
     it('should render nothing when there are no replies', () => {
       // Mock post counts with 0 replies
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce([]);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 });
 
       const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -75,9 +80,13 @@ describe('TimelinePostReplies', () => {
 
     it('should render replies when post has replies', async () => {
       // Mock post counts with 3 replies
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      // Mock getOrFetchStreamSlice to return replies
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -89,9 +98,12 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should render PostThreadSpacer for each reply', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -102,19 +114,21 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should render nothing when replyIds array is empty', () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 1, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce([]);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 1, tags: 0, unique_tags: 0, reposts: 0 });
 
+      // Will return empty array from getOrFetchStreamSlice (default mock)
       const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
       expect(container.firstChild).toBeNull();
     });
 
     it('should render with correct container styling', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 1, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(['author:reply1']);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 1, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: ['author:reply1'],
+        timestamp: undefined,
+      });
 
       const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -127,9 +141,12 @@ describe('TimelinePostReplies', () => {
 
   describe('Reply Properties', () => {
     it('should mark all replies with isReply=true', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 2, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(['author:reply1', 'author:reply2']);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 2, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: ['author:reply1', 'author:reply2'],
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -142,9 +159,12 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should mark last reply with isLastReply=true', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -156,9 +176,12 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should not mark first and middle replies as last', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -172,9 +195,12 @@ describe('TimelinePostReplies', () => {
 
   describe('Click Handling', () => {
     it('should call onPostClick with correct postId when reply is clicked', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 1, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(['author:reply1']);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 1, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: ['author:reply1'],
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -187,9 +213,12 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should call onPostClick with correct IDs for multiple replies', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -209,48 +238,76 @@ describe('TimelinePostReplies', () => {
 
   describe('Data Fetching', () => {
     it('should fetch post counts on mount', () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce([]);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
       expect(mockUseLiveQuery).toHaveBeenCalledWith(expect.any(Function), [mockPostId]);
     });
 
-    it('should fetch replies when post has replies', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+    it('should call getOrFetchStreamSlice with correct parameters', async () => {
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 5, tags: 0, unique_tags: 0, reposts: 0 });
+
+      const spy = vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
       await waitFor(() => {
-        expect(mockUseLiveQuery).toHaveBeenCalledWith(
-          expect.any(Function),
-          [mockPostId, 3], // Should watch reply count
-          [],
-        );
+        expect(spy).toHaveBeenCalledWith({
+          streamId: `${Core.StreamSource.REPLIES}:${mockPostId}`,
+          streamTail: 0,
+          lastPostId: undefined,
+          limit: 3, // Should use min(repliesCount, 3)
+        });
       });
     });
 
-    it('should not fetch replies when count is zero', () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce([]);
+    it('should use repliesCount as limit when less than 3', async () => {
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 2, tags: 0, unique_tags: 0, reposts: 0 });
+
+      const spy = vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: ['author:reply1', 'author:reply2'],
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
-      // Should still call useLiveQuery but return empty array
-      expect(mockUseLiveQuery).toHaveBeenCalledTimes(2);
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith({
+          streamId: `${Core.StreamSource.REPLIES}:${mockPostId}`,
+          streamTail: 0,
+          lastPostId: undefined,
+          limit: 2, // Should use repliesCount since it's less than 3
+        });
+      });
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should return empty array when controller throws error', async () => {
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockRejectedValueOnce(new Error('Database error'));
+
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
+
+      await waitFor(() => {
+        expect(container.firstChild).toBeNull();
+      });
     });
   });
 
   describe('Limit Behavior', () => {
     it('should render maximum of 3 replies', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 10, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 10, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -263,9 +320,12 @@ describe('TimelinePostReplies', () => {
 
   describe('Key Generation', () => {
     it('should generate unique keys for each reply', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -278,9 +338,7 @@ describe('TimelinePostReplies', () => {
 
   describe('Snapshots', () => {
     it('should match snapshot when rendering no replies', () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce([]);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 0, tags: 0, unique_tags: 0, reposts: 0 });
 
       const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
@@ -288,9 +346,12 @@ describe('TimelinePostReplies', () => {
     });
 
     it('should match snapshot when rendering replies', async () => {
-      mockUseLiveQuery
-        .mockReturnValueOnce({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 })
-        .mockReturnValueOnce(mockReplyIds);
+      mockUseLiveQuery.mockReturnValue({ id: mockPostId, replies: 3, tags: 0, unique_tags: 0, reposts: 0 });
+
+      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
+        nextPageIds: mockReplyIds,
+        timestamp: undefined,
+      });
 
       const { container } = render(<TimelinePostReplies postId={mockPostId} onPostClick={mockOnPostClick} />);
 
