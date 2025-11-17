@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PostLinkEmbeds } from './PostLinkEmbeds';
+import * as PostLinkEmbedsUtils from './utils';
 
 vi.mock('@/atoms', () => ({
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
@@ -133,6 +134,25 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toBeInTheDocument();
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
+  });
+});
+
+describe('PostLinkEmbeds - useMemo optimization', () => {
+  it('memoizes parsing result when content does not change', () => {
+    const parseSpy = vi.spyOn(PostLinkEmbedsUtils, 'parseContentForLinkEmbed');
+    const { rerender } = render(<PostLinkEmbeds content="https://youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+    expect(parseSpy).toHaveBeenCalledTimes(1);
+
+    // Re-render with same content should not call parse function again
+    rerender(<PostLinkEmbeds content="https://youtube.com/watch?v=dQw4w9WgXcQ" />);
+    expect(parseSpy).toHaveBeenCalledTimes(1);
+
+    // Re-render with different content should call parse function again
+    rerender(<PostLinkEmbeds content="https://youtube.com/watch?v=xyz123456" />);
+    expect(parseSpy).toHaveBeenCalledTimes(2);
+
+    parseSpy.mockRestore();
   });
 });
 
