@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Spinner > matches snapshot 1`] = `
+<div>
+  <div
+    class="animate-spin rounded-full border-b-2 border-brand h-8 w-8"
+    data-testid="spinner"
+  />
+</div>
+`;
+
+exports[`Spinner > matches snapshot with lg size 1`] = `
+<div>
+  <div
+    class="animate-spin rounded-full border-b-2 border-brand h-12 w-12"
+    data-testid="spinner"
+  />
+</div>
+`;
+
+exports[`Spinner > matches snapshot with sm size 1`] = `
+<div>
+  <div
+    class="animate-spin rounded-full border-b-2 border-brand h-4 w-4"
+    data-testid="spinner"
+  />
+</div>
+`;

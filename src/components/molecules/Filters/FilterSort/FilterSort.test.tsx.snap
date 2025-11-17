@@ -10,7 +10,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_7_"
+    id="_r_2_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     </h2>
   </div>
   <div
-    aria-labelledby="_r_7_"
+    aria-labelledby="_r_2_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
@@ -30,7 +30,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="false"
         aria-label="Recent"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -75,8 +75,8 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
         >
           Recent
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="true"
         aria-label="Popularity"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -108,7 +108,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
         >
           Popularity
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -124,7 +124,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_6_"
+    id="_r_1_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -134,7 +134,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_6_"
+    aria-labelledby="_r_1_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
@@ -144,7 +144,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="true"
         aria-label="Recent"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -189,8 +189,8 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
         >
           Recent
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Popularity"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -222,7 +222,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
         >
           Popularity
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -238,7 +238,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_5_"
+    id="_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -248,7 +248,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="_r_5_"
+    aria-labelledby="_r_0_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
@@ -258,7 +258,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="true"
         aria-label="Recent"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -303,8 +303,8 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
         >
           Recent
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Popularity"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -336,7 +336,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
         >
           Popularity
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>

@@ -27,7 +27,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
       <a
         href="/settings/account"
       >
-        <p
+        <div
           class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
@@ -60,12 +60,12 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Account
           </span>
-        </p>
+        </div>
       </a>
       <a
         href="/settings/notifications"
       >
-        <p
+        <div
           class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
@@ -96,12 +96,12 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Notifications
           </span>
-        </p>
+        </div>
       </a>
       <a
         href="/settings/privacy-safety"
       >
-        <p
+        <div
           class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
@@ -129,12 +129,12 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Privacy & Safety
           </span>
-        </p>
+        </div>
       </a>
       <a
         href="/settings/muted-users"
       >
-        <p
+        <div
           class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
@@ -174,12 +174,12 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Muted Users
           </span>
-        </p>
+        </div>
       </a>
       <a
         href="/settings/language"
       >
-        <p
+        <div
           class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
@@ -215,12 +215,12 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Language
           </span>
-        </p>
+        </div>
       </a>
       <a
         href="/settings/help"
       >
-        <p
+        <div
           class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
@@ -256,7 +256,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Help
           </span>
-        </p>
+        </div>
       </a>
     </div>
   </div>

@@ -24,7 +24,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -51,8 +51,8 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Following
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -80,8 +80,8 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Based Bitcoin
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -118,8 +118,8 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Mining Industry
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -147,8 +147,8 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Lightning Network
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -200,8 +200,8 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Design UX/UI
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -232,7 +232,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Create Feed
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>

@@ -57,7 +57,10 @@ export function useProfileHeader(userId: string) {
       console.log('Edit clicked');
     },
     onCopyPublicKey: () => {
-      void copyToClipboard('Copy public key clicked');
+      void copyToClipboard(profileData.publicKey);
+    },
+    onCopyLink: () => {
+      void copyToClipboard(profileData.link);
     },
     onSignOut: () => {
       router.push(AUTH_ROUTES.LOGOUT);

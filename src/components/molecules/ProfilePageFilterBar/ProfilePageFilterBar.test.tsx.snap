@@ -9,7 +9,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
     class="flex flex-col gap-0"
     data-testid="container"
   >
-    <p
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground w-full justify-between px-0 py-1"
       data-selected="true"
       data-slot="filter-item"
@@ -34,7 +34,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
       >
         10
       </span>
-    </p>
+    </div>
   </div>
 </div>
 `;
@@ -48,7 +48,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
     class="flex flex-col gap-0"
     data-testid="container"
   >
-    <p
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground w-full justify-between px-0 py-1"
       data-selected="true"
       data-slot="filter-item"
@@ -90,8 +90,8 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         2
       </span>
-    </p>
-    <p
+    </div>
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 w-full justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -133,8 +133,8 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         4
       </span>
-    </p>
-    <p
+    </div>
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 w-full justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -173,8 +173,8 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         7
       </span>
-    </p>
-    <p
+    </div>
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 w-full justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -221,8 +221,8 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         115
       </span>
-    </p>
-    <p
+    </div>
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 w-full justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -260,8 +260,8 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         27
       </span>
-    </p>
-    <p
+    </div>
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 w-full justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -309,8 +309,8 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         10
       </span>
-    </p>
-    <p
+    </div>
+    <div
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 w-full justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -355,7 +355,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       >
         5
       </span>
-    </p>
+    </div>
   </div>
 </div>
 `;

@@ -10,7 +10,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_p_"
+    id="_r_3_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     </h2>
   </div>
   <div
-    aria-labelledby="_r_p_"
+    aria-labelledby="_r_3_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -30,7 +30,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="false"
         aria-label="All"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -76,8 +76,8 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         >
           All
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Following"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -108,8 +108,8 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         >
           Following
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="true"
         aria-label="Friends"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -141,7 +141,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         >
           Friends
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -157,7 +157,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_n_"
+    id="_r_1_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -167,7 +167,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_n_"
+    aria-labelledby="_r_1_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -177,7 +177,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="false"
         aria-label="All"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -223,8 +223,8 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         >
           All
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="true"
         aria-label="Following"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -255,8 +255,8 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         >
           Following
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Friends"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -288,7 +288,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         >
           Friends
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -304,7 +304,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_o_"
+    id="_r_2_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -314,7 +314,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_o_"
+    aria-labelledby="_r_2_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -324,7 +324,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="false"
         aria-label="All"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -370,8 +370,8 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         >
           All
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Following"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -402,8 +402,8 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         >
           Following
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="true"
         aria-label="Friends"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -435,7 +435,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         >
           Friends
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -451,7 +451,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_m_"
+    id="_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -461,7 +461,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     </h2>
   </div>
   <div
-    aria-labelledby="_r_m_"
+    aria-labelledby="_r_0_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -471,7 +471,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="true"
         aria-label="All"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -517,8 +517,8 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         >
           All
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Following"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -549,8 +549,8 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         >
           Following
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Friends"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -582,7 +582,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         >
           Friends
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>

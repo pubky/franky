@@ -67,7 +67,8 @@ function FilterItem({
   children: React.ReactNode;
 } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <Atoms.Typography
+    <Atoms.Container
+      overrideDefaults={true}
       data-slot="filter-item"
       data-testid="filter-item"
       data-selected={isSelected ? 'true' : 'false'}
@@ -81,7 +82,7 @@ function FilterItem({
       {...props}
     >
       {children}
-    </Atoms.Typography>
+    </Atoms.Container>
   );
 }
 

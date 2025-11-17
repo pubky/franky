@@ -11,6 +11,7 @@ const mockProps = {
   link: 'https://example.com',
   onEdit: vi.fn(),
   onCopyPublicKey: vi.fn(),
+  onCopyLink: vi.fn(),
   onSignOut: vi.fn(),
   onStatusClick: vi.fn(),
 };
@@ -73,10 +74,14 @@ describe('ProfilePageHeader', () => {
     expect(onSignOut).toHaveBeenCalledTimes(1);
   });
 
-  it('does not render Link button when link is not provided', () => {
-    render(<ProfilePageHeader {...mockProps} link={undefined} />);
+  it('calls onCopyLink when Link button is clicked', () => {
+    const onCopyLink = vi.fn();
+    render(<ProfilePageHeader {...mockProps} onCopyLink={onCopyLink} />);
 
-    expect(screen.queryByText('Link')).not.toBeInTheDocument();
+    const linkButton = screen.getByText('Link').closest('button');
+    fireEvent.click(linkButton!);
+
+    expect(onCopyLink).toHaveBeenCalledTimes(1);
   });
 
   it('renders avatar with fallback initials when no avatarUrl', () => {
