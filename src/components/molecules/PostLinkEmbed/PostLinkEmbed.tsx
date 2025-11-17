@@ -7,9 +7,10 @@ export type PostLinkEmbedProps = {
   content: string;
 };
 
-type LinkEmbed = 'none' | 'youtube';
+type EmbedType = 'youtube' | 'vimeo' | 'twitch' | 'twitter' | 'generic';
+type LinkEmbed = { type: EmbedType | 'none'; url: string };
 
-const parseContentForLinkEmbed = (content: string): { type: LinkEmbed; url: string } => {
+const parseContentForLinkEmbed = (content: string): LinkEmbed => {
   try {
     // Simple URL pattern for social media links
     const urlRegex =
