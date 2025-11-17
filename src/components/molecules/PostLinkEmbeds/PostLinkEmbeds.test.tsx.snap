@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostLinkEmbed - Snapshots > matches snapshot for YouTube embed 1`] = `
+exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
 <div
   data-testid="container"
 >
@@ -16,4 +16,4 @@ exports[`PostLinkEmbed - Snapshots > matches snapshot for YouTube embed 1`] = `
 </div>
 `;
 
-exports[`PostLinkEmbed - Snapshots > matches snapshot for no embed (no URL) 1`] = `null`;
+exports[`PostLinkEmbeds - Snapshots > matches snapshot for no embed (no URL) 1`] = `null`;

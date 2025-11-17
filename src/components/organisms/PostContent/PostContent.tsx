@@ -28,7 +28,7 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
         {postDetails.content}
       </p>
 
-      <Molecules.PostLinkEmbed content={postDetails.content} />
+      <Molecules.PostLinkEmbeds content={postDetails.content} />
     </Atoms.Container>
   );
 }

@@ -3,7 +3,7 @@
 import * as Atoms from '@/atoms';
 import { useMemo } from 'react';
 
-export type PostLinkEmbedProps = {
+export type PostLinkEmbedsProps = {
   content: string;
 };
 
@@ -51,7 +51,7 @@ const parseContentForLinkEmbed = (content: string): LinkEmbed => {
   }
 };
 
-export const PostLinkEmbed = ({ content }: PostLinkEmbedProps) => {
+export const PostLinkEmbeds = ({ content }: PostLinkEmbedsProps) => {
   const linkEmbed = useMemo(() => parseContentForLinkEmbed(content), [content]);
 
   if (linkEmbed.type === 'none') return null;
