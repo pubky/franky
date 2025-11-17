@@ -300,15 +300,15 @@ describe('Stream API URL Generation', () => {
     it('should have exactly 9 endpoints', () => {
       const endpointKeys = Object.keys(postStreamApi);
       expect(endpointKeys).toHaveLength(9);
+      expect(endpointKeys).toContain('all');
       expect(endpointKeys).toContain('following');
       expect(endpointKeys).toContain('followers');
       expect(endpointKeys).toContain('friends');
       expect(endpointKeys).toContain('bookmarks');
-      expect(endpointKeys).toContain('postReplies');
+      expect(endpointKeys).toContain('post_replies');
       expect(endpointKeys).toContain('author');
-      expect(endpointKeys).toContain('authorReplies');
+      expect(endpointKeys).toContain('author_replies');
       expect(endpointKeys).toContain('postsByIds');
-      expect(endpointKeys).toContain('all');
     });
   });
 });

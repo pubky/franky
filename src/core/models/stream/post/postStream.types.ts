@@ -41,6 +41,39 @@ export enum PostStreamTypes {
   TIMELINE_FRIENDS_VIDEO = 'timeline:friends:video',
   TIMELINE_FRIENDS_LINK = 'timeline:friends:link',
   TIMELINE_FRIENDS_FILE = 'timeline:friends:file',
+
+  // ============================================
+  // POPULARITY (Total Engagement) - ALL Sources
+  // ============================================
+  POPULARITY_ALL_ALL = 'total_engagement:all:all',
+  POPULARITY_ALL_SHORT = 'total_engagement:all:short',
+  POPULARITY_ALL_LONG = 'total_engagement:all:long',
+  POPULARITY_ALL_IMAGE = 'total_engagement:all:image',
+  POPULARITY_ALL_VIDEO = 'total_engagement:all:video',
+  POPULARITY_ALL_LINK = 'total_engagement:all:link',
+  POPULARITY_ALL_FILE = 'total_engagement:all:file',
+
+  // ============================================
+  // POPULARITY (Total Engagement) - FOLLOWING Source
+  // ============================================
+  POPULARITY_FOLLOWING_ALL = 'total_engagement:following:all',
+  POPULARITY_FOLLOWING_SHORT = 'total_engagement:following:short',
+  POPULARITY_FOLLOWING_LONG = 'total_engagement:following:long',
+  POPULARITY_FOLLOWING_IMAGE = 'total_engagement:following:image',
+  POPULARITY_FOLLOWING_VIDEO = 'total_engagement:following:video',
+  POPULARITY_FOLLOWING_LINK = 'total_engagement:following:link',
+  POPULARITY_FOLLOWING_FILE = 'total_engagement:following:file',
+
+  // ============================================
+  // POPULARITY (Total Engagement) - FRIENDS Source
+  // ============================================
+  POPULARITY_FRIENDS_ALL = 'total_engagement:friends:all',
+  POPULARITY_FRIENDS_SHORT = 'total_engagement:friends:short',
+  POPULARITY_FRIENDS_LONG = 'total_engagement:friends:long',
+  POPULARITY_FRIENDS_IMAGE = 'total_engagement:friends:image',
+  POPULARITY_FRIENDS_VIDEO = 'total_engagement:friends:video',
+  POPULARITY_FRIENDS_LINK = 'total_engagement:friends:link',
+  POPULARITY_FRIENDS_FILE = 'total_engagement:friends:file',
 }
 
 export type ReplyStreamCompositeId = `${Core.StreamSource.REPLIES}:${string}`;
@@ -51,4 +84,8 @@ export function buildPostReplyStreamId(compositePostId: string): ReplyStreamComp
   return `${Core.StreamSource.REPLIES}:${compositePostId}`;
 }
 
-export type PostStreamId = PostStreamTypes | ReplyStreamCompositeId | AuthorStreamCompositeId | AuthorRepliesStreamCompositeId;
+export type PostStreamId =
+  | PostStreamTypes
+  | ReplyStreamCompositeId
+  | AuthorStreamCompositeId
+  | AuthorRepliesStreamCompositeId;

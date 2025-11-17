@@ -25,7 +25,7 @@ export function createNexusParams(
 function handleNotCommonStreamParams(authorId: string, postId: string | undefined) {
   const extraParams: Record<string, string> = {};
   extraParams.author_id = authorId;
-  
+
   if (postId) {
     extraParams.post_id = postId;
   }
@@ -51,7 +51,7 @@ function setStreamPagination(params: Core.TStreamBase, streamTail: number) {
 /**
  * Breaks down a stream ID into its components (sorting, endpoint, kind).
  * NOTE: There are some special streams that does not follow timline pattern as post_replies, author_replies and author.
- * 
+ *
  * @param streamId - The stream ID to break down
  * @returns A tuple of [sorting, invokeEndpoint, kind]
  */

@@ -1,0 +1,76 @@
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import * as Core from '@/core';
+import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
+import * as Libs from '@/libs';
+
+/**
+ * TimelinePostReplies
+ *
+ * Renders replies for a specific post in the timeline with thread connectors (flat structure, 1 level).
+ */
+interface TimelinePostRepliesProps {
+  postId: string;
+  onPostClick: (postId: string) => void;
+}
+
+export function TimelinePostReplies({ postId, onPostClick }: TimelinePostRepliesProps) {
+  const [replyIds, setReplyIds] = useState<string[]>([]);
+
+  // Watch for changes in post_counts to trigger refetch when replies count changes
+  const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ postId }), [postId]);
+
+  const fetchReplies = useCallback(
+    async (repliesCount: number) => {
+      try {
+        const response = await Core.StreamPostsController.getOrFetchStreamSlice({
+          streamId: `${Core.StreamSource.REPLIES}:${postId}`,
+          streamTail: 0,
+          lastPostId: undefined,
+          limit: repliesCount > 3 ? 3 : repliesCount,
+        });
+        setReplyIds(response.nextPageIds);
+      } catch (error) {
+        // Silently handle errors - don't show replies if there's an issue
+        Libs.Logger.error('Failed to fetch post replies:', error);
+        setReplyIds([]);
+      }
+    },
+    [postId],
+  );
+
+  useEffect(() => {
+    if (!postCounts?.replies || postCounts.replies < 1) {
+      setReplyIds([]);
+      return;
+    }
+
+    fetchReplies(postCounts.replies);
+  }, [postId, postCounts?.replies, fetchReplies]);
+
+  const hasReplies = replyIds && replyIds.length > 0;
+
+  // Don't render anything if there are no replies
+  if (!hasReplies) {
+    return null;
+  }
+
+  return (
+    <Atoms.Container overrideDefaults className="ml-3">
+      {replyIds.map((replyId, index) => (
+        <React.Fragment key={`reply_${replyId}`}>
+          <Atoms.PostThreadSpacer />
+          <Organisms.PostMain
+            postId={replyId}
+            isReply={true}
+            onClick={() => onPostClick(replyId)}
+            isLastReply={index === replyIds.length - 1}
+          />
+        </React.Fragment>
+      ))}
+    </Atoms.Container>
+  );
+}
