@@ -23,7 +23,9 @@ export function DialogWelcome() {
     return details || null;
   }, [currentUserPubky]);
 
-  const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const { copyToClipboard } = Hooks.useCopyToClipboard({
+    successTitle: Hooks.COPY_PUBKY_SUCCESS_TITLE,
+  });
 
   // Don't render if conditions aren't met
   if (!userDetails || !currentUserPubky) {

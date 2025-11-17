@@ -165,9 +165,13 @@ const { mockCopyToClipboard, mockUseCopyToClipboard } = vi.hoisted(() => {
 
 const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-vi.mock('@/hooks', () => ({
-  useCopyToClipboard: mockUseCopyToClipboard,
-}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCopyToClipboard: mockUseCopyToClipboard,
+  };
+});
 
 // Mock libs
 const { mockShareWithFallback } = vi.hoisted(() => ({

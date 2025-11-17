@@ -49,7 +49,7 @@ describe('useCopyToClipboard', () => {
   });
 
   it('should return a copyToClipboard function', () => {
-    const { result } = renderHook(() => useCopyToClipboard());
+    const { result } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied' }));
 
     expect(result.current.copyToClipboard).toBeDefined();
     expect(typeof result.current.copyToClipboard).toBe('function');
@@ -69,8 +69,8 @@ describe('useCopyToClipboard', () => {
     expect(typeof result.current.copyToClipboard).toBe('function');
   });
 
-  it('should use default options when none provided', () => {
-    const { result } = renderHook(() => useCopyToClipboard());
+  it('should require successTitle', () => {
+    const { result } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied' }));
 
     expect(result.current.copyToClipboard).toBeDefined();
     expect(typeof result.current.copyToClipboard).toBe('function');
@@ -94,32 +94,15 @@ describe('useCopyToClipboard', () => {
 
   it('should handle different option combinations', () => {
     const { result: result1 } = renderHook(() => useCopyToClipboard({ successTitle: 'Success' }));
-    const { result: result2 } = renderHook(() => useCopyToClipboard({ errorTitle: 'Error' }));
-    const { result: result3 } = renderHook(() => useCopyToClipboard({ onSuccess: vi.fn() }));
-    const { result: result4 } = renderHook(() => useCopyToClipboard({ onError: vi.fn() }));
+    const { result: result2 } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied', errorTitle: 'Error' }));
+    const { result: result3 } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied', onSuccess: vi.fn() }));
+    const { result: result4 } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied', onError: vi.fn() }));
 
     expect(result1.current.copyToClipboard).toBeDefined();
     expect(result2.current.copyToClipboard).toBeDefined();
     expect(result3.current.copyToClipboard).toBeDefined();
     expect(result4.current.copyToClipboard).toBeDefined();
   });
-
-  it('should handle empty options object', () => {
-    const { result } = renderHook(() => useCopyToClipboard({}));
-
-    expect(result.current.copyToClipboard).toBeDefined();
-    expect(typeof result.current.copyToClipboard).toBe('function');
-  });
-
-  it('should handle undefined options', () => {
-    const { result } = renderHook(() => useCopyToClipboard(undefined));
-
-    expect(result.current.copyToClipboard).toBeDefined();
-    expect(typeof result.current.copyToClipboard).toBe('function');
-  });
-
-  // Note: The hook is designed to work with valid options or undefined.
-  // Passing null would cause a destructuring error, which is expected behavior.
 
   it('should return the same function reference when options do not change', () => {
     const options = { successTitle: 'Test' };
@@ -145,7 +128,7 @@ describe('useCopyToClipboard', () => {
   });
 
   it('should resolve to true when copying succeeds', async () => {
-    const { result } = renderHook(() => useCopyToClipboard());
+    const { result } = renderHook(() => useCopyToClipboard({ successTitle: 'Pubky copied to clipboard' }));
 
     await expect(result.current.copyToClipboard('test text')).resolves.toBe(true);
     expect(mockCopyToClipboard).toHaveBeenCalledWith({ text: 'test text' });
@@ -158,19 +141,21 @@ describe('useCopyToClipboard', () => {
   });
 
   it('should use custom successDescription when provided', async () => {
-    const { result } = renderHook(() => useCopyToClipboard({ successDescription: 'Custom description' }));
+    const { result } = renderHook(() =>
+      useCopyToClipboard({ successTitle: 'Copied', successDescription: 'Custom description' }),
+    );
 
     await result.current.copyToClipboard('test text');
     expect(mockToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: 'Pubky copied to clipboard',
+        title: 'Copied',
         description: 'Custom description',
       }),
     );
   });
 
   it('should not include description when successDescription is empty string', async () => {
-    const { result } = renderHook(() => useCopyToClipboard({ successDescription: '' }));
+    const { result } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied', successDescription: '' }));
 
     await result.current.copyToClipboard('test text');
     expect(mockToast).toHaveBeenCalledWith(
@@ -184,7 +169,7 @@ describe('useCopyToClipboard', () => {
     const error = new Error('clipboard failed');
     mockCopyToClipboard.mockRejectedValueOnce(error);
 
-    const { result } = renderHook(() => useCopyToClipboard());
+    const { result } = renderHook(() => useCopyToClipboard({ successTitle: 'Copied' }));
 
     await expect(result.current.copyToClipboard('test text')).resolves.toBe(false);
     expect(mockToast).toHaveBeenCalledWith({

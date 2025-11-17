@@ -4,20 +4,22 @@ import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import * as Atoms from '@/atoms';
 
+export const COPY_PUBKY_SUCCESS_TITLE = 'Pubky copied to clipboard' as const;
+
 interface UseCopyToClipboardOptions {
   onSuccess?: (text: string) => void;
   onError?: (error: Error) => void;
-  successTitle?: string;
+  successTitle: string;
   successDescription?: string;
   errorTitle?: string;
   errorDescription?: string;
 }
 
-export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
+export function useCopyToClipboard(options: UseCopyToClipboardOptions) {
   const {
     onSuccess,
     onError,
-    successTitle = 'Pubky copied to clipboard',
+    successTitle,
     successDescription,
     errorTitle = 'Copy failed',
     errorDescription = 'Unable to copy to clipboard',

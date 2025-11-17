@@ -8,7 +8,9 @@ import * as Hooks from '@/hooks';
 
 export const CreateProfileHeader = () => {
   const { pubky } = Core.useOnboardingStore();
-  const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const { copyToClipboard } = Hooks.useCopyToClipboard({
+    successTitle: Hooks.COPY_PUBKY_SUCCESS_TITLE,
+  });
 
   const displayPublicKey = Libs.formatPublicKey({ key: pubky, length: 10 });
 

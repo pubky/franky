@@ -10,7 +10,9 @@ import * as Hooks from '@/hooks';
 
 export function PublicKeyCard() {
   const { setKeypair, setMnemonic, pubky } = Core.useOnboardingStore();
-  const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const { copyToClipboard } = Hooks.useCopyToClipboard({
+    successTitle: Hooks.COPY_PUBKY_SUCCESS_TITLE,
+  });
   const canUseWebShare = Libs.isWebShareSupported();
 
   useEffect(() => {

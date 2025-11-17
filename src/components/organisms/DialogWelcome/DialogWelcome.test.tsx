@@ -43,11 +43,15 @@ vi.mock('dexie-react-hooks', () => ({
 }));
 
 // Mock hooks
-vi.mock('@/hooks', () => ({
-  useCopyToClipboard: vi.fn(() => ({
-    copyToClipboard: mockCopyToClipboard,
-  })),
-}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCopyToClipboard: vi.fn(() => ({
+      copyToClipboard: mockCopyToClipboard,
+    })),
+  };
+});
 
 // Mock libs
 vi.mock('@/libs', () => ({
