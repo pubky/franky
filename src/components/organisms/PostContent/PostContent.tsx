@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Utils from '@/libs/utils';
+import * as Libs from '@/libs';
 
 export interface PostContentOrganismProps {
   postId: string;
