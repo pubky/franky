@@ -30,9 +30,6 @@ exports[`ProfilePageProfile > matches snapshot 1`] = `
         Copy Key
       </button>
       <button>
-        Link
-      </button>
-      <button>
         Sign out
       </button>
       <button>

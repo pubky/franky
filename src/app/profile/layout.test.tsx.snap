@@ -19,7 +19,7 @@ exports[`ProfileLayout > matches snapshot 1`] = `
     data-testid="profile-page-layout-wrapper"
   >
     <div
-      class="sticky top-[146px] z-20 hidden bg-background pb-6 shadow-sm lg:block"
+      class="hidden bg-background pb-6 shadow-sm lg:block"
     >
       <div
         data-testid="profile-page-header"

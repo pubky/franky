@@ -34,7 +34,7 @@ export function ProfilePageFilterBar({
   onPageChangeAction,
 }: ProfilePageFilterBarProps) {
   return (
-    <div className="sticky top-[314px] hidden h-fit w-[180px] flex-col self-start lg:flex">
+    <div className="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden h-fit w-[180px] flex-col self-start lg:flex">
       <div className="flex flex-col gap-0">
         {items.map((item, index) => {
           const Icon = item.icon;

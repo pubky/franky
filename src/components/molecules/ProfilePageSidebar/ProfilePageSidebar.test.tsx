@@ -22,7 +22,16 @@ describe('ProfilePageSidebar', () => {
   it('has correct structure with sticky positioning', () => {
     const { container } = render(<ProfilePageSidebar />);
     const rootElement = container.firstChild as HTMLElement;
-    expect(rootElement).toHaveClass('sticky', 'top-[338px]', 'hidden', 'w-[180px]', 'flex-col', 'gap-6', 'lg:flex');
+    expect(rootElement).toHaveClass(
+      'sticky',
+      'top-[calc(var(--header-height)+var(--profile-header-height))]',
+      'hidden',
+      'w-[180px]',
+      'flex-col',
+      'gap-6',
+      'self-start',
+      'lg:flex',
+    );
   });
 
   it('renders with custom tags', () => {

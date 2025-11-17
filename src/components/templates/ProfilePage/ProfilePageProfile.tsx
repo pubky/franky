@@ -21,7 +21,6 @@ export function ProfilePageProfile() {
         status="Vacationing"
         onEdit={() => console.log('Edit clicked')}
         onCopyPublicKey={() => console.log('Copy public key clicked')}
-        onLinkClick={() => console.log('Link clicked')}
         onSignOut={handleLogout}
         onStatusClick={() => console.log('Status clicked')}
       />

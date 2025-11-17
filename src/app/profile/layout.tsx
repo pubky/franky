@@ -55,7 +55,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
       <Molecules.ProfilePageMobileMenu activePage={activePage} onPageChangeAction={setActivePage} />
 
       <Molecules.ProfilePageLayoutWrapper>
-        <div className="sticky top-[146px] z-20 hidden bg-background pb-6 shadow-sm lg:block">
+        <div className="hidden bg-background pb-6 shadow-sm lg:block">
           <Organisms.ProfilePageHeader
             name="Satoshi Nakamoto"
             bio="Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared."
@@ -63,8 +63,8 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             emoji="🌴"
             status="Vacationing"
             onEdit={() => console.log('Edit clicked')}
+            link="https://twitter.com/satoshi_nakamoto"
             onCopyPublicKey={() => console.log('Copy public key clicked')}
-            onLinkClick={() => console.log('Link clicked')}
             onSignOut={handleLogout}
             onStatusClick={() => console.log('Status clicked')}
           />

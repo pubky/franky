@@ -21,7 +21,7 @@ describe('ProfilePageFilterBar', () => {
     const rootElement = container.firstChild as HTMLElement;
     expect(rootElement).toHaveClass(
       'sticky',
-      'top-[314px]',
+      'top-[calc(var(--header-height)+var(--profile-header-height))]',
       'hidden',
       'h-fit',
       'w-[180px]',

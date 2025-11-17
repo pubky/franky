@@ -11,7 +11,6 @@ const mockProps = {
   link: 'https://example.com',
   onEdit: vi.fn(),
   onCopyPublicKey: vi.fn(),
-  onLinkClick: vi.fn(),
   onSignOut: vi.fn(),
   onStatusClick: vi.fn(),
 };
@@ -62,16 +61,6 @@ describe('ProfilePageHeader', () => {
     fireEvent.click(publicKeyButton!);
 
     expect(onCopyPublicKey).toHaveBeenCalledTimes(1);
-  });
-
-  it('calls onLinkClick when Link button is clicked', () => {
-    const onLinkClick = vi.fn();
-    render(<ProfilePageHeader {...mockProps} link="https://example.com" onLinkClick={onLinkClick} />);
-
-    const linkButton = screen.getByText('Link').closest('a');
-    fireEvent.click(linkButton!);
-
-    expect(onLinkClick).toHaveBeenCalledTimes(1);
   });
 
   it('calls onSignOut when Sign out button is clicked', () => {

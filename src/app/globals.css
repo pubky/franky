@@ -103,6 +103,8 @@ body {
   --sidebar-ring: oklch(0.472 0.007 274.863);
   --brand: oklch(0.928 0.23 123.978);
   --transparent: oklch(0.118 0.014 284.115 / 0);
+  --header-height: 146px;
+  --profile-header-height: 168px;
 }
 
 @layer base {
