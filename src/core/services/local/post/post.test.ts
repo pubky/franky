@@ -530,4 +530,77 @@ describe('LocalPostService', () => {
       }
     });
   });
+
+  describe('getPostCounts', () => {
+    it('should return post counts when post exists', async () => {
+      const postId = testData.fullPostId1;
+      await setupExistingPost(postId, 'Test post');
+
+      // Update some counts
+      await Core.PostCountsModel.update(postId, {
+        tags: 5,
+        unique_tags: 3,
+        replies: 10,
+        reposts: 2,
+      });
+
+      const counts = await Core.LocalPostService.getPostCounts(postId);
+
+      expect(counts).toBeTruthy();
+      expect(counts.id).toBe(postId);
+      expect(counts.tags).toBe(5);
+      expect(counts.unique_tags).toBe(3);
+      expect(counts.replies).toBe(10);
+      expect(counts.reposts).toBe(2);
+    });
+
+    it('should return default counts when post does not exist', async () => {
+      const nonExistentPostId = 'nonexistent:post123';
+
+      const counts = await Core.LocalPostService.getPostCounts(nonExistentPostId);
+
+      expect(counts).toBeTruthy();
+      expect(counts.id).toBe(nonExistentPostId);
+      expect(counts.tags).toBe(0);
+      expect(counts.unique_tags).toBe(0);
+      expect(counts.replies).toBe(0);
+      expect(counts.reposts).toBe(0);
+    });
+
+    it('should throw DatabaseError on database failure', async () => {
+      const postId = testData.fullPostId1;
+
+      // Mock findById to throw an error
+      const spy = vi
+        .spyOn(Core.PostCountsModel, 'findById')
+        .mockRejectedValueOnce(new Error('Database connection lost'));
+
+      await expect(Core.LocalPostService.getPostCounts(postId)).rejects.toMatchObject({
+        type: 'QUERY_FAILED',
+        message: 'Failed to get post counts',
+        statusCode: 500,
+      });
+
+      spy.mockRestore();
+    });
+
+    it('should log error on failure', async () => {
+      const postId = testData.fullPostId1;
+      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
+
+      const spy = vi.spyOn(Core.PostCountsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
+
+      await expect(Core.LocalPostService.getPostCounts(postId)).rejects.toThrow();
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'Failed to get post counts',
+        expect.objectContaining({
+          postId,
+        }),
+      );
+
+      spy.mockRestore();
+      loggerSpy.mockRestore();
+    });
+  });
 });

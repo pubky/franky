@@ -231,7 +231,7 @@ describe('StreamPostsController', () => {
       expect(fetchMissingPostsSpy).not.toHaveBeenCalled();
     });
 
-    it('should propagate error when fetchMissingPostsFromNexus throws', async () => {
+    it('should fetch missing posts in background without blocking response', async () => {
       const nextPageIds = ['user-1:post-1', 'user-1:post-2'];
       const cacheMissPostIds = ['user-1:post-3', 'user-1:post-4'];
       const timestamp = 1000000;
@@ -243,19 +243,20 @@ describe('StreamPostsController', () => {
         timestamp,
       });
 
-      // Mock fetchMissingPostsFromNexus to throw error
+      // Mock fetchMissingPostsFromNexus - even if it throws, should not block
       const fetchError = new Error('Failed to fetch missing posts');
       vi.spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus').mockRejectedValue(fetchError);
 
-      // Should propagate the error
-      await expect(
-        StreamPostsController.getOrFetchStreamSlice({
-          streamId,
-          streamTail: 0,
-        }),
-      ).rejects.toThrow('Failed to fetch missing posts');
+      // Should return immediately without waiting for background fetch
+      const result = await StreamPostsController.getOrFetchStreamSlice({
+        streamId,
+        streamTail: 0,
+      });
 
-      // Verify fetchMissingPostsFromNexus was called
+      // Should return the nextPageIds and timestamp immediately
+      expect(result).toEqual({ nextPageIds, timestamp });
+
+      // Verify fetchMissingPostsFromNexus was called (fire-and-forget)
       expect(Core.PostStreamApplication.fetchMissingPostsFromNexus).toHaveBeenCalledWith({
         cacheMissPostIds,
         viewerId,
