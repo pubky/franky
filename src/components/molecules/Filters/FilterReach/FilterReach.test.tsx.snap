@@ -10,7 +10,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_3_"
+    id="_r_p_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
     </h2>
   </div>
   <div
-    aria-labelledby="_r_3_"
+    aria-labelledby="_r_p_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -157,7 +157,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_1_"
+    id="_r_n_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -167,7 +167,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_1_"
+    aria-labelledby="_r_n_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -304,7 +304,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_2_"
+    id="_r_o_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -314,7 +314,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_2_"
+    aria-labelledby="_r_o_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"
@@ -451,7 +451,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_0_"
+    id="_r_m_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -461,7 +461,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
     </h2>
   </div>
   <div
-    aria-labelledby="_r_0_"
+    aria-labelledby="_r_m_"
     class=""
     data-testid="filter-reach-radiogroup"
     role="radiogroup"

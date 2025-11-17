@@ -26,6 +26,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with custom links 1`] =
       </span>
       <span
         class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
       >
         Example
       </span>
@@ -77,6 +78,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with default props 1`] 
       </svg>
       <span
         class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
       >
         bitcoin.org
       </span>
@@ -118,6 +120,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with default props 1`] 
       </svg>
       <span
         class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
       >
         x.com
       </span>
@@ -152,6 +155,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with default props 1`] 
       </svg>
       <span
         class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
       >
         youtube.com
       </span>
@@ -177,6 +181,7 @@ exports[`ProfilePageLinks - Snapshots > matches snapshot with default props 1`] 
       </svg>
       <span
         class="flex-1 text-base font-medium text-secondary-foreground"
+        data-testid="typography"
       >
         telegram.chat
       </span>

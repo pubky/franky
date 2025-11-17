@@ -24,7 +24,7 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
@@ -65,8 +65,8 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         >
           Today
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -107,8 +107,8 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         >
           This Month
         </span>
-      </p>
-      <p
+      </div>
+      <div
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
@@ -141,7 +141,7 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         >
           All Time
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>

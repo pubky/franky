@@ -10,7 +10,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_1_"
+    id="_r_6_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     </h2>
   </div>
   <div
-    aria-labelledby="_r_1_"
+    aria-labelledby="_r_6_"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
@@ -186,7 +186,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_2_"
+    id="_r_7_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -196,7 +196,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_2_"
+    aria-labelledby="_r_7_"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
@@ -362,7 +362,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_0_"
+    id="_r_5_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -372,7 +372,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="_r_0_"
+    aria-labelledby="_r_5_"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"

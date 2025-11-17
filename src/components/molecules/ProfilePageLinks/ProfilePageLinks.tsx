@@ -39,7 +39,9 @@ export function ProfilePageLinks({ links = DEFAULT_LINKS }: ProfilePageLinksProp
               className="flex items-center gap-2.5 py-1"
             >
               <Icon size={16} className="shrink-0 text-foreground" />
-              <span className="flex-1 text-base font-medium text-secondary-foreground">{link.label}</span>
+              <Atoms.Typography as="span" className="flex-1 text-base font-medium text-secondary-foreground">
+                {link.label}
+              </Atoms.Typography>
             </a>
           );
         })}
