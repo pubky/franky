@@ -41,7 +41,8 @@ export class PostStreamApplication {
       const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
       if (postBatch) {
-        await Core.LocalStreamPostsService.persistPosts(postBatch);
+        const { postAttachments } = await Core.LocalStreamPostsService.persistPosts(postBatch);
+        await Core.FileApplication.persistFiles(postAttachments);
         const cacheMissUserIds = postBatch
           ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
           : [];

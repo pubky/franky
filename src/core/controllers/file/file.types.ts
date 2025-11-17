@@ -5,8 +5,8 @@ export type TUploadFileParams = {
   pubky: Core.Pubky;
 };
 
-export type TReadFilesParams = {
-  fileUris: Core.Pubky[];
+export type TGetMetadataParams = {
+  fileAttachments: string[];
 };
 
 export type TGetImageUrlParams = {

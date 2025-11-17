@@ -42,8 +42,7 @@ export class BootstrapApplication {
     ]);
     
     // TODO: That lines in the future will come from the bootstrap data and we will persist directly
-    const { postAttachments } = results[1];
-    await Core.FileApplication.persistFiles(postAttachments);
+    await Core.FileApplication.persistFiles(results[1].postAttachments);
 
     return { unread: results[results.length - 1] as number, lastRead };
   }

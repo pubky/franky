@@ -31,7 +31,10 @@ export class FileApplication {
    * @param fileUris - Array of file URIs to fetch and persist
    * @returns Promise that resolves when files are persisted
    */
-  static async persistFiles(fileUris: string[]): Promise<void> {
+  static async persistFiles(fileUris: string[]) {
+    if (fileUris.length === 0) {
+      return;
+    }
     // TODO: Wrap with try/catch
     const nexusFiles = await this.fetch({ fileUris });
     const filesWithCompositeIds = nexusFiles.map((file) => {
@@ -43,6 +46,15 @@ export class FileApplication {
     });
     
     await Core.LocalFileService.persistFiles({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
+  }
+
+  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
+    const compositeFileIds = fileAttachments.flatMap((uri) => {
+      const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
+      return compositeId ? [compositeId] : [];
+    });
+    const files = await Core.LocalFileService.findByIds(compositeFileIds);
+    return files;
   }
 
   /**

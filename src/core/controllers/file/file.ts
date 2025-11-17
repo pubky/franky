@@ -75,21 +75,21 @@ export class FileController {
     return Core.FileApplication.getImageUrl({ fileId, variant });
   }
 
-  // /**
-  //  * Reads file metadata from nexus by file URIs.
-  //  *
-  //  * @param params - Parameters for reading files
-  //  * @param params.fileUris - Array of file URIs (pubky) to fetch
-  //  * @returns Promise resolving to file metadata
-  //  *
-  //  * @example
-  //  * ```typescript
-  //  * const files = await FileController.read({
-  //  *   fileUris: ['pubky1', 'pubky2']
-  //  * });
-  //  * ```
-  //  */
-  // static async read({ fileUris }: Core.TReadFilesParams) {
-  //   return await Core.FileApplication.read({ fileUris });
-  // }
+  /**
+   * Reads file metadata from nexus by file URIs.
+   *
+   * @param params - Parameters for reading files
+   * @param params.fileUris - Array of file URIs (pubky) to fetch
+   * @returns Promise resolving to file metadata
+   *
+   * @example
+   * ```typescript
+   * const files = await FileController.read({
+   *   fileUris: ['pubky1', 'pubky2']
+   * });
+   * ```
+   */
+  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
+    return await Core.FileApplication.getMetadata({ fileAttachments });
+  }
 }
