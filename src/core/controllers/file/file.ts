@@ -38,6 +38,43 @@ export class FileController {
     return fileResult.meta.url;
   }
 
+  /**
+   * Gets the CDN URL for a user's avatar.
+   *
+   * @param pubky - User's public key
+   * @returns CDN URL string for the avatar
+   *
+   * @example
+   * ```typescript
+   * const avatarUrl = FileController.getAvatarUrl(userPubky);
+   * ```
+   */
+  static getAvatarUrl(pubky: Core.Pubky): string {
+    return Core.FileApplication.getAvatarUrl(pubky);
+  }
+
+  /**
+   * Gets the CDN URL for an image file with a specific variant.
+   *
+   * @param params - Parameters for image URL
+   * @param params.pubky - User's public key
+   * @param params.fileId - File identifier
+   * @param params.variant - Image variant (small, feed, main)
+   * @returns CDN URL string
+   *
+   * @example
+   * ```typescript
+   * const imageUrl = FileController.getImageUrl({
+   *   pubky: userPubky,
+   *   fileId: 'file123',
+   *   variant: Core.FileVariant.FEED
+   * });
+   * ```
+   */
+  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
+    return Core.FileApplication.getImageUrl({ fileId, variant });
+  }
+
   // /**
   //  * Reads file metadata from nexus by file URIs.
   //  *
@@ -54,43 +91,6 @@ export class FileController {
   //  */
   // static async read({ fileUris }: Core.TReadFilesParams) {
   //   return await Core.FileApplication.read({ fileUris });
-  // }
-
-  // /**
-  //  * Gets the CDN URL for an image file with a specific variant.
-  //  *
-  //  * @param params - Parameters for image URL
-  //  * @param params.pubky - User's public key
-  //  * @param params.fileId - File identifier
-  //  * @param params.variant - Image variant (small, feed, main)
-  //  * @returns CDN URL string
-  //  *
-  //  * @example
-  //  * ```typescript
-  //  * const imageUrl = FileController.getImageUrl({
-  //  *   pubky: userPubky,
-  //  *   fileId: 'file123',
-  //  *   variant: Core.FileVariant.FEED
-  //  * });
-  //  * ```
-  //  */
-  // static getImageUrl({ pubky, fileId, variant }: Core.TGetImageUrlParams): string {
-  //   return Core.filesApi.getImage({ pubky, file_id: fileId, variant });
-  // }
-
-  // /**
-  //  * Gets the CDN URL for a user's avatar.
-  //  *
-  //  * @param pubky - User's public key
-  //  * @returns CDN URL string for the avatar
-  //  *
-  //  * @example
-  //  * ```typescript
-  //  * const avatarUrl = FileController.getAvatarUrl(userPubky);
-  //  * ```
-  //  */
-  // static getAvatarUrl(pubky: Core.Pubky): string {
-  //   return Core.filesApi.getAvatar(pubky);
   // }
 }
 

@@ -47,10 +47,10 @@ vi.mock('@/organisms', () => ({
 
 // Mock Core
 vi.mock('@/core', () => ({
-  buildPostCompositeId: vi.fn(),
+  buildCompositeIdFromPubkyUri: vi.fn(),
 }));
 
-const mockBuildPostCompositeId = vi.mocked(Core.buildPostCompositeId);
+const mockBuildCompositeIdFromPubkyUri = vi.mocked(Core.buildCompositeIdFromPubkyUri);
 
 describe('SinglePost Template', () => {
   beforeEach(() => {
@@ -59,7 +59,7 @@ describe('SinglePost Template', () => {
       postId: 'test-post-123',
       userId: 'test-user-456',
     });
-    mockBuildPostCompositeId.mockReturnValue('test-user-456:test-post-123');
+    mockBuildCompositeIdFromPubkyUri.mockReturnValue('test-user-456:test-post-123');
   });
 
   it('renders post content', () => {
@@ -119,7 +119,7 @@ describe('SinglePost Template', () => {
       postId: 'new-post-789',
       userId: 'new-user-101',
     });
-    mockBuildPostCompositeId.mockReturnValue('new-user-101:new-post-789');
+    mockBuildCompositeIdFromPubkyUri.mockReturnValue('new-user-101:new-post-789');
 
     rerender(<SinglePost />);
 
@@ -133,7 +133,7 @@ describe('SinglePost Template', () => {
       postId: '',
       userId: '',
     });
-    mockBuildPostCompositeId.mockReturnValue(':');
+    mockBuildCompositeIdFromPubkyUri.mockReturnValue(':');
 
     render(<SinglePost />);
 
@@ -154,8 +154,8 @@ describe('SinglePost Template', () => {
     expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
-  it('handles buildPostCompositeId errors', () => {
-    mockBuildPostCompositeId.mockImplementation(() => {
+  it('handles buildCompositeIdFromPubkyUri errors', () => {
+    mockBuildCompositeIdFromPubkyUri.mockImplementation(() => {
       throw new Error('Invalid post ID');
     });
 

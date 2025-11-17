@@ -66,7 +66,7 @@ export class LocalStreamPostsService {
 
     for (const post of posts) {
       // Build composite ID to ensure uniqueness (authorId:postId)
-      const postId = Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id });
+      const postId = Core.buildCompositeId({ pubky: post.details.author, id: post.details.id });
       compositePostIds.push(postId);
       postCounts.push([postId, post.counts]);
       postRelationships.push([postId, post.relationships]);

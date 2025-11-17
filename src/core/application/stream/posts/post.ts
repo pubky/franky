@@ -105,7 +105,7 @@ export class PostStreamApplication {
 
     const timestamp = nexusPosts[nexusPosts.length - 1].details.indexed_at;
     const compositePostIds = nexusPosts.map((post) =>
-      Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
+      Core.buildCompositeId({ pubky: post.details.author, id: post.details.id }),
     );
 
     // Do not persist any stream related with engagement sorting

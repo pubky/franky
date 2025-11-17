@@ -31,9 +31,18 @@ export class FileApplication {
    * @param params.fileUris - Array of file URIs (pubky) to fetch
    * @returns Promise resolving to file metadata from nexus
    */
-  static async read({ fileUris }: Core.TReadFilesInput) {
+  static async fetch({ fileUris }: Core.TReadFilesInput) {
     const { url, body } = Core.filesApi.getFiles(fileUris);
     return await Core.queryNexus<unknown>(url, 'POST', JSON.stringify(body));
+  }
+
+  static getAvatarUrl(pubky: Core.Pubky): string {
+    return Core.filesApi.getAvatarUrl(pubky);
+  }
+
+  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
+    const { pubky, id } = Core.parseCompositeId(fileId);
+    return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
   }
 }
 

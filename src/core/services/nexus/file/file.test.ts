@@ -9,14 +9,14 @@ const fileId = 'test-file';
 const encodedFileId = encodeURIComponent(fileId);
 
 describe('File API', () => {
-  describe('filesApi.getAvatar', () => {
+  describe('filesApi.getAvatarUrl', () => {
     it('should generate correct avatar URL for valid pubky', () => {
-      const result = filesApi.getAvatar(pubky);
+      const result = filesApi.getAvatarUrl(pubky);
       expect(result).toBe(`${Config.CDN_URL}/avatar/${encodedPubky}`);
     });
   });
 
-  describe('filesApi.getImage', () => {
+  describe('filesApi.getImageUrl', () => {
     it('should generate correct URL for SMALL variant', () => {
       const params: TImageParams = {
         pubky,
@@ -24,7 +24,7 @@ describe('File API', () => {
         variant: FileVariant.SMALL,
       };
 
-      const result = filesApi.getImage(params);
+      const result = filesApi.getImageUrl(params);
       expect(result).toBe(`${Config.CDN_URL}/files/${encodedPubky}/${encodedFileId}/small`);
     });
 
@@ -35,7 +35,7 @@ describe('File API', () => {
         variant: FileVariant.FEED,
       };
 
-      const result = filesApi.getImage(params);
+      const result = filesApi.getImageUrl(params);
       expect(result).toBe(`${Config.CDN_URL}/files/${encodedPubky}/${encodedFileId}/feed`);
     });
 
@@ -46,7 +46,7 @@ describe('File API', () => {
         variant: FileVariant.MAIN,
       };
 
-      const result = filesApi.getImage(params);
+      const result = filesApi.getImageUrl(params);
       expect(result).toBe(`${Config.CDN_URL}/files/${encodedPubky}/${encodedFileId}/main`);
     });
   });
@@ -105,8 +105,8 @@ describe('File API', () => {
     it('should have exactly 3 endpoints', () => {
       const endpointKeys = Object.keys(filesApi);
       expect(endpointKeys).toHaveLength(3);
-      expect(endpointKeys).toContain('getAvatar');
-      expect(endpointKeys).toContain('getImage');
+      expect(endpointKeys).toContain('getAvatarUrl');
+      expect(endpointKeys).toContain('getImageUrl');
       expect(endpointKeys).toContain('getFiles');
     });
   });

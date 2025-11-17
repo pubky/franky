@@ -16,7 +16,7 @@ export class PostNormalizer {
     // Create embed object if embed URI is provided
     let embedObject: PubkyAppPostEmbed | null = null;
     if (post.embed) {
-      const embeddedPostId = Core.buildPostIdFromPubkyUri(post.embed);
+      const embeddedPostId = Core.buildCompositeIdFromPubkyUri({ uri: post.embed, domain: 'posts' });
       if (embeddedPostId) {
         const embeddedPost = await Core.PostDetailsModel.findById(embeddedPostId);
         if (embeddedPost) {

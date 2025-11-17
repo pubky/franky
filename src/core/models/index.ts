@@ -6,3 +6,4 @@ export * from './shared';
 export * from './notification';
 export * from './models.types';
 export * from './models.defaults';
+export * from './models.utils';

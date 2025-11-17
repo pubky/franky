@@ -10,7 +10,7 @@ export type TReadFilesParams = {
 };
 
 export type TGetImageUrlParams = {
-  pubky: Core.Pubky;
+  // Composite ID: author:fileId
   fileId: string;
   variant: Core.FileVariant;
 };
