@@ -156,3 +156,14 @@ export type NexusNotification = {
   timestamp: number;
   body: Record<string, unknown>; // Generic object to handle all notification types
 };
+
+// File types
+export type NexusFileDetails = {
+  id: Pubky;
+  name: string;
+  src: string;
+  content_type: string;
+  size: number;
+  created_at: number;
+  indexed_at: Timestamp;
+};

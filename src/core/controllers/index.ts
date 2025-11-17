@@ -5,4 +5,5 @@ export * from './post';
 export * from './tag';
 export * from './user';
 export * from './hot';
+export * from './file';
 export * from './controllers.types';

@@ -7,7 +7,7 @@ import * as App from '@/app';
 vi.mock('@/core', () => ({
   useOnboardingStore: vi.fn(),
   ProfileController: {
-    uploadAvatar: vi.fn(),
+    upload: vi.fn(),
     create: vi.fn(),
   },
   UserValidator: {
@@ -413,7 +413,7 @@ describe('CreateProfileForm', () => {
     // Reset all mock functions
     mockPush.mockReset();
     mockToast.mockReset();
-    vi.mocked(Core.ProfileController.uploadAvatar).mockReset();
+    vi.mocked(Core.FileController.upload).mockReset();
     vi.mocked(Core.ProfileController.create).mockReset();
     vi.mocked(Core.UserValidator.check).mockReset();
     vi.mocked(Core.AuthController.authorizeAndBootstrap).mockReset();
@@ -767,7 +767,7 @@ describe('CreateProfileForm', () => {
 
       // Verify that the mocked functions exist
       expect(typeof Core.ProfileController.create).toBe('function');
-      expect(typeof Core.ProfileController.uploadAvatar).toBe('function');
+      expect(typeof Core.FileController.upload).toBe('function');
       expect(typeof Core.UserValidator.check).toBe('function');
       expect(typeof Core.AuthController.authorizeAndBootstrap).toBe('function');
     });

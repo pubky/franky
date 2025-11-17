@@ -1,5 +1,6 @@
 export * from './post';
 export * from './user';
+export * from './file';
 export * from './stream';
 export * from './shared';
 export * from './notification';

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Pubky } from '@/core';
-import type { BlobResult, FileResult, PubkyAppUser } from 'pubky-app-specs';
+import type { PubkyAppUser } from 'pubky-app-specs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({}));
@@ -44,118 +44,6 @@ beforeEach(async () => {
 });
 
 describe('ProfileApplication', () => {
-  describe('read', () => {
-    it('returns user details from local database when available', async () => {
-      const mockUserDetails = {
-        id: 'test-user',
-        name: 'Test User',
-        bio: 'Test bio',
-        image: null,
-        status: 'active',
-        links: [],
-        indexed_at: Date.now(),
-      };
-
-      const findByIdSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
-      const detailsSpy = vi.spyOn(Core.NexusUserService, 'details');
-
-      const result = await ProfileApplication.read({ userId: 'test-user' as Pubky });
-
-      expect(result).toEqual(mockUserDetails);
-      expect(findByIdSpy).toHaveBeenCalledWith('test-user');
-      expect(detailsSpy).not.toHaveBeenCalled();
-    });
-
-    it('fetches from Nexus and persists when not found locally', async () => {
-      const mockNexusUserDetails = {
-        id: 'test-user' as Pubky,
-        name: 'Test User',
-        bio: 'Test bio',
-        image: null,
-        status: 'active',
-        links: [],
-        indexed_at: Date.now(),
-      };
-
-      const findByIdSpy = vi
-        .spyOn(Core.UserDetailsModel, 'findById')
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(mockNexusUserDetails);
-      const detailsSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockNexusUserDetails);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert').mockResolvedValue(undefined);
-
-      const result = await ProfileApplication.read({ userId: 'test-user' as Pubky });
-
-      expect(findByIdSpy).toHaveBeenCalledTimes(2);
-      expect(detailsSpy).toHaveBeenCalledWith({ user_id: 'test-user' });
-      expect(upsertSpy).toHaveBeenCalledWith(mockNexusUserDetails);
-      expect(result).toEqual(mockNexusUserDetails);
-    });
-
-    it('returns null when user not found locally or on Nexus', async () => {
-      vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
-      vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(null);
-
-      const result = await ProfileApplication.read({ userId: 'nonexistent-user' as Pubky });
-
-      expect(result).toBeNull();
-    });
-
-    it('propagates errors from Nexus service', async () => {
-      vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
-      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(new Error('Nexus API error'));
-
-      await expect(ProfileApplication.read({ userId: 'test-user' as Pubky })).rejects.toThrow('Nexus API error');
-    });
-  });
-
-  describe('uploadAvatar', () => {
-    it('uploads blob and then file record to homeserver', async () => {
-      const blobResult = {
-        blob: { data: new Uint8Array([1, 2, 3]) },
-        meta: { url: 'pubky://user/blob/avatar' },
-      } as unknown as BlobResult;
-      const fileJson = { id: 'file-1', kind: 'avatar' };
-      const fileResult = {
-        file: { toJson: vi.fn(() => fileJson) },
-        meta: { url: 'pubky://user/pub/pubky.app/files/avatar' },
-      } as unknown as FileResult;
-
-      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
-
-      await ProfileApplication.uploadAvatar({ blobResult, fileResult });
-
-      expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
-      expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenNthCalledWith(1, Core.HomeserverAction.PUT, fileResult.meta.url, fileJson);
-
-      // Ensure blob upload happened before file record request
-      expect(putBlobSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
-    });
-
-    it('propagates errors if the first upload fails', async () => {
-      const blobResult = {
-        blob: { data: new Uint8Array([9, 9, 9]) },
-        meta: { url: 'pubky://user/blob/avatar' },
-      } as unknown as BlobResult;
-      const fileResult = {
-        file: { toJson: vi.fn() },
-        meta: { url: 'pubky://user/pub/pubky.app/files/avatar' },
-      } as unknown as FileResult;
-
-      const putBlobSpy = vi
-        .spyOn(Core.HomeserverService, 'putBlob')
-        .mockRejectedValueOnce(new Error('blob upload failed'));
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
-
-      await expect(ProfileApplication.uploadAvatar({ blobResult, fileResult })).rejects.toThrow('blob upload failed');
-      expect(putBlobSpy).toHaveBeenCalledTimes(1);
-      expect(requestSpy).not.toHaveBeenCalled();
-      expect(fileResult.file.toJson).not.toHaveBeenCalled();
-    });
-  });
-
   describe('create', () => {
     it('creates profile and sets auth state on success', async () => {
       const profileJson = { name: 'Alice' };
