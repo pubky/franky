@@ -63,10 +63,11 @@ export const PostLinkEmbeds = ({ content }: PostLinkEmbedsProps) => {
           width="100%"
           height="315"
           src={linkEmbed.url}
-          title="YouTube video player"
+          title={`YouTube video ${linkEmbed.url.split('https://www.youtube-nocookie.com/embed/')[1]}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
           className="rounded-md"
+          data-testid="YouTube video player"
         ></iframe>
       )}
     </Atoms.Container>
