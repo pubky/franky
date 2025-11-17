@@ -59,7 +59,6 @@ export class PostStreamApplication {
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
     }
-    
   }
 
   // ============================================================================
