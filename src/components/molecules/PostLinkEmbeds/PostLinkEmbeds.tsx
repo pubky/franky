@@ -67,6 +67,7 @@ export const PostLinkEmbeds = ({ content }: PostLinkEmbedsProps) => {
           title={`YouTube video ${linkEmbed.url.split('https://www.youtube-nocookie.com/embed/')[1]}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           allowFullScreen
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
           className="rounded-md"
           data-testid="YouTube video player"
         ></iframe>
