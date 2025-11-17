@@ -50,13 +50,16 @@ export function ProfilePageFilterBar({
               onClick={() => onPageChangeAction(item.pageType)}
               className="w-full justify-between px-0 py-1"
             >
-              <span className="flex items-center gap-2">
+              <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
                 <Atoms.FilterItemIcon icon={Icon} />
                 <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
-              </span>
-              <span className={`text-base font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+              </Atoms.Container>
+              <Atoms.Typography
+                as="span"
+                className={`text-base font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}
+              >
                 {item.count}
-              </span>
+              </Atoms.Typography>
             </Atoms.FilterItem>
           );
         })}

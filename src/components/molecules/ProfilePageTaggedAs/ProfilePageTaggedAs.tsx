@@ -33,7 +33,9 @@ export function ProfilePageTaggedAs({ tags = DEFAULT_TAGS }: ProfilePageTaggedAs
 
       <Atoms.Button variant="outline" size="sm" className="border border-border bg-foreground/5">
         <Libs.Tag size={16} className="text-foreground" />
-        <span className="font-bold">Add Tag</span>
+        <Atoms.Typography as="span" className="text-sm font-bold">
+          Add Tag
+        </Atoms.Typography>
       </Atoms.Button>
     </Atoms.Container>
   );

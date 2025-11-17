@@ -154,7 +154,8 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
         />
       </svg>
       <span
-        class="font-bold"
+        class="text-foreground text-sm font-bold"
+        data-testid="typography"
       >
         Add Tag
       </span>
@@ -468,7 +469,8 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         />
       </svg>
       <span
-        class="font-bold"
+        class="text-foreground text-sm font-bold"
+        data-testid="typography"
       >
         Add Tag
       </span>
