@@ -14,6 +14,32 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
+// Mock useProfileHeader hook
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useProfileHeader: vi.fn(() => ({
+      profileData: {
+        name: 'Satoshi Nakamoto',
+        bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
+        publicKey: '1QX7GKW3abcdef1234567890',
+        emoji: '🌴',
+        status: 'Vacationing',
+        avatarUrl: undefined,
+        link: undefined,
+      },
+      handlers: {
+        onEdit: vi.fn(),
+        onCopyPublicKey: vi.fn(),
+        onSignOut: vi.fn(),
+        onStatusClick: vi.fn(),
+      },
+      isLoading: false,
+    })),
+  };
+});
+
 // Mock molecules
 vi.mock('@/components/molecules', () => ({
   MobileHeader: ({ showLeftButton, showRightButton }: { showLeftButton?: boolean; showRightButton?: boolean }) => (

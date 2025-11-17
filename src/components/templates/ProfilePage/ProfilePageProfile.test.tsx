@@ -4,11 +4,40 @@ import { ProfilePageProfile } from './ProfilePageProfile';
 import * as App from '@/app';
 
 // Mock next/navigation
+const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({
-    push: vi.fn(),
+    push: mockPush,
   })),
 }));
+
+// Mock useProfileHeader hook
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useProfileHeader: vi.fn(() => ({
+      profileData: {
+        name: 'Satoshi Nakamoto',
+        bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
+        publicKey: '1QX7GKW3abcdef1234567890',
+        emoji: '🌴',
+        status: 'Vacationing',
+        avatarUrl: undefined,
+        link: undefined,
+      },
+      handlers: {
+        onEdit: vi.fn(),
+        onCopyPublicKey: vi.fn(),
+        onSignOut: vi.fn(() => {
+          mockPush(App.AUTH_ROUTES.LOGOUT);
+        }),
+        onStatusClick: vi.fn(),
+      },
+      isLoading: false,
+    })),
+  };
+});
 
 // Mock organisms
 vi.mock('@/organisms', () => ({
@@ -74,11 +103,7 @@ describe('ProfilePageProfile', () => {
     expect(wrapper).toHaveClass('lg:hidden');
   });
 
-  it('navigates to logout page when sign out is clicked', async () => {
-    const { useRouter } = await import('next/navigation');
-    const mockPush = vi.fn();
-    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
-
+  it('navigates to logout page when sign out is clicked', () => {
     render(<ProfilePageProfile />);
     const signOutButton = screen.getByText('Sign out');
     fireEvent.click(signOutButton);

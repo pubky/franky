@@ -1,29 +1,16 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { AUTH_ROUTES } from '@/app';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 export function ProfilePageProfile() {
-  const router = useRouter();
-
-  const handleLogout = () => {
-    router.push(AUTH_ROUTES.LOGOUT);
-  };
+  const { currentUserPubky } = Core.useAuthStore();
+  const { profileData, handlers, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
 
   return (
     <div className="mt-6 flex flex-col gap-4 lg:mt-0 lg:hidden">
-      <Organisms.ProfilePageHeader
-        name="Satoshi Nakamoto"
-        bio="Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared."
-        publicKey="1QX7GKW3abcdef1234567890"
-        emoji="🌴"
-        status="Vacationing"
-        onEdit={() => console.log('Edit clicked')}
-        onCopyPublicKey={() => console.log('Copy public key clicked')}
-        onSignOut={handleLogout}
-        onStatusClick={() => console.log('Status clicked')}
-      />
+      {!isLoading && <Organisms.ProfilePageHeader {...profileData} {...handlers} />}
       <div className="flex flex-col gap-4 text-base text-muted-foreground">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore

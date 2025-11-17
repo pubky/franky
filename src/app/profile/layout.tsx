@@ -2,9 +2,11 @@
 
 import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { AUTH_ROUTES, PROFILE_ROUTES } from '@/app';
+import { PROFILE_ROUTES } from '@/app';
 import * as Molecules from '@/components/molecules';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 import { PROFILE_PAGE_TYPES, ProfilePageType, FilterBarPageType } from './types';
 
 const PAGE_PATH_MAP: Record<string, ProfilePageType> = {
@@ -22,6 +24,8 @@ const PAGE_PATH_MAP: Record<string, ProfilePageType> = {
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { currentUserPubky } = Core.useAuthStore();
+  const { profileData, handlers, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
 
   const activePage = React.useMemo(() => {
     return PAGE_PATH_MAP[pathname] || PROFILE_PAGE_TYPES.NOTIFICATIONS;
@@ -41,10 +45,6 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
     router.push(routeMap[page]);
   };
 
-  const handleLogout = () => {
-    router.push(AUTH_ROUTES.LOGOUT);
-  };
-
   const filterBarActivePage =
     activePage === PROFILE_PAGE_TYPES.PROFILE ? PROFILE_PAGE_TYPES.NOTIFICATIONS : (activePage as FilterBarPageType);
 
@@ -56,18 +56,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
 
       <Molecules.ProfilePageLayoutWrapper>
         <div className="hidden bg-background pb-6 shadow-sm lg:block">
-          <Organisms.ProfilePageHeader
-            name="Satoshi Nakamoto"
-            bio="Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared."
-            publicKey="1QX7GKW3abcdef1234567890"
-            emoji="🌴"
-            status="Vacationing"
-            onEdit={() => console.log('Edit clicked')}
-            link="https://twitter.com/satoshi_nakamoto"
-            onCopyPublicKey={() => console.log('Copy public key clicked')}
-            onSignOut={handleLogout}
-            onStatusClick={() => console.log('Status clicked')}
-          />
+          {!isLoading && <Organisms.ProfilePageHeader {...profileData} {...handlers} />}
         </div>
 
         <div className="flex gap-6">
