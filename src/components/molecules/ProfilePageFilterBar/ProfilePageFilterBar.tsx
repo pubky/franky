@@ -36,7 +36,7 @@ export function ProfilePageFilterBar({
   return (
     <Atoms.Container
       overrideDefaults={true}
-      className="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden h-fit w-[180px] flex-col self-start lg:flex"
+      className="sticky top-[var(--header-height)] hidden h-fit w-[180px] flex-col self-start lg:flex"
     >
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-0">
         {items.map((item, index) => {

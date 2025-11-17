@@ -24,7 +24,7 @@ describe('ProfilePageSidebar', () => {
     const rootElement = container.firstChild as HTMLElement;
     expect(rootElement).toHaveClass(
       'sticky',
-      'top-[calc(var(--header-height)+var(--profile-header-height))]',
+      'top-[var(--header-height)]',
       'hidden',
       'w-[180px]',
       'flex-col',
