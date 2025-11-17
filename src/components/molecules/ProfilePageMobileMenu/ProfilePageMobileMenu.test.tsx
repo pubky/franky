@@ -17,7 +17,13 @@ describe('ProfilePageMobileMenu', () => {
       <ProfilePageMobileMenu activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />,
     );
     const rootElement = container.firstChild as HTMLElement;
-    expect(rootElement).toHaveClass('sticky', 'top-20', 'z-30', 'bg-background', 'lg:hidden');
+    expect(rootElement).toHaveClass(
+      'sticky',
+      'top-[var(--header-height-mobile)]',
+      'z-30',
+      'bg-background',
+      'lg:hidden',
+    );
   });
 
   it('renders correct number of menu items', () => {
