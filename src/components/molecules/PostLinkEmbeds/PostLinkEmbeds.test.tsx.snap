@@ -10,6 +10,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
     class="rounded-md"
     data-testid="YouTube video player"
     height="315"
+    loading="lazy"
     src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
     title="YouTube video dQw4w9WgXcQ"
     width="100%"
