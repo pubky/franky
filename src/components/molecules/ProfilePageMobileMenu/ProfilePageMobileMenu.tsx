@@ -29,7 +29,10 @@ export interface ProfilePageMobileMenuProps {
 
 export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: ProfilePageMobileMenuProps) {
   return (
-    <Atoms.Container overrideDefaults={true} className="sticky top-20 z-30 bg-background lg:hidden">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="sticky top-[var(--header-height-mobile)] z-30 bg-background lg:hidden"
+    >
       <Atoms.Container overrideDefaults={true} className="flex w-full">
         {PROFILE_MENU_ITEMS.map((item, index) => {
           const Icon = item.icon;
