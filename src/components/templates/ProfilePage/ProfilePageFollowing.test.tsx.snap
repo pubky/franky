@@ -8,11 +8,13 @@ exports[`ProfilePageFollowing > matches snapshot 1`] = `
   >
     <h1
       class="text-2xl font-bold text-foreground"
+      data-testid="heading-1"
     >
       Following
     </h1>
     <p
-      class="text-base text-muted-foreground"
+      class="text-base font-normal text-muted-foreground"
+      data-testid="typography"
     >
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     </p>

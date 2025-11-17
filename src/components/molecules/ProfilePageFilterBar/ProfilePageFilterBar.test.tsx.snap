@@ -15,8 +15,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <span>
           Icon
@@ -26,9 +27,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
         >
           Custom
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-foreground"
+        data-testid="typography"
       >
         10
       </span>
@@ -52,8 +54,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           aria-hidden="true"
@@ -80,9 +83,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Notifications
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-foreground"
+        data-testid="typography"
       >
         2
       </span>
@@ -93,8 +97,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           aria-hidden="true"
@@ -121,9 +126,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Posts
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
         4
       </span>
@@ -134,8 +140,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           aria-hidden="true"
@@ -159,9 +166,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Replies
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
         7
       </span>
@@ -172,8 +180,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           aria-hidden="true"
@@ -205,9 +214,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Followers
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
         115
       </span>
@@ -218,8 +228,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           class="h-5 w-5"
@@ -242,9 +253,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Following
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
         27
       </span>
@@ -255,8 +267,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           aria-hidden="true"
@@ -280,9 +293,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Friends
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
         10
       </span>
@@ -293,8 +307,9 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
       data-slot="filter-item"
       data-testid="filter-item"
     >
-      <span
+      <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <svg
           aria-hidden="true"
@@ -324,9 +339,10 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 
         >
           Tagged
         </span>
-      </span>
+      </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-testid="typography"
       >
         5
       </span>
