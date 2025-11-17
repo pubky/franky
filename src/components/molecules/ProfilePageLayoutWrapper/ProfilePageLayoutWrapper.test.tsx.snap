@@ -3,6 +3,7 @@
 exports[`ProfilePageLayoutWrapper > matches snapshot 1`] = `
 <div
   class="mx-auto w-full max-w-sm px-6 pt-0 pb-12 sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl xl:px-0"
+  data-testid="container"
 >
   <div>
     Test Content

@@ -1,10 +1,12 @@
 'use client';
 
+import * as Atoms from '@/atoms';
+
 export function ProfilePagePosts() {
   return (
-    <div className="mt-6 flex flex-col gap-4 lg:mt-0">
+    <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0">
       <h1 className="text-2xl font-bold text-foreground">Posts</h1>
-      <div className="flex flex-col gap-4 text-base text-muted-foreground">
+      <Atoms.Container overrideDefaults={true} className="flex flex-col gap-4 text-base text-muted-foreground">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
           magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -113,7 +115,7 @@ export function ProfilePagePosts() {
           repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut
           reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
         </p>
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

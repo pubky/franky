@@ -3,6 +3,7 @@
 exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with custom tags 1`] = `
 <div
   class="flex flex-col gap-2"
+  data-testid="container"
 >
   <h2
     class="text-2xl font-light text-muted-foreground"
@@ -12,9 +13,11 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with custom tags 1`]
   </h2>
   <div
     class="flex flex-col gap-2"
+    data-testid="container"
   >
     <div
       class="flex items-center gap-2"
+      data-testid="container"
     >
       <div
         class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -66,6 +69,7 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with custom tags 1`]
     </div>
     <div
       class="flex items-center gap-2"
+      data-testid="container"
     >
       <div
         class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -157,6 +161,7 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with custom tags 1`]
 exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="flex flex-col gap-2"
+  data-testid="container"
 >
   <h2
     class="text-2xl font-light text-muted-foreground"
@@ -166,9 +171,11 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with default props 1
   </h2>
   <div
     class="flex flex-col gap-2"
+    data-testid="container"
   >
     <div
       class="flex items-center gap-2"
+      data-testid="container"
     >
       <div
         class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -220,6 +227,7 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with default props 1
     </div>
     <div
       class="flex items-center gap-2"
+      data-testid="container"
     >
       <div
         class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -271,6 +279,7 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with default props 1
     </div>
     <div
       class="flex items-center gap-2"
+      data-testid="container"
     >
       <div
         class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"

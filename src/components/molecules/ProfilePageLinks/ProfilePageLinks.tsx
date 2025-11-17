@@ -22,12 +22,12 @@ export const DEFAULT_LINKS: ProfilePageSidebarLink[] = [
 
 export function ProfilePageLinks({ links = DEFAULT_LINKS }: ProfilePageLinksProps) {
   return (
-    <div className="flex flex-col">
+    <Atoms.Container overrideDefaults={true} className="flex flex-col">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
         Links
       </Atoms.Heading>
 
-      <div className="flex flex-col">
+      <Atoms.Container overrideDefaults={true} className="flex flex-col">
         {links.map((link, index) => {
           const Icon = link.icon;
           return (
@@ -43,7 +43,7 @@ export function ProfilePageLinks({ links = DEFAULT_LINKS }: ProfilePageLinksProp
             </a>
           );
         })}
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

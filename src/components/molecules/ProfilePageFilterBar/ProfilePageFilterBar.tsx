@@ -34,8 +34,11 @@ export function ProfilePageFilterBar({
   onPageChangeAction,
 }: ProfilePageFilterBarProps) {
   return (
-    <div className="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden h-fit w-[180px] flex-col self-start lg:flex">
-      <div className="flex flex-col gap-0">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden h-fit w-[180px] flex-col self-start lg:flex"
+    >
+      <Atoms.Container overrideDefaults={true} className="flex flex-col gap-0">
         {items.map((item, index) => {
           const Icon = item.icon;
           const isActive = item.pageType === activePage;
@@ -57,7 +60,7 @@ export function ProfilePageFilterBar({
             </Atoms.FilterItem>
           );
         })}
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

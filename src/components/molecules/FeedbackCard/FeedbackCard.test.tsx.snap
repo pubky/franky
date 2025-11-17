@@ -3,6 +3,7 @@
 exports[`FeedbackCard - Snapshots > matches snapshot for feedback form 1`] = `
 <div
   class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
+  data-testid="container"
 >
   What do you think about Pubky?
 </div>
@@ -11,6 +12,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot for feedback form 1`] = `
 exports[`FeedbackCard - Snapshots > matches snapshot for user info section 1`] = `
 <div
   class="text-base font-bold text-foreground"
+  data-testid="container"
 >
   Your Name
 </div>
@@ -31,12 +33,15 @@ exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
   </div>
   <div
     class="flex flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+    data-testid="container"
   >
     <div
       class="flex items-center gap-2"
+      data-testid="container"
     >
       <div
         class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+        data-testid="container"
       >
         <div
           class="h-12 w-12"
@@ -77,12 +82,14 @@ exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
       </div>
       <div
         class="text-base font-bold text-foreground"
+        data-testid="container"
       >
         Your Name
       </div>
     </div>
     <div
       class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
+      data-testid="container"
     >
       What do you think about Pubky?
     </div>

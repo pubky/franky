@@ -3,9 +3,11 @@
 exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1`] = `
 <div
   class="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden h-fit w-[180px] flex-col self-start lg:flex"
+  data-testid="container"
 >
   <div
     class="flex flex-col gap-0"
+    data-testid="container"
   >
     <p
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground w-full justify-between px-0 py-1"
@@ -38,9 +40,11 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
 exports[`ProfilePageFilterBar - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden h-fit w-[180px] flex-col self-start lg:flex"
+  data-testid="container"
 >
   <div
     class="flex flex-col gap-0"
+    data-testid="container"
   >
     <p
       class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground w-full justify-between px-0 py-1"

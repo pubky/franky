@@ -3,12 +3,15 @@
 exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="sticky top-20 z-30 bg-background lg:hidden"
+  data-testid="container"
 >
   <div
     class="flex w-full"
+    data-testid="container"
   >
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Profile"
@@ -45,6 +48,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-foreground"
+      data-testid="container"
     >
       <button
         aria-current="page"
@@ -75,6 +79,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Replies"
@@ -101,6 +106,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Posts"
@@ -130,6 +136,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Followers"
@@ -164,6 +171,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Following"
@@ -189,6 +197,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Friends"
@@ -215,6 +224,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     </div>
     <div
       class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      data-testid="container"
     >
       <button
         aria-label="Tagged"

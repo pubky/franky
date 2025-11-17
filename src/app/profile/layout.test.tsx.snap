@@ -20,6 +20,7 @@ exports[`ProfileLayout > matches snapshot 1`] = `
   >
     <div
       class="hidden bg-background pb-6 shadow-sm lg:block"
+      data-testid="container"
     >
       <div
         data-testid="profile-page-header"
@@ -46,6 +47,7 @@ exports[`ProfileLayout > matches snapshot 1`] = `
     </div>
     <div
       class="flex gap-6"
+      data-testid="container"
     >
       <div
         data-active="notifications"
@@ -55,6 +57,7 @@ exports[`ProfileLayout > matches snapshot 1`] = `
       </div>
       <div
         class="flex-1"
+        data-testid="container"
       >
         <div>
           Test Content
