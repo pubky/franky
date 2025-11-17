@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
 import * as App from '@/app';
+import * as Atoms from '@/atoms';
 
 interface RouteGuardProviderProps {
   children: React.ReactNode;
@@ -69,7 +70,7 @@ export function RouteGuardProvider({ children }: RouteGuardProviderProps) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-brand"></div>
+          <Atoms.Spinner className="mx-auto" />
           <p className="mt-2 text-muted-foreground">{isLoading ? 'Loading...' : 'Checking access...'}</p>
         </div>
       </div>

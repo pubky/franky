@@ -10,7 +10,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_r_"
+    id="_r_3_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,7 +20,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_r_"
+    aria-labelledby="_r_3_"
     class=""
     data-testid="custom-test-id"
     role="radiogroup"
@@ -30,7 +30,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="true"
         aria-label="Option 1"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -48,8 +48,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
         >
           Option 1
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Option 2"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -67,8 +67,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
         >
           Option 2
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Option 3"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -86,7 +86,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
         >
           Option 3
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -102,7 +102,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_o_"
+    id="_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -112,7 +112,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_o_"
+    aria-labelledby="_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -122,7 +122,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="true"
         aria-label="Option 1"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -140,8 +140,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
         >
           Option 1
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Option 2"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -159,8 +159,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
         >
           Option 2
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Option 3"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -178,7 +178,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
         >
           Option 3
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -194,7 +194,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_q_"
+    id="_r_2_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -204,7 +204,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_q_"
+    aria-labelledby="_r_2_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -214,7 +214,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="true"
         aria-label="Option 1"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -232,8 +232,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         >
           Option 1
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-disabled="true"
         aria-label="Option 2"
@@ -252,8 +252,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         >
           Option 2
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Option 3"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -271,7 +271,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         >
           Option 3
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>
@@ -287,7 +287,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_p_"
+    id="_r_1_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -297,7 +297,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     </h2>
   </div>
   <div
-    aria-labelledby="_r_p_"
+    aria-labelledby="_r_1_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -307,7 +307,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <div
         aria-checked="false"
         aria-label="Option 1"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -325,8 +325,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
         >
           Option 1
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="true"
         aria-label="Option 2"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
@@ -344,8 +344,8 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
         >
           Option 2
         </span>
-      </p>
-      <p
+      </div>
+      <div
         aria-checked="false"
         aria-label="Option 3"
         class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
@@ -363,7 +363,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
         >
           Option 3
         </span>
-      </p>
+      </div>
     </div>
   </div>
 </div>

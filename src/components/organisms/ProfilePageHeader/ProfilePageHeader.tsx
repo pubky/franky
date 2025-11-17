@@ -12,10 +12,10 @@ export function ProfilePageHeader({
   name,
   bio,
   publicKey,
-  link,
   status,
   onEdit,
   onCopyPublicKey,
+  onCopyLink,
   onSignOut,
   onStatusClick,
 }: ProfilePageHeaderProps) {
@@ -66,14 +66,10 @@ export function ProfilePageHeader({
             <Icons.KeyRound className="size-4" />
             {formattedPublicKey}
           </Atoms.Button>
-          {link && (
-            <Atoms.Button variant="secondary" size="sm" asChild>
-              <a href={link} target="_blank" rel="noopener noreferrer">
-                <Icons.Link className="size-4" />
-                Link
-              </a>
-            </Atoms.Button>
-          )}
+          <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
+            <Icons.Link className="size-4" />
+            Link
+          </Atoms.Button>
           <Atoms.Button variant="secondary" size="sm" onClick={onSignOut}>
             <Icons.LogOut className="size-4" />
             Sign out
