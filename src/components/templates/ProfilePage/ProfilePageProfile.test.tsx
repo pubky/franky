@@ -18,9 +18,9 @@ vi.mock('@/organisms', () => ({
     publicKey,
     emoji,
     status,
+    link,
     onEdit,
     onCopyPublicKey,
-    onLinkClick,
     onSignOut,
     onStatusClick,
   }: {
@@ -29,9 +29,9 @@ vi.mock('@/organisms', () => ({
     publicKey: string;
     emoji?: string;
     status: string;
+    link?: string;
     onEdit?: () => void;
     onCopyPublicKey?: () => void;
-    onLinkClick?: () => void;
     onSignOut?: () => void;
     onStatusClick?: () => void;
   }) => (
@@ -43,7 +43,7 @@ vi.mock('@/organisms', () => ({
       <div>{status}</div>
       {onEdit && <button onClick={onEdit}>Edit</button>}
       {onCopyPublicKey && <button onClick={onCopyPublicKey}>Copy Key</button>}
-      {onLinkClick && <button onClick={onLinkClick}>Link</button>}
+      {link && <a href={link}>Link</a>}
       {onSignOut && <button onClick={onSignOut}>Sign out</button>}
       {onStatusClick && <button onClick={onStatusClick}>Status</button>}
     </div>

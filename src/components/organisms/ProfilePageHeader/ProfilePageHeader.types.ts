@@ -8,7 +8,6 @@ export interface ProfilePageHeaderProps {
   status: string;
   onEdit?: () => void;
   onCopyPublicKey?: () => void;
-  onLinkClick?: () => void;
   onSignOut?: () => void;
   onStatusClick?: () => void;
 }
