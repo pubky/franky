@@ -179,12 +179,14 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           data-variant="ghost"
         >
           <span
-            class="text-base leading-none"
+            class="font-semibold text-foreground text-base leading-none"
+            data-testid="typography"
           >
             🌴
           </span>
           <span
             class="text-base font-bold text-white"
+            data-testid="typography"
           >
             Vacationing
           </span>
