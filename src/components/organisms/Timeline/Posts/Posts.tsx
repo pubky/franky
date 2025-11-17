@@ -9,6 +9,7 @@ import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Hooks from '@/hooks';
+import * as Libs from '@/libs';
 
 /**
  * Timeline
@@ -18,7 +19,7 @@ import * as Hooks from '@/hooks';
  * Uses cursor-based pagination with post_id and timestamp.
  * Automatically updates when global filters change.
  */
-export function Timeline() {
+export function TimelinePosts() {
   const [postIds, setPostIds] = useState<string[]>([]);
   const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(true);
@@ -98,9 +99,11 @@ export function Timeline() {
       }
 
       setPostIds((prevIds) => {
-        const newIds = [...prevIds, ...ids.nextPageIds];
-        postIdsRef.current = newIds; // Update ref
-        return newIds;
+        // Deduplicate by creating a Set and then converting back to array
+        const combined = [...prevIds, ...ids.nextPageIds];
+        const uniqueIds = Array.from(new Set(combined));
+        postIdsRef.current = uniqueIds; // Update ref
+        return uniqueIds;
       });
       // Update timestamp for pagination if provided
       if (ids.timestamp !== undefined) {
@@ -133,8 +136,12 @@ export function Timeline() {
         checkHasMore(ids.nextPageIds.length);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch posts');
-        // TODO: show alert to the user
-        throw err;
+        Libs.Logger.error('Failed to fetch posts', err);
+        // Don't throw - just log and show error state
+        // If it's pagination, stop trying to load more
+        if (!isInitialLoad) {
+          setHasMore(false);
+        }
       } finally {
         setLoadingState(isInitialLoad, false);
       }
@@ -196,8 +203,11 @@ export function Timeline() {
   return (
     <Atoms.Container>
       <Atoms.Container overrideDefaults className="space-y-4">
-        {postIds.map((postId, index) => (
-          <Organisms.PostMain key={`${postId}-${index}`} postId={postId} onClick={() => handlePostClick(postId)} />
+        {postIds.map((postId) => (
+          <Atoms.Container key={`main_${postId}`}>
+            <Organisms.PostMain postId={postId} onClick={() => handlePostClick(postId)} isReply={false} />
+            <Organisms.TimelinePostReplies postId={postId} onPostClick={handlePostClick} />
+          </Atoms.Container>
         ))}
 
         {/* Loading More Indicator */}

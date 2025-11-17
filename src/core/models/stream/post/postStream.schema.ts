@@ -1,7 +1,7 @@
-import { PostStreamTypes } from './postStream.types';
+import { PostStreamId } from './postStream.types';
 import { BaseStreamModelSchema } from '@/core/models/shared/stream/stream.type';
 
-export interface PostStreamModelSchema extends BaseStreamModelSchema<PostStreamTypes, string> {
+export interface PostStreamModelSchema extends BaseStreamModelSchema<PostStreamId, string> {
   name: string | undefined;
 }
 
