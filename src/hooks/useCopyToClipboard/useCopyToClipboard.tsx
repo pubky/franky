@@ -8,6 +8,7 @@ interface UseCopyToClipboardOptions {
   onSuccess?: (text: string) => void;
   onError?: (error: Error) => void;
   successTitle?: string;
+  successDescription?: string;
   errorTitle?: string;
   errorDescription?: string;
 }
@@ -17,6 +18,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
     onSuccess,
     onError,
     successTitle = 'Pubky copied to clipboard',
+    successDescription,
     errorTitle = 'Copy failed',
     errorDescription = 'Unable to copy to clipboard',
   } = options;
@@ -28,7 +30,9 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
 
         const toastInstance = Molecules.toast({
           title: successTitle,
-          description: text,
+          ...(successDescription !== undefined
+            ? successDescription !== '' && { description: successDescription }
+            : { description: text }),
           action: (
             <Atoms.Button
               variant="outline"
@@ -52,7 +56,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
         return false;
       }
     },
-    [onSuccess, onError, successTitle, errorTitle, errorDescription],
+    [onSuccess, onError, successTitle, successDescription, errorTitle, errorDescription],
   );
 
   return { copyToClipboard: copyToClipboardHandler };

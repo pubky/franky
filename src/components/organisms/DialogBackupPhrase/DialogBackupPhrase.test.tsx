@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useState, useEffect } from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { DialogBackupPhrase } from './DialogBackupPhrase';
@@ -138,8 +138,19 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   ),
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="container" className={className}>
+  Container: ({
+    children,
+    className,
+    onClick,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    onClick?: () => void;
+    display?: string;
+    [key: string]: unknown;
+  }) => (
+    <div data-testid="container" className={className} onClick={onClick} {...props}>
       {children}
     </div>
   ),
@@ -188,7 +199,29 @@ vi.mock('@/molecules', () => ({
       {word || `Slot ${index + 1}`}
     </div>
   ),
+  toast: vi.fn(),
 }));
+
+// Mock hooks
+const { mockCopyToClipboard, mockUseCopyToClipboard } = vi.hoisted(() => {
+  const mockCopy = vi.fn().mockResolvedValue(true);
+  const mockUseCopy = vi.fn(() => ({
+    copyToClipboard: mockCopy,
+  }));
+
+  return {
+    mockCopyToClipboard: mockCopy,
+    mockUseCopyToClipboard: mockUseCopy,
+  };
+});
+
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useCopyToClipboard: mockUseCopyToClipboard,
+  };
+});
 
 describe('DialogBackupPhrase - Snapshots', () => {
   it('matches snapshot for default DialogBackupPhrase', () => {
@@ -198,6 +231,10 @@ describe('DialogBackupPhrase - Snapshots', () => {
 });
 
 describe('DialogBackupPhrase - Duplicate Words', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('should handle duplicate words correctly in recovery phrase', () => {
     const { container } = render(<DialogBackupPhrase />);
 
@@ -298,6 +335,68 @@ describe('DialogBackupPhrase - Duplicate Words', () => {
     const updatedOuterContainer = wordContainer?.parentElement?.parentElement as HTMLElement | null;
     expect(updatedOuterContainer).not.toBeNull();
     expect(updatedOuterContainer?.className ?? '').toContain('blur-md');
+  });
+
+  it('should copy recovery phrase to clipboard when clicking on a word when unblurred', async () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // Verify the hook was called
+    expect(mockUseCopyToClipboard).toHaveBeenCalled();
+
+    // First, reveal the recovery phrase
+    const revealButton = screen.getByRole('button', { name: /reveal recovery phrase/i });
+    await act(async () => {
+      fireEvent.click(revealButton);
+    });
+
+    // Find a word container - need to find the direct child containers of the grid
+    const wordContainers = container.querySelectorAll('[data-testid="container"]');
+    // The grid container has display="grid", find it first
+    const gridContainer = Array.from(wordContainers).find((container) => {
+      const element = container as HTMLElement;
+      return element.className?.includes('grid-cols-2') || element.className?.includes('grid-cols-3');
+    });
+
+    expect(gridContainer).toBeTruthy();
+
+    // Get the first word container (direct child of grid)
+    const firstWordContainer = gridContainer?.querySelector(':scope > [data-testid="container"]') as HTMLElement | null;
+    expect(firstWordContainer).not.toBeNull();
+
+    // Verify it has onClick handler (should have cursor-pointer class when unblurred)
+    expect(firstWordContainer?.className).toContain('cursor-pointer');
+
+    // Click on the word container
+    await act(async () => {
+      fireEvent.click(firstWordContainer!);
+    });
+
+    // Verify that copyToClipboard was called with the full recovery phrase
+    const expectedPhrase = 'tube tube resource mass door firm genius parrot girl orphan window world';
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(expectedPhrase);
+    expect(mockCopyToClipboard).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not copy recovery phrase when words are blurred', () => {
+    const { container } = render(<DialogBackupPhrase />);
+
+    // Words should be blurred by default (isHidden = true)
+    const wordContainers = container.querySelectorAll('[data-testid="container"]');
+    const recoveryGrid = Array.from(wordContainers).find((container) =>
+      container.querySelector('[data-testid="badge"]'),
+    );
+
+    expect(recoveryGrid).toBeTruthy();
+
+    // Get the first word container
+    const firstWordContainer = recoveryGrid?.querySelector('[data-testid="container"]') as HTMLElement | null;
+    expect(firstWordContainer).not.toBeNull();
+
+    // Click on the word container (should not copy when blurred)
+    fireEvent.click(firstWordContainer!);
+
+    // Verify that copyToClipboard was not called
+    expect(mockCopyToClipboard).not.toHaveBeenCalled();
   });
 
   it('should allow selecting duplicate words individually in step 2', () => {

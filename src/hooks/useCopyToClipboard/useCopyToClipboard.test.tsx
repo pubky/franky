@@ -149,6 +149,35 @@ describe('useCopyToClipboard', () => {
 
     await expect(result.current.copyToClipboard('test text')).resolves.toBe(true);
     expect(mockCopyToClipboard).toHaveBeenCalledWith({ text: 'test text' });
+    expect(mockToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Pubky copied to clipboard',
+        description: 'test text',
+      }),
+    );
+  });
+
+  it('should use custom successDescription when provided', async () => {
+    const { result } = renderHook(() => useCopyToClipboard({ successDescription: 'Custom description' }));
+
+    await result.current.copyToClipboard('test text');
+    expect(mockToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Pubky copied to clipboard',
+        description: 'Custom description',
+      }),
+    );
+  });
+
+  it('should not include description when successDescription is empty string', async () => {
+    const { result } = renderHook(() => useCopyToClipboard({ successDescription: '' }));
+
+    await result.current.copyToClipboard('test text');
+    expect(mockToast).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        description: expect.anything(),
+      }),
+    );
   });
 
   it('should resolve to false when copying fails', async () => {

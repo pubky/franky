@@ -73,6 +73,20 @@ function RecoveryStep1({
   setIsHidden: (isHidden: boolean) => void;
   setStep: (step: number) => void;
 }) {
+  const { copyToClipboard } = Hooks.useCopyToClipboard({
+    successTitle: 'Recovery phrase copied',
+    successDescription: '',
+    errorTitle: 'Copy failed',
+    errorDescription: 'Unable to copy recovery phrase to clipboard',
+  });
+
+  const handleWordClick = () => {
+    if (!isHidden && recoveryWords.length > 0) {
+      const phrase = recoveryWords.join(' ');
+      copyToClipboard(phrase);
+    }
+  };
+
   return (
     <>
       <Atoms.DialogHeader>
@@ -92,7 +106,14 @@ function RecoveryStep1({
       <Atoms.Container className={Libs.cn(isHidden && 'blur-md')}>
         <Atoms.Container display="grid" className="grid-cols-2 gap-1.5 md:grid-cols-3 md:gap-3">
           {recoveryWords.map((word, index) => (
-            <Atoms.Container key={index} className="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4">
+            <Atoms.Container
+              key={index}
+              className={Libs.cn(
+                'flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4',
+                !isHidden && 'cursor-pointer transition-opacity hover:opacity-80',
+              )}
+              onClick={handleWordClick}
+            >
               <Atoms.Badge
                 id={`backup-recovery-phrase-word-${index + 1}`}
                 variant="outline"
