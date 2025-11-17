@@ -42,11 +42,11 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
         <Atoms.FilterList>
           {FAQ_QUESTIONS.map((faq, index) => (
             <Link key={index} href={faq.href}>
-              <div className="relative p-4 rounded-md border border-border hover:border-white cursor-pointer transition-colors">
-                <span className="text-sm font-bold leading-normal text-[var(--base-popover-foreground,#EEEEF6)] pr-6 block">
+              <div className="relative cursor-pointer rounded-md border border-border p-4 transition-colors hover:border-white">
+                <span className="block pr-6 text-sm leading-normal font-bold text-[var(--base-popover-foreground,#EEEEF6)]">
                   {faq.question}
                 </span>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <div className="absolute top-1/2 right-3 -translate-y-1/2">
                   <Libs.ChevronRight size={16} />
                 </div>
               </div>
@@ -62,7 +62,7 @@ export function SettingsInfo({ className }: SettingsInfoProps) {
       <Atoms.FilterRoot>
         <Atoms.FilterHeader title="Version" />
         <Atoms.FilterList className="gap-2">
-          <p className="text-base font-medium leading-normal text-[var(--base-secondary-foreground,#D4D4DB)]">
+          <p className="text-base leading-normal font-medium text-[var(--base-secondary-foreground,#D4D4DB)]">
             {APP_VERSION}
           </p>
         </Atoms.FilterList>

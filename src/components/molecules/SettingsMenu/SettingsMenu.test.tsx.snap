@@ -13,7 +13,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
       data-testid="filter-header"
     >
       <h2
-        class="text-2xl text-muted-foreground font-light"
+        class="text-2xl font-light text-muted-foreground"
         data-testid="heading-2"
       >
         Settings
@@ -28,14 +28,14 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/account"
       >
         <p
-          class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-user-round w-5 h-5"
+            class="lucide lucide-user-round h-5 w-5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -66,14 +66,14 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/notifications"
       >
         <p
-          class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-bell w-5 h-5"
+            class="lucide lucide-bell h-5 w-5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -102,14 +102,14 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/privacy-safety"
       >
         <p
-          class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-shield w-5 h-5"
+            class="lucide lucide-shield h-5 w-5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -135,14 +135,14 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/muted-users"
       >
         <p
-          class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-megaphone-off w-5 h-5"
+            class="lucide lucide-megaphone-off h-5 w-5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -154,19 +154,19 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M9.26 9.26 3 11v3l14.14 3.14"
+              d="M11.636 6A13 13 0 0 0 19.4 3.2 1 1 0 0 1 21 4v11.344"
             />
             <path
-              d="M21 15.34V6l-7.31 2.03"
+              d="M14.378 14.357A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1"
             />
             <path
-              d="M11.6 16.8a3 3 0 1 1-5.8-1.6"
+              d="m2 2 20 20"
             />
-            <line
-              x1="2"
-              x2="22"
-              y1="2"
-              y2="22"
+            <path
+              d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+            />
+            <path
+              d="M8 8v6"
             />
           </svg>
           <span
@@ -180,14 +180,14 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/language"
       >
         <p
-          class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-globe w-5 h-5"
+            class="lucide lucide-globe h-5 w-5"
             fill="none"
             height="24"
             stroke="currentColor"
@@ -221,14 +221,14 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/help"
       >
         <p
-          class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-circle-help w-5 h-5"
+            class="lucide lucide-circle-question-mark h-5 w-5"
             fill="none"
             height="24"
             stroke="currentColor"

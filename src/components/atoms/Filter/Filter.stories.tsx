@@ -39,7 +39,7 @@ type Story = StoryObj<typeof meta>;
 export const RootOnly: Story = {
   name: 'Root Layout',
   render: () => (
-    <FilterRoot className="max-w-sm p-4 rounded-xl border bg-background">
+    <FilterRoot className="max-w-sm rounded-xl border bg-background p-4">
       <p className="text-sm text-muted-foreground">Place any filter elements inside this container.</p>
     </FilterRoot>
   ),
@@ -55,7 +55,7 @@ export const RootOnly: Story = {
 export const WithHeaderAndList: Story = {
   name: 'Header + List',
   render: () => (
-    <FilterRoot className="max-w-sm p-4 rounded-xl border bg-background">
+    <FilterRoot className="max-w-sm rounded-xl border bg-background p-4">
       <FilterHeader title="Content" />
       <FilterList>
         <FilterItem>
@@ -82,31 +82,33 @@ export const WithHeaderAndList: Story = {
   },
 };
 
+const InteractiveSelectionComponent = () => {
+  const [selected, setSelected] = useState('all');
+
+  const items = [
+    { key: 'all', label: 'All', icon: Libs.Layers },
+    { key: 'posts', label: 'Posts', icon: Libs.StickyNote },
+    { key: 'articles', label: 'Articles', icon: Libs.Newspaper },
+  ];
+
+  return (
+    <FilterRoot className="max-w-sm rounded-xl border bg-background p-4">
+      <FilterHeader title="Content" />
+      <FilterList>
+        {items.map(({ key, label, icon: Icon }) => (
+          <FilterItem key={key} isSelected={selected === key} onClick={() => setSelected(key)}>
+            <FilterItemIcon icon={Icon} />
+            <FilterItemLabel>{label}</FilterItemLabel>
+          </FilterItem>
+        ))}
+      </FilterList>
+    </FilterRoot>
+  );
+};
+
 export const InteractiveSelection: Story = {
   name: 'Interactive Selection',
-  render: () => {
-    const [selected, setSelected] = useState('all');
-
-    const items = [
-      { key: 'all', label: 'All', icon: Libs.Layers },
-      { key: 'posts', label: 'Posts', icon: Libs.StickyNote },
-      { key: 'articles', label: 'Articles', icon: Libs.Newspaper },
-    ];
-
-    return (
-      <FilterRoot className="max-w-sm p-4 rounded-xl border bg-background">
-        <FilterHeader title="Content" />
-        <FilterList>
-          {items.map(({ key, label, icon: Icon }) => (
-            <FilterItem key={key} isSelected={selected === key} onClick={() => setSelected(key)}>
-              <FilterItemIcon icon={Icon} />
-              <FilterItemLabel>{label}</FilterItemLabel>
-            </FilterItem>
-          ))}
-        </FilterList>
-      </FilterRoot>
-    );
-  },
+  render: () => <InteractiveSelectionComponent />,
   parameters: {
     docs: {
       description: {

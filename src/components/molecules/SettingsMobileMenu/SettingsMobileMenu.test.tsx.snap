@@ -2,7 +2,7 @@
 
 exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="fixed top-[73px] left-0 right-0 z-20 bg-background/80 backdrop-blur-sm border-b border-[var(--base-border,#303034)] custom-menu"
+  class="fixed top-[73px] right-0 left-0 z-20 border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm custom-menu"
 >
   <div
     class="flex w-full"
@@ -10,7 +10,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-current="page"
       aria-label="Account"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-foreground border-b border-white"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
     >
       <svg
         aria-hidden="true"
@@ -37,7 +37,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Notifications"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -62,7 +62,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Privacy & Safety"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -84,7 +84,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Muted Users"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -100,25 +100,25 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M9.26 9.26 3 11v3l14.14 3.14"
+          d="M11.636 6A13 13 0 0 0 19.4 3.2 1 1 0 0 1 21 4v11.344"
         />
         <path
-          d="M21 15.34V6l-7.31 2.03"
+          d="M14.378 14.357A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1"
         />
         <path
-          d="M11.6 16.8a3 3 0 1 1-5.8-1.6"
+          d="m2 2 20 20"
         />
-        <line
-          x1="2"
-          x2="22"
-          y1="2"
-          y2="22"
+        <path
+          d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+        />
+        <path
+          d="M8 8v6"
         />
       </svg>
     </button>
     <button
       aria-label="Language"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -148,11 +148,11 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Help"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-help shrink-0"
+        class="lucide lucide-circle-question-mark shrink-0"
         fill="none"
         height="20"
         stroke="currentColor"
@@ -182,7 +182,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
 
 exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="fixed top-[73px] left-0 right-0 z-20 bg-background/80 backdrop-blur-sm border-b border-[var(--base-border,#303034)]"
+  class="fixed top-[73px] right-0 left-0 z-20 border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm"
 >
   <div
     class="flex w-full"
@@ -190,7 +190,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-current="page"
       aria-label="Account"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-foreground border-b border-white"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
     >
       <svg
         aria-hidden="true"
@@ -217,7 +217,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Notifications"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -242,7 +242,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Privacy & Safety"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -264,7 +264,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Muted Users"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -280,25 +280,25 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M9.26 9.26 3 11v3l14.14 3.14"
+          d="M11.636 6A13 13 0 0 0 19.4 3.2 1 1 0 0 1 21 4v11.344"
         />
         <path
-          d="M21 15.34V6l-7.31 2.03"
+          d="M14.378 14.357A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h1"
         />
         <path
-          d="M11.6 16.8a3 3 0 1 1-5.8-1.6"
+          d="m2 2 20 20"
         />
-        <line
-          x1="2"
-          x2="22"
-          y1="2"
-          y2="22"
+        <path
+          d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"
+        />
+        <path
+          d="M8 8v6"
         />
       </svg>
     </button>
     <button
       aria-label="Language"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
@@ -328,11 +328,11 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Help"
-      class="flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative hover:bg-secondary/10 text-muted-foreground border-b border-transparent"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-help shrink-0"
+        class="lucide lucide-circle-question-mark shrink-0"
         fill="none"
         height="20"
         stroke="currentColor"

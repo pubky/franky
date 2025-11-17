@@ -14,8 +14,8 @@ export const SignInNavigation = () => {
   };
 
   return (
-    <Atoms.Container className="flex-col-reverse md:flex-row gap-3 lg:gap-6 justify-start">
-      <Atoms.Container className="flex-col gap-3 sm:flex-row w-auto sm:w-full justify-start items-start mx-0 sm:mx-auto">
+    <Atoms.Container className="flex-col-reverse justify-start gap-3 md:flex-row lg:gap-6">
+      <Atoms.Container className="mx-0 w-auto flex-col items-start justify-start gap-3 sm:mx-auto sm:w-full sm:flex-row">
         <Organisms.DialogRestoreRecoveryPhrase onRestore={handleRestore} />
         <Organisms.DialogRestoreEncryptedFile onRestore={handleRestore} />
       </Atoms.Container>

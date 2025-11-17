@@ -3,7 +3,7 @@
 exports[`MobileFooter - Snapshots > matches snapshot for navigation links 1`] = `
 <a
   aria-label="Home"
-  class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+  class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/30"
   href="/home"
 >
   <svg
@@ -23,7 +23,7 @@ exports[`MobileFooter - Snapshots > matches snapshot for navigation links 1`] = 
       d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
     />
     <path
-      d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+      d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
     />
   </svg>
 </a>
@@ -32,7 +32,7 @@ exports[`MobileFooter - Snapshots > matches snapshot for navigation links 1`] = 
 exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
 <a
   aria-label="Profile"
-  class="flex-shrink-0 relative"
+  class="relative flex-shrink-0"
   href="/profile"
   id="footer-nav-profile-btn"
 >
@@ -77,14 +77,14 @@ exports[`MobileFooter - Snapshots > matches snapshot for profile link 1`] = `
 
 exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="pb-20 flex justify-center lg:hidden custom-footer"
+  class="flex justify-center pb-20 lg:hidden custom-footer"
 >
   <div
-    class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
+    class="fixed bottom-0 z-40 flex w-full max-w-[380px] items-center justify-between overflow-x-auto bg-gradient-to-t from-background via-background/95 to-transparent px-3 py-4 sm:max-w-[600px] md:max-w-[720px]"
   >
     <a
       aria-label="Home"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/30"
       href="/home"
     >
       <svg
@@ -104,13 +104,13 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
           d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
         />
         <path
-          d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
         />
       </svg>
     </a>
     <a
       aria-label="Search"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/search"
     >
       <svg
@@ -138,7 +138,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
     </a>
     <a
       aria-label="Hot"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/hot"
     >
       <svg
@@ -155,13 +155,13 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+          d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
         />
       </svg>
     </a>
     <a
       aria-label="Bookmarks"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/bookmarks"
     >
       <svg
@@ -184,7 +184,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
     </a>
     <a
       aria-label="Settings"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/settings"
     >
       <svg
@@ -201,7 +201,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+          d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
         />
         <circle
           cx="12"
@@ -212,7 +212,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
     </a>
     <a
       aria-label="Profile"
-      class="flex-shrink-0 relative"
+      class="relative flex-shrink-0"
       href="/profile"
       id="footer-nav-profile-btn"
     >
@@ -259,14 +259,14 @@ exports[`MobileFooter - Snapshots > matches snapshot with custom className 1`] =
 
 exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="pb-20 flex justify-center lg:hidden"
+  class="flex justify-center pb-20 lg:hidden"
 >
   <div
-    class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
+    class="fixed bottom-0 z-40 flex w-full max-w-[380px] items-center justify-between overflow-x-auto bg-gradient-to-t from-background via-background/95 to-transparent px-3 py-4 sm:max-w-[600px] md:max-w-[720px]"
   >
     <a
       aria-label="Home"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/30"
       href="/home"
     >
       <svg
@@ -286,13 +286,13 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
           d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
         />
         <path
-          d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
         />
       </svg>
     </a>
     <a
       aria-label="Search"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/search"
     >
       <svg
@@ -320,7 +320,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
     </a>
     <a
       aria-label="Hot"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/hot"
     >
       <svg
@@ -337,13 +337,13 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+          d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
         />
       </svg>
     </a>
     <a
       aria-label="Bookmarks"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/bookmarks"
     >
       <svg
@@ -366,7 +366,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
     </a>
     <a
       aria-label="Settings"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/settings"
     >
       <svg
@@ -383,7 +383,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+          d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
         />
         <circle
           cx="12"
@@ -394,7 +394,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
     </a>
     <a
       aria-label="Profile"
-      class="flex-shrink-0 relative"
+      class="relative flex-shrink-0"
       href="/profile"
       id="footer-nav-profile-btn"
     >
@@ -441,14 +441,14 @@ exports[`MobileFooter - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`MobileFooter - Snapshots > matches snapshot with different active path 1`] = `
 <div
-  class="pb-20 flex justify-center lg:hidden"
+  class="flex justify-center pb-20 lg:hidden"
 >
   <div
-    class="overflow-x-auto w-full max-w-[380px] sm:max-w-[600px] md:max-w-[720px] py-4 bg-gradient-to-t from-background via-background/95 to-transparent flex items-center justify-between fixed bottom-0 z-40 px-3"
+    class="fixed bottom-0 z-40 flex w-full max-w-[380px] items-center justify-between overflow-x-auto bg-gradient-to-t from-background via-background/95 to-transparent px-3 py-4 sm:max-w-[600px] md:max-w-[720px]"
   >
     <a
       aria-label="Home"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/home"
     >
       <svg
@@ -468,13 +468,13 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
           d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
         />
         <path
-          d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
         />
       </svg>
     </a>
     <a
       aria-label="Search"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/30"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/30"
       href="/search"
     >
       <svg
@@ -502,7 +502,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
     </a>
     <a
       aria-label="Hot"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/hot"
     >
       <svg
@@ -519,13 +519,13 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+          d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
         />
       </svg>
     </a>
     <a
       aria-label="Bookmarks"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/bookmarks"
     >
       <svg
@@ -548,7 +548,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
     </a>
     <a
       aria-label="Settings"
-      class="p-3 rounded-full backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
+      class="rounded-full p-3 backdrop-blur-sm transition-all bg-secondary/20 hover:bg-secondary/25"
       href="/settings"
     >
       <svg
@@ -565,7 +565,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+          d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
         />
         <circle
           cx="12"
@@ -576,7 +576,7 @@ exports[`MobileFooter - Snapshots > matches snapshot with different active path 
     </a>
     <a
       aria-label="Profile"
-      class="flex-shrink-0 relative"
+      class="relative flex-shrink-0"
       href="/profile"
       id="footer-nav-profile-btn"
     >

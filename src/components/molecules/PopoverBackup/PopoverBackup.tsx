@@ -14,7 +14,7 @@ export function PopoverBackup({ ...props }: React.HTMLAttributes<HTMLDivElement>
           <Atoms.Heading level={4} size="sm" className="text-popover-foreground">
             Why is this important?
           </Atoms.Heading>
-          <Atoms.Typography size="sm" className="text-sm text-muted-foreground font-medium leading-light">
+          <Atoms.Typography size="sm" className="leading-light text-sm font-medium text-muted-foreground">
             The secret seed for your pubky is like a master password. Anyone with access can take full control of your
             account. You are responsible for keeping your keys safe.
           </Atoms.Typography>

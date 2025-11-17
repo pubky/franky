@@ -85,14 +85,14 @@ function RecoveryStep1({
           <span className="md:hidden">
             Write down these 12 words in the correct order and store them in a safe place.{' '}
           </span>
-          <span className="text-brand font-bold">Never share this recovery phrase with anyone.</span>
+          <span className="font-bold text-brand">Never share this recovery phrase with anyone.</span>
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
       <Atoms.Container className={Libs.cn(isHidden && 'blur-md')}>
-        <Atoms.Container display="grid" className="grid-cols-2 md:grid-cols-3 gap-1.5 md:gap-3">
+        <Atoms.Container display="grid" className="grid-cols-2 gap-1.5 md:grid-cols-3 md:gap-3">
           {recoveryWords.map((word, index) => (
-            <Atoms.Container key={index} className="items-center gap-3 rounded-md bg-secondary px-5 py-4 flex-row">
+            <Atoms.Container key={index} className="flex-row items-center gap-3 rounded-md bg-secondary px-5 py-4">
               <Atoms.Badge
                 id={`backup-recovery-phrase-word-${index + 1}`}
                 variant="outline"
@@ -189,7 +189,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
       </Atoms.DialogHeader>
 
       <Atoms.Container className="space-y-6">
-        <Atoms.Container className="flex-wrap gap-2 flex-row">
+        <Atoms.Container className="flex-row flex-wrap gap-2">
           {remainingWords.map(({ word, index, isUsed }) => (
             <Atoms.Button
               id={`backup-recovery-phrase-word-${word}-${index + 1}`}
@@ -197,8 +197,8 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
               variant={isUsed ? 'secondary' : 'outline'}
               className={`rounded-full ${
                 isUsed
-                  ? 'opacity-40 bg-transparent border text-muted-foreground cursor-not-allowed'
-                  : 'border-transparent bg-secondary cursor-pointer'
+                  ? 'cursor-not-allowed border bg-transparent text-muted-foreground opacity-40'
+                  : 'cursor-pointer border-transparent bg-secondary'
               }`}
               onClick={() => !isUsed && handleWordClick(word)}
               disabled={isUsed}
@@ -208,7 +208,7 @@ function RecoveryStep2({ recoveryWords, setStep }: { recoveryWords: string[]; se
           ))}
         </Atoms.Container>
 
-        <Atoms.Container display="grid" className="grid-cols-2 sm:grid-cols-3 gap-1.5 md:gap-3">
+        <Atoms.Container display="grid" className="grid-cols-2 gap-1.5 sm:grid-cols-3 md:gap-3">
           {userWords.map((word, i) => {
             const isCorrect = word !== '' && word === recoveryWords[i];
             const isError = errors[i];
@@ -256,8 +256,8 @@ function RecoveryStep3({ handleClose }: { handleClose: () => void }) {
         </Atoms.DialogDescription>
       </Atoms.DialogHeader>
 
-      <Atoms.Container className="w-full bg-card rounded-md p-12 flex items-center justify-center">
-        <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="w-48 h-48" />
+      <Atoms.Container className="flex w-full items-center justify-center rounded-md bg-card p-12">
+        <Image src="/images/check.png" alt="Backup Complete" width={180} height={180} className="h-48 w-48" />
       </Atoms.Container>
 
       <Atoms.DialogFooter>

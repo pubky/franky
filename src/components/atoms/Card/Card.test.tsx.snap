@@ -20,7 +20,7 @@ exports[`Card - Snapshots > matches snapshot for CardContent 1`] = `
 
 exports[`Card - Snapshots > matches snapshot for CardDescription 1`] = `
 <div
-  class="text-muted-foreground text-sm"
+  class="text-sm text-muted-foreground"
   data-slot="card-description"
 >
   Card Description
@@ -56,7 +56,7 @@ exports[`Card - Snapshots > matches snapshot for CardTitle 1`] = `
 
 exports[`Card - Snapshots > matches snapshot for complete card structure 1`] = `
 <div
-  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
+  class="flex flex-col gap-6 rounded-xl bg-card py-6 text-card-foreground shadow-sm"
   data-slot="card"
   data-testid="card"
 >
@@ -71,7 +71,7 @@ exports[`Card - Snapshots > matches snapshot for complete card structure 1`] = `
       Card Title
     </div>
     <div
-      class="text-muted-foreground text-sm"
+      class="text-sm text-muted-foreground"
       data-slot="card-description"
     >
       Card Description
@@ -100,7 +100,7 @@ exports[`Card - Snapshots > matches snapshot for complete card structure 1`] = `
 
 exports[`Card - Snapshots > matches snapshot for minimal card structure 1`] = `
 <div
-  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
+  class="flex flex-col gap-6 rounded-xl bg-card py-6 text-card-foreground shadow-sm"
   data-slot="card"
   data-testid="card"
 >
@@ -115,7 +115,7 @@ exports[`Card - Snapshots > matches snapshot for minimal card structure 1`] = `
 
 exports[`Card - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm custom-card"
+  class="flex flex-col gap-6 rounded-xl bg-card py-6 text-card-foreground shadow-sm custom-card"
   data-slot="card"
   data-testid="card"
 >
@@ -125,7 +125,7 @@ exports[`Card - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`Card - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm"
+  class="flex flex-col gap-6 rounded-xl bg-card py-6 text-card-foreground shadow-sm"
   data-slot="card"
   data-testid="card"
 >

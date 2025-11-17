@@ -21,11 +21,11 @@ export const CreateProfileHeader = () => {
       <Molecules.PageTitle size="large">
         Create your <span className="text-brand">profile.</span>
       </Molecules.PageTitle>
-      <Atoms.Container className="flex-col md:flex-row md:items-center gap-4 w-auto m-0">
+      <Atoms.Container className="m-0 w-auto flex-col gap-4 md:flex-row md:items-center">
         <Atoms.PageSubtitle>Add your name, bio, links, and avatar.</Atoms.PageSubtitle>
-        <Atoms.Container className="flex-row items-center gap-2 w-auto mx-0">
-          <Atoms.Button variant="secondary" className="rounded-full gap-2 w-fit h-8" onClick={handleCopyToClipboard}>
-            <Libs.Key className="w-4 h-4" />
+        <Atoms.Container className="mx-0 w-auto flex-row items-center gap-2">
+          <Atoms.Button variant="secondary" className="h-8 w-fit gap-2 rounded-full" onClick={handleCopyToClipboard}>
+            <Libs.Key className="h-4 w-4" />
             {displayPublicKey || '...'}
           </Atoms.Button>
           <Molecules.PopoverPublicKey className="-ml-1" />

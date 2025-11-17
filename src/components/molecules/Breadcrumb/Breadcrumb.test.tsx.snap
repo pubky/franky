@@ -6,7 +6,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with c
   class="flex items-center flex-wrap gap-2.5 custom-breadcrumb"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -16,7 +16,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with c
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -32,7 +32,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with d
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -42,7 +42,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with d
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -58,7 +58,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with m
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -68,7 +68,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with m
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -84,7 +84,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with s
   class="flex items-center flex-wrap gap-1.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -94,7 +94,7 @@ exports[`Breadcrumb - Snapshots > Breadcrumb Container > matches snapshot with s
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -110,7 +110,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbEllipsis > matches snapshot with cus
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <span
       aria-hidden="true"
@@ -162,7 +162,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbEllipsis > matches snapshot with def
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <span
       aria-hidden="true"
@@ -214,7 +214,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with current
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-foreground"
@@ -224,7 +224,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with current
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Current
         </span>
@@ -240,7 +240,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with custom 
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer custom-item"
@@ -250,7 +250,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with custom 
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -266,7 +266,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with dropdow
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded overflow-hidden"
@@ -276,13 +276,13 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with dropdow
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Menu
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down w-[15px] h-[15px]"
+          class="lucide lucide-chevron-down h-[15px] w-[15px]"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -309,7 +309,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with href pr
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -319,7 +319,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with href pr
         href="/home"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -335,7 +335,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with link va
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -345,7 +345,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbItem > matches snapshot with link va
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -361,7 +361,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbPage > matches snapshot with custom 
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <span
       aria-current="page"
@@ -381,7 +381,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbPage > matches snapshot with default
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <span
       aria-current="page"
@@ -401,7 +401,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -411,7 +411,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -424,7 +424,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -450,7 +450,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -460,7 +460,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with cu
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -487,7 +487,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with de
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -497,7 +497,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with de
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -510,7 +510,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with de
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -536,7 +536,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with me
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -546,7 +546,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with me
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -559,7 +559,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with me
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -585,7 +585,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with sm
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -595,7 +595,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with sm
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -608,7 +608,7 @@ exports[`Breadcrumb - Snapshots > BreadcrumbSeparator > matches snapshot with sm
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -634,7 +634,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -644,7 +644,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         href="/"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -657,7 +657,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -720,7 +720,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -744,13 +744,13 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Category
         </span>
         <svg
           aria-hidden="true"
-          class="lucide lucide-chevron-down w-[15px] h-[15px]"
+          class="lucide lucide-chevron-down h-[15px] w-[15px]"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -774,7 +774,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -798,7 +798,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         href="/products"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Products
         </span>
@@ -811,7 +811,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -845,7 +845,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
   class="flex items-center flex-wrap gap-2.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -855,7 +855,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         href="/"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -868,7 +868,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -902,7 +902,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
   class="flex items-center flex-wrap gap-1.5"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
@@ -912,7 +912,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         href="/"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -925,7 +925,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -949,7 +949,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         href="/category"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Category
         </span>
@@ -962,7 +962,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-chevron-right w-full h-full"
+        class="lucide lucide-chevron-right h-full w-full"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -996,7 +996,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
   class="flex items-center flex-wrap gap-2.5 custom-breadcrumb"
 >
   <ol
-    class="flex items-center flex-wrap gap-inherit"
+    class="gap-inherit flex flex-wrap items-center"
   >
     <li
       class="flex items-center justify-center gap-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer custom-link"
@@ -1006,7 +1006,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         href="/"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Home
         </span>
@@ -1029,7 +1029,7 @@ exports[`Breadcrumb - Snapshots > Complete Breadcrumb Examples > matches snapsho
         type="button"
       >
         <span
-          class="font-bold text-sm leading-5 font-sans"
+          class="font-sans text-sm leading-5 font-bold"
         >
           Current
         </span>

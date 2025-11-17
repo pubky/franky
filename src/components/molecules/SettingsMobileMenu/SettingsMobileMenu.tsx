@@ -15,7 +15,7 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
   return (
     <div
       className={Libs.cn(
-        'fixed top-[73px] left-0 right-0 z-20 bg-background/80 backdrop-blur-sm border-b border-[var(--base-border,#303034)]',
+        'fixed top-[73px] right-0 left-0 z-20 border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm',
         className,
       )}
     >
@@ -29,11 +29,11 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
               key={item.path}
               onClick={() => router.push(item.path)}
               className={Libs.cn(
-                'flex flex-1 justify-center items-center gap-2 px-2.5 py-3.5 transition-all relative',
+                'relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all',
                 'hover:bg-secondary/10',
                 isSelected
-                  ? 'text-foreground border-b border-white'
-                  : 'text-muted-foreground border-b border-transparent',
+                  ? 'border-b border-white text-foreground'
+                  : 'border-b border-transparent text-muted-foreground',
               )}
               aria-label={item.label}
               aria-current={isSelected ? 'page' : undefined}

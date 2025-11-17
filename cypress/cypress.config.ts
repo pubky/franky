@@ -25,7 +25,8 @@ export default defineConfig({
       // slow down execution more in CI to avoid flaky tests
       commandDelay: defaultMs,
       ci: process.env['CI'],
-      homeserverAdminUrl: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_URL']|| 'http://localhost:6288/generate_signup_token',
+      homeserverAdminUrl:
+        process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_URL'] || 'http://localhost:6288/generate_signup_token',
       homeserverAdminPassword: process.env['NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD'] || 'admin',
       isMobile: false,
     },
@@ -108,16 +109,13 @@ export default defineConfig({
         },
 
         logToFile({ testName, message }) {
-          appendFileSync(
-            'cypress.log',
-            `\nTest: ${testName}\nTime: ${new Date().toISOString()}\n${message}`
-          );
+          appendFileSync('cypress.log', `\nTest: ${testName}\nTime: ${new Date().toISOString()}\n${message}`);
           return null; // return null to indicate task completion
-        }
+        },
       });
     },
     experimentalModifyObstructiveThirdPartyCode: true,
     chromeWebSecurity: false,
-    pageLoadTimeout: 60000
-  }
+    pageLoadTimeout: 60000,
+  },
 });

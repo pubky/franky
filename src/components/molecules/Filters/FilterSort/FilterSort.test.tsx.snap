@@ -10,17 +10,17 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r7»"
+    id="_r_7_"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
     </h2>
   </div>
   <div
-    aria-labelledby="«r7»"
+    aria-labelledby="_r_7_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
@@ -33,7 +33,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       <p
         aria-checked="false"
         aria-label="Recent"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -42,7 +42,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-square-asterisk w-5 h-5"
+          class="lucide lucide-square-asterisk h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -79,7 +79,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       <p
         aria-checked="true"
         aria-label="Popularity"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -88,7 +88,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-flame w-5 h-5"
+          class="lucide lucide-flame h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -100,7 +100,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
         <span
@@ -124,17 +124,17 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r6»"
+    id="_r_6_"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
     </h2>
   </div>
   <div
-    aria-labelledby="«r6»"
+    aria-labelledby="_r_6_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
@@ -147,7 +147,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       <p
         aria-checked="true"
         aria-label="Recent"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -156,7 +156,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-square-asterisk w-5 h-5"
+          class="lucide lucide-square-asterisk h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -193,7 +193,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       <p
         aria-checked="false"
         aria-label="Popularity"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -202,7 +202,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-flame w-5 h-5"
+          class="lucide lucide-flame h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -214,7 +214,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
         <span
@@ -238,17 +238,17 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r5»"
+    id="_r_5_"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Sort
     </h2>
   </div>
   <div
-    aria-labelledby="«r5»"
+    aria-labelledby="_r_5_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
@@ -261,7 +261,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       <p
         aria-checked="true"
         aria-label="Recent"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -270,7 +270,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-square-asterisk w-5 h-5"
+          class="lucide lucide-square-asterisk h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -307,7 +307,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       <p
         aria-checked="false"
         aria-label="Popularity"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -316,7 +316,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-flame w-5 h-5"
+          class="lucide lucide-flame h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -328,7 +328,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
         <span
