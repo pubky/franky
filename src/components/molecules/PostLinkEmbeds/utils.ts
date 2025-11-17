@@ -1,20 +1,18 @@
 import type { LinkEmbed } from './types';
+import LinkifyIt from 'linkify-it';
 
 export const parseContentForLinkEmbed = (content: string): LinkEmbed => {
   try {
-    // Simple URL pattern for social media links
-    const urlRegex =
-      /(https?:\/\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=%]+)|(?:www\.)?([a-zA-Z0-9][a-zA-Z0-9-]*\.)+[a-zA-Z]{2,}(?:\/[^\s]*)*/g;
+    const linkify = new LinkifyIt();
+    linkify.add('ftp:', null).add('mailto:', null);
 
-    const match = content.match(urlRegex);
+    const match = linkify.match(content);
 
     if (!match) return { type: 'none', url: '' };
 
-    // Clean up trailing punctuation
-    const url = match[0].replace(/[.,;!?]+$/, '');
+    const url = match[0].url;
 
-    const fullUrl = url.startsWith('http') ? url : `https://${url}`;
-    const parsedUrl = new URL(fullUrl);
+    const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
 
     switch (hostname) {
