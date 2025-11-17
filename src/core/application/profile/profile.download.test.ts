@@ -57,10 +57,14 @@ beforeEach(() => {
     file: mockFile,
   });
   mockGenerateAsync.mockResolvedValue(new Blob(['test']));
-  mockJSZipConstructor.mockImplementation(() => ({
-    folder: mockFolder,
-    generateAsync: mockGenerateAsync,
-  }));
+  mockJSZipConstructor.mockImplementation(function (this: {
+    folder: typeof mockFolder;
+    generateAsync: typeof mockGenerateAsync;
+  }) {
+    this.folder = mockFolder;
+    this.generateAsync = mockGenerateAsync;
+    return this;
+  });
 
   // Setup DOM mocks
   mockAnchorElement = {
@@ -78,10 +82,9 @@ beforeEach(() => {
     },
   } as unknown as Document;
 
-  global.URL = {
-    createObjectURL: mockCreateObjectURL,
-    revokeObjectURL: mockRevokeObjectURL,
-  } as unknown as typeof URL;
+  // Don't override the entire URL object, just the methods we need
+  URL.createObjectURL = mockCreateObjectURL;
+  URL.revokeObjectURL = mockRevokeObjectURL;
 });
 
 let ProfileApplication: typeof import('./profile').ProfileApplication;

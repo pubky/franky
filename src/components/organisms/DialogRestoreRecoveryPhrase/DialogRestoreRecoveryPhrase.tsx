@@ -59,7 +59,7 @@ export function DialogRestoreRecoveryPhrase({ onRestore }: DialogRestoreRecovery
   return (
     <Atoms.Dialog>
       <Atoms.DialogTrigger asChild>
-        <Atoms.Button id="restore-recovery-phrase-btn" variant="outline" className="rounded-full w-auto md:flex-none">
+        <Atoms.Button id="restore-recovery-phrase-btn" variant="outline" className="w-auto rounded-full md:flex-none">
           <Libs.FileText className="mr-2 h-4 w-4" />
           Use recovery phrase
         </Atoms.Button>
@@ -182,7 +182,7 @@ function RestoreForm({
   return (
     <>
       <Atoms.DialogHeader className="space-y-1.5 pr-6">
-        <Atoms.DialogTitle className="text-2xl sm:text-[24px] font-bold">
+        <Atoms.DialogTitle className="text-2xl font-bold sm:text-[24px]">
           Restore with recovery phrase
         </Atoms.DialogTitle>
         <Atoms.DialogDescription className="text-sm text-muted-foreground">
@@ -191,7 +191,7 @@ function RestoreForm({
       </Atoms.DialogHeader>
 
       <Atoms.Container className="space-y-6">
-        <Atoms.Container display="grid" className="grid-cols-2 sm:grid-cols-3 gap-3">
+        <Atoms.Container display="grid" className="grid-cols-2 gap-3 sm:grid-cols-3">
           {userWords.map((word, i) => {
             const isError = errors[i];
             const showError = touched[i];
@@ -213,27 +213,27 @@ function RestoreForm({
         </Atoms.Container>
 
         {errors.some((error, index) => error && touched[index]) && (
-          <Atoms.Container className="rounded-lg bg-red-500/10 border border-red-500/20 p-4">
+          <Atoms.Container className="rounded-lg border border-red-500/20 bg-red-500/10 p-4">
             <div className="flex items-center gap-2 text-red-500">
               <Libs.AlertCircle className="h-4 w-4" />
               <span className="text-sm font-medium">Invalid words detected</span>
             </div>
-            <p className="text-sm text-red-500/80 mt-1">
+            <p className="mt-1 text-sm text-red-500/80">
               Please check that all words are valid and contain only lowercase letters.
             </p>
           </Atoms.Container>
         )}
       </Atoms.Container>
 
-      <Atoms.Container className="flex-col-reverse sm:flex-row gap-3 sm:gap-4 sm:justify-end">
+      <Atoms.Container className="flex-col-reverse gap-3 sm:flex-row sm:justify-end sm:gap-4">
         <Atoms.DialogClose asChild>
-          <Atoms.Button variant="outline" className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6">
+          <Atoms.Button variant="outline" className="h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6">
             Cancel
           </Atoms.Button>
         </Atoms.DialogClose>
         <Atoms.Button
           id="recovery-phrase-restore-btn"
-          className="flex-1 rounded-full h-10 px-4 py-2.5 md:px-12 md:py-6"
+          className="h-10 flex-1 rounded-full px-4 py-2.5 md:px-12 md:py-6"
           onClick={onRestore}
           disabled={!isFormValid()}
         >

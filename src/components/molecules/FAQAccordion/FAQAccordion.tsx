@@ -17,25 +17,25 @@ export interface FAQAccordionProps {
 
 export function FAQAccordion({ items, className }: FAQAccordionProps) {
   return (
-    <AccordionPrimitive.Root type="single" collapsible className={Libs.cn('w-full flex-col gap-4 flex', className)}>
+    <AccordionPrimitive.Root type="single" collapsible className={Libs.cn('flex w-full flex-col gap-4', className)}>
       {items.map((item) => (
         <AccordionPrimitive.Item
           key={item.id}
           value={item.id}
-          className="w-full border border-border rounded-lg overflow-hidden"
+          className="w-full overflow-hidden rounded-lg border border-border"
         >
           <AccordionPrimitive.Header>
             <AccordionPrimitive.Trigger
               className={Libs.cn(
-                'w-full px-6 py-4 flex justify-between items-center',
-                'hover:bg-white/5 transition-colors cursor-pointer',
+                'flex w-full items-center justify-between px-6 py-4',
+                'cursor-pointer transition-colors hover:bg-white/5',
                 'group',
               )}
             >
-              <span className="text-base font-semibold text-left">{item.question}</span>
+              <span className="text-left text-base font-semibold">{item.question}</span>
               <Libs.ChevronDown
                 size={20}
-                className={Libs.cn('transition-transform flex-shrink-0 ml-4', 'group-data-[state=open]:rotate-180')}
+                className={Libs.cn('ml-4 flex-shrink-0 transition-transform', 'group-data-[state=open]:rotate-180')}
               />
             </AccordionPrimitive.Trigger>
           </AccordionPrimitive.Header>
@@ -46,7 +46,7 @@ export function FAQAccordion({ items, className }: FAQAccordionProps) {
               'data-[state=open]:animate-accordion-down',
             )}
           >
-            <div className="px-6 pb-4 pt-2 text-base font-medium leading-6 text-muted-foreground">{item.answer}</div>
+            <div className="px-6 pt-2 pb-4 text-base leading-6 font-medium text-muted-foreground">{item.answer}</div>
           </AccordionPrimitive.Content>
         </AccordionPrimitive.Item>
       ))}

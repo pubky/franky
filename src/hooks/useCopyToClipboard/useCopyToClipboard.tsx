@@ -32,7 +32,7 @@ export function useCopyToClipboard(options: UseCopyToClipboardOptions = {}) {
           action: (
             <Atoms.Button
               variant="outline"
-              className="rounded-full h-10 px-4 bg-transparent border-brand text-white hover:bg-brand/16"
+              className="h-10 rounded-full border-brand bg-transparent px-4 text-white hover:bg-brand/16"
               onClick={() => toastInstance.dismiss()}
             >
               OK

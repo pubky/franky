@@ -129,6 +129,12 @@ export class PostStreamApplication {
     // TODO: Could be a case that it does not have sufficient posts, in which case we need to fetch more from Nexus
     // e.g. in the cache there is only limit - 5 posts and the missing ones we have to download
     // From now, if cache exists and has posts, return from cache
+
+    // Handle limit 0 case: return empty array immediately without fetching from Nexus
+    if (limit === 0) {
+      return { postIds: [], timestamp: undefined };
+    }
+
     let postIds: string[] | null = null;
 
     if (!lastPostId && cachedStream.stream.length >= limit) {

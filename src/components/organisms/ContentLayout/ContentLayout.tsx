@@ -17,9 +17,9 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
     <Atoms.Container
       overrideDefaults
       className={Libs.cn(
-        'hidden lg:flex flex-col gap-6 justify-start items-start sticky self-start',
+        'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'top-[147px]', // 144px + 3px for the header
-        'max-w-[180px] w-full',
+        'w-full max-w-[180px]',
       )}
     >
       {children}
@@ -69,7 +69,7 @@ export function ContentLayout({
         overrideDefaults
         className={Libs.cn(
           'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
-          'w-full pb-12 m-auto px-6 xl:px-0',
+          'm-auto w-full px-6 pb-12 xl:px-0',
           'pt-20 lg:pt-0', // Add top padding on mobile for fixed header
           className,
         )}
@@ -81,7 +81,7 @@ export function ContentLayout({
           )}
 
           {/* Main content area - grows to fill space */}
-          <Atoms.Container className="gap-6 flex-1 w-full">{children}</Atoms.Container>
+          <Atoms.Container className="w-full flex-1 gap-6">{children}</Atoms.Container>
 
           {/* Right sidebar - hidden on mobile (< lg) and in wide layout mode */}
           {showRightSidebar && layout !== Core.LAYOUT.WIDE && rightSidebarContent && (

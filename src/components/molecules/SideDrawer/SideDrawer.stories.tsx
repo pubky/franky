@@ -80,62 +80,64 @@ export const RightPosition: Story = {
   render: () => <SideDrawerWithState position="right" />,
 };
 
-export const WithComplexContent: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
+const WithComplexContentComponent = () => {
+  const [open, setOpen] = useState(false);
 
-    return (
-      <div className="p-4">
-        <Button onClick={() => setOpen(true)}>Open Complex Drawer</Button>
-        <SideDrawer open={open} onOpenChangeAction={setOpen} position="left">
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Advanced Options</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Category</label>
-                  <select className="w-full p-2 border rounded">
-                    <option>All Categories</option>
-                    <option>Technology</option>
-                    <option>Design</option>
-                    <option>Business</option>
-                  </select>
+  return (
+    <div className="p-4">
+      <Button onClick={() => setOpen(true)}>Open Complex Drawer</Button>
+      <SideDrawer open={open} onOpenChangeAction={setOpen} position="left">
+        <div className="space-y-6">
+          <div>
+            <h2 className="mb-4 text-xl font-semibold">Advanced Options</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium">Category</label>
+                <select className="w-full rounded border p-2">
+                  <option>All Categories</option>
+                  <option>Technology</option>
+                  <option>Design</option>
+                  <option>Business</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Date Range</label>
+                <div className="space-y-2">
+                  <input type="date" className="w-full rounded border p-2" />
+                  <input type="date" className="w-full rounded border p-2" />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Date Range</label>
-                  <div className="space-y-2">
-                    <input type="date" className="w-full p-2 border rounded" />
-                    <input type="date" className="w-full p-2 border rounded" />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Tags</label>
-                  <div className="space-y-2">
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" />
-                      <span>React</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" />
-                      <span>TypeScript</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input type="checkbox" />
-                      <span>Next.js</span>
-                    </label>
-                  </div>
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium">Tags</label>
+                <div className="space-y-2">
+                  <label className="flex items-center space-x-2">
+                    <input type="checkbox" />
+                    <span>React</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input type="checkbox" />
+                    <span>TypeScript</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input type="checkbox" />
+                    <span>Next.js</span>
+                  </label>
                 </div>
               </div>
             </div>
-            <div className="flex space-x-2 pt-4">
-              <Button onClick={() => setOpen(false)}>Apply</Button>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-            </div>
           </div>
-        </SideDrawer>
-      </div>
-    );
-  },
+          <div className="flex space-x-2 pt-4">
+            <Button onClick={() => setOpen(false)}>Apply</Button>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </SideDrawer>
+    </div>
+  );
+};
+
+export const WithComplexContent: Story = {
+  render: () => <WithComplexContentComponent />,
 };

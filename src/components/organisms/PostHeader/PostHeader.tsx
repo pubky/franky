@@ -44,7 +44,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
         </Atoms.Avatar>
         <div className="flex flex-col">
           <span className="text-base font-bold text-foreground">{userDetails.name}</span>
-          <span className="text-xs leading-4 font-medium tracking-[0.075rem] uppercase text-muted-foreground">
+          <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground uppercase">
             @{Libs.formatPublicKey({ key: userId, length: 8 })}
           </span>
         </div>

@@ -96,7 +96,7 @@ export function PostActionsBar({
           aria-label={ariaLabel}
         >
           <Icon {...iconProps} />
-          {count !== undefined && <span className="text-xs font-bold leading-4 text-muted-foreground">{count}</span>}
+          {count !== undefined && <span className="text-xs leading-4 font-bold text-muted-foreground">{count}</span>}
         </Atoms.Button>
       ))}
     </div>

@@ -68,8 +68,8 @@ export const WithTags: Story = {
             'linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), linear-gradient(90deg, rgb(255, 153, 0) 0%, rgb(255, 153, 0) 100%)',
         }}
       >
-        <span className="text-sm font-bold leading-5 text-white">bitcoin</span>
-        <span className="text-sm font-medium leading-5 text-white opacity-50">21</span>
+        <span className="text-sm leading-5 font-bold text-white">bitcoin</span>
+        <span className="text-sm leading-5 font-medium text-white opacity-50">21</span>
       </div>
       <div
         className="flex h-8 items-center gap-1.5 rounded-lg px-3 backdrop-blur-lg"
@@ -78,8 +78,8 @@ export const WithTags: Story = {
             'linear-gradient(90deg, rgba(5, 5, 10, 0.7) 0%, rgba(5, 5, 10, 0.7) 100%), linear-gradient(90deg, rgb(255, 0, 0) 0%, rgb(255, 0, 0) 100%)',
         }}
       >
-        <span className="text-sm font-bold leading-5 text-white">based</span>
-        <span className="text-sm font-medium leading-5 text-white opacity-50">7</span>
+        <span className="text-sm leading-5 font-bold text-white">based</span>
+        <span className="text-sm leading-5 font-medium text-white opacity-50">7</span>
       </div>
       <PostTagAddButton {...args} />
     </div>

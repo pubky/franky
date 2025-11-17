@@ -37,7 +37,7 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubky
           <Image src={imageBadge.src} alt={imageBadge.alt} width={210} height={40} />
         </Atoms.Link>
       )}
-      <Atoms.DialogTrigger asChild className="cursor-pointer hidden sm:block">
+      <Atoms.DialogTrigger asChild className="hidden cursor-pointer sm:block">
         {store === 'apple' ? (
           <Image src="/images/badge-apple.png" alt="App Store" width={120} height={40} />
         ) : (
@@ -52,13 +52,13 @@ export function DialogDownloadPubkyRing({ store = 'apple' }: DialogDownloadPubky
           </Atoms.DialogDescription>
         </Atoms.DialogHeader>
         <Atoms.Container className="mt-6">
-          <Atoms.Container className="flex-row gap-8 items-center">
+          <Atoms.Container className="flex-row items-center gap-8">
             <Image src="/images/pubky-ring-phone.png" alt="App preview" width={96} height={256} />
             <Atoms.Container className="space-y-6">
-              <Atoms.Container className="bg-foreground rounded-lg p-4 w-[192px] h-[192px] flex items-center justify-center">
+              <Atoms.Container className="flex h-[192px] w-[192px] items-center justify-center rounded-lg bg-foreground p-4">
                 <QRCodeSVG value={imageBadge.href} size={160} />
               </Atoms.Container>
-              <Atoms.Container className="justify-between items-center">
+              <Atoms.Container className="items-center justify-between">
                 <Atoms.Link className="h-10 w-full" href={imageBadge.href} target="_blank">
                   <Image
                     src={imageBadge.src}

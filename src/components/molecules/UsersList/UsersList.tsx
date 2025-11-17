@@ -28,13 +28,13 @@ export function UsersList({ users, onFollow, onSeeAll, className, title, maxUser
   return (
     <Atoms.Container className={Libs.cn('flex flex-col gap-2 bg-background', className)} {...props}>
       {title && (
-        <Atoms.Heading level={2} size="lg" className={Libs.cn('text-muted-foreground font-light', className)}>
+        <Atoms.Heading level={2} size="lg" className={Libs.cn('font-light text-muted-foreground', className)}>
           {title}
         </Atoms.Heading>
       )}
 
       {/* Users List */}
-      <Atoms.Container className="flex flex-col gap-2 justify-center items-center">
+      <Atoms.Container className="flex flex-col items-center justify-center gap-2">
         {displayUsers.map((user) => (
           <Molecules.User
             key={user.id}
@@ -51,10 +51,10 @@ export function UsersList({ users, onFollow, onSeeAll, className, title, maxUser
         <Atoms.Button
           variant="outline"
           onClick={handleSeeAll}
-          className="w-full flex items-center justify-center gap-2"
+          className="flex w-full items-center justify-center gap-2"
           data-testid="see-all-button"
         >
-          <Libs.Users className="w-4 h-4" />
+          <Libs.Users className="h-4 w-4" />
           <Atoms.Typography size="sm" className="font-bold">
             See all
           </Atoms.Typography>

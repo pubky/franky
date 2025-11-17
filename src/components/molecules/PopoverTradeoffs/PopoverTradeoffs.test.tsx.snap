@@ -62,7 +62,7 @@ exports[`PopoverTradeoffs - Snapshots > matches snapshot for default PopoverTrad
         data-testid="container"
       >
         <ul
-          class="list-disc list-inside text-muted-foreground text-sm"
+          class="list-inside list-disc text-sm text-muted-foreground"
         >
           <li>
             Less secure than mobile keychain

@@ -2,7 +2,7 @@
 
 exports[`ButtonFilters - Snapshots > matches snapshot for button element 1`] = `
 <button
-  class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full"
+  class="hidden bg-secondary px-4 py-3 shadow-xl hover:bg-secondary/90 lg:inline-flex rounded-l-none rounded-r-full"
   data-size="icon"
   data-variant="secondary"
 >
@@ -20,10 +20,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot for button element 1`] = `
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M20 7h-9"
+      d="M14 17H5"
     />
     <path
-      d="M14 17H5"
+      d="M19 7h-9"
     />
     <circle
       cx="17"
@@ -41,10 +41,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot for button element 1`] = `
 
 exports[`ButtonFilters - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="z-10 fixed top-[150px] left-0"
+  class="fixed top-[150px] z-10 left-0"
 >
   <button
-    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full custom-filters"
+    class="hidden bg-secondary px-4 py-3 shadow-xl hover:bg-secondary/90 lg:inline-flex rounded-l-none rounded-r-full custom-filters"
     data-size="icon"
     data-variant="secondary"
   >
@@ -62,10 +62,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot with custom className 1`] 
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M20 7h-9"
+        d="M14 17H5"
       />
       <path
-        d="M14 17H5"
+        d="M19 7h-9"
       />
       <circle
         cx="17"
@@ -84,10 +84,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot with custom className 1`] 
 
 exports[`ButtonFilters - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="z-10 fixed top-[150px] left-0"
+  class="fixed top-[150px] z-10 left-0"
 >
   <button
-    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full"
+    class="hidden bg-secondary px-4 py-3 shadow-xl hover:bg-secondary/90 lg:inline-flex rounded-l-none rounded-r-full"
     data-size="icon"
     data-variant="secondary"
   >
@@ -105,10 +105,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot with default props 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M20 7h-9"
+        d="M14 17H5"
       />
       <path
-        d="M14 17H5"
+        d="M19 7h-9"
       />
       <circle
         cx="17"
@@ -127,10 +127,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`ButtonFilters - Snapshots > matches snapshot with left position 1`] = `
 <div
-  class="z-10 fixed top-[150px] left-0"
+  class="fixed top-[150px] z-10 left-0"
 >
   <button
-    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-l-none rounded-r-full"
+    class="hidden bg-secondary px-4 py-3 shadow-xl hover:bg-secondary/90 lg:inline-flex rounded-l-none rounded-r-full"
     data-size="icon"
     data-variant="secondary"
   >
@@ -148,10 +148,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot with left position 1`] = `
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M20 7h-9"
+        d="M14 17H5"
       />
       <path
-        d="M14 17H5"
+        d="M19 7h-9"
       />
       <circle
         cx="17"
@@ -170,10 +170,10 @@ exports[`ButtonFilters - Snapshots > matches snapshot with left position 1`] = `
 
 exports[`ButtonFilters - Snapshots > matches snapshot with right position 1`] = `
 <div
-  class="z-10 fixed top-[150px] right-0"
+  class="fixed top-[150px] z-10 right-0"
 >
   <button
-    class="hidden lg:inline-flex px-4 py-3 bg-secondary shadow-xl hover:bg-secondary/90 rounded-r-none rounded-l-full"
+    class="hidden bg-secondary px-4 py-3 shadow-xl hover:bg-secondary/90 lg:inline-flex rounded-r-none rounded-l-full"
     data-size="icon"
     data-variant="secondary"
   >

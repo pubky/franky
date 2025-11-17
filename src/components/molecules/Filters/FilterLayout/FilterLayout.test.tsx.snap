@@ -10,17 +10,17 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r6»"
+    id="_r_6_"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Layout
     </h2>
   </div>
   <div
-    aria-labelledby="«r6»"
+    aria-labelledby="_r_6_"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
@@ -33,7 +33,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       <p
         aria-checked="true"
         aria-label="Columns"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -42,7 +42,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-columns3 lucide-columns-3 w-5 h-5"
+          class="lucide lucide-columns3 lucide-columns-3 h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -76,7 +76,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       <p
         aria-checked="false"
         aria-label="Wide"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -85,7 +85,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-menu w-5 h-5"
+          class="lucide lucide-menu h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -97,13 +97,13 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
+            d="M4 5h16"
+          />
+          <path
             d="M4 12h16"
           />
           <path
-            d="M4 18h16"
-          />
-          <path
-            d="M4 6h16"
+            d="M4 19h16"
           />
         </svg>
         <span
@@ -116,7 +116,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
-        class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+        class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -125,7 +125,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-layout-grid w-5 h-5"
+          class="lucide lucide-layout-grid h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -186,17 +186,17 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r7»"
+    id="_r_7_"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Layout
     </h2>
   </div>
   <div
-    aria-labelledby="«r7»"
+    aria-labelledby="_r_7_"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
@@ -209,7 +209,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       <p
         aria-checked="false"
         aria-label="Columns"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -218,7 +218,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-columns3 lucide-columns-3 w-5 h-5"
+          class="lucide lucide-columns3 lucide-columns-3 h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -252,7 +252,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       <p
         aria-checked="true"
         aria-label="Wide"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -261,7 +261,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-menu w-5 h-5"
+          class="lucide lucide-menu h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -273,13 +273,13 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
+            d="M4 5h16"
+          />
+          <path
             d="M4 12h16"
           />
           <path
-            d="M4 18h16"
-          />
-          <path
-            d="M4 6h16"
+            d="M4 19h16"
           />
         </svg>
         <span
@@ -292,7 +292,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
-        class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+        class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -301,7 +301,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-layout-grid w-5 h-5"
+          class="lucide lucide-layout-grid h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -362,17 +362,17 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     class="flex flex-col gap-2"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r5»"
+    id="_r_5_"
   >
     <h2
-      class="text-2xl text-muted-foreground font-light"
+      class="text-2xl font-light text-muted-foreground"
       data-testid="heading-2"
     >
       Layout
     </h2>
   </div>
   <div
-    aria-labelledby="«r5»"
+    aria-labelledby="_r_5_"
     class=""
     data-testid="filter-layout-radiogroup"
     role="radiogroup"
@@ -385,7 +385,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       <p
         aria-checked="true"
         aria-label="Columns"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -394,7 +394,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-columns3 lucide-columns-3 w-5 h-5"
+          class="lucide lucide-columns3 lucide-columns-3 h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -428,7 +428,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       <p
         aria-checked="false"
         aria-label="Wide"
-        class="cursor-pointer flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -437,7 +437,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-menu w-5 h-5"
+          class="lucide lucide-menu h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"
@@ -449,13 +449,13 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
+            d="M4 5h16"
+          />
+          <path
             d="M4 12h16"
           />
           <path
-            d="M4 18h16"
-          />
-          <path
-            d="M4 6h16"
+            d="M4 19h16"
           />
         </svg>
         <span
@@ -468,7 +468,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
-        class="flex gap-2 items-center text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 opacity-20 cursor-default"
+        class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
@@ -477,7 +477,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-layout-grid w-5 h-5"
+          class="lucide lucide-layout-grid h-5 w-5"
           fill="none"
           height="24"
           stroke="currentColor"

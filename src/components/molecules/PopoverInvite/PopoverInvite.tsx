@@ -20,7 +20,7 @@ export function PopoverInvite({ className = 'hover:bg-brand/10' }: PopoverInvite
             <Atoms.Heading level={4} size="sm" className="text-popover-foreground">
               Don&apos;t have an invite yet?
             </Atoms.Heading>
-            <Atoms.Typography size="sm" className="text-muted-foreground font-normal">
+            <Atoms.Typography size="sm" className="font-normal text-muted-foreground">
               Ask the Pubky team!
             </Atoms.Typography>
           </Atoms.Container>

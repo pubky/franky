@@ -78,7 +78,7 @@ export const SearchInput = ({
 
       {/* Search Button */}
       <Atoms.Button onClick={handleSearchClick} className={buttonClassName} type="button">
-        <Libs.Search className="w-4 h-4" />
+        <Libs.Search className="h-4 w-4" />
       </Atoms.Button>
 
       {/* Dropdown Card with Children */}

@@ -36,10 +36,10 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderButtonSignIn
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderContainer 1`] = `
 <header
-  class="sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] backdrop-blur-sm py-6"
+  class="sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] py-6 backdrop-blur-sm"
 >
   <div
-    class="mx-auto w-full flex-col flex container flex flex-row flex-wrap items-center justify-between gap-4 sm:gap-6 px-4 sm:px-6 py-4 sm:py-6"
+    class="mx-auto w-full flex-col flex container flex flex-row flex-wrap items-center justify-between gap-4 sm:gap-6 px-4 py-4 sm:px-6 sm:py-6"
     data-testid="container"
   >
     <nav
@@ -60,7 +60,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-auto w-full flex-col flex hidden md:flex flex-row justify-end gap-6 mr-6"
+    class="mx-auto w-full flex-col flex mr-6 hidden flex-row justify-end gap-6 md:flex"
     data-testid="header-social-links"
   >
     <a
@@ -69,7 +69,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
       target="_blank"
     >
       <svg
-        class="w-6 h-6"
+        class="h-6 w-6"
         fill="none"
         height="24"
         viewBox="0 0 24 24"
@@ -91,7 +91,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
       target="_blank"
     >
       <svg
-        class="lucide-x-twitter w-6 h-6"
+        class="lucide-x-twitter h-6 w-6"
         fill="none"
         height="24"
         viewBox="0 0 24 24"
@@ -126,7 +126,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
       target="_blank"
     >
       <svg
-        class="lucide-telegram w-6 h-6"
+        class="lucide-telegram h-6 w-6"
         fill="none"
         height="24"
         viewBox="4 4 16 16"
@@ -184,7 +184,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/home"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -206,7 +206,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
           d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
         />
         <path
-          d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
         />
       </svg>
     </button>
@@ -216,7 +216,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/hot"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -235,7 +235,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+          d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
         />
       </svg>
     </button>
@@ -245,7 +245,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/bookmarks"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -274,7 +274,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/settings"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -293,7 +293,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+          d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
         />
         <circle
           cx="12"
@@ -309,7 +309,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     id="header-nav-profile-btn"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 h-12 w-12 cursor-pointer"
     >
       <span
         class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -331,7 +331,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/home"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -353,7 +353,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
           d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
         />
         <path
-          d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
         />
       </svg>
     </button>
@@ -363,7 +363,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/hot"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -382,7 +382,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+          d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
         />
       </svg>
     </button>
@@ -392,7 +392,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/bookmarks"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -421,7 +421,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     href="/settings"
   >
     <button
-      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+      class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
       data-size="icon"
       data-slot="button"
       data-variant="secondary"
@@ -440,7 +440,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+          d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
         />
         <circle
           cx="12"
@@ -456,7 +456,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     id="header-nav-profile-btn"
   >
     <span
-      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
+      class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 h-12 w-12 cursor-pointer"
     >
       <span
         class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -465,7 +465,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
       </span>
     </span>
     <div
-      class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 absolute bottom-0 right-0 rounded-full bg-brand h-5 w-5"
+      class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90 absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand"
       data-slot="badge"
       data-variant="secondary"
     >
@@ -513,7 +513,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-search w-4 h-4"
+        class="lucide lucide-search h-4 w-4"
         fill="none"
         height="24"
         stroke="currentColor"
@@ -544,7 +544,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       href="/home"
     >
       <button
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -566,7 +566,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
             d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
           />
           <path
-            d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+            d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
           />
         </svg>
       </button>
@@ -576,7 +576,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       href="/hot"
     >
       <button
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -595,7 +595,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
       </button>
@@ -605,7 +605,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       href="/bookmarks"
     >
       <button
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -634,7 +634,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       href="/settings"
     >
       <button
-        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 w-12 h-12 border bg-transparent"
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9 h-12 w-12 border bg-transparent"
         data-size="icon"
         data-slot="button"
         data-variant="secondary"
@@ -653,7 +653,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+            d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
           />
           <circle
             cx="12"
@@ -669,7 +669,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       id="header-nav-profile-btn"
     >
       <span
-        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 w-12 h-12 cursor-pointer"
+        class="relative flex shrink-0 overflow-hidden rounded-full h-10 w-10 h-12 w-12 cursor-pointer"
       >
         <span
           class="flex h-full w-full items-center justify-center rounded-full bg-muted"
@@ -684,7 +684,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 1`] = `
 <div
-  class="mx-auto w-full flex-col flex hidden md:flex flex-row justify-end gap-6 mr-6"
+  class="mx-auto w-full flex-col flex mr-6 hidden flex-row justify-end gap-6 md:flex"
   data-testid="header-social-links"
 >
   <a
@@ -693,7 +693,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
     target="_blank"
   >
     <svg
-      class="w-6 h-6"
+      class="h-6 w-6"
       fill="none"
       height="24"
       viewBox="0 0 24 24"
@@ -715,7 +715,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
     target="_blank"
   >
     <svg
-      class="lucide-x-twitter w-6 h-6"
+      class="lucide-x-twitter h-6 w-6"
       fill="none"
       height="24"
       viewBox="0 0 24 24"
@@ -750,7 +750,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
     target="_blank"
   >
     <svg
-      class="lucide-telegram w-6 h-6"
+      class="lucide-telegram h-6 w-6"
       fill="none"
       height="24"
       viewBox="4 4 16 16"
@@ -768,11 +768,11 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
 
 exports[`Header Components - Snapshots > matches snapshot for HeaderTitle 1`] = `
 <div
-  class="mx-auto w-full flex-col flex flex-1 hidden md:flex"
+  class="mx-auto w-full flex-col flex hidden flex-1 md:flex"
   data-testid="container"
 >
   <h2
-    class="text-2xl font-bold text-foreground text-muted-foreground font-normal"
+    class="text-2xl font-bold text-foreground font-normal text-muted-foreground"
     data-testid="heading-2"
   >
     Test Title

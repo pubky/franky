@@ -5,7 +5,7 @@ exports[`PostContent - Snapshots > matches snapshot with empty content 1`] = `
   class="flex flex-col"
 >
   <p
-    class="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line"
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
   />
 </div>
 `;
@@ -15,7 +15,7 @@ exports[`PostContent - Snapshots > matches snapshot with multiline content (pres
   class="flex flex-col"
 >
   <p
-    class="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line"
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
   >
     Line 1
 Line 2
@@ -30,7 +30,7 @@ exports[`PostContent - Snapshots > matches snapshot with single-line content 1`]
   class="flex flex-col"
 >
   <p
-    class="text-base leading-6 font-medium text-secondary-foreground break-all whitespace-pre-line"
+    class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
   >
     One liner
   </p>

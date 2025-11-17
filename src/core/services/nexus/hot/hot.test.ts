@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { NexusHotService } from './hot.api';
 
 describe('NexusHotService', () => {
@@ -72,6 +73,198 @@ describe('NexusHotService', () => {
       const result = await NexusHotService.fetch(params);
 
       expect(result).toEqual([]);
+    });
+
+    it('should return empty array when response is undefined', async () => {
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.ALL_TIME,
+      };
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should return empty array when response is empty array', async () => {
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      };
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should log debug message with count when fetch succeeds', async () => {
+      const mockHotTags = [
+        {
+          label: 'bitcoin',
+          tagged_count: 100,
+          taggers_count: 2,
+          taggers_id: ['user1', 'user2'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      };
+
+      const loggerSpy = vi.spyOn(Libs.Logger, 'debug');
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+
+      await NexusHotService.fetch(params);
+
+      expect(loggerSpy).toHaveBeenCalledWith('Hot tags fetched successfully', { count: 1 });
+    });
+
+    it('should log debug message with count 0 when response is null', async () => {
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      };
+
+      const loggerSpy = vi.spyOn(Libs.Logger, 'debug');
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+
+      await NexusHotService.fetch(params);
+
+      expect(loggerSpy).toHaveBeenCalledWith('Hot tags fetched successfully', { count: 0 });
+    });
+
+    it('should handle user_id parameter', async () => {
+      const mockHotTags = [
+        {
+          label: 'personalised',
+          tagged_count: 10,
+          taggers_count: 1,
+          taggers_id: ['user1'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        user_id: 'user-123',
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+      const tagApiHotSpy = vi.spyOn(Core.tagApi, 'hot');
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(tagApiHotSpy).toHaveBeenCalledWith(params);
+      expect(queryNexusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle taggers_limit parameter', async () => {
+      const mockHotTags = [
+        {
+          label: 'limited',
+          tagged_count: 50,
+          taggers_count: 5,
+          taggers_id: ['user1', 'user2'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        taggers_limit: 2,
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+      const tagApiHotSpy = vi.spyOn(Core.tagApi, 'hot');
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(tagApiHotSpy).toHaveBeenCalledWith(params);
+      expect(queryNexusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle limit: 0', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        limit: 0,
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+      const tagApiHotSpy = vi.spyOn(Core.tagApi, 'hot');
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(tagApiHotSpy).toHaveBeenCalledWith(params);
+      expect(queryNexusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle skip: 0', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        skip: 0,
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+      const tagApiHotSpy = vi.spyOn(Core.tagApi, 'hot');
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(tagApiHotSpy).toHaveBeenCalledWith(params);
+      expect(queryNexusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle large limit values', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        limit: 10_000,
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+      const tagApiHotSpy = vi.spyOn(Core.tagApi, 'hot');
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(tagApiHotSpy).toHaveBeenCalledWith(params);
+      expect(queryNexusSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should handle all optional parameters together', async () => {
+      const mockHotTags = [
+        {
+          label: 'comprehensive',
+          tagged_count: 200,
+          taggers_count: 10,
+          taggers_id: ['user1', 'user2', 'user3'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        reach: Core.UserStreamReach.FRIENDS,
+        timeframe: Core.UserStreamTimeframe.THIS_MONTH,
+        skip: 5,
+        limit: 25,
+        user_id: 'user-456',
+        taggers_limit: 3,
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockHotTags);
+      const tagApiHotSpy = vi.spyOn(Core.tagApi, 'hot');
+
+      const result = await NexusHotService.fetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(tagApiHotSpy).toHaveBeenCalledWith(params);
+      expect(queryNexusSpy).toHaveBeenCalledOnce();
     });
 
     it('should bubble when queryNexus fails', async () => {

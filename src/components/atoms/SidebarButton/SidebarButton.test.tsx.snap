@@ -2,7 +2,7 @@
 
 exports[`SidebarButton - Snapshots > matches snapshot with FileText icon 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
 >
   <svg
     aria-hidden="true"
@@ -18,10 +18,10 @@ exports[`SidebarButton - Snapshots > matches snapshot with FileText icon 1`] = `
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+      d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
     />
     <path
-      d="M14 2v4a2 2 0 0 0 2 2h4"
+      d="M14 2v5a1 1 0 0 0 1 1h5"
     />
     <path
       d="M10 9H8"
@@ -34,7 +34,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with FileText icon 1`] = `
     />
   </svg>
   <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+    class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
   >
     Terms of service
   </span>
@@ -43,7 +43,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with FileText icon 1`] = `
 
 exports[`SidebarButton - Snapshots > matches snapshot with LockKeyhole icon 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
 >
   <svg
     aria-hidden="true"
@@ -75,7 +75,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with LockKeyhole icon 1`] 
     />
   </svg>
   <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+    class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
   >
     Privacy policy
   </span>
@@ -84,7 +84,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with LockKeyhole icon 1`] 
 
 exports[`SidebarButton - Snapshots > matches snapshot with Users icon 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
 >
   <svg
     aria-hidden="true"
@@ -115,7 +115,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with Users icon 1`] = `
     />
   </svg>
   <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+    class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
   >
     See all
   </span>
@@ -125,7 +125,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with Users icon 1`] = `
 exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] = `
 <button
   aria-label="Test button"
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
   data-testid="test"
 >
   <svg
@@ -142,10 +142,10 @@ exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] 
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+      d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
     />
     <path
-      d="M14 2v4a2 2 0 0 0 2 2h4"
+      d="M14 2v5a1 1 0 0 0 1 1h5"
     />
     <path
       d="M10 9H8"
@@ -158,7 +158,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] 
     />
   </svg>
   <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+    class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
   >
     Test Button
   </span>
@@ -167,7 +167,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with additional props 1`] 
 
 exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors"
+  class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80"
 >
   <svg
     aria-hidden="true"
@@ -183,10 +183,10 @@ exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] 
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+      d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
     />
     <path
-      d="M14 2v4a2 2 0 0 0 2 2h4"
+      d="M14 2v5a1 1 0 0 0 1 1h5"
     />
     <path
       d="M10 9H8"
@@ -199,7 +199,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] 
     />
   </svg>
   <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+    class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
   >
     <span>
       Complex
@@ -214,7 +214,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with complex children 1`] 
 
 exports[`SidebarButton - Snapshots > matches snapshot with custom className 1`] = `
 <button
-  class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-full border border-border hover:bg-secondary/80 cursor-pointer transition-colors custom-class"
+  class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full border border-border px-4 py-2 transition-colors hover:bg-secondary/80 custom-class"
 >
   <svg
     aria-hidden="true"
@@ -230,10 +230,10 @@ exports[`SidebarButton - Snapshots > matches snapshot with custom className 1`] 
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"
+      d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"
     />
     <path
-      d="M14 2v4a2 2 0 0 0 2 2h4"
+      d="M14 2v5a1 1 0 0 0 1 1h5"
     />
     <path
       d="M10 9H8"
@@ -246,7 +246,7 @@ exports[`SidebarButton - Snapshots > matches snapshot with custom className 1`] 
     />
   </svg>
   <span
-    class="text-xs font-bold leading-normal text-[var(--base-foreground,#FFF)]"
+    class="text-xs leading-normal font-bold text-[var(--base-foreground,#FFF)]"
   >
     Custom Button
   </span>

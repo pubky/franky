@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { HotApplication } from './hot';
 
 describe('HotApplication', () => {
@@ -79,6 +80,166 @@ describe('HotApplication', () => {
       const result = await HotApplication.getOrFetch(params);
 
       expect(result).toEqual([]);
+    });
+
+    it('should return empty array when service returns empty array', async () => {
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      };
+
+      vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue([]);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle AppError and return empty array', async () => {
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      };
+
+      const appError = Libs.createCommonError(Libs.CommonErrorType.NETWORK_ERROR, 'Network error', 500, {});
+      vi.spyOn(Core.NexusHotService, 'fetch').mockRejectedValue(appError);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should log error when service fails', async () => {
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+      };
+
+      const error = new Error('service-fail');
+      const loggerSpy = vi.spyOn(Libs.Logger, 'error');
+      vi.spyOn(Core.NexusHotService, 'fetch').mockRejectedValue(error);
+
+      await HotApplication.getOrFetch(params);
+
+      expect(loggerSpy).toHaveBeenCalledWith('Error in HotApplication.getOrFetch:', error);
+    });
+
+    it('should handle user_id parameter', async () => {
+      const mockHotTags = [
+        {
+          label: 'personalised',
+          tagged_count: 10,
+          taggers_count: 1,
+          taggers_id: ['user1'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        user_id: 'user-123',
+      };
+
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(fetchSpy).toHaveBeenCalledWith(params);
+    });
+
+    it('should handle taggers_limit parameter', async () => {
+      const mockHotTags = [
+        {
+          label: 'limited',
+          tagged_count: 50,
+          taggers_count: 5,
+          taggers_id: ['user1', 'user2'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        taggers_limit: 2,
+      };
+
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(fetchSpy).toHaveBeenCalledWith(params);
+    });
+
+    it('should handle limit: 0', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        limit: 0,
+      };
+
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(fetchSpy).toHaveBeenCalledWith(params);
+    });
+
+    it('should handle skip: 0', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        skip: 0,
+      };
+
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(fetchSpy).toHaveBeenCalledWith(params);
+    });
+
+    it('should handle large limit values', async () => {
+      const mockHotTags = [] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        timeframe: Core.UserStreamTimeframe.TODAY,
+        limit: 9999,
+      };
+
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(fetchSpy).toHaveBeenCalledWith(params);
+    });
+
+    it('should handle all optional parameters together', async () => {
+      const mockHotTags = [
+        {
+          label: 'comprehensive',
+          tagged_count: 200,
+          taggers_count: 10,
+          taggers_id: ['user1', 'user2', 'user3'],
+        },
+      ] as Core.NexusHotTag[];
+
+      const params: Core.TTagHotParams = {
+        reach: Core.UserStreamReach.FRIENDS,
+        timeframe: Core.UserStreamTimeframe.THIS_MONTH,
+        skip: 5,
+        limit: 25,
+        user_id: 'user-456',
+        taggers_limit: 3,
+      };
+
+      const fetchSpy = vi.spyOn(Core.NexusHotService, 'fetch').mockResolvedValue(mockHotTags);
+
+      const result = await HotApplication.getOrFetch(params);
+
+      expect(result).toEqual(mockHotTags);
+      expect(fetchSpy).toHaveBeenCalledWith(params);
     });
 
     it('should handle different reach values', async () => {

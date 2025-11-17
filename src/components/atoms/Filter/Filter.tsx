@@ -29,11 +29,11 @@ function FilterHeader({
 } & React.HTMLAttributes<HTMLElement>) {
   return (
     <div data-slot="filter-header" data-testid="filter-header" className="flex flex-col gap-2" {...props}>
-      <Atoms.Heading level={2} size="lg" className={Libs.cn('text-muted-foreground font-light', className)}>
+      <Atoms.Heading level={2} size="lg" className={Libs.cn('font-light text-muted-foreground', className)}>
         {title}
       </Atoms.Heading>
       {subtitle && (
-        <p className="text-base font-medium leading-normal text-[var(--base-secondary-foreground,#D4D4DB)]">
+        <p className="text-base leading-normal font-medium text-[var(--base-secondary-foreground,#D4D4DB)]">
           {subtitle}
         </p>
       )}
@@ -72,7 +72,7 @@ function FilterItem({
       data-testid="filter-item"
       data-selected={isSelected ? 'true' : 'false'}
       className={Libs.cn(
-        'cursor-pointer flex gap-2 items-center text-base font-medium transition-colors',
+        'flex cursor-pointer items-center gap-2 text-base font-medium transition-colors',
         isSelected ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80',
         className,
       )}
@@ -93,7 +93,7 @@ function FilterItemIcon({
   icon: React.ComponentType<{ className?: string }>;
   className?: string;
 } & Omit<React.HTMLAttributes<HTMLDivElement>, 'onCopy' | 'onCut' | 'onPaste'>) {
-  return <Icon className={Libs.cn('w-5 h-5', className)} {...props} />;
+  return <Icon className={Libs.cn('h-5 w-5', className)} {...props} />;
 }
 
 function FilterItemLabel({

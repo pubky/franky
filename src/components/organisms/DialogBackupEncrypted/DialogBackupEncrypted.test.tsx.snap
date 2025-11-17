@@ -39,7 +39,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
         Encrypt your recovery file below with a secure password, download it, and save it to your computer or cloud provider.
          
         <span
-          class="text-foreground font-bold"
+          class="font-bold text-foreground"
         >
           <span
             class="hidden sm:inline"
@@ -62,7 +62,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
         data-testid="container"
       >
         <label
-          class="text-xs font-medium tracking-widest text-muted-foreground pb-4"
+          class="pb-4 text-xs font-medium tracking-widest text-muted-foreground"
           data-testid="label"
           for="password"
         >
@@ -78,7 +78,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
             <input
               aria-describedby="password-help"
               autocomplete="new-password"
-              class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4"
+              class="bg-opacity-90 h-14 rounded-md border border-dashed px-5 py-4 shadow-sm"
               data-testid="input"
               id="password"
               placeholder="Enter a strong password"
@@ -87,7 +87,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
             />
           </div>
           <p
-            class="text-muted-foreground text-xs font-medium leading-none"
+            class="text-xs leading-none font-medium text-muted-foreground"
             data-size="sm"
             data-testid="typography"
           >
@@ -103,7 +103,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
         data-testid="container"
       >
         <label
-          class="text-xs font-medium tracking-widest text-muted-foreground pb-4"
+          class="pb-4 text-xs font-medium tracking-widest text-muted-foreground"
           data-testid="label"
           for="confirmPassword"
         >
@@ -116,7 +116,7 @@ exports[`DialogBackupEncrypted - Snapshots > matches snapshot for default Dialog
           <input
             aria-invalid="false"
             autocomplete="new-password"
-            class="h-14 rounded-md border-dashed border bg-opacity-90 shadow-sm px-5 py-4 "
+            class="bg-opacity-90 h-14 rounded-md border border-dashed px-5 py-4 shadow-sm "
             data-testid="input"
             id="confirmPassword"
             placeholder="Repeat your password"

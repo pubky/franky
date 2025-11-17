@@ -77,19 +77,21 @@ export const Playground: Story = {
   },
 };
 
-export const Controlled: Story = {
-  render: () => {
-    const [selected, setSelected] = useState<Core.ReachType>('all');
+const ControlledComponent = () => {
+  const [selected, setSelected] = useState<Core.ReachType>('all');
 
-    return (
-      <div className="space-y-4">
-        <FilterReach selectedTab={selected} onTabChange={setSelected} />
-        <p className="text-sm text-muted-foreground">
-          Current selection: <strong>{selected}</strong>
-        </p>
-      </div>
-    );
-  },
+  return (
+    <div className="space-y-4">
+      <FilterReach selectedTab={selected} onTabChange={setSelected} />
+      <p className="text-sm text-muted-foreground">
+        Current selection: <strong>{selected}</strong>
+      </p>
+    </div>
+  );
+};
+
+export const Controlled: Story = {
+  render: () => <ControlledComponent />,
   parameters: {
     docs: {
       description: {
@@ -121,36 +123,38 @@ export const Uncontrolled: Story = {
   },
 };
 
-export const KeyboardNavigationDemo: Story = {
-  render: () => {
-    const [selected, setSelected] = useState<Core.ReachType>('all');
-    const [lastAction, setLastAction] = useState<string>('None');
+const KeyboardNavigationDemoComponent = () => {
+  const [selected, setSelected] = useState<Core.ReachType>('all');
+  const [lastAction, setLastAction] = useState<string>('None');
 
-    return (
-      <div className="space-y-4">
-        <FilterReach
-          selectedTab={selected}
-          onTabChange={(tab) => {
-            setSelected(tab);
-            setLastAction(`Selected: ${tab}`);
-          }}
-        />
-        <div className="text-sm space-y-2">
-          <p className="text-muted-foreground">
-            <strong>Try keyboard navigation:</strong>
-          </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-1">
-            <li>Tab to focus, then use Arrow keys to navigate</li>
-            <li>Press Space or Enter to select</li>
-            <li>Press Home/End to jump to first/last</li>
-          </ul>
-          <p className="text-foreground">
-            Last action: <strong>{lastAction}</strong>
-          </p>
-        </div>
+  return (
+    <div className="space-y-4">
+      <FilterReach
+        selectedTab={selected}
+        onTabChange={(tab) => {
+          setSelected(tab);
+          setLastAction(`Selected: ${tab}`);
+        }}
+      />
+      <div className="space-y-2 text-sm">
+        <p className="text-muted-foreground">
+          <strong>Try keyboard navigation:</strong>
+        </p>
+        <ul className="list-inside list-disc space-y-1 text-muted-foreground">
+          <li>Tab to focus, then use Arrow keys to navigate</li>
+          <li>Press Space or Enter to select</li>
+          <li>Press Home/End to jump to first/last</li>
+        </ul>
+        <p className="text-foreground">
+          Last action: <strong>{lastAction}</strong>
+        </p>
       </div>
-    );
-  },
+    </div>
+  );
+};
+
+export const KeyboardNavigationDemo: Story = {
+  render: () => <KeyboardNavigationDemoComponent />,
   parameters: {
     docs: {
       description: {

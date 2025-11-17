@@ -32,7 +32,7 @@ function DialogOverlay({ className, ...props }: React.ComponentProps<typeof Dial
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={Libs.cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-40 bg-black/50',
+        'fixed inset-0 z-40 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
         className,
       )}
       {...props}
@@ -59,9 +59,9 @@ function DialogContent({
           data-testid="dialog-content"
           className={Libs.cn(
             'relative z-50 grid',
-            'rounded-lg sm:rounded-xl border bg-background shadow-lg duration-200',
+            'rounded-lg border bg-background shadow-lg duration-200 sm:rounded-xl',
             'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-            'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 p-6 sm:p-8 gap-6 m-4',
+            'm-4 gap-6 p-6 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:p-8',
             className,
           )}
           {...props}
@@ -69,11 +69,7 @@ function DialogContent({
           {hiddenTitle && <DialogPrimitive.Title className="sr-only">{hiddenTitle}</DialogPrimitive.Title>}
           {children}
           {showCloseButton && (
-            <DialogClose
-              className="absolute right-4 top-4 p-2 cursor-pointer rounded-full bg-secondary
-              transition-all duration-300 ease-in-out hover:bg-secondary/80 disabled:pointer-events-none disabled:opacity-50
-               outline-none focus:outline-none"
-            >
+            <DialogClose className="absolute top-4 right-4 cursor-pointer rounded-full bg-secondary p-2 transition-all duration-300 ease-in-out outline-none hover:bg-secondary/80 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
               <Libs.X className="h-4 w-4 text-secondary-foreground opacity-70" />
               <span className="sr-only">Close</span>
             </DialogClose>
@@ -100,7 +96,7 @@ function DialogFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="dialog-footer"
       className={Libs.cn(
-        'flex flex-col sm:flex-row gap-3 sm:gap-4 sm:justify-end md:justify-between [&>*]:w-full sm:[&>*]:flex-1',
+        'flex flex-col gap-3 sm:flex-row sm:justify-end sm:gap-4 md:justify-between [&>*]:w-full sm:[&>*]:flex-1',
         className,
       )}
       {...props}
@@ -113,7 +109,7 @@ function DialogTitle({ className, ...props }: React.ComponentProps<typeof Dialog
     <DialogPrimitive.Title
       data-slot="dialog-title"
       data-testid="dialog-title"
-      className={Libs.cn('text-foreground text-xl/[1.4] sm:text-2xl/[1.333] font-bold', className)}
+      className={Libs.cn('text-xl/[1.4] font-bold text-foreground sm:text-2xl/[1.333]', className)}
       {...props}
     />
   );
@@ -123,7 +119,7 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={Libs.cn('text-muted-foreground text-sm font-medium leading-normal', className)}
+      className={Libs.cn('text-sm leading-normal font-medium text-muted-foreground', className)}
       {...props}
     />
   );
