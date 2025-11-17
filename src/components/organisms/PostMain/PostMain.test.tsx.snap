@@ -2,30 +2,30 @@
 
 exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 <div
-  class="cursor-pointer"
+  data-class-name="cursor-pointer rounded-md py-0"
+  data-testid="card"
 >
   <div
-    data-class-name="rounded-md py-0"
-    data-testid="card"
+    data-class-name="flex flex-col gap-4 p-6"
+    data-testid="card-content"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
-      data-testid="card-content"
+      data-testid="post-header"
+    >
+      PostHeader 
+      post-123
+    </div>
+    <div
+      data-testid="post-content"
+    >
+      PostContent 
+      post-123
+    </div>
+    <div
+      class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
     >
       <div
-        data-testid="post-header"
-      >
-        PostHeader 
-        post-123
-      </div>
-      <div
-        data-testid="post-content"
-      >
-        PostContent 
-        post-123
-      </div>
-      <div
-        class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="click-stop"
       >
         <ul
           data-testid="post-tags-list"
@@ -40,11 +40,19 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
             gamma
           </li>
         </ul>
+      </div>
+      <div
+        data-testid="click-stop"
+      >
         <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
           data-testid="post-actions"
         >
           Actions 
           post-123
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>
@@ -54,39 +62,47 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
 <div
-  class="cursor-pointer"
+  data-class-name="cursor-pointer rounded-md py-0"
+  data-testid="card"
 >
   <div
-    data-class-name="rounded-md py-0"
-    data-testid="card"
+    data-class-name="flex flex-col gap-4 p-6"
+    data-testid="card-content"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
-      data-testid="card-content"
+      data-testid="post-header"
+    >
+      PostHeader 
+      post-789
+    </div>
+    <div
+      data-testid="post-content"
+    >
+      PostContent 
+      post-789
+    </div>
+    <div
+      class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
     >
       <div
-        data-testid="post-header"
-      >
-        PostHeader 
-        post-789
-      </div>
-      <div
-        data-testid="post-content"
-      >
-        PostContent 
-        post-789
-      </div>
-      <div
-        class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="click-stop"
       >
         <ul
           data-testid="post-tags-list"
         />
+      </div>
+      <div
+        data-testid="click-stop"
+      >
         <div
+          data-class-name="w-full flex-1 justify-start md:justify-end"
           data-testid="post-actions"
         >
           Actions 
           post-789
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>

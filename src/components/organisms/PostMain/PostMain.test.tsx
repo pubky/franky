@@ -18,8 +18,8 @@ vi.mock('@/libs', async (importOriginal) => {
 
 // Minimal atoms used by PostMain
 vi.mock('@/atoms', () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" data-class-name={className}>
+  Card: ({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => (
+    <div data-testid="card" data-class-name={className} onClick={onClick}>
       {children}
     </div>
   ),
@@ -28,15 +28,38 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
+  ClickStop: ({ children }: { children: React.ReactNode }) => <div data-testid="click-stop">{children}</div>,
 }));
 
 // Stub organisms composed inside PostMain
 vi.mock('@/organisms', () => ({
   PostHeader: ({ postId }: { postId: string }) => <div data-testid="post-header">PostHeader {postId}</div>,
   PostContent: ({ postId }: { postId: string }) => <div data-testid="post-content">PostContent {postId}</div>,
-  PostActionsBar: ({ postId, className }: { postId: string; className?: string }) => (
+  PostActionsBar: ({
+    postId,
+    className,
+    onReplyClick,
+  }: {
+    postId: string;
+    className?: string;
+    onReplyClick?: () => void;
+  }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
+      {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+    </div>
+  ),
+  DialogReply: ({
+    postId,
+    open,
+    onOpenChangeAction,
+  }: {
+    postId: string;
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog-reply" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
+      DialogReply
     </div>
   ),
 }));

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
@@ -14,6 +15,8 @@ export interface PostMainProps {
 }
 
 export function PostMain({ postId, onClick, className }: PostMainProps) {
+  const [replyDialogOpen, setReplyDialogOpen] = useState(false);
+
   // Fetch post tags
   const postTags = useLiveQuery(async () => {
     return await Core.PostTagsModel.findById(postId);
@@ -25,26 +28,39 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
       label: tag.label,
     })) || [];
 
+  const handleReplyClick = () => {
+    setReplyDialogOpen(true);
+  };
+
   return (
-    <div onClick={onClick} className="cursor-pointer">
-      <Atoms.Card className={Libs.cn('rounded-md py-0', className)}>
+    <>
+      <Atoms.Card className={Libs.cn('cursor-pointer rounded-md py-0', className)} onClick={onClick}>
         <Atoms.CardContent className="flex flex-col gap-4 p-6">
           <Organisms.PostHeader postId={postId} />
           <Organisms.PostContent postId={postId} />
           <div className="flex flex-col justify-between gap-2 md:flex-row md:gap-0">
-            <Molecules.PostTagsList
-              tags={tags}
-              showInput={false}
-              showAddButton={false}
-              addMode
-              showEmojiPicker={false}
-              showTagClose={false}
-            />
+            <Atoms.ClickStop>
+              <Molecules.PostTagsList
+                tags={tags}
+                showInput={false}
+                showAddButton={false}
+                addMode
+                showEmojiPicker={false}
+                showTagClose={false}
+              />
+            </Atoms.ClickStop>
 
-            <Organisms.PostActionsBar postId={postId} />
+            <Atoms.ClickStop>
+              <Organisms.PostActionsBar
+                postId={postId}
+                onReplyClick={handleReplyClick}
+                className="w-full flex-1 justify-start md:justify-end"
+              />
+            </Atoms.ClickStop>
           </div>
         </Atoms.CardContent>
       </Atoms.Card>
-    </div>
+      <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />
+    </>
   );
 }
