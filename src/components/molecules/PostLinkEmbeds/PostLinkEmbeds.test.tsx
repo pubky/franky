@@ -53,6 +53,30 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
 
+    it('renders YouTube embed for shorts URL format', () => {
+      render(<PostLinkEmbeds content="Check out this short: https://www.youtube.com/shorts/dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders YouTube embed for live stream URL format', () => {
+      render(<PostLinkEmbeds content="Live stream: https://www.youtube.com/live/dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('renders YouTube embed for legacy /v URL format', () => {
+      render(<PostLinkEmbeds content="Legacy format: https://www.youtube.com/v/dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
     it('handles YouTube URL with trailing punctuation', () => {
       render(<PostLinkEmbeds content="Check this out: https://www.youtube.com/watch?v=dQw4w9WgXcQ!" />);
 
