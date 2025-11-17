@@ -2,9 +2,14 @@ import { Pubky } from '@/core';
 
 export const COMPOSITE_ID_DELIMITER = ':' as const;
 
+export enum CompositeIdDomain {
+  POSTS = 'posts',
+  FILES = 'files',
+}
+
 export type CompositeIdParams = {
   uri: Pubky;
-  domain: 'posts' | 'files';
+  domain: CompositeIdDomain;
 };
 
 export type CompositeIdResult = {
@@ -13,12 +18,11 @@ export type CompositeIdResult = {
 };
 
 /**
- * Extracts a composite ID from a Pubky URI
- *
- * Parses a pubky:// URI to extract the author and ID,
- * combining them into the canonical format "author:id"
+ * Parses a pubky:// URI to extract the author and ID, 
+ * then builds a composite ID in the format "author:id"
  *
  * @param uri - A pubky URI (e.g., "pubky://author/pub/pubky.app/posts/post123")
+ * @param domain - The domain of the URI (e.g., "posts", "files")
  * @returns Composite ID in "author:id" format, or null if parsing fails
  *
  * @example

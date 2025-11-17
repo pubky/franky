@@ -25,15 +25,36 @@ export class FileApplication {
   }
 
   /**
+   * Persists files to the local database.
+   * Fetches file metadata from nexus, extracts composite IDs from URIs, and saves them locally.
+   *
+   * @param fileUris - Array of file URIs to fetch and persist
+   * @returns Promise that resolves when files are persisted
+   */
+  static async persistFiles(fileUris: string[]): Promise<void> {
+    // TODO: Wrap with try/catch
+    const nexusFiles = await this.fetch({ fileUris });
+    const filesWithCompositeIds = nexusFiles.map((file) => {
+      const compositeId = Core.buildCompositeIdFromPubkyUri({ uri: file.uri, domain: Core.CompositeIdDomain.FILES });
+      return {
+        ...file,
+        id: compositeId
+      };
+    });
+    
+    await Core.LocalFileService.persistFiles({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
+  }
+
+  /**
    * Reads file metadata from nexus by file URIs.
    *
    * @param params - Parameters for reading files
    * @param params.fileUris - Array of file URIs (pubky) to fetch
    * @returns Promise resolving to file metadata from nexus
    */
-  static async fetch({ fileUris }: Core.TReadFilesInput) {
+  static async fetch({ fileUris }: Core.TReadFilesInput): Promise<Core.NexusFileDetails[]> {
     const { url, body } = Core.filesApi.getFiles(fileUris);
-    return await Core.queryNexus<unknown>(url, 'POST', JSON.stringify(body));
+    return await Core.queryNexus<Core.NexusFileDetails[]>(url, 'POST', JSON.stringify(body)) ?? [];
   }
 
   static getAvatarUrl(pubky: Core.Pubky): string {

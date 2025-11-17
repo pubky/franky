@@ -159,11 +159,20 @@ export type NexusNotification = {
 
 // File types
 export type NexusFileDetails = {
-  id: Pubky;
+  id: string;
   name: string;
   src: string;
+  // TODO: Do we have some enum for that
   content_type: string;
   size: number;
-  created_at: number;
+  created_at: Timestamp;
   indexed_at: Timestamp;
+  metadata: Record<string, string>;
+  owner_id: string;
+  uri: string;
+  urls: {
+    feed: string;
+    main: string;
+    small: string;
+  };
 };

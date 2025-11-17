@@ -48,28 +48,34 @@ export class LocalStreamPostsService {
   ): void {
     if (!repliedUri) return;
 
-    const parentCompositePostId = Core.buildPostIdFromPubkyUri(repliedUri);
+    const parentCompositePostId = Core.buildCompositeIdFromPubkyUri({ uri: repliedUri, domain: Core.CompositeIdDomain.POSTS });
     if (!parentCompositePostId) return;
 
     const replyStreamId = Core.buildPostReplyStreamId(parentCompositePostId);
     postReplies[replyStreamId] = [...(postReplies[replyStreamId] || []), replyPostId];
   }
-
-  static async persistPosts(posts: Core.NexusPost[]): Promise<string[]> {
+  
+  static async persistPosts(posts: Core.NexusPost[]): Promise<Core.TPostStreamPersistResult> {
     const postCounts: Core.NexusModelTuple<Core.NexusPostCounts>[] = [];
     const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
     const postDetails: Core.RecordModelBase<string, Core.PostDetailsModelSchema>[] = [];
 
-    const compositePostIds: string[] = [];
     const postReplies: Record<Core.ReplyStreamCompositeId, string[]> = {};
+    const postAttachments: string[] = [];
 
     for (const post of posts) {
       // Build composite ID to ensure uniqueness (authorId:postId)
       const postId = Core.buildCompositeId({ pubky: post.details.author, id: post.details.id });
-      compositePostIds.push(postId);
+      
       postCounts.push([postId, post.counts]);
+      
       postRelationships.push([postId, post.relationships]);
+      if (post.details.attachments) {
+        post.details.attachments.forEach((attachment) => {
+          postAttachments.push(attachment);
+        });
+      }
 
       // Convert TagModel[] to NexusTag[] by accessing the data property
       const nexusTags = post.tags.map((tag) => ({
@@ -106,7 +112,7 @@ export class LocalStreamPostsService {
         }),
       );
     }
-    return compositePostIds;
+    return { postAttachments };
   }
 
   /**

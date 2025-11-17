@@ -4,3 +4,7 @@ export type TPostStreamUpsertParams = {
   streamId: Core.PostStreamId;
   stream: string[];
 };
+
+export type TPostStreamPersistResult = {
+  postAttachments: string[];
+};

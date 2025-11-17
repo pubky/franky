@@ -40,6 +40,10 @@ export class BootstrapApplication {
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);
+    
+    // TODO: That lines in the future will come from the bootstrap data and we will persist directly
+    const { postAttachments } = results[1];
+    await Core.FileApplication.persistFiles(postAttachments);
 
     return { unread: results[results.length - 1] as number, lastRead };
   }
