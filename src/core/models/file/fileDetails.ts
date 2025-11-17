@@ -31,4 +31,3 @@ export class FileDetailsModel
     return this.table.orderBy('indexed_at').reverse().offset(offset).limit(limit).toArray();
   }
 }
-

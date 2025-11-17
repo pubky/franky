@@ -9,4 +9,3 @@ export type TUploadFileInput = {
 export type TReadFilesInput = {
   fileUris: Core.Pubky[];
 };
-

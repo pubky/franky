@@ -8,9 +8,9 @@ export type CompositeIdParams = {
 };
 
 export type CompositeIdResult = {
-    pubky: Pubky;
-    id: string;
-  };
+  pubky: Pubky;
+  id: string;
+};
 
 /**
  * Extracts a composite ID from a Pubky URI

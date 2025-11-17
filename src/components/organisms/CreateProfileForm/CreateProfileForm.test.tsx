@@ -10,6 +10,9 @@ vi.mock('@/core', () => ({
     upload: vi.fn(),
     create: vi.fn(),
   },
+  FileController: {
+    upload: vi.fn(),
+  },
   UserValidator: {
     check: vi.fn(),
   },

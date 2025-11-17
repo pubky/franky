@@ -45,4 +45,3 @@ export class FileApplication {
     return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
   }
 }
-

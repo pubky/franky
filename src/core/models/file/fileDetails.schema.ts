@@ -7,4 +7,3 @@ export type FileDetailsModelSchema = Core.NexusFileDetails;
 export const fileDetailsTableSchema = `
   &id
 `;
-

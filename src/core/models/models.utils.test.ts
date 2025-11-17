@@ -42,4 +42,3 @@ describe('models.utils (composite id)', () => {
     expect(c2).toBe(c1);
   });
 });
-

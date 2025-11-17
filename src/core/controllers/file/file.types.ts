@@ -14,4 +14,3 @@ export type TGetImageUrlParams = {
   fileId: string;
   variant: Core.FileVariant;
 };
-
