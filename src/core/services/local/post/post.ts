@@ -190,34 +190,6 @@ export class LocalPostService {
   }
 
   /**
-   * Get the first N replies for a post
-   *
-   * @param postId - Composite post ID (author:postId)
-   * @param limit - Maximum number of replies to return (default: 3)
-   * @returns Array of reply post IDs (first N replies)
-   *
-   * @throws {DatabaseError} When database operations fail
-   */
-  static async getFirstReplies(postId: string, limit: number = 3): Promise<string[]> {
-    // Get post details to retrieve the URI
-    const postDetails = await Core.PostDetailsModel.findById(postId);
-    if (!postDetails?.uri) {
-      return [];
-    }
-
-    // Query post_relationships to find replies to this post
-    // Simply take the first N replies (they're already in the order they were indexed)
-    const replyRelationships = await Core.PostRelationshipsModel.getReplies(postDetails.uri);
-
-    if (!replyRelationships || replyRelationships.length === 0) {
-      return [];
-    }
-
-    // Take the first N replies and extract their IDs
-    return replyRelationships.slice(0, limit).map((rel) => rel.id);
-  }
-
-  /**
    * Helper method to update post counts safely
    */
   private static async updatePostCount(
