@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as Core from '@/core';
 
 describe('PostStreamApplication', () => {
-  const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
+  const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId;
   const DEFAULT_AUTHOR = 'user-1';
   const BASE_TIMESTAMP = 1000000;
 
@@ -138,7 +138,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 10,
         streamTail: 0,
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       expect(result.nextPageIds).toHaveLength(10);
@@ -160,7 +160,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 10,
         streamTail: 0,
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       // Should have fetched and cached posts
@@ -199,7 +199,7 @@ describe('PostStreamApplication', () => {
         limit: 10,
         streamTail: staleTimestamp, // Passing old timestamp
         lastPostId: undefined, // Initial load (no pagination cursor)
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       // Should detect no cache and force streamTail to 0 (fetch from beginning)
@@ -237,7 +237,7 @@ describe('PostStreamApplication', () => {
         limit: 10,
         lastPostId: `${DEFAULT_AUTHOR}:post-5`, // Last post in cache
         streamTail: BASE_TIMESTAMP + 4, // Timestamp of last post
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       // Should return newly fetched posts
@@ -270,7 +270,7 @@ describe('PostStreamApplication', () => {
         limit: 10,
         lastPostId: `${DEFAULT_AUTHOR}:post-2`,
         streamTail: BASE_TIMESTAMP + 1,
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       expect(result.nextPageIds).toHaveLength(0);
@@ -291,7 +291,7 @@ describe('PostStreamApplication', () => {
         streamId,
         limit: 10,
         streamTail: 0,
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       // Should return all cached posts (3) since getStreamFromCache returns null when insufficient
@@ -324,7 +324,7 @@ describe('PostStreamApplication', () => {
         limit: 10,
         lastPostId: `${DEFAULT_AUTHOR}:post-5`,
         streamTail: BASE_TIMESTAMP + 4,
-        viewerId: DEFAULT_AUTHOR,
+        viewerId: 'user-viewer' as Core.Pubky,
       });
 
       // Should still work, fetching from Nexus with undefined start timestamp
@@ -748,22 +748,24 @@ describe('PostStreamApplication', () => {
       expect(persistUsersSpy).toHaveBeenCalledWith([]);
     });
 
-    it('should propagate error when queryNexus fails for posts', async () => {
+    it('should handle error gracefully when queryNexus fails for posts', async () => {
       const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
 
       // Mock queryNexus to throw error
       const nexusError = new Error('Network error');
       vi.spyOn(Core, 'queryNexus').mockRejectedValue(nexusError);
 
-      await expect(
-        Core.PostStreamApplication.fetchMissingPostsFromNexus({
-          cacheMissPostIds,
-          viewerId,
-        }),
-      ).rejects.toThrow('Network error');
+      // Should not throw - errors are caught and logged
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify queryNexus was called
+      expect(Core.queryNexus).toHaveBeenCalled();
     });
 
-    it('should propagate error when persistPosts fails', async () => {
+    it('should handle error gracefully when persistPosts fails', async () => {
       const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
       const mockNexusPosts = createMockNexusPosts(1);
 
@@ -774,15 +776,17 @@ describe('PostStreamApplication', () => {
       const persistError = new Error('Failed to persist posts');
       vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockRejectedValue(persistError);
 
-      await expect(
-        Core.PostStreamApplication.fetchMissingPostsFromNexus({
-          cacheMissPostIds,
-          viewerId,
-        }),
-      ).rejects.toThrow('Failed to persist posts');
+      // Should not throw - errors are caught and logged
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify persistPosts was called
+      expect(Core.LocalStreamPostsService.persistPosts).toHaveBeenCalled();
     });
 
-    it('should propagate error when queryNexus fails for users', async () => {
+    it('should handle error gracefully when queryNexus fails for users', async () => {
       const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
       const mockNexusPosts = createMockNexusPosts(1);
 
@@ -797,15 +801,17 @@ describe('PostStreamApplication', () => {
       // Mock getNotPersistedUsersInCache to return user-1 (not cached)
       vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue([undefined]);
 
-      await expect(
-        Core.PostStreamApplication.fetchMissingPostsFromNexus({
-          cacheMissPostIds,
-          viewerId,
-        }),
-      ).rejects.toThrow('Network error fetching users');
+      // Should not throw - errors are caught and logged
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify queryNexus was called for both posts and users
+      expect(Core.queryNexus).toHaveBeenCalledTimes(2);
     });
 
-    it('should propagate error when persistUsers fails', async () => {
+    it('should handle error gracefully when persistUsers fails', async () => {
       const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
       const mockNexusPosts = createMockNexusPosts(1);
       const mockNexusUsers = [createMockNexusUser(DEFAULT_AUTHOR)];
@@ -824,12 +830,14 @@ describe('PostStreamApplication', () => {
       const persistUsersError = new Error('Failed to persist users');
       vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockRejectedValue(persistUsersError);
 
-      await expect(
-        Core.PostStreamApplication.fetchMissingPostsFromNexus({
-          cacheMissPostIds,
-          viewerId,
-        }),
-      ).rejects.toThrow('Failed to persist users');
+      // Should not throw - errors are caught and logged
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify persistUsers was called
+      expect(Core.LocalStreamUsersService.persistUsers).toHaveBeenCalled();
     });
 
     it('should handle multiple posts with same author', async () => {
@@ -929,7 +937,7 @@ describe('PostStreamApplication', () => {
       expect(persistUsersSpy).toHaveBeenCalledWith(mockNexusUsers);
     });
 
-    it('should handle error when getNotPersistedUsersInCache fails', async () => {
+    it('should handle error gracefully when getNotPersistedUsersInCache fails', async () => {
       const cacheMissPostIds = [`${DEFAULT_AUTHOR}:post-1`];
       const mockNexusPosts = createMockNexusPosts(1);
 
@@ -941,12 +949,14 @@ describe('PostStreamApplication', () => {
       const findError = new Error('Database query failed');
       vi.spyOn(Core.UserDetailsModel, 'findByIdsPreserveOrder').mockRejectedValue(findError);
 
-      await expect(
-        Core.PostStreamApplication.fetchMissingPostsFromNexus({
-          cacheMissPostIds,
-          viewerId,
-        }),
-      ).rejects.toThrow('Database query failed');
+      // Should not throw - errors are caught and logged
+      await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+        cacheMissPostIds,
+        viewerId,
+      });
+
+      // Verify findByIdsPreserveOrder was called
+      expect(Core.UserDetailsModel.findByIdsPreserveOrder).toHaveBeenCalled();
     });
   });
 });

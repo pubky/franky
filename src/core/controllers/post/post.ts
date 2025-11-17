@@ -78,4 +78,14 @@ export class PostController {
 
     await Core.PostApplication.delete({ postId, deleterId });
   }
+
+  /**
+   * Get post counts for a specific post
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get counts for
+   * @returns Post counts (with default values if not found)
+   */
+  static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
+    return await Core.LocalPostService.getPostCounts(postId);
+  }
 }
