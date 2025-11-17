@@ -186,6 +186,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
         </span>
         <span
           class="flex-1 text-base font-medium text-secondary-foreground"
+          data-testid="typography"
         >
           Example
         </span>
@@ -518,6 +519,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         </svg>
         <span
           class="flex-1 text-base font-medium text-secondary-foreground"
+          data-testid="typography"
         >
           bitcoin.org
         </span>
@@ -559,6 +561,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         </svg>
         <span
           class="flex-1 text-base font-medium text-secondary-foreground"
+          data-testid="typography"
         >
           x.com
         </span>
@@ -593,6 +596,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         </svg>
         <span
           class="flex-1 text-base font-medium text-secondary-foreground"
+          data-testid="typography"
         >
           youtube.com
         </span>
@@ -618,6 +622,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         </svg>
         <span
           class="flex-1 text-base font-medium text-secondary-foreground"
+          data-testid="typography"
         >
           telegram.chat
         </span>
