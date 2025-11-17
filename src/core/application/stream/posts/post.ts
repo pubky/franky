@@ -37,24 +37,29 @@ export class PostStreamApplication {
   }
 
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
-    const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
-    const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
-    if (postBatch) {
-      await Core.LocalStreamPostsService.persistPosts(postBatch);
-      const cacheMissUserIds = postBatch
-        ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
-        : [];
-      if (cacheMissUserIds.length > 0) {
-        const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
-          user_ids: cacheMissUserIds,
-          viewer_id: viewerId,
-        });
-        const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
-        if (userBatch) {
-          await Core.LocalStreamUsersService.persistUsers(userBatch);
+    try {
+      const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
+      const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
+      if (postBatch) {
+        await Core.LocalStreamPostsService.persistPosts(postBatch);
+        const cacheMissUserIds = postBatch
+          ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
+          : [];
+        if (cacheMissUserIds.length > 0) {
+          const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+            user_ids: cacheMissUserIds,
+            viewer_id: viewerId,
+          });
+          const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
+          if (userBatch) {
+            await Core.LocalStreamUsersService.persistUsers(userBatch);
+          }
         }
       }
+    } catch (error) {
+      Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
     }
+    
   }
 
   // ============================================================================
