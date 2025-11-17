@@ -4,6 +4,21 @@ import { FeedbackCard } from './FeedbackCard';
 
 // Mock the atoms
 vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    'data-testid': dataTestId,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+    [key: string]: unknown;
+  }) => (
+    <div data-testid={dataTestId || 'container'} className={className} {...props}>
+      {children}
+    </div>
+  ),
   Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="avatar" className={className}>
       {children}

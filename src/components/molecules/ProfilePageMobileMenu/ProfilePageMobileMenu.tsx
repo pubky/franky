@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import { ProfilePageType, PROFILE_PAGE_TYPES } from '@/app/profile/types';
 
@@ -28,15 +29,16 @@ export interface ProfilePageMobileMenuProps {
 
 export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: ProfilePageMobileMenuProps) {
   return (
-    <div className="sticky top-20 z-30 bg-background lg:hidden">
-      <div className="flex w-full">
+    <Atoms.Container overrideDefaults={true} className="sticky top-20 z-30 bg-background lg:hidden">
+      <Atoms.Container overrideDefaults={true} className="flex w-full">
         {PROFILE_MENU_ITEMS.map((item, index) => {
           const Icon = item.icon;
           const isSelected = item.pageType === activePage;
 
           return (
-            <div
+            <Atoms.Container
               key={index}
+              overrideDefaults={true}
               className={Libs.cn(
                 'flex flex-1 justify-center border-b px-0 py-1.5',
                 isSelected ? 'border-foreground' : 'border-border',
@@ -50,10 +52,10 @@ export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: Profil
               >
                 <Icon size={20} className={isSelected ? 'text-foreground' : 'text-muted-foreground'} />
               </button>
-            </div>
+            </Atoms.Container>
           );
         })}
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

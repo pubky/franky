@@ -89,12 +89,15 @@ exports[`MobileHeader - Snapshots > matches snapshot for right button 1`] = `
 exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick 1`] = `
 <div
   class="sticky top-0 z-30 bg-background shadow-xs-dark lg:hidden"
+  data-testid="container"
 >
   <div
     class="px-6 pt-6 pb-0"
+    data-testid="container"
   >
     <div
       class="flex items-center justify-between py-3"
+      data-testid="container"
     >
       <button
         class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs hover:text-accent-foreground hover:bg-accent/50 border-none size-9"
@@ -208,12 +211,15 @@ exports[`MobileHeader - Snapshots > matches snapshot with custom onLeftIconClick
 exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="sticky top-0 z-30 bg-background shadow-xs-dark lg:hidden"
+  data-testid="container"
 >
   <div
     class="px-6 pt-6 pb-0"
+    data-testid="container"
   >
     <div
       class="flex items-center justify-between py-3"
+      data-testid="container"
     >
       <button
         class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs hover:text-accent-foreground hover:bg-accent/50 border-none size-9"
@@ -327,9 +333,11 @@ exports[`MobileHeader - Snapshots > matches snapshot with default props 1`] = `
 exports[`MobileHeader - Snapshots > matches snapshot with padding container 1`] = `
 <div
   class="px-6 pt-6 pb-0"
+  data-testid="container"
 >
   <div
     class="flex items-center justify-between py-3"
+    data-testid="container"
   >
     <button
       class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs hover:text-accent-foreground hover:bg-accent/50 border-none size-9"

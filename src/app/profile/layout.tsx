@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { PROFILE_ROUTES } from '@/app';
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/components/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
@@ -55,19 +56,21 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
       <Molecules.ProfilePageMobileMenu activePage={activePage} onPageChangeAction={setActivePage} />
 
       <Molecules.ProfilePageLayoutWrapper>
-        <div className="hidden bg-background pb-6 shadow-sm lg:block">
+        <Atoms.Container overrideDefaults={true} className="hidden bg-background pb-6 shadow-sm lg:block">
           {!isLoading && <Organisms.ProfilePageHeader {...profileData} {...handlers} />}
-        </div>
+        </Atoms.Container>
 
-        <div className="flex gap-6">
+        <Atoms.Container overrideDefaults={true} className="flex gap-6">
           <Molecules.ProfilePageFilterBar
             activePage={filterBarActivePage}
             onPageChangeAction={(page) => setActivePage(page)}
           />
 
-          <div className="flex-1">{children}</div>
+          <Atoms.Container overrideDefaults={true} className="flex-1">
+            {children}
+          </Atoms.Container>
           <Molecules.ProfilePageSidebar />
-        </div>
+        </Atoms.Container>
       </Molecules.ProfilePageLayoutWrapper>
 
       <Molecules.MobileFooter />

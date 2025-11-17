@@ -1,5 +1,6 @@
 'use client';
 
+import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
@@ -9,9 +10,9 @@ export function ProfilePageProfile() {
   const { profileData, handlers, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
 
   return (
-    <div className="mt-6 flex flex-col gap-4 lg:mt-0 lg:hidden">
+    <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0 lg:hidden">
       {!isLoading && <Organisms.ProfilePageHeader {...profileData} {...handlers} />}
-      <div className="flex flex-col gap-4 text-base text-muted-foreground">
+      <Atoms.Container overrideDefaults={true} className="flex flex-col gap-4 text-base text-muted-foreground">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
           magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
@@ -84,7 +85,7 @@ export function ProfilePageProfile() {
           repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut
           reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
         </p>
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

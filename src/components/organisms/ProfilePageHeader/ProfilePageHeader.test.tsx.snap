@@ -3,10 +3,12 @@
 exports[`ProfilePageHeader > matches snapshot 1`] = `
 <div>
   <div
-    class="flex flex-col lg:flex-row gap-6 items-center lg:items-start p-6 lg:p-0 bg-card lg:bg-transparent rounded-lg lg:rounded-none"
+    class="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
+    data-testid="container"
   >
     <div
       class="relative lg:px-4"
+      data-testid="container"
     >
       <span
         class="relative flex shrink-0 overflow-hidden rounded-full size-16 lg:size-36"
@@ -18,16 +20,19 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
         </span>
       </span>
       <div
-        class="absolute -bottom-1 -right-1 size-10 lg:size-16 flex items-center justify-center text-3xl lg:text-5xl leading-none"
+        class="absolute -right-1 -bottom-1 flex size-10 items-center justify-center text-3xl leading-none lg:size-16 lg:text-5xl"
+        data-testid="container"
       >
         🌴
       </div>
     </div>
     <div
-      class="flex flex-col gap-5 flex-1"
+      class="flex flex-1 flex-col gap-5"
+      data-testid="container"
     >
       <div
         class="flex flex-col text-center lg:text-left gap-2"
+        data-testid="container"
       >
         <h1
           class="text-2xl font-bold text-white lg:text-6xl"
@@ -43,7 +48,8 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
         </p>
       </div>
       <div
-        class="flex flex-wrap gap-3 items-center justify-center lg:justify-start"
+        class="flex flex-wrap items-center justify-center gap-3 lg:justify-start"
+        data-testid="container"
       >
         <button
           class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 h-8 gap-1.5 px-3 has-[>svg]:px-2.5"

@@ -3,9 +3,11 @@
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and links 1`] = `
 <div
   class="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+  data-testid="container"
 >
   <div
     class="flex flex-col gap-2"
+    data-testid="container"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -15,9 +17,11 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
     </h2>
     <div
       class="flex flex-col gap-2"
+      data-testid="container"
     >
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -69,6 +73,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
       </div>
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -157,6 +162,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
   </div>
   <div
     class="flex flex-col"
+    data-testid="container"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -166,6 +172,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
     </h2>
     <div
       class="flex flex-col"
+      data-testid="container"
     >
       <a
         class="flex items-center gap-2.5 py-1"
@@ -196,12 +203,15 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
     </h2>
     <div
       class="flex flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+      data-testid="container"
     >
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+          data-testid="container"
         >
           <span
             class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
@@ -236,12 +246,14 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
         </div>
         <div
           class="text-base font-bold text-foreground"
+          data-testid="container"
         >
           Your Name
         </div>
       </div>
       <div
         class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
+        data-testid="container"
       >
         What do you think about Pubky?
       </div>
@@ -253,9 +265,11 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="sticky top-[calc(var(--header-height)+var(--profile-header-height))] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+  data-testid="container"
 >
   <div
     class="flex flex-col gap-2"
+    data-testid="container"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -265,9 +279,11 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
     </h2>
     <div
       class="flex flex-col gap-2"
+      data-testid="container"
     >
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -319,6 +335,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
       </div>
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -370,6 +387,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
       </div>
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
@@ -458,6 +476,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
   </div>
   <div
     class="flex flex-col"
+    data-testid="container"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -467,6 +486,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
     </h2>
     <div
       class="flex flex-col"
+      data-testid="container"
     >
       <a
         class="flex items-center gap-2.5 py-1"
@@ -614,12 +634,15 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
     </h2>
     <div
       class="flex flex-col gap-4 rounded-lg border border-dashed border-input p-6"
+      data-testid="container"
     >
       <div
         class="flex items-center gap-2"
+        data-testid="container"
       >
         <div
           class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+          data-testid="container"
         >
           <span
             class="relative flex shrink-0 overflow-hidden rounded-full h-12 w-12"
@@ -654,12 +677,14 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         </div>
         <div
           class="text-base font-bold text-foreground"
+          data-testid="container"
         >
           Your Name
         </div>
       </div>
       <div
         class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
+        data-testid="container"
       >
         What do you think about Pubky?
       </div>

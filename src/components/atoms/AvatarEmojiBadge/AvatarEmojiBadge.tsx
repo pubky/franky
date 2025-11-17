@@ -1,11 +1,16 @@
+import * as Atoms from '@/atoms';
+
 export interface AvatarEmojiBadgeProps {
   emoji: string;
 }
 
 export function AvatarEmojiBadge({ emoji }: AvatarEmojiBadgeProps) {
   return (
-    <div className="absolute -bottom-1 -right-1 size-10 lg:size-16 flex items-center justify-center text-3xl lg:text-5xl leading-none">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="absolute -right-1 -bottom-1 flex size-10 items-center justify-center text-3xl leading-none lg:size-16 lg:text-5xl"
+    >
       {emoji}
-    </div>
+    </Atoms.Container>
   );
 }

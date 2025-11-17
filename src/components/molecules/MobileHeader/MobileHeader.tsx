@@ -18,16 +18,16 @@ export function MobileHeader({
   showRightButton = true,
 }: MobileHeaderProps) {
   return (
-    <div className="sticky top-0 z-30 bg-background shadow-xs-dark lg:hidden">
-      <div className="px-6 pt-6 pb-0">
-        <div className="flex items-center justify-between py-3">
+    <Atoms.Container overrideDefaults={true} className="sticky top-0 z-30 bg-background shadow-xs-dark lg:hidden">
+      <Atoms.Container overrideDefaults={true} className="px-6 pt-6 pb-0">
+        <Atoms.Container overrideDefaults={true} className="flex items-center justify-between py-3">
           {/* Left icon - filters */}
           {showLeftButton ? (
             <Atoms.Button variant="ghost" size="icon" onClick={onLeftIconClick}>
               <Libs.SlidersHorizontal className="h-6 w-6" />
             </Atoms.Button>
           ) : (
-            <div />
+            <Atoms.Container overrideDefaults={true} />
           )}
 
           {/* Center - Logo */}
@@ -39,10 +39,10 @@ export function MobileHeader({
               <Libs.Activity className="h-6 w-6" />
             </Atoms.Button>
           ) : (
-            <div />
+            <Atoms.Container overrideDefaults={true} />
           )}
-        </div>
-      </div>
-    </div>
+        </Atoms.Container>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

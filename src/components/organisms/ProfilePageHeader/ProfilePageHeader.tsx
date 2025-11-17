@@ -22,8 +22,11 @@ export function ProfilePageHeader({
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 items-center lg:items-start p-6 lg:p-0 bg-card lg:bg-transparent rounded-lg lg:rounded-none">
-      <div className="relative lg:px-4">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
+    >
+      <Atoms.Container overrideDefaults={true} className="relative lg:px-4">
         <Atoms.Avatar className="size-16 lg:size-36">
           {avatarUrl ? (
             <Atoms.AvatarImage src={avatarUrl} alt={name} />
@@ -34,10 +37,13 @@ export function ProfilePageHeader({
           )}
         </Atoms.Avatar>
         <Atoms.AvatarEmojiBadge emoji={emoji} />
-      </div>
+      </Atoms.Container>
 
-      <div className="flex flex-col gap-5 flex-1">
-        <div className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}>
+      <Atoms.Container overrideDefaults={true} className="flex flex-1 flex-col gap-5">
+        <Atoms.Container
+          overrideDefaults={true}
+          className={Libs.cn('flex flex-col text-center lg:text-left', bio && 'gap-2')}
+        >
           <Atoms.Typography as="h1" size="lg" className="text-white lg:text-6xl">
             {name}
           </Atoms.Typography>
@@ -46,9 +52,12 @@ export function ProfilePageHeader({
               {bio}
             </Atoms.Typography>
           )}
-        </div>
+        </Atoms.Container>
 
-        <div className="flex flex-wrap gap-3 items-center justify-center lg:justify-start">
+        <Atoms.Container
+          overrideDefaults={true}
+          className="flex flex-wrap items-center justify-center gap-3 lg:justify-start"
+        >
           <Atoms.Button variant="secondary" size="sm" onClick={onEdit}>
             <Icons.Pencil className="size-4" />
             Edit
@@ -70,8 +79,8 @@ export function ProfilePageHeader({
             Sign out
           </Atoms.Button>
           <Molecules.StatusPicker emoji={emoji} status={status} onClick={onStatusClick} />
-        </div>
-      </div>
-    </div>
+        </Atoms.Container>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }
