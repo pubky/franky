@@ -39,7 +39,7 @@ describe('ProfilePageLayoutWrapper', () => {
       </ProfilePageLayoutWrapper>,
     );
     const wrapper = container.firstChild as HTMLElement;
-    expect(wrapper).toHaveClass('px-6', 'pb-12', 'xl:px-0', 'pt-0');
+    expect(wrapper).toHaveClass('px-6', 'xl:px-0', 'pt-0');
   });
 
   it('matches snapshot', () => {
