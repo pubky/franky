@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { userApi } from './user.api';
 import {
   TUserViewParams,
@@ -154,6 +154,78 @@ describe('User API', () => {
       expect(endpointKeys).toContain('relationship');
       expect(endpointKeys).toContain('taggers');
       expect(endpointKeys).toContain('tags');
+    });
+  });
+});
+
+describe('NexusUserService', () => {
+  const testUserId = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry' as Core.Pubky;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('tags', () => {
+    it('should construct correct URL and handle successful response', async () => {
+      const mockTags = [
+        { label: 'developer', taggers: [] as Core.Pubky[], taggers_count: 0, relationship: false },
+      ] as Core.NexusTag[];
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockTags);
+
+      const result = await Core.NexusUserService.tags({
+        user_id: testUserId,
+        skip_tags: 5,
+        limit_tags: 20,
+      });
+
+      expect(result).toEqual(mockTags);
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/tags?skip_tags=5&limit_tags=20`,
+      );
+    });
+
+    it('should handle null/undefined responses gracefully', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+
+      const result = await Core.NexusUserService.tags({
+        user_id: testUserId,
+        skip_tags: 0,
+        limit_tags: 10,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('taggers', () => {
+    it('should construct correct URL with encoded label', async () => {
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      await Core.NexusUserService.taggers({
+        user_id: testUserId,
+        label: 'rust & wasm',
+        skip: 10,
+        limit: 5,
+      });
+
+      // Verify label is URL-encoded (& becomes %26)
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/\/taggers\/rust%20%26%20wasm\?skip=10&limit=5$/),
+      );
+    });
+
+    it('should handle null/undefined responses gracefully', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+
+      const result = await Core.NexusUserService.taggers({
+        user_id: testUserId,
+        label: 'developer',
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(result).toEqual([]);
     });
   });
 });
