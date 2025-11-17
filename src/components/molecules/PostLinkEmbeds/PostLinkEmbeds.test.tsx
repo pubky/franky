@@ -93,8 +93,14 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
 
-    it('does not render embed for invalid YouTube video ID', () => {
-      render(<PostLinkEmbeds content="Invalid: https://www.youtube.com/watch?v=invalid" />);
+    it('does not render embed for YouTube video ID with invalid character length', () => {
+      render(<PostLinkEmbeds content="Invalid length: https://www.youtube.com/watch?v=dQw4w9WgXc" />);
+
+      expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for YouTube video ID with invalid characters', () => {
+      render(<PostLinkEmbeds content="Invalid chars: https://www.youtube.com/watch?v=dQw4w9WgXc@" />);
 
       expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
     });
