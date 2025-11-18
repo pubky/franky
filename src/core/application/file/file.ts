@@ -24,6 +24,24 @@ export class FileApplication {
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
   }
 
+  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
+    const compositeFileIds = fileAttachments.flatMap((uri) => {
+      const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
+      return compositeId ? [compositeId] : [];
+    });
+    const files = await Core.LocalFileService.findByIds(compositeFileIds);
+    return files;
+  }
+
+  static getAvatarUrl(pubky: Core.Pubky): string {
+    return Core.filesApi.getAvatarUrl(pubky);
+  }
+
+  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
+    const { pubky, id } = Core.parseCompositeId(fileId);
+    return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
+  }
+
   /**
    * Persists files to the local database.
    * Fetches file metadata from nexus, extracts composite IDs from URIs, and saves them locally.
@@ -35,26 +53,16 @@ export class FileApplication {
     if (fileUris.length === 0) {
       return;
     }
-    // TODO: Wrap with try/catch
     const nexusFiles = await this.fetch({ fileUris });
     const filesWithCompositeIds = nexusFiles.map((file) => {
       const compositeId = Core.buildCompositeIdFromPubkyUri({ uri: file.uri, domain: Core.CompositeIdDomain.FILES });
       return {
         ...file,
-        id: compositeId
+        id: compositeId,
       };
     });
-    
-    await Core.LocalFileService.persistFiles({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
-  }
 
-  static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
-    const compositeFileIds = fileAttachments.flatMap((uri) => {
-      const compositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
-      return compositeId ? [compositeId] : [];
-    });
-    const files = await Core.LocalFileService.findByIds(compositeFileIds);
-    return files;
+    await Core.LocalFileService.persistFiles({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
   }
 
   /**
@@ -64,17 +72,8 @@ export class FileApplication {
    * @param params.fileUris - Array of file URIs (pubky) to fetch
    * @returns Promise resolving to file metadata from nexus
    */
-  static async fetch({ fileUris }: Core.TReadFilesInput): Promise<Core.NexusFileDetails[]> {
+  private static async fetch({ fileUris }: Core.TReadFilesInput): Promise<Core.NexusFileDetails[]> {
     const { url, body } = Core.filesApi.getFiles(fileUris);
     return await Core.queryNexus<Core.NexusFileDetails[]>(url, 'POST', JSON.stringify(body)) ?? [];
-  }
-
-  static getAvatarUrl(pubky: Core.Pubky): string {
-    return Core.filesApi.getAvatarUrl(pubky);
-  }
-
-  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
-    const { pubky, id } = Core.parseCompositeId(fileId);
-    return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
   }
 }

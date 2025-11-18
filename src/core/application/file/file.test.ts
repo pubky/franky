@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { BlobResult, FileResult } from 'pubky-app-specs';
+import type { Pubky } from '@/core/models/models.types';
+import type { NexusFileDetails } from '@/core/services/nexus/nexus.types';
+import { FileVariant } from '@/core/services/nexus/file/file.types';
 
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({}));
@@ -18,8 +21,60 @@ vi.mock('@/core/services/homeserver', () => ({
   },
 }));
 
+// Mock LocalFileService
+vi.mock('@/core/services/local/file', () => ({
+  LocalFileService: {
+    findByIds: vi.fn(),
+    persistFiles: vi.fn(),
+  },
+}));
+
+// Mock filesApi
+vi.mock('@/core/services/nexus/file/file.api', () => ({
+  filesApi: {
+    getAvatarUrl: vi.fn(),
+    getImageUrl: vi.fn(),
+    getFiles: vi.fn(),
+  },
+}));
+
+// Mock queryNexus
+vi.mock('@/core/services/nexus/nexus.utils', async () => {
+  const actual = await vi.importActual('@/core/services/nexus/nexus.utils');
+  return {
+    ...actual,
+    queryNexus: vi.fn(),
+  };
+});
+
 let FileApplication: typeof import('./file').FileApplication;
 let Core: typeof import('@/core');
+
+const TEST_PUBKY = 'operrr8wsbpr3ue9d4qj41ge1kcc6r7fdiy6o3ugjrrhi4y77rd0' as Pubky;
+const TEST_TIMESTAMP = 1234567890;
+
+const createMockFile = (
+  id: string,
+  name: string,
+  uri: string,
+  overrides?: Partial<NexusFileDetails>,
+): NexusFileDetails => ({
+  id,
+  name,
+  src: `src-${name}`,
+  content_type: 'image/jpeg',
+  size: 100,
+  created_at: TEST_TIMESTAMP,
+  indexed_at: TEST_TIMESTAMP,
+  metadata: {},
+  owner_id: TEST_PUBKY,
+  uri,
+  urls: { feed: '', main: '', small: '' },
+  ...overrides,
+});
+
+const createFileUri = (fileId: string, pubky: Pubky = TEST_PUBKY) =>
+  `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -74,6 +129,273 @@ describe('FileApplication', () => {
       expect(putBlobSpy).toHaveBeenCalledTimes(1);
       expect(requestSpy).not.toHaveBeenCalled();
       expect(fileResult.file.toJson).not.toHaveBeenCalled();
+    });
+
+    it('propagates errors if the file record upload fails', async () => {
+      const blobResult = {
+        blob: { data: new Uint8Array([1, 2, 3]) },
+        meta: { url: 'pubky://user/blob/file' },
+      } as unknown as BlobResult;
+      const fileJson = { id: 'file-1', kind: 'image' };
+      const fileResult = {
+        file: { toJson: vi.fn(() => fileJson) },
+        meta: { url: 'pubky://user/pub/pubky.app/files/file' },
+      } as unknown as FileResult;
+
+      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
+      const requestSpy = vi
+        .spyOn(Core.HomeserverService, 'request')
+        .mockRejectedValueOnce(new Error('file record upload failed'));
+
+      await expect(FileApplication.upload({ blobResult, fileResult })).rejects.toThrow('file record upload failed');
+      expect(putBlobSpy).toHaveBeenCalledTimes(1);
+      expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
+      expect(requestSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getMetadata', () => {
+    it('returns files for valid file attachment URIs', async () => {
+      const fileId1 = 'file-123';
+      const fileId2 = 'file-456';
+      const uri1 = createFileUri(fileId1);
+      const uri2 = createFileUri(fileId2);
+      const compositeId1 = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId1 });
+      const compositeId2 = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId2 });
+
+      const mockFiles = [
+        createMockFile(compositeId1, 'file1.jpg', uri1),
+        createMockFile(compositeId2, 'file2.png', uri2, { content_type: 'image/png', size: 200 }),
+      ];
+
+      vi.spyOn(Core.LocalFileService, 'findByIds').mockResolvedValue(mockFiles);
+
+      const result = await FileApplication.getMetadata({ fileAttachments: [uri1, uri2] });
+
+      expect(Core.LocalFileService.findByIds).toHaveBeenCalledWith([compositeId1, compositeId2]);
+      expect(result).toEqual(mockFiles);
+    });
+
+    it('filters out invalid URIs and only queries valid ones', async () => {
+      const fileId = 'file-123';
+      const validUri = createFileUri(fileId);
+      const invalidUri = 'not-a-valid-uri';
+      const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
+
+      const mockFiles = [createMockFile(compositeId, 'file1.jpg', validUri)];
+
+      vi.spyOn(Core.LocalFileService, 'findByIds').mockResolvedValue(mockFiles);
+
+      const result = await FileApplication.getMetadata({ fileAttachments: [validUri, invalidUri] });
+
+      expect(Core.LocalFileService.findByIds).toHaveBeenCalledWith([compositeId]);
+      expect(result).toEqual(mockFiles);
+    });
+
+    it('returns empty array when no valid URIs are provided', async () => {
+      vi.spyOn(Core.LocalFileService, 'findByIds').mockResolvedValue([]);
+
+      const result = await FileApplication.getMetadata({ fileAttachments: ['invalid-uri-1', 'invalid-uri-2'] });
+
+      expect(Core.LocalFileService.findByIds).toHaveBeenCalledWith([]);
+      expect(result).toEqual([]);
+    });
+
+    it('returns empty array when fileAttachments is empty', async () => {
+      vi.spyOn(Core.LocalFileService, 'findByIds').mockResolvedValue([]);
+
+      const result = await FileApplication.getMetadata({ fileAttachments: [] });
+
+      expect(Core.LocalFileService.findByIds).toHaveBeenCalledWith([]);
+      expect(result).toEqual([]);
+    });
+
+    it('propagates errors from LocalFileService', async () => {
+      const fileId = 'file-123';
+      const uri = createFileUri(fileId);
+      const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
+
+      const error = new Error('Database query failed');
+      vi.spyOn(Core.LocalFileService, 'findByIds').mockRejectedValue(error);
+
+      await expect(FileApplication.getMetadata({ fileAttachments: [uri] })).rejects.toThrow('Database query failed');
+      expect(Core.LocalFileService.findByIds).toHaveBeenCalledWith([compositeId]);
+    });
+  });
+
+  describe('getAvatarUrl', () => {
+    it('delegates to filesApi.getAvatarUrl', () => {
+      const expectedUrl = 'https://cdn.example.com/avatar/encoded-pubky';
+
+      vi.spyOn(Core.filesApi, 'getAvatarUrl').mockReturnValue(expectedUrl);
+
+      const result = FileApplication.getAvatarUrl(TEST_PUBKY);
+
+      expect(Core.filesApi.getAvatarUrl).toHaveBeenCalledWith(TEST_PUBKY);
+      expect(result).toBe(expectedUrl);
+    });
+  });
+
+  describe('getImageUrl', () => {
+    it('parses composite ID and delegates to filesApi.getImageUrl', () => {
+      const fileId = 'file-123';
+      const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
+      const variant = FileVariant.SMALL;
+      const expectedUrl = 'https://cdn.example.com/files/encoded-pubky/encoded-file-id/small';
+
+      const parseCompositeIdSpy = vi.spyOn(Core, 'parseCompositeId').mockReturnValue({ pubky: TEST_PUBKY, id: fileId });
+      vi.spyOn(Core.filesApi, 'getImageUrl').mockReturnValue(expectedUrl);
+
+      const result = FileApplication.getImageUrl({ fileId: compositeId, variant });
+
+      expect(parseCompositeIdSpy).toHaveBeenCalledWith(compositeId);
+      expect(Core.filesApi.getImageUrl).toHaveBeenCalledWith({ pubky: TEST_PUBKY, file_id: fileId, variant });
+      expect(result).toBe(expectedUrl);
+    });
+
+    it('propagates errors from parseCompositeId', () => {
+      const invalidCompositeId = 'invalid-id';
+      const variant = FileVariant.FEED;
+
+      vi.spyOn(Core, 'parseCompositeId').mockImplementation(() => {
+        throw new Error(`Invalid composite id: ${invalidCompositeId}`);
+      });
+
+      expect(() => FileApplication.getImageUrl({ fileId: invalidCompositeId, variant })).toThrow(
+        `Invalid composite id: ${invalidCompositeId}`,
+      );
+      expect(Core.filesApi.getImageUrl).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('persistFiles', () => {
+    it('returns early when fileUris is empty', async () => {
+      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles');
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus');
+
+      await FileApplication.persistFiles([]);
+
+      expect(queryNexusSpy).not.toHaveBeenCalled();
+      expect(persistFilesSpy).not.toHaveBeenCalled();
+    });
+
+    it('fetches files from nexus and persists them with composite IDs', async () => {
+      const fileId1 = 'file-123';
+      const fileId2 = 'file-456';
+      const uri1 = createFileUri(fileId1);
+      const uri2 = createFileUri(fileId2);
+      const compositeId1 = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId1 });
+      const compositeId2 = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId2 });
+
+      const nexusFiles = [
+        createMockFile('', 'file1.jpg', uri1),
+        createMockFile('', 'file2.png', uri2, { content_type: 'image/png', size: 200 }),
+      ];
+
+      const expectedFilesWithIds = [
+        { ...nexusFiles[0], id: compositeId1 },
+        { ...nexusFiles[1], id: compositeId2 },
+      ];
+
+      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [uri1, uri2] } };
+      vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(nexusFiles);
+      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+
+      await FileApplication.persistFiles([uri1, uri2]);
+
+      expect(Core.filesApi.getFiles).toHaveBeenCalledWith([uri1, uri2]);
+      expect(Core.queryNexus).toHaveBeenCalledWith(
+        mockGetFilesResult.url,
+        'POST',
+        JSON.stringify(mockGetFilesResult.body),
+      );
+      expect(persistFilesSpy).toHaveBeenCalledWith({ files: expectedFilesWithIds });
+    });
+
+    it('filters out files with invalid URIs when building composite IDs', async () => {
+      const fileId = 'file-123';
+      const validUri = createFileUri(fileId);
+      const invalidUri = 'not-a-valid-uri';
+      const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
+
+      const nexusFiles = [
+        createMockFile('', 'file1.jpg', validUri),
+        createMockFile('', 'file2.png', invalidUri, { content_type: 'image/png', size: 200 }),
+      ];
+
+      const expectedFilesWithIds = [
+        { ...nexusFiles[0], id: compositeId },
+        { ...nexusFiles[1], id: null as unknown as string }, // buildCompositeIdFromPubkyUri returns null for invalid URI
+      ];
+
+      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [validUri, invalidUri] } };
+      vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(nexusFiles);
+      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+
+      await FileApplication.persistFiles([validUri, invalidUri]);
+
+      expect(persistFilesSpy).toHaveBeenCalledWith({ files: expectedFilesWithIds });
+    });
+
+    it('handles empty response from queryNexus', async () => {
+      const uri = 'pubky://user/pub/pubky.app/files/file-123';
+
+      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [uri] } };
+      vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+
+      await FileApplication.persistFiles([uri]);
+
+      expect(Core.queryNexus).toHaveBeenCalled();
+      expect(persistFilesSpy).toHaveBeenCalledWith({ files: [] });
+    });
+
+    it('handles null response from queryNexus', async () => {
+      const uri = 'pubky://user/pub/pubky.app/files/file-123';
+
+      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [uri] } };
+      vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null as unknown as NexusFileDetails[]);
+      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);
+
+      await FileApplication.persistFiles([uri]);
+
+      expect(Core.queryNexus).toHaveBeenCalled();
+      expect(persistFilesSpy).toHaveBeenCalledWith({ files: [] });
+    });
+
+    it('propagates errors from queryNexus', async () => {
+      const uri = 'pubky://user/pub/pubky.app/files/file-123';
+      const error = new Error('Network error');
+
+      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [uri] } };
+      vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
+      vi.spyOn(Core, 'queryNexus').mockRejectedValue(error);
+      const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles');
+
+      await expect(FileApplication.persistFiles([uri])).rejects.toThrow('Network error');
+      expect(persistFilesSpy).not.toHaveBeenCalled();
+    });
+
+    it('propagates errors from LocalFileService.persistFiles', async () => {
+      const fileId = 'file-123';
+      const uri = createFileUri(fileId);
+      const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
+
+      const nexusFiles = [createMockFile('', 'file1.jpg', uri)];
+      const expectedFilesWithIds = [{ ...nexusFiles[0], id: compositeId }];
+
+      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [uri] } };
+      vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(nexusFiles);
+      const error = new Error('Database save failed');
+      vi.spyOn(Core.LocalFileService, 'persistFiles').mockRejectedValue(error);
+
+      await expect(FileApplication.persistFiles([uri])).rejects.toThrow('Database save failed');
+      expect(Core.LocalFileService.persistFiles).toHaveBeenCalledWith({ files: expectedFilesWithIds });
     });
   });
 });

@@ -17,12 +17,6 @@ export class FileController {
    * @param params.file - The file to upload
    * @param params.pubky - User's public key
    * @returns Promise resolving to the file URL
-   *
-   * @example
-   * ```typescript
-   * const file = new File([blob], 'image.png', { type: 'image/png' });
-   * const fileUrl = await FileController.upload({ file, pubky: userPubky });
-   * ```
    */
   static async upload({ file, pubky }: Core.TUploadFileParams): Promise<string> {
     const fileContent = await file.arrayBuffer();
@@ -43,11 +37,6 @@ export class FileController {
    *
    * @param pubky - User's public key
    * @returns CDN URL string for the avatar
-   *
-   * @example
-   * ```typescript
-   * const avatarUrl = FileController.getAvatarUrl(userPubky);
-   * ```
    */
   static getAvatarUrl(pubky: Core.Pubky): string {
     return Core.FileApplication.getAvatarUrl(pubky);
@@ -61,33 +50,17 @@ export class FileController {
    * @param params.fileId - File identifier
    * @param params.variant - Image variant (small, feed, main)
    * @returns CDN URL string
-   *
-   * @example
-   * ```typescript
-   * const imageUrl = FileController.getImageUrl({
-   *   pubky: userPubky,
-   *   fileId: 'file123',
-   *   variant: Core.FileVariant.FEED
-   * });
-   * ```
    */
   static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
     return Core.FileApplication.getImageUrl({ fileId, variant });
   }
 
   /**
-   * Reads file metadata from nexus by file URIs.
+   * Gets files metadata
    *
    * @param params - Parameters for reading files
    * @param params.fileUris - Array of file URIs (pubky) to fetch
    * @returns Promise resolving to file metadata
-   *
-   * @example
-   * ```typescript
-   * const files = await FileController.read({
-   *   fileUris: ['pubky1', 'pubky2']
-   * });
-   * ```
    */
   static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {
     return await Core.FileApplication.getMetadata({ fileAttachments });
