@@ -1,1 +1,2 @@
-export * from './Timeline';
+export * from './Posts';
+export * from './PostReplies';

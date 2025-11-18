@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 
 export function useElementHeight() {
-  const [height, setHeight] = useState(100);
+  const [height, setHeight] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -16,11 +16,19 @@ export function useElementHeight() {
       }
     };
 
-    // Initial height
-    updateHeight();
+    // Initial height measurement - use requestAnimationFrame to ensure DOM is ready
+    const measureInitialHeight = () => {
+      requestAnimationFrame(() => {
+        updateHeight();
+      });
+    };
+
+    measureInitialHeight();
 
     // Use ResizeObserver to watch for content changes
-    const resizeObserver = new ResizeObserver(updateHeight);
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(updateHeight);
+    });
     resizeObserver.observe(ref.current);
 
     return () => {

@@ -28,6 +28,7 @@ export * from './PopoverInvite';
 export * from './PopoverInviteHomeserver';
 export * from './PopoverPublicKey';
 export * from './PopoverTradeoffs';
+export * from './PostLinkEmbeds';
 export * from './ProfileNavigation';
 export * from './PostTag';
 export * from './PostTagAddButton';
