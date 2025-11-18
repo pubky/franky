@@ -2,10 +2,10 @@ import { Table } from 'dexie';
 import * as Libs from '@/libs';
 import { PostStreamModelSchema } from './postStream.schema';
 import { db } from '@/core/database';
-import { PostStreamTypes } from './postStream.types';
+import { PostStreamId } from './postStream.types';
 import { BaseStreamModel } from '@/core/models/shared/stream/stream';
 
-export class PostStreamModel extends BaseStreamModel<PostStreamTypes, string, PostStreamModelSchema> {
+export class PostStreamModel extends BaseStreamModel<PostStreamId, string, PostStreamModelSchema> {
   static table: Table<PostStreamModelSchema> = db.table('post_streams');
 
   name: string | undefined;
@@ -16,7 +16,7 @@ export class PostStreamModel extends BaseStreamModel<PostStreamTypes, string, Po
   }
 
   // Custom upsert method to handle name property
-  static async createWithName(id: PostStreamTypes, stream: string[], name: string): Promise<PostStreamModelSchema> {
+  static async createWithName(id: PostStreamId, stream: string[], name: string): Promise<PostStreamModelSchema> {
     try {
       const streamData = { id, name, stream } as PostStreamModelSchema;
       await PostStreamModel.table.put(streamData);
