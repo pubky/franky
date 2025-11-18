@@ -152,6 +152,11 @@ export type NexusPost = {
   bookmark: NexusBookmark | null;
 };
 
+export type NexusPostsKeyStream = {
+  post_keys: string[];
+  last_post_score: number;
+};
+
 export type NexusNotification = {
   timestamp: number;
   body: Record<string, unknown>; // Generic object to handle all notification types
