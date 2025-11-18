@@ -19,6 +19,21 @@ const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
 const IGNORED_PROTOCOLS = ['ftp:', 'mailto:'];
 
 /**
+ * Create a hostname-to-provider lookup map for O(1) performance
+ * Lazily initialized on first use to avoid module circular dependency issues
+ */
+let PROVIDER_MAP: Map<string, Providers.EmbedProvider> | null = null;
+
+const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
+  if (!PROVIDER_MAP) {
+    PROVIDER_MAP = new Map<string, Providers.EmbedProvider>(
+      EMBED_PROVIDERS.flatMap((provider) => provider.domains.map((domain) => [domain, provider] as const)),
+    );
+  }
+  return PROVIDER_MAP;
+};
+
+/**
  * Parse content for embeddable links
  * Returns the first embeddable link and its provider
  */
@@ -37,15 +52,15 @@ const parseContentForLinkEmbed = (content: string): Types.ParseContentForLinkEmb
     const parsedUrl = new URL(url);
     const hostname = parsedUrl.hostname.toLowerCase();
 
-    // Try each provider until one matches
-    for (const provider of EMBED_PROVIDERS) {
-      if (provider.isDomain(hostname)) {
-        const embed = provider.parseEmbed(url);
-        if (embed) return { embed, provider };
-      }
-    }
+    // O(1) lookup using the provider map
+    const providerMap = getProviderMap();
+    const provider = providerMap.get(hostname);
+    if (!provider) return { embed: null, provider: null };
 
-    return { embed: null, provider: null };
+    const embed = provider.parseEmbed(url);
+    if (!embed) return { embed: null, provider: null };
+
+    return { embed, provider };
   } catch {
     return { embed: null, provider: null };
   }

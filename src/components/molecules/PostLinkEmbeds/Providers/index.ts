@@ -1,2 +1,2 @@
-export * from './Youtube';
-export * from './Provider.types';
+export { Youtube } from './Youtube';
+export type { EmbedProvider } from './Provider.types';

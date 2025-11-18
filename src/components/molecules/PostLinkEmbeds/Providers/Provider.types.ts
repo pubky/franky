@@ -5,9 +5,10 @@ import type { ReactNode } from 'react';
  */
 export interface EmbedProvider {
   /**
-   * Check if the hostname belongs to this provider's domain
+   * List of supported domains for this provider (lowercase)
+   * Used for O(1) hostname-to-provider lookup
    */
-  isDomain: (hostname: string) => boolean;
+  domains: readonly string[];
 
   /**
    * Parse URL and return embed information

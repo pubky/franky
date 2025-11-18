@@ -63,25 +63,26 @@ const extractYouTubeTimestamp = (url: string): number | null => {
 };
 
 /**
+ * YouTube supported domains (lowercase)
+ */
+const YOUTUBE_DOMAINS = [
+  'youtube.com',
+  'www.youtube.com',
+  'youtu.be',
+  'm.youtube.com',
+  'www.youtube-nocookie.com',
+  'youtube-nocookie.com',
+] as const;
+
+/**
  * YouTube embed provider
  * Implements the standard EmbedProvider interface
  */
 export const Youtube: ProviderTypes.EmbedProvider = {
   /**
-   * Check if hostname is a YouTube domain
+   * List of supported YouTube domains
    */
-  isDomain: (hostname: string): boolean => {
-    const youtubeDomains = [
-      'youtube.com',
-      'www.youtube.com',
-      'youtu.be',
-      'm.youtube.com',
-      'www.youtube-nocookie.com',
-      'youtube-nocookie.com',
-    ];
-
-    return youtubeDomains.includes(hostname.toLowerCase());
-  },
+  domains: YOUTUBE_DOMAINS,
 
   /**
    * Parse YouTube URL and return embed information

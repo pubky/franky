@@ -2,29 +2,22 @@ import { describe, it, expect } from 'vitest';
 import { Youtube } from './ProviderYoutube';
 
 describe('ProviderYoutube', () => {
-  describe('isDomain', () => {
-    it('returns true for youtube.com domains', () => {
-      expect(Youtube.isDomain('youtube.com')).toBe(true);
-      expect(Youtube.isDomain('www.youtube.com')).toBe(true);
-      expect(Youtube.isDomain('m.youtube.com')).toBe(true);
-      expect(Youtube.isDomain('youtube-nocookie.com')).toBe(true);
-      expect(Youtube.isDomain('www.youtube-nocookie.com')).toBe(true);
+  describe('domains', () => {
+    it('exposes list of supported YouTube domains', () => {
+      expect(Youtube.domains).toBeDefined();
+      expect(Youtube.domains.length).toBeGreaterThan(0);
+      expect(Youtube.domains).toContain('youtube.com');
+      expect(Youtube.domains).toContain('www.youtube.com');
+      expect(Youtube.domains).toContain('youtu.be');
+      expect(Youtube.domains).toContain('m.youtube.com');
+      expect(Youtube.domains).toContain('youtube-nocookie.com');
+      expect(Youtube.domains).toContain('www.youtube-nocookie.com');
     });
 
-    it('returns true for youtu.be domain', () => {
-      expect(Youtube.isDomain('youtu.be')).toBe(true);
-    });
-
-    it('returns false for non-YouTube domains', () => {
-      expect(Youtube.isDomain('vimeo.com')).toBe(false);
-      expect(Youtube.isDomain('twitch.tv')).toBe(false);
-      expect(Youtube.isDomain('example.com')).toBe(false);
-    });
-
-    it('is case-insensitive', () => {
-      expect(Youtube.isDomain('YouTube.com')).toBe(true);
-      expect(Youtube.isDomain('YOUTUBE.COM')).toBe(true);
-      expect(Youtube.isDomain('YouTu.be')).toBe(true);
+    it('has all domains in lowercase', () => {
+      Youtube.domains.forEach((domain) => {
+        expect(domain).toBe(domain.toLowerCase());
+      });
     });
   });
 
