@@ -40,20 +40,17 @@ const extractYouTubeTimestamp = (url: string): number | null => {
   try {
     const parsedUrl = new URL(url);
     const timeParam = parsedUrl.searchParams.get('t');
-
     if (!timeParam) return null;
 
-    // Handle h/m/s format (e.g., "1h2m3s", "2m30s", "45s")
-    const hmsMatch = timeParam.match(/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?/);
-    if (hmsMatch) {
+    // Require at least one component
+    const hmsMatch = timeParam.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)$/);
+    if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
       const hours = parseInt(hmsMatch[1] || '0', 10);
       const minutes = parseInt(hmsMatch[2] || '0', 10);
       const seconds = parseInt(hmsMatch[3] || '0', 10);
-      const total = hours * 3600 + minutes * 60 + seconds;
-      return total > 0 ? total : null;
+      return hours * 3600 + minutes * 60 + seconds;
     }
 
-    // Handle plain number or number with 's' suffix
     const numericMatch = timeParam.match(/^(\d+)s?$/);
     if (numericMatch) {
       return parseInt(numericMatch[1], 10);
