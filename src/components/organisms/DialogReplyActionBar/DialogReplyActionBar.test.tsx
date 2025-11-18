@@ -44,6 +44,37 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   ),
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
+  Typography: ({
+    children,
+    as,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: string;
+    size?: string;
+    className?: string;
+  }) => {
+    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
+    return (
+      <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 describe('DialogReplyActionBar', () => {
@@ -103,12 +134,6 @@ describe('DialogReplyActionBar', () => {
 
     const postButton = screen.getByRole('button', { name: 'Post reply' });
     expect(postButton).not.toBeDisabled();
-  });
-
-  it('applies className prop', () => {
-    const { container } = render(<DialogReplyActionBar className="custom-class" />);
-
-    expect(container.firstChild).toHaveClass('custom-class');
   });
 
   it('renders Post button with label text', () => {

@@ -1,14 +1,18 @@
+import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
 export function PostReplyConnector() {
   return (
-    <div>
+    <Atoms.Container overrideDefaults>
       {/* Vertical line - 35px long from post card edge to horizontal connector */}
-      <div className="absolute top-[-13px] left-[-12px] h-[35px] w-px border-l border-secondary" />
+      <Atoms.Container
+        className="absolute top-[-13px] left-[-12px] h-[35px] w-px border-l border-secondary"
+        overrideDefaults
+      />
       {/* Horizontal connector at avatar level */}
-      <div className="absolute top-[22px] left-[-12px]">
+      <Atoms.Container className="absolute top-[22px] left-[-12px]" overrideDefaults>
         <Libs.LineHorizontal />
-      </div>
-    </div>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

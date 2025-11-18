@@ -37,8 +37,8 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
   };
 
   const handleTagAdd = (tag: string) => {
-    const normalizedTag = tag.trim().toLowerCase();
     setTags((prevTags) => {
+      const normalizedTag = tag.trim().toLowerCase();
       const isDuplicate = prevTags.some((existingTag) => existingTag.label.toLowerCase() === normalizedTag);
       if (!isDuplicate) {
         return [...prevTags, { id: `${Date.now()}`, label: tag.trim() }];
@@ -52,9 +52,12 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
   };
 
   return (
-    <div className="relative flex flex-col rounded-md border border-dashed border-input p-6">
+    <Atoms.Container
+      className="relative flex flex-col rounded-md border border-dashed border-input p-6"
+      overrideDefaults
+    >
       <Atoms.PostReplyConnector />
-      <div className="flex flex-col gap-4">
+      <Atoms.Container className="flex flex-col gap-4" overrideDefaults>
         <Organisms.PostHeader
           postId={currentUserId}
           hideTime={true}
@@ -62,20 +65,17 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
           maxLength={MAX_CHARACTER_LENGTH}
         />
 
-        {/* Input field */}
-        <div>
-          <Atoms.Textarea
-            placeholder="Write a reply..."
-            className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            value={replyContent}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            maxLength={MAX_CHARACTER_LENGTH}
-            rows={1}
-          />
-        </div>
+        <Atoms.Textarea
+          placeholder="Write a reply..."
+          className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+          value={replyContent}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          maxLength={MAX_CHARACTER_LENGTH}
+          rows={1}
+        />
 
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:gap-0">
+        <Atoms.Container className="flex flex-col justify-between gap-4 md:flex-row md:gap-0" overrideDefaults>
           <Molecules.PostTagsList
             tags={tags.map((tag) => ({ label: tag.label }))}
             showInput={false}
@@ -88,8 +88,8 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
           />
 
           <Organisms.DialogReplyActionBar onPostClick={handleReplySubmit} isPostDisabled={!replyContent.trim()} />
-        </div>
-      </div>
-    </div>
+        </Atoms.Container>
+      </Atoms.Container>
+    </Atoms.Container>
   );
 }

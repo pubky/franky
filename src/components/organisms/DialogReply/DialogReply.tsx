@@ -19,14 +19,14 @@ export function DialogReply({ postId, open, onOpenChangeAction }: DialogReplyPro
         </Atoms.DialogHeader>
         <Atoms.Container className="gap-3">
           <Organisms.DialogReplyPost postId={postId} />
-          <div className="relative pl-6">
+          <Atoms.Container className="relative pl-6" overrideDefaults>
             <Organisms.DialogReplyInput
               postId={postId}
               onSuccessAction={() => {
                 onOpenChangeAction(false);
               }}
             />
-          </div>
+          </Atoms.Container>
         </Atoms.Container>
       </Atoms.DialogContent>
     </Atoms.Dialog>

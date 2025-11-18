@@ -29,6 +29,19 @@ vi.mock('@/atoms', () => ({
     </div>
   ),
   ClickStop: ({ children }: { children: React.ReactNode }) => <div data-testid="click-stop">{children}</div>,
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
 }));
 
 // Stub organisms composed inside PostMain

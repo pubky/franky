@@ -35,38 +35,58 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
 
   // Show loading if user details or post details (when needed) are not available
   if (!userDetails || (!hideTime && !postDetails)) {
-    return <div className="text-muted-foreground">Loading header...</div>;
+    return (
+      <Atoms.Container className="text-muted-foreground" overrideDefaults>
+        Loading header...
+      </Atoms.Container>
+    );
   }
 
   const timeAgo = !hideTime && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
-    <div className="flex justify-between">
-      <div className="flex gap-3">
+    <Atoms.Container className="flex justify-between" overrideDefaults>
+      <Atoms.Container className="flex gap-3" overrideDefaults>
         <Atoms.Avatar size="default">
           <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>
-        <div className="flex flex-col">
-          <span className="text-base font-bold text-foreground">{userDetails.name}</span>
-          <div className="flex min-w-0 items-center gap-2">
-            <span className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase">
+        <Atoms.Container className="flex flex-col" overrideDefaults>
+          <Atoms.Typography as="span" size="sm" className="text-base font-bold text-foreground">
+            {userDetails.name}
+          </Atoms.Typography>
+          <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
+            <Atoms.Typography
+              as="span"
+              size="sm"
+              className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+            >
               @{Libs.formatPublicKey({ key: userId, length: 8 })}
-            </span>
+            </Atoms.Typography>
             {characterCount !== undefined && maxLength !== undefined && (
-              <span className="flex-shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground">
+              <Atoms.Typography
+                as="span"
+                size="sm"
+                className="flex-shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+              >
                 {characterCount}/{maxLength}
-              </span>
+              </Atoms.Typography>
             )}
-          </div>
-        </div>
-      </div>
+          </Atoms.Container>
+        </Atoms.Container>
+      </Atoms.Container>
       {timeAgo && (
-        <div className="flex items-center gap-1">
+        <Atoms.Container className="flex items-center gap-1" overrideDefaults>
           <Libs.Clock className="size-4 text-muted-foreground" />
-          <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground">{timeAgo}</span>
-        </div>
+          <Atoms.Typography
+            as="span"
+            size="sm"
+            className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+          >
+            {timeAgo}
+          </Atoms.Typography>
+        </Atoms.Container>
       )}
-    </div>
+    </Atoms.Container>
   );
 }

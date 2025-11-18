@@ -2,7 +2,6 @@
 
 exports[`ClickStop - Snapshots > matches snapshot with children 1`] = `
 <div
-  class=""
   data-testid="click-stop"
 >
   <button>
@@ -22,7 +21,6 @@ exports[`ClickStop - Snapshots > matches snapshot with custom className 1`] = `
 
 exports[`ClickStop - Snapshots > matches snapshot with custom data-testid 1`] = `
 <div
-  class=""
   data-testid="custom-testid"
 >
   Custom Test ID
@@ -31,7 +29,6 @@ exports[`ClickStop - Snapshots > matches snapshot with custom data-testid 1`] = 
 
 exports[`ClickStop - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class=""
   data-testid="click-stop"
 >
   Default ClickStop
@@ -40,7 +37,6 @@ exports[`ClickStop - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`ClickStop - Snapshots > matches snapshot with multiple children 1`] = `
 <div
-  class=""
   data-testid="click-stop"
 >
   <button>
@@ -57,7 +53,6 @@ exports[`ClickStop - Snapshots > matches snapshot with multiple children 1`] = `
 
 exports[`ClickStop - Snapshots > matches snapshot with nested content 1`] = `
 <div
-  class=""
   data-testid="click-stop"
 >
   <div>

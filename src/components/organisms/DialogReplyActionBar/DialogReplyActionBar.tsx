@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
@@ -10,7 +11,6 @@ export interface DialogReplyActionBarProps {
   onArticleClick?: () => void;
   onPostClick?: () => void;
   isPostDisabled?: boolean;
-  className?: string;
 }
 
 interface ActionButtonConfig {
@@ -29,7 +29,6 @@ export function DialogReplyActionBar({
   onArticleClick,
   onPostClick,
   isPostDisabled = false,
-  className,
 }: DialogReplyActionBarProps) {
   const commonButtonProps = {
     variant: 'secondary' as const,
@@ -69,7 +68,7 @@ export function DialogReplyActionBar({
   ];
 
   return (
-    <div className={Libs.cn('flex items-center justify-end gap-2', className)}>
+    <Atoms.Container className="flex items-center justify-end gap-2" overrideDefaults>
       {actionButtons.map(
         ({ icon: Icon, onClick, ariaLabel, disabled, className: buttonClassName, showLabel }, index) => (
           <Atoms.Button
@@ -81,16 +80,18 @@ export function DialogReplyActionBar({
             aria-label={ariaLabel}
           >
             {showLabel ? (
-              <div className="flex items-center gap-2">
+              <Atoms.Container className="flex items-center gap-2" overrideDefaults>
                 <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
-                <span className="text-xs leading-4 font-bold text-secondary-foreground">Post</span>
-              </div>
+                <Atoms.Typography as="span" size="sm" className="text-xs leading-4 font-bold text-secondary-foreground">
+                  Post
+                </Atoms.Typography>
+              </Atoms.Container>
             ) : (
               <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
             )}
           </Atoms.Button>
         ),
       )}
-    </div>
+    </Atoms.Container>
   );
 }

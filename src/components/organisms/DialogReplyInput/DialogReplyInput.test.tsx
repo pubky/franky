@@ -41,6 +41,19 @@ vi.mock('@/atoms', () => ({
       {children}
     </button>
   )),
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
 }));
 
 vi.mock('@/molecules', () => ({
@@ -378,7 +391,7 @@ describe('DialogReplyInput - Snapshots', () => {
   });
 
   it('matches snapshot in default state', () => {
-    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccess={mockOnSuccess} />);
+    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccessAction={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -389,7 +402,7 @@ describe('DialogReplyInput - Snapshots', () => {
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
     });
-    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccess={mockOnSuccess} />);
+    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccessAction={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -400,7 +413,7 @@ describe('DialogReplyInput - Snapshots', () => {
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
     });
-    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccess={mockOnSuccess} />);
+    const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccessAction={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

@@ -2,6 +2,30 @@ import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { PostReplyConnector } from './PostReplyConnector';
 
+vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
+}));
+
+vi.mock('@/libs', () => ({
+  LineHorizontal: () => (
+    <svg width="12" height="12" viewBox="0 0 12 12" className="fill-secondary">
+      <path fillRule="evenodd" clipRule="evenodd" d="M0 0h12v12H0z" />
+    </svg>
+  ),
+}));
+
 describe('PostReplyConnector', () => {
   it('renders connector elements', () => {
     const { container } = render(<PostReplyConnector />);
@@ -10,6 +34,7 @@ describe('PostReplyConnector', () => {
     const wrapper = container.firstChild;
     expect(wrapper).toBeInTheDocument();
     expect(wrapper).toBeInstanceOf(HTMLDivElement);
+    expect(wrapper).toHaveAttribute('data-testid', 'container');
   });
 
   it('renders vertical line with correct styling', () => {

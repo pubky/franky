@@ -38,7 +38,7 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
         <Atoms.CardContent className="flex flex-col gap-4 p-6">
           <Organisms.PostHeader postId={postId} />
           <Organisms.PostContent postId={postId} />
-          <div className="flex flex-col justify-between gap-2 md:flex-row md:gap-0">
+          <Atoms.Container className="flex flex-col justify-between gap-2 md:flex-row md:gap-0" overrideDefaults>
             <Atoms.ClickStop>
               <Molecules.PostTagsList
                 tags={tags}
@@ -57,7 +57,7 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
                 className="w-full flex-1 justify-start md:justify-end"
               />
             </Atoms.ClickStop>
-          </div>
+          </Atoms.Container>
         </Atoms.CardContent>
       </Atoms.Card>
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />

@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
-import { cn } from '@/libs';
+import * as Atoms from '@/atoms';
 
 export interface ClickStopProps {
-  children?: ReactNode;
+  children: ReactNode;
   className?: string;
   'data-testid'?: string;
 }
@@ -13,8 +13,13 @@ export function ClickStop({ children, className, 'data-testid': dataTestId }: Cl
   };
 
   return (
-    <div onClick={handleClick} className={cn(className)} data-testid={dataTestId || 'click-stop'}>
+    <Atoms.Container
+      onClick={handleClick}
+      className={className}
+      overrideDefaults
+      data-testid={dataTestId || 'click-stop'}
+    >
       {children}
-    </div>
+    </Atoms.Container>
   );
 }

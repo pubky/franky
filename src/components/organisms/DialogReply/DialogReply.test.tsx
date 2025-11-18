@@ -206,8 +206,10 @@ describe('DialogReply', () => {
     const onOpenChangeAction = vi.fn();
     render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
-    const container = screen.getByTestId('container');
-    expect(container).toHaveClass('gap-3');
+    const containers = screen.getAllByTestId('container');
+    const mainContainer = containers.find((c) => c.className.includes('gap-3'));
+    expect(mainContainer).toBeInTheDocument();
+    expect(mainContainer).toHaveClass('gap-3');
   });
 
   it('handles open prop correctly', () => {

@@ -13,6 +13,37 @@ vi.mock('@/atoms', () => ({
   Avatar: vi.fn(({ children }) => <div data-testid="avatar">{children}</div>),
   AvatarImage: vi.fn(() => <img data-testid="avatar-image" alt="" />),
   AvatarFallback: vi.fn(({ children }) => <div data-testid="avatar-fallback">{children}</div>),
+  Container: ({
+    children,
+    className,
+    overrideDefaults,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => (
+    <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
+      {children}
+    </div>
+  ),
+  Typography: ({
+    children,
+    as,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    as?: string;
+    size?: string;
+    className?: string;
+  }) => {
+    const Tag = (as || 'p') as keyof JSX.IntrinsicElements;
+    return (
+      <Tag data-testid="typography" data-as={as} data-size={size} className={className}>
+        {children}
+      </Tag>
+    );
+  },
 }));
 
 vi.mock('@/core', () => ({
@@ -33,6 +64,10 @@ vi.mock('@/libs', async (importOriginal) => {
   return {
     ...actual,
     cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+    timeAgo: vi.fn(() => '2h'),
+    extractInitials: vi.fn(({ name }) => name?.substring(0, 2).toUpperCase() || ''),
+    formatPublicKey: vi.fn(({ key, length }) => key?.substring(0, length) || ''),
+    Clock: vi.fn(({ className }: { className?: string }) => <svg data-testid="clock-icon" className={className} />),
   };
 });
 

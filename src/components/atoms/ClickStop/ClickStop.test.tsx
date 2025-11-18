@@ -2,6 +2,24 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ClickStop } from './ClickStop';
 
+vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    onClick,
+    'data-testid': dataTestId,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    onClick?: (e: React.MouseEvent) => void;
+    'data-testid'?: string;
+  }) => (
+    <div data-testid={dataTestId || 'container'} className={className} onClick={onClick}>
+      {children}
+    </div>
+  ),
+}));
+
 describe('ClickStop', () => {
   it('renders with default props', () => {
     render(<ClickStop>Default ClickStop</ClickStop>);
@@ -9,6 +27,7 @@ describe('ClickStop', () => {
     expect(element).toBeInTheDocument();
     expect(element.tagName).toBe('DIV');
     expect(element).toHaveAttribute('data-testid', 'click-stop');
+    expect(element.closest('[data-testid="click-stop"]')).toBeInTheDocument();
   });
 
   it('stops event propagation on click', () => {

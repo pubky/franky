@@ -35,6 +35,7 @@ exports[`DialogReply - Snapshots > matches snapshot with default props 1`] = `
       </div>
       <div
         class="relative pl-6"
+        data-testid="container"
       >
         <div
           data-testid="dialog-reply-input"
@@ -86,6 +87,7 @@ exports[`DialogReply - Snapshots > matches snapshot with onOpenChangeAction prop
       </div>
       <div
         class="relative pl-6"
+        data-testid="container"
       >
         <div
           data-testid="dialog-reply-input"
@@ -137,6 +139,7 @@ exports[`DialogReply - Snapshots > matches snapshot with open prop 1`] = `
       </div>
       <div
         class="relative pl-6"
+        data-testid="container"
       >
         <div
           data-testid="dialog-reply-input"
