@@ -12,9 +12,3 @@ export type TReadPostStreamChunkResponse = {
   nextPageIds: string[];
   timestamp: number | undefined;
 };
-
-
-export type TTimelineInitialCursorResponse = {
-  streamTail: number;
-  lastPostId: string | undefined;
-};

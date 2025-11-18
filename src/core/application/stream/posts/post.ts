@@ -1,32 +1,34 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
-const NO_CACHE_PERSISTED = { streamTail: 0, lastPostId: undefined };
-
 export class PostStreamApplication {
   private constructor() {}
 
   // ============================================================================
   // Public API
   // ============================================================================
-
-  static async getTimelineInitialCursor(
+  
+  static async getCachedLastPostTimestamp(
     streamId: Core.PostStreamId,
-  ): Promise<Core.TTimelineInitialCursorResponse> {
+  ): Promise<number> {
     try {
       const postStream = await Core.PostStreamModel.findById(streamId);
-      if (!postStream) {
-        return NO_CACHE_PERSISTED;
+      if (!postStream || postStream.stream.length === 0) {
+        return 0;
       }
+
       const lastPostId = postStream.stream[postStream.stream.length - 1];
       const postDetails = await Core.PostDetailsModel.findById(lastPostId);
-      if (postDetails) {
-        return { streamTail: postDetails.indexed_at, lastPostId };
+
+      if (!postDetails) {
+        Libs.Logger.warn('Post details not found for last post in stream', { streamId, lastPostId });
+        return 0;
       }
-      return NO_CACHE_PERSISTED;
+
+      return postDetails.indexed_at;
     } catch (error) {
       Libs.Logger.warn('Failed to get timeline initial cursor', { streamId, error });
-      return NO_CACHE_PERSISTED;
+      return 0;
     }
   }
 
@@ -42,9 +44,9 @@ export class PostStreamApplication {
       const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
 
       if (cachedStream) {
-        const cacheResult = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
-        if (cacheResult) {
-          return { nextPageIds: cacheResult.postIds, cacheMissPostIds: [], timestamp: undefined };
+        const streamChunk = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
+        if (streamChunk.length > 0) {
+          return { nextPageIds: streamChunk, cacheMissPostIds: [], timestamp: undefined };
         }
       }
 
@@ -91,32 +93,12 @@ export class PostStreamApplication {
   // Internal Helpers
   // ============================================================================
 
-  // TODO: Delete fn because the below reason
-  private static async getTimestampFromPostId(postId: string): Promise<number | undefined> {
-    try {
-      const postDetails = await Core.PostDetailsModel.findById(postId);
-      return postDetails?.indexed_at;
-    } catch (error) {
-      Libs.Logger.warn('Failed to get timestamp from post ID', { postId, error });
-      return undefined;
-    }
-  }
-
   private static async fetchStreamFromNexus({
     streamId,
     limit,
     streamTail,
     viewerId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
-    // TODO: DELETE FROM
-    // const streamTailUndefined = lastPostId ? await this.getTimestampFromPostId(lastPostId) : streamTail;
-    // if (!streamTailUndefined) {
-    //   // throw new Error('Stream tail is required');
-    //   return { nextPageIds: [], cacheMissPostIds: [], timestamp: undefined };
-    // }
-    // streamTail = streamTailUndefined;
-    // TODO: DELETE FINISH
-
     const { params, invokeEndpoint, extraParams } = Core.createPostStreamParams(streamId, streamTail, limit, viewerId);
     const postStreamChunk = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
@@ -151,36 +133,37 @@ export class PostStreamApplication {
     lastPostId,
     limit,
     cachedStream,
-  }: Core.TCacheStreamParams): Promise<{ postIds: string[]; timestamp: number | undefined } | null> {
+  }: Core.TCacheStreamParams): Promise<string[]> {
     // TODO: Could be a case that it does not have sufficient posts, in which case we need to fetch more from Nexus
     // e.g. in the cache there is only limit - 5 posts and the missing ones we have to download
     // From now, if cache exists and has posts, return from cache
     // Handle limit 0 case: return empty array immediately without fetching from Nexus
     if (limit === 0) {
-      return { postIds: [], timestamp: undefined };
+      return [];
     }
 
     let postIds: string[] | null = null;
 
+    // If the lastPostId is not provided, it means that we are in the head of the stream
     if (!lastPostId && cachedStream.stream.length >= limit) {
       postIds = cachedStream.stream.slice(0, limit);
     } else if (lastPostId) {
       const postIndex = cachedStream.stream.indexOf(lastPostId);
       if (postIndex === -1) {
-        return null;
+        return [];
       }
 
       if (postIndex + 1 + limit <= cachedStream.stream.length) {
         postIds = cachedStream.stream.slice(postIndex + 1, postIndex + 1 + limit);
       } else {
-        return null;
+        return [];
       }
     }
 
     if (!postIds || postIds.length === 0) {
-      return null;
+      return [];
     }
 
-    return { postIds, timestamp: undefined };
+    return postIds;
   }
 }

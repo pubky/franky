@@ -63,7 +63,16 @@ export class StreamPostsController {
     return { nextPageIds, timestamp };
   }
 
-  static async getTimelineInitialCursor(streamId: Core.PostStreamId): Promise<Core.TTimelineInitialCursorResponse> {
-    return await Core.PostStreamApplication.getTimelineInitialCursor(streamId);
+  /**
+   * Gets the timestamp of the last cached post in a stream.
+   *
+   * Extracts the indexed_at timestamp from the oldest post in the cached stream.
+   * Returns 0 if no cached stream exists or if the last post's details cannot be found.
+   *
+   * @param streamId - The ID of the post stream to query
+   * @returns Promise resolving to the timestamp (number) or 0 if not found
+   */
+  static async getCachedLastPostTimestamp(streamId: Core.PostStreamId): Promise<number> {
+    return await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
   }
 }

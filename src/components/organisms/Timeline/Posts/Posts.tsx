@@ -12,29 +12,40 @@ import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 
 /**
- * Timeline
+ * TimelinePosts
  *
- * Self-contained component that manages the timeline feed.
- * Handles fetching, loading, infinite scroll, and navigation to posts.
- * Uses cursor-based pagination with post_id and timestamp.
- * Automatically updates when global filters change.
+ * Self-contained component that manages the timeline feed with infinite scroll.
+ * 
+ * Features:
+ * - Cursor-based pagination using post ID and timestamp (skip for engagement streams)
+ * - Automatic refetching when global filters change
+ * - Handles both cache-first and remote fetching strategies
+ * - Supports both timeline and engagement stream types
+ * - Deduplicates posts to prevent duplicates during pagination
  */
 export function TimelinePosts() {
   const [postIds, setPostIds] = useState<string[]>([]);
-  // Last postId of the current page
-  const [streamTail, setStreamTail] = useState<number>(0);
+  /**
+   * PostId pagination cursor: tracks the last postId from the current page.
+   * Primary cursor for cache-based pagination
+   */
   const [lastPostId, setLastPostId] = useState<string | undefined>(undefined);
+  /**
+   * Timestamp cursor: tracks pagination position (timeline streams only).
+   * - Cache pagination: unchanged (cache doesn't provide new timestamps). Initializes
+   *   with the last cached post timestamp.
+   * - Remote fetching: updates to the timestamp of the last post returned
+   * Note: For engagement streams, repurposed as a skip count.
+   */
+  const [streamTail, setStreamTail] = useState<number>(0);
+
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
 
-  // Use ref to always have access to the latest postIds
   const postIdsRef = useRef<string[]>([]);
-
   const router = useRouter();
-
-  // Get current streamId based on global filters
   const streamId = Hooks.useStreamIdFromFilters();
 
   /**
@@ -49,39 +60,34 @@ export function TimelinePosts() {
   }, []);
 
   /**
-   * Fetches post IDs from the stream controller
+   * Fetches post IDs from the post stream controller
    */
   const fetchStreamSlice = useCallback(
     async (isInitialLoad: boolean) => {
-      // Determine if this is an engagement stream (uses skip) or timeline (uses timestamp)
-      //const isEngagementStream = ;
-
       if (isInitialLoad) {
-        const initialCursor = await Core.StreamPostsController.getTimelineInitialCursor(streamId);
-        // setLastPostId(lastPostId);
-        setStreamTail(initialCursor.streamTail);
+        const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp(streamId);
+        setStreamTail(cachedLastPostTimestamp);
         return await Core.StreamPostsController.getOrFetchStreamSlice({
           streamId,
-          lastPostId: initialCursor.lastPostId,
-          streamTail: initialCursor.streamTail,
+          // We are in the head of the stream, so we don't have a lastPostId
+          lastPostId: undefined,
+          streamTail: cachedLastPostTimestamp,
         });
       }
-
-      // Get the latest postIds from ref
-      //const currentPostIds = postIdsRef.current;
-      // const lastPostId = currentPostIds[currentPostIds.length - 1];
-
-      // For engagement streams: streamTail = number of posts loaded (skip count)
-      // For timeline streams: streamTail = timestamp of last post
-      const isEngagement = streamId.split(':')[0] === Core.SORT.ENGAGEMENT;
+      
+      const isEngagementStream = streamId.startsWith(Core.SORT.ENGAGEMENT);
+      // Calculate cursor value based on stream type
+      const cursorValue = isEngagementStream
+        ? postIdsRef.current.length // Skip count for engagement streams
+        : streamTail; // Timestamp for timeline streams
 
       return await Core.StreamPostsController.getOrFetchStreamSlice({
         streamId,
         lastPostId,
-        streamTail: isEngagement ? postIdsRef.current.length : streamTail,
+        streamTail: cursorValue,
       });
     },
-    [streamId, streamTail, lastPostId], // Removed postIds from dependencies
+    [streamId, streamTail, lastPostId],
   );
 
   /**
@@ -103,10 +109,8 @@ export function TimelinePosts() {
         if (streamChunk.timestamp) {
           setStreamTail(streamChunk.timestamp);
         }
-        if (streamChunk.nextPageIds.length > 0) {
-          const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
-          setLastPostId(newLastPostId);
-        }
+        const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
+        setLastPostId(newLastPostId);
         return;
       }
 
@@ -118,13 +122,12 @@ export function TimelinePosts() {
         return uniqueIds;
       });
       // Update timestamp for pagination if provided
+      // Update timestamp for pagination if provided (comes from nexus query)
       if (streamChunk.timestamp !== undefined) {
         setStreamTail(streamChunk.timestamp);
-      } 
-      if (streamChunk.nextPageIds.length > 0) {
-        const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
-        setLastPostId(newLastPostId);
       }
+      const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
+      setLastPostId(newLastPostId);
     },
     [],
   );
@@ -169,6 +172,7 @@ export function TimelinePosts() {
     setPostIds([]);
     postIdsRef.current = []; // Clear ref
     setStreamTail(0);
+    setLastPostId(undefined);
     setHasMore(true);
     setError(null);
   }, []);
@@ -183,7 +187,6 @@ export function TimelinePosts() {
   // Load more posts function
   const loadMorePosts = useCallback(async () => {
     if (loadingMore || !hasMore) return;
-    console.warn('loadMorePosts', lastPostId);
     await fetchPosts(false);
   }, [loadingMore, hasMore, fetchPosts]);
 
@@ -223,7 +226,7 @@ export function TimelinePosts() {
         {postIds.map((postId) => (
           <Atoms.Container key={`main_${postId}`}>
             <Organisms.PostMain postId={postId} onClick={() => handlePostClick(postId)} isReply={false} />
-            {/* <Organisms.TimelinePostReplies postId={postId} onPostClick={handlePostClick} /> */}
+            <Organisms.TimelinePostReplies postId={postId} onPostClick={handlePostClick} />
           </Atoms.Container>
         ))}
 
