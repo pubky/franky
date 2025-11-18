@@ -136,5 +136,137 @@ describe('ProviderYoutube', () => {
         expect(result).toBeNull();
       });
     });
+
+    describe('malformed URLs', () => {
+      it('handles malformed URLs gracefully without crashing', () => {
+        // These should not crash, even if URL parser fails
+        const malformedUrls = [
+          'not-a-url-at-all',
+          'ht!tp://invalid',
+          'javascript:alert(1)',
+          'data:text/html,<script>alert(1)</script>',
+          '://missing-protocol',
+          'https://',
+          'https://youtube.com/watch?v=',
+          'youtube.com/watch?v=<script>alert(1)</script>',
+        ];
+
+        malformedUrls.forEach((url) => {
+          expect(() => Youtube.parseEmbed(url)).not.toThrow();
+          const result = Youtube.parseEmbed(url);
+          expect(result).toBeNull();
+        });
+      });
+
+      it('handles URLs with invalid timestamp formats gracefully', () => {
+        const invalidTimestamps = [
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=invalid',
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=',
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=hms',
+          'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=-123',
+        ];
+
+        invalidTimestamps.forEach((url) => {
+          expect(() => Youtube.parseEmbed(url)).not.toThrow();
+          const result = Youtube.parseEmbed(url);
+          // Should still return valid embed URL without timestamp
+          expect(result).toEqual({
+            url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+          });
+        });
+      });
+    });
+
+    describe('security: XSS attempts', () => {
+      it('rejects video IDs containing script tags', () => {
+        const xssAttempts = [
+          'https://www.youtube.com/watch?v=<script>alert(1)</script>',
+          'https://youtu.be/<script>',
+          'https://www.youtube.com/watch?v="><script>alert(1)</script>',
+        ];
+
+        xssAttempts.forEach((url) => {
+          const result = Youtube.parseEmbed(url);
+          expect(result).toBeNull();
+        });
+      });
+
+      it('rejects video IDs containing HTML entities', () => {
+        const htmlEntityAttempts = [
+          'https://www.youtube.com/watch?v=&lt;script&gt;',
+          'https://www.youtube.com/watch?v=&quot;&gt;&lt;',
+        ];
+
+        htmlEntityAttempts.forEach((url) => {
+          const result = Youtube.parseEmbed(url);
+          expect(result).toBeNull();
+        });
+      });
+
+      it('only accepts alphanumeric, dash, and underscore in video IDs', () => {
+        const validId = 'dQw4w9WgXcQ';
+        const validWithDash = 'dQw4w9WgX-Q';
+        const validWithUnderscore = 'dQw4w9WgX_Q';
+
+        expect(Youtube.parseEmbed(`https://www.youtube.com/watch?v=${validId}`)).not.toBeNull();
+        expect(Youtube.parseEmbed(`https://www.youtube.com/watch?v=${validWithDash}`)).not.toBeNull();
+        expect(Youtube.parseEmbed(`https://www.youtube.com/watch?v=${validWithUnderscore}`)).not.toBeNull();
+
+        // Invalid characters should be rejected
+        const invalidChars = ['<', '>', '"', "'", '&', ';', '(', ')', '{', '}', '[', ']'];
+        invalidChars.forEach((char) => {
+          const maliciousId = `dQw4w9WgXc${char}`;
+          const result = Youtube.parseEmbed(`https://www.youtube.com/watch?v=${maliciousId}`);
+          expect(result).toBeNull();
+        });
+      });
+    });
+
+    describe('concurrent/rapid changes', () => {
+      it('handles multiple rapid parseEmbed calls consistently', () => {
+        const url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        const results = Array.from({ length: 100 }, () => Youtube.parseEmbed(url));
+
+        // All results should be identical
+        results.forEach((result) => {
+          expect(result).toEqual({
+            url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+          });
+        });
+      });
+
+      it('handles alternating valid/invalid URLs consistently', () => {
+        const validUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        const invalidUrl = 'https://www.youtube.com/watch?v=invalid';
+
+        for (let i = 0; i < 50; i++) {
+          const validResult = Youtube.parseEmbed(validUrl);
+          const invalidResult = Youtube.parseEmbed(invalidUrl);
+
+          expect(validResult).toEqual({
+            url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+          });
+          expect(invalidResult).toBeNull();
+        }
+      });
+
+      it('parseEmbed is stateless and returns consistent results', () => {
+        const url1 = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+        const url2 = 'https://www.youtube.com/watch?v=jNQXAC9IVRw';
+
+        const result1a = Youtube.parseEmbed(url1);
+        const result2 = Youtube.parseEmbed(url2);
+        const result1b = Youtube.parseEmbed(url1);
+
+        // Results should not be affected by previous calls
+        expect(result1a).toEqual(result1b);
+        expect(result1a).toEqual({
+          url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
+        });
+        expect(result2).toEqual({
+          url: 'https://www.youtube-nocookie.com/embed/jNQXAC9IVRw',
+        });
+      });
+    });
   });
 });
