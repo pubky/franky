@@ -62,4 +62,8 @@ export class StreamPostsController {
     }
     return { nextPageIds, timestamp };
   }
+
+  static async getTimelineInitialCursor(streamId: Core.PostStreamId): Promise<Core.TTimelineInitialCursorResponse> {
+    return await Core.PostStreamApplication.getTimelineInitialCursor(streamId);
+  }
 }

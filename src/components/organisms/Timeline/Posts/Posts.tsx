@@ -21,7 +21,9 @@ import * as Libs from '@/libs';
  */
 export function TimelinePosts() {
   const [postIds, setPostIds] = useState<string[]>([]);
-  const [timestamp, setTimestamp] = useState<number | undefined>(undefined);
+  // Last postId of the current page
+  const [streamTail, setStreamTail] = useState<number>(0);
+  const [lastPostId, setLastPostId] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,62 +54,76 @@ export function TimelinePosts() {
   const fetchStreamSlice = useCallback(
     async (isInitialLoad: boolean) => {
       // Determine if this is an engagement stream (uses skip) or timeline (uses timestamp)
-      const isEngagementStream = streamId.split(':')[0] === Core.SORT.ENGAGEMENT;
+      //const isEngagementStream = ;
 
       if (isInitialLoad) {
+        const initialCursor = await Core.StreamPostsController.getTimelineInitialCursor(streamId);
+        // setLastPostId(lastPostId);
+        setStreamTail(initialCursor.streamTail);
         return await Core.StreamPostsController.getOrFetchStreamSlice({
           streamId,
-          lastPostId: undefined,
-          streamTail: 0, // For initial load: always start at 0
+          lastPostId: initialCursor.lastPostId,
+          streamTail: initialCursor.streamTail,
         });
       }
 
       // Get the latest postIds from ref
-      const currentPostIds = postIdsRef.current;
-      const lastPostId = currentPostIds[currentPostIds.length - 1];
+      //const currentPostIds = postIdsRef.current;
+      // const lastPostId = currentPostIds[currentPostIds.length - 1];
 
       // For engagement streams: streamTail = number of posts loaded (skip count)
       // For timeline streams: streamTail = timestamp of last post
-      const streamTail = isEngagementStream ? currentPostIds.length : timestamp!;
+      const isEngagement = streamId.split(':')[0] === Core.SORT.ENGAGEMENT;
 
       return await Core.StreamPostsController.getOrFetchStreamSlice({
         streamId,
-        lastPostId: lastPostId,
-        streamTail,
+        lastPostId,
+        streamTail: isEngagement ? postIdsRef.current.length : streamTail,
       });
     },
-    [streamId, timestamp], // Removed postIds from dependencies
+    [streamId, streamTail, lastPostId], // Removed postIds from dependencies
   );
 
   /**
    * Updates post state after fetching
    */
   const updatePostState = useCallback(
-    (ids: { nextPageIds: string[]; timestamp: number | undefined }, isInitialLoad: boolean) => {
-      if (isInitialLoad) {
-        setPostIds(ids.nextPageIds);
-        postIdsRef.current = ids.nextPageIds; // Update ref
-        // Always update timestamp on initial load, even if undefined (resets stale timestamp)
-        setTimestamp(ids.timestamp);
+    (streamChunk: Core.TReadPostStreamChunkResponse, isInitialLoad: boolean) => {
+      // Handle empty results - applies to both initial load and pagination
+      if (streamChunk.nextPageIds.length === 0) {
+        setHasMore(false);
         return;
       }
 
-      // Pagination flow
-      if (ids.nextPageIds.length === 0) {
-        setHasMore(false);
+      if (isInitialLoad) {
+        setPostIds(streamChunk.nextPageIds);
+        postIdsRef.current = streamChunk.nextPageIds; // Update ref
+        // The timestamp only updates when we are already fetching from nexus. Meanwhile, we use the streamTail to paginate.
+        // This does not apply for ENGAGEMENT streams.
+        if (streamChunk.timestamp) {
+          setStreamTail(streamChunk.timestamp);
+        }
+        if (streamChunk.nextPageIds.length > 0) {
+          const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
+          setLastPostId(newLastPostId);
+        }
         return;
       }
 
       setPostIds((prevIds) => {
         // Deduplicate by creating a Set and then converting back to array
-        const combined = [...prevIds, ...ids.nextPageIds];
+        const combined = [...prevIds, ...streamChunk.nextPageIds];
         const uniqueIds = Array.from(new Set(combined));
         postIdsRef.current = uniqueIds; // Update ref
         return uniqueIds;
       });
       // Update timestamp for pagination if provided
-      if (ids.timestamp !== undefined) {
-        setTimestamp(ids.timestamp);
+      if (streamChunk.timestamp !== undefined) {
+        setStreamTail(streamChunk.timestamp);
+      } 
+      if (streamChunk.nextPageIds.length > 0) {
+        const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
+        setLastPostId(newLastPostId);
       }
     },
     [],
@@ -152,7 +168,7 @@ export function TimelinePosts() {
   const clearState = useCallback(() => {
     setPostIds([]);
     postIdsRef.current = []; // Clear ref
-    setTimestamp(undefined);
+    setStreamTail(0);
     setHasMore(true);
     setError(null);
   }, []);
@@ -167,6 +183,7 @@ export function TimelinePosts() {
   // Load more posts function
   const loadMorePosts = useCallback(async () => {
     if (loadingMore || !hasMore) return;
+    console.warn('loadMorePosts', lastPostId);
     await fetchPosts(false);
   }, [loadingMore, hasMore, fetchPosts]);
 
@@ -206,7 +223,7 @@ export function TimelinePosts() {
         {postIds.map((postId) => (
           <Atoms.Container key={`main_${postId}`}>
             <Organisms.PostMain postId={postId} onClick={() => handlePostClick(postId)} isReply={false} />
-            <Organisms.TimelinePostReplies postId={postId} onPostClick={handlePostClick} />
+            {/* <Organisms.TimelinePostReplies postId={postId} onPostClick={handlePostClick} /> */}
           </Atoms.Container>
         ))}
 
