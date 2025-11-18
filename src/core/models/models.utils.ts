@@ -18,7 +18,7 @@ export type CompositeIdResult = {
 };
 
 /**
- * Parses a pubky:// URI to extract the author and ID, 
+ * Parses a pubky:// URI to extract the author and ID,
  * then builds a composite ID in the format "author:id"
  *
  * @param uri - A pubky URI (e.g., "pubky://author/pub/pubky.app/posts/post123")

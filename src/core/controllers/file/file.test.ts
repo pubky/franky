@@ -162,7 +162,7 @@ describe('FileController', () => {
       const fileId = 'user123:file456';
       const variant = FileVariant.SMALL;
       const expectedUrl = 'https://cdn.example.com/files/user123/file456/small';
-      
+
       mockFileApplication.getImageUrl.mockReturnValue(expectedUrl);
 
       const result = FileController.getImageUrl({
@@ -181,12 +181,14 @@ describe('FileController', () => {
       const invalidFileId = 'invalid-file-id';
       const variant = FileVariant.SMALL;
       const error = new Error('Invalid composite id: invalid-file-id');
-      
+
       mockFileApplication.getImageUrl.mockImplementation(() => {
         throw error;
       });
 
-      expect(() => FileController.getImageUrl({ fileId: invalidFileId, variant })).toThrow('Invalid composite id: invalid-file-id');
+      expect(() => FileController.getImageUrl({ fileId: invalidFileId, variant })).toThrow(
+        'Invalid composite id: invalid-file-id',
+      );
     });
   });
 
@@ -206,9 +208,9 @@ describe('FileController', () => {
     it('propagates errors when FileApplication.getMetadata fails', async () => {
       mockFileApplication.getMetadata.mockRejectedValue(new Error('metadata fetch failed'));
 
-      await expect(FileController.getMetadata({ fileAttachments: ['pubky://user1/pub/pubky.app/files/file1'] })).rejects.toThrow(
-        'metadata fetch failed',
-      );
+      await expect(
+        FileController.getMetadata({ fileAttachments: ['pubky://user1/pub/pubky.app/files/file1'] }),
+      ).rejects.toThrow('metadata fetch failed');
     });
 
     it('handles empty array of fileAttachments', async () => {

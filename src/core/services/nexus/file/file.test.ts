@@ -76,6 +76,15 @@ describe('File API', () => {
       expect(result.body).toEqual({ uris: fileUris });
       expect(result.body.uris).toHaveLength(100);
     });
+
+    it('should handle empty file URIs array', () => {
+      const fileUris: string[] = [];
+      const result = filesApi.getFiles(fileUris);
+
+      expect(result.url).toBe(`${Config.NEXUS_URL}/v0/files/by_ids`);
+      expect(result.body).toEqual({ uris: [] });
+      expect(result.body.uris).toHaveLength(0);
+    });
   });
 
   describe('buildFileBodyUrl', () => {
@@ -98,6 +107,13 @@ describe('File API', () => {
 
       expect(result1).toEqual(result2);
       expect(result1).not.toBe(result2); // Different object instances
+    });
+
+    it('should handle empty file URIs array', () => {
+      const fileUris: string[] = [];
+      const result: TFileBody = buildFileBodyUrl(fileUris);
+      expect(result).toEqual({ uris: [] });
+      expect(result.uris).toHaveLength(0);
     });
   });
 

@@ -197,7 +197,7 @@ export class LocalPostService {
     countField: 'replies' | 'reposts',
     countChange: number,
   ): Promise<void> {
-    const postId = Core.buildCompositeIdFromPubkyUri({ uri, domain: 'posts' });
+    const postId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });
     if (!postId) return;
 
     const counts = await Core.PostCountsModel.findById(postId);

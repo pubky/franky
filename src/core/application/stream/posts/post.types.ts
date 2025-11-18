@@ -31,3 +31,8 @@ export type TCacheStreamParams = {
   limit: number;
   cachedStream: { stream: string[] };
 };
+
+export type TFetchMissingUsersParams = {
+  posts: Core.NexusPost[];
+  viewerId: Core.Pubky;
+};

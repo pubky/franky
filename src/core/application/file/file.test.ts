@@ -73,8 +73,7 @@ const createMockFile = (
   ...overrides,
 });
 
-const createFileUri = (fileId: string, pubky: Pubky = TEST_PUBKY) =>
-  `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
+const createFileUri = (fileId: string, pubky: Pubky = TEST_PUBKY) => `pubky://${pubky}/pub/pubky.app/files/${fileId}`;
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -329,7 +328,10 @@ describe('FileApplication', () => {
         { ...nexusFiles[1], id: null as unknown as string }, // buildCompositeIdFromPubkyUri returns null for invalid URI
       ];
 
-      const mockGetFilesResult = { url: 'https://nexus.example.com/v0/files/by_ids', body: { uris: [validUri, invalidUri] } };
+      const mockGetFilesResult = {
+        url: 'https://nexus.example.com/v0/files/by_ids',
+        body: { uris: [validUri, invalidUri] },
+      };
       vi.spyOn(Core.filesApi, 'getFiles').mockReturnValue(mockGetFilesResult);
       vi.spyOn(Core, 'queryNexus').mockResolvedValue(nexusFiles);
       const persistFilesSpy = vi.spyOn(Core.LocalFileService, 'persistFiles').mockResolvedValue(undefined);

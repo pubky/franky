@@ -74,6 +74,6 @@ export class FileApplication {
    */
   private static async fetch({ fileUris }: Core.TReadFilesInput): Promise<Core.NexusFileDetails[]> {
     const { url, body } = Core.filesApi.getFiles(fileUris);
-    return await Core.queryNexus<Core.NexusFileDetails[]>(url, 'POST', JSON.stringify(body)) ?? [];
+    return (await Core.queryNexus<Core.NexusFileDetails[]>(url, 'POST', JSON.stringify(body))) ?? [];
   }
 }

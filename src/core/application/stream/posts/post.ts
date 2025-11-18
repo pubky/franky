@@ -42,23 +42,27 @@ export class PostStreamApplication {
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
       if (postBatch) {
         const { postAttachments } = await Core.LocalStreamPostsService.persistPosts(postBatch);
+        // Persist the post attachments metadata
         await Core.FileApplication.persistFiles(postAttachments);
-        const cacheMissUserIds = postBatch
-          ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
-          : [];
-        if (cacheMissUserIds.length > 0) {
-          const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
-            user_ids: cacheMissUserIds,
-            viewer_id: viewerId,
-          });
-          const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
-          if (userBatch) {
-            await Core.LocalStreamUsersService.persistUsers(userBatch);
-          }
-        }
+        // Persist the missing authors of the posts
+        await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
       }
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
+    }
+  }
+
+  private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
+    const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
+    if (cacheMissUserIds.length > 0) {
+      const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+        user_ids: cacheMissUserIds,
+        viewer_id: viewerId,
+      });
+      const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
+      if (userBatch) {
+        await Core.LocalStreamUsersService.persistUsers(userBatch);
+      }
     }
   }
 

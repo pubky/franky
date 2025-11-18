@@ -161,7 +161,9 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       ),
     persistFiles: vi
       .spyOn(Core.FileApplication, 'persistFiles')
-      .mockImplementation(persistFilesError ? () => Promise.reject(persistFilesError) : () => Promise.resolve(undefined)),
+      .mockImplementation(
+        persistFilesError ? () => Promise.reject(persistFilesError) : () => Promise.resolve(undefined),
+      ),
     upsertPostsStream: vi
       .spyOn(Core.LocalStreamPostsService, 'upsert')
       .mockImplementation(upsertPostsError ? () => Promise.reject(upsertPostsError) : () => Promise.resolve(undefined)),
@@ -384,15 +386,16 @@ describe('BootstrapApplication', () => {
     it('should persist files with post attachments from persistPosts result', async () => {
       const bootstrapData = createMockBootstrapData();
       const notifications = [createMockNotification()];
-      const mockAttachments = ['pubky://user-1/pub/pubky.app/files/file-1', 'pubky://user-1/pub/pubky.app/files/file-2'];
-      
+      const mockAttachments = [
+        'pubky://user-1/pub/pubky.app/files/file-1',
+        'pubky://user-1/pub/pubky.app/files/file-2',
+      ];
+
       const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
       // Override persistPosts mock to return specific attachments
-      const persistPostsSpy = vi
-        .spyOn(Core.LocalStreamPostsService, 'persistPosts')
-        .mockResolvedValue({
-          postAttachments: mockAttachments,
-        });
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
+        postAttachments: mockAttachments,
+      });
       mocks.persistPosts = persistPostsSpy;
 
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
