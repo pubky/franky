@@ -60,14 +60,18 @@ export class UserStreamApplication {
       return;
     }
 
-    const { url, body } = Core.userStreamApi.usersByIds({
-      user_ids: cacheMissUserIds,
-      viewer_id: viewerId,
-    });
+    try {
+      const { url, body } = Core.userStreamApi.usersByIds({
+        user_ids: cacheMissUserIds,
+        viewer_id: viewerId,
+      });
 
-    const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
-    if (userBatch) {
-      await Core.LocalStreamUsersService.persistUsers(userBatch);
+      const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
+      if (userBatch) {
+        await Core.LocalStreamUsersService.persistUsers(userBatch);
+      }
+    } catch (error) {
+      console.error('Failed to fetch missing users from Nexus:', error);
     }
   }
 
@@ -101,8 +105,13 @@ export class UserStreamApplication {
     await Core.LocalStreamUsersService.persistUsers(nexusUsers);
 
     // Upsert stream (append to existing or create new)
-    const updatedStream = cachedStream ? [...cachedStream.stream, ...userIds] : userIds;
-    await Core.LocalStreamUsersService.upsert({ streamId, stream: updatedStream });
+    let stream = userIds;
+    if (cachedStream) {
+      // Filter out duplicates before appending
+      const newUserIds = userIds.filter((id) => !cachedStream.stream.includes(id));
+      stream = [...cachedStream.stream, ...newUserIds];
+    }
+    await Core.LocalStreamUsersService.upsert({ streamId, stream });
 
     // Identify users not yet in cache (shouldn't be any now, but keep for consistency)
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(userIds);

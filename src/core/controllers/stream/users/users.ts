@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import * as Config from '@/config';
 
 /**
  * Stream User Controller
@@ -20,7 +21,7 @@ export class StreamUserController {
    */
   static async getOrFetchStreamSlice({
     streamId,
-    limit,
+    limit = Config.NEXUS_USERS_PER_PAGE,
     skip,
   }: Core.TReadUserStreamChunkParams): Promise<Core.TReadUserStreamChunkResponse> {
     const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
@@ -38,7 +39,7 @@ export class StreamUserController {
 
     // Background fetch for missing users (non-blocking)
     if (cacheMissUserIds.length > 0) {
-      await Core.UserStreamApplication.fetchMissingUsersFromNexus({
+      void Core.UserStreamApplication.fetchMissingUsersFromNexus({
         cacheMissUserIds,
         viewerId,
       });
