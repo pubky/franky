@@ -1,13 +1,28 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { PostLinkEmbeds } from './PostLinkEmbeds';
-import * as PostLinkEmbedsUtils from './utils';
 
 vi.mock('@/atoms', () => ({
   Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="container" className={className}>
       {children}
     </div>
+  ),
+  Iframe: ({
+    'data-testid': dataTestId,
+    width = '100%',
+    height = '315',
+    ...props
+  }: React.IframeHTMLAttributes<HTMLIFrameElement> & { 'data-testid'?: string }) => (
+    <iframe
+      data-testid={dataTestId}
+      loading="lazy"
+      allowFullScreen
+      className="rounded-md"
+      width={width}
+      height={height}
+      {...props}
+    />
   ),
 }));
 
@@ -27,6 +42,14 @@ describe('PostLinkEmbeds', () => {
       const iframe = screen.getByTestId('YouTube video player');
       expect(iframe).toBeInTheDocument();
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('handles youtu.be URL with query parameters', () => {
+      render(<PostLinkEmbeds content="https://youtu.be/dQw4w9WgXcQ?t=123" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=123');
     });
 
     it('renders YouTube embed for mobile youtube.com URL', () => {
@@ -85,24 +108,61 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
 
-    it('handles YouTube URL with additional parameters', () => {
+    it('handles YouTube URL with timestamp in seconds format', () => {
       render(<PostLinkEmbeds content="Timestamped: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=123s" />);
 
       const iframe = screen.getByTestId('YouTube video player');
       expect(iframe).toBeInTheDocument();
-      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=123');
     });
 
-    it('does not render embed for YouTube video ID with invalid character length', () => {
+    it('handles YouTube URL with timestamp in h/m/s format', () => {
+      render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=1h2m3s" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=3723');
+    });
+
+    it('handles YouTube URL with timestamp as plain number', () => {
+      render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=90');
+    });
+
+    it('handles YouTube URL with partial h/m/s format (minutes and seconds only)', () => {
+      render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=2m30s" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=150');
+    });
+
+    it('does not render embed for YouTube video ID shorter than 11 characters', () => {
       render(<PostLinkEmbeds content="Invalid length: https://www.youtube.com/watch?v=dQw4w9WgXc" />);
 
       expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
     });
 
-    it('does not render embed for YouTube video ID with invalid characters', () => {
-      render(<PostLinkEmbeds content="Invalid chars: https://www.youtube.com/watch?v=dQw4w9WgXc@" />);
+    it('does not render embed for YouTube video ID longer than 11 characters', () => {
+      render(<PostLinkEmbeds content="Invalid length: https://www.youtube.com/watch?v=dQw4w9WgXcQQ" />);
 
       expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for YouTube video ID with invalid characters', () => {
+      render(<PostLinkEmbeds content="Invalid chars: https://www.youtube.com/watch?v=dQw4w9WgX@!" />);
+
+      expect(screen.queryByTestId('YouTube video player')).not.toBeInTheDocument();
+    });
+
+    it('renders embed for valid 11-character YouTube ID with valid characters', () => {
+      render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
     });
 
     it('does not render embed for YouTube URL without video ID', () => {
@@ -164,25 +224,6 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toBeInTheDocument();
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
-  });
-});
-
-describe('PostLinkEmbeds - useMemo optimization', () => {
-  it('memoizes parsing result when content does not change', () => {
-    const parseSpy = vi.spyOn(PostLinkEmbedsUtils, 'parseContentForLinkEmbed');
-    const { rerender } = render(<PostLinkEmbeds content="https://youtube.com/watch?v=dQw4w9WgXcQ" />);
-
-    expect(parseSpy).toHaveBeenCalledTimes(1);
-
-    // Re-render with same content should not call parse function again
-    rerender(<PostLinkEmbeds content="https://youtube.com/watch?v=dQw4w9WgXcQ" />);
-    expect(parseSpy).toHaveBeenCalledTimes(1);
-
-    // Re-render with different content should call parse function again
-    rerender(<PostLinkEmbeds content="https://youtube.com/watch?v=xyz123456" />);
-    expect(parseSpy).toHaveBeenCalledTimes(2);
-
-    parseSpy.mockRestore();
   });
 });
 

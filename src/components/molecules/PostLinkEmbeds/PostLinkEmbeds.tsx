@@ -1,34 +1,60 @@
 'use client';
 
-import * as Atoms from '@/atoms';
 import { useMemo } from 'react';
-import { parseContentForLinkEmbed } from './utils';
+import LinkifyIt from 'linkify-it';
 
-export type PostLinkEmbedsProps = {
-  content: string;
+import * as Atoms from '@/atoms';
+import * as Providers from './Providers';
+import * as Types from './PostLinkEmbeds.types';
+
+// Register all embed providers here
+const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
+  Providers.Youtube,
+  // Add more providers here:
+  // Providers.Vimeo,
+  // Providers.Twitch,
+];
+
+// Protocol types to ignore when parsing links
+const IGNORED_PROTOCOLS = ['ftp:', 'mailto:'];
+
+/**
+ * Parse content for embeddable links
+ * Returns the first embeddable link and its provider
+ */
+const parseContentForLinkEmbed = (content: string): Types.ParseContentForLinkEmbedResult => {
+  try {
+    const linkify = new LinkifyIt();
+
+    // Disable unwanted protocol types
+    IGNORED_PROTOCOLS.forEach((protocol) => linkify.add(protocol, null));
+
+    const match = linkify.match(content);
+
+    if (!match) return { embed: null, provider: null };
+
+    const url = match[0].url;
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.toLowerCase();
+
+    // Try each provider until one matches
+    for (const provider of EMBED_PROVIDERS) {
+      if (provider.isDomain(hostname)) {
+        const embed = provider.parseEmbed(url);
+        if (embed) return { embed, provider };
+      }
+    }
+
+    return { embed: null, provider: null };
+  } catch {
+    return { embed: null, provider: null };
+  }
 };
 
-export const PostLinkEmbeds = ({ content }: PostLinkEmbedsProps) => {
-  const linkEmbed = useMemo(() => parseContentForLinkEmbed(content), [content]);
+export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
+  const { embed, provider } = useMemo(() => parseContentForLinkEmbed(content), [content]);
 
-  if (linkEmbed.type === 'none') return null;
+  if (!embed || !provider) return null;
 
-  return (
-    <Atoms.Container>
-      {linkEmbed.type === 'youtube' && (
-        <iframe
-          width="100%"
-          height="315"
-          src={linkEmbed.url}
-          loading="lazy"
-          title={`YouTube video ${linkEmbed.url.split('https://www.youtube-nocookie.com/embed/')[1]}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-          className="rounded-md"
-          data-testid="YouTube video player"
-        ></iframe>
-      )}
-    </Atoms.Container>
-  );
+  return <Atoms.Container>{provider.renderEmbed(embed.url)}</Atoms.Container>;
 };
