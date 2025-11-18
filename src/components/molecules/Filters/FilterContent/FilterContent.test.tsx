@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { FilterContent, type ContentTab } from './FilterContent';
-import { CONTENT } from '@/core/stores/home/home.types';
+import { FilterContent } from './FilterContent';
+import { CONTENT, type ContentType } from '@/core/stores/home/home.types';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -29,14 +29,14 @@ describe('FilterContent', () => {
     render(<FilterContent onTabChange={onTabChange} />);
 
     // Map of tab values to their display labels
-    const tabsToTest: Array<{ value: ContentTab; label: string }> = [
-      { value: 'all', label: 'All' },
-      { value: 'short', label: 'Posts' },
-      { value: 'long', label: 'Articles' },
-      { value: 'images', label: 'Images' },
-      { value: 'videos', label: 'Videos' },
-      { value: 'links', label: 'Links' },
-      { value: 'files', label: 'Files' },
+    const tabsToTest: Array<{ value: ContentType; label: string }> = [
+      { value: CONTENT.ALL, label: 'All' },
+      { value: CONTENT.SHORT, label: 'Posts' },
+      { value: CONTENT.LONG, label: 'Articles' },
+      { value: CONTENT.IMAGES, label: 'Images' },
+      { value: CONTENT.VIDEOS, label: 'Videos' },
+      { value: CONTENT.LINKS, label: 'Links' },
+      { value: CONTENT.FILES, label: 'Files' },
     ];
 
     tabsToTest.forEach(({ value, label }) => {

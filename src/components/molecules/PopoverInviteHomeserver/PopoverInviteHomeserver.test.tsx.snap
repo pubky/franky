@@ -15,7 +15,7 @@ exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for PopoverInvit
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-help h-4 w-4 text-white"
+        class="lucide lucide-circle-question-mark h-4 w-4 text-white"
         data-testid="circle-help-icon"
         fill="none"
         height="24"
@@ -184,7 +184,7 @@ exports[`PopoverInviteHomeserver - Snapshots > matches snapshot for default Popo
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-help h-4 w-4 text-white"
+        class="lucide lucide-circle-question-mark h-4 w-4 text-white"
         data-testid="circle-help-icon"
         fill="none"
         height="24"

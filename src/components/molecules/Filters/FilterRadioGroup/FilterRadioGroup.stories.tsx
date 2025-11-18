@@ -120,24 +120,21 @@ export const Playground: Story = {
   },
 };
 
-export const Controlled: Story = {
-  render: () => {
-    const [selected, setSelected] = useState('recent');
+const ControlledComponent = () => {
+  const [selected, setSelected] = useState('recent');
 
-    return (
-      <div className="space-y-4">
-        <FilterRadioGroup
-          title="Controlled Filter"
-          items={sampleItems}
-          selectedValue={selected}
-          onChange={setSelected}
-        />
-        <div className="text-sm text-muted-foreground">
-          Current selection: <strong className="text-foreground">{selected}</strong>
-        </div>
+  return (
+    <div className="space-y-4">
+      <FilterRadioGroup title="Controlled Filter" items={sampleItems} selectedValue={selected} onChange={setSelected} />
+      <div className="text-sm text-muted-foreground">
+        Current selection: <strong className="text-foreground">{selected}</strong>
       </div>
-    );
-  },
+    </div>
+  );
+};
+
+export const Controlled: Story = {
+  render: () => <ControlledComponent />,
   parameters: {
     docs: {
       description: {
@@ -190,31 +187,33 @@ export const WithDisabledItems: Story = {
   },
 };
 
-export const WithOnClose: Story = {
-  render: () => {
-    const [isOpen, setIsOpen] = useState(true);
+const WithOnCloseComponent = () => {
+  const [isOpen, setIsOpen] = useState(true);
 
-    return (
-      <div className="space-y-4">
-        {isOpen ? (
-          <FilterRadioGroup
-            title="Filter with Close"
-            items={sampleItems}
-            defaultValue="recent"
-            onClose={() => {
-              setIsOpen(false);
-              setTimeout(() => setIsOpen(true), 1000);
-            }}
-          />
-        ) : (
-          <div className="text-sm text-muted-foreground">Filter closed. Will reopen in 1 second...</div>
-        )}
-        <p className="text-sm text-muted-foreground">
-          Click any option to trigger <code>onClose</code> callback.
-        </p>
-      </div>
-    );
-  },
+  return (
+    <div className="space-y-4">
+      {isOpen ? (
+        <FilterRadioGroup
+          title="Filter with Close"
+          items={sampleItems}
+          defaultValue="recent"
+          onClose={() => {
+            setIsOpen(false);
+            setTimeout(() => setIsOpen(true), 1000);
+          }}
+        />
+      ) : (
+        <div className="text-sm text-muted-foreground">Filter closed. Will reopen in 1 second...</div>
+      )}
+      <p className="text-sm text-muted-foreground">
+        Click any option to trigger <code>onClose</code> callback.
+      </p>
+    </div>
+  );
+};
+
+export const WithOnClose: Story = {
+  render: () => <WithOnCloseComponent />,
   parameters: {
     docs: {
       description: {
@@ -225,38 +224,40 @@ export const WithOnClose: Story = {
   },
 };
 
-export const KeyboardNavigationDemo: Story = {
-  render: () => {
-    const [selected, setSelected] = useState('recent');
-    const [lastAction, setLastAction] = useState<string>('None');
+const KeyboardNavigationDemoComponent = () => {
+  const [selected, setSelected] = useState('recent');
+  const [lastAction, setLastAction] = useState<string>('None');
 
-    return (
-      <div className="space-y-4">
-        <FilterRadioGroup
-          title="Keyboard Navigation"
-          items={sampleItems}
-          selectedValue={selected}
-          onChange={(value) => {
-            setSelected(value);
-            setLastAction(`Selected: ${value}`);
-          }}
-        />
-        <div className="space-y-2 text-sm">
-          <p className="text-muted-foreground">
-            <strong>Try keyboard navigation:</strong>
-          </p>
-          <ul className="list-inside list-disc space-y-1 text-muted-foreground">
-            <li>Tab to focus, then use Arrow keys to navigate</li>
-            <li>Press Space or Enter to select</li>
-            <li>Press Home/End to jump to first/last</li>
-          </ul>
-          <p className="text-foreground">
-            Last action: <strong>{lastAction}</strong>
-          </p>
-        </div>
+  return (
+    <div className="space-y-4">
+      <FilterRadioGroup
+        title="Keyboard Navigation"
+        items={sampleItems}
+        selectedValue={selected}
+        onChange={(value) => {
+          setSelected(value);
+          setLastAction(`Selected: ${value}`);
+        }}
+      />
+      <div className="space-y-2 text-sm">
+        <p className="text-muted-foreground">
+          <strong>Try keyboard navigation:</strong>
+        </p>
+        <ul className="list-inside list-disc space-y-1 text-muted-foreground">
+          <li>Tab to focus, then use Arrow keys to navigate</li>
+          <li>Press Space or Enter to select</li>
+          <li>Press Home/End to jump to first/last</li>
+        </ul>
+        <p className="text-foreground">
+          Last action: <strong>{lastAction}</strong>
+        </p>
       </div>
-    );
-  },
+    </div>
+  );
+};
+
+export const KeyboardNavigationDemo: Story = {
+  render: () => <KeyboardNavigationDemoComponent />,
   parameters: {
     docs: {
       description: {

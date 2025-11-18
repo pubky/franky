@@ -2,7 +2,7 @@
 
 exports[`Popover - Snapshots > matches snapshot for PopoverTrigger with asChild 1`] = `
 <button
-  aria-controls="radix-«r0»"
+  aria-controls="radix-_r_0_"
   aria-expanded="false"
   aria-haspopup="dialog"
   data-as-child="true"
@@ -17,7 +17,7 @@ exports[`Popover - Snapshots > matches snapshot for PopoverTrigger with asChild 
 
 exports[`Popover - Snapshots > matches snapshot for PopoverTrigger with default props 1`] = `
 <button
-  aria-controls="radix-«r0»"
+  aria-controls="radix-_r_0_"
   aria-expanded="false"
   aria-haspopup="dialog"
   data-as-child="false"
@@ -32,7 +32,7 @@ exports[`Popover - Snapshots > matches snapshot for PopoverTrigger with default 
 
 exports[`Popover - Snapshots > matches snapshot for popover trigger in open state 1`] = `
 <button
-  aria-controls="radix-«r0»"
+  aria-controls="radix-_r_0_"
   aria-expanded="false"
   aria-haspopup="dialog"
   data-as-child="true"

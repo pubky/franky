@@ -16,7 +16,7 @@ exports[`PopoverPublicKey - Snapshots > matches snapshot for PopoverPublicKey wi
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-help h-4 w-4 text-white"
+        class="lucide lucide-circle-question-mark h-4 w-4 text-white"
         data-testid="circle-help-icon"
         fill="none"
         height="24"
@@ -85,7 +85,7 @@ exports[`PopoverPublicKey - Snapshots > matches snapshot for default PopoverPubl
     >
       <svg
         aria-hidden="true"
-        class="lucide lucide-circle-help h-4 w-4 text-white"
+        class="lucide lucide-circle-question-mark h-4 w-4 text-white"
         data-testid="circle-help-icon"
         fill="none"
         height="24"

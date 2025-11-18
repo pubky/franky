@@ -457,18 +457,18 @@ describe('Utils', () => {
 
     it('should normalize radix IDs in aria-controls attributes', () => {
       const element1 = document.createElement('button');
-      element1.setAttribute('aria-controls', 'radix-«r1»-content');
+      element1.setAttribute('aria-controls', 'radix-_r_1_');
       mockContainer.appendChild(element1);
 
       const element2 = document.createElement('button');
-      element2.setAttribute('aria-controls', 'radix-«r2»-trigger');
+      element2.setAttribute('aria-controls', 'radix-_r_2_');
       mockContainer.appendChild(element2);
 
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-«r0»');
-      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-«r0»');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-_r_0_');
     });
 
     it('should not modify non-radix aria-controls attributes', () => {
@@ -496,7 +496,7 @@ describe('Utils', () => {
 
     it('should handle mixed radix and non-radix elements', () => {
       const radixElement = document.createElement('button');
-      radixElement.setAttribute('aria-controls', 'radix-«r5»-content');
+      radixElement.setAttribute('aria-controls', 'radix-_r_5_');
       mockContainer.appendChild(radixElement);
 
       const normalElement = document.createElement('button');
@@ -506,7 +506,7 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-«r0»');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
       expect(buttons[1].getAttribute('aria-controls')).toBe('normal-id');
     });
 

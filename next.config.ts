@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+  // Empty turbopack config to silence the warning
+  // We're using webpack (via --webpack flag) due to our WebAssembly requirements
+  turbopack: {},
 };
 
 export default nextConfig;

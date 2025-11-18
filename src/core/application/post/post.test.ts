@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 import { PubkyAppPost, PubkyAppPostKind } from 'pubky-app-specs';
 
 // Mock the Local.Post service
@@ -87,6 +88,72 @@ describe('Post Application', () => {
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
+
+    it('should handle posts with Long kind', async () => {
+      const longPost = new PubkyAppPost('Long post content', PubkyAppPostKind.Long, undefined, undefined, undefined);
+      const mockData: Core.TCreatePostInput = {
+        postId: 'post456',
+        authorId: 'author' as Core.Pubky,
+        post: longPost,
+        postUrl: 'pubky://author/pub/pubky.app/posts/post456',
+      };
+      const { saveSpy, requestSpy } = setupMocks();
+
+      saveSpy.mockResolvedValue(undefined);
+      requestSpy.mockResolvedValue(undefined);
+
+      await Core.PostApplication.create(mockData);
+
+      expect(saveSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        authorId: mockData.authorId,
+        post: longPost,
+      });
+      expect(requestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        mockData.postUrl,
+        expect.objectContaining({
+          content: 'Long post content',
+          kind: 'long',
+        }),
+      );
+    });
+
+    it('should handle posts with parent URI (reply)', async () => {
+      const replyPost = new PubkyAppPost(
+        'Reply content',
+        PubkyAppPostKind.Short,
+        'pubky://parent-author/pub/pubky.app/posts/parent-post',
+        undefined,
+        undefined,
+      );
+      const mockData: Core.TCreatePostInput = {
+        postId: 'post789',
+        authorId: 'author' as Core.Pubky,
+        post: replyPost,
+        postUrl: 'pubky://author/pub/pubky.app/posts/post789',
+      };
+      const { saveSpy, requestSpy } = setupMocks();
+
+      saveSpy.mockResolvedValue(undefined);
+      requestSpy.mockResolvedValue(undefined);
+
+      await Core.PostApplication.create(mockData);
+
+      expect(saveSpy).toHaveBeenCalledWith({
+        postId: mockData.postId,
+        authorId: mockData.authorId,
+        post: replyPost,
+      });
+      expect(requestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        mockData.postUrl,
+        expect.objectContaining({
+          content: 'Reply content',
+          kind: 'short',
+        }),
+      );
+    });
   });
 
   describe('delete', () => {
@@ -126,7 +193,7 @@ describe('Post Application', () => {
 
       await expect(Core.PostApplication.delete(mockData)).rejects.toThrow('Post not found');
 
-      expect(findByIdSpy).toHaveBeenCalledOnce();
+      expect(findByIdSpy).toHaveBeenCalledWith(mockData.postId);
     });
 
     it('should propagate error when local delete fails', async () => {
@@ -155,6 +222,25 @@ describe('Post Application', () => {
       expect(findByIdSpy).toHaveBeenCalledOnce();
       expect(deleteSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
+    });
+
+    it('should propagate database error when findById throws', async () => {
+      const mockData = createMockDeleteData();
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Database connection failed',
+        500,
+        { postId: mockData.postId },
+      );
+      const findByIdSpy = vi.spyOn(Core.PostDetailsModel, 'findById').mockRejectedValue(databaseError);
+      const deleteSpy = vi.spyOn(Core.LocalPostService, 'delete').mockResolvedValue(undefined);
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+      await expect(Core.PostApplication.delete(mockData)).rejects.toThrow('Database connection failed');
+
+      expect(findByIdSpy).toHaveBeenCalledWith(mockData.postId);
+      expect(deleteSpy).not.toHaveBeenCalled();
+      expect(requestSpy).not.toHaveBeenCalled();
     });
   });
 });
