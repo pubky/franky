@@ -104,7 +104,6 @@ type ServiceMocks = {
   persistPosts: unknown;
   upsertPostsStream: unknown;
   upsertInfluencersStream: unknown;
-  upsertTagsStream: unknown;
   upsertHotTags: unknown;
   persistNotifications: unknown;
 };
@@ -155,7 +154,6 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       .spyOn(Core.LocalStreamPostsService, 'upsert')
       .mockImplementation(upsertPostsError ? () => Promise.reject(upsertPostsError) : () => Promise.resolve(undefined)),
     upsertInfluencersStream: vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined),
-    upsertTagsStream: vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined),
     upsertHotTags: vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined),
     persistNotifications: vi
       .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
@@ -189,7 +187,10 @@ const assertCommonCalls = (
     Core.UserStreamTypes.RECOMMENDED,
     bootstrapData.list.recommended,
   );
-  expect(mocks.upsertHotTags).toHaveBeenCalledWith('today:all', bootstrapData.list.hot_tags);
+  expect(mocks.upsertHotTags).toHaveBeenCalledWith(
+    Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'),
+    bootstrapData.list.hot_tags,
+  );
   expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
 };
 
@@ -416,7 +417,7 @@ describe('BootstrapApplication', () => {
       });
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.RECOMMENDED, []);
-      expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, []);
+      expect(mocks.upsertHotTags).toHaveBeenCalledWith(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), []);
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });
 
@@ -447,7 +448,7 @@ describe('BootstrapApplication', () => {
       });
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
       expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.RECOMMENDED, ['user-2']);
-      expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, []);
+      expect(mocks.upsertHotTags).toHaveBeenCalledWith(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), []);
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });
   });
@@ -495,7 +496,6 @@ describe('BootstrapApplication', () => {
       const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue([]);
       const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       const upsertInfluencersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
-      const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const upsertHotTagsSpy = vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const persistNotificationsSpy = vi
         .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
@@ -511,7 +511,6 @@ describe('BootstrapApplication', () => {
         persistPosts: persistPostsSpy,
         upsertPostsStream: upsertPostsStreamSpy,
         upsertInfluencersStream: upsertInfluencersStreamSpy,
-        upsertTagsStream: upsertTagsStreamSpy,
         upsertHotTags: upsertHotTagsSpy,
         persistNotifications: persistNotificationsSpy,
         loggerInfo: loggerInfoSpy,
