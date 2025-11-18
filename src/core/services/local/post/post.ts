@@ -169,6 +169,27 @@ export class LocalPostService {
   }
 
   /**
+   * Get post counts for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post counts or undefined if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+    try {
+      const counts = await Core.PostCountsModel.findById(postId);
+      return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
+    } catch (error) {
+      Libs.Logger.error('Failed to get post counts', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post counts', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
    * Helper method to update post counts safely
    */
   private static async updatePostCount(

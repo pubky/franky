@@ -15,8 +15,8 @@ export class PostStreamApplication {
     limit,
     viewerId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
-    // Avoid the indexdb query for engagement streams
-    if (streamId.split(':')[0] === Core.StreamSorting.TIMELINE) {
+    // Avoid the indexdb query for engagement streams even we do not persist
+    if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT) {
       const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
 
       if (cachedStream) {
@@ -37,23 +37,27 @@ export class PostStreamApplication {
   }
 
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
-    const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
-    const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
-    if (postBatch) {
-      await Core.LocalStreamPostsService.persistPosts(postBatch);
-      const cacheMissUserIds = postBatch
-        ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
-        : [];
-      if (cacheMissUserIds.length > 0) {
-        const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
-          user_ids: cacheMissUserIds,
-          viewer_id: viewerId,
-        });
-        const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
-        if (userBatch) {
-          await Core.LocalStreamUsersService.persistUsers(userBatch);
+    try {
+      const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
+      const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
+      if (postBatch) {
+        await Core.LocalStreamPostsService.persistPosts(postBatch);
+        const cacheMissUserIds = postBatch
+          ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
+          : [];
+        if (cacheMissUserIds.length > 0) {
+          const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+            user_ids: cacheMissUserIds,
+            viewer_id: viewerId,
+          });
+          const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
+          if (userBatch) {
+            await Core.LocalStreamUsersService.persistUsers(userBatch);
+          }
         }
       }
+    } catch (error) {
+      Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
     }
   }
 
@@ -90,9 +94,9 @@ export class PostStreamApplication {
     // TODO: DELETE FINISH
 
     // START of the fn
-    const { params, invokeEndpoint } = Core.createNexusParams(streamId, streamTail, limit, viewerId);
+    const { params, invokeEndpoint, extraParams } = Core.createNexusParams(streamId, streamTail, limit, viewerId);
     // TODO: With the new endpoint, we have to adapt the next line and delete timestamp and composidePostIds
-    const nexusPosts = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params });
+    const nexusPosts = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
     // Handle empty response
     if (nexusPosts.length === 0) {
@@ -103,8 +107,11 @@ export class PostStreamApplication {
     const compositePostIds = nexusPosts.map((post) =>
       Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
     );
-    // TODO: Delete the addPost
-    await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });
+
+    // Do not persist any stream related with engagement sorting
+    if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT) {
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });
+    }
     const cacheMissPostIds = await this.getNotPersistedPostsInCache(compositePostIds);
     // TODO: the timestamp we will get from
     return { nextPageIds: compositePostIds, cacheMissPostIds, timestamp };
