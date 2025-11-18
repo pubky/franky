@@ -2,7 +2,8 @@
 
 exports[`PostContent - Snapshots > matches snapshot with empty content 1`] = `
 <div
-  class="flex flex-col"
+  class="mx-auto w-full flex-col flex gap-3"
+  data-testid="container"
 >
   <p
     class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -12,7 +13,8 @@ exports[`PostContent - Snapshots > matches snapshot with empty content 1`] = `
 
 exports[`PostContent - Snapshots > matches snapshot with multiline content (preserves newlines) 1`] = `
 <div
-  class="flex flex-col"
+  class="mx-auto w-full flex-col flex gap-3"
+  data-testid="container"
 >
   <p
     class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -27,7 +29,8 @@ Line 3
 
 exports[`PostContent - Snapshots > matches snapshot with single-line content 1`] = `
 <div
-  class="flex flex-col"
+  class="mx-auto w-full flex-col flex gap-3"
+  data-testid="container"
 >
   <p
     class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"

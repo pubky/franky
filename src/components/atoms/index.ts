@@ -7,6 +7,7 @@ export * from './Dialog';
 export * from './Filter';
 export * from './FooterLinks';
 export * from './Heading';
+export * from './Iframe';
 export * from './ImageBackground';
 export * from './Input';
 export * from './Link';
