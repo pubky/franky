@@ -1,34 +1,75 @@
 'use client';
 
-import * as Atoms from '@/atoms';
 import { useMemo } from 'react';
-import { parseContentForLinkEmbed } from './utils';
+import LinkifyIt from 'linkify-it';
 
-export type PostLinkEmbedsProps = {
-  content: string;
+import * as Atoms from '@/atoms';
+import * as Providers from './Providers';
+import * as Types from './PostLinkEmbeds.types';
+
+// Register all embed providers here
+const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
+  Providers.Youtube,
+  // Add more providers here:
+  // Providers.Vimeo,
+  // Providers.Twitch,
+];
+
+// Protocol types to ignore when parsing links
+const IGNORED_PROTOCOLS = ['ftp:', 'mailto:'];
+
+/**
+ * Create a hostname-to-provider lookup map for O(1) performance
+ * Lazily initialized on first use to avoid module circular dependency issues
+ */
+let PROVIDER_MAP: Map<string, Providers.EmbedProvider> | null = null;
+
+const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
+  if (!PROVIDER_MAP) {
+    PROVIDER_MAP = new Map<string, Providers.EmbedProvider>(
+      EMBED_PROVIDERS.flatMap((provider) => provider.domains.map((domain) => [domain, provider] as const)),
+    );
+  }
+  return PROVIDER_MAP;
 };
 
-export const PostLinkEmbeds = ({ content }: PostLinkEmbedsProps) => {
-  const linkEmbed = useMemo(() => parseContentForLinkEmbed(content), [content]);
+/**
+ * Parse content for embeddable links
+ * Returns the first embeddable link and its provider
+ */
+const parseContentForLinkEmbed = (content: string): Types.ParseContentForLinkEmbedResult => {
+  try {
+    const linkify = new LinkifyIt();
 
-  if (linkEmbed.type === 'none') return null;
+    // Disable unwanted protocol types
+    IGNORED_PROTOCOLS.forEach((protocol) => linkify.add(protocol, null));
 
-  return (
-    <Atoms.Container>
-      {linkEmbed.type === 'youtube' && (
-        <iframe
-          width="100%"
-          height="315"
-          src={linkEmbed.url}
-          loading="lazy"
-          title={`YouTube video ${linkEmbed.url.split('https://www.youtube-nocookie.com/embed/')[1]}`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-          className="rounded-md"
-          data-testid="YouTube video player"
-        ></iframe>
-      )}
-    </Atoms.Container>
-  );
+    const match = linkify.match(content);
+
+    if (!match) return { embed: null, provider: null };
+
+    const url = match[0].url;
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.toLowerCase();
+
+    // O(1) lookup using the provider map
+    const providerMap = getProviderMap();
+    const provider = providerMap.get(hostname);
+    if (!provider) return { embed: null, provider: null };
+
+    const embed = provider.parseEmbed(url);
+    if (!embed) return { embed: null, provider: null };
+
+    return { embed, provider };
+  } catch {
+    return { embed: null, provider: null };
+  }
+};
+
+export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
+  const { embed, provider } = useMemo(() => parseContentForLinkEmbed(content), [content]);
+
+  if (!embed || !provider) return null;
+
+  return <Atoms.Container>{provider.renderEmbed(embed.url)}</Atoms.Container>;
 };
