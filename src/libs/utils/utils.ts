@@ -74,13 +74,14 @@ export async function copyToClipboard({ text }: CopyToClipboardProps) {
 export const normaliseRadixIds = (container: HTMLElement) => {
   const clonedContainer = container.cloneNode(true) as HTMLElement;
   const normalizedId = 'radix-_r_0_';
-  const radixIdPattern = /^radix-_r_[\da-z]+_?$/i;
+  const radixIdPatterns = [/^radix-_r_[\da-z]+_?$/i, /^_r_[\da-z]+_?$/i];
+  const shouldNormalise = (value: string | null) =>
+    Boolean(value && radixIdPatterns.some((pattern) => pattern.test(value)));
 
   // Normalise all radix IDs to a consistent value
   const elementsWithIds = clonedContainer.querySelectorAll('[id]');
   elementsWithIds.forEach((el) => {
-    const id = el.getAttribute('id');
-    if (id && radixIdPattern.test(id)) {
+    if (shouldNormalise(el.getAttribute('id'))) {
       el.setAttribute('id', normalizedId);
     }
   });
@@ -88,8 +89,7 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   // Normalise aria-controls attributes
   const elementsWithAriaControls = clonedContainer.querySelectorAll('[aria-controls]');
   elementsWithAriaControls.forEach((el) => {
-    const ariaControls = el.getAttribute('aria-controls');
-    if (ariaControls && radixIdPattern.test(ariaControls)) {
+    if (shouldNormalise(el.getAttribute('aria-controls'))) {
       el.setAttribute('aria-controls', normalizedId);
     }
   });
@@ -97,8 +97,7 @@ export const normaliseRadixIds = (container: HTMLElement) => {
   // Normalise aria-labelledby attributes
   const elementsWithAriaLabelledBy = clonedContainer.querySelectorAll('[aria-labelledby]');
   elementsWithAriaLabelledBy.forEach((el) => {
-    const ariaLabelledBy = el.getAttribute('aria-labelledby');
-    if (ariaLabelledBy && radixIdPattern.test(ariaLabelledBy)) {
+    if (shouldNormalise(el.getAttribute('aria-labelledby'))) {
       el.setAttribute('aria-labelledby', normalizedId);
     }
   });
