@@ -1,7 +1,7 @@
 'use client';
 
-import * as Atoms from '@/components/atoms';
-import * as Molecules from '@/components/molecules';
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
