@@ -1,3 +1,4 @@
+export * from './ProfilePageLayout';
 export * from './ProfilePageNotifications';
 export * from './ProfilePagePosts';
 export * from './ProfilePageReplies';

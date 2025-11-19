@@ -3,90 +3,11 @@
 exports[`ProfileLayout > matches snapshot 1`] = `
 <div>
   <div
-    data-left="false"
-    data-right="false"
-    data-testid="mobile-header"
+    data-testid="profile-page-container"
   >
-    Mobile Header
-  </div>
-  <div
-    data-active="notifications"
-    data-testid="profile-mobile-menu"
-  >
-    <button
-      aria-label="Posts"
-    >
-      Posts
-    </button>
-    <button
-      aria-label="Replies"
-    >
-      Replies
-    </button>
-    <button
-      aria-label="Notifications"
-    >
-      Notifications
-    </button>
-  </div>
-  <div
-    data-testid="profile-page-layout-wrapper"
-  >
-    <div
-      class="hidden bg-background pb-6 shadow-sm lg:block"
-      data-testid="container"
-    >
-      <div
-        data-testid="profile-page-header"
-      >
-        <div />
-        <div />
-        <div />
-      </div>
+    <div>
+      Test Content
     </div>
-    <div
-      class="flex gap-6"
-      data-testid="container"
-    >
-      <div
-        data-active="notifications"
-        data-testid="profile-filter-bar"
-      >
-        <button
-          aria-label="Posts"
-        >
-          Posts
-        </button>
-        <button
-          aria-label="Followers"
-        >
-          Followers
-        </button>
-        <button
-          aria-label="Following"
-        >
-          Following
-        </button>
-      </div>
-      <div
-        class="flex-1"
-        data-testid="container"
-      >
-        <div>
-          Test Content
-        </div>
-      </div>
-      <div
-        data-testid="profile-sidebar"
-      >
-        Sidebar
-      </div>
-    </div>
-  </div>
-  <div
-    data-testid="mobile-footer"
-  >
-    Footer
   </div>
 </div>
 `;

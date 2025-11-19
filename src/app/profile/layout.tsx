@@ -1,43 +1,23 @@
-'use client';
-
 import * as React from 'react';
-import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-import * as Core from '@/core';
-import * as Hooks from '@/hooks';
 
+/**
+ * ProfileLayout - Next.js layout for profile pages
+ *
+ * This layout is now a simple wrapper that delegates all business logic
+ * to the ProfilePageContainer (smart component), which in turn delegates
+ * presentation to ProfilePageLayout (dumb component).
+ *
+ * Benefits of this separation:
+ * 1. Layout is truly "dumb plumbing" - no business logic
+ * 2. Easier to test (container can be tested independently)
+ * 3. Better separation of concerns (smart vs. dumb components)
+ * 4. Follows single responsibility principle
+ * 5. Auth state and data fetching are encapsulated in container
+ *
+ * @see {@link ProfilePageContainer} for business logic
+ * @see {@link ProfilePageLayout} for presentation
+ */
 export default function ProfileLayout({ children }: { children: React.ReactNode }) {
-  const { currentUserPubky } = Core.useAuthStore();
-  const { profile, stats, actions, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
-  const { activePage, filterBarActivePage, navigateToPage } = Hooks.useProfileNavigation();
-
-  return (
-    <>
-      <Molecules.MobileHeader showLeftButton={false} showRightButton={false} />
-
-      <Molecules.ProfilePageMobileMenu activePage={activePage} onPageChangeAction={navigateToPage} />
-
-      <Molecules.ProfilePageLayoutWrapper>
-        <Atoms.Container overrideDefaults={true} className="hidden bg-background pb-6 shadow-sm lg:block">
-          {!isLoading && <Organisms.ProfilePageHeader profile={profile} actions={actions} />}
-        </Atoms.Container>
-
-        <Atoms.Container overrideDefaults={true} className="flex gap-6">
-          <Molecules.ProfilePageFilterBar
-            activePage={filterBarActivePage}
-            onPageChangeAction={navigateToPage}
-            stats={stats}
-          />
-
-          <Atoms.Container overrideDefaults={true} className="flex-1">
-            {children}
-          </Atoms.Container>
-          <Molecules.ProfilePageSidebar />
-        </Atoms.Container>
-      </Molecules.ProfilePageLayoutWrapper>
-
-      <Molecules.MobileFooter />
-    </>
-  );
+  return <Organisms.ProfilePageContainer>{children}</Organisms.ProfilePageContainer>;
 }
