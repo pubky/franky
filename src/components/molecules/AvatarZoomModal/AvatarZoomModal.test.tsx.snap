@@ -1,0 +1,50 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AvatarZoomModal - Snapshots > matches snapshot when closed 1`] = `null`;
+
+exports[`AvatarZoomModal - Snapshots > matches snapshot when open with avatar image 1`] = `
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  data-testid="avatar-zoom-modal-overlay"
+>
+  <div
+    class="relative"
+    data-testid="avatar-zoom-modal-content"
+  >
+    <div
+      class="size-(--avatar-zoom-size)"
+      data-testid="avatar"
+    >
+      <img
+        alt="John Doe's avatar"
+        data-testid="avatar-image"
+        src="https://example.com/avatar.jpg"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`AvatarZoomModal - Snapshots > matches snapshot when open with fallback initials 1`] = `
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  data-testid="avatar-zoom-modal-overlay"
+>
+  <div
+    class="relative"
+    data-testid="avatar-zoom-modal-content"
+  >
+    <div
+      class="size-(--avatar-zoom-size)"
+      data-testid="avatar"
+    >
+      <div
+        class="text-6xl"
+        data-testid="avatar-fallback"
+      >
+        JS
+      </div>
+    </div>
+  </div>
+</div>
+`;

@@ -146,6 +146,20 @@ body {
    */
   --filter-bar-width: 180px;
 
+  /**
+   * Avatar zoom modal size
+   * - Size of the avatar when displayed in the zoom modal
+   * - Used for full-screen avatar preview on profile page
+   * - Applied to: AvatarZoomModal component
+   * 
+   * Rationale:
+   * - 362px provides optimal viewing size for avatar details
+   * - Large enough to see fine details while maintaining aspect ratio
+   * - Consistent with design specifications for modal avatar display
+   * - Ensures avatar is prominently displayed without overwhelming the viewport
+   */
+  --avatar-zoom-size: 362px;
+
   /* ==================================================================
    * Z-INDEX LAYERS (Stacking Order)
    * ================================================================== */

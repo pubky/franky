@@ -3,6 +3,68 @@ import { describe, it, expect, vi } from 'vitest';
 import { ProfilePageHeader } from './ProfilePageHeader';
 import { ProfilePageHeaderProps } from './ProfilePageHeader.types';
 
+// Mock Molecules components
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    AvatarWithFallback: ({
+      avatarUrl,
+      name,
+      className,
+      fallbackClassName,
+      alt,
+    }: {
+      avatarUrl?: string;
+      name: string;
+      className?: string;
+      fallbackClassName?: string;
+      alt?: string;
+    }) => (
+      <div data-testid="avatar" className={className}>
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={alt || name} data-testid="avatar-image" />
+        ) : (
+          <div data-testid="avatar-fallback" className={fallbackClassName}>
+            {name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </div>
+        )}
+      </div>
+    ),
+    AvatarZoomModal: ({
+      open,
+      onClose,
+      avatarUrl,
+      name,
+    }: {
+      open: boolean;
+      onClose: () => void;
+      avatarUrl?: string;
+      name: string;
+    }) =>
+      open ? (
+        <div data-testid="avatar-zoom-modal">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={`${name}'s avatar`} data-testid="avatar-image-modal" />
+          ) : (
+            <div data-testid="avatar-fallback-modal">
+              {name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')}
+            </div>
+          )}
+          <button data-testid="modal-close" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      ) : null,
+  };
+});
+
 const mockProps: ProfilePageHeaderProps = {
   profile: {
     name: 'Satoshi Nakamoto',
@@ -116,6 +178,61 @@ describe('ProfilePageHeader', () => {
     expect(
       screen.queryByText('Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.'),
     ).not.toBeInTheDocument();
+  });
+
+  it('opens avatar zoom modal when avatar is clicked', () => {
+    render(<ProfilePageHeader {...mockProps} />);
+
+    const containers = screen.getAllByTestId('container');
+    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
+    fireEvent.click(avatarContainer!);
+
+    expect(screen.getByTestId('avatar-zoom-modal')).toBeInTheDocument();
+  });
+
+  it('closes avatar zoom modal when backdrop is clicked', () => {
+    render(<ProfilePageHeader {...mockProps} />);
+
+    // Open modal
+    const containers = screen.getAllByTestId('container');
+    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
+    fireEvent.click(avatarContainer!);
+
+    // Verify modal is open
+    expect(screen.getByTestId('avatar-zoom-modal')).toBeInTheDocument();
+
+    // Close modal by clicking close button
+    const closeButton = screen.getByTestId('modal-close');
+    fireEvent.click(closeButton);
+
+    // Verify modal is closed
+    expect(screen.queryByTestId('avatar-zoom-modal')).not.toBeInTheDocument();
+  });
+
+  it('renders avatar zoom modal with avatar image when avatarUrl is provided', () => {
+    const props = {
+      ...mockProps,
+      profile: { ...mockProps.profile, avatarUrl: 'https://example.com/avatar.jpg' },
+    };
+    render(<ProfilePageHeader {...props} />);
+
+    const containers = screen.getAllByTestId('container');
+    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
+    fireEvent.click(avatarContainer!);
+
+    const avatarImage = screen.getByTestId('avatar-image-modal');
+    expect(avatarImage).toHaveAttribute('src', 'https://example.com/avatar.jpg');
+    expect(avatarImage).toHaveAttribute('alt', "Satoshi Nakamoto's avatar");
+  });
+
+  it('renders avatar zoom modal with fallback initials when avatarUrl is not provided', () => {
+    render(<ProfilePageHeader {...mockProps} />);
+
+    const containers = screen.getAllByTestId('container');
+    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
+    fireEvent.click(avatarContainer!);
+
+    expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('SN');
   });
 
   it('matches snapshot', () => {

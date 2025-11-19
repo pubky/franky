@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot when avatarUrl is not provided 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <div
+    class="text-2xl"
+    data-testid="avatar-fallback"
+  >
+    JS
+  </div>
+</div>
+`;
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot when avatarUrl is provided 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <img
+    alt="John Doe"
+    data-testid="avatar-image"
+    src="https://example.com/avatar.jpg"
+  />
+</div>
+`;
+
+exports[`AvatarWithFallback - Snapshots > matches snapshot with custom alt text 1`] = `
+<div
+  class="size-16"
+  data-testid="avatar"
+>
+  <img
+    alt="Custom alt"
+    data-testid="avatar-image"
+    src="https://example.com/avatar.jpg"
+  />
+</div>
+`;
