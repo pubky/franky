@@ -29,9 +29,17 @@ export class BootstrapApplication {
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: data.list.stream,
       }),
-      Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, data.list.influencers),
-      Core.LocalStreamUsersService.upsert(Core.UserStreamTypes.RECOMMENDED, data.list.recommended),
+      Core.LocalStreamUsersService.upsert({
+        streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        stream: data.list.influencers,
+      }),
+      Core.LocalStreamUsersService.upsert({
+        streamId: Core.UserStreamTypes.RECOMMENDED,
+        stream: data.list.recommended,
+      }),
+      // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
+      Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);
 

@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
+<div
+  data-testid="container"
+>
+  <iframe
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen=""
+    class="rounded-md"
+    data-testid="YouTube video player"
+    height="315"
+    loading="lazy"
+    sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+    src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+    title="YouTube video dQw4w9WgXcQ"
+    width="100%"
+  />
+</div>
+`;
+
+exports[`PostLinkEmbeds - Snapshots > matches snapshot for no embed (no URL) 1`] = `null`;
