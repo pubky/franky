@@ -35,6 +35,7 @@ export * from './ProfilePageTaggedAs';
 export * from './ProfilePageLinks';
 export * from './ProfilePageLayoutWrapper';
 export * from './ProfileNavigation';
+export * from './PostLinkEmbeds';
 export * from './PostTag';
 export * from './PostTagAddButton';
 export * from './PostTagInput';

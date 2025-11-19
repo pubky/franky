@@ -16,6 +16,11 @@ vi.mock('@/core', () => ({
   },
 }));
 
+// Mock molecules - PostLinkEmbeds
+vi.mock('@/molecules', () => ({
+  PostLinkEmbeds: () => null, // Return null for cleaner snapshots
+}));
+
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockFindById = vi.mocked(Core.PostDetailsModel.findById);
 
