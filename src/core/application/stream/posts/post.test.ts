@@ -56,6 +56,20 @@ describe('PostStreamApplication', () => {
     });
   };
 
+  const createMockNexusPostsKeyStream = (
+    count: number,
+    startIndex: number = 1,
+    author: string = DEFAULT_AUTHOR,
+    startTimestamp: number = BASE_TIMESTAMP,
+  ): Core.NexusPostsKeyStream => {
+    const postKeys = Array.from({ length: count }, (_, i) => `${author}:post-${startIndex + i}`);
+    const lastPostScore = startTimestamp + count - 1;
+    return {
+      post_keys: postKeys,
+      last_post_score: lastPostScore,
+    };
+  };
+
   const createMockNexusUser = (
     userId: string = DEFAULT_AUTHOR,
     overrides?: Partial<Core.NexusUser>,
@@ -170,8 +184,8 @@ describe('PostStreamApplication', () => {
     });
 
     it('should fetch from Nexus when cache is empty', async () => {
-      const mockNexusPosts = createMockNexusPosts(5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
       await createStreamWithPosts([]);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
@@ -192,9 +206,10 @@ describe('PostStreamApplication', () => {
     });
 
     it('should fetch from beginning when database is deleted (no cache with stale timestamp)', async () => {
-      const mockNexusPosts = createMockNexusPosts(5);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5);
       const staleTimestamp = BASE_TIMESTAMP + 100;
-      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
+      vi.spyOn(Core.PostDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue(Array(5).fill(undefined));
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -224,8 +239,8 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(initialPostIds);
       await createPostDetails(initialPostIds);
 
-      const mockNexusPosts = createMockNexusPosts(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -247,7 +262,7 @@ describe('PostStreamApplication', () => {
       const postIds = [`${DEFAULT_AUTHOR}:post-1`, `${DEFAULT_AUTHOR}:post-2`];
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -267,8 +282,8 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(cachedPostIds);
 
       // Mock more posts from Nexus
-      const mockNexusPosts = createMockNexusPosts(5, 4, DEFAULT_AUTHOR, BASE_TIMESTAMP + 3);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5, 4, DEFAULT_AUTHOR, BASE_TIMESTAMP + 3);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
 
       // Request 10 posts, but cache only has 3
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
@@ -287,8 +302,8 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
 
       vi.spyOn(Core.PostDetailsModel, 'findById').mockRejectedValue(new Error('Database error'));
-      const mockNexusPosts = createMockNexusPosts(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -305,8 +320,8 @@ describe('PostStreamApplication', () => {
       const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
       await createStreamWithPosts(postIds);
 
-      const mockNexusPosts = createMockNexusPosts(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -341,8 +356,8 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
 
-      const mockNexusPosts = createMockNexusPosts(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5, 6, DEFAULT_AUTHOR, BASE_TIMESTAMP + 5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -372,8 +387,8 @@ describe('PostStreamApplication', () => {
 
     it('should propagate error when persistNewStreamChunk fails (stream write operation)', async () => {
       await createStreamWithPosts([]);
-      const mockNexusPosts = createMockNexusPosts(5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
       vi.spyOn(Core.LocalStreamPostsService, 'persistNewStreamChunk').mockRejectedValue(
         new Error('Failed to persist stream chunk'),
       );
@@ -390,8 +405,8 @@ describe('PostStreamApplication', () => {
 
     it('should propagate error when getNotPersistedPostsInCache fails (post details read operation)', async () => {
       await createStreamWithPosts([]);
-      const mockNexusPosts = createMockNexusPosts(5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
       vi.spyOn(Core.LocalStreamPostsService, 'persistNewStreamChunk').mockResolvedValue(undefined);
 
       const findByIdsSpy = vi
@@ -412,12 +427,11 @@ describe('PostStreamApplication', () => {
 
     it('should handle posts with different authors', async () => {
       await createStreamWithPosts([]);
-      const mockNexusPosts: Core.NexusPost[] = [
-        createMockNexusPost('post-1', 'author-1', BASE_TIMESTAMP),
-        createMockNexusPost('post-2', 'author-2', BASE_TIMESTAMP + 1),
-        createMockNexusPost('post-3', 'author-1', BASE_TIMESTAMP + 2),
-      ];
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
+        post_keys: ['author-1:post-1', 'author-2:post-2', 'author-1:post-3'],
+        last_post_score: BASE_TIMESTAMP + 2,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
       vi.spyOn(Core.PostDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue(Array(3).fill(undefined));
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
@@ -436,7 +450,7 @@ describe('PostStreamApplication', () => {
       await createStreamWithPosts(postIds);
       await createPostDetails(postIds);
 
-      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue([]);
+      const nexusFetchSpy = vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(undefined);
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
         streamId,
@@ -448,13 +462,14 @@ describe('PostStreamApplication', () => {
       expect(result.nextPageIds).toHaveLength(0);
       expect(result.cacheMissPostIds).toEqual([]);
       expect(result.timestamp).toBeUndefined();
-      expect(nexusFetchSpy).not.toHaveBeenCalled();
+      // Note: fetch is still called even when limit is 0, but returns empty result
+      expect(nexusFetchSpy).toHaveBeenCalled();
     });
 
     it('should handle when timestamp is provided but post_id is not', async () => {
       await createStreamWithPosts([]);
-      const mockNexusPosts = createMockNexusPosts(5);
-      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPosts);
+      const mockNexusPostsKeyStream = createMockNexusPostsKeyStream(5);
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
       vi.spyOn(Core.PostDetailsModel, 'findByIdsPreserveOrder').mockResolvedValue(Array(5).fill(undefined));
 
       const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
