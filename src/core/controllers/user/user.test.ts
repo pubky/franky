@@ -12,6 +12,88 @@ describe('UserController', () => {
     vi.restoreAllMocks();
   });
 
+  describe('getDetails', () => {
+    it('should delegate to UserDetailsModel.findById', async () => {
+      const userId = 'test-user-id';
+      const mockUserDetails = {
+        id: userId,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: '',
+        links: [],
+        status: '',
+      } as Core.UserDetailsModelSchema;
+
+      const findByIdSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
+
+      const result = await UserController.getDetails(userId);
+
+      expect(result).toEqual(mockUserDetails);
+      expect(findByIdSpy).toHaveBeenCalledWith(userId);
+    });
+
+    it('should return null when user details not found', async () => {
+      const userId = 'non-existent-user';
+
+      vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
+
+      const result = await UserController.getDetails(userId);
+
+      expect(result).toBeNull();
+    });
+
+    it('should propagate errors from model layer', async () => {
+      const userId = 'test-user-id';
+
+      vi.spyOn(Core.UserDetailsModel, 'findById').mockRejectedValue(new Error('Database error'));
+
+      await expect(UserController.getDetails(userId)).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('getCounts', () => {
+    it('should delegate to UserCountsModel.findById', async () => {
+      const userId = 'test-user-id';
+      const mockUserCounts = {
+        id: userId,
+        posts: 10,
+        replies: 5,
+        followers: 20,
+        following: 15,
+        friends: 8,
+        tagged: 3,
+        tags: 2,
+        unique_tags: 1,
+        bookmarks: 7,
+      } as Core.UserCountsModelSchema;
+
+      const findByIdSpy = vi.spyOn(Core.UserCountsModel, 'findById').mockResolvedValue(mockUserCounts);
+
+      const result = await UserController.getCounts(userId);
+
+      expect(result).toEqual(mockUserCounts);
+      expect(findByIdSpy).toHaveBeenCalledWith(userId);
+    });
+
+    it('should return null when user counts not found', async () => {
+      const userId = 'non-existent-user';
+
+      vi.spyOn(Core.UserCountsModel, 'findById').mockResolvedValue(null);
+
+      const result = await UserController.getCounts(userId);
+
+      expect(result).toBeNull();
+    });
+
+    it('should propagate errors from model layer', async () => {
+      const userId = 'test-user-id';
+
+      vi.spyOn(Core.UserCountsModel, 'findById').mockRejectedValue(new Error('Database error'));
+
+      await expect(UserController.getCounts(userId)).rejects.toThrow('Database error');
+    });
+  });
+
   describe('follow', () => {
     it('should normalize follow request and delegate to UserApplication.follow (PUT)', async () => {
       const follower = 'pubky-follower' as unknown as Core.Pubky;

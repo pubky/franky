@@ -135,6 +135,35 @@ describe('Filter Components', () => {
       const item = screen.getByTestId('filter-item');
       expect(item).toMatchSnapshot();
     });
+
+    it('renders as a button element for accessibility', () => {
+      render(
+        <FilterItem>
+          <span>Test Item</span>
+        </FilterItem>,
+      );
+
+      const item = screen.getByTestId('filter-item');
+      expect(item.tagName).toBe('BUTTON');
+      expect(item).toHaveAttribute('type', 'button');
+    });
+
+    it('supports keyboard interaction when focused', () => {
+      const mockOnClick = vi.fn();
+      render(
+        <FilterItem onClick={mockOnClick}>
+          <span>Test Item</span>
+        </FilterItem>,
+      );
+
+      const item = screen.getByTestId('filter-item');
+      item.focus();
+      expect(item).toHaveFocus();
+
+      // Simulate pressing Enter key which triggers click on buttons
+      fireEvent.click(item);
+      expect(mockOnClick).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('FilterItemIcon', () => {

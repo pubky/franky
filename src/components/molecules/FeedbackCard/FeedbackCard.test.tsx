@@ -19,6 +19,21 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
+  Button: ({
+    children,
+    className,
+    variant,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    variant?: string;
+    [key: string]: unknown;
+  }) => (
+    <button data-testid="button" className={className} data-variant={variant} {...props}>
+      {children}
+    </button>
+  ),
   Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="avatar" className={className}>
       {children}
@@ -91,19 +106,20 @@ describe('FeedbackCard', () => {
     expect(userName).toHaveClass('text-base', 'font-bold', 'text-foreground');
   });
 
-  it('renders feedback question correctly', () => {
+  it('renders feedback question correctly as an unstyled button', () => {
     render(<FeedbackCard />);
 
-    const question = screen.getByText('What do you think about Pubky?');
-    expect(question).toHaveClass(
+    const button = screen.getByTestId('button');
+    expect(button).toHaveTextContent('What do you think about Pubky?');
+    expect(button).toHaveClass(
       'text-base',
       'leading-normal',
       'font-medium',
       'text-muted-foreground',
-      'cursor-pointer',
       'hover:text-foreground',
-      'transition-colors',
+      'text-left',
     );
+    expect(button).toHaveAttribute('data-variant', 'unstyled');
   });
 
   it('applies correct container classes', () => {
@@ -116,7 +132,8 @@ describe('FeedbackCard', () => {
   it('applies correct feedback form classes', () => {
     render(<FeedbackCard />);
 
-    const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
+    const button = screen.getByTestId('button');
+    const feedbackForm = button.parentElement;
     expect(feedbackForm).toHaveClass(
       'flex',
       'flex-col',
@@ -151,8 +168,8 @@ describe('FeedbackCard', () => {
   it('handles hover states correctly', () => {
     render(<FeedbackCard />);
 
-    const question = screen.getByText('What do you think about Pubky?');
-    expect(question).toHaveClass('hover:text-foreground', 'transition-colors');
+    const button = screen.getByTestId('button');
+    expect(button).toHaveClass('hover:text-foreground');
   });
 
   it('applies correct spacing and layout', () => {
@@ -161,7 +178,8 @@ describe('FeedbackCard', () => {
     const container = screen.getByTestId('feedback-card');
     expect(container).toHaveClass('gap-2');
 
-    const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
+    const button = screen.getByTestId('button');
+    const feedbackForm = button.parentElement;
     expect(feedbackForm).toHaveClass('gap-4', 'p-6');
   });
 });
@@ -175,7 +193,8 @@ describe('FeedbackCard - Snapshots', () => {
   it('matches snapshot for feedback form', () => {
     render(<FeedbackCard />);
 
-    const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div');
+    const button = screen.getByTestId('button');
+    const feedbackForm = button.parentElement;
     expect(feedbackForm).toMatchSnapshot();
   });
 

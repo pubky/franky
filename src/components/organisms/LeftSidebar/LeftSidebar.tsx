@@ -14,7 +14,7 @@ export function LeftSidebar({ className }: LeftSidebarProps) {
   return (
     <div
       data-testid="left-sidebar"
-      className={Libs.cn('hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex', className)}
+      className={Libs.cn('hidden w-(--filter-bar-width) flex-col items-start justify-start gap-6 lg:flex', className)}
     >
       <Molecules.FilterReach selectedTab={reach} onTabChange={setReach} />
       <Molecules.FilterSort selectedTab={sort} onTabChange={setSort} />

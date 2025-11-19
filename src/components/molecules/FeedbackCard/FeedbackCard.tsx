@@ -31,12 +31,13 @@ export function FeedbackCard() {
           </Atoms.Container>
         </Atoms.Container>
 
-        <Atoms.Container
-          overrideDefaults={true}
-          className="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
+        <Atoms.Button
+          variant="unstyled"
+          overrideDefaults
+          className="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
         >
           What do you think about Pubky?
-        </Atoms.Container>
+        </Atoms.Button>
       </Atoms.Container>
     </Atoms.Container>
   );

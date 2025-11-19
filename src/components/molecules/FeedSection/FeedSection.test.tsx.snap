@@ -24,11 +24,12 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <div
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      <button
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        type="button"
       >
         <svg
           class="h-5 w-5"
@@ -51,12 +52,13 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Following
         </span>
-      </div>
-      <div
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      </button>
+      <button
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -80,12 +82,13 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Based Bitcoin
         </span>
-      </div>
-      <div
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      </button>
+      <button
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -118,12 +121,13 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Mining Industry
         </span>
-      </div>
-      <div
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      </button>
+      <button
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -147,12 +151,13 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Lightning Network
         </span>
-      </div>
-      <div
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      </button>
+      <button
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -200,12 +205,13 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Design UX/UI
         </span>
-      </div>
-      <div
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+      </button>
+      <button
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -232,7 +238,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         >
           Create Feed
         </span>
-      </div>
+      </button>
     </div>
   </div>
 </div>

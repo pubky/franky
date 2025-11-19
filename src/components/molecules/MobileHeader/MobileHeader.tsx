@@ -1,6 +1,6 @@
 'use client';
 
-import * as Atoms from '@/components/atoms';
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 
@@ -18,7 +18,10 @@ export function MobileHeader({
   showRightButton = true,
 }: MobileHeaderProps) {
   return (
-    <Atoms.Container overrideDefaults={true} className="sticky top-0 z-30 bg-background shadow-xs-dark lg:hidden">
+    <Atoms.Container
+      overrideDefaults={true}
+      className="sticky top-0 z-(--z-mobile-menu) bg-background shadow-xs-dark lg:hidden"
+    >
       <Atoms.Container overrideDefaults={true} className="px-6 pt-6 pb-0">
         <Atoms.Container overrideDefaults={true} className="flex items-center justify-between py-3">
           {/* Left icon - filters */}

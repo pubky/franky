@@ -12,7 +12,7 @@ export function ProfilePageSidebar({ tags, links }: ProfilePageSidebarProps) {
   return (
     <Atoms.Container
       overrideDefaults={true}
-      className="sticky top-[var(--header-height)] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+      className="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
     >
       <Molecules.ProfilePageTaggedAs tags={tags} />
       <Molecules.ProfilePageLinks links={links} />

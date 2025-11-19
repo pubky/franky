@@ -3,6 +3,22 @@ import * as Core from '@/core';
 export class UserController {
   private constructor() {} // Prevent instantiation
 
+  /**
+   * Get user details from local database
+   * This is a read-only operation that queries the local cache
+   */
+  static async getDetails(userId: string): Promise<Core.UserDetailsModelSchema | null> {
+    return await Core.UserDetailsModel.findById(userId);
+  }
+
+  /**
+   * Get user counts from local database
+   * This is a read-only operation that queries the local cache
+   */
+  static async getCounts(userId: string): Promise<Core.UserCountsModelSchema | null> {
+    return await Core.UserCountsModel.findById(userId);
+  }
+
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
     await Core.UserApplication.follow({

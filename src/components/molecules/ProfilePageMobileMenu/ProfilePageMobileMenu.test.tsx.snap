@@ -15,7 +15,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Profile"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"
@@ -53,7 +55,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       <button
         aria-current="page"
         aria-label="Notifications"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"
@@ -83,7 +87,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Replies"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"
@@ -110,7 +116,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Posts"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"
@@ -140,7 +148,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Followers"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"
@@ -175,7 +185,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Following"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           class="text-muted-foreground"
@@ -201,7 +213,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Friends"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"
@@ -228,7 +242,9 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
     >
       <button
         aria-label="Tagged"
-        class="px-2.5 py-2"
+        class="inline-flex items-center justify-center whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 has-[>svg]:px-4 px-2.5 py-2"
+        data-slot="button"
+        data-variant="unstyled"
       >
         <svg
           aria-hidden="true"

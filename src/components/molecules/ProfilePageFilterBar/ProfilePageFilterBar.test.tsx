@@ -1,14 +1,31 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ProfilePageFilterBar } from './ProfilePageFilterBar';
-import { DEFAULT_ITEMS } from './ProfilePageFilterBar';
+import { ProfilePageFilterBar, getDefaultItems } from './ProfilePageFilterBar';
 import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
+import * as Hooks from '@/hooks';
+
+const mockStats: Hooks.ProfileStats = {
+  notifications: 2,
+  posts: 4,
+  replies: 7,
+  followers: 115,
+  following: 27,
+  friends: 10,
+  tagged: 5,
+};
 
 describe('ProfilePageFilterBar', () => {
-  it('renders all filter items', () => {
-    render(<ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />);
-    DEFAULT_ITEMS.forEach((item) => {
+  it('renders all filter items with stats', () => {
+    render(
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={mockStats}
+      />,
+    );
+    const defaultItems = getDefaultItems(mockStats);
+    defaultItems.forEach((item) => {
       expect(screen.getByText(item.label)).toBeInTheDocument();
       expect(screen.getByText(item.count.toString())).toBeInTheDocument();
     });
@@ -33,10 +50,22 @@ describe('ProfilePageFilterBar', () => {
 
   it('renders correct number of filter items', () => {
     const { container } = render(
-      <ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />,
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={mockStats}
+      />,
     );
     const filterItems = container.querySelectorAll('[data-slot="filter-item"]');
-    expect(filterItems.length).toBe(DEFAULT_ITEMS.length);
+    expect(filterItems.length).toBe(getDefaultItems(mockStats).length);
+  });
+
+  it('renders with zero counts when no stats provided', () => {
+    render(<ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />);
+    expect(screen.getByText('Notifications')).toBeInTheDocument();
+    // Should show 0 for all counts when no stats provided
+    const counts = screen.getAllByText('0');
+    expect(counts.length).toBeGreaterThan(0);
   });
 
   it('marks active item correctly', () => {
@@ -49,7 +78,13 @@ describe('ProfilePageFilterBar', () => {
   });
 
   it('applies correct count styling for active and inactive items', () => {
-    render(<ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />);
+    render(
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={mockStats}
+      />,
+    );
     const activeCount = screen.getByText('2').closest('span');
     expect(activeCount).toHaveClass('text-foreground');
 
@@ -74,7 +109,18 @@ describe('ProfilePageFilterBar', () => {
 });
 
 describe('ProfilePageFilterBar - Snapshots', () => {
-  it('matches snapshot with default props', () => {
+  it('matches snapshot with stats', () => {
+    const { container } = render(
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={mockStats}
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot without stats (zero counts)', () => {
     const { container } = render(
       <ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />,
     );

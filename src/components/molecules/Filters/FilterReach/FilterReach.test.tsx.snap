@@ -30,15 +30,16 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <div
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -76,16 +77,17 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         >
           All
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="false"
         aria-label="Following"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           class="h-5 w-5"
@@ -108,16 +110,17 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         >
           Following
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="true"
         aria-label="Friends"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -141,7 +144,7 @@ exports[`FilterReach - Snapshots > matches snapshot in uncontrolled mode with de
         >
           Friends
         </span>
-      </div>
+      </button>
     </div>
   </div>
 </div>
@@ -177,15 +180,16 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <div
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -223,16 +227,17 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         >
           All
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="true"
         aria-label="Following"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           class="h-5 w-5"
@@ -255,16 +260,17 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         >
           Following
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="false"
         aria-label="Friends"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -288,7 +294,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Following selected 1`] 
         >
           Friends
         </span>
-      </div>
+      </button>
     </div>
   </div>
 </div>
@@ -324,15 +330,16 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <div
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -370,16 +377,17 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         >
           All
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="false"
         aria-label="Following"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           class="h-5 w-5"
@@ -402,16 +410,17 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         >
           Following
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="true"
         aria-label="Friends"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -435,7 +444,7 @@ exports[`FilterReach - Snapshots > matches snapshot with Friends selected 1`] = 
         >
           Friends
         </span>
-      </div>
+      </button>
     </div>
   </div>
 </div>
@@ -471,15 +480,16 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <div
+      <button
         aria-checked="true"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -517,16 +527,17 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         >
           All
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="false"
         aria-label="Following"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           class="h-5 w-5"
@@ -549,16 +560,17 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         >
           Following
         </span>
-      </div>
-      <div
+      </button>
+      <button
         aria-checked="false"
         aria-label="Friends"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -582,7 +594,7 @@ exports[`FilterReach - Snapshots > matches snapshot with default props (All sele
         >
           Friends
         </span>
-      </div>
+      </button>
     </div>
   </div>
 </div>

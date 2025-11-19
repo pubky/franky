@@ -13,7 +13,21 @@ exports[`ProfileLayout > matches snapshot 1`] = `
     data-active="notifications"
     data-testid="profile-mobile-menu"
   >
-    Mobile Menu
+    <button
+      aria-label="Posts"
+    >
+      Posts
+    </button>
+    <button
+      aria-label="Replies"
+    >
+      Replies
+    </button>
+    <button
+      aria-label="Notifications"
+    >
+      Notifications
+    </button>
   </div>
   <div
     data-testid="profile-page-layout-wrapper"
@@ -25,24 +39,9 @@ exports[`ProfileLayout > matches snapshot 1`] = `
       <div
         data-testid="profile-page-header"
       >
-        <div>
-          Satoshi Nakamoto
-        </div>
-        <div>
-          Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.
-        </div>
-        <div>
-          1QX7GKW3abcdef1234567890
-        </div>
-        <div>
-          🌴
-        </div>
-        <div>
-          Vacationing
-        </div>
-        <button>
-          Sign out
-        </button>
+        <div />
+        <div />
+        <div />
       </div>
     </div>
     <div
@@ -53,7 +52,21 @@ exports[`ProfileLayout > matches snapshot 1`] = `
         data-active="notifications"
         data-testid="profile-filter-bar"
       >
-        Filter Bar
+        <button
+          aria-label="Posts"
+        >
+          Posts
+        </button>
+        <button
+          aria-label="Followers"
+        >
+          Followers
+        </button>
+        <button
+          aria-label="Following"
+        >
+          Following
+        </button>
       </div>
       <div
         class="flex-1"

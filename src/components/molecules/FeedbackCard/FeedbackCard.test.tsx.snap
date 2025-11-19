@@ -2,10 +2,68 @@
 
 exports[`FeedbackCard - Snapshots > matches snapshot for feedback form 1`] = `
 <div
-  class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
+  class="flex flex-col gap-4 rounded-lg border border-dashed border-input p-6"
   data-testid="container"
 >
-  What do you think about Pubky?
+  <div
+    class="flex items-center gap-2"
+    data-testid="container"
+  >
+    <div
+      class="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
+      data-testid="container"
+    >
+      <div
+        class="h-12 w-12"
+        data-testid="avatar"
+      >
+        <img
+          alt="User"
+          data-testid="avatar-image"
+          src="https://i.pravatar.cc/150?img=68"
+        />
+        <div
+          data-testid="avatar-fallback"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-user h-5 w-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
+            />
+            <circle
+              cx="12"
+              cy="7"
+              r="4"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div
+      class="text-base font-bold text-foreground"
+      data-testid="container"
+    >
+      Your Name
+    </div>
+  </div>
+  <button
+    class="text-left text-base leading-normal font-medium text-muted-foreground hover:text-foreground"
+    data-testid="button"
+    data-variant="unstyled"
+  >
+    What do you think about Pubky?
+  </button>
 </div>
 `;
 
@@ -87,12 +145,13 @@ exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
         Your Name
       </div>
     </div>
-    <div
-      class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
-      data-testid="container"
+    <button
+      class="text-left text-base leading-normal font-medium text-muted-foreground hover:text-foreground"
+      data-testid="button"
+      data-variant="unstyled"
     >
       What do you think about Pubky?
-    </div>
+    </button>
   </div>
 </div>
 `;

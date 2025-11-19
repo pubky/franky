@@ -13,7 +13,7 @@ const meta = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'brand', 'link'],
+      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'brand', 'link', 'unstyled'],
     },
     size: {
       control: { type: 'select' },
@@ -95,5 +95,13 @@ export const Icon: Story = {
   args: {
     size: 'icon',
     children: '⚙️',
+  },
+};
+
+export const Unstyled: Story = {
+  args: {
+    variant: 'unstyled',
+    children: 'Unstyled Button',
+    className: 'px-4 py-2',
   },
 };

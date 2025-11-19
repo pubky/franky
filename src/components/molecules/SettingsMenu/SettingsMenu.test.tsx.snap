@@ -27,11 +27,12 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
       <a
         href="/settings/account"
       >
-        <div
-          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        <button
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -60,16 +61,17 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Account
           </span>
-        </div>
+        </button>
       </a>
       <a
         href="/settings/notifications"
       >
-        <div
-          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        <button
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -96,16 +98,17 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Notifications
           </span>
-        </div>
+        </button>
       </a>
       <a
         href="/settings/privacy-safety"
       >
-        <div
-          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        <button
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -129,16 +132,17 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Privacy & Safety
           </span>
-        </div>
+        </button>
       </a>
       <a
         href="/settings/muted-users"
       >
-        <div
-          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        <button
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -174,16 +178,17 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Muted Users
           </span>
-        </div>
+        </button>
       </a>
       <a
         href="/settings/language"
       >
-        <div
-          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        <button
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -215,16 +220,17 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Language
           </span>
-        </div>
+        </button>
       </a>
       <a
         href="/settings/help"
       >
-        <div
-          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        <button
+          class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
           data-selected="false"
           data-slot="filter-item"
           data-testid="filter-item"
+          type="button"
         >
           <svg
             aria-hidden="true"
@@ -256,7 +262,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
           >
             Help
           </span>
-        </div>
+        </button>
       </a>
     </div>
   </div>

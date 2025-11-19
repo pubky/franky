@@ -105,6 +105,9 @@ body {
   --transparent: oklch(0.118 0.014 284.115 / 0);
   --header-height: 146px;
   --header-height-mobile: 80px;
+  --filter-bar-width: 180px;
+  --z-sticky-header: 20;
+  --z-mobile-menu: 30;
 }
 
 @layer base {
