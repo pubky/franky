@@ -44,6 +44,71 @@ beforeEach(async () => {
 });
 
 describe('ProfileApplication', () => {
+  describe('read', () => {
+    it('returns user details from local database when available', async () => {
+      const mockUserDetails = {
+        id: 'test-user',
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'active',
+        links: [],
+        indexed_at: Date.now(),
+      };
+
+      const findByIdSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
+      const detailsSpy = vi.spyOn(Core.NexusUserService, 'details');
+
+      const result = await ProfileApplication.read({ userId: 'test-user' as Pubky });
+
+      expect(result).toEqual(mockUserDetails);
+      expect(findByIdSpy).toHaveBeenCalledWith('test-user');
+      expect(detailsSpy).not.toHaveBeenCalled();
+    });
+
+    it('fetches from Nexus and persists when not found locally', async () => {
+      const mockNexusUserDetails = {
+        id: 'test-user' as Pubky,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'active',
+        links: [],
+        indexed_at: Date.now(),
+      };
+
+      const findByIdSpy = vi
+        .spyOn(Core.UserDetailsModel, 'findById')
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockNexusUserDetails);
+      const detailsSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockNexusUserDetails);
+      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert').mockResolvedValue(undefined);
+
+      const result = await ProfileApplication.read({ userId: 'test-user' as Pubky });
+
+      expect(findByIdSpy).toHaveBeenCalledTimes(2);
+      expect(detailsSpy).toHaveBeenCalledWith({ user_id: 'test-user' });
+      expect(upsertSpy).toHaveBeenCalledWith(mockNexusUserDetails);
+      expect(result).toEqual(mockNexusUserDetails);
+    });
+
+    it('returns null when user not found locally or on Nexus', async () => {
+      vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(null);
+
+      const result = await ProfileApplication.read({ userId: 'nonexistent-user' as Pubky });
+
+      expect(result).toBeNull();
+    });
+
+    it('propagates errors from Nexus service', async () => {
+      vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(new Error('Nexus API error'));
+
+      await expect(ProfileApplication.read({ userId: 'test-user' as Pubky })).rejects.toThrow('Nexus API error');
+    });
+  });
+
   describe('uploadAvatar', () => {
     it('uploads blob and then file record to homeserver', async () => {
       const blobResult = {

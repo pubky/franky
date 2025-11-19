@@ -16,4 +16,4 @@ export * from './FilterReach';
 export * from './FilterSort';
 
 // Shared types
-export * from './types';
+export * from './Filters.types';

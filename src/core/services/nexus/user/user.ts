@@ -48,4 +48,19 @@ export class NexusUserService {
     Libs.Logger.debug(`User taggers fetched successfully! Returned ${taggerList.length} taggers`);
     return taggerList;
   }
+
+  /**
+   * Retrieves user details from Nexus API
+   *
+   * @param params - Parameters containing user ID
+   * @returns User details including name, bio, status, image, and links
+   */
+  static async details(params: Core.TUserId): Promise<Core.NexusUserDetails | undefined> {
+    const url = Core.userApi.details(params);
+    const userDetails = await Core.queryNexus<Core.NexusUserDetails>(url);
+    if (userDetails) {
+      Libs.Logger.debug(`User details fetched successfully for user ${params.user_id}`);
+    }
+    return userDetails;
+  }
 }

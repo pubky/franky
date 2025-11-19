@@ -125,3 +125,20 @@ exports[`Button - Snapshots > matches snapshot with default props 1`] = `
   Default Button
 </button>
 `;
+
+exports[`Button - Snapshots > matches snapshot with overrideDefaults and custom className 1`] = `
+<button
+  class="custom-override-class"
+  data-slot="button"
+>
+  Override
+</button>
+`;
+
+exports[`Button - Snapshots > matches snapshot with overrideDefaults and no className 1`] = `
+<button
+  data-slot="button"
+>
+  Clean
+</button>
+`;

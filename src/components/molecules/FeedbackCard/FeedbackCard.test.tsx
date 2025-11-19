@@ -4,6 +4,36 @@ import { FeedbackCard } from './FeedbackCard';
 
 // Mock the atoms
 vi.mock('@/atoms', () => ({
+  Container: ({
+    children,
+    className,
+    'data-testid': dataTestId,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+    [key: string]: unknown;
+  }) => (
+    <div data-testid={dataTestId || 'container'} className={className} {...props}>
+      {children}
+    </div>
+  ),
+  Button: ({
+    children,
+    className,
+    variant,
+    ...props
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    variant?: string;
+    [key: string]: unknown;
+  }) => (
+    <button data-testid="button" className={className} data-variant={variant} {...props}>
+      {children}
+    </button>
+  ),
   Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div data-testid="avatar" className={className}>
       {children}
@@ -11,6 +41,21 @@ vi.mock('@/atoms', () => ({
   ),
   AvatarImage: ({ src, alt }: { src: string; alt: string }) => <img data-testid="avatar-image" src={src} alt={alt} />,
   AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
+  Heading: ({
+    children,
+    level,
+    size,
+    className,
+  }: {
+    children: React.ReactNode;
+    level?: number;
+    size?: string;
+    className?: string;
+  }) => (
+    <div data-testid="heading" data-level={level} data-size={size} className={className}>
+      {children}
+    </div>
+  ),
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
@@ -27,18 +72,11 @@ describe('FeedbackCard', () => {
     expect(screen.getByText('Feedback')).toBeInTheDocument();
   });
 
-  it('renders with custom className', () => {
-    render(<FeedbackCard className="custom-feedback" />);
-
-    const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('custom-feedback');
-  });
-
   it('renders feedback heading correctly', () => {
     render(<FeedbackCard />);
 
     const heading = screen.getByText('Feedback');
-    expect(heading).toHaveClass('text-2xl', 'font-light', 'text-muted-foreground');
+    expect(heading).toHaveClass('font-light', 'text-muted-foreground');
   });
 
   it('renders user avatar with correct props', () => {
@@ -68,18 +106,21 @@ describe('FeedbackCard', () => {
     expect(userName).toHaveClass('text-base', 'font-bold', 'text-foreground');
   });
 
-  it('renders feedback question correctly', () => {
+  it('renders feedback question correctly with overrideDefaults', () => {
     render(<FeedbackCard />);
 
-    const question = screen.getByText('What do you think about Pubky?');
-    expect(question).toHaveClass(
-      'text-sm',
+    const button = screen.getByTestId('button');
+    expect(button).toHaveTextContent('What do you think about Pubky?');
+    expect(button).toHaveClass(
+      'text-base',
+      'leading-normal',
+      'font-medium',
       'text-muted-foreground',
-      'cursor-pointer',
       'hover:text-foreground',
-      'transition-colors',
-      'leading-snug',
+      'text-left',
     );
+    // Button uses overrideDefaults, so no variant attribute is set
+    expect(button).not.toHaveAttribute('data-variant');
   });
 
   it('applies correct container classes', () => {
@@ -92,16 +133,17 @@ describe('FeedbackCard', () => {
   it('applies correct feedback form classes', () => {
     render(<FeedbackCard />);
 
-    const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
+    const button = screen.getByTestId('button');
+    const feedbackForm = button.parentElement;
     expect(feedbackForm).toHaveClass(
       'flex',
       'flex-col',
-      'gap-3',
-      'p-5',
+      'gap-4',
+      'p-6',
       'rounded-lg',
       'border-dashed',
       'border',
-      'border-border/50',
+      'border-input',
     );
   });
 
@@ -127,8 +169,8 @@ describe('FeedbackCard', () => {
   it('handles hover states correctly', () => {
     render(<FeedbackCard />);
 
-    const question = screen.getByText('What do you think about Pubky?');
-    expect(question).toHaveClass('hover:text-foreground', 'transition-colors');
+    const button = screen.getByTestId('button');
+    expect(button).toHaveClass('hover:text-foreground');
   });
 
   it('applies correct spacing and layout', () => {
@@ -137,8 +179,9 @@ describe('FeedbackCard', () => {
     const container = screen.getByTestId('feedback-card');
     expect(container).toHaveClass('gap-2');
 
-    const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div')?.parentElement;
-    expect(feedbackForm).toHaveClass('gap-3', 'p-5');
+    const button = screen.getByTestId('button');
+    const feedbackForm = button.parentElement;
+    expect(feedbackForm).toHaveClass('gap-4', 'p-6');
   });
 });
 
@@ -148,15 +191,11 @@ describe('FeedbackCard - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<FeedbackCard className="custom-feedback" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
   it('matches snapshot for feedback form', () => {
     render(<FeedbackCard />);
 
-    const feedbackForm = screen.getByText('What do you think about Pubky?').closest('div');
+    const button = screen.getByTestId('button');
+    const feedbackForm = button.parentElement;
     expect(feedbackForm).toMatchSnapshot();
   });
 

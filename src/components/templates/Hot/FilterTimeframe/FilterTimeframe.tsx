@@ -11,7 +11,7 @@ interface TimeframeProps {
 }
 
 const tabs: { key: TimeframeTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: 'today', label: 'Today', icon: Libs.SquareAsterisk },
+  { key: 'today', label: 'Today', icon: Libs.Star },
   { key: 'thisMonth', label: 'This Month', icon: Libs.Calendar },
   { key: 'allTime', label: 'All Time', icon: Libs.Clock },
 ];

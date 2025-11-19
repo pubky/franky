@@ -1,108 +1,16 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] = `
-<div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
-  data-slot="filter-root"
-  data-testid="filter-root"
->
-  <div
-    class="flex flex-col gap-2"
-    data-slot="filter-header"
-    data-testid="filter-header"
-    id="_r_r_"
-  >
-    <h2
-      class="text-2xl font-light text-muted-foreground"
-      data-testid="heading-2"
-    >
-      Test Filter
-    </h2>
-  </div>
-  <div
-    aria-labelledby="_r_r_"
-    class=""
-    data-testid="custom-test-id"
-    role="radiogroup"
-  >
-    <div
-      class="mx-auto w-full flex flex-col gap-2"
-      data-slot="filter-list"
-      data-testid="filter-list"
-    >
-      <p
-        aria-checked="true"
-        aria-label="Option 1"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
-        data-selected="true"
-        data-slot="filter-item"
-        data-testid="filter-item"
-        role="radio"
-        tabindex="0"
-      >
-        <svg
-          data-testid="mock-icon-1"
-        />
-        <span
-          class=""
-        >
-          Option 1
-        </span>
-      </p>
-      <p
-        aria-checked="false"
-        aria-label="Option 2"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
-        data-selected="false"
-        data-slot="filter-item"
-        data-testid="filter-item"
-        role="radio"
-        tabindex="-1"
-      >
-        <svg
-          data-testid="mock-icon-2"
-        />
-        <span
-          class=""
-        >
-          Option 2
-        </span>
-      </p>
-      <p
-        aria-checked="false"
-        aria-label="Option 3"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
-        data-selected="false"
-        data-slot="filter-item"
-        data-testid="filter-item"
-        role="radio"
-        tabindex="-1"
-      >
-        <svg
-          data-testid="mock-icon-3"
-        />
-        <span
-          class=""
-        >
-          Option 3
-        </span>
-      </p>
-    </div>
-  </div>
-</div>
-`;
-
 exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_o_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -112,25 +20,27 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_o_"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="true"
         aria-label="Option 1"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           data-testid="mock-icon-1"
@@ -140,16 +50,18 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
         >
           Option 1
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Option 2"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           data-testid="mock-icon-2"
@@ -159,16 +71,18 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
         >
           Option 2
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Option 3"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           data-testid="mock-icon-3"
@@ -178,7 +92,105 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
         >
           Option 3
         </span>
-      </p>
+      </button>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`FilterRadioGroup - Snapshots > matches snapshot with default value 1`] = `
+<div
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
+  data-slot="filter-root"
+  data-testid="filter-root"
+>
+  <div
+    class="m-0 gap-2 p-0"
+    data-slot="filter-header"
+    data-testid="filter-header"
+    id="radix-_r_0_"
+  >
+    <h2
+      class="text-2xl font-light text-muted-foreground"
+      data-testid="heading-2"
+    >
+      Test Filter
+    </h2>
+  </div>
+  <div
+    aria-labelledby="radix-_r_0_"
+    class=""
+    data-testid="filter-test filter-radiogroup"
+    role="radiogroup"
+  >
+    <div
+      class="mx-auto w-full flex-col flex gap-2"
+      data-slot="filter-list"
+      data-testid="filter-list"
+    >
+      <button
+        aria-checked="true"
+        aria-label="Option 1"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
+        data-selected="true"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="0"
+        type="button"
+      >
+        <svg
+          data-testid="mock-icon-1"
+        />
+        <span
+          class=""
+        >
+          Option 1
+        </span>
+      </button>
+      <button
+        aria-checked="false"
+        aria-label="Option 2"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+        type="button"
+      >
+        <svg
+          data-testid="mock-icon-2"
+        />
+        <span
+          class=""
+        >
+          Option 2
+        </span>
+      </button>
+      <button
+        aria-checked="false"
+        aria-label="Option 3"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
+        data-selected="false"
+        data-slot="filter-item"
+        data-testid="filter-item"
+        role="radio"
+        tabindex="-1"
+        type="button"
+      >
+        <svg
+          data-testid="mock-icon-3"
+        />
+        <span
+          class=""
+        >
+          Option 3
+        </span>
+      </button>
     </div>
   </div>
 </div>
@@ -186,15 +198,15 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
 
 exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_q_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -204,25 +216,27 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_q_"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="true"
         aria-label="Option 1"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           data-testid="mock-icon-1"
@@ -232,17 +246,19 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         >
           Option 1
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-disabled="true"
         aria-label="Option 2"
-        class="flex items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
+        aria-pressed="false"
+        class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           data-testid="mock-icon-2"
@@ -252,16 +268,18 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         >
           Option 2
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Option 3"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           data-testid="mock-icon-3"
@@ -271,7 +289,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
         >
           Option 3
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -279,15 +297,15 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
 
 exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_p_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -297,25 +315,27 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     </h2>
   </div>
   <div
-    aria-labelledby="_r_p_"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="Option 1"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           data-testid="mock-icon-1"
@@ -325,16 +345,18 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
         >
           Option 1
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Option 2"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           data-testid="mock-icon-2"
@@ -344,16 +366,18 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
         >
           Option 2
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Option 3"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           data-testid="mock-icon-3"
@@ -363,7 +387,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
         >
           Option 3
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>

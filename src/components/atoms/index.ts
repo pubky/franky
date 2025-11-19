@@ -1,4 +1,5 @@
 export * from './Avatar';
+export * from './AvatarEmojiBadge';
 export * from './Badge';
 export * from './Button';
 export * from './Card';
@@ -20,6 +21,7 @@ export * from './PostThreadConnector';
 export * from './PostThreadSpacer';
 export * from './ReplyLine';
 export * from './SidebarButton';
+export * from './Spinner';
 export * from './Textarea';
 export * from './Toast';
 export * from './Toggle';

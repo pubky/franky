@@ -175,11 +175,12 @@ describe('Header Components', () => {
       expect(container).toHaveClass(
         'sticky',
         'top-0',
-        'z-20',
+        'z-(--z-sticky-header)',
         'w-full',
-        'bg-gradient-to-b',
-        'from-[var(--background)]/95',
-        'to-[var(--transparent)]',
+        'bg-linear-to-b',
+        'from-(--background)/95',
+        'to-(--transparent)',
+        'py-6',
         'backdrop-blur-sm',
       );
 
