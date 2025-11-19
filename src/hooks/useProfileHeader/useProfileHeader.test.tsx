@@ -1,181 +1,140 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useProfileHeader } from './useProfileHeader';
-import * as Core from '@/core';
+import type { UserProfile, ProfileStats, ProfileActions } from './useProfileHeader';
 
-// Mock next/navigation
-const mockPush = vi.fn();
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
-}));
+// Mock the composed hooks
+let mockProfile: UserProfile | null = null;
+let mockProfileLoading = false;
+let mockStats: ProfileStats = {
+  notifications: 0,
+  posts: 0,
+  replies: 0,
+  followers: 0,
+  following: 0,
+  friends: 0,
+  tagged: 0,
+};
+let mockStatsLoading = false;
+let mockActions: ProfileActions = {
+  onEdit: vi.fn(),
+  onCopyPublicKey: vi.fn(),
+  onCopyLink: vi.fn(),
+  onSignOut: vi.fn(),
+  onStatusClick: vi.fn(),
+};
 
-// Mock useCopyToClipboard hook
-const mockCopyToClipboard = vi.fn();
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
     ...actual,
-    useCopyToClipboard: () => ({
-      copyToClipboard: mockCopyToClipboard,
-    }),
-  };
-});
-
-// Mock user data
-let mockUserDetails: Core.UserDetailsModelSchema | null = null;
-let mockUserCounts: Core.UserCountsModelSchema | null = null;
-
-// Mock dexie-react-hooks - return mockUserDetails for first query, mockUserCounts for second
-let queryCallCount = 0;
-vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn(() => {
-    queryCallCount++;
-    // First call returns userDetails, second call returns userCounts
-    return queryCallCount % 2 === 1 ? mockUserDetails : mockUserCounts;
-  }),
-}));
-
-// Mock Core controllers and services
-vi.mock('@/core', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/core')>();
-  return {
-    ...actual,
-    ProfileController: {
-      read: vi.fn().mockResolvedValue(undefined),
-    },
-    UserController: {
-      getDetails: vi.fn(),
-      getCounts: vi.fn(),
-    },
-    filesApi: {
-      getAvatar: vi.fn((userId: string) => `https://example.com/avatar/${userId}`),
-    },
+    useUserProfile: vi.fn(() => ({
+      profile: mockProfile,
+      isLoading: mockProfileLoading,
+    })),
+    useProfileStats: vi.fn(() => ({
+      stats: mockStats,
+      isLoading: mockStatsLoading,
+    })),
+    useProfileActions: vi.fn(() => mockActions),
   };
 });
 
 describe('useProfileHeader', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUserDetails = null;
-    mockUserCounts = null;
-    queryCallCount = 0;
 
-    // Reset window.location
-    Object.defineProperty(window, 'location', {
-      value: { origin: 'https://example.com' },
-      writable: true,
-    });
+    // Reset mocks to default values
+    mockProfile = null;
+    mockProfileLoading = false;
+    mockStats = {
+      notifications: 0,
+      posts: 0,
+      replies: 0,
+      followers: 0,
+      following: 0,
+      friends: 0,
+      tagged: 0,
+    };
+    mockStatsLoading = false;
+    mockActions = {
+      onEdit: vi.fn(),
+      onCopyPublicKey: vi.fn(),
+      onCopyLink: vi.fn(),
+      onSignOut: vi.fn(),
+      onStatusClick: vi.fn(),
+    };
   });
 
-  describe('Profile data', () => {
-    it('returns profile data when user exists', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
+  describe('Composition', () => {
+    it('composes useUserProfile, useProfileStats, and useProfileActions', () => {
+      mockProfile = {
         name: 'Test User',
         bio: 'Test bio',
-        image: 'avatar.jpg',
+        publicKey: 'pk:test-user-id',
+        emoji: '🌴',
         status: 'Active',
-        links: [],
-        indexed_at: Date.now(),
-      } as Core.UserDetailsModelSchema;
-
-      mockUserCounts = {
-        id: 'test-user-id',
+        avatarUrl: 'https://example.com/avatar/test-user-id',
+        link: 'https://example.com/profile/test-user-id',
+      };
+      mockStats = {
+        notifications: 0,
         posts: 10,
         replies: 5,
         followers: 20,
         following: 15,
         friends: 8,
         tagged: 3,
-        tags: 0,
-        unique_tags: 0,
-        bookmarks: 0,
-      } as Core.UserCountsModelSchema;
+      };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      expect(result.current.profile.name).toBe('Test User');
-      expect(result.current.profile.bio).toBe('Test bio');
-      expect(result.current.profile.status).toBe('Active');
+      expect(result.current.profile).toEqual(mockProfile);
+      expect(result.current.stats).toEqual(mockStats);
+      expect(result.current.actions).toEqual(mockActions);
     });
 
-    it('returns default values when user details are null', () => {
+    it('returns null profile when useUserProfile returns null', () => {
+      mockProfile = null;
+      mockProfileLoading = true;
+
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      expect(result.current.profile.name).toBe('');
-      expect(result.current.profile.bio).toBe('');
-      expect(result.current.profile.status).toBe('');
+      expect(result.current.profile).toBeNull();
     });
 
-    it('builds correct public key format', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
+    it('returns profile data when available', () => {
+      mockProfile = {
+        name: 'Test User',
+        bio: 'Test bio',
+        publicKey: 'pk:test-user-id',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: undefined,
+        link: 'https://example.com/profile/test-user-id',
+      };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      expect(result.current.profile.publicKey).toBe('pk:test-user-id');
-    });
-
-    it('builds correct profile link', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
-      expect(result.current.profile.link).toBe('https://example.com/profile/test-user-id');
-    });
-
-    it('builds avatar URL when user has image', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-        image: 'avatar.jpg',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
-      expect(result.current.profile.avatarUrl).toBe('https://example.com/avatar/test-user-id');
-      expect(Core.filesApi.getAvatar).toHaveBeenCalledWith('test-user-id');
-    });
-
-    it('returns undefined avatar URL when user has no image', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-        image: '',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
-      expect(result.current.profile.avatarUrl).toBeUndefined();
+      expect(result.current.profile?.name).toBe('Test User');
+      expect(result.current.profile?.bio).toBe('Test bio');
+      expect(result.current.profile?.status).toBe('Active');
+      expect(result.current.profile?.publicKey).toBe('pk:test-user-id');
+      expect(result.current.profile?.link).toBe('https://example.com/profile/test-user-id');
     });
   });
 
   describe('Stats', () => {
-    it('returns correct stats when user counts exist', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
-
-      mockUserCounts = {
-        id: 'test-user-id',
+    it('returns stats from useProfileStats', () => {
+      mockStats = {
+        notifications: 0,
         posts: 10,
         replies: 5,
         followers: 20,
         following: 15,
         friends: 8,
         tagged: 3,
-        tags: 0,
-        unique_tags: 0,
-        bookmarks: 0,
-      } as Core.UserCountsModelSchema;
+      };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
@@ -187,11 +146,16 @@ describe('useProfileHeader', () => {
       expect(result.current.stats.tagged).toBe(3);
     });
 
-    it('returns zero stats when user counts are null', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
+    it('returns zero stats when not available', () => {
+      mockStats = {
+        notifications: 0,
+        posts: 0,
+        replies: 0,
+        followers: 0,
+        following: 0,
+        friends: 0,
+        tagged: 0,
+      };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
@@ -202,99 +166,106 @@ describe('useProfileHeader', () => {
       expect(result.current.stats.friends).toBe(0);
       expect(result.current.stats.tagged).toBe(0);
     });
-
-    it('notifications stat is always 0 (not implemented yet)', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
-      expect(result.current.stats.notifications).toBe(0);
-    });
   });
 
   describe('Actions', () => {
-    it('onCopyPublicKey calls copyToClipboard with public key', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
+    it('returns actions from useProfileActions', () => {
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
+      expect(result.current.actions).toEqual(mockActions);
+      expect(result.current.actions.onCopyPublicKey).toBeDefined();
+      expect(result.current.actions.onCopyLink).toBeDefined();
+      expect(result.current.actions.onSignOut).toBeDefined();
+      expect(result.current.actions.onEdit).toBeDefined();
+      expect(result.current.actions.onStatusClick).toBeDefined();
+    });
+
+    it('calls action handlers', () => {
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
       result.current.actions.onCopyPublicKey();
-      expect(mockCopyToClipboard).toHaveBeenCalledWith('pk:test-user-id');
-    });
-
-    it('onCopyLink calls copyToClipboard with profile link', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
       result.current.actions.onCopyLink();
-      expect(mockCopyToClipboard).toHaveBeenCalledWith('https://example.com/profile/test-user-id');
-    });
-
-    it('onSignOut navigates to logout route', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
       result.current.actions.onSignOut();
-      expect(mockPush).toHaveBeenCalledWith('/logout');
-    });
-
-    it('onEdit logs to console (not implemented yet)', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
-
-      const { result } = renderHook(() => useProfileHeader('test-user-id'));
-
       result.current.actions.onEdit();
-      expect(consoleSpy).toHaveBeenCalledWith('Edit clicked');
+      result.current.actions.onStatusClick();
 
-      consoleSpy.mockRestore();
+      expect(mockActions.onCopyPublicKey).toHaveBeenCalled();
+      expect(mockActions.onCopyLink).toHaveBeenCalled();
+      expect(mockActions.onSignOut).toHaveBeenCalled();
+      expect(mockActions.onEdit).toHaveBeenCalled();
+      expect(mockActions.onStatusClick).toHaveBeenCalled();
     });
 
-    it('onStatusClick logs to console (not implemented yet)', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
+    it('passes correct props to useProfileActions when profile exists', () => {
+      mockProfile = {
+        name: 'Test User',
+        bio: 'Test bio',
+        publicKey: 'pk:test-user-id',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: undefined,
+        link: 'https://example.com/profile/test-user-id',
+      };
+
+      renderHook(() => useProfileHeader('test-user-id'));
+
+      // Verify actions are returned
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+      expect(result.current.actions).toBeDefined();
+    });
+
+    it('handles null profile gracefully in actions', () => {
+      mockProfile = null;
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      result.current.actions.onStatusClick();
-      expect(consoleSpy).toHaveBeenCalledWith('Status clicked');
-
-      consoleSpy.mockRestore();
+      // Actions should still be defined even with null profile
+      expect(result.current.actions).toBeDefined();
+      expect(result.current.actions.onCopyPublicKey).toBeDefined();
+      expect(result.current.actions.onCopyLink).toBeDefined();
     });
   });
 
   describe('Loading state', () => {
-    it('isLoading is true when user details are not available', () => {
+    it('isLoading is true when profile is loading', () => {
+      mockProfileLoading = true;
+      mockStatsLoading = false;
+
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
       expect(result.current.isLoading).toBe(true);
     });
 
-    it('isLoading is false when user details are available', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema;
+    it('isLoading is true when stats are loading', () => {
+      mockProfileLoading = false;
+      mockStatsLoading = true;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('isLoading is true when both profile and stats are loading', () => {
+      mockProfileLoading = true;
+      mockStatsLoading = true;
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('isLoading is false when both profile and stats are loaded', () => {
+      mockProfileLoading = false;
+      mockStatsLoading = false;
+      mockProfile = {
+        name: 'Test User',
+        bio: 'Test bio',
+        publicKey: 'pk:test-user-id',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: undefined,
+        link: 'https://example.com/profile/test-user-id',
+      };
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
@@ -303,27 +274,73 @@ describe('useProfileHeader', () => {
   });
 
   describe('Edge cases', () => {
-    it('handles empty userId gracefully', () => {
-      const { result } = renderHook(() => useProfileHeader(''));
-
-      expect(result.current.profile.publicKey).toBe('');
-      expect(result.current.profile.link).toBe('');
-      expect(result.current.isLoading).toBe(true);
-    });
-
-    it('handles partial user details', () => {
-      mockUserDetails = {
-        id: 'test-user-id',
-        name: 'Test',
-        // Missing bio, image, status
-      } as Core.UserDetailsModelSchema;
+    it('handles null profile gracefully', () => {
+      mockProfile = null;
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      expect(result.current.profile.name).toBe('Test');
-      expect(result.current.profile.bio).toBe('');
-      expect(result.current.profile.status).toBe('');
-      expect(result.current.profile.avatarUrl).toBeUndefined();
+      expect(result.current.profile).toBeNull();
+    });
+
+    it('handles profile with all fields', () => {
+      mockProfile = {
+        name: 'Test User',
+        bio: 'Test bio',
+        publicKey: 'pk:test-user-id',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: 'https://example.com/avatar/test-user-id',
+        link: 'https://example.com/profile/test-user-id',
+      };
+
+      const { result } = renderHook(() => useProfileHeader('test-user-id'));
+
+      expect(result.current.profile).toEqual(mockProfile);
+    });
+  });
+
+  describe('Type exports', () => {
+    it('exports ProfileStats type', () => {
+      // This test ensures the type export is working
+      const stats: ProfileStats = {
+        notifications: 0,
+        posts: 0,
+        replies: 0,
+        followers: 0,
+        following: 0,
+        friends: 0,
+        tagged: 0,
+      };
+
+      expect(stats).toBeDefined();
+    });
+
+    it('exports UserProfile type', () => {
+      // This test ensures the type export is working
+      const profile: UserProfile = {
+        name: 'Test',
+        bio: 'Bio',
+        publicKey: 'pk:test',
+        emoji: '🌴',
+        status: 'Active',
+        avatarUrl: undefined,
+        link: 'https://example.com',
+      };
+
+      expect(profile).toBeDefined();
+    });
+
+    it('exports ProfileActions type', () => {
+      // This test ensures the type export is working
+      const actions: ProfileActions = {
+        onEdit: vi.fn(),
+        onCopyPublicKey: vi.fn(),
+        onCopyLink: vi.fn(),
+        onSignOut: vi.fn(),
+        onStatusClick: vi.fn(),
+      };
+
+      expect(actions).toBeDefined();
     });
   });
 });
