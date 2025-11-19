@@ -1,6 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as ProviderTypes from '../Provider.types';
 import * as ProviderConstants from '../Provider.constants';
+import * as ProviderUtils from '../Provider.utils';
 
 /**
  * Extract YouTube video ID from URL
@@ -45,10 +46,7 @@ const extractYouTubeTimestamp = (url: string): number | null => {
     // Require at least one component
     const hmsMatch = timeParam.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)$/);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
-      const hours = parseInt(hmsMatch[1] || '0', 10);
-      const minutes = parseInt(hmsMatch[2] || '0', 10);
-      const seconds = parseInt(hmsMatch[3] || '0', 10);
-      return hours * 3600 + minutes * 60 + seconds;
+      return ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
     }
 
     const numericMatch = timeParam.match(/^(\d+)s?$/);
@@ -104,7 +102,7 @@ export const Youtube: ProviderTypes.EmbedProvider = {
    * Render YouTube iframe embed
    */
   renderEmbed: (embedUrl: string) => {
-    const videoId = embedUrl.split('https://www.youtube-nocookie.com/embed/')[1];
+    const videoId = embedUrl.match(/youtube-nocookie\.com\/embed\/([a-zA-Z0-9_-]{11})/)?.[1] || 'id';
 
     return (
       <Atoms.Iframe

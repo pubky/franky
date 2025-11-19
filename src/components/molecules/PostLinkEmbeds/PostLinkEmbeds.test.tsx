@@ -3,8 +3,16 @@ import { render, screen } from '@testing-library/react';
 import { PostLinkEmbeds } from './PostLinkEmbeds';
 
 vi.mock('@/atoms', () => ({
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="container" className={className}>
+  Container: ({
+    children,
+    className,
+    'data-testid': dataTestId,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    'data-testid'?: string;
+  }) => (
+    <div data-testid={dataTestId || 'container'} className={className}>
       {children}
     </div>
   ),
@@ -12,13 +20,14 @@ vi.mock('@/atoms', () => ({
     'data-testid': dataTestId,
     width = '100%',
     height = '315',
+    className,
     ...props
   }: React.IframeHTMLAttributes<HTMLIFrameElement> & { 'data-testid'?: string }) => (
     <iframe
       data-testid={dataTestId}
       loading="lazy"
       allowFullScreen
-      className="rounded-md"
+      className={`rounded-md ${className || ''}`.trim()}
       width={width}
       height={height}
       {...props}
@@ -188,6 +197,154 @@ describe('PostLinkEmbeds', () => {
     });
   });
 
+  describe('Vimeo URL parsing', () => {
+    it('renders Vimeo embed for standard vimeo.com URL', () => {
+      render(<PostLinkEmbeds content="Check out this video: https://vimeo.com/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+
+    it('renders Vimeo embed for www.vimeo.com URL', () => {
+      render(<PostLinkEmbeds content="Watch this: https://www.vimeo.com/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+
+    it('renders Vimeo embed for player.vimeo.com URL', () => {
+      render(<PostLinkEmbeds content="Player link: https://player.vimeo.com/video/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+
+    it('renders Vimeo embed for channels URL', () => {
+      render(<PostLinkEmbeds content="Channel video: https://vimeo.com/channels/staffpicks/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+
+    it('renders Vimeo embed for groups URL', () => {
+      render(<PostLinkEmbeds content="Group video: https://vimeo.com/groups/shortfilms/videos/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+
+    it('renders Vimeo embed for album URL', () => {
+      render(<PostLinkEmbeds content="Album: https://vimeo.com/album/987654/video/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+
+    it('renders Vimeo embed for short video IDs', () => {
+      render(<PostLinkEmbeds content="Short ID: https://vimeo.com/123456" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456');
+    });
+
+    it('renders Vimeo embed for long video IDs', () => {
+      render(<PostLinkEmbeds content="Long ID: https://vimeo.com/1234567890" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/1234567890');
+    });
+
+    it('handles Vimeo URL with timestamp in seconds format', () => {
+      render(<PostLinkEmbeds content="Timestamped: https://vimeo.com/123456789#t=30s" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789#t=30s');
+    });
+
+    it('handles Vimeo URL with timestamp in m/s format', () => {
+      render(<PostLinkEmbeds content="https://vimeo.com/123456789#t=2m30s" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789#t=150s');
+    });
+
+    it('handles Vimeo URL with timestamp in h/m/s format', () => {
+      render(<PostLinkEmbeds content="https://vimeo.com/123456789#t=1h2m3s" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789#t=3723s');
+    });
+
+    it('handles Vimeo URL with timestamp minutes only', () => {
+      render(<PostLinkEmbeds content="https://vimeo.com/123456789#t=5m" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789#t=300s');
+    });
+
+    it('handles Vimeo URL with timestamp hours only', () => {
+      render(<PostLinkEmbeds content="https://vimeo.com/123456789#t=1h" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789#t=3600s');
+    });
+
+    it('does not render embed for Vimeo video ID with non-numeric characters', () => {
+      render(<PostLinkEmbeds content="Invalid: https://vimeo.com/abc123def" />);
+
+      expect(screen.queryByTestId('Vimeo video player')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for Vimeo URL without video ID', () => {
+      render(<PostLinkEmbeds content="No ID: https://vimeo.com/about" />);
+
+      expect(screen.queryByTestId('Vimeo video player')).not.toBeInTheDocument();
+    });
+
+    it('handles Vimeo URL with trailing punctuation', () => {
+      render(<PostLinkEmbeds content="Check this out: https://vimeo.com/123456789!" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://player.vimeo.com/video/123456789');
+    });
+  });
+
+  describe('Vimeo iframe attributes', () => {
+    it('sets correct iframe attributes for Vimeo embed', () => {
+      render(<PostLinkEmbeds content="https://vimeo.com/123456789" />);
+
+      const iframe = screen.getByTestId('Vimeo video player');
+      expect(iframe).toHaveAttribute('allowFullScreen');
+      expect(iframe).toHaveAttribute(
+        'allow',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+      );
+      expect(iframe).toHaveClass('absolute', 'top-0', 'left-0', 'h-full', 'w-full', 'rounded-md');
+    });
+
+    it('wraps Vimeo iframe in aspect ratio container', () => {
+      render(<PostLinkEmbeds content="https://vimeo.com/123456789" />);
+
+      const wrapper = screen.getByTestId('vimeo-aspect-ratio-wrapper');
+      expect(wrapper).toBeInTheDocument();
+      expect(wrapper).toHaveClass('relative', 'pt-[56.25%]');
+    });
+  });
+
   describe('Edge cases', () => {
     it('does not render embed for content without URLs', () => {
       render(<PostLinkEmbeds content="Just some regular text without any links" />);
@@ -230,6 +387,11 @@ describe('PostLinkEmbeds', () => {
 describe('PostLinkEmbeds - Snapshots', () => {
   it('matches snapshot for YouTube embed', () => {
     const { container } = render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Vimeo embed', () => {
+    const { container } = render(<PostLinkEmbeds content="https://vimeo.com/123456789" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
