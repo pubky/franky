@@ -7,11 +7,11 @@ import * as Hooks from '@/hooks';
 
 export function ProfilePageProfile() {
   const { currentUserPubky } = Core.useAuthStore();
-  const { profileData, handlers, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
+  const { profile, actions, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
 
   return (
     <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0 lg:hidden">
-      {!isLoading && <Organisms.ProfilePageHeader {...profileData} {...handlers} />}
+      {!isLoading && <Organisms.ProfilePageHeader profile={profile} actions={actions} />}
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-4 text-base text-muted-foreground">
         <Atoms.Typography as="p" className="text-base font-normal">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore

@@ -9,7 +9,7 @@ import * as Types from '@/app/profile/types';
 export interface ProfilePageFilterBarItem {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
-  count: number;
+  count: number | undefined;
   pageType: Types.FilterBarPageType;
 }
 
@@ -20,50 +20,67 @@ export interface ProfilePageFilterBarProps {
   onPageChangeAction: (page: Types.FilterBarPageType) => void;
 }
 
-export const getDefaultItems = (stats?: Hooks.ProfileStats): ProfilePageFilterBarItem[] => [
+// Item configuration - single source of truth for filter items
+const FILTER_ITEMS_CONFIG: Array<{
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  pageType: Types.FilterBarPageType;
+  statKey: keyof Hooks.ProfileStats;
+}> = [
   {
     icon: Libs.Bell,
     label: 'Notifications',
-    count: stats?.notifications ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.NOTIFICATIONS,
+    statKey: 'notifications',
   },
   {
     icon: Libs.StickyNote,
     label: 'Posts',
-    count: stats?.posts ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.POSTS,
+    statKey: 'posts',
   },
   {
     icon: Libs.MessageCircle,
     label: 'Replies',
-    count: stats?.replies ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.REPLIES,
+    statKey: 'replies',
   },
   {
     icon: Libs.UsersRound,
     label: 'Followers',
-    count: stats?.followers ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.FOLLOWERS,
+    statKey: 'followers',
   },
   {
     icon: Libs.UsersRound2,
     label: 'Following',
-    count: stats?.following ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.FOLLOWING,
+    statKey: 'following',
   },
   {
     icon: Libs.HeartHandshake,
     label: 'Friends',
-    count: stats?.friends ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.FRIENDS,
+    statKey: 'friends',
   },
   {
     icon: Libs.Tag,
     label: 'Tagged',
-    count: stats?.tagged ?? 0,
     pageType: Types.PROFILE_PAGE_TYPES.TAGGED,
+    statKey: 'tagged',
   },
 ];
+
+export const getDefaultItems = (stats?: Hooks.ProfileStats): ProfilePageFilterBarItem[] => {
+  return FILTER_ITEMS_CONFIG.map((config) => ({
+    icon: config.icon,
+    label: config.label,
+    pageType: config.pageType,
+    // If stats not provided, count is undefined (loading state)
+    // If stats provided, use the value or fallback to 0
+    count: stats ? (stats[config.statKey] ?? 0) : undefined,
+  }));
+};
 
 export function ProfilePageFilterBar({ items, stats, activePage, onPageChangeAction }: ProfilePageFilterBarProps) {
   // Use provided items or generate default items with stats
@@ -78,6 +95,7 @@ export function ProfilePageFilterBar({ items, stats, activePage, onPageChangeAct
         {filterItems.map((item, index) => {
           const Icon = item.icon;
           const isActive = item.pageType === activePage;
+          const isLoading = item.count === undefined;
 
           return (
             <Atoms.FilterItem
@@ -90,12 +108,16 @@ export function ProfilePageFilterBar({ items, stats, activePage, onPageChangeAct
                 <Atoms.FilterItemIcon icon={Icon} />
                 <Atoms.FilterItemLabel>{item.label}</Atoms.FilterItemLabel>
               </Atoms.Container>
-              <Atoms.Typography
-                as="span"
-                className={`text-base font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}
-              >
-                {item.count}
-              </Atoms.Typography>
+              {isLoading ? (
+                <Atoms.Spinner size="sm" className="size-4" />
+              ) : (
+                <Atoms.Typography
+                  as="span"
+                  className={`text-base font-medium ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}
+                >
+                  {item.count}
+                </Atoms.Typography>
+              )}
             </Atoms.FilterItem>
           );
         })}

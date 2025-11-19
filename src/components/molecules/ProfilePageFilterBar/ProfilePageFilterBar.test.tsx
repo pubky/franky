@@ -38,10 +38,10 @@ describe('ProfilePageFilterBar', () => {
     const rootElement = container.firstChild as HTMLElement;
     expect(rootElement).toHaveClass(
       'sticky',
-      'top-[var(--header-height)]',
+      'top-(--header-height)',
       'hidden',
       'h-fit',
-      'w-[180px]',
+      'w-(--filter-bar-width)',
       'flex-col',
       'self-start',
       'lg:flex',
@@ -60,12 +60,35 @@ describe('ProfilePageFilterBar', () => {
     expect(filterItems.length).toBe(getDefaultItems(mockStats).length);
   });
 
-  it('renders with zero counts when no stats provided', () => {
+  it('renders with loading spinners when no stats provided', () => {
     render(<ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />);
     expect(screen.getByText('Notifications')).toBeInTheDocument();
-    // Should show 0 for all counts when no stats provided
+    // Should show loading spinners when stats are undefined
+    const spinners = screen.getAllByTestId('spinner');
+    expect(spinners.length).toBe(7); // One for each filter item
+  });
+
+  it('renders with zero counts when stats are provided but individual values are zero', () => {
+    const zeroStats: Hooks.ProfileStats = {
+      notifications: 0,
+      posts: 0,
+      replies: 0,
+      followers: 0,
+      following: 0,
+      friends: 0,
+      tagged: 0,
+    };
+    render(
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={zeroStats}
+      />,
+    );
+    expect(screen.getByText('Notifications')).toBeInTheDocument();
+    // Should show 0 for all counts when stats are provided with zero values
     const counts = screen.getAllByText('0');
-    expect(counts.length).toBeGreaterThan(0);
+    expect(counts.length).toBe(7);
   });
 
   it('marks active item correctly', () => {
@@ -106,6 +129,51 @@ describe('ProfilePageFilterBar', () => {
     expect(screen.getByText('Custom')).toBeInTheDocument();
     expect(screen.getByText('10')).toBeInTheDocument();
   });
+
+  it('renders custom items with loading state', () => {
+    const customItems = [
+      {
+        icon: () => <span>Icon</span>,
+        label: 'Loading Item',
+        count: undefined,
+        pageType: PROFILE_PAGE_TYPES.NOTIFICATIONS,
+      },
+    ];
+    render(
+      <ProfilePageFilterBar
+        items={customItems}
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+      />,
+    );
+    expect(screen.getByText('Loading Item')).toBeInTheDocument();
+    const spinners = screen.getAllByTestId('spinner');
+    expect(spinners.length).toBe(1);
+  });
+
+  it('transitions from loading to loaded state', () => {
+    const { rerender } = render(
+      <ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />,
+    );
+
+    // Initially should show spinners
+    let spinners = screen.getAllByTestId('spinner');
+    expect(spinners.length).toBe(7);
+
+    // After stats are provided, should show counts
+    rerender(
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={mockStats}
+      />,
+    );
+
+    spinners = screen.queryAllByTestId('spinner');
+    expect(spinners.length).toBe(0);
+    expect(screen.getByText('2')).toBeInTheDocument(); // notifications count
+    expect(screen.getByText('4')).toBeInTheDocument(); // posts count
+  });
 });
 
 describe('ProfilePageFilterBar - Snapshots', () => {
@@ -120,9 +188,29 @@ describe('ProfilePageFilterBar - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot without stats (zero counts)', () => {
+  it('matches snapshot with loading state (no stats)', () => {
     const { container } = render(
       <ProfilePageFilterBar activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS} onPageChangeAction={() => {}} />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with zero stats', () => {
+    const zeroStats: Hooks.ProfileStats = {
+      notifications: 0,
+      posts: 0,
+      replies: 0,
+      followers: 0,
+      following: 0,
+      friends: 0,
+      tagged: 0,
+    };
+    const { container } = render(
+      <ProfilePageFilterBar
+        activePage={PROFILE_PAGE_TYPES.NOTIFICATIONS}
+        onPageChangeAction={() => {}}
+        stats={zeroStats}
+      />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
