@@ -2,12 +2,12 @@
 
 exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_6_"
@@ -26,17 +26,18 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
       <button
         aria-checked="true"
         aria-label="Columns"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="0"
         type="button"
@@ -77,10 +78,11 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       <button
         aria-checked="false"
         aria-label="Wide"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="-1"
         type="button"
@@ -118,10 +120,11 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
-        class="flex items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
+        class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="-1"
         type="button"
@@ -181,12 +184,12 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
 
 exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_7_"
@@ -205,17 +208,18 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
       <button
         aria-checked="false"
         aria-label="Columns"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="-1"
         type="button"
@@ -256,10 +260,11 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       <button
         aria-checked="true"
         aria-label="Wide"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="0"
         type="button"
@@ -297,10 +302,11 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
-        class="flex items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
+        class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="-1"
         type="button"
@@ -360,12 +366,12 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
 
 exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_5_"
@@ -384,17 +390,18 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
       <button
         aria-checked="true"
         aria-label="Columns"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="0"
         type="button"
@@ -435,10 +442,11 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Wide"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="-1"
         type="button"
@@ -476,10 +484,11 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
-        class="flex items-center gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 cursor-default opacity-20"
+        class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
+        data-variant="unstyled"
         role="radio"
         tabindex="-1"
         type="button"

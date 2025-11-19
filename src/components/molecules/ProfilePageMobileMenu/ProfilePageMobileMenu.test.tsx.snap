@@ -2,15 +2,15 @@
 
 exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="sticky top-[var(--header-height-mobile)] z-30 bg-background lg:hidden"
-  data-testid="container"
+  class="sticky top-(--header-height-mobile) z-(--z-mobile-menu) bg-background lg:hidden"
+  data-testid="profile-page-mobile-menu"
 >
   <div
     class="flex w-full"
-    data-testid="container"
+    data-testid="profile-page-mobile-menu-items"
   >
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
@@ -49,7 +49,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-foreground"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-foreground"
       data-testid="container"
     >
       <button
@@ -82,7 +82,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
@@ -111,7 +111,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
@@ -143,7 +143,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
@@ -180,7 +180,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
@@ -208,7 +208,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
@@ -237,7 +237,7 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button

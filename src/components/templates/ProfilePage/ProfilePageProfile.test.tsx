@@ -17,18 +17,19 @@ vi.mock('@/hooks', async (importOriginal) => {
   return {
     ...actual,
     useProfileHeader: vi.fn(() => ({
-      profileData: {
+      profile: {
         name: 'Satoshi Nakamoto',
         bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-        publicKey: '1QX7GKW3abcdef1234567890',
+        publicKey: 'pk:1QX7GKW3abcdef1234567890',
         emoji: '🌴',
         status: 'Vacationing',
         avatarUrl: undefined,
-        link: undefined,
+        link: 'http://localhost:3000/profile/1QX7GKW3abcdef1234567890',
       },
-      handlers: {
+      actions: {
         onEdit: vi.fn(),
         onCopyPublicKey: vi.fn(),
+        onCopyLink: vi.fn(),
         onSignOut: vi.fn(() => {
           mockPush(App.AUTH_ROUTES.LOGOUT);
         }),
@@ -42,39 +43,37 @@ vi.mock('@/hooks', async (importOriginal) => {
 // Mock organisms
 vi.mock('@/organisms', () => ({
   ProfilePageHeader: ({
-    name,
-    bio,
-    publicKey,
-    emoji,
-    status,
-    link,
-    onEdit,
-    onCopyPublicKey,
-    onSignOut,
-    onStatusClick,
+    profile,
+    actions,
   }: {
-    name: string;
-    bio?: string;
-    publicKey: string;
-    emoji?: string;
-    status: string;
-    link?: string;
-    onEdit?: () => void;
-    onCopyPublicKey?: () => void;
-    onSignOut?: () => void;
-    onStatusClick?: () => void;
+    profile: {
+      name: string;
+      bio?: string;
+      publicKey: string;
+      emoji?: string;
+      status: string;
+      link?: string;
+      avatarUrl?: string;
+    };
+    actions: {
+      onEdit?: () => void;
+      onCopyPublicKey?: () => void;
+      onCopyLink?: () => void;
+      onSignOut?: () => void;
+      onStatusClick?: () => void;
+    };
   }) => (
     <div data-testid="profile-page-header">
-      <div>{name}</div>
-      {bio && <div>{bio}</div>}
-      <div>{publicKey}</div>
-      {emoji && <div>{emoji}</div>}
-      <div>{status}</div>
-      {onEdit && <button onClick={onEdit}>Edit</button>}
-      {onCopyPublicKey && <button onClick={onCopyPublicKey}>Copy Key</button>}
-      {link && <a href={link}>Link</a>}
-      {onSignOut && <button onClick={onSignOut}>Sign out</button>}
-      {onStatusClick && <button onClick={onStatusClick}>Status</button>}
+      <div>{profile.name}</div>
+      {profile.bio && <div>{profile.bio}</div>}
+      <div>{profile.publicKey}</div>
+      {profile.emoji && <div>{profile.emoji}</div>}
+      <div>{profile.status}</div>
+      {actions.onEdit && <button onClick={actions.onEdit}>Edit</button>}
+      {actions.onCopyPublicKey && <button onClick={actions.onCopyPublicKey}>Copy Key</button>}
+      {profile.link && <a href={profile.link}>Link</a>}
+      {actions.onSignOut && <button onClick={actions.onSignOut}>Sign out</button>}
+      {actions.onStatusClick && <button onClick={actions.onStatusClick}>Status</button>}
     </div>
   ),
 }));
@@ -92,7 +91,7 @@ describe('ProfilePageProfile', () => {
     expect(
       screen.getByText('Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.'),
     ).toBeInTheDocument();
-    expect(screen.getByText('1QX7GKW3abcdef1234567890')).toBeInTheDocument();
+    expect(screen.getByText('pk:1QX7GKW3abcdef1234567890')).toBeInTheDocument();
     expect(screen.getByText('🌴')).toBeInTheDocument();
     expect(screen.getByText('Vacationing')).toBeInTheDocument();
   });

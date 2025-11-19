@@ -24,9 +24,9 @@ describe('ProfilePageSidebar', () => {
     const rootElement = container.firstChild as HTMLElement;
     expect(rootElement).toHaveClass(
       'sticky',
-      'top-[var(--header-height)]',
+      'top-(--header-height)',
       'hidden',
-      'w-[180px]',
+      'w-(--filter-bar-width)',
       'flex-col',
       'gap-6',
       'self-start',

@@ -2,7 +2,7 @@
 
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and links 1`] = `
 <div
-  class="sticky top-[var(--header-height)] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+  class="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
   data-testid="container"
 >
   <div
@@ -254,7 +254,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
         </div>
       </div>
       <button
-        class="inline-flex items-center justify-center whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 px-4 py-2 has-[>svg]:px-4 text-left text-base leading-normal font-medium text-muted-foreground hover:text-foreground"
+        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
         data-slot="button"
         data-variant="unstyled"
       >
@@ -267,7 +267,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
 
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="sticky top-[var(--header-height)] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+  class="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
   data-testid="container"
 >
   <div
@@ -691,7 +691,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
         </div>
       </div>
       <button
-        class="inline-flex items-center justify-center whitespace-nowrap disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive border cursor-pointer transition-colors border-none shadow-none rounded-none p-0 h-10 gap-1 px-4 py-2 has-[>svg]:px-4 text-left text-base leading-normal font-medium text-muted-foreground hover:text-foreground"
+        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
         data-slot="button"
         data-variant="unstyled"
       >

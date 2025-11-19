@@ -52,6 +52,7 @@ exports[`MutedUsers - Snapshots > matches snapshot with custom className 1`] = `
     </p>
     <div
       class="inline-flex w-full flex-col gap-3"
+      data-testid="container"
     >
       <h2
         class="mt-5 flex self-center text-center text-2xl leading-8 font-normal opacity-20"
@@ -115,6 +116,7 @@ exports[`MutedUsers - Snapshots > matches snapshot with no muted users 1`] = `
     </p>
     <div
       class="inline-flex w-full flex-col gap-3"
+      data-testid="container"
     >
       <h2
         class="mt-5 flex self-center text-center text-2xl leading-8 font-normal opacity-20"

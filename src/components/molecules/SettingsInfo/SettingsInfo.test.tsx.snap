@@ -6,12 +6,12 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
     class="flex flex-col gap-6"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2 bg-background"
+      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
       <div
-        class="flex flex-col gap-2"
+        class="m-0 gap-2 p-0"
         data-slot="filter-header"
         data-testid="filter-header"
       >
@@ -22,13 +22,14 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
           Terms of Service & Privacy
         </h2>
         <p
-          class="text-base leading-normal font-medium text-[var(--base-secondary-foreground,#D4D4DB)]"
+          class="text-base leading-normal font-medium text-secondary-foreground"
+          data-testid="typography"
         >
           Please read our terms carefully.
         </p>
       </div>
       <div
-        class="mx-auto w-full flex flex-col gap-2"
+        class="mx-auto w-full flex-col flex gap-2"
         data-slot="filter-list"
         data-testid="filter-list"
       >
@@ -127,12 +128,12 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="mx-auto w-full flex flex-col gap-2 bg-background"
+      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
       <div
-        class="flex flex-col gap-2"
+        class="m-0 gap-2 p-0"
         data-slot="filter-header"
         data-testid="filter-header"
       >
@@ -144,7 +145,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <div
-        class="mx-auto w-full flex flex-col gap-2"
+        class="mx-auto w-full flex-col flex gap-2"
         data-slot="filter-list"
         data-testid="filter-list"
       >
@@ -359,12 +360,12 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
       </div>
     </div>
     <div
-      class="mx-auto w-full flex flex-col gap-2 bg-background"
+      class="w-full flex-col flex m-0 gap-2 bg-background p-0"
       data-slot="filter-root"
       data-testid="filter-root"
     >
       <div
-        class="flex flex-col gap-2"
+        class="m-0 gap-2 p-0"
         data-slot="filter-header"
         data-testid="filter-header"
       >
@@ -376,7 +377,7 @@ exports[`SettingsInfo - Snapshots > matches snapshot 1`] = `
         </h2>
       </div>
       <div
-        class="mx-auto w-full flex flex-col gap-2"
+        class="mx-auto w-full flex-col flex gap-2"
         data-slot="filter-list"
         data-testid="filter-list"
       >

@@ -58,7 +58,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot for feedback form 1`] = `
     </div>
   </div>
   <button
-    class="text-left text-base leading-normal font-medium text-muted-foreground hover:text-foreground"
+    class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
     data-testid="button"
     data-variant="unstyled"
   >
@@ -146,7 +146,7 @@ exports[`FeedbackCard - Snapshots > matches snapshot with default props 1`] = `
       </div>
     </div>
     <button
-      class="text-left text-base leading-normal font-medium text-muted-foreground hover:text-foreground"
+      class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
       data-testid="button"
       data-variant="unstyled"
     >

@@ -16,7 +16,7 @@ exports[`ProfilePageProfile > matches snapshot 1`] = `
         Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.
       </div>
       <div>
-        1QX7GKW3abcdef1234567890
+        pk:1QX7GKW3abcdef1234567890
       </div>
       <div>
         🌴
@@ -30,6 +30,11 @@ exports[`ProfilePageProfile > matches snapshot 1`] = `
       <button>
         Copy Key
       </button>
+      <a
+        href="http://localhost:3000/profile/1QX7GKW3abcdef1234567890"
+      >
+        Link
+      </a>
       <button>
         Sign out
       </button>
