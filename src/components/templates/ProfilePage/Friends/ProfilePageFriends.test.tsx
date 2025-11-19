@@ -1,27 +1,27 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ProfilePageReplies } from './ProfilePageReplies';
+import { ProfilePageFriends } from '../Friends/ProfilePageFriends';
 
-describe('ProfilePageReplies', () => {
+describe('ProfilePageFriends', () => {
   it('renders without errors', () => {
-    render(<ProfilePageReplies />);
-    expect(screen.getByText('Replies')).toBeInTheDocument();
+    render(<ProfilePageFriends />);
+    expect(screen.getByText('Friends')).toBeInTheDocument();
   });
 
   it('displays the correct heading', () => {
-    render(<ProfilePageReplies />);
+    render(<ProfilePageFriends />);
     const heading = screen.getByRole('heading', { level: 1 });
-    expect(heading).toHaveTextContent('Replies');
+    expect(heading).toHaveTextContent('Friends');
     expect(heading).toHaveClass('text-2xl', 'font-bold', 'text-foreground');
   });
 
   it('displays lorem ipsum text', () => {
-    render(<ProfilePageReplies />);
+    render(<ProfilePageFriends />);
     expect(screen.getByText(/Lorem ipsum dolor sit amet/)).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<ProfilePageReplies />);
+    const { container } = render(<ProfilePageFriends />);
     expect(container).toMatchSnapshot();
   });
 });

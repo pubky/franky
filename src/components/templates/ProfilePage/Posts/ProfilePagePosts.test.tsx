@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ProfilePagePosts } from './ProfilePagePosts';
+import { ProfilePagePosts } from '../Posts/ProfilePagePosts';
 
 describe('ProfilePagePosts', () => {
   it('renders without errors', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ProfilePageNotifications } from './ProfilePageNotifications';
+import { ProfilePageNotifications } from '../Notifications/ProfilePageNotifications';
 
 describe('ProfilePageNotifications', () => {
   it('renders without errors', () => {

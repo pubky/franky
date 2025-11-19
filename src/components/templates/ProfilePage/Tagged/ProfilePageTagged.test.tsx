@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { ProfilePageTagged } from './ProfilePageTagged';
+import { ProfilePageTagged } from '../Tagged/ProfilePageTagged';
 
 describe('ProfilePageTagged', () => {
   it('renders without errors', () => {

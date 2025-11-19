@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ProfilePageProfile } from './ProfilePageProfile';
+import { ProfilePageProfile } from '../Profile/ProfilePageProfile';
 import * as App from '@/app';
 
 // Mock next/navigation
