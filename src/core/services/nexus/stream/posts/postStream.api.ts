@@ -39,7 +39,8 @@ function buildPostStreamUrl(
  */
 export const postStreamApi = {
   // All posts (no additional required parameters)
-  all: (params: Core.TStreamAllParams) => buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS_KEYS),
+  all: (params: Core.TStreamAllParams) =>
+    buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Sources requiring observer_id
   following: (params: Core.TStreamWithObserverParams) =>

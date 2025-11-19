@@ -15,7 +15,7 @@ import * as Libs from '@/libs';
  * TimelinePosts
  *
  * Self-contained component that manages the timeline feed with infinite scroll.
- * 
+ *
  * Features:
  * - Cursor-based pagination using post ID and timestamp (skip for engagement streams)
  * - Automatic refetching when global filters change
@@ -74,7 +74,7 @@ export function TimelinePosts() {
           streamTail: cachedLastPostTimestamp,
         });
       }
-      
+
       const isEngagementStream = streamId.startsWith(Core.SORT.ENGAGEMENT);
       // Calculate cursor value based on stream type
       const cursorValue = isEngagementStream
@@ -93,44 +93,41 @@ export function TimelinePosts() {
   /**
    * Updates post state after fetching
    */
-  const updatePostState = useCallback(
-    (streamChunk: Core.TReadPostStreamChunkResponse, isInitialLoad: boolean) => {
-      // Handle empty results - applies to both initial load and pagination
-      if (streamChunk.nextPageIds.length === 0) {
-        setHasMore(false);
-        return;
-      }
+  const updatePostState = useCallback((streamChunk: Core.TReadPostStreamChunkResponse, isInitialLoad: boolean) => {
+    // Handle empty results - applies to both initial load and pagination
+    if (streamChunk.nextPageIds.length === 0) {
+      setHasMore(false);
+      return;
+    }
 
-      if (isInitialLoad) {
-        setPostIds(streamChunk.nextPageIds);
-        postIdsRef.current = streamChunk.nextPageIds; // Update ref
-        // The timestamp only updates when we are already fetching from nexus. Meanwhile, we use the streamTail to paginate.
-        // This does not apply for ENGAGEMENT streams.
-        if (streamChunk.timestamp) {
-          setStreamTail(streamChunk.timestamp);
-        }
-        const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
-        setLastPostId(newLastPostId);
-        return;
-      }
-
-      setPostIds((prevIds) => {
-        // Deduplicate by creating a Set and then converting back to array
-        const combined = [...prevIds, ...streamChunk.nextPageIds];
-        const uniqueIds = Array.from(new Set(combined));
-        postIdsRef.current = uniqueIds; // Update ref
-        return uniqueIds;
-      });
-      // Update timestamp for pagination if provided
-      // Update timestamp for pagination if provided (comes from nexus query)
-      if (streamChunk.timestamp !== undefined) {
+    if (isInitialLoad) {
+      setPostIds(streamChunk.nextPageIds);
+      postIdsRef.current = streamChunk.nextPageIds; // Update ref
+      // The timestamp only updates when we are already fetching from nexus. Meanwhile, we use the streamTail to paginate.
+      // This does not apply for ENGAGEMENT streams.
+      if (streamChunk.timestamp) {
         setStreamTail(streamChunk.timestamp);
       }
       const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
       setLastPostId(newLastPostId);
-    },
-    [],
-  );
+      return;
+    }
+
+    setPostIds((prevIds) => {
+      // Deduplicate by creating a Set and then converting back to array
+      const combined = [...prevIds, ...streamChunk.nextPageIds];
+      const uniqueIds = Array.from(new Set(combined));
+      postIdsRef.current = uniqueIds; // Update ref
+      return uniqueIds;
+    });
+    // Update timestamp for pagination if provided
+    // Update timestamp for pagination if provided (comes from nexus query)
+    if (streamChunk.timestamp !== undefined) {
+      setStreamTail(streamChunk.timestamp);
+    }
+    const newLastPostId = streamChunk.nextPageIds[streamChunk.nextPageIds.length - 1];
+    setLastPostId(newLastPostId);
+  }, []);
 
   /**
    * Checks if there are more posts to load

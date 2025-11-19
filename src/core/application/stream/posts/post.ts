@@ -7,10 +7,8 @@ export class PostStreamApplication {
   // ============================================================================
   // Public API
   // ============================================================================
-  
-  static async getCachedLastPostTimestamp(
-    streamId: Core.PostStreamId,
-  ): Promise<number> {
+
+  static async getCachedLastPostTimestamp(streamId: Core.PostStreamId): Promise<number> {
     try {
       const postStream = await Core.PostStreamModel.findById(streamId);
       if (!postStream || postStream.stream.length === 0) {
@@ -102,7 +100,6 @@ export class PostStreamApplication {
     const { params, invokeEndpoint, extraParams } = Core.createPostStreamParams(streamId, streamTail, limit, viewerId);
     const postStreamChunk = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
-    // TODO: Could be the case that we reach the end of the stream. How are we going to handle that?
     if (!postStreamChunk) {
       return { nextPageIds: [], cacheMissPostIds: [], timestamp: undefined };
     }

@@ -12,7 +12,11 @@ export class NexusPostStreamService {
    * @param params - Parameters for fetching post stream data
    * @returns Post stream data
    */
-  static async fetch({ params, invokeEndpoint, extraParams }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream | undefined> {
+  static async fetch({
+    params,
+    invokeEndpoint,
+    extraParams,
+  }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream | undefined> {
     let nexusEndpoint: string;
     switch (invokeEndpoint) {
       case Core.StreamSource.ALL:
