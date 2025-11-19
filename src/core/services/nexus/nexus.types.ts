@@ -37,6 +37,10 @@ export enum UserStreamReach {
   WOT = 'wot',
 }
 
+// Defining this type for usage in userId:reach id format. Not sure whether WOT needs
+// to be supported here, so I'm excluding it for now.
+export type UserStreamCompositeReach = Exclude<UserStreamReach, UserStreamReach.WOT>;
+
 export enum UserStreamTimeframe {
   TODAY = 'today',
   THIS_MONTH = 'this_month',
@@ -106,6 +110,11 @@ export type NexusUser = {
   counts: NexusUserCounts;
   tags: NexusTag[];
   relationship: NexusUserRelationship;
+};
+
+// User ID stream response containing only user identifiers
+export type NexusUserIdStream = {
+  user_ids: Pubky[];
 };
 
 // Post types

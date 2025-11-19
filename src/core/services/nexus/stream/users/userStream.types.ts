@@ -2,6 +2,7 @@ import * as Core from '@/core';
 
 export enum USER_STREAM_PREFIX {
   USERS = 'v0/stream/users',
+  USER_IDS = 'v0/stream/users/ids',
   USERNAME = 'v0/stream/users/username',
   USERS_BY_IDS = 'v0/stream/users/by_ids',
 }
@@ -49,6 +50,16 @@ export type TUserStreamUsersByIdsParams = {
   user_ids: Core.Pubky[];
   viewer_id?: Core.Pubky;
   depth?: number;
+};
+
+/**
+ * Parameters for fetching user stream from Nexus
+ * streamId: Composite stream identifier (e.g., 'user123:followers', 'influencers:today:all')
+ * params: Pagination parameters
+ */
+export type TFetchUserStreamParams = {
+  streamId: Core.UserStreamId;
+  params: TUserStreamBase;
 };
 
 /**
