@@ -19,8 +19,8 @@ describe('ProfilePageMobileMenu', () => {
     const rootElement = container.firstChild as HTMLElement;
     expect(rootElement).toHaveClass(
       'sticky',
-      'top-[var(--header-height-mobile)]',
-      'z-30',
+      'top-(--header-height-mobile)',
+      'z-(--z-mobile-menu)',
       'bg-background',
       'lg:hidden',
     );

@@ -1,30 +1,22 @@
 'use client';
 
-import * as Atoms from '@/components/atoms';
-import * as Molecules from '@/components/molecules';
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
-import { ProfilePageHeaderProps } from './ProfilePageHeader.types';
+import * as Types from './ProfilePageHeader.types';
 
-export function ProfilePageHeader({
-  avatarUrl,
-  emoji = '🌴',
-  name,
-  bio,
-  publicKey,
-  status,
-  onEdit,
-  onCopyPublicKey,
-  onCopyLink,
-  onSignOut,
-  onStatusClick,
-}: ProfilePageHeaderProps) {
+export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderProps) {
+  const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
+  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusClick } = actions;
+
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
 
   return (
     <Atoms.Container
       overrideDefaults={true}
       className="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
+      data-testid="profile-page-header"
     >
       <Atoms.Container overrideDefaults={true} className="relative lg:px-4">
         <Atoms.Avatar className="size-16 lg:size-36">

@@ -30,7 +30,14 @@ describe('MobileHeader', () => {
     const { container } = render(<MobileHeader />);
     const outerContainer = container.firstChild as HTMLElement;
 
-    expect(outerContainer).toHaveClass('sticky', 'top-0', 'z-30', 'bg-background', 'shadow-xs-dark', 'lg:hidden');
+    expect(outerContainer).toHaveClass(
+      'sticky',
+      'top-0',
+      'z-(--z-mobile-menu)',
+      'bg-background',
+      'shadow-xs-dark',
+      'lg:hidden',
+    );
   });
 
   it('renders with custom onLeftIconClick', () => {

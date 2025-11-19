@@ -37,4 +37,5 @@ export * from './SinglePostUserDetails';
 export * from './RightSidebar';
 export * from './SignInNavigation';
 export * from './Timeline';
+export * from './ProfilePageContainer';
 export * from './ProfilePageHeader';

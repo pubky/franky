@@ -1,19 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ProfilePageHeader } from './ProfilePageHeader';
+import { ProfilePageHeaderProps } from './ProfilePageHeader.types';
 
-const mockProps = {
-  name: 'Satoshi Nakamoto',
-  bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-  publicKey: '1QX7GKW3abcdef1234567890',
-  status: 'Vacationing',
-  emoji: '🌴',
-  link: 'https://example.com',
-  onEdit: vi.fn(),
-  onCopyPublicKey: vi.fn(),
-  onCopyLink: vi.fn(),
-  onSignOut: vi.fn(),
-  onStatusClick: vi.fn(),
+const mockProps: ProfilePageHeaderProps = {
+  profile: {
+    name: 'Satoshi Nakamoto',
+    bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
+    publicKey: '1QX7GKW3abcdef1234567890',
+    status: 'Vacationing',
+    emoji: '🌴',
+    link: 'https://example.com',
+  },
+  actions: {
+    onEdit: vi.fn(),
+    onCopyPublicKey: vi.fn(),
+    onCopyLink: vi.fn(),
+    onSignOut: vi.fn(),
+    onStatusClick: vi.fn(),
+  },
 };
 
 describe('ProfilePageHeader', () => {
@@ -45,7 +50,8 @@ describe('ProfilePageHeader', () => {
 
   it('calls onEdit when Edit button is clicked', () => {
     const onEdit = vi.fn();
-    render(<ProfilePageHeader {...mockProps} onEdit={onEdit} />);
+    const props = { ...mockProps, actions: { ...mockProps.actions, onEdit } };
+    render(<ProfilePageHeader {...props} />);
 
     const editButton = screen.getByText('Edit').closest('button');
     fireEvent.click(editButton!);
@@ -55,7 +61,8 @@ describe('ProfilePageHeader', () => {
 
   it('calls onCopyPublicKey when public key button is clicked', () => {
     const onCopyPublicKey = vi.fn();
-    render(<ProfilePageHeader {...mockProps} onCopyPublicKey={onCopyPublicKey} />);
+    const props = { ...mockProps, actions: { ...mockProps.actions, onCopyPublicKey } };
+    render(<ProfilePageHeader {...props} />);
 
     // Find button containing the formatted public key
     const publicKeyButton = screen.getByText(/1QX7GK/).closest('button');
@@ -66,7 +73,8 @@ describe('ProfilePageHeader', () => {
 
   it('calls onSignOut when Sign out button is clicked', () => {
     const onSignOut = vi.fn();
-    render(<ProfilePageHeader {...mockProps} onSignOut={onSignOut} />);
+    const props = { ...mockProps, actions: { ...mockProps.actions, onSignOut } };
+    render(<ProfilePageHeader {...props} />);
 
     const signOutButton = screen.getByText('Sign out').closest('button');
     fireEvent.click(signOutButton!);
@@ -76,7 +84,8 @@ describe('ProfilePageHeader', () => {
 
   it('calls onCopyLink when Link button is clicked', () => {
     const onCopyLink = vi.fn();
-    render(<ProfilePageHeader {...mockProps} onCopyLink={onCopyLink} />);
+    const props = { ...mockProps, actions: { ...mockProps.actions, onCopyLink } };
+    render(<ProfilePageHeader {...props} />);
 
     const linkButton = screen.getByText('Link').closest('button');
     fireEvent.click(linkButton!);
@@ -85,7 +94,8 @@ describe('ProfilePageHeader', () => {
   });
 
   it('renders avatar with fallback initials when no avatarUrl', () => {
-    render(<ProfilePageHeader {...mockProps} avatarUrl={undefined} />);
+    const props = { ...mockProps, profile: { ...mockProps.profile, avatarUrl: undefined } };
+    render(<ProfilePageHeader {...props} />);
 
     expect(screen.getByText('SN')).toBeInTheDocument();
   });
@@ -99,7 +109,8 @@ describe('ProfilePageHeader', () => {
   });
 
   it('renders without bio', () => {
-    render(<ProfilePageHeader {...mockProps} bio={undefined} />);
+    const props = { ...mockProps, profile: { ...mockProps.profile, bio: undefined } };
+    render(<ProfilePageHeader {...props} />);
 
     expect(screen.getByText('Satoshi Nakamoto')).toBeInTheDocument();
     expect(

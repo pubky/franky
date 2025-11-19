@@ -9,7 +9,7 @@ function FilterRoot({ className, children, ...props }: React.HTMLAttributes<HTML
     <Atoms.Container
       data-slot="filter-root"
       data-testid="filter-root"
-      className={Libs.cn('flex flex-col gap-2 bg-background', className)}
+      className={Libs.cn('m-0 gap-2 bg-background p-0', className)}
       {...props}
     >
       {children}
@@ -28,16 +28,22 @@ function FilterHeader({
   className?: string;
 } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <div data-slot="filter-header" data-testid="filter-header" className="flex flex-col gap-2" {...props}>
+    <Atoms.Container
+      overrideDefaults
+      data-slot="filter-header"
+      data-testid="filter-header"
+      className="m-0 gap-2 p-0"
+      {...props}
+    >
       <Atoms.Heading level={2} size="lg" className={Libs.cn('font-light text-muted-foreground', className)}>
         {title}
       </Atoms.Heading>
       {subtitle && (
-        <p className="text-base leading-normal font-medium text-[var(--base-secondary-foreground,#D4D4DB)]">
+        <Atoms.Typography size="md" className="text-base leading-normal font-medium text-secondary-foreground">
           {subtitle}
-        </p>
+        </Atoms.Typography>
       )}
-    </div>
+    </Atoms.Container>
   );
 }
 
@@ -46,7 +52,7 @@ function FilterList({ className, children, ...props }: React.HTMLAttributes<HTML
     <Atoms.Container
       data-slot="filter-list"
       data-testid="filter-list"
-      className={Libs.cn('flex flex-col gap-2', className)}
+      className={Libs.cn('gap-2', className)}
       {...props}
     >
       {children}
@@ -65,24 +71,28 @@ function FilterItem({
   onClick?: () => void;
   className?: string;
   children: React.ReactNode;
-} & React.HTMLAttributes<HTMLElement>) {
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <Atoms.Container
-      overrideDefaults={true}
+    <Atoms.Button
+      type="button"
       data-slot="filter-item"
       data-testid="filter-item"
       data-selected={isSelected ? 'true' : 'false'}
+      aria-pressed={isSelected}
+      overrideDefaults
       className={Libs.cn(
-        'flex cursor-pointer items-center gap-2 text-base font-medium transition-colors',
+        'flex cursor-pointer gap-2 text-base font-medium transition-colors',
+        'border-0 bg-transparent p-0 text-left',
+        'items-center justify-normal',
         isSelected ? 'text-foreground' : 'text-muted-foreground hover:text-foreground/80',
+        'm-0 h-full px-0 py-1',
         className,
       )}
-      size="sm"
       onClick={onClick}
       {...props}
     >
       {children}
-    </Atoms.Container>
+    </Atoms.Button>
   );
 }
 

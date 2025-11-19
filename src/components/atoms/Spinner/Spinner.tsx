@@ -22,6 +22,8 @@ export const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
         overrideDefaults={overrideDefaults}
         className={cn('animate-spin rounded-full border-b-2 border-brand', sizeClasses[size], className)}
         data-testid="spinner"
+        role="status"
+        aria-label="Loading"
         {...props}
       />
     );

@@ -88,6 +88,64 @@ describe('Button', () => {
     expect(link).toHaveAttribute('href', '/test');
     expect(link).toHaveAttribute('data-slot', 'button');
   });
+
+  it('overrideDefaults removes all default classes', () => {
+    render(
+      <Button overrideDefaults className="my-custom-class">
+        Override Button
+      </Button>,
+    );
+    const button = screen.getByRole('button');
+
+    // Should only have the custom class
+    expect(button).toHaveClass('my-custom-class');
+
+    // Should NOT have default button classes
+    expect(button).not.toHaveClass('inline-flex');
+    expect(button).not.toHaveClass('bg-brand/16');
+    expect(button).not.toHaveClass('rounded-full');
+    expect(button).not.toHaveClass('border');
+  });
+
+  it('overrideDefaults with no className renders a clean button', () => {
+    render(<Button overrideDefaults>Clean Button</Button>);
+    const button = screen.getByRole('button');
+
+    // Should not have variant or size classes
+    expect(button).not.toHaveClass('bg-brand/16');
+    expect(button).not.toHaveClass('h-10');
+    expect(button).not.toHaveClass('rounded-full');
+
+    // Should still have data attributes
+    expect(button).toHaveAttribute('data-slot', 'button');
+  });
+
+  it('overrideDefaults works with multiple custom classes', () => {
+    render(
+      <Button overrideDefaults className="flex items-center gap-2 bg-red-500 px-4 py-2 text-white">
+        Custom Styled Button
+      </Button>,
+    );
+    const button = screen.getByRole('button');
+
+    // Should have all custom classes
+    expect(button).toHaveClass('flex', 'items-center', 'gap-2', 'px-4', 'py-2', 'bg-red-500', 'text-white');
+
+    // Should NOT have default button classes
+    expect(button).not.toHaveClass('bg-brand/16');
+    expect(button).not.toHaveClass('rounded-full');
+  });
+
+  it('without overrideDefaults applies default classes normally', () => {
+    render(<Button className="custom-class">Normal Button</Button>);
+    const button = screen.getByRole('button');
+
+    // Should have both default and custom classes
+    expect(button).toHaveClass('custom-class');
+    expect(button).toHaveClass('bg-brand/16');
+    expect(button).toHaveClass('inline-flex');
+    expect(button).toHaveClass('rounded-full');
+  });
 });
 
 describe('Button - Snapshots', () => {
@@ -261,5 +319,19 @@ describe('Button - Snapshots', () => {
     );
     const button = screen.getByTestId('button');
     expect(button).toHaveAttribute('data-custom', 'test');
+  });
+
+  it('matches snapshot with overrideDefaults and custom className', () => {
+    const { container } = render(
+      <Button overrideDefaults className="custom-override-class">
+        Override
+      </Button>,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with overrideDefaults and no className', () => {
+    const { container } = render(<Button overrideDefaults>Clean</Button>);
+    expect(container.firstChild).toMatchSnapshot();
   });
 });

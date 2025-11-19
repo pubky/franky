@@ -12,3 +12,7 @@ export * from './useStreamIdFromFilters';
 export * from './useControlledState';
 export * from './useRadiogroupKeyboard';
 export * from './useProfileHeader';
+export * from './useProfileNavigation';
+export * from './useUserProfile';
+export * from './useProfileStats';
+export * from './useProfileActions';

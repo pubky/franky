@@ -1,13 +1,31 @@
-import { baseUriBuilder } from 'pubky-app-specs';
 import JSZip from 'jszip';
+
+import * as Specs from 'pubky-app-specs';
 import * as Core from '@/core';
 
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
   static async read({ userId }: Core.TReadProfileParams) {
-    // TODO: get from nexus api if not found in database
-    return await Core.UserDetailsModel.findById(userId);
+    // Try to get from local database first
+    const localUserDetails = await Core.UserDetailsModel.findById(userId);
+
+    // If found locally, return it
+    if (localUserDetails) {
+      return localUserDetails;
+    }
+
+    // If not found locally, fetch from Nexus API
+    const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
+
+    // If found from Nexus, persist it to local database
+    if (nexusUserDetails) {
+      await Core.UserDetailsModel.upsert(nexusUserDetails);
+      return await Core.UserDetailsModel.findById(userId);
+    }
+
+    // If not found anywhere, return null
+    return null;
   }
 
   static async uploadAvatar({ blobResult, fileResult }: Core.TUploadAvatarInput) {
@@ -35,7 +53,7 @@ export class ProfileApplication {
     // Clear local IndexedDB data first
     await Core.LocalProfileService.deleteAccount();
 
-    const baseDirectory = baseUriBuilder(pubky);
+    const baseDirectory = Specs.baseUriBuilder(pubky);
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since
     // homeserver.list does not yet support pagination. This ensures all files are deleted.
     const dataList = await Core.HomeserverService.list(baseDirectory, undefined, false, Infinity);
@@ -76,7 +94,7 @@ export class ProfileApplication {
    * @param params - Parameters containing user's public key and optional progress callback
    */
   static async downloadData({ pubky, setProgress }: Core.TDownloadDataParams) {
-    const baseDirectory = baseUriBuilder(pubky);
+    const baseDirectory = Specs.baseUriBuilder(pubky);
 
     // TODO: Using undefined, false, and Infinity here as a temporary workaround since homeserver.list does not yet
     // support pagination. This ensures all files are retrieved.

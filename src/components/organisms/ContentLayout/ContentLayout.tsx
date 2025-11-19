@@ -19,7 +19,7 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       className={Libs.cn(
         'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'top-[147px]', // 144px + 3px for the header
-        'w-full max-w-[180px]',
+        'w-full max-w-(--filter-bar-width)',
       )}
     >
       {children}

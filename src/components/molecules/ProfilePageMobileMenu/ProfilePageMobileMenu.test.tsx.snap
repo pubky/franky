@@ -2,20 +2,21 @@
 
 exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="sticky top-[var(--header-height-mobile)] z-30 bg-background lg:hidden"
-  data-testid="container"
+  class="sticky top-(--header-height-mobile) z-(--z-mobile-menu) bg-background lg:hidden"
+  data-testid="profile-page-mobile-menu"
 >
   <div
     class="flex w-full"
-    data-testid="container"
+    data-testid="profile-page-mobile-menu-items"
   >
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Profile"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"
@@ -47,13 +48,14 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-foreground"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-foreground"
       data-testid="container"
     >
       <button
         aria-current="page"
         aria-label="Notifications"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"
@@ -78,12 +80,13 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Replies"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"
@@ -105,12 +108,13 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Posts"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"
@@ -135,12 +139,13 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Followers"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"
@@ -170,12 +175,13 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Following"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           class="text-muted-foreground"
@@ -196,12 +202,13 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Friends"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"
@@ -232,12 +239,13 @@ exports[`ProfilePageMobileMenu - Snapshots > matches snapshot with default props
       </button>
     </div>
     <div
-      class="flex flex-1 justify-center border-b px-0 py-1.5 border-border"
+      class="flex flex-1 justify-center border-b px-0 py-1.5 data-testid=\\"profile-page-mobile-menu-item\\" border-border"
       data-testid="container"
     >
       <button
         aria-label="Tagged"
         class="px-2.5 py-2"
+        data-slot="button"
       >
         <svg
           aria-hidden="true"

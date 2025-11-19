@@ -228,4 +228,56 @@ describe('NexusUserService', () => {
       expect(result).toEqual([]);
     });
   });
+
+  describe('details', () => {
+    it('should construct correct URL and handle successful response', async () => {
+      const mockUserDetails: Core.NexusUserDetails = {
+        id: testUserId,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'active',
+        links: [],
+        indexed_at: Date.now(),
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockUserDetails);
+
+      const result = await Core.NexusUserService.details({ user_id: testUserId });
+
+      expect(result).toEqual(mockUserDetails);
+      expect(queryNexusSpy).toHaveBeenCalledWith(`${Config.NEXUS_URL}/v0/user/${testUserId}/details`);
+    });
+
+    it('should handle null/undefined responses gracefully', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+
+      const result = await Core.NexusUserService.details({ user_id: testUserId });
+
+      expect(result).toEqual(null);
+    });
+
+    it('should handle user with complete profile data', async () => {
+      const mockUserDetails: Core.NexusUserDetails = {
+        id: testUserId,
+        name: 'Satoshi Nakamoto',
+        bio: 'Bitcoin creator',
+        image: '/path/to/avatar.jpg',
+        status: 'Busy',
+        links: [
+          { title: 'Website', url: 'https://bitcoin.org' },
+          { title: 'GitHub', url: 'https://github.com/bitcoin' },
+        ],
+        indexed_at: 1234567890,
+      };
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockUserDetails);
+
+      const result = await Core.NexusUserService.details({ user_id: testUserId });
+
+      expect(result).toEqual(mockUserDetails);
+      expect(result?.name).toBe('Satoshi Nakamoto');
+      expect(result?.links).toHaveLength(2);
+    });
+  });
 });

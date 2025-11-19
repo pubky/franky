@@ -21,7 +21,7 @@ export function DialogFeedback({ name, avatar }: DialogFeedbackProps) {
             <Atoms.AvatarImage src={avatar} alt={name} />
             <Atoms.AvatarFallback>{Libs.extractInitials({ name, maxLength: 2 })}</Atoms.AvatarFallback>
           </Atoms.Avatar>
-          <Atoms.Typography size="sm" className="text-base font-medium text-muted-foreground">
+          <Atoms.Typography size="sm" className="text-base font-medium break-all text-muted-foreground">
             What do you think about Pubky?
           </Atoms.Typography>
         </Atoms.Container>

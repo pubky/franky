@@ -39,6 +39,13 @@ describe('Spinner', () => {
     expect(spinner).toHaveClass('animate-spin', 'rounded-full', 'border-b-2', 'border-brand');
   });
 
+  it('has accessible role and label', () => {
+    const { container } = render(<Spinner />);
+    const spinner = container.querySelector('[data-testid="spinner"]');
+    expect(spinner).toHaveAttribute('role', 'status');
+    expect(spinner).toHaveAttribute('aria-label', 'Loading');
+  });
+
   it('matches snapshot', () => {
     const { container } = render(<Spinner />);
     expect(container).toMatchSnapshot();

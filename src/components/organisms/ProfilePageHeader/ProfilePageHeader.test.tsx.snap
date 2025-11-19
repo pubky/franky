@@ -4,7 +4,7 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
 <div>
   <div
     class="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
-    data-testid="container"
+    data-testid="profile-page-header"
   >
     <div
       class="relative lg:px-4"

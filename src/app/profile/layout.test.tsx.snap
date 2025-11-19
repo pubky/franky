@@ -3,77 +3,11 @@
 exports[`ProfileLayout > matches snapshot 1`] = `
 <div>
   <div
-    data-left="false"
-    data-right="false"
-    data-testid="mobile-header"
+    data-testid="profile-page-container"
   >
-    Mobile Header
-  </div>
-  <div
-    data-active="notifications"
-    data-testid="profile-mobile-menu"
-  >
-    Mobile Menu
-  </div>
-  <div
-    data-testid="profile-page-layout-wrapper"
-  >
-    <div
-      class="hidden bg-background pb-6 shadow-sm lg:block"
-      data-testid="container"
-    >
-      <div
-        data-testid="profile-page-header"
-      >
-        <div>
-          Satoshi Nakamoto
-        </div>
-        <div>
-          Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.
-        </div>
-        <div>
-          1QX7GKW3abcdef1234567890
-        </div>
-        <div>
-          🌴
-        </div>
-        <div>
-          Vacationing
-        </div>
-        <button>
-          Sign out
-        </button>
-      </div>
+    <div>
+      Test Content
     </div>
-    <div
-      class="flex gap-6"
-      data-testid="container"
-    >
-      <div
-        data-active="notifications"
-        data-testid="profile-filter-bar"
-      >
-        Filter Bar
-      </div>
-      <div
-        class="flex-1"
-        data-testid="container"
-      >
-        <div>
-          Test Content
-        </div>
-      </div>
-      <div
-        data-testid="profile-sidebar"
-      >
-        Sidebar
-      </div>
-    </div>
-  </div>
-  <div
-    data-testid="mobile-footer"
-  >
-    Footer
   </div>
 </div>
 `;

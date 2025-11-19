@@ -1,78 +1,60 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import { useRouter } from 'next/navigation';
-import { AUTH_ROUTES } from '@/app';
-import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
-// Assuming the data structure will look similar to this
-interface UserDetails {
-  id: string;
-  name: string;
-  bio: string;
-  publicKey: string;
-  emoji: string;
-  status: string;
-  image: string | null;
-  indexed_at: number;
-  link: string;
-}
+// Re-export types from composed hooks for backwards compatibility
+export type { ProfileStats } from '@/hooks/useProfileStats';
+export type { UserProfile } from '@/hooks/useUserProfile';
+export type { ProfileActions } from '@/hooks/useProfileActions';
 
+/**
+ * Default profile data used during loading state or when profile is unavailable.
+ */
+const DEFAULT_PROFILE: Hooks.UserProfile = {
+  name: '',
+  bio: '',
+  publicKey: '',
+  emoji: '🌴',
+  status: '',
+  avatarUrl: undefined,
+  link: '',
+};
+
+/**
+ * Composite hook that combines user profile data, stats, and actions.
+ * This hook composes three focused hooks following Single Responsibility Principle:
+ *
+ * - useUserProfile: Pure data fetching for user details
+ * - useProfileStats: Pure data fetching for statistics
+ * - useProfileActions: Action handlers for user interactions
+ *
+ * Note: This hook guarantees a non-null profile object by providing default values
+ * during loading state. Consumers should check `isLoading` to determine data readiness.
+ *
+ * @param userId - The user ID to fetch profile data for
+ * @returns Combined profile data (never null), stats, actions, and loading state
+ */
 export function useProfileHeader(userId: string) {
-  const router = useRouter();
-  const { copyToClipboard } = Hooks.useCopyToClipboard();
+  // Fetch user profile data
+  const { profile, isLoading: isProfileLoading } = Hooks.useUserProfile(userId);
 
-  const userDetails = useLiveQuery(
-    // This will be substituted by a controller call in the future
-    () =>
-      Promise.resolve<UserDetails>({
-        id: userId,
-        name: 'Satoshi Nakamoto',
-        bio: 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-        publicKey: 'pk:pcoitzaep9o3m6dh1km3ysi4ug9jno8smu4pbsc73mhy1h8krd1y',
-        emoji: '🌴',
-        status: 'Vacationing',
-        image: null,
-        indexed_at: Date.now(),
-        link: 'https://staging.pubky.app/profile/pcoitzaep9o3m6dh1km3ysi4ug9jno8smu4pbsc73mhy1h8krd1y',
-      }),
-    [userId],
-  );
+  // Fetch profile statistics
+  const { stats, isLoading: isStatsLoading } = Hooks.useProfileStats(userId);
 
-  const avatarUrl = userDetails?.image ? Core.filesApi.getAvatar(userDetails.id) : undefined;
+  // Provide default profile values when profile is null (loading state)
+  // This centralizes the fallback logic and ensures type consistency
+  const profileData = profile ?? DEFAULT_PROFILE;
 
-  const profileData = {
-    name: userDetails?.name ?? 'Satoshi Nakamoto',
-    bio: userDetails?.bio ?? 'Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.',
-    publicKey: userDetails?.publicKey ?? 'pk:pcoitzaep9o3m6dh1km3ysi4ug9jno8smu4pbsc73mhy1h8krd1y',
-    emoji: userDetails?.emoji ?? '🌴',
-    status: userDetails?.status ?? 'Vacationing',
-    avatarUrl,
-    link: userDetails?.link ?? 'https://staging.pubky.app/profile/pcoitzaep9o3m6dh1km3ysi4ug9jno8smu4pbsc73mhy1h8krd1y',
-  };
-
-  const handlers = {
-    onEdit: () => {
-      console.log('Edit clicked');
-    },
-    onCopyPublicKey: () => {
-      void copyToClipboard(profileData.publicKey);
-    },
-    onCopyLink: () => {
-      void copyToClipboard(profileData.link);
-    },
-    onSignOut: () => {
-      router.push(AUTH_ROUTES.LOGOUT);
-    },
-    onStatusClick: () => {
-      console.log('Status clicked');
-    },
-  };
+  // Get action handlers (only when profile is available)
+  const actions = Hooks.useProfileActions({
+    publicKey: profileData.publicKey,
+    link: profileData.link,
+  });
 
   return {
-    profileData,
-    handlers,
-    isLoading: !userDetails,
+    profile: profileData,
+    stats,
+    actions,
+    isLoading: isProfileLoading || isStatsLoading,
   };
 }

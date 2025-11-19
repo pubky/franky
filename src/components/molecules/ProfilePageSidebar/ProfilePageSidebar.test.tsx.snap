@@ -2,7 +2,7 @@
 
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and links 1`] = `
 <div
-  class="sticky top-[var(--header-height)] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+  class="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
   data-testid="container"
 >
   <div
@@ -253,12 +253,12 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
           Your Name
         </div>
       </div>
-      <div
-        class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
-        data-testid="container"
+      <button
+        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
+        data-slot="button"
       >
         What do you think about Pubky?
-      </div>
+      </button>
     </div>
   </div>
 </div>
@@ -266,7 +266,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
 
 exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="sticky top-[var(--header-height)] hidden w-[180px] flex-col gap-6 self-start lg:flex"
+  class="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
   data-testid="container"
 >
   <div
@@ -689,12 +689,12 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
           Your Name
         </div>
       </div>
-      <div
-        class="cursor-pointer text-base leading-normal font-medium text-muted-foreground transition-colors hover:text-foreground"
-        data-testid="container"
+      <button
+        class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
+        data-slot="button"
       >
         What do you think about Pubky?
-      </div>
+      </button>
     </div>
   </div>
 </div>
