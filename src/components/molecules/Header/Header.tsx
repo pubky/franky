@@ -8,16 +8,18 @@ import * as Libs from '@/libs';
 import * as Config from '@/config';
 import * as App from '@/app';
 
-type HeaderContainerProps = {
+export interface HeaderContainerProps {
   children: React.ReactNode;
   className?: string;
-};
+}
 
 export const HeaderContainer = ({ children, className }: HeaderContainerProps) => {
   return (
-    <header
+    <Atoms.Container
+      overrideDefaults
+      as="header"
       className={Libs.cn(
-        'sticky top-0 z-20 w-full bg-gradient-to-b from-[var(--background)]/95 to-[var(--transparent)] py-6 backdrop-blur-sm',
+        'sticky top-0 z-(--z-sticky-header) w-full bg-linear-to-b from-(--background)/95 to-(--transparent) py-6 backdrop-blur-sm',
         className,
       )}
     >
@@ -35,7 +37,7 @@ export const HeaderContainer = ({ children, className }: HeaderContainerProps) =
           {children}
         </Atoms.Container>
       </Atoms.Container>
-    </header>
+    </Atoms.Container>
   );
 };
 
@@ -72,11 +74,37 @@ export function HeaderSocialLinks({ ...props }: React.HTMLAttributes<HTMLDivElem
   );
 }
 
+type NavigationItem = {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+};
+
 type HeaderNavigationButtonsProps = {
   counter?: number;
   avatarImage?: string;
   avatarInitial?: string;
 };
+
+const NAVIGATION_ITEMS: NavigationItem[] = [
+  { href: App.APP_ROUTES.HOME, icon: Libs.Home, label: 'Home' },
+  { href: App.APP_ROUTES.HOT, icon: Libs.Flame, label: 'Hot' },
+  { href: App.APP_ROUTES.BOOKMARKS, icon: Libs.Bookmark, label: 'Bookmarks' },
+  { href: App.APP_ROUTES.SETTINGS, icon: Libs.Settings, label: 'Settings' },
+];
+
+const NavigationButton = ({ href, icon: Icon, isActive }: NavigationItem & { isActive: boolean }) => (
+  <Atoms.Link href={href}>
+    <Atoms.Button
+      className={Libs.cn('h-12 w-12', isActive ? '' : 'border bg-transparent')}
+      variant="secondary"
+      size="icon"
+      aria-label={href}
+    >
+      <Icon className="size-6" />
+    </Atoms.Button>
+  </Atoms.Link>
+);
 
 export function HeaderNavigationButtons({
   counter = 0,
@@ -86,49 +114,11 @@ export function HeaderNavigationButtons({
   const pathname = usePathname();
   const counterString = counter > 21 ? '21+' : counter.toString();
 
-  const isActive = (path: string) => pathname === path;
-
   return (
     <Atoms.Container className="hidden w-auto flex-row items-center justify-start gap-3 lg:flex">
-      <Atoms.Link href={App.APP_ROUTES.HOME}>
-        <Atoms.Button
-          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.HOME) ? '' : 'border bg-transparent')}
-          variant="secondary"
-          size="icon"
-        >
-          <Libs.Home className="size-6" />
-        </Atoms.Button>
-      </Atoms.Link>
-
-      <Atoms.Link href={App.APP_ROUTES.HOT}>
-        <Atoms.Button
-          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.HOT) ? '' : 'border bg-transparent')}
-          variant="secondary"
-          size="icon"
-        >
-          <Libs.Flame className="size-6" />
-        </Atoms.Button>
-      </Atoms.Link>
-
-      <Atoms.Link href={App.APP_ROUTES.BOOKMARKS}>
-        <Atoms.Button
-          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.BOOKMARKS) ? '' : 'border bg-transparent')}
-          variant="secondary"
-          size="icon"
-        >
-          <Libs.Bookmark className="size-6" />
-        </Atoms.Button>
-      </Atoms.Link>
-
-      <Atoms.Link href={App.APP_ROUTES.SETTINGS}>
-        <Atoms.Button
-          className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.SETTINGS) ? '' : 'border bg-transparent')}
-          variant="secondary"
-          size="icon"
-        >
-          <Libs.Settings className="size-6" />
-        </Atoms.Button>
-      </Atoms.Link>
+      {NAVIGATION_ITEMS.map((item) => (
+        <NavigationButton key={item.href} {...item} isActive={pathname === item.href} />
+      ))}
 
       <Atoms.Link id="header-nav-profile-btn" className="relative" href={App.APP_ROUTES.PROFILE}>
         <Atoms.Avatar className="h-12 w-12 cursor-pointer">
@@ -136,8 +126,8 @@ export function HeaderNavigationButtons({
           <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         {counter > 0 && (
-          <Atoms.Badge className={`absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand`} variant="secondary">
-            <Atoms.Typography className={`text-primary-foreground ${counter > 21 ? 'text-xs' : ''}`} size="sm">
+          <Atoms.Badge className="absolute right-0 bottom-0 h-5 w-5 rounded-full bg-brand" variant="secondary">
+            <Atoms.Typography className={Libs.cn('text-primary-foreground', counter > 21 && 'text-xs')} size="sm">
               {counterString}
             </Atoms.Typography>
           </Atoms.Badge>

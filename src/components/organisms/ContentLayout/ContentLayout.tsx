@@ -19,7 +19,7 @@ function StickySidebar({ children }: Types.StickySidebarProps) {
       className={Libs.cn(
         'sticky hidden flex-col items-start justify-start gap-6 self-start lg:flex',
         'top-[147px]', // 144px + 3px for the header
-        'w-full max-w-[180px]',
+        'w-full max-w-(--filter-bar-width)',
       )}
     >
       {children}
@@ -70,7 +70,7 @@ export function ContentLayout({
         className={Libs.cn(
           'max-w-sm sm:max-w-xl md:max-w-3xl lg:max-w-5xl xl:max-w-6xl',
           'm-auto w-full px-6 pb-12 xl:px-0',
-          'pt-20 lg:pt-0', // Add top padding on mobile for fixed header
+          'pt-0',
           className,
         )}
       >

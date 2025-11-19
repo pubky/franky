@@ -2,7 +2,7 @@
 
 exports[`RightSidebar - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex custom-sidebar"
+  class="hidden w-(--filter-bar-width) flex-col items-start justify-start gap-6 lg:flex custom-sidebar"
   data-testid="right-sidebar"
 >
   <div
@@ -17,6 +17,7 @@ exports[`RightSidebar - Snapshots > matches snapshot with custom className 1`] =
   </div>
   <div
     class="sticky top-[100px] self-start"
+    data-testid="container"
   >
     <div
       data-testid="feedback-card"
@@ -29,7 +30,7 @@ exports[`RightSidebar - Snapshots > matches snapshot with custom className 1`] =
 
 exports[`RightSidebar - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex"
+  class="hidden w-(--filter-bar-width) flex-col items-start justify-start gap-6 lg:flex"
   data-testid="right-sidebar"
 >
   <div
@@ -44,6 +45,7 @@ exports[`RightSidebar - Snapshots > matches snapshot with default props 1`] = `
   </div>
   <div
     class="sticky top-[100px] self-start"
+    data-testid="container"
   >
     <div
       data-testid="feedback-card"
@@ -56,7 +58,7 @@ exports[`RightSidebar - Snapshots > matches snapshot with default props 1`] = `
 
 exports[`RightSidebar - Snapshots > matches snapshot with different styling 1`] = `
 <div
-  class="hidden w-[180px] flex-col items-start justify-start gap-6 lg:flex border-l border-border bg-secondary/10"
+  class="hidden w-(--filter-bar-width) flex-col items-start justify-start gap-6 lg:flex border-l border-border bg-secondary/10"
   data-testid="right-sidebar"
 >
   <div
@@ -71,6 +73,7 @@ exports[`RightSidebar - Snapshots > matches snapshot with different styling 1`] 
   </div>
   <div
     class="sticky top-[100px] self-start"
+    data-testid="container"
   >
     <div
       data-testid="feedback-card"

@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePageLayout > matches snapshot when loading 1`] = `
+<div
+  data-left="false"
+  data-right="false"
+  data-testid="mobile-header"
+>
+  Mobile Header
+</div>
+`;
+
+exports[`ProfilePageLayout > matches snapshot with default props 1`] = `
+<div
+  data-left="false"
+  data-right="false"
+  data-testid="mobile-header"
+>
+  Mobile Header
+</div>
+`;
+
+exports[`ProfilePageLayout > matches snapshot with different active pages 1`] = `
+<div
+  data-left="false"
+  data-right="false"
+  data-testid="mobile-header"
+>
+  Mobile Header
+</div>
+`;
