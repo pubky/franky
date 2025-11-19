@@ -1,0 +1,2 @@
+export { CoordinatorsManager } from './CoordinatorsManager';
+
