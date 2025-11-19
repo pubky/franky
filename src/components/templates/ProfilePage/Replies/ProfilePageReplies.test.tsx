@@ -25,6 +25,7 @@ vi.mock('@/core', async () => {
     })),
     StreamPostsController: {
       getOrFetchStreamSlice: vi.fn(),
+      getCachedLastPostTimestamp: vi.fn().mockResolvedValue(0),
     },
   };
 });
