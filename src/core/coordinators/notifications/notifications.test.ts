@@ -279,9 +279,7 @@ describe('NotificationCoordinator', () => {
       // Should have added visibility listener during construction
       expect(addEventListenerSpy).toHaveBeenCalledWith('visibilitychange', expect.any(Function));
 
-      const visibilityHandler = addEventListenerSpy.mock.calls.find(
-        (call) => call[0] === 'visibilitychange'
-      )?.[1];
+      const visibilityHandler = addEventListenerSpy.mock.calls.find((call) => call[0] === 'visibilitychange')?.[1];
 
       coordinator.destroy();
 
@@ -538,7 +536,7 @@ describe('NotificationCoordinator', () => {
 
       // Add /admin to disabled routes
       coordinator.configure({ disabledRoutes: [/^\/admin/] });
-      
+
       // Stop and restart to re-evaluate with new config
       coordinator.stop();
       coordinator.start();
@@ -557,10 +555,10 @@ describe('NotificationCoordinator', () => {
 
     it('allows disabling default routes via configure()', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
-      coordinator.configure({ 
-        pollOnStart: false, 
+      coordinator.configure({
+        pollOnStart: false,
         intervalMs: 1_000,
-        disabledRoutes: [] // Clear all disabled routes
+        disabledRoutes: [], // Clear all disabled routes
       });
       coordinator.setRoute('/sign-in');
       coordinator.start();
@@ -572,12 +570,12 @@ describe('NotificationCoordinator', () => {
 
     it('respects respectPageVisibility toggle at runtime', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
-      
+
       // Start with visibility respect enabled
-      coordinator.configure({ 
-        pollOnStart: false, 
-        intervalMs: 1_000, 
-        respectPageVisibility: true 
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        respectPageVisibility: true,
       });
       coordinator.start();
 
@@ -607,21 +605,21 @@ describe('NotificationCoordinator', () => {
 
     it('toggles respectPageVisibility from false to true', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
-      
+
       // Start with visibility respect disabled
-      coordinator.configure({ 
-        pollOnStart: false, 
-        intervalMs: 1_000, 
-        respectPageVisibility: false 
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        respectPageVisibility: false,
       });
-      
+
       // Make page hidden
       Object.defineProperty(document, 'visibilityState', {
         configurable: true,
         get: () => 'hidden',
       });
       document.dispatchEvent(new Event('visibilitychange'));
-      
+
       coordinator.start();
 
       // Should poll despite being hidden (respectPageVisibility: false)
@@ -630,7 +628,7 @@ describe('NotificationCoordinator', () => {
 
       // Toggle to respect page visibility
       coordinator.configure({ respectPageVisibility: true });
-      
+
       // Stop and restart to re-evaluate with new config
       coordinator.stop();
       coordinator.start();
@@ -678,15 +676,9 @@ describe('NotificationCoordinator', () => {
     it('handles route with special regex characters', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      
+
       // Routes with special chars that need escaping in regex
-      const specialRoutes = [
-        '/user/$userId',
-        '/post/[id]',
-        '/search/(advanced)',
-        '/settings.html',
-        '/api/v1+v2',
-      ];
+      const specialRoutes = ['/user/$userId', '/post/[id]', '/search/(advanced)', '/settings.html', '/api/v1+v2'];
 
       for (const route of specialRoutes) {
         coordinator.setRoute(route);
@@ -1040,5 +1032,3 @@ describe('NotificationCoordinator', () => {
     vi.useRealTimers();
   });
 });
-
-

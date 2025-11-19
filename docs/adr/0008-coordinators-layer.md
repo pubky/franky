@@ -9,6 +9,7 @@ Accepted — 2024-11-19
 We need to implement notification polling: periodically fetching new notifications from the server to keep the UI updated. This represents a **system-initiated workflow** that doesn't fit cleanly into existing layers defined by ADR-0004.
 
 The notification polling feature needs to:
+
 - React to system state changes (auth, page visibility, routes)
 - Coordinate periodic actions autonomously (polling every 20 seconds)
 - Initiate workflows when conditions are met (fetch notifications)
@@ -23,6 +24,7 @@ Analyzing where this belongs in the existing architecture:
 The challenge: polling needs to **call controllers** (like UI does) but is triggered by **system events** (timers, auth changes), not user actions. ADR-0004 only defines UI as an entry point to controllers.
 
 Without a proper layer for system-initiated coordination:
+
 - No clear architectural home for polling logic
 - Risk of architectural violations if forced into existing layers (e.g., services calling controllers)
 - No established pattern for future system-level behaviors (stream refresh, TTL sync, cache warming, scheduled cleanup)
@@ -100,11 +102,13 @@ Coordinators   Workflows
 **Description**: Accept services calling controllers as valid for polling use cases.
 
 **Pros**:
+
 - No new layer to learn
 - Minimal changes to architecture
 - Polling stays where it is
 
 **Cons**:
+
 - Violates ADR-0004 layering rules
 - Creates confusion about service responsibilities
 - No clear pattern for future system behaviors
@@ -112,17 +116,17 @@ Coordinators   Workflows
 
 **Why not chosen**: Architectural consistency and clean boundaries more important than avoiding a new layer.
 
-
-
 ### Alternative 2: Move to Application Layer
 
 **Description**: Make Application layer accessible from both Controllers and system events.
 
 **Pros**:
+
 - No new layer needed
 - Application already orchestrates workflows
 
 **Cons**:
+
 - Application loses its clear "orchestrator" role
 - Becomes entry point AND orchestrator (mixed concern)
 - Confuses the unidirectional flow: who calls Application?
@@ -135,11 +139,13 @@ Coordinators   Workflows
 **Description**: Create `src/core/workers/` for background task execution and system-initiated behaviors.
 
 **Pros**:
+
 - Immediately recognizable to developers familiar with worker patterns
 - Clearly conveys "background" execution
 - Well-established naming convention
 
 **Cons**:
+
 - Typically implies task queues and job processing (async work queues)
 - "Worker" usually processes tasks from a queue, not coordinates system state
 - Less clear about the "entry point" nature and calling controllers
@@ -166,7 +172,7 @@ src/core/coordinators/
 Patterns established for:
 
 - **StreamCoordinator**: Refreshes cached streams on intervals or staleness
-- **TtlCoordinator**: Expires stale cache entries based on TTL policies  
+- **TtlCoordinator**: Expires stale cache entries based on TTL policies
 - **SyncCoordinator**: Background sync for offline changes
 - **CleanupCoordinator**: Scheduled cleanup of old data
 

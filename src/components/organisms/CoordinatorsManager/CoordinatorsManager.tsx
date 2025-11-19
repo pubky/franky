@@ -19,7 +19,7 @@ import * as Core from '@/core';
  *
  * Architecture:
  * This component bridges React lifecycle with the coordinators layer:
- * 
+ *
  * i.e. CoordinatorsManager (UI) → Coordinators → Controllers → Application → Services
  */
 export function CoordinatorsManager() {
@@ -47,4 +47,3 @@ export function CoordinatorsManager() {
   // This component has no UI - it only manages coordinator lifecycles
   return null;
 }
-

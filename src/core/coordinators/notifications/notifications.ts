@@ -1,10 +1,7 @@
 import * as Core from '@/core';
 import { Env, Logger } from '@/libs';
 import { AUTH_ROUTES } from '@/app/routes';
-import type {
-  PollingServiceConfig,
-  PollingInactiveReason,
-} from './notifications.types';
+import type { PollingServiceConfig, PollingInactiveReason } from './notifications.types';
 
 /**
  * Converts a route path to a regex pattern that matches routes starting with that path.
@@ -119,12 +116,12 @@ export class NotificationCoordinator {
 
   /**
    * Configure the polling coordinator at runtime.
-   * 
+   *
    * Updates polling settings (interval, disabled routes, etc.) without recreating the instance.
    * If the polling interval changes while polling is active, it will restart with the new interval.
-   * 
+   *
    * @param config - Partial configuration to merge with existing settings
-   * 
+   *
    * @example
    * ```typescript
    * coordinator.configure({ intervalMs: 10000 }); // Change to 10 second polling
@@ -340,4 +337,3 @@ export class NotificationCoordinator {
     return Core.PollingInactiveReason.MANUALLY_STOPPED;
   }
 }
-

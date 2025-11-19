@@ -92,4 +92,3 @@ export interface PollingServiceConfig {
    */
   respectPageVisibility?: boolean;
 }
-
