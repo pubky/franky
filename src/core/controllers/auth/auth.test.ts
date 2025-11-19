@@ -132,11 +132,14 @@ describe('AuthController', () => {
       setupNotificationMocks();
     });
 
-    it('should initialize with retry and setState notification store', async () => {
-      const state: Core.NotificationState = { unread: 2, lastRead: 123 };
+    it('should initialize with retry, persist files, and setState notification store', async () => {
+      const notification: Core.NotificationState = { unread: 2, lastRead: 123 };
+      const filesUris = ['pubky://test/file1', 'pubky://test/file2'];
+      const bootstrapResponse = { notification, filesUris };
       const initializeWithRetrySpy = vi
         .spyOn(Core.BootstrapApplication, 'initializeWithRetry')
-        .mockResolvedValue(state);
+        .mockResolvedValue(bootstrapResponse);
+      const persistFilesSpy = vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined);
 
       const authStoreState: Core.AuthStore = {
         currentUserPubky: TEST_PUBKY,
@@ -156,7 +159,8 @@ describe('AuthController', () => {
         pubky: TEST_PUBKY,
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
-      expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
+      expect(persistFilesSpy).toHaveBeenCalledWith(filesUris);
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
       expect(authStoreState.setAuthenticated).toHaveBeenCalledWith(true);
     });
 
@@ -250,26 +254,34 @@ describe('AuthController', () => {
       const mockKeypair = createMockKeypair();
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
       const mockData = { pubky: 'test-pubky' as Core.Pubky, session: mockSession };
-      const mockState: Core.NotificationState = { unread: 0, lastRead: 123 };
+      const mockNotification: Core.NotificationState = { unread: 0, lastRead: 123 };
+      const filesUris = ['pubky://test/file1'];
+      const bootstrapResponse = { notification: mockNotification, filesUris };
 
       const keypairSpy = vi.spyOn(Libs.Identity, 'pubkyKeypairFromMnemonic').mockReturnValue(mockKeypair);
       const signInSpy = vi.spyOn(Core.AuthApplication, 'signIn').mockResolvedValue(mockData);
-      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(mockState);
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(bootstrapResponse);
+      const persistFilesSpy = vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined);
 
       const authStore = setupAuthAndNotificationStores();
 
-      await AuthController.loginWithMnemonic({ mnemonic });
+      const result = await AuthController.loginWithMnemonic({ mnemonic });
 
       expect(keypairSpy).toHaveBeenCalledWith(mnemonic);
       expect(signInSpy).toHaveBeenCalledWith({ keypair: expect.any(Object), secretKey: TEST_SECRET_KEY });
       expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
       expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith('test-pubky');
+      expect(initializeSpy).toHaveBeenCalledWith({
+        pubky: 'test-pubky',
+        lastReadUrl: getLastReadUrl('test-pubky'),
+      });
+      expect(persistFilesSpy).toHaveBeenCalledWith(filesUris);
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
       expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
-      expect(initializeSpy).toHaveBeenCalled();
-      expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockState);
+      expect(result).toBe(true);
     });
 
-    it('should not bootstrap if signIn returns undefined', async () => {
+    it('should return false if signIn returns undefined', async () => {
       const mnemonic = 'test mnemonic phrase';
       const mockKeypair = createMockKeypair();
 
@@ -278,9 +290,10 @@ describe('AuthController', () => {
 
       const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize');
 
-      await AuthController.loginWithMnemonic({ mnemonic });
+      const result = await AuthController.loginWithMnemonic({ mnemonic });
 
       expect(initializeSpy).not.toHaveBeenCalled();
+      expect(result).toBe(false);
     });
 
     it('should throw error if signIn fails', async () => {
@@ -308,26 +321,34 @@ describe('AuthController', () => {
       const mockKeypair = createMockKeypair();
       const mockSession = {} as unknown as import('@synonymdev/pubky').Session;
       const mockData = { pubky: 'test-pubky' as Core.Pubky, session: mockSession };
-      const mockState: Core.NotificationState = { unread: 0, lastRead: 123 };
+      const mockNotification: Core.NotificationState = { unread: 0, lastRead: 123 };
+      const filesUris = ['pubky://test/file1'];
+      const bootstrapResponse = { notification: mockNotification, filesUris };
 
       const decryptSpy = vi.spyOn(Libs.Identity, 'decryptRecoveryFile').mockResolvedValue(mockKeypair);
       const signInSpy = vi.spyOn(Core.AuthApplication, 'signIn').mockResolvedValue(mockData);
-      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(mockState);
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(bootstrapResponse);
+      const persistFilesSpy = vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined);
 
       const authStore = setupAuthAndNotificationStores();
 
-      await AuthController.loginWithEncryptedFile({ encryptedFile, password });
+      const result = await AuthController.loginWithEncryptedFile({ encryptedFile, password });
 
       expect(decryptSpy).toHaveBeenCalledWith(encryptedFile, password);
       expect(signInSpy).toHaveBeenCalledWith({ keypair: expect.any(Object), secretKey: TEST_SECRET_KEY });
       expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
       expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith('test-pubky');
+      expect(initializeSpy).toHaveBeenCalledWith({
+        pubky: 'test-pubky',
+        lastReadUrl: getLastReadUrl('test-pubky'),
+      });
+      expect(persistFilesSpy).toHaveBeenCalledWith(filesUris);
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockNotification);
       expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
-      expect(initializeSpy).toHaveBeenCalled();
-      expect(storeMocks.notificationInit).toHaveBeenCalledWith(mockState);
+      expect(result).toBe(true);
     });
 
-    it('should not bootstrap if signIn returns undefined', async () => {
+    it('should return false if signIn returns undefined', async () => {
       const encryptedFile = createMockEncryptedFile();
       const password = 'test-password';
       const mockKeypair = createMockKeypair();
@@ -337,9 +358,10 @@ describe('AuthController', () => {
 
       const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize');
 
-      await AuthController.loginWithEncryptedFile({ encryptedFile, password });
+      const result = await AuthController.loginWithEncryptedFile({ encryptedFile, password });
 
       expect(initializeSpy).not.toHaveBeenCalled();
+      expect(result).toBe(false);
     });
 
     it('should throw error if decryption fails', async () => {
@@ -400,9 +422,12 @@ describe('AuthController', () => {
       setupNotificationMocks();
     });
 
-    it('should initialize and setState notification store', async () => {
-      const state: Core.NotificationState = { unread: 0, lastRead: 456 };
-      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(state);
+    it('should initialize, persist files, and setState notification store', async () => {
+      const notification: Core.NotificationState = { unread: 0, lastRead: 456 };
+      const filesUris = ['pubky://test/file1', 'pubky://test/file2'];
+      const bootstrapResponse = { notification, filesUris };
+      const initializeSpy = vi.spyOn(Core.BootstrapApplication, 'initialize').mockResolvedValue(bootstrapResponse);
+      const persistFilesSpy = vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined);
 
       const publicKeyMock = createMockPublicKey();
 
@@ -419,7 +444,8 @@ describe('AuthController', () => {
         pubky: TEST_PUBKY,
         lastReadUrl: getLastReadUrl(TEST_PUBKY),
       });
-      expect(storeMocks.notificationInit).toHaveBeenCalledWith(state);
+      expect(persistFilesSpy).toHaveBeenCalledWith(filesUris);
+      expect(storeMocks.notificationInit).toHaveBeenCalledWith(notification);
       expect(authStore.setAuthenticated).toHaveBeenCalledWith(true);
     });
 
@@ -481,15 +507,20 @@ describe('AuthController', () => {
       expect(clearDatabaseSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw error when homeserver logout fails but still clear local state', async () => {
+    it('should throw error when homeserver logout fails and not clear local state', async () => {
       const logoutSpy = vi.spyOn(Core.AuthApplication, 'logout').mockRejectedValue(new Error('Network error'));
       const clearDatabaseSpy = vi.spyOn(Core, 'clearDatabase').mockResolvedValue(undefined);
+      const clearCookiesSpy = vi.spyOn(Libs, 'clearCookies').mockImplementation(() => {});
 
       vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue(createAuthStore());
       vi.spyOn(Core.useOnboardingStore, 'getState').mockReturnValue(createOnboardingStore());
 
       await expect(AuthController.logout()).rejects.toThrow('Network error');
       expect(logoutSpy).toHaveBeenCalledWith({ pubky: 'test-pubky', secretKey: TEST_SECRET_KEY });
+      // Local state should not be cleared if homeserver logout fails
+      expect(storeMocks.resetOnboardingStore).not.toHaveBeenCalled();
+      expect(storeMocks.resetAuthStore).not.toHaveBeenCalled();
+      expect(clearCookiesSpy).not.toHaveBeenCalled();
       expect(clearDatabaseSpy).not.toHaveBeenCalled();
     });
 

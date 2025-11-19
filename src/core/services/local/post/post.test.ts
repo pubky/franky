@@ -8,7 +8,7 @@ const testData = {
   authorPubky: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky,
   postId1: 'abc123xyz',
   get fullPostId1() {
-    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId1 });
+    return Core.buildCompositeId({ pubky: this.authorPubky, id: this.postId1 });
   },
 };
 
@@ -18,7 +18,7 @@ const createSaveParams = (
   postId?: string,
   kind: PubkyAppPostKind = PubkyAppPostKind.Short,
 ): Core.TLocalSavePostParams => {
-  const { postId: postIdPart } = Core.parsePostCompositeId(postId || testData.fullPostId1);
+  const { id: postIdPart } = Core.parseCompositeId(postId || testData.fullPostId1);
   return {
     postId: postIdPart,
     authorId: testData.authorPubky,
@@ -43,7 +43,7 @@ const getSavedTags = async (postId: string) => {
 };
 
 const setupExistingPost = async (postId: string, content: string, parentUri?: string) => {
-  const { pubky, postId: postIdPart } = Core.parsePostCompositeId(postId);
+  const { pubky, id: postIdPart } = Core.parseCompositeId(postId);
   const postDetails: Core.PostDetailsModelSchema = {
     id: postId,
     content,

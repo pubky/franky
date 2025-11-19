@@ -36,7 +36,7 @@ vi.mock('@/libs', async (importOriginal) => {
   return { ...actual };
 });
 
-// Mock Core (merge real exports so parsePostCompositeId and types remain available)
+// Mock Core (merge real exports so parseCompositeId and types remain available)
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {

@@ -41,23 +41,28 @@ export class PostStreamApplication {
       const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
       if (postBatch) {
-        await Core.LocalStreamPostsService.persistPosts(postBatch);
-        const cacheMissUserIds = postBatch
-          ? await this.getNotPersistedUsersInCache(postBatch.map((post) => post.details.author))
-          : [];
-        if (cacheMissUserIds.length > 0) {
-          const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
-            user_ids: cacheMissUserIds,
-            viewer_id: viewerId,
-          });
-          const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
-          if (userBatch) {
-            await Core.LocalStreamUsersService.persistUsers(userBatch);
-          }
-        }
+        const { postAttachments } = await Core.LocalStreamPostsService.persistPosts(postBatch);
+        // Persist the post attachments metadata
+        await Core.persistFilesFromUris(postAttachments);
+        // Persist the missing authors of the posts
+        await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
       }
     } catch (error) {
       Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
+    }
+  }
+
+  private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
+    const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
+    if (cacheMissUserIds.length > 0) {
+      const { url: userUrl, body: userBody } = Core.userStreamApi.usersByIds({
+        user_ids: cacheMissUserIds,
+        viewer_id: viewerId,
+      });
+      const userBatch = await Core.queryNexus<Core.NexusUser[]>(userUrl, 'POST', JSON.stringify(userBody));
+      if (userBatch) {
+        await Core.LocalStreamUsersService.persistUsers(userBatch);
+      }
     }
   }
 
@@ -105,7 +110,7 @@ export class PostStreamApplication {
 
     const timestamp = nexusPosts[nexusPosts.length - 1].details.indexed_at;
     const compositePostIds = nexusPosts.map((post) =>
-      Core.buildPostCompositeId({ pubky: post.details.author, postId: post.details.id }),
+      Core.buildCompositeId({ pubky: post.details.author, id: post.details.id }),
     );
 
     // Do not persist any stream related with engagement sorting

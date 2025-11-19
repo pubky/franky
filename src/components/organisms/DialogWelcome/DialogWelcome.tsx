@@ -32,7 +32,7 @@ export function DialogWelcome() {
 
   const displayPublicKey = Libs.formatPublicKey({ key: currentUserPubky, length: 10 });
   const initials = Libs.extractInitials({ name: userDetails.name, maxLength: 2 });
-  const avatarImage = Core.filesApi.getAvatar(currentUserPubky);
+  const avatarImage = Core.FileController.getAvatarUrl(currentUserPubky);
 
   const handleCopyToClipboard = () => {
     copyToClipboard(currentUserPubky);
