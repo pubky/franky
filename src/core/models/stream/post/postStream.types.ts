@@ -43,6 +43,17 @@ export enum PostStreamTypes {
   TIMELINE_FRIENDS_FILE = 'timeline:friends:file',
 
   // ============================================
+  // TIMELINE (Recent) - BOOKMARKS Source
+  // ============================================
+  TIMELINE_BOOKMARKS_ALL = 'timeline:bookmarks:all',
+  TIMELINE_BOOKMARKS_SHORT = 'timeline:bookmarks:short',
+  TIMELINE_BOOKMARKS_LONG = 'timeline:bookmarks:long',
+  TIMELINE_BOOKMARKS_IMAGE = 'timeline:bookmarks:image',
+  TIMELINE_BOOKMARKS_VIDEO = 'timeline:bookmarks:video',
+  TIMELINE_BOOKMARKS_LINK = 'timeline:bookmarks:link',
+  TIMELINE_BOOKMARKS_FILE = 'timeline:bookmarks:file',
+
+  // ============================================
   // POPULARITY (Total Engagement) - ALL Sources
   // ============================================
   POPULARITY_ALL_ALL = 'total_engagement:all:all',
