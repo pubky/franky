@@ -1,7 +1,8 @@
 import * as Core from '@/core';
 
 export enum USER_STREAM_PREFIX {
-  USERS = 'v0/stream/users/ids',
+  USERS = 'v0/stream/users',
+  USER_IDS = 'v0/stream/users/ids',
   USERNAME = 'v0/stream/users/username',
   USERS_BY_IDS = 'v0/stream/users/by_ids',
 }
