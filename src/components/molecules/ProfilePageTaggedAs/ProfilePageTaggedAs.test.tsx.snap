@@ -1,0 +1,371 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with custom tags 1`] = `
+<div
+  class="flex flex-col gap-2"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+    data-testid="heading-2"
+  >
+    Tagged as
+  </h2>
+  <div
+    class="flex flex-col gap-2"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <div
+        class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+        data-testid="tag-0"
+        style="background-color: rgba(224, 255, 0, 0.3); border: 1px solid transparent;"
+      >
+        <p
+          class="text-sm font-semibold text-foreground"
+          data-testid="tag-name"
+        >
+          custom1
+        </p>
+        <p
+          class="text-sm ml-1.5 font-medium text-foreground/50"
+          data-testid="tag-count"
+        >
+          10
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-search text-secondary-foreground"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m21 21-4.34-4.34"
+          />
+          <circle
+            cx="11"
+            cy="11"
+            r="8"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <div
+        class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+        data-testid="tag-1"
+        style="background-color: rgba(225, 0, 255, 0.3); border: 1px solid transparent;"
+      >
+        <p
+          class="text-sm font-semibold text-foreground"
+          data-testid="tag-name"
+        >
+          custom2
+        </p>
+        <p
+          class="text-sm ml-1.5 font-medium text-foreground/50"
+          data-testid="tag-count"
+        >
+          20
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-search text-secondary-foreground"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m21 21-4.34-4.34"
+          />
+          <circle
+            cx="11"
+            cy="11"
+            r="8"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs hover:text-accent-foreground hover:bg-input/50 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border border-border bg-foreground/5"
+    data-size="sm"
+    data-slot="button"
+    data-variant="outline"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-tag text-foreground"
+      fill="none"
+      height="16"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+      />
+      <circle
+        cx="7.5"
+        cy="7.5"
+        fill="currentColor"
+        r=".5"
+      />
+    </svg>
+    <span
+      class="text-foreground text-sm font-bold"
+      data-testid="typography"
+    >
+      Add Tag
+    </span>
+  </button>
+</div>
+`;
+
+exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex flex-col gap-2"
+  data-testid="container"
+>
+  <h2
+    class="text-2xl font-light text-muted-foreground"
+    data-testid="heading-2"
+  >
+    Tagged as
+  </h2>
+  <div
+    class="flex flex-col gap-2"
+    data-testid="container"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <div
+        class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+        data-testid="tag-0"
+        style="background-color: rgba(255, 203, 0, 0.3); border: 1px solid transparent;"
+      >
+        <p
+          class="text-sm font-semibold text-foreground"
+          data-testid="tag-name"
+        >
+          satoshi
+        </p>
+        <p
+          class="text-sm ml-1.5 font-medium text-foreground/50"
+          data-testid="tag-count"
+        >
+          36
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-search text-secondary-foreground"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m21 21-4.34-4.34"
+          />
+          <circle
+            cx="11"
+            cy="11"
+            r="8"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <div
+        class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+        data-testid="tag-1"
+        style="background-color: rgba(255, 153, 0, 0.3); border: 1px solid transparent;"
+      >
+        <p
+          class="text-sm font-semibold text-foreground"
+          data-testid="tag-name"
+        >
+          bitcoin
+        </p>
+        <p
+          class="text-sm ml-1.5 font-medium text-foreground/50"
+          data-testid="tag-count"
+        >
+          21
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-search text-secondary-foreground"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m21 21-4.34-4.34"
+          />
+          <circle
+            cx="11"
+            cy="11"
+            r="8"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <div
+        class="flex h-8 w-fit cursor-pointer items-center justify-between rounded-md px-3 transition-all duration-200"
+        data-testid="tag-2"
+        style="background-color: rgba(0, 216, 255, 0.3); border: 1px solid transparent;"
+      >
+        <p
+          class="text-sm font-semibold text-foreground"
+          data-testid="tag-name"
+        >
+          og
+        </p>
+        <p
+          class="text-sm ml-1.5 font-medium text-foreground/50"
+          data-testid="tag-count"
+        >
+          5
+        </p>
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border shadow-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 size-9"
+        data-size="icon"
+        data-slot="button"
+        data-variant="secondary"
+      >
+        <svg
+          aria-hidden="true"
+          class="lucide lucide-search text-secondary-foreground"
+          fill="none"
+          height="16"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="m21 21-4.34-4.34"
+          />
+          <circle
+            cx="11"
+            cy="11"
+            r="8"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+  <button
+    class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full shadow-xs hover:text-accent-foreground hover:bg-input/50 h-8 gap-1.5 px-3 has-[>svg]:px-2.5 border border-border bg-foreground/5"
+    data-size="sm"
+    data-slot="button"
+    data-variant="outline"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-tag text-foreground"
+      fill="none"
+      height="16"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"
+      />
+      <circle
+        cx="7.5"
+        cy="7.5"
+        fill="currentColor"
+        r=".5"
+      />
+    </svg>
+    <span
+      class="text-foreground text-sm font-bold"
+      data-testid="typography"
+    >
+      Add Tag
+    </span>
+  </button>
+</div>
+`;

@@ -23,6 +23,18 @@ export enum APP_ROUTES {
   PROFILE = '/profile',
 }
 
+export enum PROFILE_ROUTES {
+  PROFILE = '/profile',
+  NOTIFICATIONS = '/profile/notifications',
+  POSTS = '/profile/posts',
+  REPLIES = '/profile/replies',
+  FOLLOWERS = '/profile/followers',
+  FOLLOWING = '/profile/following',
+  FRIENDS = '/profile/friends',
+  TAGGED = '/profile/tagged',
+  PROFILE_PAGE = '/profile/profile',
+}
+
 export enum SETTINGS_ROUTES {
   ACCOUNT = '/settings/account',
   NOTIFICATIONS = '/settings/notifications',

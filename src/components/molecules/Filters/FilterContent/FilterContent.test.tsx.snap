@@ -2,19 +2,21 @@
 
 exports[`FilterContent > applies correct icon classes 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2"
+  class="mx-auto w-full flex-col flex gap-2"
   data-slot="filter-list"
   data-testid="filter-list"
 >
-  <p
+  <button
     aria-checked="true"
     aria-label="All"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+    aria-pressed="true"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="0"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -44,16 +46,18 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       All
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Posts"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -80,16 +84,18 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       Posts
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Articles"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -126,16 +132,18 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       Articles
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Images"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -172,16 +180,18 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       Images
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Videos"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -210,16 +220,18 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       Videos
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Links"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -246,16 +258,18 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       Links
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Files"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -285,20 +299,22 @@ exports[`FilterContent > applies correct icon classes 1`] = `
     >
       Files
     </span>
-  </p>
+  </button>
 </div>
 `;
 
 exports[`FilterContent > applies correct styling classes 1`] = `
-<p
+<button
   aria-checked="true"
   aria-label="All"
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+  aria-pressed="true"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
   role="radio"
   tabindex="0"
+  type="button"
 >
   <svg
     aria-hidden="true"
@@ -328,19 +344,21 @@ exports[`FilterContent > applies correct styling classes 1`] = `
   >
     All
   </span>
-</p>
+</button>
 `;
 
 exports[`FilterContent > applies correct styling classes 2`] = `
-<p
+<button
   aria-checked="false"
   aria-label="Posts"
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  aria-pressed="false"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
   role="radio"
   tabindex="-1"
+  type="button"
 >
   <svg
     aria-hidden="true"
@@ -367,24 +385,26 @@ exports[`FilterContent > applies correct styling classes 2`] = `
   >
     Posts
   </span>
-</p>
+</button>
 `;
 
 exports[`FilterContent > renders with correct icons 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2"
+  class="mx-auto w-full flex-col flex gap-2"
   data-slot="filter-list"
   data-testid="filter-list"
 >
-  <p
+  <button
     aria-checked="true"
     aria-label="All"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+    aria-pressed="true"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
     data-selected="true"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="0"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -414,16 +434,18 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       All
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Posts"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -450,16 +472,18 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       Posts
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Articles"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -496,16 +520,18 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       Articles
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Images"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -542,16 +568,18 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       Images
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Videos"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -580,16 +608,18 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       Videos
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Links"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -616,16 +646,18 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       Links
     </span>
-  </p>
-  <p
+  </button>
+  <button
     aria-checked="false"
     aria-label="Files"
-    class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+    aria-pressed="false"
+    class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
     data-testid="filter-item"
     role="radio"
     tabindex="-1"
+    type="button"
   >
     <svg
       aria-hidden="true"
@@ -655,20 +687,22 @@ exports[`FilterContent > renders with correct icons 1`] = `
     >
       Files
     </span>
-  </p>
+  </button>
 </div>
 `;
 
 exports[`FilterContent > rerenders with different selected tabs 1`] = `
-<p
+<button
   aria-checked="true"
   aria-label="All"
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+  aria-pressed="true"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
   role="radio"
   tabindex="0"
+  type="button"
 >
   <svg
     aria-hidden="true"
@@ -698,19 +732,21 @@ exports[`FilterContent > rerenders with different selected tabs 1`] = `
   >
     All
   </span>
-</p>
+</button>
 `;
 
 exports[`FilterContent > rerenders with different selected tabs 2`] = `
-<p
+<button
   aria-checked="false"
   aria-label="Posts"
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  aria-pressed="false"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
   role="radio"
   tabindex="-1"
+  type="button"
 >
   <svg
     aria-hidden="true"
@@ -737,19 +773,21 @@ exports[`FilterContent > rerenders with different selected tabs 2`] = `
   >
     Posts
   </span>
-</p>
+</button>
 `;
 
 exports[`FilterContent > rerenders with different selected tabs 3`] = `
-<p
+<button
   aria-checked="false"
   aria-label="All"
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+  aria-pressed="false"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
   role="radio"
   tabindex="-1"
+  type="button"
 >
   <svg
     aria-hidden="true"
@@ -779,19 +817,21 @@ exports[`FilterContent > rerenders with different selected tabs 3`] = `
   >
     All
   </span>
-</p>
+</button>
 `;
 
 exports[`FilterContent > rerenders with different selected tabs 4`] = `
-<p
+<button
   aria-checked="true"
   aria-label="Videos"
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+  aria-pressed="true"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
   role="radio"
   tabindex="0"
+  type="button"
 >
   <svg
     aria-hidden="true"
@@ -820,17 +860,17 @@ exports[`FilterContent > rerenders with different selected tabs 4`] = `
   >
     Videos
   </span>
-</p>
+</button>
 `;
 
 exports[`FilterContent - Snapshots > matches snapshot with All content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_a_"
@@ -849,19 +889,21 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="true"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -891,16 +933,18 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -927,16 +971,18 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -973,16 +1019,18 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1019,16 +1067,18 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1057,16 +1107,18 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1093,16 +1145,18 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1132,7 +1186,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -1140,12 +1194,12 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
 
 exports[`FilterContent - Snapshots > matches snapshot with Articles content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_c_"
@@ -1164,19 +1218,21 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1206,16 +1262,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1242,16 +1300,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1288,16 +1348,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1334,16 +1396,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1372,16 +1436,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1408,16 +1474,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1447,7 +1515,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -1455,12 +1523,12 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
 
 exports[`FilterContent - Snapshots > matches snapshot with Files content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_g_"
@@ -1479,19 +1547,21 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1521,16 +1591,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1557,16 +1629,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1603,16 +1677,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1649,16 +1725,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1687,16 +1765,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1723,16 +1803,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1762,7 +1844,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -1770,12 +1852,12 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Images content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_d_"
@@ -1794,19 +1876,21 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1836,16 +1920,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1872,16 +1958,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1918,16 +2006,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -1964,16 +2054,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2002,16 +2094,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2038,16 +2132,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2077,7 +2173,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -2085,12 +2181,12 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
 
 exports[`FilterContent - Snapshots > matches snapshot with Links content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_f_"
@@ -2109,19 +2205,21 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2151,16 +2249,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2187,16 +2287,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2233,16 +2335,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2279,16 +2383,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2317,16 +2423,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2353,16 +2461,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2392,7 +2502,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -2400,12 +2510,12 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Posts content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_b_"
@@ -2424,19 +2534,21 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2466,16 +2578,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2502,16 +2616,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2548,16 +2664,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2594,16 +2712,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2632,16 +2752,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2668,16 +2790,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2707,7 +2831,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -2715,12 +2839,12 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
 
 exports[`FilterContent - Snapshots > matches snapshot with Videos content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_e_"
@@ -2739,19 +2863,21 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2781,16 +2907,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2817,16 +2945,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2863,16 +2993,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2909,16 +3041,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2947,16 +3081,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -2983,16 +3119,18 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3022,7 +3160,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -3030,12 +3168,12 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
 
 exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
     id="_r_9_"
@@ -3054,19 +3192,21 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="true"
         aria-label="All"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3096,16 +3236,18 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           All
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Posts"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3132,16 +3274,18 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           Posts
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Articles"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3178,16 +3322,18 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           Articles
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Images"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3224,16 +3370,18 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           Images
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Videos"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3262,16 +3410,18 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           Videos
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Links"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3298,16 +3448,18 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           Links
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Files"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -3337,7 +3489,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
         >
           Files
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>

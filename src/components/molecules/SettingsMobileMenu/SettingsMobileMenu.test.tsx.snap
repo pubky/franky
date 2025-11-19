@@ -2,15 +2,18 @@
 
 exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className 1`] = `
 <div
-  class="fixed top-[73px] right-0 left-0 z-20 border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm custom-menu"
+  class="fixed top-[73px] right-0 left-0 z-(--z-sticky-header) border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm custom-menu"
+  data-testid="settings-mobile-menu"
 >
   <div
     class="flex w-full"
+    data-testid="container"
   >
     <button
       aria-current="page"
       aria-label="Account"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -38,6 +41,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-label="Notifications"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -63,6 +67,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-label="Privacy & Safety"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -85,6 +90,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-label="Muted Users"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -119,6 +125,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-label="Language"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -149,6 +156,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-label="Help"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -182,15 +190,18 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
 
 exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="fixed top-[73px] right-0 left-0 z-20 border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm"
+  class="fixed top-[73px] right-0 left-0 z-(--z-sticky-header) border-b border-[var(--base-border,#303034)] bg-background/80 backdrop-blur-sm"
+  data-testid="settings-mobile-menu"
 >
   <div
     class="flex w-full"
+    data-testid="container"
   >
     <button
       aria-current="page"
       aria-label="Account"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -218,6 +229,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-label="Notifications"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -243,6 +255,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-label="Privacy & Safety"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -265,6 +278,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-label="Muted Users"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -299,6 +313,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-label="Language"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"
@@ -329,6 +344,7 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-label="Help"
       class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      data-slot="button"
     >
       <svg
         aria-hidden="true"

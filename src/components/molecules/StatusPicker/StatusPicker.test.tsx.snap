@@ -1,0 +1,40 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StatusPicker > matches snapshot 1`] = `
+<button
+  class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border hover:text-accent-foreground border-none h-8 has-[>svg]:px-2.5 gap-1 px-0 shadow-none hover:bg-transparent"
+  data-size="sm"
+  data-slot="button"
+  data-variant="ghost"
+>
+  <span
+    class="font-semibold text-foreground text-base leading-none"
+    data-testid="typography"
+  >
+    🌴
+  </span>
+  <span
+    class="text-base font-bold text-white"
+    data-testid="typography"
+  >
+    Vacationing
+  </span>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-chevron-down size-6"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m6 9 6 6 6-6"
+    />
+  </svg>
+</button>
+`;
