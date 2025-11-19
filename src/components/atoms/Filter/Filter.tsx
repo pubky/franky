@@ -78,6 +78,7 @@ function FilterItem({
       data-slot="filter-item"
       data-testid="filter-item"
       data-selected={isSelected ? 'true' : 'false'}
+      aria-pressed={isSelected}
       overrideDefaults
       className={Libs.cn(
         'flex cursor-pointer gap-2 text-base font-medium transition-colors',

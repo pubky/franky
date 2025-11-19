@@ -20,6 +20,7 @@ exports[`Filter Components > FilterHeader > renders with title 1`] = `
 
 exports[`Filter Components > FilterItem > applies custom className 1`] = `
 <button
+  aria-pressed="false"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 custom-item"
   data-selected="false"
   data-slot="filter-item"
@@ -34,6 +35,7 @@ exports[`Filter Components > FilterItem > applies custom className 1`] = `
 
 exports[`Filter Components > FilterItem > renders as selected 1`] = `
 <button
+  aria-pressed="true"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
@@ -48,6 +50,7 @@ exports[`Filter Components > FilterItem > renders as selected 1`] = `
 
 exports[`Filter Components > FilterItem > renders as unselected 1`] = `
 <button
+  aria-pressed="false"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
@@ -62,6 +65,7 @@ exports[`Filter Components > FilterItem > renders as unselected 1`] = `
 
 exports[`Filter Components > FilterItem > renders with default props 1`] = `
 <button
+  aria-pressed="false"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
