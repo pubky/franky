@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Config from '@/config';
 
 export interface UserProfile {
   name: string;
@@ -67,8 +68,9 @@ export function useUserProfile(userId: string): UseUserProfileResult {
   // Build public key with proper format
   const publicKey = userId ? `pk:${userId}` : '';
 
-  // Build profile link
-  const link = userId ? `${window.location.origin}/profile/${userId}` : '';
+  // Build profile link using config (SSR-safe)
+  // Use DEFAULT_URL from config to avoid window.location.origin which breaks SSR
+  const link = userId ? `${Config.DEFAULT_URL}/profile/${userId}` : '';
 
   // Build profile data object
   const profile: UserProfile = {

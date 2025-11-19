@@ -42,16 +42,19 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
+// Mock Config to provide DEFAULT_URL
+vi.mock('@/config', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/config')>();
+  return {
+    ...actual,
+    DEFAULT_URL: 'https://example.com',
+  };
+});
+
 describe('useUserProfile', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setMockUserDetails(null);
-
-    // Reset window.location
-    Object.defineProperty(window, 'location', {
-      value: { origin: 'https://example.com' },
-      writable: true,
-    });
   });
 
   describe('Profile data fetching', () => {
@@ -120,7 +123,7 @@ describe('useUserProfile', () => {
   });
 
   describe('Profile link generation', () => {
-    it('builds correct profile link', () => {
+    it('builds correct profile link using config', () => {
       setMockUserDetails({
         id: 'test-user-id',
         name: 'Test',
@@ -128,23 +131,8 @@ describe('useUserProfile', () => {
 
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
+      // Uses DEFAULT_URL from config (SSR-safe)
       expect(result.current.profile?.link).toBe('https://example.com/profile/test-user-id');
-    });
-
-    it('uses window.location.origin for link', () => {
-      Object.defineProperty(window, 'location', {
-        value: { origin: 'https://custom-domain.com' },
-        writable: true,
-      });
-
-      setMockUserDetails({
-        id: 'test-user-id',
-        name: 'Test',
-      } as Core.UserDetailsModelSchema);
-
-      const { result } = renderHook(() => useUserProfile('test-user-id'));
-
-      expect(result.current.profile?.link).toBe('https://custom-domain.com/profile/test-user-id');
     });
   });
 
