@@ -62,7 +62,7 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
             <Icons.Link className="size-4" />
             Link
           </Atoms.Button>
-          <Atoms.Button variant="secondary" size="sm" onClick={onSignOut}>
+          <Atoms.Button variant="secondary" size="sm" onClick={onSignOut} id="profile-logout-btn">
             <Icons.LogOut className="size-4" />
             Sign out
           </Atoms.Button>

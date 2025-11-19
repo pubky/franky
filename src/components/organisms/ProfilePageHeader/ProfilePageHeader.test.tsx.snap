@@ -143,6 +143,7 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           data-size="sm"
           data-slot="button"
           data-variant="secondary"
+          id="profile-logout-btn"
         >
           <svg
             aria-hidden="true"
