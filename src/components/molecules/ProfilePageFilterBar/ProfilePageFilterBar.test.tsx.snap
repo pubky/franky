@@ -10,6 +10,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
     data-testid="container"
   >
     <button
+      aria-pressed="true"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="true"
       data-slot="filter-item"
@@ -50,6 +51,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     data-testid="container"
   >
     <button
+      aria-pressed="true"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="true"
       data-slot="filter-item"
@@ -94,6 +96,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       />
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -138,6 +141,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       />
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -179,6 +183,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       />
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -228,6 +233,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       />
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -268,6 +274,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       />
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -309,6 +316,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       />
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -369,6 +377,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     data-testid="container"
   >
     <button
+      aria-pressed="true"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="true"
       data-slot="filter-item"
@@ -413,6 +422,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -457,6 +467,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -498,6 +509,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -547,6 +559,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -587,6 +600,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -628,6 +642,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -688,6 +703,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     data-testid="container"
   >
     <button
+      aria-pressed="true"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-foreground m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="true"
       data-slot="filter-item"
@@ -732,6 +748,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -776,6 +793,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -817,6 +835,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -866,6 +885,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -906,6 +926,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"
@@ -947,6 +968,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </span>
     </button>
     <button
+      aria-pressed="false"
       class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left text-muted-foreground hover:text-foreground/80 m-0 h-full w-full items-start justify-between px-0 py-1"
       data-selected="false"
       data-slot="filter-item"

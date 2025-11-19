@@ -9,6 +9,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="true"
     aria-label="All"
+    aria-pressed="true"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
     data-selected="true"
     data-slot="filter-item"
@@ -49,6 +50,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="false"
     aria-label="Posts"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -86,6 +88,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="false"
     aria-label="Articles"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -133,6 +136,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="false"
     aria-label="Images"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -180,6 +184,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="false"
     aria-label="Videos"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -219,6 +224,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="false"
     aria-label="Links"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -256,6 +262,7 @@ exports[`FilterContent > applies correct icon classes 1`] = `
   <button
     aria-checked="false"
     aria-label="Files"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -300,6 +307,7 @@ exports[`FilterContent > applies correct styling classes 1`] = `
 <button
   aria-checked="true"
   aria-label="All"
+  aria-pressed="true"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
@@ -343,6 +351,7 @@ exports[`FilterContent > applies correct styling classes 2`] = `
 <button
   aria-checked="false"
   aria-label="Posts"
+  aria-pressed="false"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
@@ -388,6 +397,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="true"
     aria-label="All"
+    aria-pressed="true"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
     data-selected="true"
     data-slot="filter-item"
@@ -428,6 +438,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="false"
     aria-label="Posts"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -465,6 +476,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="false"
     aria-label="Articles"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -512,6 +524,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="false"
     aria-label="Images"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -559,6 +572,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="false"
     aria-label="Videos"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -598,6 +612,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="false"
     aria-label="Links"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -635,6 +650,7 @@ exports[`FilterContent > renders with correct icons 1`] = `
   <button
     aria-checked="false"
     aria-label="Files"
+    aria-pressed="false"
     class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
     data-selected="false"
     data-slot="filter-item"
@@ -679,6 +695,7 @@ exports[`FilterContent > rerenders with different selected tabs 1`] = `
 <button
   aria-checked="true"
   aria-label="All"
+  aria-pressed="true"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
@@ -722,6 +739,7 @@ exports[`FilterContent > rerenders with different selected tabs 2`] = `
 <button
   aria-checked="false"
   aria-label="Posts"
+  aria-pressed="false"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
@@ -762,6 +780,7 @@ exports[`FilterContent > rerenders with different selected tabs 3`] = `
 <button
   aria-checked="false"
   aria-label="All"
+  aria-pressed="false"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
@@ -805,6 +824,7 @@ exports[`FilterContent > rerenders with different selected tabs 4`] = `
 <button
   aria-checked="true"
   aria-label="Videos"
+  aria-pressed="true"
   class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
@@ -876,6 +896,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="true"
         aria-label="All"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -916,6 +937,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -953,6 +975,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1000,6 +1023,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1047,6 +1071,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1086,6 +1111,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1123,6 +1149,7 @@ exports[`FilterContent - Snapshots > matches snapshot with All content selected 
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1198,6 +1225,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="false"
         aria-label="All"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1238,6 +1266,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1275,6 +1304,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="true"
         aria-label="Articles"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -1322,6 +1352,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1369,6 +1400,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1408,6 +1440,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1445,6 +1478,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Articles content sele
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1520,6 +1554,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="false"
         aria-label="All"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1560,6 +1595,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1597,6 +1633,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1644,6 +1681,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1691,6 +1729,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1730,6 +1769,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1767,6 +1807,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Files content selecte
       <button
         aria-checked="true"
         aria-label="Files"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -1842,6 +1883,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="false"
         aria-label="All"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1882,6 +1924,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1919,6 +1962,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -1966,6 +2010,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="true"
         aria-label="Images"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -2013,6 +2058,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2052,6 +2098,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2089,6 +2136,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Images content select
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2164,6 +2212,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="false"
         aria-label="All"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2204,6 +2253,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2241,6 +2291,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2288,6 +2339,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2335,6 +2387,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2374,6 +2427,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="true"
         aria-label="Links"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -2411,6 +2465,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Links content selecte
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2486,6 +2541,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="false"
         aria-label="All"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2526,6 +2582,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="true"
         aria-label="Posts"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -2563,6 +2620,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2610,6 +2668,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2657,6 +2716,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2696,6 +2756,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2733,6 +2794,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Posts content selecte
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2808,6 +2870,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="false"
         aria-label="All"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2848,6 +2911,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2885,6 +2949,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2932,6 +2997,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -2979,6 +3045,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="true"
         aria-label="Videos"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -3018,6 +3085,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3055,6 +3123,7 @@ exports[`FilterContent - Snapshots > matches snapshot with Videos content select
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3130,6 +3199,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="true"
         aria-label="All"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -3170,6 +3240,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Posts"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3207,6 +3278,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Articles"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3254,6 +3326,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Images"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3301,6 +3374,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Videos"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3340,6 +3414,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Links"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -3377,6 +3452,7 @@ exports[`FilterContent - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Files"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"

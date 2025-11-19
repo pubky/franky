@@ -33,6 +33,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       <button
         aria-checked="false"
         aria-label="Recent"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -80,6 +81,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
       <button
         aria-checked="true"
         aria-label="Popularity"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -149,6 +151,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       <button
         aria-checked="true"
         aria-label="Recent"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -196,6 +199,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
       <button
         aria-checked="false"
         aria-label="Popularity"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -265,6 +269,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="true"
         aria-label="Recent"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -312,6 +317,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Popularity"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"

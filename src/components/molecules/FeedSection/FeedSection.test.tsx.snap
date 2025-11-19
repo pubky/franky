@@ -25,6 +25,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
       data-testid="filter-list"
     >
       <button
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -54,6 +55,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         </span>
       </button>
       <button
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -84,6 +86,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         </span>
       </button>
       <button
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -123,6 +126,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         </span>
       </button>
       <button
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -153,6 +157,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         </span>
       </button>
       <button
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -207,6 +212,7 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         </span>
       </button>
       <button
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"

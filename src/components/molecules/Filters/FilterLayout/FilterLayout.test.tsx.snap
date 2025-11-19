@@ -33,6 +33,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       <button
         aria-checked="true"
         aria-label="Columns"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -77,6 +78,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
       <button
         aria-checked="false"
         aria-label="Wide"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -118,6 +120,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Columns selected tab 1
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
+        aria-pressed="false"
         class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
@@ -212,6 +215,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       <button
         aria-checked="false"
         aria-label="Columns"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -256,6 +260,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
       <button
         aria-checked="true"
         aria-label="Wide"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -297,6 +302,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with Wide selected tab 1`] 
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
+        aria-pressed="false"
         class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"
@@ -391,6 +397,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="true"
         aria-label="Columns"
+        aria-pressed="true"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
@@ -435,6 +442,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
       <button
         aria-checked="false"
         aria-label="Wide"
+        aria-pressed="false"
         class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
@@ -476,6 +484,7 @@ exports[`FilterLayout - Snapshots > matches snapshot with default props 1`] = `
         aria-checked="false"
         aria-disabled="true"
         aria-label="Visual"
+        aria-pressed="false"
         class="flex gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 cursor-default opacity-20"
         data-selected="false"
         data-slot="filter-item"

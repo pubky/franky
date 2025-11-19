@@ -28,6 +28,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/account"
       >
         <button
+          aria-pressed="false"
           class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
           data-selected="false"
           data-slot="filter-item"
@@ -67,6 +68,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/notifications"
       >
         <button
+          aria-pressed="false"
           class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
           data-selected="false"
           data-slot="filter-item"
@@ -104,6 +106,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/privacy-safety"
       >
         <button
+          aria-pressed="false"
           class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
           data-selected="false"
           data-slot="filter-item"
@@ -138,6 +141,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/muted-users"
       >
         <button
+          aria-pressed="false"
           class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
           data-selected="false"
           data-slot="filter-item"
@@ -184,6 +188,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/language"
       >
         <button
+          aria-pressed="false"
           class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
           data-selected="false"
           data-slot="filter-item"
@@ -226,6 +231,7 @@ exports[`SettingsMenu - Snapshots > matches snapshot 1`] = `
         href="/settings/help"
       >
         <button
+          aria-pressed="false"
           class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
           data-selected="false"
           data-slot="filter-item"
