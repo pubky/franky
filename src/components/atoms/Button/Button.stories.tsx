@@ -13,13 +13,16 @@ const meta = {
   argTypes: {
     variant: {
       control: { type: 'select' },
-      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'brand', 'link', 'unstyled'],
+      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'brand', 'link'],
     },
     size: {
       control: { type: 'select' },
       options: ['default', 'sm', 'lg', 'icon'],
     },
     asChild: {
+      control: { type: 'boolean' },
+    },
+    overrideDefaults: {
       control: { type: 'boolean' },
     },
   },
@@ -98,10 +101,10 @@ export const Icon: Story = {
   },
 };
 
-export const Unstyled: Story = {
+export const OverrideDefaults: Story = {
   args: {
-    variant: 'unstyled',
-    children: 'Unstyled Button',
-    className: 'px-4 py-2',
+    overrideDefaults: true,
+    children: 'Fully Custom Button',
+    className: 'px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600',
   },
 };

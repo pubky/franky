@@ -12,9 +12,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     <button
       aria-current="page"
       aria-label="Account"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -41,9 +40,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Notifications"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -68,9 +66,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Privacy & Safety"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -92,9 +89,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Muted Users"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -128,9 +124,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Language"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -160,9 +155,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with custom className
     </button>
     <button
       aria-label="Help"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -206,9 +200,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     <button
       aria-current="page"
       aria-label="Account"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-white text-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -235,9 +228,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Notifications"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -262,9 +254,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Privacy & Safety"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -286,9 +277,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Muted Users"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -322,9 +312,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Language"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"
@@ -354,9 +343,8 @@ exports[`SettingsMobileMenu - Snapshots > matches snapshot with default props 1`
     </button>
     <button
       aria-label="Help"
-      class="whitespace-nowrap text-sm disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold border cursor-pointer border-none shadow-none rounded-none p-0 h-10 has-[>svg]:px-4 relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
+      class="relative flex flex-1 items-center justify-center gap-2 px-2.5 py-3.5 transition-all hover:bg-secondary/10 border-b border-transparent text-muted-foreground"
       data-slot="button"
-      data-variant="unstyled"
     >
       <svg
         aria-hidden="true"

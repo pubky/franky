@@ -24,7 +24,6 @@ exports[`Filter Components > FilterItem > applies custom className 1`] = `
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
-  data-variant="unstyled"
   type="button"
 >
   <span>
@@ -39,7 +38,6 @@ exports[`Filter Components > FilterItem > renders as selected 1`] = `
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
-  data-variant="unstyled"
   type="button"
 >
   <span>
@@ -54,7 +52,6 @@ exports[`Filter Components > FilterItem > renders as unselected 1`] = `
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
-  data-variant="unstyled"
   type="button"
 >
   <span>
@@ -69,7 +66,6 @@ exports[`Filter Components > FilterItem > renders with default props 1`] = `
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
-  data-variant="unstyled"
   type="button"
 >
   <span>

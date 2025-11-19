@@ -14,7 +14,6 @@ export enum ButtonVariant {
   GHOST = 'ghost',
   BRAND = 'brand',
   LINK = 'link',
-  UNSTYLED = 'unstyled',
 }
 
 const buttonVariants = cva(
@@ -34,7 +33,6 @@ const buttonVariants = cva(
         dark: 'bg-neutral-900 text-white hover:bg-neutral-800 border-neutral-900',
         'dark-outline':
           'bg-transparent hover:bg-neutral-900 hover:text-white bg-transparent border-neutral-700 hover:bg-neutral-800',
-        unstyled: 'cursor-pointer transition-colors border-none shadow-none rounded-none p-0',
       },
       size: {
         default: 'h-10 gap-1 px-4 py-2 has-[>svg]:px-4',

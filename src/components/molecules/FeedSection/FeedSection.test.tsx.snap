@@ -29,7 +29,6 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -59,7 +58,6 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -90,7 +88,6 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -130,7 +127,6 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -161,7 +157,6 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -216,7 +211,6 @@ exports[`FeedSection - Snapshots > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg

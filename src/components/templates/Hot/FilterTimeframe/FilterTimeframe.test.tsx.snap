@@ -29,7 +29,6 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -60,7 +59,6 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg
@@ -104,7 +102,6 @@ exports[`FilterTimeframe > matches snapshot 1`] = `
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
-        data-variant="unstyled"
         type="button"
       >
         <svg

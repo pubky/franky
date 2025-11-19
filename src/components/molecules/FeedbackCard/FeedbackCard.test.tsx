@@ -106,7 +106,7 @@ describe('FeedbackCard', () => {
     expect(userName).toHaveClass('text-base', 'font-bold', 'text-foreground');
   });
 
-  it('renders feedback question correctly as an unstyled button', () => {
+  it('renders feedback question correctly with overrideDefaults', () => {
     render(<FeedbackCard />);
 
     const button = screen.getByTestId('button');
@@ -119,7 +119,8 @@ describe('FeedbackCard', () => {
       'hover:text-foreground',
       'text-left',
     );
-    expect(button).toHaveAttribute('data-variant', 'unstyled');
+    // Button uses overrideDefaults, so no variant attribute is set
+    expect(button).not.toHaveAttribute('data-variant');
   });
 
   it('applies correct container classes', () => {

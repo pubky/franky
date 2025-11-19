@@ -46,10 +46,6 @@ describe('Button', () => {
     rerender(<Button variant="dark-outline">Dark Outline</Button>);
     button = screen.getByRole('button');
     expect(button).toHaveClass('bg-transparent');
-
-    rerender(<Button variant={ButtonVariant.UNSTYLED}>Unstyled</Button>);
-    button = screen.getByRole('button');
-    expect(button).toHaveClass('cursor-pointer', 'transition-colors', 'border-none', 'shadow-none');
   });
 
   it('renders different sizes correctly', () => {
@@ -180,11 +176,6 @@ describe('Button - Snapshots', () => {
 
   it('matches snapshot for brand variant', () => {
     const { container } = render(<Button variant="brand">Brand</Button>);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot for unstyled variant', () => {
-    const { container } = render(<Button variant="unstyled">Unstyled</Button>);
     expect(container.firstChild).toMatchSnapshot();
   });
 

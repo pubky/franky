@@ -256,7 +256,6 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with custom tags and 
       <button
         class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
         data-slot="button"
-        data-variant="unstyled"
       >
         What do you think about Pubky?
       </button>
@@ -693,7 +692,6 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default props 1`
       <button
         class="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
         data-slot="button"
-        data-variant="unstyled"
       >
         What do you think about Pubky?
       </button>

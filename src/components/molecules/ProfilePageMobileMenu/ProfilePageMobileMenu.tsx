@@ -50,7 +50,7 @@ export function ProfilePageMobileMenu({ activePage, onPageChangeAction }: Profil
               )}
             >
               <Atoms.Button
-                variant="unstyled"
+                overrideDefaults
                 onClick={() => onPageChangeAction(item.pageType)}
                 className="px-2.5 py-2"
                 aria-label={item.label}

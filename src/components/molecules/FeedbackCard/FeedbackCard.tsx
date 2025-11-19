@@ -32,7 +32,6 @@ export function FeedbackCard() {
         </Atoms.Container>
 
         <Atoms.Button
-          variant="unstyled"
           overrideDefaults
           className="cursor-pointer text-left text-base leading-normal font-medium break-all text-muted-foreground hover:text-foreground"
         >

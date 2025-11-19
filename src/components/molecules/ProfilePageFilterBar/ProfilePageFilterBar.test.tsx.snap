@@ -14,7 +14,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -55,7 +54,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -100,7 +98,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -145,7 +142,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -187,7 +183,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -237,7 +232,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -278,7 +272,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -320,7 +313,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -381,7 +373,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -426,7 +417,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -471,7 +461,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -513,7 +502,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -563,7 +551,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -604,7 +591,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -646,7 +632,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -707,7 +692,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="true"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -752,7 +736,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -797,7 +780,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -839,7 +821,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -889,7 +870,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -930,7 +910,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div
@@ -972,7 +951,6 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       data-selected="false"
       data-slot="filter-item"
       data-testid="filter-item"
-      data-variant="unstyled"
       type="button"
     >
       <div

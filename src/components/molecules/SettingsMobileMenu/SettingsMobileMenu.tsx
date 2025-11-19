@@ -29,7 +29,7 @@ export function SettingsMobileMenu({ className }: SettingsMobileMenuProps) {
 
           return (
             <Atoms.Button
-              variant="unstyled"
+              overrideDefaults
               key={item.path}
               onClick={() => router.push(item.path)}
               className={Libs.cn(

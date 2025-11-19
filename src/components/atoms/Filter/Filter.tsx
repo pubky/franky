@@ -74,7 +74,6 @@ function FilterItem({
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <Atoms.Button
-      variant="unstyled"
       type="button"
       data-slot="filter-item"
       data-testid="filter-item"
