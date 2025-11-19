@@ -43,7 +43,7 @@ export class PostStreamApplication {
       if (postBatch) {
         const { postAttachments } = await Core.LocalStreamPostsService.persistPosts(postBatch);
         // Persist the post attachments metadata
-        await Core.FileApplication.persistFiles(postAttachments);
+        await Core.persistFilesFromUris(postAttachments);
         // Persist the missing authors of the posts
         await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
       }

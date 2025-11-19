@@ -170,9 +170,11 @@ export type NexusFileDetails = {
   metadata: Record<string, string>;
   owner_id: string;
   uri: string;
-  urls: {
-    feed: string;
-    main: string;
-    small: string;
-  };
+  urls: NexusFileUrls;
+};
+
+export type NexusFileUrls = {
+  feed: string;
+  main: string;
+  small: string;
 };

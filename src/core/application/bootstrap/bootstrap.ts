@@ -13,7 +13,7 @@ export class BootstrapApplication {
    * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification state with unread count and last read timestamp
    */
-  static async initialize(params: Core.TBootstrapParams): Promise<Core.NotificationState> {
+  static async initialize(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
     const [data, { notificationList, lastRead }] = await Promise.all([
       Core.NexusBootstrapService.fetch(params.pubky),
       this.fetchNotifications(params),
@@ -41,10 +41,10 @@ export class BootstrapApplication {
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);
 
-    // TODO: That lines in the future will come from the bootstrap data and we will persist directly
-    await Core.FileApplication.persistFiles(results[1].postAttachments);
+    const filesUris = results[1].postAttachments;
+    const unread = results[results.length - 1] as number;
 
-    return { unread: results[results.length - 1] as number, lastRead };
+    return { notification: { unread, lastRead }, filesUris };
   }
 
   /**
@@ -78,10 +78,10 @@ export class BootstrapApplication {
    * @param params.lastReadUrl - URL to fetch user's last read timestamp from homeserver
    * @returns Promise resolving to notification state after successful bootstrap
    */
-  static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.NotificationState> {
+  static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
     let success = false;
     let retries = 0;
-    let notificationState = Core.notificationInitialState;
+    let notificationState: Core.TBootstrapResponse = { notification: Core.notificationInitialState, filesUris: [] };
     while (!success && retries < 3) {
       try {
         // Wait 5 seconds before each attempt to let Nexus index the user

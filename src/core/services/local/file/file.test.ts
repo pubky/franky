@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { BlobResult, FileResult } from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { LocalFileService } from './file';
@@ -187,6 +188,141 @@ describe('LocalFileService', () => {
         owner_id: testPubky,
         uri: file.uri,
       });
+    });
+  });
+
+  describe('create', () => {
+    const createMockBlobResult = (url: string): BlobResult =>
+      ({
+        blob: { data: new Uint8Array([1, 2, 3]) },
+        meta: { url },
+      }) as unknown as BlobResult;
+
+    const createMockFileResult = (
+      fileId: string,
+      overrides?: Partial<{ name: string; content_type: string; size: number; created_at: string }>,
+    ): FileResult => {
+      const uri = `pubky://${testPubky}/pub/pubky.app/files/${fileId}`;
+      return {
+        file: {
+          name: overrides?.name || `test-file-${fileId}.jpg`,
+          content_type: overrides?.content_type || 'image/jpeg',
+          size: overrides?.size || 102400,
+          created_at: overrides?.created_at || '1234567890',
+        },
+        meta: { url: uri },
+      } as unknown as FileResult;
+    };
+
+    it('creates a file record with correct properties', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/pub/pubky.app/blobs/blob-123`);
+      const fileResult = createMockFileResult(testFileId1);
+
+      await LocalFileService.create({ blobResult, fileResult });
+
+      const saved = await Core.FileDetailsModel.findById(compositeId1);
+      expect(saved).toBeDefined();
+      expect(saved?.name).toBe(fileResult.file.name);
+      expect(saved?.src).toBe(blobResult.meta.url);
+      expect(saved?.uri).toBe(fileResult.meta.url);
+      expect(saved?.content_type).toBe(fileResult.file.content_type);
+      expect(saved?.size).toBe(fileResult.file.size);
+      expect(saved?.created_at).toBe(Number(fileResult.file.created_at));
+      expect(saved?.indexed_at).toBe(Number(fileResult.file.created_at));
+      expect(saved?.metadata).toEqual({});
+      expect(saved?.owner_id).toBe(testPubky);
+      expect(saved?.urls).toEqual(Core.buildUrls(compositeId1));
+    });
+
+    it('creates file with all provided properties', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-456`);
+      const fileResult = createMockFileResult(testFileId1, {
+        name: 'custom-image.png',
+        content_type: 'image/png',
+        size: 204800,
+        created_at: '9876543210',
+      });
+
+      await LocalFileService.create({ blobResult, fileResult });
+
+      const saved = await Core.FileDetailsModel.findById(compositeId1);
+      expect(saved?.name).toBe('custom-image.png');
+      expect(saved?.content_type).toBe('image/png');
+      expect(saved?.size).toBe(204800);
+      expect(saved?.created_at).toBe(9876543210);
+      expect(saved?.indexed_at).toBe(9876543210);
+    });
+
+    it('builds correct URLs from composite ID', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-789`);
+      const fileResult = createMockFileResult(testFileId1);
+
+      await LocalFileService.create({ blobResult, fileResult });
+
+      const saved = await Core.FileDetailsModel.findById(compositeId1);
+      const expectedUrls = Core.buildUrls(compositeId1);
+      expect(saved?.urls).toEqual(expectedUrls);
+      expect(saved?.urls.feed).toContain('/feed');
+      expect(saved?.urls.main).toContain('/main');
+      expect(saved?.urls.small).toContain('/small');
+    });
+
+    it('does not create file when URI is invalid', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-invalid`);
+      const fileResult = {
+        file: {
+          name: 'test.jpg',
+          content_type: 'image/jpeg',
+          size: 102400,
+          created_at: '1234567890',
+        },
+        meta: { url: 'invalid-uri' },
+      } as unknown as FileResult;
+
+      await LocalFileService.create({ blobResult, fileResult });
+
+      // Should not create any file since buildCompositeIdFromPubkyUri returns null
+      const allFiles = await Core.FileDetailsModel.table.toArray();
+      expect(allFiles).toHaveLength(0);
+    });
+
+    it('propagates database error when create fails', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-error`);
+      const fileResult = createMockFileResult(testFileId1);
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.CREATE_FAILED,
+        'Failed to create record in file_details',
+        500,
+        { error: new Error('Database constraint violation') },
+      );
+
+      vi.spyOn(Core.FileDetailsModel, 'create').mockRejectedValueOnce(databaseError);
+
+      await expect(LocalFileService.create({ blobResult, fileResult })).rejects.toMatchObject({
+        type: 'CREATE_FAILED',
+        message: 'Failed to create record in file_details',
+        statusCode: 500,
+      });
+    });
+
+    it('propagates generic error when create throws', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-generic-error`);
+      const fileResult = createMockFileResult(testFileId1);
+      const error = new Error('Unexpected database error');
+
+      vi.spyOn(Core.FileDetailsModel, 'create').mockRejectedValueOnce(error);
+
+      await expect(LocalFileService.create({ blobResult, fileResult })).rejects.toThrow('Unexpected database error');
+    });
+
+    it('extracts owner_id from composite ID', async () => {
+      const blobResult = createMockBlobResult(`pubky://${testPubky}/blobs/blob-owner`);
+      const fileResult = createMockFileResult(testFileId1);
+
+      await LocalFileService.create({ blobResult, fileResult });
+
+      const saved = await Core.FileDetailsModel.findById(compositeId1);
+      expect(saved?.owner_id).toBe(testPubky);
     });
   });
 });
