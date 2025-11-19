@@ -7,6 +7,7 @@ import * as Hooks from '@/hooks';
 
 export function ProfilePageProfile() {
   const { currentUserPubky } = Core.useAuthStore();
+  // Note: useProfileHeader guarantees a non-null profile with default values during loading
   const { profile, actions, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
 
   return (

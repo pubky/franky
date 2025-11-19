@@ -94,13 +94,23 @@ describe('useProfileHeader', () => {
       expect(result.current.actions).toEqual(mockActions);
     });
 
-    it('returns null profile when useUserProfile returns null', () => {
+    it('returns default profile when useUserProfile returns null', () => {
       mockProfile = null;
       mockProfileLoading = true;
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      expect(result.current.profile).toBeNull();
+      // Hook guarantees a non-null profile with default values
+      expect(result.current.profile).toEqual({
+        name: '',
+        bio: '',
+        publicKey: '',
+        emoji: '🌴',
+        status: '',
+        avatarUrl: undefined,
+        link: '',
+      });
+      expect(result.current.isLoading).toBe(true);
     });
 
     it('returns profile data when available', () => {
@@ -274,12 +284,21 @@ describe('useProfileHeader', () => {
   });
 
   describe('Edge cases', () => {
-    it('handles null profile gracefully', () => {
+    it('handles null profile gracefully with default values', () => {
       mockProfile = null;
 
       const { result } = renderHook(() => useProfileHeader('test-user-id'));
 
-      expect(result.current.profile).toBeNull();
+      // Hook provides default values instead of null
+      expect(result.current.profile).toEqual({
+        name: '',
+        bio: '',
+        publicKey: '',
+        emoji: '🌴',
+        status: '',
+        avatarUrl: undefined,
+        link: '',
+      });
     });
 
     it('handles profile with all fields', () => {

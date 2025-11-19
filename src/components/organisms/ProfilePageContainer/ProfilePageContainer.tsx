@@ -43,6 +43,7 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
   const { currentUserPubky } = Core.useAuthStore();
 
   // Business logic: Fetch profile data and stats
+  // Note: useProfileHeader guarantees a non-null profile with default values during loading
   const { profile, stats, actions, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
 
   // Business logic: Handle navigation state
