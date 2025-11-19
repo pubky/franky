@@ -179,14 +179,15 @@ const assertCommonCalls = (
     streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
     stream: bootstrapData.list.stream,
   });
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-    bootstrapData.list.influencers,
-  );
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.RECOMMENDED,
-    bootstrapData.list.recommended,
-  );
+  // Check user streams are stored with UserStreamTypes directly
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+    stream: bootstrapData.list.influencers,
+  });
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.RECOMMENDED,
+    stream: bootstrapData.list.recommended,
+  });
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
   expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
 };
@@ -360,9 +361,10 @@ describe('BootstrapApplication', () => {
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: [],
       });
-      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, [
-        'user-1',
-      ]);
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        stream: ['user-1'],
+      });
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });
 
@@ -412,8 +414,14 @@ describe('BootstrapApplication', () => {
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: [],
       });
-      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
-      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.RECOMMENDED, []);
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        stream: [],
+      });
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.RECOMMENDED,
+        stream: [],
+      });
       expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, []);
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });
@@ -443,8 +451,14 @@ describe('BootstrapApplication', () => {
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: ['post-1'],
       });
-      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.TODAY_INFLUENCERS_ALL, []);
-      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(Core.UserStreamTypes.RECOMMENDED, ['user-2']);
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        stream: [],
+      });
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.RECOMMENDED,
+        stream: ['user-2'],
+      });
       expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, []);
       expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
     });

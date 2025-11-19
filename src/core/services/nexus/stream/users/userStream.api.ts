@@ -38,34 +38,34 @@ function buildUserStreamUrl(
 export const userStreamApi = {
   // Sources requiring user_id
   followers: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWERS, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWERS, Core.USER_STREAM_PREFIX.USER_IDS),
 
   following: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWING, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FOLLOWING, Core.USER_STREAM_PREFIX.USER_IDS),
 
   friends: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, Core.USER_STREAM_PREFIX.USER_IDS),
 
   muted: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.MUTED, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.MUTED, Core.USER_STREAM_PREFIX.USER_IDS),
 
   recommended: (params: Core.TUserStreamWithUserIdParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.RECOMMENDED, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.RECOMMENDED, Core.USER_STREAM_PREFIX.USER_IDS),
 
   // Influencers with additional parameters
   influencers: (params: Core.TUserStreamInfluencersParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.INFLUENCERS, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.INFLUENCERS, Core.USER_STREAM_PREFIX.USER_IDS),
 
   // Post replies requiring author_id and post_id
   postReplies: (params: Core.TUserStreamPostRepliesParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.POST_REPLIES, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.POST_REPLIES, Core.USER_STREAM_PREFIX.USER_IDS),
 
   // Sources with depth parameter
   friendsWithDepth: (params: Core.TUserStreamWithDepthParams) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.FRIENDS, Core.USER_STREAM_PREFIX.USER_IDS),
 
   mostFollowed: (params: Core.TUserStreamBase) =>
-    buildUserStreamUrl(params, Core.UserStreamSource.MOST_FOLLOWED, Core.USER_STREAM_PREFIX.USERS),
+    buildUserStreamUrl(params, Core.UserStreamSource.MOST_FOLLOWED, Core.USER_STREAM_PREFIX.USER_IDS),
 
   // Username search
   username: (params: Core.TUserStreamUsernameParams) =>
