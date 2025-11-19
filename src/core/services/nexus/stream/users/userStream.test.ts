@@ -140,7 +140,7 @@ describe('Users Stream API - Error Control', () => {
       const usernameUrl = userStreamApi.username({ username: mockUsername });
       const usersByIdsRequest = userStreamApi.usersByIds({ user_ids: mockUserIds });
 
-      expect(followersUrl).toMatch(/stream\/users\?/);
+      expect(followersUrl).toMatch(/stream\/users\/ids\?/);
       expect(usernameUrl).toMatch(/stream\/users\/username\?/);
       expect(usersByIdsRequest.url).toMatch(/stream\/users\/by_ids$/);
     });
@@ -351,7 +351,7 @@ describe('NexusUserStreamService.fetch', () => {
         limit: 10,
       });
 
-      expect(url).toContain('v0/stream/users?');
+      expect(url).toContain('v0/stream/users/ids?');
       expect(url).toContain('source=followers');
       expect(url).toContain(`user_id=${mockUserId}`);
       expect(url).toContain('skip=0');
@@ -365,7 +365,7 @@ describe('NexusUserStreamService.fetch', () => {
         limit: 10,
       });
 
-      expect(url).toContain('v0/stream/users?');
+      expect(url).toContain('v0/stream/users/ids?');
       expect(url).toContain('source=following');
       expect(url).toContain(`user_id=${mockUserId}`);
       expect(url).toContain('skip=0');
@@ -453,14 +453,14 @@ describe('NexusUserStreamService.fetch', () => {
   });
 
   describe('URL structure validation', () => {
-    it('should always start with v0/stream/users?', () => {
+    it('should always start with v0/stream/users/ids?', () => {
       const url = userStreamApi.followers({
         user_id: mockUserId,
         skip: 0,
         limit: 10,
       });
 
-      expect(url).toMatch(/v0\/stream\/users\?/);
+      expect(url).toMatch(/v0\/stream\/users\/ids\?/);
     });
 
     it('should have proper query parameter format', () => {

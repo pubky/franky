@@ -76,8 +76,8 @@ export class UserStreamApplication {
   }
 
   /**
-   * Fetch user stream from Nexus API
-   * Persists both stream IDs and full user data
+   * Fetches user IDs from Nexus API and persists stream to cache
+   * Returns IDs and identifies which users need full details fetched
    *
    * @private
    */
@@ -88,21 +88,16 @@ export class UserStreamApplication {
     viewerId,
     cachedStream,
   }: TFetchStreamFromNexusParams): Promise<Core.TUserStreamChunkResponse> {
-    const nexusUsers = await Core.NexusUserStreamService.fetch({
+    // Fetch user IDs from Nexus
+    const userIds = await Core.NexusUserStreamService.fetch({
       streamId,
       params: { skip, limit, viewer_id: viewerId },
     });
 
     // Handle empty response
-    if (nexusUsers.length === 0) {
+    if (userIds.length === 0) {
       return { nextPageIds: [], cacheMissUserIds: [], skip: undefined };
     }
-
-    // Extract user IDs
-    const userIds = nexusUsers.map((user) => user.details.id);
-
-    // Persist full user data to IndexedDB
-    await Core.LocalStreamUsersService.persistUsers(nexusUsers);
 
     // Upsert stream (append to existing or create new)
     let stream = userIds;
@@ -113,11 +108,11 @@ export class UserStreamApplication {
     }
     await Core.LocalStreamUsersService.upsert({ streamId, stream });
 
-    // Identify users not yet in cache (shouldn't be any now, but keep for consistency)
+    // Identify users missing from cache that need full details fetched
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(userIds);
 
-    // Calculate next skip value
-    const nextSkip = skip + nexusUsers.length;
+    // Calculate next skip value for pagination
+    const nextSkip = skip + userIds.length;
 
     return { nextPageIds: userIds, cacheMissUserIds, skip: nextSkip };
   }

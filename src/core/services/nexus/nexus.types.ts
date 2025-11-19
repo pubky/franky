@@ -112,6 +112,11 @@ export type NexusUser = {
   relationship: NexusUserRelationship;
 };
 
+// User ID stream response containing only user identifiers
+export type NexusUserIdStream = {
+  user_ids: Pubky[];
+};
+
 // Post types
 export type NexusPostDetails = {
   id: string;
