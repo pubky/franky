@@ -32,7 +32,7 @@ vi.mock('@/core', () => ({
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn((callback, deps) => {
+  useLiveQuery: vi.fn(() => {
     // useLiveQuery returns the resolved value directly (not a Promise)
     // The callback is async, but useLiveQuery handles the async internally
     return {

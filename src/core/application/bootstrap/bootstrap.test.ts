@@ -363,10 +363,10 @@ describe('BootstrapApplication', () => {
         'Influencers stream upsert error',
       );
 
-      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-        Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-        bootstrapData.list.influencers,
-      );
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        stream: bootstrapData.list.influencers,
+      });
     });
 
     it('should throw error when upsert tags stream fails', async () => {
