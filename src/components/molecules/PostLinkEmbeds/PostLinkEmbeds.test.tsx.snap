@@ -28,18 +28,23 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
 <div
   data-testid="container"
 >
-  <iframe
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen=""
-    class="rounded-md"
-    data-testid="YouTube video player"
-    height="315"
-    loading="lazy"
-    sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-    src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
-    title="YouTube video dQw4w9WgXcQ"
-    width="100%"
-  />
+  <div
+    class="relative pt-[56.25%]"
+    data-testid="youtube-aspect-ratio-wrapper"
+  >
+    <iframe
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen=""
+      class="rounded-md absolute top-0 left-0 h-full w-full"
+      data-testid="YouTube video player"
+      height="auto"
+      loading="lazy"
+      sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+      src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ"
+      title="YouTube video dQw4w9WgXcQ"
+      width="100%"
+    />
+  </div>
 </div>
 `;
 

@@ -193,15 +193,20 @@ describe('PostLinkEmbeds', () => {
     it('sets correct iframe attributes for YouTube embed', () => {
       render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
 
+      // Check aspect ratio wrapper
+      const wrapper = screen.getByTestId('youtube-aspect-ratio-wrapper');
+      expect(wrapper).toHaveClass('relative', 'pt-[56.25%]');
+
+      // Check iframe attributes
       const iframe = screen.getByTestId('YouTube video player');
       expect(iframe).toHaveAttribute('width', '100%');
-      expect(iframe).toHaveAttribute('height', '315');
+      expect(iframe).toHaveAttribute('height', 'auto');
       expect(iframe).toHaveAttribute('allowFullScreen');
       expect(iframe).toHaveAttribute(
         'allow',
         'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
       );
-      expect(iframe).toHaveClass('rounded-md');
+      expect(iframe).toHaveClass('rounded-md', 'absolute', 'top-0', 'left-0', 'h-full', 'w-full');
     });
   });
 

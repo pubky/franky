@@ -173,6 +173,22 @@ describe('ProviderVimeo', () => {
         const result = Vimeo.parseEmbed('https://youtube.com/watch?v=dQw4w9WgXcQ');
         expect(result).toBeNull();
       });
+
+      it('returns null for URLs with video ID followed by path segments', () => {
+        // These are valid Vimeo page URLs but not embeddable video URLs
+        const urlsWithExtraPaths = [
+          'https://vimeo.com/123456789/comments',
+          'https://vimeo.com/123456789/likes',
+          'https://vimeo.com/123456789/privacy',
+          'https://vimeo.com/123456789/share',
+          'https://vimeo.com/123456789/settings',
+        ];
+
+        urlsWithExtraPaths.forEach((url) => {
+          const result = Vimeo.parseEmbed(url);
+          expect(result).toBeNull();
+        });
+      });
     });
 
     describe('malformed URLs', () => {
