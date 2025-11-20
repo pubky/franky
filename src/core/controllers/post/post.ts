@@ -62,7 +62,7 @@ export class PostController {
    * @param params.deleterId - ID of the user deleting the post
    */
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {
-    const { pubky: authorId } = Core.parsePostCompositeId(postId);
+    const { pubky: authorId } = Core.parseCompositeId(postId);
 
     if (authorId !== deleterId) {
       throw Libs.createSanitizationError(

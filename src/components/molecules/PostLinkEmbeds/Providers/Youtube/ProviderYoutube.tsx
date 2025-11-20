@@ -21,6 +21,8 @@ const extractYouTubeId = (url: string): string | null => {
     /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
     // Live streams: youtube.com/live/VIDEO_ID
     /(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
+    // Music subdomain: music.youtube.com/watch?v=VIDEO_ID
+    /(?:music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})(?:[&\s]|$)/,
     // Old embed: youtube.com/v/VIDEO_ID (legacy)
     /(?:youtube\.com\/v\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
   ];
@@ -68,6 +70,7 @@ const YOUTUBE_DOMAINS = [
   'www.youtube.com',
   'youtu.be',
   'm.youtube.com',
+  'music.youtube.com',
   'www.youtube-nocookie.com',
   'youtube-nocookie.com',
 ] as const;

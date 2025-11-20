@@ -109,6 +109,14 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
 
+    it('renders YouTube embed for music.youtube.com URL', () => {
+      render(<PostLinkEmbeds content="Music video: https://music.youtube.com/watch?v=UTD5buLHoR4" />);
+
+      const iframe = screen.getByTestId('YouTube video player');
+      expect(iframe).toBeInTheDocument();
+      expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/UTD5buLHoR4');
+    });
+
     it('handles YouTube URL with trailing punctuation', () => {
       render(<PostLinkEmbeds content="Check this out: https://www.youtube.com/watch?v=dQw4w9WgXcQ!" />);
 

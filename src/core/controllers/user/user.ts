@@ -41,8 +41,11 @@ export class UserController {
     });
   }
 
-  // This function should be called from a notification hook that polls at regular intervals
-  // to check for new unread notifications and update the store
+  /**
+   * Refreshes unread notifications for the current user.
+   * @param userId - The user ID to fetch notifications for
+   * @returns Promise resolving to the number of unread notifications
+   */
   static async notifications({ userId }: Core.TReadProfileParams) {
     const notificationStore = Core.useNotificationStore.getState();
     const lastRead = notificationStore.selectLastRead();

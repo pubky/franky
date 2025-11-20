@@ -39,7 +39,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
     <div className={Libs.cn('flex justify-between', className)}>
       <div className="flex gap-3">
         <Atoms.Avatar size="default">
-          <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
+          <Atoms.AvatarImage src={Core.FileController.getAvatarUrl(userId)} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <div className="flex flex-col">

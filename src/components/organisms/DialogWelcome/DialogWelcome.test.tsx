@@ -2,16 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DialogWelcome } from './DialogWelcome';
 
-const { mockGetAvatar, mockCopyToClipboard, mockSetShowWelcomeDialog } = vi.hoisted(() => ({
-  mockGetAvatar: vi.fn((pubky: string) => `https://mocked.avatar/${pubky}`),
+const { mockGetAvatarUrl, mockCopyToClipboard, mockSetShowWelcomeDialog } = vi.hoisted(() => ({
+  mockGetAvatarUrl: vi.fn((pubky: string) => `https://mocked.avatar/${pubky}`),
   mockCopyToClipboard: vi.fn(),
   mockSetShowWelcomeDialog: vi.fn(),
 }));
 
 vi.mock('@/core', () => ({
-  filesApi: {
-    getAvatar: mockGetAvatar,
-  },
   useAuthStore: vi.fn(() => ({
     currentUserPubky: 'test-pubky-123',
   })),
@@ -28,12 +25,16 @@ vi.mock('@/core', () => ({
       }),
     ),
   },
+  FileController: {
+    getAvatarUrl: mockGetAvatarUrl,
+  },
 }));
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(() => {
-    // Immediately resolve the callback to return user details
+    // useLiveQuery returns the resolved value directly (not a Promise)
+    // The callback is async, but useLiveQuery handles the async internally
     return {
       name: 'Test User',
       bio: 'Test bio',
@@ -219,6 +220,6 @@ describe('DialogWelcome', () => {
 
   it('uses generated avatar url', () => {
     render(<DialogWelcome />);
-    expect(mockGetAvatar).toHaveBeenCalledWith('test-pubky-123');
+    expect(mockGetAvatarUrl).toHaveBeenCalledWith('test-pubky-123');
   });
 });

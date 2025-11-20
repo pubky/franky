@@ -10,6 +10,7 @@ describe('ProviderYoutube', () => {
       expect(Youtube.domains).toContain('www.youtube.com');
       expect(Youtube.domains).toContain('youtu.be');
       expect(Youtube.domains).toContain('m.youtube.com');
+      expect(Youtube.domains).toContain('music.youtube.com');
       expect(Youtube.domains).toContain('youtube-nocookie.com');
       expect(Youtube.domains).toContain('www.youtube-nocookie.com');
     });
@@ -64,6 +65,13 @@ describe('ProviderYoutube', () => {
           url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ',
         });
       });
+
+      it('parses music subdomain URL', () => {
+        const result = Youtube.parseEmbed('https://music.youtube.com/watch?v=UTD5buLHoR4');
+        expect(result).toEqual({
+          url: 'https://www.youtube-nocookie.com/embed/UTD5buLHoR4',
+        });
+      });
     });
 
     describe('timestamps', () => {
@@ -99,6 +107,13 @@ describe('ProviderYoutube', () => {
         const result = Youtube.parseEmbed('https://youtu.be/dQw4w9WgXcQ?t=123');
         expect(result).toEqual({
           url: 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?start=123',
+        });
+      });
+
+      it('parses timestamp on music.youtube.com URL', () => {
+        const result = Youtube.parseEmbed('https://music.youtube.com/watch?v=UTD5buLHoR4&t=45');
+        expect(result).toEqual({
+          url: 'https://www.youtube-nocookie.com/embed/UTD5buLHoR4?start=45',
         });
       });
     });
