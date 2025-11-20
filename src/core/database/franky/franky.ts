@@ -13,6 +13,7 @@ import { postCountsTableSchema } from '@/core/models/post/counts/postCounts.sche
 import { postDetailsTableSchema } from '@/core/models/post/details/postDetails.schema';
 import { postRelationshipsTableSchema } from '@/core/models/post/relationships/postRelationships.schema';
 import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
+import { fileDetailsTableSchema } from '@/core/models/file/fileDetails.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
@@ -36,6 +37,8 @@ export class AppDatabase extends Dexie {
   post_relationships!: Dexie.Table<Core.PostRelationshipsModelSchema>;
   post_tags!: Dexie.Table<Core.TagCollectionModelSchema<string>>;
   post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
+  // File
+  file_details!: Dexie.Table<Core.FileDetailsModelSchema>;
   // Streams
   post_streams!: Dexie.Table<PostStreamModelSchema>;
   user_streams!: Dexie.Table<UserStreamModelSchema>;
@@ -61,6 +64,8 @@ export class AppDatabase extends Dexie {
         post_relationships: postRelationshipsTableSchema,
         post_tags: tagCollectionTableSchema,
         post_ttl: postTtlTableSchema,
+        // File related tables
+        file_details: fileDetailsTableSchema,
         // Streams
         post_streams: postStreamTableSchema,
         user_streams: userStreamTableSchema,

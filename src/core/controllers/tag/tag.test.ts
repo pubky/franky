@@ -29,7 +29,7 @@ const testData = {
   taggedUserPubky: 'y4euc88xboik1ev3axy9m9ajuedo8gx1mh1n7ms8zoxm5s1b1h9y' as Core.Pubky,
   postId: 'abc123xyz',
   get postTaggedId() {
-    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId });
+    return Core.buildCompositeId({ pubky: this.authorPubky, id: this.postId });
   },
   get userTaggedId() {
     return this.taggedUserPubky;

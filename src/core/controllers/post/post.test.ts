@@ -36,7 +36,7 @@ const testData = {
   authorPubky: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky,
   postId: 'abc123xyz',
   get fullPostId() {
-    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId });
+    return Core.buildCompositeId({ pubky: this.authorPubky, id: this.postId });
   },
 };
 

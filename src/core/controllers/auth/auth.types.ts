@@ -2,27 +2,42 @@ import { PublicKey, Keypair } from '@synonymdev/pubky';
 
 import * as Core from '@/core';
 
-export type TPubkyParams = {
+export interface TPubkyParams {
   pubky: Core.Pubky;
-};
+}
 
-export type TAuthenticatedData = TPubkyParams & {
+export interface TAuthenticatedData extends TPubkyParams {
   session: Core.SignupResult['session'];
-};
-export type TKeypairParams = {
+}
+
+export interface TKeypairParams {
   keypair: Keypair;
-};
-export type TSignUpParams = {
+}
+
+export interface TSignUpParams {
   keypair: Core.TKeyPair;
   signupToken: string;
-};
-export type TLoginWithMnemonicParams = {
+}
+
+export interface TLoginWithMnemonicParams {
   mnemonic: string;
-};
-export type TLoginWithEncryptedFileParams = {
+}
+
+export interface TLoginWithEncryptedFileParams {
   encryptedFile: File;
   password: string;
-};
-export type TLoginWithAuthUrlParams = {
+}
+
+export interface TLoginWithAuthUrlParams {
   publicKey: PublicKey;
-};
+}
+
+export interface TBootstrapResponseParams {
+  authStore: Core.AuthStore;
+  bootstrapResponse: { notification: Core.NotificationState; filesUris: string[] };
+}
+
+export interface TBootstrapResponse {
+  notification: Core.NotificationState;
+  filesUris: string[];
+}

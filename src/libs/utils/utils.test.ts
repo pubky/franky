@@ -510,6 +510,21 @@ describe('Utils', () => {
       expect(buttons[1].getAttribute('aria-controls')).toBe('normal-id');
     });
 
+    it('should normalise shorthand radix IDs without the radix prefix', () => {
+      const element = document.createElement('div');
+      element.setAttribute('id', '_r_a_');
+      element.setAttribute('aria-controls', '_r_b_');
+      element.setAttribute('aria-labelledby', '_r_c_');
+      mockContainer.appendChild(element);
+
+      const normalized = normaliseRadixIds(mockContainer);
+      const div = normalized.querySelector('div');
+
+      expect(div?.getAttribute('id')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('aria-labelledby')).toBe('radix-_r_0_');
+    });
+
     it('should return a cloned container', () => {
       const element = document.createElement('div');
       element.textContent = 'Original';

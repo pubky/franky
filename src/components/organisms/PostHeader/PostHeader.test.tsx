@@ -16,8 +16,8 @@ vi.mock('@/atoms', () => ({
 }));
 
 vi.mock('@/core', () => ({
-  filesApi: {
-    getAvatar: vi.fn(() => 'https://example.com/avatar.png'),
+  FileController: {
+    getAvatarUrl: vi.fn((userId: string) => `https://example.com/avatar/${userId}.png`),
   },
   PostController: {
     read: vi.fn(),

@@ -72,7 +72,8 @@ describe('useProfileStats', () => {
 
       const { result } = renderHook(() => useProfileStats('test-user-id'));
 
-      expect(result.current.stats.posts).toBe(10);
+      // Backend sends posts including replies, UI calculates: 10 - 5 = 5 actual posts
+      expect(result.current.stats.posts).toBe(5);
       expect(result.current.stats.replies).toBe(5);
       expect(result.current.stats.followers).toBe(20);
       expect(result.current.stats.following).toBe(15);
@@ -103,6 +104,29 @@ describe('useProfileStats', () => {
       expect(result.current.stats.following).toBe(0);
       expect(result.current.stats.friends).toBe(0);
       expect(result.current.stats.tagged).toBe(0);
+    });
+
+    it('calculates posts correctly when user only has replies', () => {
+      // User with 27 replies and no posts (backend counts posts including replies)
+      setMockUserCounts({
+        id: 'test-user-id',
+        posts: 27, // Backend: includes replies in count
+        replies: 27,
+        followers: 0,
+        following: 0,
+        friends: 0,
+        tagged: 7,
+        tags: 0,
+        unique_tags: 0,
+        bookmarks: 0,
+      } as Core.UserCountsModelSchema);
+
+      const { result } = renderHook(() => useProfileStats('test-user-id'));
+
+      // UI calculates: 27 - 27 = 0 actual posts
+      expect(result.current.stats.posts).toBe(0);
+      expect(result.current.stats.replies).toBe(27);
+      expect(result.current.stats.tagged).toBe(7);
     });
   });
 
@@ -178,7 +202,8 @@ describe('useProfileStats', () => {
 
       const { result } = renderHook(() => useProfileStats('test-user-id'));
 
-      expect(result.current.stats.posts).toBe(999999);
+      // UI calculates: 999999 - 888888 = 111111 actual posts
+      expect(result.current.stats.posts).toBe(111111);
       expect(result.current.stats.replies).toBe(888888);
       expect(result.current.stats.followers).toBe(777777);
       expect(result.current.stats.following).toBe(666666);

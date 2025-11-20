@@ -2,6 +2,7 @@ import * as Core from '@/core';
 
 export enum STREAM_PREFIX {
   POSTS = 'v0/stream/posts',
+  POSTS_KEYS = 'v0/stream/posts/keys',
   POSTS_BY_IDS = 'v0/stream/posts/by_ids',
 }
 

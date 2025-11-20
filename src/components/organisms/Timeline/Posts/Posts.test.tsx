@@ -390,7 +390,7 @@ describe('TimelinePosts', () => {
       await waitFor(() => {
         expect(spy).toHaveBeenNthCalledWith(2, {
           streamId: Core.PostStreamTypes.POPULARITY_ALL_ALL,
-          lastPostId: 'author3:post3',
+          lastPostId: undefined, // Engagement streams don't use lastPostId for pagination
           streamTail: 3, // Should use count for engagement (skip)
         });
       });

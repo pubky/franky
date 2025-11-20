@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] = `
+exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
@@ -10,7 +10,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_r_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,9 +20,9 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_r_"
+    aria-labelledby="radix-_r_0_"
     class=""
-    data-testid="custom-test-id"
+    data-testid="filter-test filter-radiogroup"
     role="radiogroup"
   >
     <div
@@ -98,7 +98,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with custom testId 1`] 
 </div>
 `;
 
-exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] = `
+exports[`FilterRadioGroup - Snapshots > matches snapshot with default value 1`] = `
 <div
   class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
@@ -108,7 +108,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_o_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -118,7 +118,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with default props 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_o_"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -206,7 +206,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_q_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -216,7 +216,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with disabled item 1`] 
     </h2>
   </div>
   <div
-    aria-labelledby="_r_q_"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"
@@ -305,7 +305,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="_r_p_"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -315,7 +315,7 @@ exports[`FilterRadioGroup - Snapshots > matches snapshot with selected value 1`]
     </h2>
   </div>
   <div
-    aria-labelledby="_r_p_"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-test filter-radiogroup"
     role="radiogroup"

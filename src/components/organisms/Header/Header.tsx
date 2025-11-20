@@ -9,7 +9,6 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import * as App from '@/app';
-
 // Map paths to step numbers and titles
 const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/onboarding/install': { step: 1, title: 'Identity keys' },

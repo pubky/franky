@@ -25,7 +25,7 @@ export class LocalPostService {
    * @throws {DatabaseError} When database operations fail
    */
   static async create({ postId, authorId, post }: TLocalSavePostParams) {
-    const compositePostId = Core.buildPostCompositeId({ pubky: authorId, postId });
+    const compositePostId = Core.buildCompositeId({ pubky: authorId, id: postId });
     const { content, kind, parent: parentUri, attachments, embed } = post;
 
     const repostedUri = embed?.uri ?? null;
@@ -197,7 +197,7 @@ export class LocalPostService {
     countField: 'replies' | 'reposts',
     countChange: number,
   ): Promise<void> {
-    const postId = Core.buildPostIdFromPubkyUri(uri);
+    const postId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });
     if (!postId) return;
 
     const counts = await Core.PostCountsModel.findById(postId);

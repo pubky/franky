@@ -39,32 +39,33 @@ function buildPostStreamUrl(
  */
 export const postStreamApi = {
   // All posts (no additional required parameters)
-  all: (params: Core.TStreamAllParams) => buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS),
+  all: (params: Core.TStreamAllParams) =>
+    buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Sources requiring observer_id
   following: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, Core.STREAM_PREFIX.POSTS_KEYS),
 
   followers: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   friends: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FRIENDS, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FRIENDS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   bookmarks: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Post replies requiring author_id and post_id
   post_replies: (params: Core.TStreamPostRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Author posts requiring author_id
   author: (params: Core.TStreamAuthorParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Author replies requiring author_id
   author_replies: (params: Core.TStreamAuthorRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Posts by IDs (POST request)
   postsByIds: (params: Core.TStreamPostsByIdsParams) => {

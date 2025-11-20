@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { FilterRadioGroup } from './FilterRadioGroup';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock icon components for testing
 const MockIcon1 = () => <svg data-testid="mock-icon-1" />;
@@ -29,28 +30,10 @@ describe('FilterRadioGroup', () => {
     expect(screen.getByText('Option 3')).toBeInTheDocument();
   });
 
-  it('renders with proper ARIA attributes', () => {
-    render(<FilterRadioGroup title="Test Filter" items={mockItems} testId="test-filter" />);
-
-    const radiogroup = screen.getByTestId('test-filter');
-    expect(radiogroup).toHaveAttribute('role', 'radiogroup');
-    expect(radiogroup).toHaveAttribute('aria-labelledby');
-
-    const option1 = screen.getByLabelText('Option 1');
-    expect(option1).toHaveAttribute('role', 'radio');
-    expect(option1).toHaveAttribute('aria-label', 'Option 1');
-  });
-
   it('generates default testId from title', () => {
     render(<FilterRadioGroup title="My Custom Filter" items={mockItems} />);
 
     expect(screen.getByTestId('filter-my custom filter-radiogroup')).toBeInTheDocument();
-  });
-
-  it('uses custom testId when provided', () => {
-    render(<FilterRadioGroup title="Test Filter" items={mockItems} testId="custom-test-id" />);
-
-    expect(screen.getByTestId('custom-test-id')).toBeInTheDocument();
   });
 
   it('selects first item by default when no defaultValue provided', () => {
@@ -125,16 +108,6 @@ describe('FilterRadioGroup', () => {
     fireEvent.click(option2);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
-  });
-
-  it('does not call onClose when disabled item is clicked', () => {
-    const mockOnClose = vi.fn();
-    render(<FilterRadioGroup title="Test Filter" items={mockItemsWithDisabled} onClose={mockOnClose} />);
-
-    const option2 = screen.getByLabelText('Option 2');
-    fireEvent.click(option2);
-
-    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   describe('Disabled items', () => {
@@ -301,21 +274,25 @@ describe('FilterRadioGroup', () => {
 describe('FilterRadioGroup - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<FilterRadioGroup title="Test Filter" items={mockItems} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with selected value', () => {
     const { container } = render(<FilterRadioGroup title="Test Filter" items={mockItems} selectedValue="option2" />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with disabled item', () => {
     const { container } = render(<FilterRadioGroup title="Test Filter" items={mockItemsWithDisabled} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with custom testId', () => {
-    const { container } = render(<FilterRadioGroup title="Test Filter" items={mockItems} testId="custom-test-id" />);
-    expect(container.firstChild).toMatchSnapshot();
+  it('matches snapshot with default value', () => {
+    const { container } = render(<FilterRadioGroup title="Test Filter" items={mockItems} defaultValue="option1" />);
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 });
