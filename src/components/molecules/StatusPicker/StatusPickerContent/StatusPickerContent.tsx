@@ -55,7 +55,9 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
     setSelectedEmoji('');
   };
 
-  const isValidCustomStatus = () => customStatus && selectedEmoji;
+  const isValidCustomStatus = () => {
+    return Boolean(customStatus && selectedEmoji);
+  };
 
   const handleCustomStatusSave = () => {
     if (isValidCustomStatus()) {
