@@ -312,8 +312,9 @@ describe('AvatarZoomModal', () => {
       rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
       rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={true} />);
 
-      // Should have removed listeners each time
-      expect(removeEventListenerSpy.mock.calls.length).toBeGreaterThanOrEqual(4);
+      // Should have removed listeners each time modal was open (3 times)
+      // With early return, cleanup only runs when listener was added
+      expect(removeEventListenerSpy.mock.calls.length).toBeGreaterThanOrEqual(2);
 
       // Fire escape key - should only call onClose once
       onClose.mockClear();
@@ -325,7 +326,7 @@ describe('AvatarZoomModal', () => {
       removeEventListenerSpy.mockRestore();
     });
 
-    it('cleanup function is always registered regardless of open state', () => {
+    it('cleanup does not run when modal never opened (early return optimization)', () => {
       const onClose = vi.fn();
       const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
 
@@ -334,11 +335,11 @@ describe('AvatarZoomModal', () => {
 
       removeEventListenerSpy.mockClear();
 
-      // Unmount - cleanup should be called even though modal was never opened
+      // Unmount - with early return, cleanup should NOT be called since listener was never added
       unmount();
 
-      // Cleanup function should be called on unmount
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+      // With early return optimization, removeEventListener is not called unnecessarily
+      expect(removeEventListenerSpy).not.toHaveBeenCalled();
 
       removeEventListenerSpy.mockRestore();
     });

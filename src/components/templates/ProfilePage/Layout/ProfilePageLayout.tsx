@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -79,9 +79,18 @@ export function ProfilePageLayout({
 }: ProfilePageLayoutProps) {
   const [isAvatarZoomOpen, setIsAvatarZoomOpen] = useState(false);
 
+  // Stabilize callbacks to prevent unnecessary re-renders in child components
+  const handleAvatarClick = useCallback(() => {
+    setIsAvatarZoomOpen(true);
+  }, []);
+
+  const handleCloseAvatarZoom = useCallback(() => {
+    setIsAvatarZoomOpen(false);
+  }, []);
+
   const headerActions = {
     ...actions,
-    onAvatarClick: () => setIsAvatarZoomOpen(true),
+    onAvatarClick: handleAvatarClick,
   };
 
   return (
@@ -113,7 +122,7 @@ export function ProfilePageLayout({
 
       <Molecules.AvatarZoomModal
         open={isAvatarZoomOpen}
-        onClose={() => setIsAvatarZoomOpen(false)}
+        onClose={handleCloseAvatarZoom}
         avatarUrl={profile.avatarUrl}
         name={profile.name}
       />

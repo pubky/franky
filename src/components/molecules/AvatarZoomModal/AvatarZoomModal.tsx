@@ -38,15 +38,15 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
 
   // Keyboard navigation: close on Escape
   useEffect(() => {
+    if (!open) return; // Early return when closed - no cleanup needed
+
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    if (open) {
-      document.addEventListener('keydown', handleEscape);
-    }
+    document.addEventListener('keydown', handleEscape);
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
