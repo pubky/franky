@@ -11,6 +11,15 @@ import * as Config from '@/config';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 
+export interface TimelinePostsProps {
+  /**
+   * Optional stream ID to use instead of filters
+   * If provided, the component will fetch posts from this stream
+   * If not provided, it will use the global filters to determine the stream
+   */
+  streamId?: Core.PostStreamId;
+}
+
 /**
  * TimelinePosts
  *
@@ -23,7 +32,7 @@ import * as Libs from '@/libs';
  * - Supports both timeline and engagement stream types
  * - Deduplicates posts to prevent duplicates during pagination
  */
-export function TimelinePosts() {
+export function TimelinePosts({ streamId: streamIdProp }: TimelinePostsProps = {}) {
   const [postIds, setPostIds] = useState<string[]>([]);
   /**
    * PostId pagination cursor: tracks the last postId from the current page.
@@ -46,7 +55,10 @@ export function TimelinePosts() {
 
   const postIdsRef = useRef<string[]>([]);
   const router = useRouter();
-  const streamId = Hooks.useStreamIdFromFilters();
+
+  // Get current streamId based on global filters (only if streamId prop not provided)
+  const streamIdFromFilters = Hooks.useStreamIdFromFilters();
+  const streamId = streamIdProp ?? streamIdFromFilters;
 
   /**
    * Sets the appropriate loading state based on load type
