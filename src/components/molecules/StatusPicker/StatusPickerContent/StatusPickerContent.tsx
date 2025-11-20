@@ -1,0 +1,177 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import * as Atoms from '@/components/atoms';
+import * as Molecules from '@/components/molecules';
+import { Smile, Check } from 'lucide-react';
+import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
+import { statusHelper } from '../statusHelper';
+import { parseStatus } from '../statusUtils';
+
+const BUTTON_RESET_CLASSES =
+  'border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none';
+
+export interface StatusPickerContentProps {
+  onStatusSelect: (status: string) => void;
+  currentStatus?: string;
+}
+
+const STATUS_OPTIONS = [
+  { value: 'available', label: statusHelper.labels.available, emoji: statusHelper.emojis.available },
+  { value: 'away', label: statusHelper.labels.away, emoji: statusHelper.emojis.away },
+  { value: 'vacationing', label: statusHelper.labels.vacationing, emoji: statusHelper.emojis.vacationing },
+  { value: 'working', label: statusHelper.labels.working, emoji: statusHelper.emojis.working },
+  { value: 'traveling', label: statusHelper.labels.traveling, emoji: statusHelper.emojis.traveling },
+  { value: 'celebrating', label: statusHelper.labels.celebrating, emoji: statusHelper.emojis.celebrating },
+  { value: 'sick', label: statusHelper.labels.sick, emoji: statusHelper.emojis.sick },
+  { value: 'noStatus', label: statusHelper.labels.noStatus, emoji: statusHelper.emojis.noStatus },
+] as const;
+
+export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPickerContentProps) {
+  const [customStatus, setCustomStatus] = useState('');
+  const [selectedEmoji, setSelectedEmoji] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+
+  // Parse current status to extract emoji and text if it's custom
+  const parsed = parseStatus(currentStatus || '');
+  const isCustomStatus = parsed.isCustom;
+
+  // Initialize custom status state from current status if it's custom
+  useEffect(() => {
+    if (isCustomStatus) {
+      setCustomStatus(parsed.text);
+      setSelectedEmoji(parsed.emoji);
+    } else {
+      setCustomStatus('');
+      setSelectedEmoji('');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStatus]);
+
+  const handlePredefinedStatusClick = (statusValue: string) => {
+    onStatusSelect(statusValue);
+    setCustomStatus('');
+    setSelectedEmoji('');
+  };
+
+  const isValidCustomStatus = () => customStatus && selectedEmoji;
+
+  const handleCustomStatusSave = () => {
+    if (isValidCustomStatus()) {
+      onStatusSelect(`${selectedEmoji}${customStatus}`);
+      setCustomStatus('');
+      setSelectedEmoji('');
+    }
+  };
+
+  const handleEmojiSelect = (emoji: { native: string }) => {
+    setSelectedEmoji(emoji.native);
+    setShowEmojiPicker(false);
+  };
+
+  const handleKeyDown = Hooks.useEnterSubmit(isValidCustomStatus, handleCustomStatusSave);
+
+  return (
+    <Atoms.Container className="gap-2">
+      {/* Predefined status options */}
+      {STATUS_OPTIONS.map((option) => {
+        const isSelected = !isCustomStatus && currentStatus === option.value;
+        return (
+          <Atoms.Button
+            key={option.value}
+            overrideDefaults={true}
+            onClick={() => handlePredefinedStatusClick(option.value)}
+            className={Libs.cn(
+              'w-full justify-between gap-2 p-0',
+              'inline-flex cursor-pointer items-center',
+              BUTTON_RESET_CLASSES,
+              'group',
+            )}
+          >
+            <Atoms.Container overrideDefaults className="flex items-center gap-2">
+              <span>{option.emoji}</span>
+              <Atoms.Typography
+                as="span"
+                className={Libs.cn(
+                  'text-base leading-6 font-medium transition-colors',
+                  isSelected ? 'text-popover-foreground' : 'text-muted-foreground group-hover:text-popover-foreground',
+                )}
+              >
+                {option.label}
+              </Atoms.Typography>
+            </Atoms.Container>
+            {isSelected && <Check className="size-5 text-popover-foreground" />}
+          </Atoms.Button>
+        );
+      })}
+
+      {/* Custom Status Section */}
+      <Atoms.Container className="flex flex-col gap-2.5 pt-1 pb-0">
+        <Atoms.Label className="text-xs leading-5 tracking-[1.2px] text-muted-foreground uppercase">
+          Custom Status
+        </Atoms.Label>
+        <Atoms.Container className="flex flex-col gap-3">
+          <Atoms.Container
+            overrideDefaults={true}
+            className="flex items-center gap-2 rounded-md border border-dashed border-input bg-background/10 px-5 py-4 shadow-sm focus-within:border-white/80"
+          >
+            <Atoms.Input
+              type="text"
+              value={customStatus}
+              placeholder="Add status"
+              maxLength={12}
+              onChange={(e) => setCustomStatus(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={Libs.cn(
+                'flex-1 bg-transparent text-base leading-6 font-medium caret-white outline-none',
+                'border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
+                'min-h-6 p-0',
+                'placeholder:font-medium placeholder:text-input',
+                customStatus ? 'text-foreground' : 'text-input',
+              )}
+            />
+            {selectedEmoji ? (
+              <Atoms.Button
+                overrideDefaults={true}
+                onClick={() => setShowEmojiPicker(true)}
+                className={Libs.cn(
+                  'h-6 w-auto shrink-0 p-0',
+                  'inline-flex cursor-pointer items-center justify-center',
+                  BUTTON_RESET_CLASSES,
+                  'hover:opacity-80',
+                )}
+                aria-label="Change emoji"
+              >
+                <span className="text-2xl leading-none">{selectedEmoji}</span>
+              </Atoms.Button>
+            ) : (
+              <Atoms.Button
+                overrideDefaults={true}
+                onClick={() => setShowEmojiPicker(true)}
+                className={Libs.cn(
+                  'size-9 shrink-0 rounded-full p-1 shadow-xs-dark',
+                  'inline-flex cursor-pointer items-center justify-center',
+                  BUTTON_RESET_CLASSES,
+                  'hover:shadow-xs-dark',
+                )}
+                aria-label="Open emoji picker"
+              >
+                <Smile className="size-5" strokeWidth={2} />
+              </Atoms.Button>
+            )}
+          </Atoms.Container>
+        </Atoms.Container>
+      </Atoms.Container>
+
+      {/* Emoji Picker Dialog */}
+      <Molecules.EmojiPickerDialog
+        open={showEmojiPicker}
+        onOpenChange={setShowEmojiPicker}
+        onEmojiSelect={handleEmojiSelect}
+        maxLength={12}
+        currentInput={customStatus}
+      />
+    </Atoms.Container>
+  );
+}

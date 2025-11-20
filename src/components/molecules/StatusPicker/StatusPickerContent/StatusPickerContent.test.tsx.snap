@@ -1,0 +1,676 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-2"
+  data-testid="container"
+>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        👋
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Available
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🕓
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Away
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🌴
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Vacationing
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        👨‍💻
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Working
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        ✈️
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Traveling
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🥂
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Celebrating
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🤒
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Sick
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        💭
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        No Status
+      </span>
+    </div>
+  </button>
+  <div
+    class="mx-auto w-full flex flex-col gap-2.5 pt-1 pb-0"
+    data-testid="container"
+  >
+    <label
+      class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-xs leading-5 tracking-[1.2px] text-muted-foreground uppercase"
+      data-slot="label"
+    >
+      Custom Status
+    </label>
+    <div
+      class="mx-auto w-full flex flex-col gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex items-center gap-2 rounded-md border border-dashed border-input bg-background/10 px-5 py-4 shadow-sm focus-within:border-white/80"
+        data-testid="container"
+      >
+        <input
+          class="file:text-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border transition-[color,box-shadow] file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:ring-0 flex-1 bg-transparent text-base leading-6 font-medium caret-white outline-none border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none min-h-6 p-0 placeholder:font-medium placeholder:text-input text-foreground"
+          data-testid="input"
+          maxlength="12"
+          placeholder="Add status"
+          type="text"
+          value="Working"
+        />
+        <button
+          aria-label="Change emoji"
+          class="h-6 w-auto shrink-0 p-0 inline-flex cursor-pointer items-center justify-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none hover:opacity-80"
+          data-slot="button"
+        >
+          <span
+            class="text-2xl leading-none"
+          >
+            😊
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`StatusPickerContent > Snapshots > matches snapshot with no current status 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-2"
+  data-testid="container"
+>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        👋
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Available
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🕓
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Away
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🌴
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Vacationing
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        👨‍💻
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Working
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        ✈️
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Traveling
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🥂
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Celebrating
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🤒
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Sick
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        💭
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        No Status
+      </span>
+    </div>
+  </button>
+  <div
+    class="mx-auto w-full flex flex-col gap-2.5 pt-1 pb-0"
+    data-testid="container"
+  >
+    <label
+      class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-xs leading-5 tracking-[1.2px] text-muted-foreground uppercase"
+      data-slot="label"
+    >
+      Custom Status
+    </label>
+    <div
+      class="mx-auto w-full flex flex-col gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex items-center gap-2 rounded-md border border-dashed border-input bg-background/10 px-5 py-4 shadow-sm focus-within:border-white/80"
+        data-testid="container"
+      >
+        <input
+          class="file:text-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border transition-[color,box-shadow] file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:ring-0 flex-1 bg-transparent text-base leading-6 font-medium caret-white outline-none border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none min-h-6 p-0 placeholder:font-medium placeholder:text-input text-input"
+          data-testid="input"
+          maxlength="12"
+          placeholder="Add status"
+          type="text"
+          value=""
+        />
+        <button
+          aria-label="Open emoji picker"
+          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none hover:shadow-xs-dark"
+          data-slot="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-smile size-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <path
+              d="M8 14s1.5 2 4 2 4-2 4-2"
+            />
+            <line
+              x1="9"
+              x2="9.01"
+              y1="9"
+              y2="9"
+            />
+            <line
+              x1="15"
+              x2="15.01"
+              y1="9"
+              y2="9"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`StatusPickerContent > Snapshots > matches snapshot with predefined status selected 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-2"
+  data-testid="container"
+>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        👋
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-popover-foreground"
+        data-testid="typography"
+      >
+        Available
+      </span>
+    </div>
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-check size-5 text-popover-foreground"
+      fill="none"
+      height="24"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M20 6 9 17l-5-5"
+      />
+    </svg>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🕓
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Away
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🌴
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Vacationing
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        👨‍💻
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Working
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        ✈️
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Traveling
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🥂
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Celebrating
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        🤒
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        Sick
+      </span>
+    </div>
+  </button>
+  <button
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    data-slot="button"
+  >
+    <div
+      class="flex items-center gap-2"
+      data-testid="container"
+    >
+      <span>
+        💭
+      </span>
+      <span
+        class="text-base leading-6 font-medium transition-colors text-muted-foreground group-hover:text-popover-foreground"
+        data-testid="typography"
+      >
+        No Status
+      </span>
+    </div>
+  </button>
+  <div
+    class="mx-auto w-full flex flex-col gap-2.5 pt-1 pb-0"
+    data-testid="container"
+  >
+    <label
+      class="flex items-center gap-2 font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50 text-xs leading-5 tracking-[1.2px] text-muted-foreground uppercase"
+      data-slot="label"
+    >
+      Custom Status
+    </label>
+    <div
+      class="mx-auto w-full flex flex-col gap-3"
+      data-testid="container"
+    >
+      <div
+        class="flex items-center gap-2 rounded-md border border-dashed border-input bg-background/10 px-5 py-4 shadow-sm focus-within:border-white/80"
+        data-testid="container"
+      >
+        <input
+          class="file:text-foreground selection:bg-primary selection:text-primary-foreground border-input flex h-9 w-full min-w-0 rounded-md border transition-[color,box-shadow] file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:ring-0 flex-1 bg-transparent text-base leading-6 font-medium caret-white outline-none border-none shadow-none ring-0 hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none min-h-6 p-0 placeholder:font-medium placeholder:text-input text-input"
+          data-testid="input"
+          maxlength="12"
+          placeholder="Add status"
+          type="text"
+          value=""
+        />
+        <button
+          aria-label="Open emoji picker"
+          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none hover:shadow-xs-dark"
+          data-slot="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-smile size-5"
+            fill="none"
+            height="24"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="12"
+              cy="12"
+              r="10"
+            />
+            <path
+              d="M8 14s1.5 2 4 2 4-2 4-2"
+            />
+            <line
+              x1="9"
+              x2="9.01"
+              y1="9"
+              y2="9"
+            />
+            <line
+              x1="15"
+              x2="15.01"
+              y1="9"
+              y2="9"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

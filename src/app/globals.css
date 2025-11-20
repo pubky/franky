@@ -146,6 +146,25 @@ body {
    */
   --filter-bar-width: 180px;
 
+  /**
+   * Popover width
+   * - Standard width for popover components (dropdowns, pickers)
+   * - Ensures consistent popover sizing across the application
+   * - Applied to: StatusPicker PopoverContent
+   * - Used for: Status selection dropdowns and similar picker components
+   */
+  --popover-width: 280px;
+
+  /**
+   * Popover side offset
+   * - Vertical offset for popover positioning relative to trigger
+   * - Negative value allows popover to overlap with trigger element
+   * - Applied to: StatusPicker PopoverContent sideOffset prop
+   * - Used for: Positioning popovers above/below triggers with overlap
+   * - Value is in pixels (negative for upward overlap)
+   */
+  --popover-side-offset: -30px;
+
   /* ==================================================================
    * Z-INDEX LAYERS (Stacking Order)
    * ================================================================== */

@@ -20,6 +20,7 @@ export * from './Popover';
 export * from './PostThreadConnector';
 export * from './PostThreadSpacer';
 export * from './ReplyLine';
+export * from './Sheet';
 export * from './SidebarButton';
 export * from './Spinner';
 export * from './Textarea';

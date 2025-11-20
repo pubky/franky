@@ -1,0 +1,300 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Sheet - Snapshots > matches snapshot for Sheet with default props 1`] = `
+<div
+  data-testid="sheet-root"
+>
+  <div>
+    Sheet Content
+  </div>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetContent with bottom side 1`] = `
+<div
+  data-testid="sheet-portal"
+>
+  <div
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-testid="sheet-overlay"
+  />
+  <div
+    class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom"
+    data-testid="sheet-content"
+  >
+    <div>
+      Bottom Sheet
+    </div>
+    <button
+      class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
+      data-testid="sheet-close"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Close
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetContent with default side 1`] = `
+<div
+  data-testid="sheet-portal"
+>
+  <div
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-testid="sheet-overlay"
+  />
+  <div
+    class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
+    data-testid="sheet-content"
+  >
+    <div>
+      Sheet Content
+    </div>
+    <button
+      class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
+      data-testid="sheet-close"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Close
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetContent with left side 1`] = `
+<div
+  data-testid="sheet-portal"
+>
+  <div
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-testid="sheet-overlay"
+  />
+  <div
+    class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm"
+    data-testid="sheet-content"
+  >
+    <div>
+      Left Sheet
+    </div>
+    <button
+      class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
+      data-testid="sheet-close"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Close
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetContent with right side 1`] = `
+<div
+  data-testid="sheet-portal"
+>
+  <div
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-testid="sheet-overlay"
+  />
+  <div
+    class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm"
+    data-testid="sheet-content"
+  >
+    <div>
+      Right Sheet
+    </div>
+    <button
+      class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
+      data-testid="sheet-close"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Close
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetContent with top side 1`] = `
+<div
+  data-testid="sheet-portal"
+>
+  <div
+    class="fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+    data-testid="sheet-overlay"
+  />
+  <div
+    class="fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500 inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top"
+    data-testid="sheet-content"
+  >
+    <div>
+      Top Sheet
+    </div>
+    <button
+      class="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-secondary"
+      data-testid="sheet-close"
+    >
+      <svg
+        aria-hidden="true"
+        class="lucide lucide-x h-4 w-4"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M18 6 6 18"
+        />
+        <path
+          d="m6 6 12 12"
+        />
+      </svg>
+      <span
+        class="sr-only"
+      >
+        Close
+      </span>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetHeader 1`] = `
+<div
+  class="flex flex-col space-y-2 text-center sm:text-left"
+>
+  <h2
+    class="text-lg font-semibold text-foreground"
+    data-testid="sheet-title"
+  >
+    Sheet Title
+  </h2>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetTitle 1`] = `
+<h2
+  class="text-lg font-semibold text-foreground"
+  data-testid="sheet-title"
+>
+  My Sheet Title
+</h2>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetTrigger with asChild 1`] = `
+<div
+  data-as-child="true"
+  data-testid="sheet-trigger"
+>
+  <button>
+    Open Sheet
+  </button>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetTrigger with default props 1`] = `
+<div
+  data-as-child="false"
+  data-testid="sheet-trigger"
+>
+  <button>
+    Open Sheet
+  </button>
+</div>
+`;

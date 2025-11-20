@@ -28,7 +28,7 @@ export interface ProfilePageLayoutProps {
     onCopyPublicKey: () => void;
     onCopyLink: () => void;
     onSignOut: () => void;
-    onStatusClick: () => void;
+    onStatusChange: (status: string) => void;
   };
   /** Currently active page */
   activePage: ProfilePageType;
