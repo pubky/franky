@@ -45,11 +45,10 @@ export class LocalStreamPostsService {
     const existing = await this.findById(streamId);
     const currentStream = existing?.stream || [];
 
-    // Only add if not already in stream
-    if (!currentStream.includes(postId)) {
-      const updatedStream = [postId, ...currentStream];
-      await this.upsert({ streamId, stream: updatedStream });
-    }
+    if (currentStream.includes(postId)) return;
+
+    const updatedStream = [postId, ...currentStream];
+    await this.upsert({ streamId, stream: updatedStream });
   }
 
   /**

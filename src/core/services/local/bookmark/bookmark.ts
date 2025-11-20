@@ -135,55 +135,62 @@ export class LocalBookmarkService {
       streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LONG);
     }
 
-    // Check for attachments
-    if (postDetails.attachments && postDetails.attachments.length > 0) {
-      const attachments = postDetails.attachments;
+    if (!postDetails.attachments || postDetails.attachments.length === 0) {
+      const urlRegex = /(https?:\/\/[^\s]+)/gi;
+      const hasLinks = urlRegex.test(postDetails.content);
 
-      // Check for images
-      const hasImages = attachments.some((uri) => {
-        const lower = uri.toLowerCase();
-        return (
-          lower.endsWith('.jpg') ||
-          lower.endsWith('.jpeg') ||
-          lower.endsWith('.png') ||
-          lower.endsWith('.webp') ||
-          lower.endsWith('.gif')
-        );
-      });
-
-      if (hasImages) {
-        streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE);
+      if (hasLinks) {
+        streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK);
       }
 
-      // Check for videos
-      const hasVideos = attachments.some((uri) => {
-        const lower = uri.toLowerCase();
-        return lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov');
-      });
-
-      if (hasVideos) {
-        streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_VIDEO);
-      }
-
-      // Check for other files (non-image, non-video)
-      const hasFiles = attachments.some((uri) => {
-        const lower = uri.toLowerCase();
-        const isImage =
-          lower.endsWith('.jpg') ||
-          lower.endsWith('.jpeg') ||
-          lower.endsWith('.png') ||
-          lower.endsWith('.webp') ||
-          lower.endsWith('.gif');
-        const isVideo = lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov');
-        return !isImage && !isVideo;
-      });
-
-      if (hasFiles) {
-        streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_FILE);
-      }
+      await Promise.all(
+        streamIds.map((streamId) => Core.LocalStreamPostsService.insertSortedByTimestamp(streamId, postId)),
+      );
+      return;
     }
 
-    // Check for links in content (simple URL detection)
+    const attachments = postDetails.attachments;
+
+    const hasImages = attachments.some((uri) => {
+      const lower = uri.toLowerCase();
+      return (
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.gif')
+      );
+    });
+
+    if (hasImages) {
+      streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE);
+    }
+
+    const hasVideos = attachments.some((uri) => {
+      const lower = uri.toLowerCase();
+      return lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov');
+    });
+
+    if (hasVideos) {
+      streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_VIDEO);
+    }
+
+    const hasFiles = attachments.some((uri) => {
+      const lower = uri.toLowerCase();
+      const isImage =
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.webp') ||
+        lower.endsWith('.gif');
+      const isVideo = lower.endsWith('.mp4') || lower.endsWith('.webm') || lower.endsWith('.mov');
+      return !isImage && !isVideo;
+    });
+
+    if (hasFiles) {
+      streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_FILE);
+    }
+
     const urlRegex = /(https?:\/\/[^\s]+)/gi;
     const hasLinks = urlRegex.test(postDetails.content);
 
@@ -191,7 +198,6 @@ export class LocalBookmarkService {
       streamIds.push(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK);
     }
 
-    // Add to all applicable streams in parallel, sorted by post timestamp
     await Promise.all(
       streamIds.map((streamId) => Core.LocalStreamPostsService.insertSortedByTimestamp(streamId, postId)),
     );
