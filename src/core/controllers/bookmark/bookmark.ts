@@ -10,14 +10,15 @@ export class BookmarkController {
    * @param params.userId - ID of the user creating the bookmark (current user)
    * @param params.postId - Composite post ID (authorId:postId)
    */
-  static async create(params: Core.TBookmarkEventParams) {
-    const { bookmarkUrl, bookmarkJson } = await BookmarkController.generateBookmarkUri(params);
-    const { postId } = params;
+  static async create({ postId, userId }: Core.TBookmarkEventParams) {
+    const { pubky: authorId, id: rawPostId } = Core.parseCompositeId(postId);
+    const postUri = postUriBuilder(authorId, rawPostId);
+    const { bookmark, meta } = Core.BookmarkNormalizer.to(postUri, userId);
 
     await Core.BookmarkApplication.create({
       postId,
-      bookmarkUrl,
-      bookmarkJson,
+      bookmarkUrl: meta.url,
+      bookmarkJson: bookmark.toJson(),
     });
   }
 
@@ -27,32 +28,14 @@ export class BookmarkController {
    * @param params.userId - ID of the user removing the bookmark (current user)
    * @param params.postId - Composite post ID (authorId:postId)
    */
-  static async delete(params: Core.TBookmarkEventParams) {
-    const { bookmarkUrl } = await BookmarkController.generateBookmarkUri(params);
-    const { postId } = params;
+  static async delete({ postId, userId }: Core.TBookmarkEventParams) {
+    const { pubky: authorId, id: rawPostId } = Core.parseCompositeId(postId);
+    const postUri = postUriBuilder(authorId, rawPostId);
+    const { meta } = Core.BookmarkNormalizer.to(postUri, userId);
 
     await Core.BookmarkApplication.delete({
       postId,
-      bookmarkUrl,
-    });
-  }
-
-  private static async generateBookmarkUri({
-    postId,
-    userId,
-  }: Core.TBookmarkEventParams): Promise<{ bookmarkUrl: string; bookmarkJson: Record<string, unknown> }> {
-    // Parse composite post ID to get author and post ID
-    const { pubky: authorId, id: rawPostId } = Core.parseCompositeId(postId);
-
-    // Build the post URI
-    const postUri = postUriBuilder(authorId, rawPostId);
-
-    // Use BookmarkNormalizer to create bookmark with proper URI and ID
-    const { bookmark, meta } = Core.BookmarkNormalizer.to(postUri, userId);
-
-    return {
       bookmarkUrl: meta.url,
-      bookmarkJson: bookmark.toJson(),
-    };
+    });
   }
 }
