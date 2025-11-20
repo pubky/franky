@@ -189,5 +189,82 @@ describe('useBodyScrollLock', () => {
       unmount();
       expect(document.body.style.overflow).toBe('visible');
     });
+
+    it('does not restore to hidden when unlocking after being locked (critical bug test)', () => {
+      // This test catches the critical bug where cleanup captures the wrong state
+      document.body.style.overflow = 'auto';
+
+      const { rerender } = renderHook(({ locked }) => useBodyScrollLock(locked), {
+        initialProps: { locked: true },
+      });
+
+      // Body is now 'hidden'
+      expect(document.body.style.overflow).toBe('hidden');
+
+      // Unlock - should restore to 'auto', NOT stay 'hidden'
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('auto');
+
+      // Lock again
+      rerender({ locked: true });
+      expect(document.body.style.overflow).toBe('hidden');
+
+      // Unlock again - should still restore to 'auto', not 'hidden'
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('auto');
+    });
+
+    it('handles multiple lock/unlock cycles without state corruption', () => {
+      // Extended test for multiple modal open/close cycles
+      document.body.style.overflow = 'scroll';
+
+      const { rerender } = renderHook(({ locked }) => useBodyScrollLock(locked), {
+        initialProps: { locked: false },
+      });
+
+      // Cycle 1: lock → unlock
+      rerender({ locked: true });
+      expect(document.body.style.overflow).toBe('hidden');
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('scroll');
+
+      // Cycle 2: lock → unlock
+      rerender({ locked: true });
+      expect(document.body.style.overflow).toBe('hidden');
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('scroll');
+
+      // Cycle 3: lock → unlock
+      rerender({ locked: true });
+      expect(document.body.style.overflow).toBe('hidden');
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('scroll');
+    });
+
+    it('captures new overflow state when relocking after manual changes', () => {
+      // This test verifies that the hook correctly handles manual style changes between locks
+      document.body.style.overflow = 'auto';
+
+      const { rerender } = renderHook(({ locked }) => useBodyScrollLock(locked), {
+        initialProps: { locked: true },
+      });
+
+      expect(document.body.style.overflow).toBe('hidden');
+
+      // Unlock - restores to 'auto'
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('auto');
+
+      // Manually change body overflow while unlocked (simulates another component changing it)
+      document.body.style.overflow = 'visible';
+
+      // Lock again - should capture the current 'visible' state
+      rerender({ locked: true });
+      expect(document.body.style.overflow).toBe('hidden');
+
+      // Unlock - should restore to 'visible' (the state before this lock cycle)
+      rerender({ locked: false });
+      expect(document.body.style.overflow).toBe('visible');
+    });
   });
 });
