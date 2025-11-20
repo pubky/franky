@@ -6,25 +6,48 @@ import * as ProviderUtils from '../Provider.utils';
 /**
  * Extract Vimeo video ID from URL
  * Vimeo uses purely numeric IDs (unlike YouTube's alphanumeric)
+ *
+ * @security Regex Denial of Service (ReDoS) Prevention
+ *
+ * This function uses security-hardened regex patterns to prevent catastrophic
+ * backtracking attacks. Key protections:
+ *
+ * 1. **Bounded Repetition**: Channel/group names limited to {1,100} characters
+ *    instead of unbounded [^/]+ which could cause exponential backtracking
+ *
+ * 2. **Character Class Restrictions**: Uses [a-z0-9_-] instead of [^/] to
+ *    limit valid characters and prevent edge cases
+ *
+ * 3. **Explicit Anchoring**: All patterns end with (?:[?#\s]|$) to ensure
+ *    proper termination and prevent runaway matching
+ *
+ * 4. **Performance**: Guaranteed to complete in <100ms even with malicious
+ *    input containing 1000+ characters (validated in tests)
+ *
+ * @see ProviderVimeo.test.ts - "regex catastrophic backtracking prevention"
  */
 const extractVimeoId = (url: string): string | null => {
-  // Handle different Vimeo URL formats
+  // Handle different Vimeo URL formats with security-hardened patterns
   const patterns = [
-    // Standard: vimeo.com/VIDEO_ID
-    /vimeo\.com\/(\d+)/,
+    // Standard: vimeo.com/VIDEO_ID (with word boundary or end/query marker)
+    /vimeo\.com\/(\d+)(?:[?#\s]|$)/,
     // Player: player.vimeo.com/video/VIDEO_ID
-    /player\.vimeo\.com\/video\/(\d+)/,
-    // Channels: vimeo.com/channels/*/VIDEO_ID
-    /vimeo\.com\/channels\/[^/]+\/(\d+)/,
-    // Groups: vimeo.com/groups/*/videos/VIDEO_ID
-    /vimeo\.com\/groups\/[^/]+\/videos\/(\d+)/,
-    // Album: vimeo.com/album/*/video/VIDEO_ID
-    /vimeo\.com\/album\/\d+\/video\/(\d+)/,
+    /player\.vimeo\.com\/video\/(\d+)(?:[?#\s]|$)/,
+    // Channels: vimeo.com/channels/CHANNEL_NAME/VIDEO_ID (limit channel name length)
+    /vimeo\.com\/channels\/([a-z0-9_-]{1,100})\/(\d+)(?:[?#\s]|$)/i,
+    // Groups: vimeo.com/groups/GROUP_NAME/videos/VIDEO_ID (limit group name length)
+    /vimeo\.com\/groups\/([a-z0-9_-]{1,100})\/videos\/(\d+)(?:[?#\s]|$)/i,
+    // Album: vimeo.com/album/ALBUM_ID/video/VIDEO_ID
+    /vimeo\.com\/album\/(\d+)\/video\/(\d+)(?:[?#\s]|$)/,
   ];
 
   for (const pattern of patterns) {
-    const id = url.match(pattern)?.[1];
-    if (id && /^\d+$/.test(id)) return id;
+    const match = url.match(pattern);
+    if (match) {
+      // Get last capturing group (always the video ID)
+      const id = match[match.length - 1];
+      if (id && /^\d+$/.test(id)) return id;
+    }
   }
 
   return null;

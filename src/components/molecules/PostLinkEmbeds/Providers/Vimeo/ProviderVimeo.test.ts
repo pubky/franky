@@ -252,5 +252,96 @@ describe('ProviderVimeo', () => {
         });
       });
     });
+
+    describe('regex catastrophic backtracking prevention', () => {
+      it('handles malicious input with many non-slash characters efficiently', () => {
+        const startTime = Date.now();
+
+        // Attempt potential ReDoS attack with excessive characters
+        const maliciousUrls = [
+          `https://vimeo.com/channels/${'a'.repeat(1000)}/123456`,
+          `https://vimeo.com/groups/${'b'.repeat(1000)}/videos/123456`,
+          `https://vimeo.com/channels/${'c-'.repeat(500)}/123456`,
+          `https://vimeo.com/groups/${'d_'.repeat(500)}/videos/123456`,
+        ];
+
+        maliciousUrls.forEach((url) => {
+          const result = Vimeo.parseEmbed(url);
+          // Should return null due to 100-character limit on channel/group names
+          expect(result).toBeNull();
+        });
+
+        const duration = Date.now() - startTime;
+        // Should complete in under 100ms even with malicious input
+        expect(duration).toBeLessThan(100);
+      });
+
+      it('accepts valid channel/group names within length limit', () => {
+        const validUrls = [
+          'https://vimeo.com/channels/staffpicks/123456',
+          'https://vimeo.com/channels/shortfilms/123456',
+          'https://vimeo.com/groups/documentary/videos/123456',
+          'https://vimeo.com/groups/animation-101/videos/123456',
+          `https://vimeo.com/channels/${'a'.repeat(100)}/123456`,
+          `https://vimeo.com/groups/${'b'.repeat(100)}/videos/123456`,
+        ];
+
+        validUrls.forEach((url) => {
+          const result = Vimeo.parseEmbed(url);
+          expect(result).toEqual({
+            url: 'https://player.vimeo.com/video/123456',
+          });
+        });
+      });
+
+      it('rejects channel/group names exceeding 100 characters', () => {
+        const invalidUrls = [
+          `https://vimeo.com/channels/${'a'.repeat(101)}/123456`,
+          `https://vimeo.com/groups/${'b'.repeat(101)}/videos/123456`,
+          `https://vimeo.com/channels/${'c'.repeat(200)}/123456`,
+        ];
+
+        invalidUrls.forEach((url) => {
+          const result = Vimeo.parseEmbed(url);
+          expect(result).toBeNull();
+        });
+      });
+
+      it('handles URLs with query strings and fragments correctly', () => {
+        const urlsWithBoundaries = [
+          'https://vimeo.com/123456?quality=hd',
+          'https://vimeo.com/123456#t=30s',
+          'https://vimeo.com/123456 ',
+          'https://player.vimeo.com/video/123456?autoplay=1',
+          'https://vimeo.com/channels/staff/123456?embed=true',
+          'https://vimeo.com/groups/docs/videos/123456#share',
+        ];
+
+        urlsWithBoundaries.forEach((url) => {
+          const result = Vimeo.parseEmbed(url.trim());
+          expect(result).toBeDefined();
+          expect(result?.url).toContain('123456');
+        });
+      });
+
+      it('completes parsing within reasonable time for edge cases', () => {
+        const edgeCases = [
+          'https://vimeo.com/' + '1'.repeat(100),
+          'https://vimeo.com/channels//' + '2'.repeat(50),
+          'https://vimeo.com/groups//videos/' + '3'.repeat(50),
+          'https://vimeo.com/album//' + '4'.repeat(50),
+        ];
+
+        const startTime = Date.now();
+
+        edgeCases.forEach((url) => {
+          expect(() => Vimeo.parseEmbed(url)).not.toThrow();
+        });
+
+        const duration = Date.now() - startTime;
+        // Should complete quickly even with edge cases
+        expect(duration).toBeLessThan(50);
+      });
+    });
   });
 });
