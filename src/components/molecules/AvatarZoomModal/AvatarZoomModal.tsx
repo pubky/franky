@@ -15,6 +15,15 @@ export interface AvatarZoomModalProps {
   name: string;
 }
 
+/**
+ * Modal component that displays an enlarged version of a user's avatar.
+ * Handles backdrop clicks, escape key, and scroll locking.
+ *
+ * @param open - Controls modal visibility
+ * @param onClose - Callback when user closes modal (backdrop click or Escape)
+ * @param avatarUrl - Optional URL to avatar image
+ * @param name - User's name for fallback initials and alt text
+ */
 export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
 
