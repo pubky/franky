@@ -14,7 +14,7 @@ interface PostWideProps {
 
 export function SinglePost({ clickable = false, isReply = false, onClick }: PostWideProps) {
   const { postId, userId } = useParams() as { postId: string; userId: string };
-  const pId = Core.buildPostCompositeId({ pubky: userId, postId });
+  const pId = Core.buildCompositeId({ pubky: userId, id: postId });
 
   return (
     <Atoms.Container className="flex flex-col">

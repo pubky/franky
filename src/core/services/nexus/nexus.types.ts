@@ -152,7 +152,34 @@ export type NexusPost = {
   bookmark: NexusBookmark | null;
 };
 
+export type NexusPostsKeyStream = {
+  post_keys: string[];
+  last_post_score: number;
+};
+
 export type NexusNotification = {
   timestamp: number;
   body: Record<string, unknown>; // Generic object to handle all notification types
+};
+
+// File types
+export type NexusFileDetails = {
+  id: string;
+  name: string;
+  src: string;
+  // TODO: Do we have some enum for that
+  content_type: string;
+  size: number;
+  created_at: Timestamp;
+  indexed_at: Timestamp;
+  metadata: Record<string, string>;
+  owner_id: string;
+  uri: string;
+  urls: NexusFileUrls;
+};
+
+export type NexusFileUrls = {
+  feed: string;
+  main: string;
+  small: string;
 };

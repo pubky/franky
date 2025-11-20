@@ -33,10 +33,15 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   }, [userId]);
 
   // Build stats object from user counts
+  // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts
+  const totalPosts = userCounts?.posts ?? 0;
+  const repliesCount = userCounts?.replies ?? 0;
+  const actualPostsCount = Math.max(0, totalPosts - repliesCount);
+
   const stats: ProfileStats = {
     notifications: 0, // TODO: Get from notifications when implemented
-    posts: userCounts?.posts ?? 0,
-    replies: userCounts?.replies ?? 0,
+    posts: actualPostsCount,
+    replies: repliesCount,
     followers: userCounts?.followers ?? 0,
     following: userCounts?.following ?? 0,
     friends: userCounts?.friends ?? 0,

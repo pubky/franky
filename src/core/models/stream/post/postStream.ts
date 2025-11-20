@@ -15,6 +15,7 @@ export class PostStreamModel extends BaseStreamModel<PostStreamId, string, PostS
     this.name = stream.name;
   }
 
+  // TODO: What is it that one?? since when the streams has a name?
   // Custom upsert method to handle name property
   static async createWithName(id: PostStreamId, stream: string[], name: string): Promise<PostStreamModelSchema> {
     try {

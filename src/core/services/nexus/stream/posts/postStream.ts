@@ -12,11 +12,16 @@ export class NexusPostStreamService {
    * @param params - Parameters for fetching post stream data
    * @returns Post stream data
    */
-  static async fetch({ params, invokeEndpoint, extraParams }: Core.TPostStreamFetchParams): Promise<Core.NexusPost[]> {
+  static async fetch({
+    params,
+    invokeEndpoint,
+    extraParams,
+  }: Core.TPostStreamFetchParams): Promise<Core.NexusPostsKeyStream | undefined> {
     // TEMPORARY: Mock data for bookmarks testing
     if (invokeEndpoint === Core.StreamSource.BOOKMARKS) {
       return await this.generateMockBookmarks(params);
     }
+
 
     let nexusEndpoint: string;
     switch (invokeEndpoint) {
@@ -45,11 +50,11 @@ export class NexusPostStreamService {
       default:
         throw new Error(`Invalid stream type: ${invokeEndpoint}`);
     }
-    return (await Core.queryNexus<Core.NexusPost[]>(nexusEndpoint)) || [];
+    return await Core.queryNexus<Core.NexusPostsKeyStream>(nexusEndpoint);
   }
 
   // TEMPORARY: Mock bookmark data generator for testing
-  private static async generateMockBookmarks(params: Core.TStreamBase): Promise<Core.NexusPost[]> {
+  private static async generateMockBookmarks(params: Core.TStreamBase): Promise<Core.NexusPostsKeyStream> {
     const limit = params.limit || 10;
     const totalMockPosts = 45; // Enough for multiple pages
     const baseTimestamp = Date.now();
@@ -113,7 +118,11 @@ export class NexusPostStreamService {
       await Core.LocalStreamPostsService.persistPosts(posts);
     }
 
-    return posts;
+    // Return in the format expected by master: NexusPostsKeyStream
+    return {
+      post_keys: posts.map((post) => post.details.id),
+      last_post_score: posts.length > 0 ? posts[posts.length - 1].details.indexed_at : baseTimestamp,
+    };
   }
 
   // TEMPORARY: Ensure mock users exist in the database
