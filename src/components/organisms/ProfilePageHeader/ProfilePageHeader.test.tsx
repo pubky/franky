@@ -80,6 +80,7 @@ const mockProps: ProfilePageHeaderProps = {
     onCopyLink: vi.fn(),
     onSignOut: vi.fn(),
     onStatusClick: vi.fn(),
+    onAvatarClick: vi.fn(),
   },
 };
 
@@ -180,39 +181,11 @@ describe('ProfilePageHeader', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('opens avatar zoom modal when avatar is clicked', () => {
-    render(<ProfilePageHeader {...mockProps} />);
-
-    const containers = screen.getAllByTestId('container');
-    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
-    fireEvent.click(avatarContainer!);
-
-    expect(screen.getByTestId('avatar-zoom-modal')).toBeInTheDocument();
-  });
-
-  it('closes avatar zoom modal when backdrop is clicked', () => {
-    render(<ProfilePageHeader {...mockProps} />);
-
-    // Open modal
-    const containers = screen.getAllByTestId('container');
-    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
-    fireEvent.click(avatarContainer!);
-
-    // Verify modal is open
-    expect(screen.getByTestId('avatar-zoom-modal')).toBeInTheDocument();
-
-    // Close modal by clicking close button
-    const closeButton = screen.getByTestId('modal-close');
-    fireEvent.click(closeButton);
-
-    // Verify modal is closed
-    expect(screen.queryByTestId('avatar-zoom-modal')).not.toBeInTheDocument();
-  });
-
-  it('renders avatar zoom modal with avatar image when avatarUrl is provided', () => {
+  it('calls onAvatarClick when avatar is clicked', () => {
+    const onAvatarClick = vi.fn();
     const props = {
       ...mockProps,
-      profile: { ...mockProps.profile, avatarUrl: 'https://example.com/avatar.jpg' },
+      actions: { ...mockProps.actions, onAvatarClick },
     };
     render(<ProfilePageHeader {...props} />);
 
@@ -220,19 +193,7 @@ describe('ProfilePageHeader', () => {
     const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
     fireEvent.click(avatarContainer!);
 
-    const avatarImage = screen.getByTestId('avatar-image-modal');
-    expect(avatarImage).toHaveAttribute('src', 'https://example.com/avatar.jpg');
-    expect(avatarImage).toHaveAttribute('alt', "Satoshi Nakamoto's avatar");
-  });
-
-  it('renders avatar zoom modal with fallback initials when avatarUrl is not provided', () => {
-    render(<ProfilePageHeader {...mockProps} />);
-
-    const containers = screen.getAllByTestId('container');
-    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
-    fireEvent.click(avatarContainer!);
-
-    expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('SN');
+    expect(onAvatarClick).toHaveBeenCalledTimes(1);
   });
 
   it('matches snapshot', () => {
