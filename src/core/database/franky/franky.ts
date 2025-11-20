@@ -19,7 +19,7 @@ import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stre
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
 import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.schema';
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
-import { bookmarkTableSchema } from '@/core/models/stream/bookmark/bookmark.schema';
+import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
