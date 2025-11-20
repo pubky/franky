@@ -27,7 +27,7 @@ export type ContainerProps = {
   onClick?: React.HTMLAttributes<HTMLElement>['onClick'];
   style?: React.CSSProperties;
   title?: string;
-  'aria-modal'?: boolean | 'true' | 'false';
+  'aria-modal'?: boolean;
   'aria-label'?: string;
   tabIndex?: number;
 };

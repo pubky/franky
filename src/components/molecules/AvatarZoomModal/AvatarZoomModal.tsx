@@ -66,7 +66,7 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
       ref={modalRef}
       overrideDefaults={true}
       role="dialog"
-      aria-modal="true"
+      aria-modal={true}
       aria-label={`${name}'s avatar enlarged`}
       tabIndex={-1}
       className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/50 duration-200 outline-none fade-in"

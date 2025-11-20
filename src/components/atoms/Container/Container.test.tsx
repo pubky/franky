@@ -12,7 +12,7 @@ describe('Container', () => {
   describe('Accessibility Props', () => {
     it('renders with aria-modal attribute', () => {
       render(
-        <Container aria-modal="true" data-testid="modal-container">
+        <Container aria-modal={true} data-testid="modal-container">
           Modal Container
         </Container>,
       );
@@ -44,7 +44,7 @@ describe('Container', () => {
       render(
         <Container
           role="dialog"
-          aria-modal="true"
+          aria-modal={true}
           aria-label="Dialog Title"
           tabIndex={-1}
           data-testid="dialog-container"
