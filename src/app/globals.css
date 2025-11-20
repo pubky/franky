@@ -153,12 +153,22 @@ body {
    * - Applied to: AvatarZoomModal component
    * 
    * Rationale:
-   * - 362px provides optimal viewing size for avatar details
-   * - Large enough to see fine details while maintaining aspect ratio
-   * - Consistent with design specifications for modal avatar display
+   * - 362px provides optimal viewing size on desktop
+   * - min() function ensures responsive sizing on mobile devices
+   * - 90vw (90% of viewport width) prevents overflow on small screens
+   * - Maintains aspect ratio across all device sizes
    * - Ensures avatar is prominently displayed without overwhelming the viewport
+   * 
+   * Responsive behavior:
+   * - Desktop (≥402px width): 362px (max size)
+   * - Mobile (<402px width):  90% of viewport width
+   * - Examples:
+   *   → 1920px viewport: 362px
+   *   → 768px viewport:  362px
+   *   → 375px viewport:  337px (90% of 375px)
+   *   → 320px viewport:  288px (90% of 320px)
    */
-  --avatar-zoom-size: 362px;
+  --avatar-zoom-size: min(362px, 90vw);
 
   /* ==================================================================
    * Z-INDEX LAYERS (Stacking Order)

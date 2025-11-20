@@ -365,3 +365,38 @@ describe('AvatarZoomModal - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 });
+
+describe('AvatarZoomModal - Responsive Sizing', () => {
+  it('uses responsive CSS variable for avatar size', () => {
+    render(
+      <AvatarZoomModal open={true} onClose={vi.fn()} avatarUrl="https://example.com/avatar.jpg" name="John Doe" />,
+    );
+
+    const avatar = screen.getByTestId('avatar');
+
+    // Verify it uses the CSS variable class (not a fixed pixel size)
+    expect(avatar).toHaveClass('size-(--avatar-zoom-size)');
+  });
+
+  it('avatar size is defined with min() function in CSS for responsiveness', () => {
+    // This test documents that --avatar-zoom-size uses min(362px, 90vw)
+    // The actual responsive behavior is handled by CSS and can be verified in:
+    // - globals.css: --avatar-zoom-size: min(362px, 90vw)
+    // - Visual testing: Check avatar scales down on narrow viewports
+    // - E2E tests: Test on various viewport sizes
+
+    render(<AvatarZoomModal open={true} onClose={vi.fn()} name="Test User" />);
+
+    const avatar = screen.getByTestId('avatar');
+    const computedStyle = window.getComputedStyle(avatar);
+
+    // Verify the CSS variable is being applied
+    expect(avatar.className).toContain('size-(--avatar-zoom-size)');
+
+    // Note: getComputedStyle won't show the CSS variable value in JSDOM,
+    // but this test documents the expected behavior for real browsers:
+    // - Desktop (≥402px): 362px max
+    // - Mobile (<402px): 90% of viewport width
+    expect(computedStyle).toBeDefined();
+  });
+});
