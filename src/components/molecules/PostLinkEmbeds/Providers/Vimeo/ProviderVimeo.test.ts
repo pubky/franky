@@ -112,6 +112,50 @@ describe('ProviderVimeo', () => {
           url: 'https://player.vimeo.com/video/123456789#t=3600s',
         });
       });
+
+      it('parses timestamp without seconds suffix (30)', () => {
+        // Vimeo format allows plain numbers to be interpreted as seconds
+        const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=30');
+        expect(result).toEqual({
+          url: 'https://player.vimeo.com/video/123456789#t=30s',
+        });
+      });
+
+      it('rejects malformed timestamps with duplicate suffixes', () => {
+        const malformedTimestamps = [
+          'https://vimeo.com/123456789#t=30ss',
+          'https://vimeo.com/123456789#t=1hh',
+          'https://vimeo.com/123456789#t=2mm',
+          'https://vimeo.com/123456789#t=1h2m3ss',
+        ];
+
+        malformedTimestamps.forEach((url) => {
+          const result = Vimeo.parseEmbed(url);
+          // Should return video URL without timestamp due to malformed format
+          expect(result).toEqual({
+            url: 'https://player.vimeo.com/video/123456789',
+          });
+        });
+      });
+
+      it('accepts valid timestamps with each unit appearing once', () => {
+        const validTimestamps = [
+          { url: 'https://vimeo.com/123456789#t=1h', expected: 3600 },
+          { url: 'https://vimeo.com/123456789#t=5m', expected: 300 },
+          { url: 'https://vimeo.com/123456789#t=30s', expected: 30 },
+          { url: 'https://vimeo.com/123456789#t=30', expected: 30 },
+          { url: 'https://vimeo.com/123456789#t=1h30m', expected: 5400 },
+          { url: 'https://vimeo.com/123456789#t=2m15s', expected: 135 },
+          { url: 'https://vimeo.com/123456789#t=1h2m3s', expected: 3723 },
+        ];
+
+        validTimestamps.forEach(({ url, expected }) => {
+          const result = Vimeo.parseEmbed(url);
+          expect(result).toEqual({
+            url: `https://player.vimeo.com/video/123456789#t=${expected}s`,
+          });
+        });
+      });
     });
 
     describe('invalid URLs', () => {
@@ -157,6 +201,9 @@ describe('ProviderVimeo', () => {
           'https://vimeo.com/123456789#t=',
           'https://vimeo.com/123456789#t=hms',
           'https://vimeo.com/123456789#t=-123',
+          'https://vimeo.com/123456789#t=30ss', // double 's' should be rejected
+          'https://vimeo.com/123456789#t=1hh2m', // double 'h' should be rejected
+          'https://vimeo.com/123456789#t=5mm', // double 'm' should be rejected
         ];
 
         invalidTimestamps.forEach((url) => {

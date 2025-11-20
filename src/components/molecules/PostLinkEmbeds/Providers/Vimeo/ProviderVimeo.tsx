@@ -55,7 +55,12 @@ const extractVimeoId = (url: string): string | null => {
 
 /**
  * Extract timestamp from Vimeo URL
- * Vimeo uses hash fragment format: #t=XmYs or #t=Xs etc.
+ * Vimeo uses hash fragment format: #t=XmYs or #t=Xs or #t=X (plain seconds)
+ *
+ * @security Regex Precision
+ * The 's' suffix is optional but explicit (not inside capture group) to prevent
+ * ambiguous matches like "30ss". Each time unit (h/m/s) can appear at most once.
+ * Plain numbers (e.g., "30") are treated as seconds.
  */
 const extractVimeoTimestamp = (url: string): number | null => {
   try {
@@ -63,6 +68,9 @@ const extractVimeoTimestamp = (url: string): number | null => {
     const timeHash = parsedUrl.hash.match(/#t=([^&\s]+)/)?.[1];
     if (!timeHash) return null;
 
+    // Match h/m/s format: each suffix is explicit and optional (outside capture groups)
+    // Supports: "1h2m3s", "5m", "30s", or plain "30" (treated as seconds)
+    // The 's?' makes seconds suffix optional, and the whole seconds group is optional via '?'
     const hmsMatch = timeHash.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
       return ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
