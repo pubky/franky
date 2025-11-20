@@ -20,11 +20,11 @@ export function buildFileBodyUrl(fileUris: Core.Pubky[]) {
 }
 
 export const filesApi = {
-  getAvatar: (pubky: Core.Pubky) => {
+  getAvatarUrl: (pubky: Core.Pubky) => {
     const encodedPubky = Core.encodePathSegment(pubky);
     return Core.buildCdnUrl(`avatar/${encodedPubky}`);
   },
-  getImage: ({ pubky, file_id, variant }: Core.TImageParams) => {
+  getImageUrl: ({ pubky, file_id, variant }: Core.TImageParams) => {
     const encodedPubky = Core.encodePathSegment(pubky);
     const encodedFileId = Core.encodePathSegment(file_id);
     return Core.buildCdnUrl(`${STATIC_PREFIX}/${encodedPubky}/${encodedFileId}/${variant}`);

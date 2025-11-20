@@ -1,22 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { buildCompositeId } from '@/core';
 
 describe('LocalStreamPostsService', () => {
-  const streamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
+  const streamId: Core.PostStreamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
   const DEFAULT_AUTHOR = 'user-1';
   const BASE_TIMESTAMP = 1000000;
-  const NON_EXISTENT_STREAM_ID = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL;
+  const NON_EXISTENT_STREAM_ID: Core.PostStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL;
 
   // ============================================================================
   // Test Helpers
   // ============================================================================
 
-  const buildCompositePostId = (author: string, postId: string) => `${author}:${postId}`;
-
   const createMockNexusPost = (
     postId: string,
     author: string = DEFAULT_AUTHOR,
+    timestamp: number = BASE_TIMESTAMP,
     overrides?: Partial<Core.NexusPost>,
   ): Core.NexusPost => ({
     details: {
@@ -25,9 +25,9 @@ describe('LocalStreamPostsService', () => {
       kind: 'short' as const,
       uri: `https://pubky.app/${author}/pub/pubky.app/posts/${postId}`,
       author,
-      indexed_at: BASE_TIMESTAMP,
+      indexed_at: timestamp,
       attachments: null,
-      ...overrides?.details,
+      ...(overrides?.details as Core.NexusPostDetails | undefined),
     },
     counts: {
       replies: 0,
@@ -47,18 +47,20 @@ describe('LocalStreamPostsService', () => {
     ...overrides,
   });
 
+  const postId = (id: string) => buildCompositeId({ pubky: DEFAULT_AUTHOR, id });
+
   const createStream = async (postIds: string[]) => {
     await Core.LocalStreamPostsService.upsert({ streamId, stream: postIds });
   };
 
   const verifyStream = async (expectedPostIds: string[]) => {
-    const result = await Core.PostStreamModel.findById(streamId);
+    const result = await Core.LocalStreamPostsService.findById(streamId);
     expect(result).toBeTruthy();
     expect(result!.stream).toEqual(expectedPostIds);
   };
 
   const verifyStreamDoesNotExist = async () => {
-    const result = await Core.PostStreamModel.findById(streamId);
+    const result = await Core.LocalStreamPostsService.findById(streamId);
     expect(result).toBeNull();
   };
 
@@ -77,13 +79,19 @@ describe('LocalStreamPostsService', () => {
     expect(tags).toBeTruthy();
   };
 
-  const persistAndVerifyPost = async (postId: string, author: string, overrides?: Partial<Core.NexusPost>) => {
-    const mockPost = createMockNexusPost(postId, author, overrides);
-    const compositeId = buildCompositePostId(author, postId);
+  const persistAndVerifyPost = async (
+    postId: string,
+    author: string,
+    timestamp: number = BASE_TIMESTAMP,
+    overrides?: Partial<Core.NexusPost>,
+  ) => {
+    const mockPost = createMockNexusPost(postId, author, timestamp, overrides);
+    const compositeId = buildCompositeId({ pubky: author, id: postId });
 
     const result = await Core.LocalStreamPostsService.persistPosts([mockPost]);
 
-    expect(result).toEqual([compositeId]);
+    const expectedAttachments = mockPost.details.attachments || [];
+    expect(result).toEqual({ postAttachments: expectedAttachments });
     return { compositeId, mockPost };
   };
 
@@ -104,9 +112,9 @@ describe('LocalStreamPostsService', () => {
   describe('upsert', () => {
     it('should create a new stream with post IDs', async () => {
       const postIds = [
-        buildCompositePostId('user1', 'post1'),
-        buildCompositePostId('user2', 'post2'),
-        buildCompositePostId('user3', 'post3'),
+        buildCompositeId({ pubky: 'user1', id: 'post1' }),
+        buildCompositeId({ pubky: 'user2', id: 'post2' }),
+        buildCompositeId({ pubky: 'user3', id: 'post3' }),
       ];
 
       await Core.LocalStreamPostsService.upsert({ streamId, stream: postIds });
@@ -115,8 +123,11 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should update an existing stream with new post IDs', async () => {
-      const initialIds = [buildCompositePostId('user1', 'post1'), buildCompositePostId('user2', 'post2')];
-      const updatedIds = [...initialIds, buildCompositePostId('user3', 'post3')];
+      const initialIds = [
+        buildCompositeId({ pubky: 'user1', id: 'post1' }),
+        buildCompositeId({ pubky: 'user2', id: 'post2' }),
+      ];
+      const updatedIds = [...initialIds, buildCompositeId({ pubky: 'user3', id: 'post3' })];
 
       await createStream(initialIds);
       await Core.LocalStreamPostsService.upsert({ streamId, stream: updatedIds });
@@ -140,7 +151,7 @@ describe('LocalStreamPostsService', () => {
       );
       vi.spyOn(Core.PostStreamModel, 'upsert').mockRejectedValue(databaseError);
 
-      const postIds = [buildCompositePostId('user1', 'post1')];
+      const postIds = [buildCompositeId({ pubky: 'user1', id: 'post1' })];
 
       await expect(Core.LocalStreamPostsService.upsert({ streamId, stream: postIds })).rejects.toThrow(
         'Failed to upsert PostStream',
@@ -150,7 +161,10 @@ describe('LocalStreamPostsService', () => {
 
   describe('findById', () => {
     it('should return stream when it exists', async () => {
-      const postIds = [buildCompositePostId('user1', 'post1'), buildCompositePostId('user2', 'post2')];
+      const postIds = [
+        buildCompositeId({ pubky: 'user1', id: 'post1' }),
+        buildCompositeId({ pubky: 'user2', id: 'post2' }),
+      ];
       await createStream(postIds);
 
       const result = await Core.LocalStreamPostsService.findById(streamId);
@@ -181,7 +195,10 @@ describe('LocalStreamPostsService', () => {
 
   describe('deleteById', () => {
     it('should delete an existing stream', async () => {
-      const postIds = [buildCompositePostId('user1', 'post1'), buildCompositePostId('user2', 'post2')];
+      const postIds = [
+        buildCompositeId({ pubky: 'user1', id: 'post1' }),
+        buildCompositeId({ pubky: 'user2', id: 'post2' }),
+      ];
       await createStream(postIds);
       await Core.LocalStreamPostsService.deleteById(streamId);
       await verifyStreamDoesNotExist();
@@ -206,7 +223,7 @@ describe('LocalStreamPostsService', () => {
   });
 
   describe('persistPosts', () => {
-    it('should persist posts and return composite post IDs', async () => {
+    it('should persist posts and return post attachments', async () => {
       const mockPosts: Core.NexusPost[] = [
         createMockNexusPost('post-1', 'user-1'),
         createMockNexusPost('post-2', 'user-2'),
@@ -214,9 +231,9 @@ describe('LocalStreamPostsService', () => {
 
       const result = await Core.LocalStreamPostsService.persistPosts(mockPosts);
 
-      expect(result).toEqual([buildCompositePostId('user-1', 'post-1'), buildCompositePostId('user-2', 'post-2')]);
-      await verifyPostPersisted(buildCompositePostId('user-1', 'post-1'), 'Post post-1 content');
-      await verifyPostPersisted(buildCompositePostId('user-2', 'post-2'), 'Post post-2 content');
+      expect(result).toEqual({ postAttachments: [] });
+      await verifyPostPersisted(buildCompositeId({ pubky: 'user-1', id: 'post-1' }), 'Post post-1 content');
+      await verifyPostPersisted(buildCompositeId({ pubky: 'user-2', id: 'post-2' }), 'Post post-2 content');
     });
 
     it('should handle posts with tags', async () => {
@@ -226,7 +243,7 @@ describe('LocalStreamPostsService', () => {
         taggers_count: 1,
         relationship: true,
       };
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', {
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
         tags: [new Core.TagModel(mockTag)],
       });
 
@@ -239,7 +256,7 @@ describe('LocalStreamPostsService', () => {
 
     it('should handle posts with relationships', async () => {
       const repliedUri = 'https://pubky.app/user-2/pub/pubky.app/posts/parent-post';
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', {
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
         relationships: {
           replied: repliedUri,
           reposted: null,
@@ -255,7 +272,7 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should remove author from post details', async () => {
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1');
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP);
 
       const postDetails = await Core.PostDetailsModel.findById(compositeId);
       expect(postDetails).toBeTruthy();
@@ -266,11 +283,11 @@ describe('LocalStreamPostsService', () => {
     it('should handle empty array', async () => {
       const result = await Core.LocalStreamPostsService.persistPosts([]);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual({ postAttachments: [] });
     });
 
     it('should handle posts with empty tags array', async () => {
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', {
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
         tags: [],
       });
 
@@ -292,7 +309,7 @@ describe('LocalStreamPostsService', () => {
         taggers_count: 1,
         relationship: false,
       };
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', {
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
         tags: [new Core.TagModel(mockTag1), new Core.TagModel(mockTag2)],
       });
 
@@ -304,7 +321,7 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should handle posts with empty mentioned array', async () => {
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', {
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
         relationships: {
           replied: null,
           reposted: null,
@@ -318,7 +335,7 @@ describe('LocalStreamPostsService', () => {
     });
 
     it('should handle posts with all null relationships', async () => {
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', {
+      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
         relationships: {
           replied: null,
           reposted: null,
@@ -357,101 +374,102 @@ describe('LocalStreamPostsService', () => {
 
       const result = await Core.LocalStreamPostsService.persistPosts(mockPosts);
 
-      expect(result).toEqual([
-        buildCompositePostId('author-1', 'post-1'),
-        buildCompositePostId('author-2', 'post-2'),
-        buildCompositePostId('author-1', 'post-3'),
-      ]);
+      expect(result).toEqual({ postAttachments: [] });
 
       // Verify all posts were persisted
-      await verifyPostPersisted(buildCompositePostId('author-1', 'post-1'), 'Post post-1 content');
-      await verifyPostPersisted(buildCompositePostId('author-2', 'post-2'), 'Post post-2 content');
-      await verifyPostPersisted(buildCompositePostId('author-1', 'post-3'), 'Post post-3 content');
+      await verifyPostPersisted(buildCompositeId({ pubky: 'author-1', id: 'post-1' }), 'Post post-1 content');
+      await verifyPostPersisted(buildCompositeId({ pubky: 'author-2', id: 'post-2' }), 'Post post-2 content');
+      await verifyPostPersisted(buildCompositeId({ pubky: 'author-1', id: 'post-3' }), 'Post post-3 content');
+    });
+
+    it('should collect and return attachments from posts', async () => {
+      const attachment1 = 'https://pubky.app/file1.jpg';
+      const attachment2 = 'https://pubky.app/file2.png';
+      const attachment3 = 'https://pubky.app/file3.gif';
+
+      const mockPosts: Core.NexusPost[] = [
+        createMockNexusPost('post-1', 'user-1', BASE_TIMESTAMP, {
+          details: { attachments: [attachment1, attachment2] } as Core.NexusPostDetails,
+        }),
+        createMockNexusPost('post-2', 'user-2', BASE_TIMESTAMP, {
+          details: { attachments: [attachment3] } as Core.NexusPostDetails,
+        }),
+        createMockNexusPost('post-3', 'user-3', BASE_TIMESTAMP, {
+          details: { attachments: null } as Core.NexusPostDetails,
+        }),
+      ];
+
+      const result = await Core.LocalStreamPostsService.persistPosts(mockPosts);
+
+      expect(result).toEqual({
+        postAttachments: [attachment1, attachment2, attachment3],
+      });
+    });
+
+    it('should handle posts with empty attachments array', async () => {
+      const mockPosts: Core.NexusPost[] = [
+        createMockNexusPost('post-1', 'user-1', BASE_TIMESTAMP, {
+          details: { attachments: [] } as unknown as Core.NexusPostDetails,
+        }),
+      ];
+
+      const result = await Core.LocalStreamPostsService.persistPosts(mockPosts);
+
+      expect(result).toEqual({ postAttachments: [] });
     });
   });
 
   describe('persistNewStreamChunk', () => {
     it('should append new stream chunk to existing stream', async () => {
-      const initialStream = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-      ];
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-3'), buildCompositePostId(DEFAULT_AUTHOR, 'post-4')];
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newChunk = [postId('post-3'), postId('post-4')];
 
       await createStream(initialStream);
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
       await verifyStream([...initialStream, ...newChunk]);
     });
 
     it('should create stream when it does not exist', async () => {
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1'), buildCompositePostId(DEFAULT_AUTHOR, 'post-2')];
+      const newChunk = [postId('post-1'), postId('post-2')];
 
-      // Verify stream doesn't exist
-      const beforeStream = await Core.PostStreamModel.findById(NON_EXISTENT_STREAM_ID);
-      expect(beforeStream).toBeNull();
+      expect(await Core.LocalStreamPostsService.findById(NON_EXISTENT_STREAM_ID)).toBeNull();
 
-      // Persist to non-existent stream - should create it
       await Core.LocalStreamPostsService.persistNewStreamChunk({
         streamId: NON_EXISTENT_STREAM_ID,
         stream: newChunk,
       });
 
-      // Verify stream was created with the posts
-      const afterStream = await Core.PostStreamModel.findById(NON_EXISTENT_STREAM_ID);
-      expect(afterStream).not.toBeNull();
-      expect(afterStream?.stream).toEqual(newChunk);
+      const result = await Core.LocalStreamPostsService.findById(NON_EXISTENT_STREAM_ID);
+      expect(result?.stream).toEqual(newChunk);
     });
 
     it('should handle appending to empty stream', async () => {
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1'), buildCompositePostId(DEFAULT_AUTHOR, 'post-2')];
+      const newChunk = [postId('post-1'), postId('post-2')];
 
       await createStream([]);
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
       await verifyStream(newChunk);
     });
 
     it('should handle appending empty chunk', async () => {
-      const initialStream = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
+      const initialStream = [postId('post-1')];
 
       await createStream(initialStream);
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: [],
-      });
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: [] });
 
       await verifyStream(initialStream);
     });
 
     it('should filter duplicates when appending new chunk', async () => {
-      const initialStream = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-      ];
-      // New chunk contains one duplicate (against existing stream) and one new post
-      const newChunk = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'), // Duplicate (exists in initialStream)
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'), // New
-      ];
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newChunk = [postId('post-2'), postId('post-3')];
 
-      // Persist post details first
       await Core.LocalStreamPostsService.persistPosts([
-        createMockNexusPost('post-1', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-1', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-2', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-2', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 1 },
-        }),
-        createMockNexusPost('post-3', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-3', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 2 },
-        }),
+        createMockNexusPost('post-1', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-2', DEFAULT_AUTHOR, BASE_TIMESTAMP + 1),
+        createMockNexusPost('post-3', DEFAULT_AUTHOR, BASE_TIMESTAMP + 2),
       ]);
 
       await createStream(initialStream);
@@ -460,65 +478,37 @@ describe('LocalStreamPostsService', () => {
         stream: newChunk,
       });
 
-      // Should have post-1, post-2, post-3 (post-2 not duplicated against existing stream)
-      const result = await Core.PostStreamModel.findById(streamId);
+      const result = await Core.LocalStreamPostsService.findById(streamId);
       expect(result?.stream).toHaveLength(3);
-      expect(result?.stream).toContain(buildCompositePostId(DEFAULT_AUTHOR, 'post-1'));
-      expect(result?.stream).toContain(buildCompositePostId(DEFAULT_AUTHOR, 'post-2'));
-      expect(result?.stream).toContain(buildCompositePostId(DEFAULT_AUTHOR, 'post-3'));
+      expect(result?.stream).toContain(postId('post-1'));
+      expect(result?.stream).toContain(postId('post-2'));
+      expect(result?.stream).toContain(postId('post-3'));
     });
 
     it('should sort stream by timestamp in descending order (most recent first)', async () => {
-      // Create initial stream with posts (order doesn't matter, will be sorted)
-      const initialStream = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'), // Middle (BASE_TIMESTAMP + 2)
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'), // Older (BASE_TIMESTAMP)
-      ];
-      const newChunk = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'), // Newest (BASE_TIMESTAMP + 5)
-      ];
+      const initialStream = [postId('post-2'), postId('post-1')];
+      const newChunk = [postId('post-3')];
 
-      // Persist post details FIRST with different timestamps (before creating stream)
-      // This ensures post details exist when persistNewStreamChunk fetches them
       await Core.LocalStreamPostsService.persistPosts([
-        createMockNexusPost('post-2', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-2', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 2 },
-        }),
-        createMockNexusPost('post-1', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-1', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-3', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-3', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 5 },
-        }),
+        createMockNexusPost('post-2', DEFAULT_AUTHOR, BASE_TIMESTAMP + 2),
+        createMockNexusPost('post-1', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-3', DEFAULT_AUTHOR, BASE_TIMESTAMP + 5),
       ]);
 
-      // Create stream with initial posts AFTER persisting post details
       await createStream(initialStream);
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
-
-      // Verify posts are in the stream in the correct order
-      const result = await Core.PostStreamModel.findById(streamId);
-      expect(result?.stream).toHaveLength(3);
-      expect(result?.stream).toEqual([
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
-      ]);
+      const result = await Core.LocalStreamPostsService.findById(streamId);
+      expect(result?.stream).toEqual([postId('post-3'), postId('post-2'), postId('post-1')]);
     });
 
     it('should handle posts with missing timestamps (defaults to 0)', async () => {
-      const initialStream = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-2')];
+      const initialStream = [postId('post-1')];
+      const newChunk = [postId('post-2')];
 
       await createStream(initialStream);
-
-      // Persist post-1 with timestamp, post-2 without timestamp (undefined)
       await Core.PostDetailsModel.create({
-        id: buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
+        id: postId('post-1'),
         content: 'Post 1',
         kind: 'short',
         indexed_at: BASE_TIMESTAMP,
@@ -526,152 +516,67 @@ describe('LocalStreamPostsService', () => {
         attachments: null,
       });
 
-      // Post-2 is missing from database (will have timestamp 0)
-      // This simulates a post that hasn't been persisted yet
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
-
-      // Post with timestamp should come before post without timestamp (timestamp 0)
-      const result = await Core.PostStreamModel.findById(streamId);
-      expect(result?.stream).toEqual([
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'), // Has timestamp BASE_TIMESTAMP
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'), // Has timestamp 0 (default)
-      ]);
+      const result = await Core.LocalStreamPostsService.findById(streamId);
+      expect(result?.stream).toEqual([postId('post-1'), postId('post-2')]);
     });
 
     it('should handle posts with same timestamps (stable sort)', async () => {
-      const initialStream = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-      ];
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-3'), buildCompositePostId(DEFAULT_AUTHOR, 'post-4')];
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newChunk = [postId('post-3'), postId('post-4')];
 
       await createStream(initialStream);
-
-      // Persist all posts with the same timestamp
       await Core.LocalStreamPostsService.persistPosts([
-        createMockNexusPost('post-1', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-1', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-2', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-2', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-3', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-3', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-4', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-4', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
+        createMockNexusPost('post-1', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-2', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-3', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-4', DEFAULT_AUTHOR, BASE_TIMESTAMP),
       ]);
 
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      // All posts have same timestamp, so order should be preserved (existing first, then new)
-      // Since sorting is stable, order within same timestamp group is preserved
-      const result = await Core.PostStreamModel.findById(streamId);
-      expect(result?.stream).toHaveLength(4);
-      expect(result?.stream).toEqual([
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-4'),
-      ]);
+      const result = await Core.LocalStreamPostsService.findById(streamId);
+      expect(result?.stream).toEqual([postId('post-1'), postId('post-2'), postId('post-3'), postId('post-4')]);
     });
 
     it('should handle mixed timestamps correctly (some posts newer, some older)', async () => {
-      // Initial stream has older posts
-      const initialStream = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'), // BASE_TIMESTAMP
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'), // BASE_TIMESTAMP + 1
-      ];
-      // New chunk has mixed: one newer, one older
-      const newChunk = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'), // BASE_TIMESTAMP + 5 (newer)
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-4'), // BASE_TIMESTAMP - 1 (older)
-      ];
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newChunk = [postId('post-3'), postId('post-4')];
 
-      // Persist post details FIRST (before creating stream)
       await Core.LocalStreamPostsService.persistPosts([
-        createMockNexusPost('post-1', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-1', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-2', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-2', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 1 },
-        }),
-        createMockNexusPost('post-3', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-3', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 5 },
-        }),
-        createMockNexusPost('post-4', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-4', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP - 1 },
-        }),
+        createMockNexusPost('post-1', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-2', DEFAULT_AUTHOR, BASE_TIMESTAMP + 1),
+        createMockNexusPost('post-3', DEFAULT_AUTHOR, BASE_TIMESTAMP + 5),
+        createMockNexusPost('post-4', DEFAULT_AUTHOR, BASE_TIMESTAMP - 1),
       ]);
 
-      // Create stream AFTER persisting post details
       await createStream(initialStream);
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
-
-      // Verify all posts are in the stream (sorting behavior verified in implementation)
-      const result = await Core.PostStreamModel.findById(streamId);
-      expect(result?.stream).toHaveLength(4);
-      expect(result?.stream).toEqual([
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-1'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-4'),
-      ]);
+      const result = await Core.LocalStreamPostsService.findById(streamId);
+      expect(result?.stream).toEqual([postId('post-3'), postId('post-2'), postId('post-1'), postId('post-4')]);
     });
 
-    // note: franky does not handle duplicates within new chunk, although it shouldn't need to because nexus ensures it
     it('should handle duplicates within new chunk itself', async () => {
-      const initialStream = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
-      // New chunk contains duplicates
-      // Note: The implementation filters duplicates against the existing stream,
-      // but does NOT filter duplicates within the new chunk itself
-      const newChunk = [
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'),
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-2'), // Duplicate in new chunk
-        buildCompositePostId(DEFAULT_AUTHOR, 'post-3'),
-      ];
+      const initialStream = [postId('post-1')];
+      const newChunk = [postId('post-2'), postId('post-2'), postId('post-3')];
 
-      // Persist post details first
       await Core.LocalStreamPostsService.persistPosts([
-        createMockNexusPost('post-1', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-1', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP },
-        }),
-        createMockNexusPost('post-2', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-2', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 1 },
-        }),
-        createMockNexusPost('post-3', DEFAULT_AUTHOR, {
-          details: { ...createMockNexusPost('post-3', DEFAULT_AUTHOR).details, indexed_at: BASE_TIMESTAMP + 2 },
-        }),
+        createMockNexusPost('post-1', DEFAULT_AUTHOR, BASE_TIMESTAMP),
+        createMockNexusPost('post-2', DEFAULT_AUTHOR, BASE_TIMESTAMP + 1),
+        createMockNexusPost('post-3', DEFAULT_AUTHOR, BASE_TIMESTAMP + 2),
       ]);
 
       await createStream(initialStream);
-      await Core.LocalStreamPostsService.persistNewStreamChunk({
-        streamId,
-        stream: newChunk,
-      });
+      await Core.LocalStreamPostsService.persistNewStreamChunk({ streamId, stream: newChunk });
 
-      // Implementation does NOT filter duplicates within new chunk itself
-      // post-2 will appear twice (once for each occurrence in newChunk)
-      const result = await Core.PostStreamModel.findById(streamId);
-      const post2Count = result?.stream.filter((id) => id === buildCompositePostId(DEFAULT_AUTHOR, 'post-2')).length;
-      expect(post2Count).toBe(2); // Duplicates within new chunk are NOT filtered
-      expect(result?.stream).toHaveLength(4); // post-1, post-2 (twice), post-3
+      const result = await Core.LocalStreamPostsService.findById(streamId);
+      expect(result?.stream.filter((id) => id === postId('post-2')).length).toBe(2);
+      expect(result?.stream).toHaveLength(4);
     });
 
     it('should propagate error when PostStreamModel.findById throws in persistNewStreamChunk', async () => {
-      // Mock PostStreamModel.findById to throw error
       const databaseError = Libs.createDatabaseError(
         Libs.DatabaseErrorType.QUERY_FAILED,
         'Database query failed',
@@ -680,23 +585,17 @@ describe('LocalStreamPostsService', () => {
       );
       vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
 
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
-
       await expect(
         Core.LocalStreamPostsService.persistNewStreamChunk({
           streamId,
-          stream: newChunk,
+          stream: [postId('post-1')],
         }),
       ).rejects.toThrow('Database query failed');
     });
 
     it('should propagate error when PostDetailsModel.findByIdsPreserveOrder throws', async () => {
-      const initialStream = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-2')];
+      await createStream([postId('post-1')]);
 
-      await createStream(initialStream);
-
-      // Mock PostDetailsModel.findByIdsPreserveOrder to throw error
       const databaseError = Libs.createDatabaseError(
         Libs.DatabaseErrorType.QUERY_FAILED,
         'Database query failed',
@@ -708,22 +607,18 @@ describe('LocalStreamPostsService', () => {
       await expect(
         Core.LocalStreamPostsService.persistNewStreamChunk({
           streamId,
-          stream: newChunk,
+          stream: [postId('post-2')],
         }),
       ).rejects.toThrow('Database query failed');
     });
 
     it('should propagate error when PostStreamModel.upsert throws in persistNewStreamChunk', async () => {
-      const initialStream = [buildCompositePostId(DEFAULT_AUTHOR, 'post-1')];
-      const newChunk = [buildCompositePostId(DEFAULT_AUTHOR, 'post-2')];
-
-      await createStream(initialStream);
+      await createStream([postId('post-1')]);
       await Core.LocalStreamPostsService.persistPosts([
         createMockNexusPost('post-1', DEFAULT_AUTHOR),
         createMockNexusPost('post-2', DEFAULT_AUTHOR),
       ]);
 
-      // Mock PostStreamModel.upsert to throw error (after sorting)
       const databaseError = Libs.createDatabaseError(
         Libs.DatabaseErrorType.UPSERT_FAILED,
         'Failed to upsert stream',
@@ -735,7 +630,7 @@ describe('LocalStreamPostsService', () => {
       await expect(
         Core.LocalStreamPostsService.persistNewStreamChunk({
           streamId,
-          stream: newChunk,
+          stream: [postId('post-2')],
         }),
       ).rejects.toThrow('Failed to upsert stream');
     });

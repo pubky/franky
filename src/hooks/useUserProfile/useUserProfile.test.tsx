@@ -36,8 +36,8 @@ vi.mock('@/core', async (importOriginal) => {
     UserController: {
       getDetails: vi.fn().mockImplementation(() => Promise.resolve(mockUserDetails.current)),
     },
-    filesApi: {
-      getAvatar: vi.fn((userId: string) => `https://example.com/avatar/${userId}`),
+    FileController: {
+      getAvatarUrl: vi.fn((userId: string) => `https://example.com/avatar/${userId}`),
     },
   };
 });
@@ -147,7 +147,7 @@ describe('useUserProfile', () => {
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.profile?.avatarUrl).toBe('https://example.com/avatar/test-user-id');
-      expect(Core.filesApi.getAvatar).toHaveBeenCalledWith('test-user-id');
+      expect(Core.FileController.getAvatarUrl).toHaveBeenCalledWith('test-user-id');
     });
 
     it('returns undefined avatar URL when user has no image', () => {

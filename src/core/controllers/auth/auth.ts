@@ -16,6 +16,19 @@ export class AuthController {
   }
 
   /**
+   * Applies the bootstrap response to the auth store and notification store.
+   * @param params - Object containing the auth store and bootstrap response
+   * @param params.authStore - The auth store
+   * @param params.bootstrapResponse - The bootstrap response
+   */
+  private static async applyBootstrapResponse({ authStore, bootstrapResponse }: Core.TBootstrapResponseParams) {
+    const { notification, filesUris } = bootstrapResponse;
+    await Core.FileApplication.persistFiles(filesUris);
+    Core.useNotificationStore.getState().setState(notification);
+    authStore.setAuthenticated(true);
+  }
+
+  /**
    * Saves authenticated user data to the auth store and initializes the application bootstrap.
    * @param params - Object containing session and pubky data from authentication
    * @param params.session - The user session data
@@ -28,9 +41,8 @@ export class AuthController {
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
-    const notificationState = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
-    Core.useNotificationStore.getState().setState(notificationState);
-    authStore.setAuthenticated(true);
+    const bootstrapResponse = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
+    this.applyBootstrapResponse({ authStore, bootstrapResponse });
   }
 
   /**
@@ -43,9 +55,8 @@ export class AuthController {
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
-    const notificationState = await Core.BootstrapApplication.initializeWithRetry({ pubky, lastReadUrl: url });
-    Core.useNotificationStore.getState().setState(notificationState);
-    authStore.setAuthenticated(true);
+    const bootstrapResponse = await Core.BootstrapApplication.initializeWithRetry({ pubky, lastReadUrl: url });
+    this.applyBootstrapResponse({ authStore, bootstrapResponse });
   }
 
   /**
@@ -123,9 +134,8 @@ export class AuthController {
     const {
       meta: { url },
     } = Core.NotificationNormalizer.to(pubky);
-    const notificationState = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
-    Core.useNotificationStore.getState().setState(notificationState);
-    authStore.setAuthenticated(true);
+    const bootstrapResponse = await Core.BootstrapApplication.initialize({ pubky, lastReadUrl: url });
+    this.applyBootstrapResponse({ authStore, bootstrapResponse });
   }
 
   /**

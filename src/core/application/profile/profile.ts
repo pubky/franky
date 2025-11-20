@@ -28,13 +28,6 @@ export class ProfileApplication {
     return null;
   }
 
-  static async uploadAvatar({ blobResult, fileResult }: Core.TUploadAvatarInput) {
-    // 1. Upload Blob
-    await Core.HomeserverService.putBlob(blobResult.meta.url, blobResult.blob.data);
-    // 2. Create File Record
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
-  }
-
   static async create({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());

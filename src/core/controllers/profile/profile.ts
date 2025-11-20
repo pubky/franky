@@ -9,21 +9,6 @@ export class ProfileController {
     return await Core.ProfileApplication.read({ userId });
   }
 
-  // Upload avatar to homeserver and return the url
-  static async uploadAvatar(avatarFile: File, pubky: Core.Pubky): Promise<string> {
-    const fileContent = await avatarFile.arrayBuffer();
-    const blobData = new Uint8Array(fileContent);
-
-    // 1. Normalize Blob
-    const blobResult = Core.FileNormalizer.toBlob(blobData, pubky);
-    // 2. Normalize File Record
-    const fileResult = Core.FileNormalizer.toFile(avatarFile, blobResult.meta.url, pubky);
-    // 3. Upload to homeserver
-    await Core.ProfileApplication.uploadAvatar({ blobResult, fileResult });
-
-    return fileResult.meta.url;
-  }
-
   static async create(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
     const { user, meta } = Core.UserNormalizer.to(
       {

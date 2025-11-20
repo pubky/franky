@@ -54,7 +54,7 @@ export class TagController {
   }: Core.TTagEventParams): Promise<{ tagUrl: string; tag: PubkyAppTag }> {
     let uri: string;
     if (taggedKind === Core.TagKind.POST) {
-      const { pubky, postId } = Core.parsePostCompositeId(taggedId);
+      const { pubky, id: postId } = Core.parseCompositeId(taggedId);
       uri = postUriBuilder(pubky, postId);
     } else {
       uri = userUriBuilder(taggedId);
