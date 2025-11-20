@@ -157,6 +157,122 @@ describe('AvatarZoomModal', () => {
 
     expect(hooks.useBodyScrollLock).toHaveBeenCalledWith(true);
   });
+
+  describe('Event Listener Cleanup', () => {
+    it('removes event listener when component unmounts', () => {
+      const onClose = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+      const { unmount } = render(<AvatarZoomModal {...mockProps} onClose={onClose} />);
+
+      // Event listener should be added when open
+      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+
+      unmount();
+
+      // Event listener should be removed on unmount
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
+    });
+
+    it('removes event listener when modal closes', () => {
+      const onClose = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+      const { rerender } = render(<AvatarZoomModal {...mockProps} onClose={onClose} />);
+
+      // Clear call counts after initial render
+      addEventListenerSpy.mockClear();
+      removeEventListenerSpy.mockClear();
+
+      // Close the modal
+      rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
+
+      // Event listener should be removed when modal closes
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
+    });
+
+    it('does not add event listener when modal is initially closed', () => {
+      const onClose = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+
+      render(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
+
+      // Event listener should not be added when modal is closed
+      expect(addEventListenerSpy).not.toHaveBeenCalledWith('keydown', expect.any(Function));
+
+      addEventListenerSpy.mockRestore();
+    });
+
+    it('adds event listener when modal opens', () => {
+      const onClose = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+
+      const { rerender } = render(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
+
+      // Clear call counts after initial render
+      addEventListenerSpy.mockClear();
+
+      // Open the modal
+      rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={true} />);
+
+      // Event listener should be added when modal opens
+      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+
+      addEventListenerSpy.mockRestore();
+    });
+
+    it('does not stack multiple event listeners on rapid open/close', () => {
+      const onClose = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+      const { rerender } = render(<AvatarZoomModal {...mockProps} onClose={onClose} open={true} />);
+
+      // Rapidly close and reopen
+      rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
+      rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={true} />);
+      rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
+      rerender(<AvatarZoomModal {...mockProps} onClose={onClose} open={true} />);
+
+      // Should have removed listeners each time
+      expect(removeEventListenerSpy.mock.calls.length).toBeGreaterThanOrEqual(4);
+
+      // Fire escape key - should only call onClose once
+      onClose.mockClear();
+      fireEvent.keyDown(document, { key: 'Escape' });
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
+    });
+
+    it('cleanup function is always registered regardless of open state', () => {
+      const onClose = vi.fn();
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+      // Start with modal closed
+      const { unmount } = render(<AvatarZoomModal {...mockProps} onClose={onClose} open={false} />);
+
+      removeEventListenerSpy.mockClear();
+
+      // Unmount - cleanup should be called even though modal was never opened
+      unmount();
+
+      // Cleanup function should be called on unmount
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
+
+      removeEventListenerSpy.mockRestore();
+    });
+  });
 });
 
 describe('AvatarZoomModal - Snapshots', () => {

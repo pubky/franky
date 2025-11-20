@@ -16,15 +16,16 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
   Hooks.useBodyScrollLock(open);
 
   useEffect(() => {
-    if (!open) return;
-
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
+    if (open) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
