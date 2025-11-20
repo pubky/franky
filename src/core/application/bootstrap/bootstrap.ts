@@ -37,6 +37,8 @@ export class BootstrapApplication {
         streamId: Core.UserStreamTypes.RECOMMENDED,
         stream: data.list.recommended,
       }),
+      // Both features: hot tags and tag streams
+      Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
       Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
     ]);
