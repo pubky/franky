@@ -73,7 +73,9 @@ const extractVimeoTimestamp = (url: string): number | null => {
     // The 's?' makes seconds suffix optional, and the whole seconds group is optional via '?'
     const hmsMatch = timeHash.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
-      return ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      // convertHmsToSeconds returns null if any value is NaN (defense in depth)
+      return timestamp;
     }
 
     return null;

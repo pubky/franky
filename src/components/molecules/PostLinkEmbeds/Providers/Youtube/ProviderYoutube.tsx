@@ -48,12 +48,16 @@ const extractYouTubeTimestamp = (url: string): number | null => {
     // Require at least one component
     const hmsMatch = timeParam.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)$/);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
-      return ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      // convertHmsToSeconds returns null if any value is NaN (defense in depth)
+      if (timestamp !== null) return timestamp;
     }
 
     const numericMatch = timeParam.match(/^(\d+)s?$/);
     if (numericMatch) {
-      return parseInt(numericMatch[1], 10);
+      const parsed = parseInt(numericMatch[1], 10);
+      // Guard against NaN from parseInt (defense in depth)
+      return isNaN(parsed) ? null : parsed;
     }
 
     return null;
