@@ -102,8 +102,6 @@ describe('NotificationCoordinator', () => {
       // Reset creates new instance with fresh state
       Core.NotificationCoordinator.resetInstance();
 
-      const coord2 = Core.NotificationCoordinator.getInstance();
-
       // New instance should not be polling (start() was not called)
       vi.advanceTimersByTime(5_000);
       expect(spy).toHaveBeenCalledTimes(1); // No additional calls from coord2
@@ -991,7 +989,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('does not poll until start() is called', async () => {
-    const { spy, coordinator } = setupAuthenticatedTest();
+    const { spy } = setupAuthenticatedTest();
 
     // Create instance but do not start (don't call start())
     // Advance time – should not poll because start() wasn't called
