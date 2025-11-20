@@ -45,8 +45,8 @@ const extractYouTubeTimestamp = (url: string): number | null => {
     const timeParam = parsedUrl.searchParams.get('t');
     if (!timeParam) return null;
 
-    // Require at least one component
-    const hmsMatch = timeParam.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)$/);
+    // Require at least one component using shared regex pattern
+    const hmsMatch = timeParam.match(ProviderUtils.HMS_TIMESTAMP_REGEX);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
       const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
       // convertHmsToSeconds returns null if any value is NaN (defense in depth)

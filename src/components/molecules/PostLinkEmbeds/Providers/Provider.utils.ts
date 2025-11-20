@@ -1,4 +1,25 @@
 /**
+ * Regex pattern for parsing H:M:S timestamp format
+ * Matches formats: "1h2m3s", "5m30s", "45s", "30" (plain seconds)
+ *
+ * Pattern breakdown:
+ * - `(?:(\d+)h)?` - Optional hours with 'h' suffix
+ * - `(?:(\d+)m)?` - Optional minutes with 'm' suffix
+ * - `(?:(\d+)s?)?` - Optional seconds with optional 's' suffix
+ *
+ * The 's?' makes seconds suffix optional (allows "30" or "30s")
+ * The outer '?' makes each entire group optional (allows "1h" or "5m" alone)
+ *
+ * @example
+ * "1h2m3s".match(HMS_TIMESTAMP_REGEX) // ["1h2m3s", "1", "2", "3"]
+ * "30s".match(HMS_TIMESTAMP_REGEX)    // ["30s", undefined, undefined, "30"]
+ * "30".match(HMS_TIMESTAMP_REGEX)     // ["30", undefined, undefined, "30"]
+ * "5m".match(HMS_TIMESTAMP_REGEX)     // ["5m", undefined, "5", undefined]
+ * "30ss".match(HMS_TIMESTAMP_REGEX)   // null (rejected by $ anchor)
+ */
+export const HMS_TIMESTAMP_REGEX = /^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/;
+
+/**
  * Convert hours, minutes, and seconds to total seconds
  * Used by video providers to parse timestamps
  *

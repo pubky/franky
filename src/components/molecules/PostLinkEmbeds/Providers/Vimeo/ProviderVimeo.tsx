@@ -68,10 +68,9 @@ const extractVimeoTimestamp = (url: string): number | null => {
     const timeHash = parsedUrl.hash.match(/#t=([^&\s]+)/)?.[1];
     if (!timeHash) return null;
 
-    // Match h/m/s format: each suffix is explicit and optional (outside capture groups)
+    // Match h/m/s format using shared regex pattern
     // Supports: "1h2m3s", "5m", "30s", or plain "30" (treated as seconds)
-    // The 's?' makes seconds suffix optional, and the whole seconds group is optional via '?'
-    const hmsMatch = timeHash.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)?$/);
+    const hmsMatch = timeHash.match(ProviderUtils.HMS_TIMESTAMP_REGEX);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
       const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
       // convertHmsToSeconds returns null if any value is NaN (defense in depth)
