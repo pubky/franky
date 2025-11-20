@@ -85,6 +85,17 @@ const extractVimeoTimestamp = (url: string): number | null => {
 };
 
 /**
+ * Extract video ID from Vimeo embed URL for accessibility/debugging
+ * Returns 'unknown' if extraction fails (should never happen with valid embed URLs)
+ *
+ * @param embedUrl - The Vimeo player embed URL
+ * @returns The numeric video ID or 'unknown' as fallback
+ */
+const extractVideoIdFromEmbedUrl = (embedUrl: string): string => {
+  return embedUrl.match(/player\.vimeo\.com\/video\/(\d+)/)?.[1] || 'unknown';
+};
+
+/**
  * Vimeo supported domains (lowercase)
  */
 const VIMEO_DOMAINS = ['vimeo.com', 'www.vimeo.com', 'player.vimeo.com'] as const;
@@ -120,7 +131,7 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
    * Following Vimeo's official embed pattern
    */
   renderEmbed: (embedUrl: string) => {
-    const videoId = embedUrl.match(/player\.vimeo\.com\/video\/(\d+)/)?.[1] || 'id';
+    const videoId = extractVideoIdFromEmbedUrl(embedUrl);
 
     return (
       <Atoms.Container data-testid="vimeo-aspect-ratio-wrapper" className="relative pt-[56.25%]">

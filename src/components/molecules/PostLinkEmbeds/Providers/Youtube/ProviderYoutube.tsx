@@ -67,6 +67,17 @@ const extractYouTubeTimestamp = (url: string): number | null => {
 };
 
 /**
+ * Extract video ID from YouTube embed URL for accessibility/debugging
+ * Returns 'unknown' if extraction fails (should never happen with valid embed URLs)
+ *
+ * @param embedUrl - The YouTube embed URL
+ * @returns The 11-character video ID or 'unknown' as fallback
+ */
+const extractVideoIdFromEmbedUrl = (embedUrl: string): string => {
+  return embedUrl.match(/youtube-nocookie\.com\/embed\/([a-zA-Z0-9_-]{11})/)?.[1] || 'unknown';
+};
+
+/**
  * YouTube supported domains (lowercase)
  */
 const YOUTUBE_DOMAINS = [
@@ -110,7 +121,7 @@ export const Youtube: ProviderTypes.EmbedProvider = {
    * Matches Vimeo's rendering pattern for consistent 16:9 aspect ratio
    */
   renderEmbed: (embedUrl: string) => {
-    const videoId = embedUrl.match(/youtube-nocookie\.com\/embed\/([a-zA-Z0-9_-]{11})/)?.[1] || 'id';
+    const videoId = extractVideoIdFromEmbedUrl(embedUrl);
 
     return (
       <Atoms.Container data-testid="youtube-aspect-ratio-wrapper" className="relative pt-[56.25%]">
