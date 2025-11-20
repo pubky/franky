@@ -106,18 +106,23 @@ export const Youtube: ProviderTypes.EmbedProvider = {
   },
 
   /**
-   * Render YouTube iframe embed
+   * Render YouTube iframe embed with responsive aspect ratio wrapper
+   * Matches Vimeo's rendering pattern for consistent 16:9 aspect ratio
    */
   renderEmbed: (embedUrl: string) => {
     const videoId = embedUrl.match(/youtube-nocookie\.com\/embed\/([a-zA-Z0-9_-]{11})/)?.[1] || 'id';
 
     return (
-      <Atoms.Iframe
-        {...ProviderConstants.VIDEO_EMBED_PROPS}
-        src={embedUrl}
-        title={`YouTube video ${videoId}`}
-        data-testid="YouTube video player"
-      />
+      <Atoms.Container data-testid="youtube-aspect-ratio-wrapper" className="relative pt-[56.25%]">
+        <Atoms.Iframe
+          {...ProviderConstants.VIDEO_EMBED_PROPS}
+          src={embedUrl}
+          title={`YouTube video ${videoId}`}
+          data-testid="YouTube video player"
+          height="auto"
+          className="absolute top-0 left-0 h-full w-full"
+        />
+      </Atoms.Container>
     );
   },
 };
