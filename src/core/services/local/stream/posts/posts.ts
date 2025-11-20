@@ -35,6 +35,73 @@ export class LocalStreamPostsService {
   }
 
   /**
+   * Prepend a post ID to a stream
+   * Only adds if not already present
+   *
+   * @param streamId - The stream to prepend to
+   * @param postId - The post ID to prepend
+   */
+  static async prependToStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
+    const existing = await this.findById(streamId);
+    const currentStream = existing?.stream || [];
+
+    // Only add if not already in stream
+    if (!currentStream.includes(postId)) {
+      const updatedStream = [postId, ...currentStream];
+      await this.upsert({ streamId, stream: updatedStream });
+    }
+  }
+
+  /**
+   * Insert a post ID into a stream sorted by post timestamp (indexed_at)
+   * Maintains descending timestamp order (newest first)
+   * Only adds if not already present
+   *
+   * @param streamId - The stream to insert into
+   * @param postId - The post ID to insert
+   */
+  static async insertSortedByTimestamp(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
+    const existing = await this.findById(streamId);
+    const currentStream = existing?.stream || [];
+
+    // Only add if not already in stream
+    if (currentStream.includes(postId)) {
+      return;
+    }
+
+    // Add new post to stream
+    const updatedStream = [...currentStream, postId];
+
+    // Fetch all post details to get timestamps
+    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(updatedStream);
+
+    // Map post IDs with their timestamps
+    const postTimestamps = updatedStream.map((id, index) => ({
+      postId: id,
+      timestamp: posts[index]?.indexed_at || 0,
+    }));
+
+    // Sort by timestamp descending (newest first)
+    const sortedStream = postTimestamps.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.postId);
+
+    await this.upsert({ streamId, stream: sortedStream });
+  }
+
+  /**
+   * Remove a post ID from a stream
+   *
+   * @param streamId - The stream to remove from
+   * @param postId - The post ID to remove
+   */
+  static async removeFromStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
+    const existing = await this.findById(streamId);
+    if (!existing) return;
+
+    const updatedStream = existing.stream.filter((id) => id !== postId);
+    await this.upsert({ streamId, stream: updatedStream });
+  }
+
+  /**
    * Adds a reply post to the post replies map if the post is a reply
    *
    * @param repliedUri - The URI of the parent post being replied to (optional)

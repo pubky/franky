@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import * as Core from '@/core';
 import { postStreamApi } from './postStream.api';
 import { StreamKind, StreamOrder } from './postStream.types';
+import { createPostStreamParams } from './postStream.utils';
 
 describe('Stream API URL Generation', () => {
   const mockObserverId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
@@ -309,6 +310,88 @@ describe('Stream API URL Generation', () => {
       expect(endpointKeys).toContain('author');
       expect(endpointKeys).toContain('author_replies');
       expect(endpointKeys).toContain('postsByIds');
+    });
+  });
+});
+
+describe('createPostStreamParams', () => {
+  const mockViewerId = 'viewer-pubky-id' as Core.Pubky;
+
+  describe('Bookmark streams', () => {
+    it('should handle timeline:bookmarks:all stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBeUndefined(); // 'all' means no kind filter
+      expect(result.params.viewer_id).toBe(mockViewerId);
+      expect(result.params.limit).toBe(20);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should handle timeline:bookmarks:short stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(Core.StreamKind.SHORT);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should handle timeline:bookmarks:long stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LONG, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(Core.StreamKind.LONG);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should handle timeline:bookmarks:image stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(Core.StreamKind.IMAGE);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should handle timeline:bookmarks:video stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_VIDEO, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(Core.StreamKind.VIDEO);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should handle timeline:bookmarks:link stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(Core.StreamKind.LINK);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should handle timeline:bookmarks:file stream', () => {
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_FILE, 0, 20, mockViewerId);
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(Core.StreamKind.FILE);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should not set start parameter when streamTail is 0', () => {
+      const result = createPostStreamParams(
+        Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+        0, // streamTail = 0 means initial load
+        20,
+        mockViewerId,
+      );
+
+      expect(result.params.start).toBeUndefined();
+    });
+
+    it('should set start parameter when streamTail is greater than 0', () => {
+      const streamTail = 1234567890;
+      const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL, streamTail, 20, mockViewerId);
+
+      expect(result.params.start).toBe(streamTail);
     });
   });
 });

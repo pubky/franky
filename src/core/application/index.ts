@@ -7,3 +7,4 @@ export * from './stream';
 export * from './hot';
 export * from './auth';
 export * from './file';
+export * from './bookmark';

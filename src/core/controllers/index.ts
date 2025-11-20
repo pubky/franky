@@ -6,4 +6,5 @@ export * from './tag';
 export * from './user';
 export * from './hot';
 export * from './file';
+export * from './bookmark';
 export * from './controllers.types';

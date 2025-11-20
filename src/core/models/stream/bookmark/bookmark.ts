@@ -8,39 +8,26 @@ export class BookmarkModel
 {
   static table: Table<Core.BookmarkModelSchema> = Core.db.table('bookmarks');
 
-  userId: Core.Pubky;
-  postId: string;
   created_at: number;
-  updated_at: number;
 
   constructor(bookmark: Core.BookmarkModelSchema) {
     super(bookmark);
-    this.userId = bookmark.userId;
-    this.postId = bookmark.postId;
     this.created_at = bookmark.created_at;
-    this.updated_at = bookmark.updated_at;
   }
 
   /**
-   * Find all bookmarks for a specific user
+   * Find all bookmarks (for current user)
+   * Returns array of post IDs
    */
-  static async findByUserId(userId: Core.Pubky): Promise<Core.BookmarkModelSchema[]> {
-    return this.table.where('userId').equals(userId).toArray();
+  static async findAll(): Promise<string[]> {
+    const bookmarks = await this.table.toArray();
+    return bookmarks.map((b) => b.id);
   }
 
   /**
-   * Find bookmark by user and post
+   * Get bookmarks sorted by creation time (most recent first)
    */
-  static async findByUserAndPost(userId: Core.Pubky, postId: string): Promise<BookmarkModel | null> {
-    const bookmarkId = `${userId}:${postId}`;
-    return this.findById(bookmarkId);
-  }
-
-  /**
-   * Check if a user has bookmarked a post
-   */
-  static async existsByUserAndPost(userId: Core.Pubky, postId: string): Promise<boolean> {
-    const bookmarkId = `${userId}:${postId}`;
-    return this.exists(bookmarkId);
+  static async findAllSorted(): Promise<Core.BookmarkModelSchema[]> {
+    return this.table.orderBy('created_at').reverse().toArray();
   }
 }

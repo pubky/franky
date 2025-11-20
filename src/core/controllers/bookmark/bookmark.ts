@@ -7,15 +7,14 @@ export class BookmarkController {
   /**
    * Create a bookmark
    * @param params - Parameters object
-   * @param params.userId - ID of the user creating the bookmark
+   * @param params.userId - ID of the user creating the bookmark (current user)
    * @param params.postId - Composite post ID (authorId:postId)
    */
   static async create(params: Core.TBookmarkEventParams) {
     const { bookmarkUrl, bookmarkJson } = await BookmarkController.generateBookmarkUri(params);
-    const { userId, postId } = params;
+    const { postId } = params;
 
     await Core.BookmarkApplication.create({
-      userId,
       postId,
       bookmarkUrl,
       bookmarkJson,
@@ -25,36 +24,16 @@ export class BookmarkController {
   /**
    * Delete a bookmark
    * @param params - Parameters object
-   * @param params.userId - ID of the user removing the bookmark
+   * @param params.userId - ID of the user removing the bookmark (current user)
    * @param params.postId - Composite post ID (authorId:postId)
    */
   static async delete(params: Core.TBookmarkEventParams) {
     const { bookmarkUrl } = await BookmarkController.generateBookmarkUri(params);
-    const { userId, postId } = params;
+    const { postId } = params;
 
     await Core.BookmarkApplication.delete({
-      userId,
       postId,
       bookmarkUrl,
-    });
-  }
-
-  /**
-   * Toggle a bookmark
-   * @param params - Parameters object
-   * @param params.userId - ID of the user toggling the bookmark
-   * @param params.postId - Composite post ID (authorId:postId)
-   * @returns boolean indicating new bookmark state (true = bookmarked, false = not bookmarked)
-   */
-  static async toggle(params: Core.TBookmarkEventParams): Promise<boolean> {
-    const { bookmarkUrl, bookmarkJson } = await BookmarkController.generateBookmarkUri(params);
-    const { userId, postId } = params;
-
-    return await Core.BookmarkApplication.toggle({
-      userId,
-      postId,
-      bookmarkUrl,
-      bookmarkJson,
     });
   }
 
