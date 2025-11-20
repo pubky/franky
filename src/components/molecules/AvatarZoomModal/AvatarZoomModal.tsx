@@ -26,6 +26,12 @@ export interface AvatarZoomModalProps {
  */
 export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+
+  // Keep the ref up-to-date with the latest onClose
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   Hooks.useBodyScrollLock(open);
 
@@ -42,7 +48,7 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        onClose();
+        onCloseRef.current();
       }
     };
 
@@ -51,7 +57,7 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [open, onClose]);
+  }, [open]);
 
   if (!open) return null;
 
