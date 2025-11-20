@@ -63,7 +63,7 @@ export class BookmarkController {
     userId,
   }: Core.TBookmarkEventParams): Promise<{ bookmarkUrl: string; bookmarkJson: Record<string, unknown> }> {
     // Parse composite post ID to get author and post ID
-    const { pubky: authorId, postId: rawPostId } = Core.parsePostCompositeId(postId);
+    const { pubky: authorId, id: rawPostId } = Core.parseCompositeId(postId);
 
     // Build the post URI
     const postUri = postUriBuilder(authorId, rawPostId);
