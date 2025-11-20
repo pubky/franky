@@ -27,9 +27,9 @@ export type ContainerProps = {
   onClick?: React.HTMLAttributes<HTMLElement>['onClick'];
   style?: React.CSSProperties;
   title?: string;
-  'aria-modal'?: boolean;
-  'aria-label'?: string;
-  tabIndex?: number;
+  'aria-modal'?: React.AriaAttributes['aria-modal'];
+  'aria-label'?: React.AriaAttributes['aria-label'];
+  tabIndex?: React.HTMLAttributes<HTMLElement>['tabIndex'];
 };
 
 export interface ContainerElementProps extends React.HTMLAttributes<HTMLElement> {
