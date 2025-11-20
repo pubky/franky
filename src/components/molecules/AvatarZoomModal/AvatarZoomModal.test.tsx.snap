@@ -39,7 +39,6 @@ exports[`AvatarZoomModal - Snapshots > matches snapshot when open with fallback 
       data-testid="avatar"
     >
       <div
-        class="text-6xl"
         data-testid="avatar-fallback"
       >
         JS
