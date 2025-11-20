@@ -108,6 +108,7 @@ type ServiceMocks = {
   persistFiles: unknown;
   upsertPostsStream: unknown;
   upsertInfluencersStream: unknown;
+  upsertHotTags: unknown;
   upsertTagsStream: unknown;
   persistNotifications: unknown;
 };
@@ -170,6 +171,7 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       .mockImplementation(
         upsertInfluencersError ? () => Promise.reject(upsertInfluencersError) : () => Promise.resolve(undefined),
       ),
+    upsertHotTags: vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined),
     upsertTagsStream: vi
       .spyOn(Core.LocalStreamTagsService, 'upsert')
       .mockImplementation(upsertTagsError ? () => Promise.reject(upsertTagsError) : () => Promise.resolve(undefined)),
@@ -206,6 +208,11 @@ const assertCommonCalls = (
     streamId: Core.UserStreamTypes.RECOMMENDED,
     stream: bootstrapData.list.recommended,
   });
+  // Check both hot tags features are called
+  expect(mocks.upsertHotTags).toHaveBeenCalledWith(
+    Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'),
+    bootstrapData.list.hot_tags,
+  );
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
   expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
 };
@@ -433,6 +440,7 @@ describe('BootstrapApplication', () => {
       const persistFilesSpy = vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined);
       const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       const upsertInfluencersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertHotTagsSpy = vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const persistNotificationsSpy = vi
         .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
@@ -448,6 +456,7 @@ describe('BootstrapApplication', () => {
         persistPosts: persistPostsSpy,
         upsertPostsStream: upsertPostsStreamSpy,
         upsertInfluencersStream: upsertInfluencersStreamSpy,
+        upsertHotTags: upsertHotTagsSpy,
         upsertTagsStream: upsertTagsStreamSpy,
         persistNotifications: persistNotificationsSpy,
         persistFiles: persistFilesSpy,
