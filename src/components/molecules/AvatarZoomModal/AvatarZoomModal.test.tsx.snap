@@ -6,13 +6,13 @@ exports[`AvatarZoomModal - Snapshots > matches snapshot when open with avatar im
 <div
   aria-label="John Doe's avatar enlarged"
   aria-modal="true"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none animate-in fade-in duration-200"
   data-testid="avatar-zoom-modal-overlay"
   role="dialog"
   tabindex="-1"
 >
   <div
-    class="relative"
+    class="relative animate-in zoom-in-95 duration-200"
     data-testid="avatar-zoom-modal-content"
   >
     <div
@@ -33,13 +33,13 @@ exports[`AvatarZoomModal - Snapshots > matches snapshot when open with fallback 
 <div
   aria-label="Jane Smith's avatar enlarged"
   aria-modal="true"
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none animate-in fade-in duration-200"
   data-testid="avatar-zoom-modal-overlay"
   role="dialog"
   tabindex="-1"
 >
   <div
-    class="relative"
+    class="relative animate-in zoom-in-95 duration-200"
     data-testid="avatar-zoom-modal-content"
   >
     <div

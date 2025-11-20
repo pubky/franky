@@ -54,13 +54,13 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
       aria-modal="true"
       aria-label={`${name}'s avatar enlarged`}
       tabIndex={-1}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none"
+      className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/50 duration-200 outline-none fade-in"
       onClick={onClose}
       data-testid="avatar-zoom-modal-overlay"
     >
       <Atoms.Container
         overrideDefaults={true}
-        className="relative"
+        className="relative animate-in duration-200 zoom-in-95"
         onClick={(e) => e.stopPropagation()}
         data-testid="avatar-zoom-modal-content"
       >
