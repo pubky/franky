@@ -17,7 +17,7 @@ export interface AvatarZoomModalProps {
 
 /**
  * Modal component that displays an enlarged version of a user's avatar.
- * Handles backdrop clicks, escape key, and scroll locking.
+ * Handles backdrop clicks, escape key, and scroll locking with CSS animations.
  *
  * @param open - Controls modal visibility
  * @param onClose - Callback when user closes modal (backdrop click or Escape)
@@ -69,20 +69,20 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
       aria-modal={true}
       aria-label={`${name}'s avatar enlarged`}
       tabIndex={-1}
-      className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/50 duration-200 outline-none fade-in"
+      className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/60 duration-300 outline-none fade-in"
       onClick={onClose}
       data-testid="avatar-zoom-modal-overlay"
     >
       <Atoms.Container
         overrideDefaults={true}
-        className="relative animate-in duration-200 zoom-in-95"
+        className="relative animate-in rounded-full shadow-2xl duration-300 ease-in-out zoom-in-95 fade-in"
         onClick={(e) => e.stopPropagation()}
         data-testid="avatar-zoom-modal-content"
       >
         <AvatarWithFallback
           avatarUrl={avatarUrl}
           name={name}
-          className="size-(--avatar-zoom-size)"
+          className="size-(--avatar-zoom-size) transition-transform hover:scale-105"
           fallbackClassName="text-6xl"
           alt={`${name}'s avatar`}
         />
