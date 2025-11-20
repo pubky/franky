@@ -158,6 +158,76 @@ describe('AvatarZoomModal', () => {
     expect(hooks.useBodyScrollLock).toHaveBeenCalledWith(true);
   });
 
+  describe('Accessibility and Focus Management', () => {
+    it('has proper ARIA attributes when open', () => {
+      render(<AvatarZoomModal {...mockProps} />);
+
+      const overlay = screen.getByTestId('avatar-zoom-modal-overlay');
+
+      expect(overlay).toHaveAttribute('role', 'dialog');
+      expect(overlay).toHaveAttribute('aria-modal', 'true');
+      expect(overlay).toHaveAttribute('aria-label', "John Doe's avatar enlarged");
+    });
+
+    it('has tabIndex=-1 for focus management', () => {
+      render(<AvatarZoomModal {...mockProps} />);
+
+      const overlay = screen.getByTestId('avatar-zoom-modal-overlay');
+
+      expect(overlay).toHaveAttribute('tabIndex', '-1');
+    });
+
+    it('focuses modal when it opens', () => {
+      const { rerender } = render(<AvatarZoomModal {...mockProps} open={false} />);
+
+      // Modal is not in the DOM when closed
+      expect(screen.queryByTestId('avatar-zoom-modal-overlay')).not.toBeInTheDocument();
+
+      // Open the modal
+      rerender(<AvatarZoomModal {...mockProps} open={true} />);
+
+      const overlay = screen.getByTestId('avatar-zoom-modal-overlay');
+
+      // Modal should be focused
+      expect(overlay).toHaveFocus();
+    });
+
+    it('refocuses modal when reopened', () => {
+      const { rerender } = render(<AvatarZoomModal {...mockProps} open={true} />);
+
+      const overlay = screen.getByTestId('avatar-zoom-modal-overlay');
+      expect(overlay).toHaveFocus();
+
+      // Close modal
+      rerender(<AvatarZoomModal {...mockProps} open={false} />);
+
+      // Move focus elsewhere
+      document.body.focus();
+
+      // Reopen modal
+      rerender(<AvatarZoomModal {...mockProps} open={true} />);
+
+      const reopenedOverlay = screen.getByTestId('avatar-zoom-modal-overlay');
+      expect(reopenedOverlay).toHaveFocus();
+    });
+
+    it('has outline-none class for visual focus management', () => {
+      render(<AvatarZoomModal {...mockProps} />);
+
+      const overlay = screen.getByTestId('avatar-zoom-modal-overlay');
+
+      expect(overlay).toHaveClass('outline-none');
+    });
+
+    it('aria-label reflects the user name', () => {
+      render(<AvatarZoomModal {...mockProps} name="Alice Smith" />);
+
+      const overlay = screen.getByTestId('avatar-zoom-modal-overlay');
+
+      expect(overlay).toHaveAttribute('aria-label', "Alice Smith's avatar enlarged");
+    });
+  });
+
   describe('Event Listener Cleanup', () => {
     it('removes event listener when component unmounts', () => {
       const onClose = vi.fn();

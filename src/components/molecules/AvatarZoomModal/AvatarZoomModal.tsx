@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 // Direct import to avoid circular dependency with @/molecules barrel export
@@ -16,8 +16,18 @@ export interface AvatarZoomModalProps {
 }
 
 export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
   Hooks.useBodyScrollLock(open);
 
+  // Focus management: move focus into modal when it opens
+  useEffect(() => {
+    if (open && modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, [open]);
+
+  // Keyboard navigation: close on Escape
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -38,8 +48,13 @@ export function AvatarZoomModal({ open, onClose, avatarUrl, name }: AvatarZoomMo
 
   return (
     <Atoms.Container
+      ref={modalRef}
       overrideDefaults={true}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${name}'s avatar enlarged`}
+      tabIndex={-1}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none"
       onClick={onClose}
       data-testid="avatar-zoom-modal-overlay"
     >

@@ -4,8 +4,12 @@ exports[`AvatarZoomModal - Snapshots > matches snapshot when closed 1`] = `null`
 
 exports[`AvatarZoomModal - Snapshots > matches snapshot when open with avatar image 1`] = `
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  aria-label="John Doe's avatar enlarged"
+  aria-modal="true"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none"
   data-testid="avatar-zoom-modal-overlay"
+  role="dialog"
+  tabindex="-1"
 >
   <div
     class="relative"
@@ -27,8 +31,12 @@ exports[`AvatarZoomModal - Snapshots > matches snapshot when open with avatar im
 
 exports[`AvatarZoomModal - Snapshots > matches snapshot when open with fallback initials 1`] = `
 <div
-  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  aria-label="Jane Smith's avatar enlarged"
+  aria-modal="true"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 outline-none"
   data-testid="avatar-zoom-modal-overlay"
+  role="dialog"
+  tabindex="-1"
 >
   <div
     class="relative"
