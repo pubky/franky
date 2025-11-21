@@ -5,7 +5,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none"
+    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0"
     data-testid="twitter-container"
     data-theme="dark"
   >
@@ -49,7 +49,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
   data-testid="container"
 >
   <div
-    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none"
+    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0"
     data-testid="twitter-container"
     data-theme="dark"
   >

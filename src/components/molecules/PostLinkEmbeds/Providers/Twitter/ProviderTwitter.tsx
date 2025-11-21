@@ -48,25 +48,30 @@ export const Twitter: ProviderTypes.EmbedProvider = {
   /**
    * Parse Twitter/X URL and return embed information
    */
-  parseEmbed: (url: string): { data: string } | null => {
+  parseEmbed: (url: string): ProviderTypes.EmbedData | null => {
     const id = extractTwitterId(url);
 
     if (!id) return null;
 
-    return { data: id };
+    return { type: 'id', value: id };
   },
 
   /**
    * Render Twitter/X component embed using Twitter post ID
    */
-  renderEmbed: (embedId: string) => {
+  renderEmbed: (embedData: ProviderTypes.EmbedData) => {
+    // Type guard: ensure we have an ID type
+    if (embedData.type !== 'id') return null;
+
+    const tweetId = embedData.value;
+
     return (
       <Atoms.Container
         data-testid="twitter-container"
         data-theme="dark"
         className="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0"
       >
-        <Tweet id={embedId} />
+        <Tweet id={tweetId} />
       </Atoms.Container>
     );
   },

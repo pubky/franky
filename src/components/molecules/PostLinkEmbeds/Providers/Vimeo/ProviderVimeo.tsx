@@ -112,7 +112,7 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
   /**
    * Parse Vimeo URL and return embed information
    */
-  parseEmbed: (url: string): { data: string } | null => {
+  parseEmbed: (url: string): ProviderTypes.EmbedData | null => {
     const id = extractVimeoId(url);
 
     if (!id) return null;
@@ -122,14 +122,18 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
       ? `https://player.vimeo.com/video/${id}#t=${timestamp}s`
       : `https://player.vimeo.com/video/${id}`;
 
-    return { data: embedUrl };
+    return { type: 'url', value: embedUrl };
   },
 
   /**
    * Render Vimeo iframe embed with responsive aspect ratio wrapper
    * Following Vimeo's official embed pattern
    */
-  renderEmbed: (embedUrl: string) => {
+  renderEmbed: (embedData: ProviderTypes.EmbedData) => {
+    // Type guard: ensure we have a URL type
+    if (embedData.type !== 'url') return null;
+
+    const embedUrl = embedData.value;
     const videoId = extractVideoIdFromEmbedUrl(embedUrl);
 
     return (

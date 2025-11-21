@@ -103,7 +103,7 @@ export const Youtube: ProviderTypes.EmbedProvider = {
   /**
    * Parse YouTube URL and return embed information
    */
-  parseEmbed: (url: string): { data: string } | null => {
+  parseEmbed: (url: string): ProviderTypes.EmbedData | null => {
     const id = extractYouTubeId(url);
 
     if (!id) return null;
@@ -113,14 +113,18 @@ export const Youtube: ProviderTypes.EmbedProvider = {
       ? `https://www.youtube-nocookie.com/embed/${id}?start=${timestamp}`
       : `https://www.youtube-nocookie.com/embed/${id}`;
 
-    return { data: embedUrl };
+    return { type: 'url', value: embedUrl };
   },
 
   /**
    * Render YouTube iframe embed with responsive aspect ratio wrapper
    * Matches Vimeo's rendering pattern for consistent 16:9 aspect ratio
    */
-  renderEmbed: (embedUrl: string) => {
+  renderEmbed: (embedData: ProviderTypes.EmbedData) => {
+    // Type guard: ensure we have a URL type
+    if (embedData.type !== 'url') return null;
+
+    const embedUrl = embedData.value;
     const videoId = extractVideoIdFromEmbedUrl(embedUrl);
 
     return (

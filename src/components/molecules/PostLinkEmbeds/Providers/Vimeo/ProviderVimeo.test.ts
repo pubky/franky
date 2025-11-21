@@ -23,56 +23,64 @@ describe('ProviderVimeo', () => {
       it('parses standard vimeo.com URL', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
       });
 
       it('parses www.vimeo.com URL', () => {
         const result = Vimeo.parseEmbed('https://www.vimeo.com/123456789');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
       });
 
       it('parses player.vimeo.com URL', () => {
         const result = Vimeo.parseEmbed('https://player.vimeo.com/video/123456789');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
       });
 
       it('parses channels URL', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/channels/staffpicks/123456789');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
       });
 
       it('parses groups URL', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/groups/shortfilms/videos/123456789');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
       });
 
       it('parses album URL', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/album/987654/video/123456789');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
       });
 
       it('parses short video IDs (6 digits)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456',
         });
       });
 
       it('parses long video IDs (10+ digits)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/1234567890');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/1234567890',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/1234567890',
         });
       });
     });
@@ -81,35 +89,40 @@ describe('ProviderVimeo', () => {
       it('parses timestamp in seconds format (30s)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=30s');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789#t=30s',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789#t=30s',
         });
       });
 
       it('parses timestamp in h/m/s format (1h2m3s)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=1h2m3s');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789#t=3723s',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789#t=3723s',
         });
       });
 
       it('parses timestamp in partial h/m/s format (2m30s)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=2m30s');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789#t=150s',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789#t=150s',
         });
       });
 
       it('parses timestamp with minutes only (5m)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=5m');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789#t=300s',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789#t=300s',
         });
       });
 
       it('parses timestamp with hours only (1h)', () => {
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=1h');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789#t=3600s',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789#t=3600s',
         });
       });
 
@@ -117,7 +130,8 @@ describe('ProviderVimeo', () => {
         // Vimeo format allows plain numbers to be interpreted as seconds
         const result = Vimeo.parseEmbed('https://vimeo.com/123456789#t=30');
         expect(result).toEqual({
-          data: 'https://player.vimeo.com/video/123456789#t=30s',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789#t=30s',
         });
       });
 
@@ -133,7 +147,8 @@ describe('ProviderVimeo', () => {
           const result = Vimeo.parseEmbed(url);
           // Should return video URL without timestamp due to malformed format
           expect(result).toEqual({
-            data: 'https://player.vimeo.com/video/123456789',
+            type: 'url',
+            value: 'https://player.vimeo.com/video/123456789',
           });
         });
       });
@@ -152,7 +167,8 @@ describe('ProviderVimeo', () => {
         validTimestamps.forEach(({ url, expected }) => {
           const result = Vimeo.parseEmbed(url);
           expect(result).toEqual({
-            data: `https://player.vimeo.com/video/123456789#t=${expected}s`,
+            type: 'url',
+            value: `https://player.vimeo.com/video/123456789#t=${expected}s`,
           });
         });
       });
@@ -227,7 +243,8 @@ describe('ProviderVimeo', () => {
           const result = Vimeo.parseEmbed(url);
           // Should still return valid embed URL without timestamp
           expect(result).toEqual({
-            data: 'https://player.vimeo.com/video/123456789',
+            type: 'url',
+            value: 'https://player.vimeo.com/video/123456789',
           });
         });
       });
@@ -277,7 +294,8 @@ describe('ProviderVimeo', () => {
         // All results should be identical
         results.forEach((result) => {
           expect(result).toEqual({
-            data: 'https://player.vimeo.com/video/123456789',
+            type: 'url',
+            value: 'https://player.vimeo.com/video/123456789',
           });
         });
       });
@@ -291,7 +309,8 @@ describe('ProviderVimeo', () => {
           const invalidResult = Vimeo.parseEmbed(invalidUrl);
 
           expect(validResult).toEqual({
-            data: 'https://player.vimeo.com/video/123456789',
+            type: 'url',
+            value: 'https://player.vimeo.com/video/123456789',
           });
           expect(invalidResult).toBeNull();
         }
@@ -308,10 +327,12 @@ describe('ProviderVimeo', () => {
         // Results should not be affected by previous calls
         expect(result1a).toEqual(result1b);
         expect(result1a).toEqual({
-          data: 'https://player.vimeo.com/video/123456789',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/123456789',
         });
         expect(result2).toEqual({
-          data: 'https://player.vimeo.com/video/987654321',
+          type: 'url',
+          value: 'https://player.vimeo.com/video/987654321',
         });
       });
     });
@@ -352,7 +373,8 @@ describe('ProviderVimeo', () => {
         validUrls.forEach((url) => {
           const result = Vimeo.parseEmbed(url);
           expect(result).toEqual({
-            data: 'https://player.vimeo.com/video/123456',
+            type: 'url',
+            value: 'https://player.vimeo.com/video/123456',
           });
         });
       });
@@ -383,7 +405,7 @@ describe('ProviderVimeo', () => {
         urlsWithBoundaries.forEach((url) => {
           const result = Vimeo.parseEmbed(url.trim());
           expect(result).toBeDefined();
-          expect(result?.data).toContain('123456');
+          expect(result?.value).toContain('123456');
         });
       });
 
