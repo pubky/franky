@@ -284,13 +284,64 @@ describe('BootstrapApplication', () => {
       expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
     });
 
-    it('should throw error when HomeserverService fails', async () => {
-      const mocks = setupMocks({ homeserverError: new Error('Homeserver error') });
+    it('should handle homeserver request failure gracefully and create new lastRead', async () => {
+      const bootstrapData = emptyBootstrap();
+      const MOCK_NORMALIZED_TIMESTAMP = 9876543210;
+      const MOCK_NORMALIZED_LAST_READ_URL = 'pubky://test-pubky/pub/pubky.app/last-read';
+      const mockLastReadResult = {
+        last_read: {
+          timestamp: MOCK_NORMALIZED_TIMESTAMP,
+          toJson: vi.fn(() => ({ timestamp: MOCK_NORMALIZED_TIMESTAMP })),
+        },
+        meta: { url: MOCK_NORMALIZED_LAST_READ_URL },
+      };
 
-      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow('Homeserver error');
+      const mocks = setupMocks({ bootstrapData });
+      // Override homeserver mock to reject on GET but allow PUT
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
+        if (action === Core.HomeserverAction.GET) {
+          return Promise.reject(new Error('Homeserver error'));
+        }
+        // Allow PUT to succeed (fire and forget)
+        return Promise.resolve(undefined);
+      });
+      mocks.homeserverRequest = homeserverRequestSpy;
 
-      expect(mocks.nexusNotifications).not.toHaveBeenCalled();
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
+      const lastReadNormalizerSpy = vi
+        .spyOn(Core.LastReadNormalizer, 'to')
+        .mockReturnValue(mockLastReadResult as unknown as LastReadResult);
+      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Verify error was logged
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Not found user last read timestamp', expect.any(Error));
+
+      // Verify LastReadNormalizer was called to create new lastRead
+      expect(lastReadNormalizerSpy).toHaveBeenCalledWith(TEST_PUBKY);
+
+      // Verify GET request failed (first call)
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT request was made to homeserver (fire and forget)
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        MOCK_NORMALIZED_LAST_READ_URL,
+        mockLastReadResult.last_read.toJson(),
+      );
+
+      // Verify notifications were still fetched (homeserver failure only affects lastRead, not notifications)
+      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
+
+      // Verify bootstrap data was still processed
+      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
+      expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+
+      // Verify result has empty notification list and normalized timestamp
+      expect(result).toEqual({
+        notification: { unread: 0, lastRead: MOCK_NORMALIZED_TIMESTAMP },
+        filesUris: [],
+      });
     });
 
     it('should throw error when NexusUserService.notifications fails', async () => {
@@ -298,6 +349,16 @@ describe('BootstrapApplication', () => {
 
       await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow(
         'Notifications error',
+      );
+
+      // Verify homeserver was called for GET (to get lastRead)
+      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT was NOT called (should not write to homeserver when notifications fail)
+      expect(mocks.homeserverRequest).not.toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.any(String),
+        expect.any(Object),
       );
 
       expect(mocks.persistUsers).not.toHaveBeenCalled();

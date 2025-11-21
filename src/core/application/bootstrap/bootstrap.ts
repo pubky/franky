@@ -60,10 +60,20 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification list and last read timestamp
    */
   private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
-    const { timestamp: userLastRead } = await Core.HomeserverService.request<{ timestamp: number }>(
-      Core.HomeserverAction.GET,
-      lastReadUrl,
-    );
+    let userLastRead: number;
+    try {
+      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
+        Core.HomeserverAction.GET,
+        lastReadUrl,
+      );
+      userLastRead = timestamp;
+    } catch (error) {
+      Libs.Logger.error('Not found user last read timestamp', error);
+      const lastRead = Core.LastReadNormalizer.to(pubky);
+      void Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
+      userLastRead = Number(lastRead.last_read.timestamp);
+    }
+
     const notificationList = await Core.NexusUserService.notifications({
       user_id: pubky,
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
