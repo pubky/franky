@@ -8,7 +8,7 @@ import * as Types from './ProfilePageHeader.types';
 
 export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
-  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusClick } = actions;
+  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusClick, onAvatarClick } = actions;
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
 
@@ -18,16 +18,14 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
       className="flex flex-col items-center gap-6 rounded-lg bg-card p-6 lg:flex-row lg:items-start lg:rounded-none lg:bg-transparent lg:p-0"
       data-testid="profile-page-header"
     >
-      <Atoms.Container overrideDefaults={true} className="relative lg:px-4">
-        <Atoms.Avatar className="size-16 lg:size-36">
-          {avatarUrl ? (
-            <Atoms.AvatarImage src={avatarUrl} alt={name} />
-          ) : (
-            <Atoms.AvatarFallback className="text-2xl lg:text-4xl">
-              {Libs.extractInitials({ name })}
-            </Atoms.AvatarFallback>
-          )}
-        </Atoms.Avatar>
+      <Atoms.Container overrideDefaults={true} className="relative cursor-pointer lg:px-4" onClick={onAvatarClick}>
+        <Molecules.AvatarWithFallback
+          avatarUrl={avatarUrl}
+          name={name}
+          className="size-16 lg:size-36"
+          fallbackClassName="text-2xl lg:text-4xl"
+          alt={name}
+        />
         <Atoms.AvatarEmojiBadge emoji={emoji} />
       </Atoms.Container>
 

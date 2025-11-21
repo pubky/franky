@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ProfilePageLayout, ProfilePageLayoutProps } from '../Layout/ProfilePageLayout';
 import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
 
@@ -50,18 +50,48 @@ vi.mock('@/molecules', () => ({
     <div data-testid="profile-page-layout-wrapper">{children}</div>
   ),
   MobileFooter: () => <div data-testid="mobile-footer">Footer</div>,
+  AvatarZoomModal: ({
+    open,
+    onClose,
+    avatarUrl,
+    name,
+  }: {
+    open: boolean;
+    onClose: () => void;
+    avatarUrl?: string;
+    name: string;
+  }) =>
+    open ? (
+      <div data-testid="avatar-zoom-modal" data-avatar-url={avatarUrl} data-name={name}>
+        <button data-testid="modal-close" onClick={onClose}>
+          Close
+        </button>
+      </div>
+    ) : null,
 }));
 
 vi.mock('@/organisms', () => ({
-  ProfilePageHeader: ({ profile, actions }: { profile: Record<string, unknown>; actions: Record<string, unknown> }) => (
-    <div
-      data-testid="profile-page-header"
-      data-profile={JSON.stringify(profile)}
-      data-actions={JSON.stringify(actions)}
-    >
-      Profile Header
-    </div>
-  ),
+  ProfilePageHeader: ({
+    profile,
+    actions,
+  }: {
+    profile: Record<string, unknown>;
+    actions: Record<string, () => void>;
+  }) => {
+    const handleAvatarClick = actions.onAvatarClick || (() => {});
+    return (
+      <div
+        data-testid="profile-page-header"
+        data-profile={JSON.stringify(profile)}
+        data-actions={JSON.stringify(Object.keys(actions))}
+      >
+        <button data-testid="avatar-button" onClick={handleAvatarClick}>
+          Click Avatar
+        </button>
+        Profile Header
+      </div>
+    );
+  },
 }));
 
 const mockProfile = {
@@ -197,5 +227,55 @@ describe('ProfilePageLayout', () => {
       />,
     );
     expect(container.firstChild).toMatchSnapshot();
+  });
+
+  describe('Avatar Zoom Modal', () => {
+    it('does not show modal initially', () => {
+      render(<ProfilePageLayout {...defaultProps} />);
+      expect(screen.queryByTestId('avatar-zoom-modal')).not.toBeInTheDocument();
+    });
+
+    it('shows modal when avatar is clicked', () => {
+      render(<ProfilePageLayout {...defaultProps} />);
+
+      const avatarButton = screen.getByTestId('avatar-button');
+      fireEvent.click(avatarButton);
+
+      expect(screen.getByTestId('avatar-zoom-modal')).toBeInTheDocument();
+    });
+
+    it('closes modal when close button is clicked', () => {
+      render(<ProfilePageLayout {...defaultProps} />);
+
+      // Open modal
+      const avatarButton = screen.getByTestId('avatar-button');
+      fireEvent.click(avatarButton);
+      expect(screen.getByTestId('avatar-zoom-modal')).toBeInTheDocument();
+
+      // Close modal
+      const closeButton = screen.getByTestId('modal-close');
+      fireEvent.click(closeButton);
+      expect(screen.queryByTestId('avatar-zoom-modal')).not.toBeInTheDocument();
+    });
+
+    it('passes correct props to modal', () => {
+      render(<ProfilePageLayout {...defaultProps} />);
+
+      const avatarButton = screen.getByTestId('avatar-button');
+      fireEvent.click(avatarButton);
+
+      const modal = screen.getByTestId('avatar-zoom-modal');
+      expect(modal).toHaveAttribute('data-avatar-url', mockProfile.avatarUrl);
+      expect(modal).toHaveAttribute('data-name', mockProfile.name);
+    });
+
+    it('passes onAvatarClick action to ProfilePageHeader', () => {
+      render(<ProfilePageLayout {...defaultProps} />);
+
+      const header = screen.getByTestId('profile-page-header');
+      const actionsKeys = JSON.parse(header.getAttribute('data-actions') || '[]');
+
+      expect(actionsKeys).toContain('onAvatarClick');
+    });
   });
 });
