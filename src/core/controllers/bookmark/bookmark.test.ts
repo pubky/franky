@@ -40,8 +40,7 @@ describe('BookmarkController', () => {
     vi.clearAllMocks();
 
     // Mock BookmarkApplication
-    vi.spyOn(Core.BookmarkApplication, 'create').mockResolvedValue(undefined);
-    vi.spyOn(Core.BookmarkApplication, 'delete').mockResolvedValue(undefined);
+    vi.spyOn(Core.BookmarkApplication, 'persist').mockResolvedValue(undefined);
 
     // Import BookmarkController
     const bookmarkModule = await import('./bookmark');
@@ -49,12 +48,12 @@ describe('BookmarkController', () => {
   });
 
   describe('create', () => {
-    it('should call BookmarkApplication.create with correct parameters', async () => {
-      const createSpy = vi.spyOn(Core.BookmarkApplication, 'create');
+    it('should call BookmarkApplication.persist with correct parameters', async () => {
+      const persistSpy = vi.spyOn(Core.BookmarkApplication, 'persist');
 
       await BookmarkController.create(createBookmarkParams());
 
-      expect(createSpy).toHaveBeenCalledWith({
+      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, {
         postId: testData.compositePostId,
         bookmarkUrl: expect.stringContaining('pubky://'),
         bookmarkJson: expect.objectContaining({ uri: expect.any(String) }),
@@ -63,12 +62,12 @@ describe('BookmarkController', () => {
   });
 
   describe('delete', () => {
-    it('should call BookmarkApplication.delete with correct parameters', async () => {
-      const deleteSpy = vi.spyOn(Core.BookmarkApplication, 'delete');
+    it('should call BookmarkApplication.persist with correct parameters', async () => {
+      const persistSpy = vi.spyOn(Core.BookmarkApplication, 'persist');
 
       await BookmarkController.delete(createBookmarkParams());
 
-      expect(deleteSpy).toHaveBeenCalledWith({
+      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
         postId: testData.compositePostId,
         bookmarkUrl: expect.stringContaining('pubky://'),
       });

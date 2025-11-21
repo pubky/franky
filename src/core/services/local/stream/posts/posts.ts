@@ -52,41 +52,6 @@ export class LocalStreamPostsService {
   }
 
   /**
-   * Insert a post ID into a stream sorted by post timestamp (indexed_at)
-   * Maintains descending timestamp order (newest first)
-   * Only adds if not already present
-   *
-   * @param streamId - The stream to insert into
-   * @param postId - The post ID to insert
-   */
-  static async insertSortedByTimestamp(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
-    const existing = await this.findById(streamId);
-    const currentStream = existing?.stream || [];
-
-    // Only add if not already in stream
-    if (currentStream.includes(postId)) {
-      return;
-    }
-
-    // Add new post to stream
-    const updatedStream = [...currentStream, postId];
-
-    // Fetch all post details to get timestamps
-    const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(updatedStream);
-
-    // Map post IDs with their timestamps
-    const postTimestamps = updatedStream.map((id, index) => ({
-      postId: id,
-      timestamp: posts[index]?.indexed_at || 0,
-    }));
-
-    // Sort by timestamp descending (newest first)
-    const sortedStream = postTimestamps.sort((a, b) => b.timestamp - a.timestamp).map((item) => item.postId);
-
-    await this.upsert({ streamId, stream: sortedStream });
-  }
-
-  /**
    * Remove a post ID from a stream
    *
    * @param streamId - The stream to remove from

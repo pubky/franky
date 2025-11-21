@@ -51,7 +51,11 @@ const setupUserCounts = async (userId: Core.Pubky, bookmarks: number = 0) => {
   });
 };
 
-const setupPostDetails = async (kind: 'short' | 'long', attachments?: string[], content?: string) => {
+const setupPostDetails = async (
+  kind: 'short' | 'long' | 'image' | 'video' | 'file' | 'link',
+  attachments?: string[],
+  content?: string,
+) => {
   await Core.PostDetailsModel.upsert({
     id: testData.compositePostId,
     content: content || 'Test post content',
@@ -76,10 +80,10 @@ describe('LocalBookmarkService', () => {
     );
   });
 
-  describe('create', () => {
+  describe('persist with PUT action (create)', () => {
     it('should create a new bookmark', async () => {
       await setupUserCounts(testData.userPubky, 0);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const savedBookmark = await getSavedBookmark();
       expect(savedBookmark).toBeTruthy();
@@ -91,7 +95,7 @@ describe('LocalBookmarkService', () => {
       await setupExistingBookmark();
       const firstBookmark = await getSavedBookmark();
 
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const secondBookmark = await getSavedBookmark();
       expect(secondBookmark!.created_at).toBe(firstBookmark!.created_at); // Should remain unchanged
@@ -99,7 +103,7 @@ describe('LocalBookmarkService', () => {
 
     it('should increment user bookmarks count when creating bookmark', async () => {
       await setupUserCounts(testData.userPubky, 0);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const userCounts = await getUserCounts(testData.userPubky);
       expect(userCounts!.bookmarks).toBe(1);
@@ -107,7 +111,7 @@ describe('LocalBookmarkService', () => {
 
     it('should increment user bookmarks count from existing value', async () => {
       await setupUserCounts(testData.userPubky, 5);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const userCounts = await getUserCounts(testData.userPubky);
       expect(userCounts!.bookmarks).toBe(6);
@@ -115,7 +119,7 @@ describe('LocalBookmarkService', () => {
 
     it('should add post to TIMELINE_BOOKMARKS_ALL stream', async () => {
       await setupPostDetails('short');
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
       expect(stream).toBeTruthy();
@@ -124,7 +128,7 @@ describe('LocalBookmarkService', () => {
 
     it('should add short post to TIMELINE_BOOKMARKS_SHORT stream', async () => {
       await setupPostDetails('short');
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT);
       expect(stream).toBeTruthy();
@@ -133,62 +137,60 @@ describe('LocalBookmarkService', () => {
 
     it('should add long post to TIMELINE_BOOKMARKS_LONG stream', async () => {
       await setupPostDetails('long');
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LONG);
       expect(stream).toBeTruthy();
       expect(stream!.stream).toContain(testData.compositePostId);
     });
 
-    it('should add post with image to TIMELINE_BOOKMARKS_IMAGE stream', async () => {
-      await setupPostDetails('short', ['https://example.com/photo.jpg']);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+    it('should add image post to TIMELINE_BOOKMARKS_IMAGE stream', async () => {
+      await setupPostDetails('image');
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE);
       expect(stream).toBeTruthy();
       expect(stream!.stream).toContain(testData.compositePostId);
     });
 
-    it('should add post with video to TIMELINE_BOOKMARKS_VIDEO stream', async () => {
-      await setupPostDetails('short', ['https://example.com/video.mp4']);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+    it('should add video post to TIMELINE_BOOKMARKS_VIDEO stream', async () => {
+      await setupPostDetails('video');
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_VIDEO);
       expect(stream).toBeTruthy();
       expect(stream!.stream).toContain(testData.compositePostId);
     });
 
-    it('should add post with file attachment to TIMELINE_BOOKMARKS_FILE stream', async () => {
-      await setupPostDetails('short', ['https://example.com/document.pdf']);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+    it('should add file post to TIMELINE_BOOKMARKS_FILE stream', async () => {
+      await setupPostDetails('file');
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_FILE);
       expect(stream).toBeTruthy();
       expect(stream!.stream).toContain(testData.compositePostId);
     });
 
-    it('should add post with link to TIMELINE_BOOKMARKS_LINK stream', async () => {
-      await setupPostDetails('short', undefined, 'Check out https://example.com for more info');
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+    it('should add link post to TIMELINE_BOOKMARKS_LINK stream', async () => {
+      await setupPostDetails('link');
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK);
       expect(stream).toBeTruthy();
       expect(stream!.stream).toContain(testData.compositePostId);
     });
 
-    it('should add post to multiple streams based on content', async () => {
-      await setupPostDetails('short', ['https://example.com/photo.jpg'], 'Visit https://example.com');
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+    it('should add post to only ALL and kind-based stream', async () => {
+      await setupPostDetails('image');
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const allStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
-      const shortStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT);
       const imageStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE);
-      const linkStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK);
+      const shortStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT);
 
       expect(allStream!.stream).toContain(testData.compositePostId);
-      expect(shortStream!.stream).toContain(testData.compositePostId);
       expect(imageStream!.stream).toContain(testData.compositePostId);
-      expect(linkStream!.stream).toContain(testData.compositePostId);
+      expect(shortStream).toBeUndefined(); // Should not be in short stream
     });
 
     it('should not update counts when post is already bookmarked', async () => {
@@ -196,30 +198,14 @@ describe('LocalBookmarkService', () => {
       await setupUserCounts(testData.userPubky, 5);
       await setupPostDetails('short');
 
-      await Core.LocalBookmarkService.create(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.PUT, createBookmarkParams());
 
       const userCounts = await getUserCounts(testData.userPubky);
       expect(userCounts!.bookmarks).toBe(5); // Should remain unchanged
     });
-
-    it('should detect multiple image formats', async () => {
-      await setupPostDetails('short', ['photo.jpg', 'image.png', 'graphic.webp', 'animation.gif']);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
-
-      const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE);
-      expect(stream!.stream).toContain(testData.compositePostId);
-    });
-
-    it('should detect multiple video formats', async () => {
-      await setupPostDetails('short', ['video.mp4', 'clip.webm', 'movie.mov']);
-      await Core.LocalBookmarkService.create(createBookmarkParams());
-
-      const stream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_VIDEO);
-      expect(stream!.stream).toContain(testData.compositePostId);
-    });
   });
 
-  describe('delete', () => {
+  describe('persist with DELETE action (delete)', () => {
     beforeEach(async () => {
       await setupExistingBookmark();
       await setupPostDetails('short');
@@ -230,7 +216,7 @@ describe('LocalBookmarkService', () => {
     });
 
     it('should delete bookmark from database', async () => {
-      await Core.LocalBookmarkService.delete(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 
       const savedBookmark = await getSavedBookmark();
       expect(savedBookmark).toBeUndefined();
@@ -238,7 +224,7 @@ describe('LocalBookmarkService', () => {
 
     it('should decrement user bookmarks count when deleting bookmark', async () => {
       await setupUserCounts(testData.userPubky, 1);
-      await Core.LocalBookmarkService.delete(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 
       const userCounts = await getUserCounts(testData.userPubky);
       expect(userCounts!.bookmarks).toBe(0);
@@ -246,7 +232,7 @@ describe('LocalBookmarkService', () => {
 
     it('should decrement user bookmarks count from existing value', async () => {
       await setupUserCounts(testData.userPubky, 10);
-      await Core.LocalBookmarkService.delete(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 
       const userCounts = await getUserCounts(testData.userPubky);
       expect(userCounts!.bookmarks).toBe(9);
@@ -262,7 +248,7 @@ describe('LocalBookmarkService', () => {
         testData.compositePostId,
       );
 
-      await Core.LocalBookmarkService.delete(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 
       const allStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
       const shortStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT);
@@ -277,7 +263,7 @@ describe('LocalBookmarkService', () => {
       await Core.BookmarkModel.table.clear();
 
       // Should not throw
-      await Core.LocalBookmarkService.delete(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 
       const savedBookmark = await getSavedBookmark();
       expect(savedBookmark).toBeUndefined();
@@ -287,7 +273,7 @@ describe('LocalBookmarkService', () => {
       await Core.BookmarkModel.table.clear();
       await setupUserCounts(testData.userPubky, 5);
 
-      await Core.LocalBookmarkService.delete(createBookmarkParams());
+      await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 
       const userCounts = await getUserCounts(testData.userPubky);
       expect(userCounts!.bookmarks).toBe(5); // Should remain unchanged

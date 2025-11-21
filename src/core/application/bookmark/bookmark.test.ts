@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BookmarkApplication } from './bookmark';
 import * as Core from '@/core';
 import type { TCreateBookmarkInput, TDeleteBookmarkInput } from './bookmark.types';
+import type { AuthStore } from '@/core/stores/auth/auth.types';
 
 // Mock the LocalBookmarkService
 vi.mock('@/core/services/local/bookmark', () => ({
   LocalBookmarkService: {
-    create: vi.fn(),
-    delete: vi.fn(),
+    persist: vi.fn(),
   },
 }));
 
@@ -35,8 +35,7 @@ describe('BookmarkApplication', () => {
 
   // Helper functions
   const setupMocks = () => ({
-    createSpy: vi.spyOn(Core.LocalBookmarkService, 'create'),
-    deleteSpy: vi.spyOn(Core.LocalBookmarkService, 'delete'),
+    persistSpy: vi.spyOn(Core.LocalBookmarkService, 'persist'),
     requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
     authSpy: vi.spyOn(Core.useAuthStore, 'getState'),
   });
@@ -45,18 +44,18 @@ describe('BookmarkApplication', () => {
     vi.clearAllMocks();
   });
 
-  describe('create', () => {
+  describe('persist with PUT action', () => {
     it('should save locally and sync to homeserver successfully', async () => {
       const mockData = createMockBookmarkData();
-      const { createSpy, requestSpy, authSpy } = setupMocks();
+      const { persistSpy, requestSpy, authSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ currentUserPubky: testUserId });
-      createSpy.mockResolvedValue(undefined);
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await BookmarkApplication.create(mockData);
+      await BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData);
 
-      expect(createSpy).toHaveBeenCalledWith({
+      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, {
         userId: testUserId,
         postId: mockData.postId,
       });
@@ -69,55 +68,57 @@ describe('BookmarkApplication', () => {
 
       // Mock unauthenticated state
       authSpy.mockReturnValue({
-        currentUserPubky: null,
-      });
+        selectCurrentUserPubky: () => null,
+      } as Partial<AuthStore>);
 
-      await expect(BookmarkApplication.create(mockData)).rejects.toThrow('User not authenticated');
+      await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow(
+        'User not authenticated',
+      );
     });
 
     it('should throw when local save fails', async () => {
       const mockData = createMockBookmarkData();
-      const { createSpy, authSpy } = setupMocks();
+      const { persistSpy, authSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ currentUserPubky: testUserId });
-      createSpy.mockRejectedValue(new Error('Database error'));
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(BookmarkApplication.create(mockData)).rejects.toThrow('Database error');
-      expect(createSpy).toHaveBeenCalledOnce();
-      // In parallel execution, homeserver request may start before local fails
-      // So we just verify it was called, but the overall operation still fails
+      await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow('Database error');
+      expect(persistSpy).toHaveBeenCalledOnce();
     });
 
     it('should throw when homeserver sync fails', async () => {
       const mockData = createMockBookmarkData();
-      const { createSpy, requestSpy, authSpy } = setupMocks();
+      const { persistSpy, requestSpy, authSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ currentUserPubky: testUserId });
-      createSpy.mockResolvedValue(undefined);
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(BookmarkApplication.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
-      expect(createSpy).toHaveBeenCalledOnce();
+      await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow(
+        'Failed to PUT to homeserver: 500',
+      );
+      expect(persistSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
   });
 
-  describe('delete', () => {
+  describe('persist with DELETE action', () => {
     it('should remove locally and sync to homeserver successfully', async () => {
       const mockData = createMockDeleteData();
-      const { deleteSpy, requestSpy, authSpy } = setupMocks();
+      const { persistSpy, requestSpy, authSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ currentUserPubky: testUserId });
-      deleteSpy.mockResolvedValue(undefined);
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await BookmarkApplication.delete(mockData);
+      await BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData);
 
-      expect(deleteSpy).toHaveBeenCalledWith({
+      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
         userId: testUserId,
         postId: mockData.postId,
       });
-      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.bookmarkUrl);
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.bookmarkUrl, undefined);
     });
 
     it('should throw error when user is not authenticated', async () => {
@@ -126,35 +127,39 @@ describe('BookmarkApplication', () => {
 
       // Mock unauthenticated state
       authSpy.mockReturnValue({
-        currentUserPubky: null,
-      });
+        selectCurrentUserPubky: () => null,
+      } as Partial<AuthStore>);
 
-      await expect(BookmarkApplication.delete(mockData)).rejects.toThrow('User not authenticated');
+      await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
+        'User not authenticated',
+      );
     });
 
     it('should throw when local remove fails', async () => {
       const mockData = createMockDeleteData();
-      const { deleteSpy, authSpy } = setupMocks();
+      const { persistSpy, authSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ currentUserPubky: testUserId });
-      deleteSpy.mockRejectedValue(new Error('Bookmark not found'));
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockRejectedValue(new Error('Bookmark not found'));
 
-      await expect(BookmarkApplication.delete(mockData)).rejects.toThrow('Bookmark not found');
-      expect(deleteSpy).toHaveBeenCalledOnce();
-      // In parallel execution, homeserver request may start before local fails
-      // So we just verify it was called, but the overall operation still fails
+      await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
+        'Bookmark not found',
+      );
+      expect(persistSpy).toHaveBeenCalledOnce();
     });
 
     it('should throw when homeserver sync fails', async () => {
       const mockData = createMockDeleteData();
-      const { deleteSpy, requestSpy, authSpy } = setupMocks();
+      const { persistSpy, requestSpy, authSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ currentUserPubky: testUserId });
-      deleteSpy.mockResolvedValue(undefined);
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(BookmarkApplication.delete(mockData)).rejects.toThrow('Failed to DELETE from homeserver: 404');
-      expect(deleteSpy).toHaveBeenCalledOnce();
+      await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
+        'Failed to DELETE from homeserver: 404',
+      );
+      expect(persistSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
   });

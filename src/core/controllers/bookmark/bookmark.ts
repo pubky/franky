@@ -15,7 +15,7 @@ export class BookmarkController {
     const postUri = postUriBuilder(authorId, rawPostId);
     const { bookmark, meta } = Core.BookmarkNormalizer.to(postUri, userId);
 
-    await Core.BookmarkApplication.create({
+    await Core.BookmarkApplication.persist(Core.HomeserverAction.PUT, {
       postId,
       bookmarkUrl: meta.url,
       bookmarkJson: bookmark.toJson(),
@@ -33,7 +33,7 @@ export class BookmarkController {
     const postUri = postUriBuilder(authorId, rawPostId);
     const { meta } = Core.BookmarkNormalizer.to(postUri, userId);
 
-    await Core.BookmarkApplication.delete({
+    await Core.BookmarkApplication.persist(Core.HomeserverAction.DELETE, {
       postId,
       bookmarkUrl: meta.url,
     });
