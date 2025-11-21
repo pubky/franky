@@ -1,3 +1,4 @@
-export { Youtube } from './Youtube';
-export { Vimeo } from './Vimeo';
-export type { EmbedProvider } from './Provider.types';
+export * from './Youtube';
+export * from './Vimeo';
+export * from './Twitter';
+export * from './Provider.types';

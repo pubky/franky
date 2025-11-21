@@ -11,6 +11,7 @@ import * as Types from './PostLinkEmbeds.types';
 const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
   Providers.Youtube,
   Providers.Vimeo,
+  Providers.Twitter,
   // Add more providers here:
   // Providers.Twitch,
 ];
@@ -71,5 +72,5 @@ export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
 
   if (!embed || !provider) return null;
 
-  return <Atoms.Container>{provider.renderEmbed(embed.url)}</Atoms.Container>;
+  return <Atoms.Container>{provider.renderEmbed(embed)}</Atoms.Container>;
 };
