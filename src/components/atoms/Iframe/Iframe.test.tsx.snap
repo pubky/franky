@@ -1,10 +1,23 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Iframe - Snapshots > matches snapshot 1`] = `
+exports[`Iframe - Snapshots > matches snapshot with custom props 1`] = `
 <iframe
   allowfullscreen=""
   class="rounded-md"
   data-testid="test-iframe"
+  height="315"
+  loading="lazy"
+  src="https://example.com/embed"
+  title="Example embed"
+  width="100%"
+/>
+`;
+
+exports[`Iframe - Snapshots > matches snapshot with default props 1`] = `
+<iframe
+  allowfullscreen=""
+  class="rounded-md"
+  data-testid="iframe"
   height="315"
   loading="lazy"
   src="https://example.com/embed"
