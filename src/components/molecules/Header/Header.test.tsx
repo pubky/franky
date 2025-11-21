@@ -20,6 +20,7 @@ vi.mock('dexie-react-hooks', () => ({
 // Mock the core
 vi.mock('@/core', () => ({
   useAuthStore: vi.fn(),
+  useNotificationStore: vi.fn(),
   db: {
     user_details: {
       get: vi.fn(),
@@ -146,6 +147,7 @@ describe('Header Components', () => {
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
     vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    vi.mocked(Core.useNotificationStore).mockReturnValue({ selectUnread: () => 0 });
     vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
   });
 
@@ -480,6 +482,7 @@ describe('Header Components - Snapshots', () => {
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
     vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    vi.mocked(Core.useNotificationStore).mockReturnValue({ selectUnread: () => 0 });
     vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
   });
 

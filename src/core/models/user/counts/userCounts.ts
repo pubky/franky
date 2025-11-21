@@ -48,6 +48,7 @@ export class UserCountsModel
       following?: number;
       followers?: number;
       friends?: number;
+      bookmarks?: number;
     },
   ): Promise<void> {
     const userCounts = await Core.UserCountsModel.findById(userId);
@@ -78,6 +79,9 @@ export class UserCountsModel
     }
     if (countChanges.friends !== undefined) {
       updates.friends = Math.max(0, userCounts.friends + countChanges.friends);
+    }
+    if (countChanges.bookmarks !== undefined) {
+      updates.bookmarks = Math.max(0, userCounts.bookmarks + countChanges.bookmarks);
     }
 
     if (Object.keys(updates).length > 0) {

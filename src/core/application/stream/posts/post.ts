@@ -15,15 +15,20 @@ export class PostStreamApplication {
         return 0;
       }
 
-      const lastPostId = postStream.stream[postStream.stream.length - 1];
-      const postDetails = await Core.PostDetailsModel.findById(lastPostId);
+      // Iterate backwards through the stream to find the last post that has details
+      // This handles cases where the last PostDetails might be missing
+      for (let i = postStream.stream.length - 1; i >= 0; i--) {
+        const postId = postStream.stream[i];
+        const postDetails = await Core.PostDetailsModel.findById(postId);
 
-      if (!postDetails) {
-        Libs.Logger.warn('Post details not found for last post in stream', { streamId, lastPostId });
-        return 0;
+        if (postDetails) {
+          return postDetails.indexed_at;
+        }
       }
 
-      return postDetails.indexed_at;
+      // No posts in the stream have details - cache is not useful
+      Libs.Logger.warn('No post details found in cached stream', { streamId, streamLength: postStream.stream.length });
+      return 0;
     } catch (error) {
       Libs.Logger.warn('Failed to get timeline initial cursor', { streamId, error });
       return 0;
@@ -42,14 +47,22 @@ export class PostStreamApplication {
       const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
 
       if (cachedStream) {
-        const streamChunk = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
-        if (streamChunk.length > 0) {
-          return { nextPageIds: streamChunk, cacheMissPostIds: [], timestamp: undefined };
+        const cachedStreamChunk = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
+
+        // Full cache hit - return immediately
+        if (cachedStreamChunk.length === limit) {
+          return { nextPageIds: cachedStreamChunk, cacheMissPostIds: [], timestamp: undefined };
+        }
+
+        // Partial cache hit - fetch missing posts from Nexus and combine
+        if (cachedStreamChunk.length > 0 && cachedStreamChunk.length < limit) {
+          return await this.partialCacheHit({ cachedStreamChunk, limit, streamTail, streamId, viewerId });
         }
       }
 
-      // If this is an initial load (no lastPostId) and cache doesn't exist or is empty,
-      // force fetching from the beginning by setting streamTail to 0
+      // Defensive check: If this is an initial load (no lastPostId) and cache doesn't exist or is empty,
+      // force fetching from the beginning by setting streamTail to 0.
+      // This ensures correctness even if a non-zero streamTail was incorrectly passed for an initial load.
       if (!lastPostId && (!cachedStream || cachedStream.stream.length === 0)) {
         streamTail = 0;
       }
@@ -73,6 +86,59 @@ export class PostStreamApplication {
     }
   }
 
+  // ============================================================================
+  // Internal Helpers
+  // ============================================================================
+
+  /**
+   * Handles partial cache hits by fetching remaining posts from Nexus and combining with cached posts.
+   *
+   * @param cachedStreamChunk - Array of post IDs from cache that need to be combined with fetched posts
+   * @param limit - Maximum number of posts to return
+   * @param streamTail - Timestamp or skip count for pagination
+   * @param streamId - ID of the post stream
+   * @param viewerId - ID of the viewer
+   **/
+  private static async partialCacheHit({
+    cachedStreamChunk,
+    limit,
+    streamTail,
+    streamId,
+    viewerId,
+  }: Core.TPartialCacheHitParams): Promise<Core.TPostStreamChunkResponse> {
+    const lastCachedPostId = cachedStreamChunk[cachedStreamChunk.length - 1];
+    const remainingLimit = limit - cachedStreamChunk.length;
+
+    // Get timestamp from last cached post for pagination
+    let nextStreamTail = streamTail;
+    try {
+      const lastPostDetails = await Core.PostDetailsModel.findById(lastCachedPostId);
+      if (lastPostDetails) {
+        nextStreamTail = lastPostDetails.indexed_at;
+      }
+    } catch (error) {
+      Libs.Logger.warn('Failed to get timestamp from last cached post', { lastCachedPostId, error });
+    }
+
+    // Fetch remaining posts from Nexus
+    const { nextPageIds, cacheMissPostIds, timestamp } = await this.fetchStreamFromNexus({
+      streamId,
+      limit: remainingLimit,
+      streamTail: nextStreamTail,
+      viewerId,
+      lastPostId: lastCachedPostId,
+    });
+
+    // Combine cached posts with fetched posts, deduplicating
+    const uniquePostIds = Array.from(new Set([...cachedStreamChunk, ...nextPageIds]));
+
+    return {
+      nextPageIds: uniquePostIds,
+      cacheMissPostIds,
+      timestamp,
+    };
+  }
+
   private static async fetchMissingUsersFromNexus({ posts, viewerId }: Core.TFetchMissingUsersParams) {
     const cacheMissUserIds = await this.getNotPersistedUsersInCache(posts.map((post) => post.details.author));
     if (cacheMissUserIds.length > 0) {
@@ -86,10 +152,6 @@ export class PostStreamApplication {
       }
     }
   }
-
-  // ============================================================================
-  // Internal Helpers
-  // ============================================================================
 
   private static async fetchStreamFromNexus({
     streamId,
@@ -131,36 +193,35 @@ export class PostStreamApplication {
     limit,
     cachedStream,
   }: Core.TCacheStreamParams): Promise<string[]> {
-    // TODO: Could be a case that it does not have sufficient posts, in which case we need to fetch more from Nexus
-    // e.g. in the cache there is only limit - 5 posts and the missing ones we have to download
-    // From now, if cache exists and has posts, return from cache
     // Handle limit 0 case: return empty array immediately without fetching from Nexus
     if (limit === 0) {
       return [];
     }
 
-    let postIds: string[] | null = null;
-
     // If the lastPostId is not provided, it means that we are in the head of the stream
-    if (!lastPostId && cachedStream.stream.length >= limit) {
-      postIds = cachedStream.stream.slice(0, limit);
-    } else if (lastPostId) {
-      const postIndex = cachedStream.stream.indexOf(lastPostId);
-      if (postIndex === -1) {
-        return [];
-      }
-
-      if (postIndex + 1 + limit <= cachedStream.stream.length) {
-        postIds = cachedStream.stream.slice(postIndex + 1, postIndex + 1 + limit);
-      } else {
-        return [];
-      }
+    if (!lastPostId) {
+      // Return all available posts from cache (up to limit)
+      // If cache has fewer posts than limit, return what's available
+      return cachedStream.stream.slice(0, Math.min(limit, cachedStream.stream.length));
     }
 
-    if (!postIds || postIds.length === 0) {
+    // lastPostId is provided - find the position in cache
+    const postIndex = cachedStream.stream.indexOf(lastPostId);
+    if (postIndex === -1) {
+      // lastPostId not found in cache, cannot serve from cache
       return [];
     }
 
-    return postIds;
+    // Return all available posts after lastPostId (up to limit)
+    // If cache has fewer posts than requested, return what's available
+    const startIndex = postIndex + 1;
+    const endIndex = Math.min(startIndex + limit, cachedStream.stream.length);
+
+    if (startIndex >= cachedStream.stream.length) {
+      // No posts after lastPostId in cache
+      return [];
+    }
+
+    return cachedStream.stream.slice(startIndex, endIndex);
   }
 }

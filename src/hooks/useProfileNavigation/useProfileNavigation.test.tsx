@@ -79,12 +79,12 @@ describe('useProfileNavigation', () => {
       expect(result.current.activePage).toBe(PROFILE_PAGE_TYPES.FRIENDS);
     });
 
-    it('should return TAGGED for the tagged route', () => {
-      mockPathname.mockReturnValue(PROFILE_ROUTES.TAGGED);
+    it('should return UNIQUE_TAGS for the unique_tags route', () => {
+      mockPathname.mockReturnValue(PROFILE_ROUTES.UNIQUE_TAGS);
 
       const { result } = renderHook(() => useProfileNavigation());
 
-      expect(result.current.activePage).toBe(PROFILE_PAGE_TYPES.TAGGED);
+      expect(result.current.activePage).toBe(PROFILE_PAGE_TYPES.UNIQUE_TAGS);
     });
 
     it('should return PROFILE for the profile page route', () => {
@@ -142,7 +142,7 @@ describe('useProfileNavigation', () => {
         { route: PROFILE_ROUTES.FOLLOWERS, type: PROFILE_PAGE_TYPES.FOLLOWERS },
         { route: PROFILE_ROUTES.FOLLOWING, type: PROFILE_PAGE_TYPES.FOLLOWING },
         { route: PROFILE_ROUTES.FRIENDS, type: PROFILE_PAGE_TYPES.FRIENDS },
-        { route: PROFILE_ROUTES.TAGGED, type: PROFILE_PAGE_TYPES.TAGGED },
+        { route: PROFILE_ROUTES.UNIQUE_TAGS, type: PROFILE_PAGE_TYPES.UNIQUE_TAGS },
       ];
 
       pages.forEach(({ route, type }) => {
@@ -176,7 +176,7 @@ describe('useProfileNavigation', () => {
         { page: PROFILE_PAGE_TYPES.FOLLOWERS, route: PROFILE_ROUTES.FOLLOWERS },
         { page: PROFILE_PAGE_TYPES.FOLLOWING, route: PROFILE_ROUTES.FOLLOWING },
         { page: PROFILE_PAGE_TYPES.FRIENDS, route: PROFILE_ROUTES.FRIENDS },
-        { page: PROFILE_PAGE_TYPES.TAGGED, route: PROFILE_ROUTES.TAGGED },
+        { page: PROFILE_PAGE_TYPES.UNIQUE_TAGS, route: PROFILE_ROUTES.UNIQUE_TAGS },
         { page: PROFILE_PAGE_TYPES.PROFILE, route: PROFILE_ROUTES.PROFILE_PAGE },
       ];
 

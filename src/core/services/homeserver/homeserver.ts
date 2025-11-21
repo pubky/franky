@@ -185,8 +185,10 @@ export class HomeserverService {
     });
 
     if (!response.ok) {
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', 500, {
+      throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', response.status, {
         url,
+        statusCode: response.status,
+        statusText: response.statusText,
       });
     }
     if (method === Core.HomeserverAction.GET) {

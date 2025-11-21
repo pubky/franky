@@ -6,7 +6,7 @@ export const PROFILE_PAGE_TYPES = {
   FOLLOWERS: 'followers',
   FOLLOWING: 'following',
   FRIENDS: 'friends',
-  TAGGED: 'tagged',
+  UNIQUE_TAGS: 'unique_tags',
 } as const;
 
 export type ProfilePageType =
@@ -17,6 +17,6 @@ export type ProfilePageType =
   | typeof PROFILE_PAGE_TYPES.FOLLOWERS
   | typeof PROFILE_PAGE_TYPES.FOLLOWING
   | typeof PROFILE_PAGE_TYPES.FRIENDS
-  | typeof PROFILE_PAGE_TYPES.TAGGED;
+  | typeof PROFILE_PAGE_TYPES.UNIQUE_TAGS;
 
 export type FilterBarPageType = Exclude<ProfilePageType, typeof PROFILE_PAGE_TYPES.PROFILE>;

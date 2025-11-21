@@ -10,7 +10,7 @@ export interface ProfileStats {
   followers: number;
   following: number;
   friends: number;
-  tagged: number;
+  uniqueTags: number;
 }
 
 export interface UseProfileStatsResult {
@@ -32,6 +32,9 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     return await Core.UserController.getCounts(userId);
   }, [userId]);
 
+  // Get unread notifications count from store
+  const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
+
   // Build stats object from user counts
   // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts
   const totalPosts = userCounts?.posts ?? 0;
@@ -39,13 +42,13 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   const actualPostsCount = Math.max(0, totalPosts - repliesCount);
 
   const stats: ProfileStats = {
-    notifications: 0, // TODO: Get from notifications when implemented
+    notifications: unreadNotifications,
     posts: actualPostsCount,
     replies: repliesCount,
     followers: userCounts?.followers ?? 0,
     following: userCounts?.following ?? 0,
     friends: userCounts?.friends ?? 0,
-    tagged: userCounts?.tagged ?? 0,
+    uniqueTags: userCounts?.unique_tags ?? 0,
   };
 
   return {
