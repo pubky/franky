@@ -66,13 +66,15 @@ describe('BookmarkApplication', () => {
       const mockData = createMockBookmarkData();
       const { authSpy } = setupMocks();
 
-      // Mock unauthenticated state
+      // Mock unauthenticated state - selectCurrentUserPubky throws when user is null
       authSpy.mockReturnValue({
-        selectCurrentUserPubky: () => null,
+        selectCurrentUserPubky: () => {
+          throw new Error('Current user pubky is not available. User may not be authenticated.');
+        },
       } as Partial<AuthStore>);
 
       await expect(BookmarkApplication.persist(Core.HomeserverAction.PUT, mockData)).rejects.toThrow(
-        'User not authenticated',
+        'Current user pubky is not available',
       );
     });
 
@@ -125,13 +127,15 @@ describe('BookmarkApplication', () => {
       const mockData = createMockDeleteData();
       const { authSpy } = setupMocks();
 
-      // Mock unauthenticated state
+      // Mock unauthenticated state - selectCurrentUserPubky throws when user is null
       authSpy.mockReturnValue({
-        selectCurrentUserPubky: () => null,
+        selectCurrentUserPubky: () => {
+          throw new Error('Current user pubky is not available. User may not be authenticated.');
+        },
       } as Partial<AuthStore>);
 
       await expect(BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData)).rejects.toThrow(
-        'User not authenticated',
+        'Current user pubky is not available',
       );
     });
 
