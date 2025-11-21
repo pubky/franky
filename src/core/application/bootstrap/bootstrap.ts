@@ -60,10 +60,27 @@ export class BootstrapApplication {
    * @returns Promise resolving to notification list and last read timestamp
    */
   private static async fetchNotifications({ pubky, lastReadUrl }: Core.TBootstrapParams) {
-    const { timestamp: userLastRead } = await Core.HomeserverService.request<{ timestamp: number }>(
-      Core.HomeserverAction.GET,
-      lastReadUrl,
-    );
+    let userLastRead: number;
+    try {
+      const { timestamp } = await Core.HomeserverService.request<{ timestamp: number }>(
+        Core.HomeserverAction.GET,
+        lastReadUrl,
+      );
+      userLastRead = timestamp;
+    } catch (error) {
+      // Only handle 404 errors (resource not found) - rethrow everything else
+      if (error instanceof Libs.AppError && error.statusCode === 404) {
+        Libs.Logger.info('Last read file not found, creating new one', { pubky });
+        const lastRead = Core.LastReadNormalizer.to(pubky);
+        void Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
+        userLastRead = Number(lastRead.last_read.timestamp);
+      } else {
+        // Network errors, timeouts, server errors, etc. should bubble up
+        Libs.Logger.error('Failed to fetch last read timestamp', error);
+        throw error;
+      }
+    }
+
     const notificationList = await Core.NexusUserService.notifications({
       user_id: pubky,
       limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
