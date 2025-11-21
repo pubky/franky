@@ -10,6 +10,7 @@ export * from './tag';
 export * from './user';
 export * from './follow';
 export * from './mute';
+export * from './bookmark';
 export * from './notification';
 export * from './lastRead';
 // Re-export pubky-app-specs types
