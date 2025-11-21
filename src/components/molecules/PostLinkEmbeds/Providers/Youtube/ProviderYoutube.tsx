@@ -1,6 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as ProviderTypes from '../Provider.types';
 import * as ProviderConstants from '../Provider.constants';
+import * as ProviderUtils from '../Provider.utils';
 
 /**
  * Extract YouTube video ID from URL
@@ -44,24 +45,36 @@ const extractYouTubeTimestamp = (url: string): number | null => {
     const timeParam = parsedUrl.searchParams.get('t');
     if (!timeParam) return null;
 
-    // Require at least one component
-    const hmsMatch = timeParam.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s?)$/);
+    // Require at least one component using shared regex pattern
+    const hmsMatch = timeParam.match(ProviderUtils.HMS_TIMESTAMP_REGEX);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
-      const hours = parseInt(hmsMatch[1] || '0', 10);
-      const minutes = parseInt(hmsMatch[2] || '0', 10);
-      const seconds = parseInt(hmsMatch[3] || '0', 10);
-      return hours * 3600 + minutes * 60 + seconds;
+      const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      // convertHmsToSeconds returns null if any value is NaN (defense in depth)
+      if (timestamp !== null) return timestamp;
     }
 
     const numericMatch = timeParam.match(/^(\d+)s?$/);
     if (numericMatch) {
-      return parseInt(numericMatch[1], 10);
+      const parsed = parseInt(numericMatch[1], 10);
+      // Guard against NaN from parseInt (defense in depth)
+      return isNaN(parsed) ? null : parsed;
     }
 
     return null;
   } catch {
     return null;
   }
+};
+
+/**
+ * Extract video ID from YouTube embed URL for accessibility/debugging
+ * Returns 'unknown' if extraction fails (should never happen with valid embed URLs)
+ *
+ * @param embedUrl - The YouTube embed URL
+ * @returns The 11-character video ID or 'unknown' as fallback
+ */
+const extractVideoIdFromEmbedUrl = (embedUrl: string): string => {
+  return embedUrl.match(/youtube-nocookie\.com\/embed\/([a-zA-Z0-9_-]{11})/)?.[1] || 'unknown';
 };
 
 /**
@@ -104,18 +117,23 @@ export const Youtube: ProviderTypes.EmbedProvider = {
   },
 
   /**
-   * Render YouTube iframe embed
+   * Render YouTube iframe embed with responsive aspect ratio wrapper
+   * Matches Vimeo's rendering pattern for consistent 16:9 aspect ratio
    */
   renderEmbed: (embedUrl: string) => {
-    const videoId = embedUrl.split('https://www.youtube-nocookie.com/embed/')[1];
+    const videoId = extractVideoIdFromEmbedUrl(embedUrl);
 
     return (
-      <Atoms.Iframe
-        {...ProviderConstants.VIDEO_EMBED_PROPS}
-        src={embedUrl}
-        title={`YouTube video ${videoId}`}
-        data-testid="YouTube video player"
-      />
+      <Atoms.Container data-testid="youtube-aspect-ratio-wrapper" className="relative pt-[56.25%]">
+        <Atoms.Iframe
+          {...ProviderConstants.VIDEO_EMBED_PROPS}
+          src={embedUrl}
+          title={`YouTube video ${videoId}`}
+          data-testid="YouTube video player"
+          height="auto"
+          className="absolute top-0 left-0 h-full w-full"
+        />
+      </Atoms.Container>
     );
   },
 };
