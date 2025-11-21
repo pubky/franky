@@ -1,10 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Twitter } from './ProviderTwitter';
-
-// Mock react-tweet to avoid CSS import issues during module import
-vi.mock('react-tweet', () => ({
-  Tweet: vi.fn(({ id }) => `Tweet component with id: ${id}`),
-}));
 
 describe('ProviderTwitter', () => {
   describe('domains', () => {

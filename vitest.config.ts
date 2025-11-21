@@ -5,6 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
+    server: { deps: { inline: ['react-tweet'] } },
     environment: 'jsdom',
     setupFiles: ['./src/config/test.ts'],
     globals: true,
