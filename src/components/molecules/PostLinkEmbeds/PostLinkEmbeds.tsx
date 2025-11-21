@@ -10,8 +10,8 @@ import * as Types from './PostLinkEmbeds.types';
 // Register all embed providers here
 const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
   Providers.Youtube,
+  Providers.Vimeo,
   // Add more providers here:
-  // Providers.Vimeo,
   // Providers.Twitch,
 ];
 
