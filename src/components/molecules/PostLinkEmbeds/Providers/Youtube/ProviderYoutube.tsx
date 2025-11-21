@@ -103,7 +103,7 @@ export const Youtube: ProviderTypes.EmbedProvider = {
   /**
    * Parse YouTube URL and return embed information
    */
-  parseEmbed: (url: string): { url: string } | null => {
+  parseEmbed: (url: string): { data: string } | null => {
     const id = extractYouTubeId(url);
 
     if (!id) return null;
@@ -113,7 +113,7 @@ export const Youtube: ProviderTypes.EmbedProvider = {
       ? `https://www.youtube-nocookie.com/embed/${id}?start=${timestamp}`
       : `https://www.youtube-nocookie.com/embed/${id}`;
 
-    return { url: embedUrl };
+    return { data: embedUrl };
   },
 
   /**

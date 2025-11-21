@@ -5,6 +5,6 @@ export type PostLinkEmbedsProps = {
 };
 
 export type ParseContentForLinkEmbedResult = {
-  embed: { url: string } | null;
+  embed: { data: string } | null;
   provider: Providers.EmbedProvider | null;
 };

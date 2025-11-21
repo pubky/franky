@@ -112,7 +112,7 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
   /**
    * Parse Vimeo URL and return embed information
    */
-  parseEmbed: (url: string): { url: string } | null => {
+  parseEmbed: (url: string): { data: string } | null => {
     const id = extractVimeoId(url);
 
     if (!id) return null;
@@ -122,7 +122,7 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
       ? `https://player.vimeo.com/video/${id}#t=${timestamp}s`
       : `https://player.vimeo.com/video/${id}`;
 
-    return { url: embedUrl };
+    return { data: embedUrl };
   },
 
   /**

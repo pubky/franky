@@ -14,10 +14,10 @@ export interface EmbedProvider {
    * Parse URL and return embed information
    * Returns null if URL is not valid for this provider
    */
-  parseEmbed: (url: string) => { url: string } | null;
+  parseEmbed: (url: string) => { data: string } | null;
 
   /**
    * Render the embed component for this provider
    */
-  renderEmbed: (embedUrl: string) => ReactNode;
+  renderEmbed: (embedData: string) => ReactNode;
 }
