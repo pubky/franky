@@ -64,9 +64,9 @@ describe('useProfileStats', () => {
         followers: 20,
         following: 15,
         friends: 8,
-        tagged: 3,
+        tagged: 0,
         tags: 0,
-        unique_tags: 0,
+        unique_tags: 3,
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
 
@@ -115,9 +115,9 @@ describe('useProfileStats', () => {
         followers: 0,
         following: 0,
         friends: 0,
-        tagged: 7,
+        tagged: 0,
         tags: 0,
-        unique_tags: 0,
+        unique_tags: 7,
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
 
@@ -139,9 +139,9 @@ describe('useProfileStats', () => {
         followers: 20,
         following: 15,
         friends: 8,
-        tagged: 3,
+        tagged: 0,
         tags: 0,
-        unique_tags: 0,
+        unique_tags: 3,
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
 
@@ -166,9 +166,9 @@ describe('useProfileStats', () => {
         followers: 20,
         following: 15,
         friends: 8,
-        tagged: 3,
+        tagged: 0,
         tags: 0,
-        unique_tags: 0,
+        unique_tags: 3,
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
 
@@ -194,9 +194,9 @@ describe('useProfileStats', () => {
         followers: 777777,
         following: 666666,
         friends: 555555,
-        tagged: 444444,
+        tagged: 0,
         tags: 0,
-        unique_tags: 0,
+        unique_tags: 444444,
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
 
