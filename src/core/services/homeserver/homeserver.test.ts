@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import type { Session } from '@synonymdev/pubky';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 // Mock global fetch
 global.fetch = vi.fn();
@@ -8,6 +9,16 @@ global.fetch = vi.fn();
 // Mock pubky-app-specs to avoid WebAssembly issues
 vi.mock('pubky-app-specs', () => ({
   default: vi.fn(() => Promise.resolve()),
+}));
+
+// Mock Logger to suppress console output during tests
+vi.mock('@/libs/logger', () => ({
+  Logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
 }));
 
 // Mock useKeypairStore
@@ -489,6 +500,65 @@ describe('HomeserverService', () => {
       singleton.fetch = async () => new Response('', { status: 200 });
       const result = await HomeserverService.request(Core.HomeserverAction.GET, 'https://example.com/empty');
       expect(result).toBeUndefined();
+    });
+
+    it('should throw error with correct status code for 404 response', async () => {
+      const { HomeserverService } = await import('@/core/services/homeserver/homeserver');
+      const singleton = HomeserverService.getInstance('dummy-key');
+      singleton.fetch = async () => new Response('Not Found', { status: 404, statusText: 'Not Found' });
+
+      await expect(
+        HomeserverService.request(Core.HomeserverAction.GET, 'https://example.com/missing'),
+      ).rejects.toMatchObject({
+        type: Libs.HomeserverErrorType.FETCH_FAILED,
+        statusCode: 404,
+        message: 'Failed to fetch data',
+        details: {
+          url: 'https://example.com/missing',
+          statusCode: 404,
+          statusText: 'Not Found',
+        },
+      });
+    });
+
+    it('should throw error with correct status code for 500 response', async () => {
+      const { HomeserverService } = await import('@/core/services/homeserver/homeserver');
+      const singleton = HomeserverService.getInstance('dummy-key');
+      singleton.fetch = async () =>
+        new Response('Internal Server Error', { status: 500, statusText: 'Internal Server Error' });
+
+      await expect(
+        HomeserverService.request(Core.HomeserverAction.GET, 'https://example.com/error'),
+      ).rejects.toMatchObject({
+        type: Libs.HomeserverErrorType.FETCH_FAILED,
+        statusCode: 500,
+        message: 'Failed to fetch data',
+        details: {
+          url: 'https://example.com/error',
+          statusCode: 500,
+          statusText: 'Internal Server Error',
+        },
+      });
+    });
+
+    it('should throw error with correct status code for 503 response', async () => {
+      const { HomeserverService } = await import('@/core/services/homeserver/homeserver');
+      const singleton = HomeserverService.getInstance('dummy-key');
+      singleton.fetch = async () =>
+        new Response('Service Unavailable', { status: 503, statusText: 'Service Unavailable' });
+
+      await expect(
+        HomeserverService.request(Core.HomeserverAction.GET, 'https://example.com/unavailable'),
+      ).rejects.toMatchObject({
+        type: Libs.HomeserverErrorType.FETCH_FAILED,
+        statusCode: 503,
+        message: 'Failed to fetch data',
+        details: {
+          url: 'https://example.com/unavailable',
+          statusCode: 503,
+          statusText: 'Service Unavailable',
+        },
+      });
     });
   });
 });

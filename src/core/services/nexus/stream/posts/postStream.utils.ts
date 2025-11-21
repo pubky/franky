@@ -38,7 +38,8 @@ function setStreamPagination(params: Core.TStreamBase, streamTail: number) {
   } else {
     // Only set start if streamTail is not 0 (0 means initial load - fetch most recent)
     if (streamTail > 0) {
-      params.start = streamTail; // timestamp of the last post
+      // If we do not decrease the streamTail by 1, we will get the same last post again.
+      params.start = streamTail - 1; // timestamp of the last post
     }
     // If streamTail is 0, don't set start - this will fetch the most recent posts
   }
