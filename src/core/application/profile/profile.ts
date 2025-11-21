@@ -81,6 +81,30 @@ export class ProfileApplication {
   }
 
   /**
+   * Updates user status in local database only.
+   * Homeserver integration will be handled separately.
+   * @param params - Parameters containing user's public key and status
+   */
+  static async update({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+    try {
+      // Get current user details from local DB
+      const currentUser = await Core.UserDetailsModel.findById(pubky);
+      if (!currentUser) {
+        throw new Error('User profile not found');
+      }
+
+      // Update local database only
+      await Core.UserDetailsModel.upsert({
+        ...currentUser,
+        status: status || null,
+      });
+    } catch (error) {
+      console.error('Failed to update status', { error, pubky, status });
+      throw error;
+    }
+  }
+
+  /**
    * Downloads all user data from the homeserver and packages it into a ZIP file.
    * Fetches all files at once (using Infinity limit), formats JSON files with indentation, and preserves binary files.
    * Automatically triggers a browser download of the generated ZIP file.

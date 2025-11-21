@@ -5,12 +5,14 @@ import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
+import { extractEmojiFromStatus } from '@/components/molecules/StatusPicker/statusUtils';
 
 export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
-  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusClick } = actions;
+  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusChange } = actions;
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
+  const displayEmoji = extractEmojiFromStatus(status || '', emoji);
 
   return (
     <Atoms.Container
@@ -28,7 +30,7 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
             </Atoms.AvatarFallback>
           )}
         </Atoms.Avatar>
-        <Atoms.AvatarEmojiBadge emoji={emoji} />
+        <Atoms.AvatarEmojiBadge emoji={displayEmoji} />
       </Atoms.Container>
 
       <Atoms.Container overrideDefaults={true} className="flex flex-1 flex-col gap-5">
@@ -66,7 +68,7 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
             <Icons.LogOut className="size-4" />
             Sign out
           </Atoms.Button>
-          <Molecules.StatusPicker emoji={emoji} status={status} onClick={onStatusClick} />
+          <Molecules.StatusPicker emoji={displayEmoji} status={status} onStatusChange={onStatusChange} />
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>

@@ -54,6 +54,8 @@ export * from './SettingsSectionCard';
 export * from './SettingsSwitchItem';
 export * from './SettingsSwitchGroup';
 export * from './SideDrawer';
+export * from './EmojiPicker';
+export * from './EmojiPickerDialog';
 export * from './SignIn';
 export * from './StatusPicker';
 export * from './OnboardingLayout';

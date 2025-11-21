@@ -19,7 +19,7 @@ export interface ProfileHeaderActions {
   onCopyPublicKey?: () => void;
   onCopyLink: () => void;
   onSignOut?: () => void;
-  onStatusClick?: () => void;
+  onStatusChange?: (status: string) => void;
 }
 
 /**
@@ -49,5 +49,5 @@ export interface ProfilePageHeaderPropsFlat {
   onCopyPublicKey?: () => void;
   onCopyLink: () => void;
   onSignOut?: () => void;
-  onStatusClick?: () => void;
+  onStatusChange?: (status: string) => void;
 }
