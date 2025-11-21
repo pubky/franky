@@ -1,38 +1,46 @@
 import * as Core from '@/core';
 
-export type TFetchStreamParams = {
+export interface TFetchStreamParams {
   streamId: Core.PostStreamId;
   streamTail: number;
   limit: number;
   viewerId: Core.Pubky;
   lastPostId?: string;
   tags?: string[];
-};
+}
 
-export type TInitialStreamParams = {
+export interface TInitialStreamParams {
   streamId: Core.PostStreamId;
   limit: number;
   cachedStream: { stream: string[] } | null;
-};
+}
 
-export type TPostStreamChunkResponse = {
+export interface TPostStreamChunkResponse {
   nextPageIds: string[];
   cacheMissPostIds: string[];
   timestamp: number | undefined;
-};
+}
 
-export type TMissingPostsParams = {
+export interface TPartialCacheHitParams {
+  cachedStreamChunk: string[];
+  limit: number;
+  streamTail: number;
+  streamId: Core.PostStreamId;
+  viewerId: Core.Pubky;
+}
+
+export interface TMissingPostsParams {
   cacheMissPostIds: string[];
   viewerId: Core.Pubky;
-};
+}
 
-export type TCacheStreamParams = {
+export interface TCacheStreamParams {
   lastPostId: string | undefined;
   limit: number;
   cachedStream: { stream: string[] };
-};
+}
 
-export type TFetchMissingUsersParams = {
+export interface TFetchMissingUsersParams {
   posts: Core.NexusPost[];
   viewerId: Core.Pubky;
-};
+}
