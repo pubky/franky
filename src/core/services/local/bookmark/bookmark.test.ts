@@ -238,13 +238,9 @@ describe('LocalBookmarkService', () => {
       expect(userCounts!.bookmarks).toBe(9);
     });
 
-    it('should remove post from all bookmark streams', async () => {
+    it('should remove post from all and kind-specific bookmark streams', async () => {
       await Core.LocalStreamPostsService.prependToStream(
         Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT,
-        testData.compositePostId,
-      );
-      await Core.LocalStreamPostsService.prependToStream(
-        Core.PostStreamTypes.TIMELINE_BOOKMARKS_LONG,
         testData.compositePostId,
       );
 
@@ -252,11 +248,9 @@ describe('LocalBookmarkService', () => {
 
       const allStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL);
       const shortStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT);
-      const longStream = await getStream(Core.PostStreamTypes.TIMELINE_BOOKMARKS_LONG);
 
       expect(allStream!.stream).not.toContain(testData.compositePostId);
       expect(shortStream!.stream).not.toContain(testData.compositePostId);
-      expect(longStream!.stream).not.toContain(testData.compositePostId);
     });
 
     it('should ignore if post is not bookmarked', async () => {

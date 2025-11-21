@@ -12,15 +12,9 @@ import * as Core from '@/core';
  * errors and potentially retry or implement compensation logic.
  */
 export class BookmarkApplication {
-  static async persist(
-    action: Core.HomeserverAction,
-    params: { postId: string; bookmarkUrl: string; bookmarkJson?: Record<string, unknown> },
-  ) {
+  static async persist(action: Core.HomeserverAction, params: Core.TBookmarkPersistInput) {
     // Get current user ID for user counts update
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
-    if (!userId) {
-      throw new Error('User not authenticated');
-    }
 
     const { postId, bookmarkUrl, bookmarkJson } = params;
 
