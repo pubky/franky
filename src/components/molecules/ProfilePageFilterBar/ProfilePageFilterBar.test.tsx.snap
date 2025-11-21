@@ -686,7 +686,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
         class="text-base font-medium text-muted-foreground"
         data-testid="typography"
       >
-        5
+        0
       </span>
     </button>
   </div>
