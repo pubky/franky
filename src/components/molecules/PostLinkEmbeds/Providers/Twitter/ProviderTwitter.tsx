@@ -61,7 +61,11 @@ export const Twitter: ProviderTypes.EmbedProvider = {
    */
   renderEmbed: (embedId: string) => {
     return (
-      <Atoms.Container data-testid="twitter-container" data-theme="dark">
+      <Atoms.Container
+        data-testid="twitter-container"
+        data-theme="dark"
+        className="mx-0 max-w-70 sm:mx-auto sm:max-w-none"
+      >
         <Tweet id={embedId} />
       </Atoms.Container>
     );
