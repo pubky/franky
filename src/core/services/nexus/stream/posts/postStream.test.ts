@@ -391,7 +391,8 @@ describe('createPostStreamParams', () => {
       const streamTail = 1234567890;
       const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL, streamTail, 20, mockViewerId);
 
-      expect(result.params.start).toBe(streamTail);
+      // streamTail is decremented by 1 to avoid fetching the same last post again
+      expect(result.params.start).toBe(streamTail - 1);
     });
   });
 });
