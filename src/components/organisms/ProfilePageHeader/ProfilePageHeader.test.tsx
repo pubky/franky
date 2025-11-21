@@ -3,6 +3,68 @@ import { describe, it, expect, vi } from 'vitest';
 import { ProfilePageHeader } from './ProfilePageHeader';
 import { ProfilePageHeaderProps } from './ProfilePageHeader.types';
 
+// Mock Molecules components
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    AvatarWithFallback: ({
+      avatarUrl,
+      name,
+      className,
+      fallbackClassName,
+      alt,
+    }: {
+      avatarUrl?: string;
+      name: string;
+      className?: string;
+      fallbackClassName?: string;
+      alt?: string;
+    }) => (
+      <div data-testid="avatar" className={className}>
+        {avatarUrl ? (
+          <img src={avatarUrl} alt={alt || name} data-testid="avatar-image" />
+        ) : (
+          <div data-testid="avatar-fallback" className={fallbackClassName}>
+            {name
+              .split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </div>
+        )}
+      </div>
+    ),
+    AvatarZoomModal: ({
+      open,
+      onClose,
+      avatarUrl,
+      name,
+    }: {
+      open: boolean;
+      onClose: () => void;
+      avatarUrl?: string;
+      name: string;
+    }) =>
+      open ? (
+        <div data-testid="avatar-zoom-modal">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={`${name}'s avatar`} data-testid="avatar-image-modal" />
+          ) : (
+            <div data-testid="avatar-fallback-modal">
+              {name
+                .split(' ')
+                .map((n) => n[0])
+                .join('')}
+            </div>
+          )}
+          <button data-testid="modal-close" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      ) : null,
+  };
+});
+
 const mockProps: ProfilePageHeaderProps = {
   profile: {
     name: 'Satoshi Nakamoto',
@@ -18,6 +80,7 @@ const mockProps: ProfilePageHeaderProps = {
     onCopyLink: vi.fn(),
     onSignOut: vi.fn(),
     onStatusClick: vi.fn(),
+    onAvatarClick: vi.fn(),
   },
 };
 
@@ -116,6 +179,21 @@ describe('ProfilePageHeader', () => {
     expect(
       screen.queryByText('Authored the Bitcoin white paper, developed Bitcoin, mined first block, disappeared.'),
     ).not.toBeInTheDocument();
+  });
+
+  it('calls onAvatarClick when avatar is clicked', () => {
+    const onAvatarClick = vi.fn();
+    const props = {
+      ...mockProps,
+      actions: { ...mockProps.actions, onAvatarClick },
+    };
+    render(<ProfilePageHeader {...props} />);
+
+    const containers = screen.getAllByTestId('container');
+    const avatarContainer = containers.find((c) => c.className.includes('cursor-pointer'));
+    fireEvent.click(avatarContainer!);
+
+    expect(onAvatarClick).toHaveBeenCalledTimes(1);
   });
 
   it('matches snapshot', () => {
