@@ -228,12 +228,6 @@ body {
   .hover\:bg-brand\/90:hover {
     background-color: oklch(from var(--brand) calc(l * 0.9) c h);
   }
-
-  .react-tweet-theme {
-    --tweet-container-margin: 0 !important;
-    max-height: 300px !important;
-    overflow-y: auto !important;
-  }
 }
 
 @layer utilities {
