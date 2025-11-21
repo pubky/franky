@@ -5,9 +5,15 @@ import { Tweet } from 'react-tweet';
 /**
  * Extract Twitter/X post ID from URL
  * Validates that ID contains only numeric characters
+ *
+ * @example
+ * // Works with or without protocol:
+ * extractTwitterId('https://twitter.com/user/status/123') // → '123'
+ * extractTwitterId('twitter.com/user/status/123')         // → '123'
+ * extractTwitterId('www.twitter.com/user/status/123')     // → '123'
  */
 const extractTwitterId = (url: string): string | null => {
-  // Handle different Twitter/X URL formats
+  // Protocol-agnostic patterns - matches with or without http(s)://
   const patterns = [
     // Standard tweet: twitter.com/username/status/ID or x.com/username/status/ID
     /(?:(?:twitter|x)\.com\/[^\/]+\/status\/)(\d+)(?:[?&#\/\s]|$)/,

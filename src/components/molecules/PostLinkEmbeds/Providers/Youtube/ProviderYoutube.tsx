@@ -6,9 +6,15 @@ import * as ProviderUtils from '../Provider.utils';
 /**
  * Extract YouTube video ID from URL
  * Validates that ID is exactly 11 characters with valid characters only
+ *
+ * @example
+ * // Protocol-agnostic - works with or without http(s)://
+ * extractYouTubeId('https://youtube.com/watch?v=dQw4w9WgXcQ') // → 'dQw4w9WgXcQ'
+ * extractYouTubeId('youtube.com/watch?v=dQw4w9WgXcQ')         // → 'dQw4w9WgXcQ'
+ * extractYouTubeId('youtu.be/dQw4w9WgXcQ')                    // → 'dQw4w9WgXcQ'
  */
 const extractYouTubeId = (url: string): string | null => {
-  // Handle different YouTube URL formats
+  // Protocol-agnostic patterns - matches with or without http(s)://
   // Use word boundaries or specific delimiters to ensure exactly 11 characters
   const patterns = [
     // Standard watch: youtube.com/watch?v=VIDEO_ID
