@@ -68,10 +68,17 @@ export class BootstrapApplication {
       );
       userLastRead = timestamp;
     } catch (error) {
-      Libs.Logger.error('Not found user last read timestamp', error);
-      const lastRead = Core.LastReadNormalizer.to(pubky);
-      void Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
-      userLastRead = Number(lastRead.last_read.timestamp);
+      // Only handle 404 errors (resource not found) - rethrow everything else
+      if (error instanceof Libs.AppError && error.statusCode === 404) {
+        Libs.Logger.info('Last read file not found, creating new one', { pubky });
+        const lastRead = Core.LastReadNormalizer.to(pubky);
+        void Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
+        userLastRead = Number(lastRead.last_read.timestamp);
+      } else {
+        // Network errors, timeouts, server errors, etc. should bubble up
+        Libs.Logger.error('Failed to fetch last read timestamp', error);
+        throw error;
+      }
     }
 
     const notificationList = await Core.NexusUserService.notifications({

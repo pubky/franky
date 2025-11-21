@@ -284,7 +284,7 @@ describe('BootstrapApplication', () => {
       expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
     });
 
-    it('should handle homeserver request failure gracefully and create new lastRead', async () => {
+    it('should handle 404 homeserver error gracefully and create new lastRead', async () => {
       const bootstrapData = emptyBootstrap();
       const MOCK_NORMALIZED_TIMESTAMP = 9876543210;
       const MOCK_NORMALIZED_LAST_READ_URL = 'pubky://test-pubky/pub/pubky.app/last-read';
@@ -297,10 +297,12 @@ describe('BootstrapApplication', () => {
       };
 
       const mocks = setupMocks({ bootstrapData });
-      // Override homeserver mock to reject on GET but allow PUT
+      // Override homeserver mock to reject on GET with 404 error but allow PUT
       const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
         if (action === Core.HomeserverAction.GET) {
-          return Promise.reject(new Error('Homeserver error'));
+          return Promise.reject(
+            Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Not found', 404, { url }),
+          );
         }
         // Allow PUT to succeed (fire and forget)
         return Promise.resolve(undefined);
@@ -310,12 +312,12 @@ describe('BootstrapApplication', () => {
       const lastReadNormalizerSpy = vi
         .spyOn(Core.LastReadNormalizer, 'to')
         .mockReturnValue(mockLastReadResult as unknown as LastReadResult);
-      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+      const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
 
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
-      // Verify error was logged
-      expect(loggerErrorSpy).toHaveBeenCalledWith('Not found user last read timestamp', expect.any(Error));
+      // Verify error was logged as info (not error) since 404 is expected for new users
+      expect(loggerInfoSpy).toHaveBeenCalledWith('Last read file not found, creating new one', { pubky: TEST_PUBKY });
 
       // Verify LastReadNormalizer was called to create new lastRead
       expect(lastReadNormalizerSpy).toHaveBeenCalledWith(TEST_PUBKY);
@@ -342,6 +344,80 @@ describe('BootstrapApplication', () => {
         notification: { unread: 0, lastRead: MOCK_NORMALIZED_TIMESTAMP },
         filesUris: [],
       });
+    });
+
+    it('should throw error when homeserver returns 500 error', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      // Override homeserver mock to reject with 500 error
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
+        if (action === Core.HomeserverAction.GET) {
+          return Promise.reject(
+            Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Internal server error', 500, { url }),
+          );
+        }
+        return Promise.resolve(undefined);
+      });
+      mocks.homeserverRequest = homeserverRequestSpy;
+
+      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toMatchObject({
+        type: Libs.HomeserverErrorType.FETCH_FAILED,
+        statusCode: 500,
+        message: 'Internal server error',
+      });
+
+      // Verify error was logged
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch last read timestamp', expect.any(Error));
+
+      // Verify GET request was attempted
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT was NOT called (error should bubble up, not create new lastRead)
+      expect(homeserverRequestSpy).not.toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.any(String),
+        expect.any(Object),
+      );
+
+      // Verify bootstrap process stopped (persist should not be called)
+      expect(mocks.persistUsers).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when homeserver returns network error', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      // Override homeserver mock to reject with network error (no status code)
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action) => {
+        if (action === Core.HomeserverAction.GET) {
+          return Promise.reject(new Error('Network timeout'));
+        }
+        return Promise.resolve(undefined);
+      });
+      mocks.homeserverRequest = homeserverRequestSpy;
+
+      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow('Network timeout');
+
+      // Verify error was logged
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch last read timestamp', expect.any(Error));
+
+      // Verify GET request was attempted
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT was NOT called (error should bubble up)
+      expect(homeserverRequestSpy).not.toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.any(String),
+        expect.any(Object),
+      );
+
+      // Verify bootstrap process stopped
+      expect(mocks.persistUsers).not.toHaveBeenCalled();
     });
 
     it('should throw error when NexusUserService.notifications fails', async () => {
