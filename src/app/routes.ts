@@ -31,7 +31,7 @@ export enum PROFILE_ROUTES {
   FOLLOWERS = '/profile/followers',
   FOLLOWING = '/profile/following',
   FRIENDS = '/profile/friends',
-  TAGGED = '/profile/tagged',
+  UNIQUE_TAGS = '/profile/tagged',
   PROFILE_PAGE = '/profile/profile',
 }
 

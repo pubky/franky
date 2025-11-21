@@ -10,7 +10,7 @@ export interface ProfileStats {
   followers: number;
   following: number;
   friends: number;
-  tagged: number;
+  uniqueTags: number;
 }
 
 export interface UseProfileStatsResult {
@@ -48,7 +48,7 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     followers: userCounts?.followers ?? 0,
     following: userCounts?.following ?? 0,
     friends: userCounts?.friends ?? 0,
-    tagged: userCounts?.unique_tags ?? 0,
+    uniqueTags: userCounts?.unique_tags ?? 0,
   };
 
   return {

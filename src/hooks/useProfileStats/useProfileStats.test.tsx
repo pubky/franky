@@ -51,7 +51,7 @@ describe('useProfileStats', () => {
       expect(result.current.stats.followers).toBe(0);
       expect(result.current.stats.following).toBe(0);
       expect(result.current.stats.friends).toBe(0);
-      expect(result.current.stats.tagged).toBe(0);
+      expect(result.current.stats.uniqueTags).toBe(0);
       expect(result.current.stats.notifications).toBe(0);
       expect(result.current.isLoading).toBe(true);
     });
@@ -64,6 +64,7 @@ describe('useProfileStats', () => {
         followers: 20,
         following: 15,
         friends: 8,
+        uniqueTags: 0,
         tagged: 0,
         tags: 0,
         unique_tags: 3,
@@ -78,7 +79,7 @@ describe('useProfileStats', () => {
       expect(result.current.stats.followers).toBe(20);
       expect(result.current.stats.following).toBe(15);
       expect(result.current.stats.friends).toBe(8);
-      expect(result.current.stats.tagged).toBe(3);
+      expect(result.current.stats.uniqueTags).toBe(3);
       expect(result.current.isLoading).toBe(false);
     });
 
@@ -91,6 +92,7 @@ describe('useProfileStats', () => {
         following: 0,
         friends: 0,
         tagged: 0,
+        uniqueTags: 0,
         tags: 0,
         unique_tags: 0,
         bookmarks: 0,
@@ -103,7 +105,7 @@ describe('useProfileStats', () => {
       expect(result.current.stats.followers).toBe(0);
       expect(result.current.stats.following).toBe(0);
       expect(result.current.stats.friends).toBe(0);
-      expect(result.current.stats.tagged).toBe(0);
+      expect(result.current.stats.uniqueTags).toBe(0);
     });
 
     it('calculates posts correctly when user only has replies', () => {
@@ -126,7 +128,7 @@ describe('useProfileStats', () => {
       // UI calculates: 27 - 27 = 0 actual posts
       expect(result.current.stats.posts).toBe(0);
       expect(result.current.stats.replies).toBe(27);
-      expect(result.current.stats.tagged).toBe(7);
+      expect(result.current.stats.uniqueTags).toBe(7);
     });
   });
 
@@ -139,6 +141,7 @@ describe('useProfileStats', () => {
         followers: 20,
         following: 15,
         friends: 8,
+        uniqueTags: 0,
         tagged: 0,
         tags: 0,
         unique_tags: 3,
@@ -166,6 +169,7 @@ describe('useProfileStats', () => {
         followers: 20,
         following: 15,
         friends: 8,
+        uniqueTags: 0,
         tagged: 0,
         tags: 0,
         unique_tags: 3,
@@ -194,6 +198,7 @@ describe('useProfileStats', () => {
         followers: 777777,
         following: 666666,
         friends: 555555,
+        uniqueTags: 0,
         tagged: 0,
         tags: 0,
         unique_tags: 444444,
@@ -208,7 +213,7 @@ describe('useProfileStats', () => {
       expect(result.current.stats.followers).toBe(777777);
       expect(result.current.stats.following).toBe(666666);
       expect(result.current.stats.friends).toBe(555555);
-      expect(result.current.stats.tagged).toBe(444444);
+      expect(result.current.stats.uniqueTags).toBe(444444);
     });
 
     it('handles partial user counts', () => {
