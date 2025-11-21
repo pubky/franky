@@ -26,70 +26,80 @@ describe('ProviderTwitter', () => {
       it('parses standard twitter.com status URL', () => {
         const result = Twitter.parseEmbed('https://twitter.com/jack/status/20');
         expect(result).toEqual({
-          data: '20',
+          type: 'id',
+          value: '20',
         });
       });
 
       it('parses standard x.com status URL', () => {
         const result = Twitter.parseEmbed('https://x.com/elonmusk/status/1234567890123456789');
         expect(result).toEqual({
-          data: '1234567890123456789',
+          type: 'id',
+          value: '1234567890123456789',
         });
       });
 
       it('parses www.twitter.com URL', () => {
         const result = Twitter.parseEmbed('https://www.twitter.com/user/status/9876543210');
         expect(result).toEqual({
-          data: '9876543210',
+          type: 'id',
+          value: '9876543210',
         });
       });
 
       it('parses www.x.com URL', () => {
         const result = Twitter.parseEmbed('https://www.x.com/user/status/9876543210');
         expect(result).toEqual({
-          data: '9876543210',
+          type: 'id',
+          value: '9876543210',
         });
       });
 
       it('parses mobile.twitter.com URL', () => {
         const result = Twitter.parseEmbed('https://mobile.twitter.com/twitter/status/1234567890');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses mobile.x.com URL', () => {
         const result = Twitter.parseEmbed('https://mobile.x.com/user/status/1234567890');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses URL with query parameters', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890?s=20&t=abc123');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses URL with hash fragment', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890#reply');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses URL with trailing slash', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890/');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses URL with whitespace at end', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890 ');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
     });
@@ -211,7 +221,7 @@ describe('ProviderTwitter', () => {
 
         validBoundaries.forEach(({ url, expected }) => {
           const result = Twitter.parseEmbed(url);
-          expect(result).toEqual({ data: expected });
+          expect(result).toEqual({ type: 'id', value: expected });
         });
 
         // Characters that are NOT valid boundaries will cause the match to fail
@@ -248,7 +258,8 @@ describe('ProviderTwitter', () => {
         const longId = '1234567890123456789';
         const result = Twitter.parseEmbed(`https://twitter.com/user/status/${longId}`);
         expect(result).toEqual({
-          data: longId,
+          type: 'id',
+          value: longId,
         });
       });
 
@@ -256,7 +267,8 @@ describe('ProviderTwitter', () => {
         const shortId = '1';
         const result = Twitter.parseEmbed(`https://twitter.com/user/status/${shortId}`);
         expect(result).toEqual({
-          data: shortId,
+          type: 'id',
+          value: shortId,
         });
       });
 
@@ -264,28 +276,32 @@ describe('ProviderTwitter', () => {
         // Username can have underscores, but ID must still be numeric
         const result = Twitter.parseEmbed('https://twitter.com/user_name_123/status/1234567890');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('handles URLs with both query params and fragments', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890?s=20&t=abc#reply');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('handles URLs with photo/video suffixes', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890/photo/1');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('handles URLs with video suffixes', () => {
         const result = Twitter.parseEmbed('https://twitter.com/user/status/1234567890/video/1');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
     });
@@ -298,7 +314,8 @@ describe('ProviderTwitter', () => {
         // All results should be identical
         results.forEach((result) => {
           expect(result).toEqual({
-            data: '1234567890',
+            type: 'id',
+            value: '1234567890',
           });
         });
       });
@@ -312,7 +329,8 @@ describe('ProviderTwitter', () => {
           const invalidResult = Twitter.parseEmbed(invalidUrl);
 
           expect(validResult).toEqual({
-            data: '1234567890',
+            type: 'id',
+            value: '1234567890',
           });
           expect(invalidResult).toBeNull();
         }
@@ -329,10 +347,12 @@ describe('ProviderTwitter', () => {
         // Results should not be affected by previous calls
         expect(result1a).toEqual(result1b);
         expect(result1a).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
         expect(result2).toEqual({
-          data: '9876543210',
+          type: 'id',
+          value: '9876543210',
         });
       });
 
@@ -344,8 +364,8 @@ describe('ProviderTwitter', () => {
           const twitterResult = Twitter.parseEmbed(twitterUrl);
           const xResult = Twitter.parseEmbed(xUrl);
 
-          expect(twitterResult).toEqual({ data: '1111111111' });
-          expect(xResult).toEqual({ data: '2222222222' });
+          expect(twitterResult).toEqual({ type: 'id', value: '1111111111' });
+          expect(xResult).toEqual({ type: 'id', value: '2222222222' });
         }
       });
     });
@@ -354,21 +374,24 @@ describe('ProviderTwitter', () => {
       it('parses http URLs', () => {
         const result = Twitter.parseEmbed('http://twitter.com/user/status/1234567890');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses URLs without protocol', () => {
         const result = Twitter.parseEmbed('twitter.com/user/status/1234567890');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
 
       it('parses URLs with www prefix without protocol', () => {
         const result = Twitter.parseEmbed('www.twitter.com/user/status/1234567890');
         expect(result).toEqual({
-          data: '1234567890',
+          type: 'id',
+          value: '1234567890',
         });
       });
     });

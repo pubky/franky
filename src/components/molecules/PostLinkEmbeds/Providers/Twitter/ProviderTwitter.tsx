@@ -5,9 +5,15 @@ import { Tweet } from 'react-tweet';
 /**
  * Extract Twitter/X post ID from URL
  * Validates that ID contains only numeric characters
+ *
+ * @example
+ * // Works with or without protocol:
+ * extractTwitterId('https://twitter.com/user/status/123') // → '123'
+ * extractTwitterId('twitter.com/user/status/123')         // → '123'
+ * extractTwitterId('www.twitter.com/user/status/123')     // → '123'
  */
 const extractTwitterId = (url: string): string | null => {
-  // Handle different Twitter/X URL formats
+  // Protocol-agnostic patterns - matches with or without http(s)://
   const patterns = [
     // Standard tweet: twitter.com/username/status/ID or x.com/username/status/ID
     /(?:(?:twitter|x)\.com\/[^\/]+\/status\/)(\d+)(?:[?&#\/\s]|$)/,
@@ -48,25 +54,30 @@ export const Twitter: ProviderTypes.EmbedProvider = {
   /**
    * Parse Twitter/X URL and return embed information
    */
-  parseEmbed: (url: string): { data: string } | null => {
+  parseEmbed: (url: string): ProviderTypes.EmbedData | null => {
     const id = extractTwitterId(url);
 
     if (!id) return null;
 
-    return { data: id };
+    return { type: 'id', value: id };
   },
 
   /**
    * Render Twitter/X component embed using Twitter post ID
    */
-  renderEmbed: (embedId: string) => {
+  renderEmbed: (embedData: ProviderTypes.EmbedData) => {
+    // Type guard: ensure we have an ID type
+    if (embedData.type !== 'id') return null;
+
+    const tweetId = embedData.value;
+
     return (
       <Atoms.Container
         data-testid="twitter-container"
         data-theme="dark"
-        className="mx-0 max-w-70 sm:mx-auto sm:max-w-none"
+        className="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0"
       >
-        <Tweet id={embedId} />
+        <Tweet id={tweetId} />
       </Atoms.Container>
     );
   },

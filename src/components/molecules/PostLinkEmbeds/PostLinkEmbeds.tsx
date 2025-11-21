@@ -72,5 +72,5 @@ export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
 
   if (!embed || !provider) return null;
 
-  return <Atoms.Container>{provider.renderEmbed(embed.data)}</Atoms.Container>;
+  return <Atoms.Container>{provider.renderEmbed(embed)}</Atoms.Container>;
 };
