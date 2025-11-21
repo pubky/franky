@@ -166,5 +166,27 @@ describe('BookmarkApplication', () => {
       expect(persistSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });
+
+    it('should sync local state when homeserver has already deleted the bookmark', async () => {
+      const mockData = createMockDeleteData();
+      const { persistSpy, requestSpy, authSpy } = setupMocks();
+
+      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
+      persistSpy.mockResolvedValue(undefined);
+      // Homeserver DELETE succeeds (idempotent - deleting already-deleted resource is OK)
+      requestSpy.mockResolvedValue(undefined);
+
+      // This simulates a sync/reconciliation scenario where the bookmark was deleted
+      // on the homeserver (e.g., from another device) and we're syncing local state
+      await BookmarkApplication.persist(Core.HomeserverAction.DELETE, mockData);
+
+      // Local state should be updated to reflect the deletion
+      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
+        userId: testUserId,
+        postId: mockData.postId,
+      });
+      // Homeserver DELETE is called (even though it's already deleted, the operation is idempotent)
+      expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockData.bookmarkUrl, undefined);
+    });
   });
 });
