@@ -1,20 +1,22 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { PostLinkEmbeds } from './PostLinkEmbeds';
 
 vi.mock('@/atoms', () => ({
   Container: ({
     children,
     className,
+    onClick,
     'data-testid': dataTestId,
     'data-theme': dataTheme,
   }: {
     children: React.ReactNode;
     className?: string;
+    onClick?: (e: React.MouseEvent) => void;
     'data-testid'?: string;
     'data-theme'?: string;
   }) => (
-    <div data-testid={dataTestId || 'container'} data-theme={dataTheme} className={className}>
+    <div data-testid={dataTestId || 'container'} data-theme={dataTheme} className={className} onClick={onClick}>
       {children}
     </div>
   ),
@@ -566,6 +568,25 @@ describe('PostLinkEmbeds', () => {
       const iframe = screen.getByTestId('YouTube video player');
       expect(iframe).toBeInTheDocument();
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    });
+
+    it('stops event propagation when clicking embed container', () => {
+      const handleParentClick = vi.fn();
+
+      render(
+        <div onClick={handleParentClick}>
+          <PostLinkEmbeds content="Check out this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+        </div>,
+      );
+
+      const container = screen.getByTestId('container');
+      expect(container).toBeInTheDocument();
+
+      // Click the embed container
+      fireEvent.click(container);
+
+      // Parent click handler should not be called due to stopPropagation
+      expect(handleParentClick).not.toHaveBeenCalled();
     });
   });
 });
