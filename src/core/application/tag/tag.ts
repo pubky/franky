@@ -16,13 +16,17 @@ import * as Core from '@/core';
  * - Consider compensation rollback on homeserver failure if strict consistency is required
  */
 export class TagApplication {
-  static async create({ taggerId, taggedId, label, tagUrl, tagJson, taggedKind }: Core.TCreateTagInput) {
-    if (taggedKind === Core.TagKind.POST) {
-      await Core.LocalPostTagService.create({ taggerId, taggedId, label });
-    } else {
-      await Core.LocalUserTagService.create({ taggerId, taggedId, label });
-    }
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
+  static async create({ tagList }: Core.TCreateTagListInput) {
+    await Promise.all(
+      tagList.map(async ({ taggerId, taggedId, label, tagUrl, tagJson, taggedKind }: Core.TCreateTagInput) => {
+        if (taggedKind === Core.TagKind.POST) {
+          await Core.LocalPostTagService.create({ taggerId, taggedId, label });
+        } else {
+          await Core.LocalUserTagService.create({ taggerId, taggedId, label });
+        }
+        await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
+      })
+    );
   }
 
   static async delete({ taggerId, taggedId, label, tagUrl, taggedKind }: Core.TDeleteTagInput) {

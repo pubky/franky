@@ -115,7 +115,7 @@ describe('FileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
       const createSpy = vi.spyOn(Core.LocalFileService, 'create').mockResolvedValue(undefined);
 
-      await FileApplication.upload({ blobResult, fileResult });
+      await FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] });
 
       expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
@@ -138,7 +138,7 @@ describe('FileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
       const createSpy = vi.spyOn(Core.LocalFileService, 'create');
 
-      await expect(FileApplication.upload({ blobResult, fileResult })).rejects.toThrow('blob upload failed');
+      await expect(FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow('blob upload failed');
       expect(putBlobSpy).toHaveBeenCalledTimes(1);
       expect(requestSpy).not.toHaveBeenCalled();
       expect(fileResult.file.toJson).not.toHaveBeenCalled();
@@ -156,7 +156,7 @@ describe('FileApplication', () => {
         .mockRejectedValueOnce(new Error('file record upload failed'));
       const createSpy = vi.spyOn(Core.LocalFileService, 'create');
 
-      await expect(FileApplication.upload({ blobResult, fileResult })).rejects.toThrow('file record upload failed');
+      await expect(FileApplication.upload({ fileAttachments: [{ blobResult, fileResult }] })).rejects.toThrow('file record upload failed');
       expect(putBlobSpy).toHaveBeenCalledTimes(1);
       expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
       expect(requestSpy).toHaveBeenCalledTimes(1);

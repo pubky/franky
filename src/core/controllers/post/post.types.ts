@@ -1,11 +1,13 @@
 import * as Core from '@/core';
 
 export type TCreatePostParams = {
-  parentPostId?: string;
-  originalPostId?: string;
+  authorId: Core.Pubky;
   content: string;
   kind?: Core.PubkyAppPostKind;
-  authorId: Core.Pubky;
+  tags?: Core.TTagEventParams[];
+  attachments?: File[];
+  parentPostId?: string;
+  originalPostId?: string;
 };
 
 export type TDeletePostParams = {

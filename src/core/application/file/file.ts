@@ -17,13 +17,18 @@ export class FileApplication {
    * @param params.blobResult - Normalized blob result
    * @param params.fileResult - Normalized file result
    */
-  static async upload({ blobResult, fileResult }: Core.TUploadFileInput) {
-    // Upload Blob
-    await Core.HomeserverService.putBlob(blobResult.meta.url, blobResult.blob.data);
-    // Create File Record
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
-    // Persist Files locally
-    await Core.LocalFileService.create({ blobResult, fileResult });
+  static async upload({ fileAttachments }: Core.FilesListParams) {
+    await Promise.all(
+      fileAttachments.map(async (fileAttachment) => {
+        const { blobResult, fileResult } = fileAttachment;
+        // Upload Blob
+        await Core.HomeserverService.putBlob(blobResult.meta.url, blobResult.blob.data);
+        // Create File Record
+        await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
+        // Persist Files locally
+        await Core.LocalFileService.create({ blobResult, fileResult });
+      })
+    );
   }
 
   static async getMetadata({ fileAttachments }: Core.TGetMetadataParams) {

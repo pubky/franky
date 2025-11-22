@@ -11,31 +11,27 @@ export class PostController {
   /**
    * Create a post (including replies and reposts)
    * @param params - Parameters object
-   * @param params.parentPostId - ID of the post being replied to (optional for root posts)
-   * @param params.originalPostId - ID of the post being reposted (optional for reposts)
+   * @param params.authorId - ID of the user creating the post
    * @param params.content - Post content (can be empty for simple reposts)
    * @param params.kind - Post kind (default: Short, automatically set to repost in storage if originalPostId is provided)
-   * @param params.authorId - ID of the user creating the post
+   * @param params.parentPostId - ID of the post being replied to (optional for root posts)
+   * @param params.originalPostId - ID of the post being reposted (optional for reposts)
    */
   static async create({
-    parentPostId,
-    originalPostId,
-    content,
-    kind = Core.PubkyAppPostKind.Short,
     authorId,
+    originalPostId,
+    parentPostId,
+    content,
+    tags,
+    attachments,
+    kind = Core.PubkyAppPostKind.Short,
   }: Core.TCreatePostParams) {
-    let parentUri: string | undefined = undefined;
-    let repostedUri: string | undefined = undefined;
-
     // Validate and set parent URI if this is a reply
-    if (parentPostId) {
-      parentUri = await Core.PostValidators.validatePostId({ postId: parentPostId, message: 'Parent post' });
-    }
+    const parentUri = parentPostId ? await Core.PostValidators.validatePostId({ postId: parentPostId, message: 'Parent post' }) : undefined;
+    const repostedUri = originalPostId ? await Core.PostValidators.validatePostId({ postId: originalPostId, message: 'Original post' }) : undefined;
 
-    // Validate and set reposted URI if this is a repost
-    if (originalPostId) {
-      repostedUri = await Core.PostValidators.validatePostId({ postId: originalPostId, message: 'Original post' });
-    }
+    // TODO: In the future, we could decouple that action and do it asyncronously in the moment that we add a file to the post
+    const fileAttachments = attachments ? await this.normalizeFileAttachments({ attachments, authorId }) : [];
 
     const { post, meta } = await Core.PostNormalizer.to(
       {
@@ -43,15 +39,19 @@ export class PostController {
         kind,
         parentUri,
         embed: repostedUri,
+        attachments: fileAttachments,
       },
       authorId,
     );
+    const tagList = tags ? this.normalizeTags({ tags }) : [];
 
     await Core.PostApplication.create({
       postId: meta.id,
       authorId,
       post,
       postUrl: meta.url,
+      fileAttachments,
+      tags: tagList,
     });
   }
 
@@ -87,5 +87,19 @@ export class PostController {
    */
   static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
     return await Core.LocalPostService.getPostCounts(postId);
+  }
+
+  private static async normalizeFileAttachments({ attachments, authorId }: { attachments: File[], authorId: Core.Pubky }): Promise<Core.TFileAttachmentResult[]> {
+    return await Promise.all(
+      attachments.map(async (attachment) => {
+        return await Core.FileNormalizer.toFileAttachment({ file: attachment, pubky: authorId });
+      })
+    );
+  }
+
+  private static normalizeTags({ tags }: { tags: Core.TTagEventParams[] }): Core.TCreateTagInput[] {
+    return tags.map((param: Core.TTagEventParams) => {
+      return Core.TagNormalizer.from(param);
+    });
   }
 }

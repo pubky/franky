@@ -1,9 +1,13 @@
 import * as Core from '@/core';
 
-export type TCreateTagInput = Core.TTagEventParams & {
+export interface TCreateTagInput extends Core.TTagEventParams {
   tagUrl: string;
   tagJson: Record<string, unknown>;
 };
+
+export interface TCreateTagListInput {
+  tagList: Core.TCreateTagInput[];
+}
 
 export type TDeleteTagInput = Omit<Core.TCreateTagInput, 'tagJson'>;
 

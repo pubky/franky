@@ -2,9 +2,16 @@ import * as Core from '@/core';
 import { createSanitizationError, SanitizationErrorType } from '@/libs';
 
 export class PostApplication {
-  static async create({ postUrl, postId, authorId, post }: Core.TCreatePostInput) {
+  static async create({ postUrl, postId, authorId, post, fileAttachments, tags }: Core.TCreatePostInput) {
+    if (fileAttachments) {
+      await Core.FileApplication.upload({ fileAttachments });
+    }
     await Core.LocalPostService.create({ postId, authorId, post });
     await Core.HomeserverService.request(Core.HomeserverAction.PUT, postUrl, post.toJson());
+
+    if (tags) {
+      await Core.TagApplication.create({ tagList: tags });
+    }
   }
 
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {

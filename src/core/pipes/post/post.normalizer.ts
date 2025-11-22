@@ -28,12 +28,17 @@ export class PostNormalizer {
       }
     }
 
+    let attachments: string[] | null = null;
+    if (post.attachments) {
+      attachments = post.attachments.map((attachment) => attachment.fileResult.meta.url);
+    }
+
     const result = builder.createPost(
       post.content,
       post.kind,
       post.parentUri ?? null,
       embedObject,
-      null, // attachments - will be added later when needed
+      attachments,
     );
 
     Libs.Logger.debug('Post validated', { result });
