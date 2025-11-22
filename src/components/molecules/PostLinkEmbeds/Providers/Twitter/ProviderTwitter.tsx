@@ -75,7 +75,7 @@ export const Twitter: ProviderTypes.EmbedProvider = {
       <Atoms.Container
         data-testid="twitter-container"
         data-theme="dark"
-        className="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0"
+        className="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.react-tweet-theme]:max-h-75 [&_.react-tweet-theme]:overflow-y-auto!"
       >
         <Tweet id={tweetId} />
       </Atoms.Container>
