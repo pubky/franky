@@ -27,7 +27,7 @@ export class FileApplication {
         await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
         // Persist Files locally
         await Core.LocalFileService.create({ blobResult, fileResult });
-      })
+      }),
     );
   }
 

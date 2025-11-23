@@ -33,13 +33,7 @@ export class PostNormalizer {
       attachments = post.attachments.map((attachment) => attachment.fileResult.meta.url);
     }
 
-    const result = builder.createPost(
-      post.content,
-      post.kind,
-      post.parentUri ?? null,
-      embedObject,
-      attachments,
-    );
+    const result = builder.createPost(post.content, post.kind, post.parentUri ?? null, embedObject, attachments);
 
     Libs.Logger.debug('Post validated', { result });
 

@@ -8,4 +8,4 @@ export interface TCreatePostInput {
   postUrl: string;
   fileAttachments?: Core.TFileAttachmentResult[];
   tags?: Core.TCreateTagInput[];
-};
+}

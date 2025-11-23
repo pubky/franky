@@ -53,9 +53,9 @@ The fundamental issue: **Where does cross-domain orchestration belong?**
 class PostApplication {
   static async createWithAttachments({ files, tags, post }) {
     // Depth 0 → Depth 1
-    await FileApplication.upload(files);      // OK
-    await TagApplication.create(tags);        // OK
-    await PostApplication.create(post);       // OK (same class)
+    await FileApplication.upload(files); // OK
+    await TagApplication.create(tags); // OK
+    await PostApplication.create(post); // OK (same class)
   }
 }
 
@@ -70,7 +70,7 @@ class FileApplication {
 // ❌ FORBIDDEN: Circular dependencies
 class PostApplication {
   static async create() {
-    await FileApplication.upload();  // A → B
+    await FileApplication.upload(); // A → B
   }
 }
 class FileApplication {
@@ -97,6 +97,7 @@ class FileApplication {
 4. **Code Comments**: Developers MUST document cross-Application calls with ADR reference
 
 **Future Tooling** (optional, not required now):
+
 - dependency-cruiser for circular dependency detection
 - Custom ESLint rules for call depth validation
 - Type-level dependency tracking (TypeScript 5.x features)
@@ -150,9 +151,9 @@ class PostApplication {
   constructor(
     private fileApp: FileApplication,
     private tagApp: TagApplication,
-    private postService: LocalPostService
+    private postService: LocalPostService,
   ) {}
-  
+
   async create({ files, tags, post }) {
     await this.fileApp.upload(files);
     await this.tagApp.create(tags);
@@ -161,6 +162,7 @@ class PostApplication {
 ```
 
 **Pros**:
+
 - Explicit dependencies in constructor
 - Compile-time circular dependency detection (would fail instantiation)
 - Better testability (easier mocking)
@@ -168,6 +170,7 @@ class PostApplication {
 - Industry standard pattern
 
 **Cons**:
+
 - **Massive refactor** (affects every Controller, Application, Service)
 - Need DI container or manual wiring
 - Increased boilerplate
@@ -176,6 +179,7 @@ class PostApplication {
 - No immediate business value
 
 **Why not chosen**: The refactor scope is too large for the immediate problem. This could be reconsidered later if:
+
 - Architecture violations become frequent
 - Team size grows beyond effective code review capacity
 - Complexity requires stronger compile-time guarantees
@@ -187,22 +191,20 @@ class PostApplication {
 ```typescript
 // In React component
 const handlePostCreate = async () => {
-  const fileUrls = await Promise.all(
-    files.map(f => FileController.upload({ file: f, pubky }))
-  );
+  const fileUrls = await Promise.all(files.map((f) => FileController.upload({ file: f, pubky })));
   await PostController.create({ content, fileUrls });
-  await Promise.all(
-    tags.map(tag => TagController.create({ taggedId: postId, label: tag }))
-  );
+  await Promise.all(tags.map((tag) => TagController.create({ taggedId: postId, label: tag })));
 };
 ```
 
 **Pros**:
+
 - No architecture changes needed
 - Clear separation between domains
 - Easy to understand flow
 
 **Cons**:
+
 - Business logic leaks into UI layer
 - Orchestration logic scattered across components
 - Hard to test (requires UI component testing)
@@ -224,13 +226,13 @@ class PostApplication {
       await HomeserverService.request(...);
       await LocalFileService.create(...);
     }
-    
+
     // Duplicate TagApplication.create logic
     for (const tag of tags) {
       await LocalPostTagService.create(...);
       await HomeserverService.request(...);
     }
-    
+
     // Post creation logic
     await LocalPostService.create(...);
   }
@@ -238,11 +240,13 @@ class PostApplication {
 ```
 
 **Pros**:
+
 - No cross-Application dependencies
 - Each Application fully independent
 - Easy to reason about (all logic in one place)
 
 **Cons**:
+
 - Violates DRY principle (logic duplicated 2-3x)
 - Hard to maintain (changes needed in multiple places)
 - Inconsistency risk (different implementations drift)
@@ -250,4 +254,3 @@ class PostApplication {
 - Code bloat
 
 **Why not chosen**: The maintenance burden and inconsistency risk outweigh the benefits of independence. Orchestration logic should be reusable.
-

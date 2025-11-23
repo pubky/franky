@@ -4,7 +4,7 @@ export type TCreatePostParams = {
   authorId: Core.Pubky;
   content: string;
   kind?: Core.PubkyAppPostKind;
-  tags?: Core.TTagEventParams[];
+  tags?: string[];
   attachments?: File[];
   parentPostId?: string;
   originalPostId?: string;

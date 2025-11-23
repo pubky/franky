@@ -14,7 +14,7 @@ export class FileNormalizer {
   private static async toBlob({ file, pubky }: Core.TUploadFileParams): Promise<BlobResult> {
     const fileContent = await file.arrayBuffer();
     const blobData = new Uint8Array(fileContent);
-    
+
     const builder = Core.PubkySpecsSingleton.get(pubky);
     const result = builder.createBlob(blobData);
 

@@ -1,4 +1,4 @@
-import { BlobResult, FileResult } from "pubky-app-specs";
+import { BlobResult, FileResult } from 'pubky-app-specs';
 
 export interface TFileAttachmentResult {
   blobResult: BlobResult;

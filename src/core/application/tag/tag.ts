@@ -25,7 +25,7 @@ export class TagApplication {
           await Core.LocalUserTagService.create({ taggerId, taggedId, label });
         }
         await Core.HomeserverService.request(Core.HomeserverAction.PUT, tagUrl, tagJson);
-      })
+      }),
     );
   }
 

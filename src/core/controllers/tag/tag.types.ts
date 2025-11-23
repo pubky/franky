@@ -14,4 +14,4 @@ export interface TTagFromResponse {
   taggedKind: Core.TagKind;
   tagUrl: string;
   tagJson: Record<string, unknown>;
-};
+}

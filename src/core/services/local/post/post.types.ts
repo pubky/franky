@@ -6,3 +6,12 @@ export type TLocalSavePostParams = {
   authorId: Core.Pubky;
   post: PubkyAppPost;
 };
+
+export type TLocalUpdatePostStreamParams = {
+  authorId: Core.Pubky;
+  postId: string;
+  kind: string;
+  parentUri?: string;
+  ops: Promise<unknown>[];
+  action: Core.HomeserverAction.PUT | Core.HomeserverAction.DELETE;
+};

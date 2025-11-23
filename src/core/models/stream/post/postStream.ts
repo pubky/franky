@@ -34,6 +34,125 @@ export class PostStreamModel extends BaseStreamModel<PostStreamId, string, PostS
     }
   }
 
+  /**
+   * Adds post IDs to the head of the stream array in the database (atomic operation)
+   * Creates the stream if it doesn't exist, filters out duplicates before adding
+   * 
+   * @param id - The stream ID to update
+   * @param postIds - Array of post IDs to add to the head of the stream
+   * @returns Promise that resolves when the operation completes
+   * @throws {DatabaseError} When the update fails
+   * 
+   * @example
+   * ```typescript
+   * await PostStreamModel.prependPosts('home-feed', ['author:postId1', 'author:postId2']);
+   * ```
+   */
+  static async prependPosts(id: PostStreamId, postIds: string[]): Promise<void> {
+    try {
+      // Check if stream exists
+      const existingStream = await PostStreamModel.table.get(id);
+
+      if (existingStream) {
+        // Update existing stream
+        await PostStreamModel.table
+          .where('id')
+          .equals(id)
+          .modify((stream) => {
+            // Filter out posts that already exist in the stream
+            const newPosts = postIds.filter((postId) => !stream.stream.includes(postId));
+
+            if (newPosts.length > 0) {
+              // Add new posts to the beginning of the stream
+              stream.stream.unshift(...newPosts);
+            }
+          });
+      } else {
+        // Create new stream with the posts
+        await PostStreamModel.upsert(id, postIds);
+      }
+
+      Libs.Logger.debug('Posts prepended to stream successfully', {
+        streamId: id,
+        postsAdded: postIds.length,
+      });
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPDATE_FAILED,
+        `Failed to prepend posts to stream with ID: ${String(id)}`,
+        500,
+        { error, streamId: id, postIdsCount: postIds.length },
+      );
+    }
+  }
+
+  /**
+   * Removes post IDs from the stream array in the database (atomic operation)
+   * Silently succeeds if stream doesn't exist
+   * 
+   * @param id - The stream ID to update
+   * @param postIds - Array of post IDs to remove from the stream
+   * @returns Promise that resolves when the operation completes
+   * @throws {DatabaseError} When the update fails
+   * 
+   * @example
+   * ```typescript
+   * await PostStreamModel.removePosts('home-feed', ['author:postId1', 'author:postId2']);
+   * ```
+   */
+  static async removePosts(id: PostStreamId, postIds: string[]): Promise<void> {
+    try {
+      // Check if stream exists
+      const existingStream = await PostStreamModel.table.get(id);
+
+      if (existingStream) {
+        // Only modify if stream exists
+        await PostStreamModel.table
+          .where('id')
+          .equals(id)
+          .modify((stream) => {
+            // Filter out the posts that need to be removed
+            stream.stream = stream.stream.filter((postId) => !postIds.includes(postId));
+          });
+
+        Libs.Logger.debug('Posts removed from stream successfully', {
+          streamId: id,
+          postsRemoved: postIds.length,
+        });
+      } else {
+        // Stream doesn't exist, nothing to remove - silently succeed
+        Libs.Logger.debug('Stream does not exist, skipping removal', {
+          streamId: id,
+          postsToRemove: postIds.length,
+        });
+      }
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPDATE_FAILED,
+        `Failed to remove posts from stream with ID: ${String(id)}`,
+        500,
+        { error, streamId: id, postIdsCount: postIds.length },
+      );
+    }
+  }
+
+  /**
+   * Removes a single post ID from the stream array in the database (atomic operation)
+   * 
+   * @param id - The stream ID to update
+   * @param postId - Post ID to remove from the stream
+   * @returns Promise that resolves when the operation completes
+   * @throws {DatabaseError} When the update fails
+   * 
+   * @example
+   * ```typescript
+   * await PostStreamModel.removePost('home-feed', 'author:postId1');
+   * ```
+   */
+  static async removePost(id: PostStreamId, postId: string): Promise<void> {
+    return PostStreamModel.removePosts(id, [postId]);
+  }
+
   // Instance methods
   addPosts(postIds: string[]): void {
     // Filter out posts that already exist and add new ones to beginning

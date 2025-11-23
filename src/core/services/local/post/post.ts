@@ -15,12 +15,9 @@ export class LocalPostService {
    *
    * If the post is a reply, also updates the parent post's reply count.
    *
-   * @param params.postId - Unique identifier for the post (format: "authorId:postId")
-   * @param params.content - Post content
-   * @param params.kind - Post kind ('short' or 'long')
    * @param params.authorId - Unique identifier of the post author
-   * @param params.parentUri - URI of parent post if this is a reply
-   * @param params.attachments - Optional array of attachment objects
+   * @param params.postId - Unique identifier for the post
+   * @param params.post - PubkyAppPost object
    *
    * @throws {DatabaseError} When database operations fail
    */
@@ -29,13 +26,14 @@ export class LocalPostService {
     const { content, kind, parent: parentUri, attachments, embed } = post;
 
     const repostedUri = embed?.uri ?? null;
+    const normalizedKind = Core.PostNormalizer.postKindToLowerCase(kind);
 
     try {
       const postDetails: Core.PostDetailsModelSchema = {
         id: compositePostId,
         content,
         indexed_at: Date.now(),
-        kind: Core.PostNormalizer.postKindToLowerCase(kind),
+        kind: normalizedKind,
         uri: postUriBuilder(authorId, postId),
         attachments: attachments ?? null,
       };
@@ -63,6 +61,7 @@ export class LocalPostService {
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
           Core.UserCountsModel.table,
+          Core.PostStreamModel.table,
         ],
         async () => {
           await Promise.all([
@@ -84,6 +83,8 @@ export class LocalPostService {
 
           // Update author's user counts in a single operation
           ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
+
+          this.updatePostStream({ postId, authorId, kind: normalizedKind, parentUri, ops, action: Core.HomeserverAction.PUT })
 
           await Promise.all(ops);
         },
@@ -117,10 +118,25 @@ export class LocalPostService {
    * @throws {DatabaseError} When database operations fail
    */
   static async delete({ postId, deleterId }: Core.TDeletePostParams) {
+
+    const postCounts = await Core.PostCountsModel.findById(postId);
+    if (!postCounts) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Post counts not found', 404, { postId });
+    }
+    if (this.isPostLinked(postCounts)) {
+      await Core.PostDetailsModel.update(postId, { content: Core.DELETED });
+      // TODO: Has to return some kind of boolean to know if it has to delete the files
+      return;
+    }
+
     const postRelationships = await Core.PostRelationshipsModel.findById(postId);
 
     const parentUri = postRelationships?.replied ?? undefined;
     const repostedUri = postRelationships?.reposted ?? undefined;
+    
+    // Fetch post details and relationships to get metadata
+    const postDetails = await Core.PostDetailsModel.findById(postId);
+    const kind = postDetails?.kind ?? 'short';
 
     try {
       await Core.db.transaction(
@@ -131,6 +147,7 @@ export class LocalPostService {
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
           Core.UserCountsModel.table,
+          Core.PostStreamModel.table,
         ],
         async () => {
           await Promise.all([
@@ -153,6 +170,12 @@ export class LocalPostService {
           // Update author's user counts in a single operation
           ops.push(Core.UserCountsModel.updateCounts(deleterId, { posts: -1, replies: parentUri ? -1 : 0 }));
 
+          // Extract postId from composite ID
+          const { id: simplePostId } = Core.parseCompositeId(postId);
+
+          // Remove post from streams
+          this.updatePostStream({ postId: simplePostId, authorId: deleterId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });
+
           await Promise.all(ops);
         },
       );
@@ -166,6 +189,31 @@ export class LocalPostService {
         deleterId,
       });
     }
+  }
+
+  private static updatePostStream({ authorId, postId, kind, parentUri, ops, action }: Core.TLocalUpdatePostStreamParams) {
+    const compositePostId = Core.buildCompositeId({ pubky: authorId, id: postId });
+    
+    // Select the appropriate method name based on action
+    const methodName = action === Core.HomeserverAction.PUT ? 'prependPosts' : 'removePosts';
+      
+    if (parentUri) {
+      const parentCompositeId = Core.buildCompositeIdFromPubkyUri({ uri: parentUri, domain: Core.CompositeIdDomain.POSTS });
+      ops.push(Core.PostStreamModel[methodName](`author_replies:${authorId}`, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](`post_replies:${parentCompositeId}`, [compositePostId]));
+    } else {
+      ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_ALL_ALL, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](`timeline:all:${kind}` as Core.PostStreamTypes, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](`timeline:following:${kind}` as Core.PostStreamTypes, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](`timeline:friends:${kind}` as Core.PostStreamTypes, [compositePostId]));
+      ops.push(Core.PostStreamModel[methodName](`author:${authorId}`, [compositePostId]));
+    }
+  }
+
+  private static isPostLinked(postCounts: Core.PostCountsModelSchema): boolean {
+    return postCounts.replies > 0 || postCounts.reposts > 0 || postCounts.tags > 0;
   }
 
   /**
