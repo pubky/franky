@@ -1,9 +1,23 @@
 'use client';
 
+import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 
 export function FeedbackCard() {
+  const { currentUserPubky } = Core.useAuthStore();
+
+  const userDetails = useLiveQuery(async () => {
+    if (!currentUserPubky) return null;
+    return await Core.ProfileController.read({ userId: currentUserPubky });
+  }, [currentUserPubky]);
+
+  const name = userDetails?.name || 'Your Name';
+  const avatarUrl =
+    userDetails?.image && currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined;
+
   return (
     <Atoms.Container overrideDefaults={true} data-testid="feedback-card" className="flex flex-col gap-2">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
@@ -19,15 +33,15 @@ export function FeedbackCard() {
             overrideDefaults={true}
             className="flex size-12 items-center justify-center rounded-md p-2 shadow-xs"
           >
-            <Atoms.Avatar className="h-12 w-12">
-              <Atoms.AvatarImage src="https://i.pravatar.cc/150?img=68" alt="User" />
-              <Atoms.AvatarFallback>
-                <Libs.User className="h-5 w-5" />
-              </Atoms.AvatarFallback>
-            </Atoms.Avatar>
+            <Molecules.AvatarWithFallback
+              avatarUrl={avatarUrl}
+              name={name}
+              className="h-12 w-12"
+              fallbackClassName="text-sm"
+            />
           </Atoms.Container>
           <Atoms.Container overrideDefaults={true} className="text-base font-bold text-foreground">
-            Your Name
+            {Libs.truncateString(name, 10)}
           </Atoms.Container>
         </Atoms.Container>
 

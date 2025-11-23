@@ -1,8 +1,56 @@
-import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { FeedbackCard } from './FeedbackCard';
+import * as Core from '@/core';
 
-// Mock the atoms
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(),
+}));
+
+// Mock Core module
+vi.mock('@/core', () => ({
+  useAuthStore: vi.fn(),
+  ProfileController: {
+    read: vi.fn(),
+  },
+  FileController: {
+    getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
+  },
+}));
+
+// Mock Molecules
+vi.mock('@/molecules', () => ({
+  AvatarWithFallback: ({
+    avatarUrl,
+    name,
+    className,
+    fallbackClassName,
+  }: {
+    avatarUrl?: string;
+    name: string;
+    className?: string;
+    fallbackClassName?: string;
+  }) => (
+    <div
+      data-testid="avatar-with-fallback"
+      data-avatar-url={avatarUrl || 'no-url'}
+      data-name={name}
+      className={className}
+    >
+      {avatarUrl ? (
+        <img data-testid="avatar-image" src={avatarUrl} alt={name} />
+      ) : (
+        <div data-testid="avatar-fallback" className={fallbackClassName}>
+          {name.charAt(0)}
+        </div>
+      )}
+    </div>
+  ),
+}));
+
+// Mock Atoms
 vi.mock('@/atoms', () => ({
   Container: ({
     children,
@@ -22,25 +70,16 @@ vi.mock('@/atoms', () => ({
   Button: ({
     children,
     className,
-    variant,
     ...props
   }: {
     children: React.ReactNode;
     className?: string;
-    variant?: string;
     [key: string]: unknown;
   }) => (
-    <button data-testid="button" className={className} data-variant={variant} {...props}>
+    <button data-testid="button" className={className} {...props}>
       {children}
     </button>
   ),
-  Avatar: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="avatar" className={className}>
-      {children}
-    </div>
-  ),
-  AvatarImage: ({ src, alt }: { src: string; alt: string }) => <img data-testid="avatar-image" src={src} alt={alt} />,
-  AvatarFallback: ({ children }: { children: React.ReactNode }) => <div data-testid="avatar-fallback">{children}</div>,
   Heading: ({
     children,
     level,
@@ -58,151 +97,369 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock libs - use actual utility functions and icons from lucide-react
+// Mock Libs - use actual truncateString implementation
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
-  return { ...actual };
+  return {
+    ...actual,
+    truncateString: (str: string, maxLength: number): string => {
+      if (!str) return '';
+      if (str.length <= maxLength) return str;
+      return `${str.slice(0, maxLength)}...`;
+    },
+  };
 });
 
 describe('FeedbackCard', () => {
-  it('renders with default props', () => {
-    render(<FeedbackCard />);
+  const mockPubky = 'user123pubky';
+  const mockUseLiveQuery = vi.mocked(useLiveQuery);
+  const mockUseAuthStore = vi.mocked(Core.useAuthStore);
 
-    expect(screen.getByTestId('feedback-card')).toBeInTheDocument();
-    expect(screen.getByText('Feedback')).toBeInTheDocument();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('renders feedback heading correctly', () => {
-    render(<FeedbackCard />);
+  describe('User Authentication', () => {
+    it('renders with authenticated user with avatar image', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel Medeiros',
+        image: 'avatar.jpg',
+      } as never);
 
-    const heading = screen.getByText('Feedback');
-    expect(heading).toHaveClass('font-light', 'text-muted-foreground');
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('feedback-card')).toBeInTheDocument();
+      });
+
+      const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+      expect(avatarWithFallback).toHaveAttribute('data-avatar-url', `https://cdn.example.com/avatar/${mockPubky}`);
+      expect(avatarWithFallback).toHaveAttribute('data-name', 'Miguel Medeiros');
+
+      // Check that the displayed name is truncated
+      expect(screen.getByText('Miguel Med...')).toBeInTheDocument();
+    });
+
+    it('renders with authenticated user without avatar image', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel Medeiros',
+        image: null,
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+        expect(avatarWithFallback).toHaveAttribute('data-avatar-url', 'no-url');
+        expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+        expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('M');
+      });
+    });
+
+    it('renders with default name when user is not authenticated', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+      mockUseLiveQuery.mockReturnValue(null as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+        expect(avatarWithFallback).toHaveAttribute('data-name', 'Your Name');
+      });
+    });
+
+    it('renders with default name when userDetails is null', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue(null as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('avatar-with-fallback')).toHaveAttribute('data-name', 'Your Name');
+      });
+    });
   });
 
-  it('renders user avatar with correct props', () => {
-    render(<FeedbackCard />);
+  describe('Name Truncation', () => {
+    it('truncates long names to 10 characters in display', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'VeryLongUserName',
+        image: null,
+      } as never);
 
-    const avatar = screen.getByTestId('avatar');
-    expect(avatar).toHaveClass('h-12', 'w-12');
+      render(<FeedbackCard />);
 
-    const avatarImage = screen.getByTestId('avatar-image');
-    expect(avatarImage).toHaveAttribute('src', 'https://i.pravatar.cc/150?img=68');
-    expect(avatarImage).toHaveAttribute('alt', 'User');
+      await waitFor(() => {
+        // Avatar receives full name
+        const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+        expect(avatarWithFallback).toHaveAttribute('data-name', 'VeryLongUserName');
+
+        // But display text is truncated
+        expect(screen.getByText('VeryLongUs...')).toBeInTheDocument();
+      });
+    });
+
+    it('does not truncate names shorter than 10 characters', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'John',
+        image: null,
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+        expect(avatarWithFallback).toHaveAttribute('data-name', 'John');
+        expect(screen.getByText('John')).toBeInTheDocument();
+      });
+    });
+
+    it('handles exactly 10 character names', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: '1234567890',
+        image: null,
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+        expect(avatarWithFallback).toHaveAttribute('data-name', '1234567890');
+        expect(screen.getByText('1234567890')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('renders avatar fallback with user icon', () => {
-    render(<FeedbackCard />);
+  describe('Avatar Handling', () => {
+    it('shows avatar image when user has image', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel',
+        image: 'has-image.jpg',
+      } as never);
 
-    const fallback = screen.getByTestId('avatar-fallback');
-    expect(fallback).toBeInTheDocument();
+      render(<FeedbackCard />);
 
-    expect(document.querySelector('.lucide-user')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
+      });
+    });
+
+    it('shows avatar fallback when user has no image', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel',
+        image: null,
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+        expect(screen.getByTestId('avatar-fallback')).toHaveTextContent('M');
+      });
+    });
+
+    it('does not call getAvatarUrl when image is not available', async () => {
+      const mockGetAvatarUrl = vi.mocked(Core.FileController.getAvatarUrl);
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel',
+        image: null,
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+      });
+
+      // Should not be called because image is null
+      expect(mockGetAvatarUrl).not.toHaveBeenCalled();
+    });
+
+    it('calls getAvatarUrl with correct pubky when image exists', async () => {
+      const mockGetAvatarUrl = vi.mocked(Core.FileController.getAvatarUrl);
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel',
+        image: 'avatar.jpg',
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        expect(mockGetAvatarUrl).toHaveBeenCalledWith(mockPubky);
+      });
+    });
+
+    it('does not call getAvatarUrl when currentUserPubky is null', async () => {
+      const mockGetAvatarUrl = vi.mocked(Core.FileController.getAvatarUrl);
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel',
+        image: 'avatar.jpg', // Even with image, should not call if no pubky
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('feedback-card')).toBeInTheDocument();
+      });
+
+      expect(mockGetAvatarUrl).not.toHaveBeenCalled();
+    });
   });
 
-  it('renders user name correctly', () => {
-    render(<FeedbackCard />);
+  describe('UI Structure', () => {
+    it('renders feedback heading correctly', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+      mockUseLiveQuery.mockReturnValue(null as never);
 
-    const userName = screen.getByText('Your Name');
-    expect(userName).toHaveClass('text-base', 'font-bold', 'text-foreground');
+      render(<FeedbackCard />);
+
+      const heading = screen.getByText('Feedback');
+      expect(heading).toBeInTheDocument();
+      expect(heading).toHaveClass('font-light', 'text-muted-foreground');
+    });
+
+    it('renders feedback question button', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+      mockUseLiveQuery.mockReturnValue(null as never);
+
+      render(<FeedbackCard />);
+
+      const button = screen.getByTestId('button');
+      expect(button).toHaveTextContent('What do you think about Pubky?');
+      expect(button).toHaveClass('text-left', 'text-base', 'leading-normal', 'font-medium', 'text-muted-foreground');
+    });
+
+    it('applies correct container classes', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+      mockUseLiveQuery.mockReturnValue(null as never);
+
+      render(<FeedbackCard />);
+
+      const container = screen.getByTestId('feedback-card');
+      expect(container).toHaveClass('flex', 'flex-col', 'gap-2');
+    });
+
+    it('applies correct avatar container classes', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockReturnValue({
+        name: 'Miguel',
+        image: null,
+      } as never);
+
+      render(<FeedbackCard />);
+
+      await waitFor(() => {
+        const avatarWithFallback = screen.getByTestId('avatar-with-fallback');
+        expect(avatarWithFallback).toHaveClass('h-12', 'w-12');
+      });
+    });
   });
 
-  it('renders feedback question correctly with overrideDefaults', () => {
-    render(<FeedbackCard />);
+  describe('Data Flow', () => {
+    it('fetches user details when currentUserPubky is available', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+      mockUseLiveQuery.mockImplementation((callback) => {
+        callback();
+        return { name: 'Miguel', image: null } as never;
+      });
 
-    const button = screen.getByTestId('button');
-    expect(button).toHaveTextContent('What do you think about Pubky?');
-    expect(button).toHaveClass(
-      'text-base',
-      'leading-normal',
-      'font-medium',
-      'text-muted-foreground',
-      'hover:text-foreground',
-      'text-left',
-    );
-    // Button uses overrideDefaults, so no variant attribute is set
-    expect(button).not.toHaveAttribute('data-variant');
-  });
+      render(<FeedbackCard />);
 
-  it('applies correct container classes', () => {
-    render(<FeedbackCard />);
+      await waitFor(() => {
+        expect(mockUseLiveQuery).toHaveBeenCalled();
+      });
+    });
 
-    const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('flex', 'flex-col', 'gap-2');
-  });
+    it('does not fetch user details when currentUserPubky is null', async () => {
+      mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+      mockUseLiveQuery.mockReturnValue(null as never);
 
-  it('applies correct feedback form classes', () => {
-    render(<FeedbackCard />);
+      render(<FeedbackCard />);
 
-    const button = screen.getByTestId('button');
-    const feedbackForm = button.parentElement;
-    expect(feedbackForm).toHaveClass(
-      'flex',
-      'flex-col',
-      'gap-4',
-      'p-6',
-      'rounded-lg',
-      'border-dashed',
-      'border',
-      'border-input',
-    );
-  });
-
-  it('applies correct user info classes', () => {
-    render(<FeedbackCard />);
-
-    const userInfo = screen.getByText('Your Name').closest('div')?.parentElement;
-    expect(userInfo).toHaveClass('flex', 'items-center', 'gap-2');
-  });
-
-  it('renders with correct data structure', () => {
-    render(<FeedbackCard />);
-
-    // Verify all expected elements are present
-    expect(screen.getByText('Feedback')).toBeInTheDocument();
-    expect(screen.getByText('Your Name')).toBeInTheDocument();
-    expect(screen.getByText('What do you think about Pubky?')).toBeInTheDocument();
-    expect(screen.getByTestId('avatar')).toBeInTheDocument();
-    expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
-    expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
-  });
-
-  it('handles hover states correctly', () => {
-    render(<FeedbackCard />);
-
-    const button = screen.getByTestId('button');
-    expect(button).toHaveClass('hover:text-foreground');
-  });
-
-  it('applies correct spacing and layout', () => {
-    render(<FeedbackCard />);
-
-    const container = screen.getByTestId('feedback-card');
-    expect(container).toHaveClass('gap-2');
-
-    const button = screen.getByTestId('button');
-    const feedbackForm = button.parentElement;
-    expect(feedbackForm).toHaveClass('gap-4', 'p-6');
+      await waitFor(() => {
+        expect(screen.getByTestId('feedback-card')).toBeInTheDocument();
+      });
+    });
   });
 });
 
 describe('FeedbackCard - Snapshots', () => {
-  it('matches snapshot with default props', () => {
+  const mockPubky = 'user123pubky';
+  const mockUseLiveQuery = vi.mocked(useLiveQuery);
+  const mockUseAuthStore = vi.mocked(Core.useAuthStore);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('matches snapshot with authenticated user with avatar', async () => {
+    mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+    mockUseLiveQuery.mockReturnValue({
+      name: 'Miguel Medeiros',
+      image: 'avatar.jpg',
+    } as never);
+
     const { container } = render(<FeedbackCard />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('avatar-image')).toBeInTheDocument();
+    });
+
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for feedback form', () => {
-    render(<FeedbackCard />);
+  it('matches snapshot with authenticated user without avatar', async () => {
+    mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+    mockUseLiveQuery.mockReturnValue({
+      name: 'Miguel',
+      image: null,
+    } as never);
 
-    const button = screen.getByTestId('button');
-    const feedbackForm = button.parentElement;
-    expect(feedbackForm).toMatchSnapshot();
+    const { container } = render(<FeedbackCard />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+    });
+
+    expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for user info section', () => {
-    render(<FeedbackCard />);
+  it('matches snapshot with unauthenticated user', async () => {
+    mockUseAuthStore.mockReturnValue({ currentUserPubky: null } as never);
+    mockUseLiveQuery.mockReturnValue(null as never);
 
-    const userInfo = screen.getByText('Your Name').closest('div');
-    expect(userInfo).toMatchSnapshot();
+    const { container } = render(<FeedbackCard />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('feedback-card')).toBeInTheDocument();
+    });
+
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with truncated long name', async () => {
+    mockUseAuthStore.mockReturnValue({ currentUserPubky: mockPubky } as never);
+    mockUseLiveQuery.mockReturnValue({
+      name: 'VeryLongUserNameThatExceedsTenCharacters',
+      image: null,
+    } as never);
+
+    const { container } = render(<FeedbackCard />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('avatar-fallback')).toBeInTheDocument();
+    });
+
+    expect(container.firstChild).toMatchSnapshot();
   });
 });
