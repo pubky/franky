@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { PubkyAppFile } from 'pubky-app-specs';
 
 /**
  * File Application
@@ -27,6 +28,28 @@ export class FileApplication {
         await Core.HomeserverService.request(Core.HomeserverAction.PUT, fileResult.meta.url, fileResult.file.toJson());
         // Persist Files locally
         await Core.LocalFileService.create({ blobResult, fileResult });
+      }),
+    );
+  }
+
+  static async delete({ fileAttachments, postId }: { fileAttachments: string[], postId: string }) {
+    await Promise.all(
+      fileAttachments.map(async (fileUri) => {
+        // Delete the file metadata
+        await Core.HomeserverService.delete(fileUri);
+        const fileCompositeId = Core.buildCompositeIdFromPubkyUri({ uri: postId, domain: Core.CompositeIdDomain.FILES });
+        if (fileCompositeId) {
+          const file = await Core.FileDetailsModel.findById(fileCompositeId);
+          if (file) {
+            // Delete the file blob
+            await Core.HomeserverService.delete(file.src);
+            await Core.LocalFileService.deleteById(fileCompositeId);
+          } else {
+            const file = await Core.HomeserverService.request(Core.HomeserverAction.GET, fileUri) as { src: string};
+            // Delete the file blob
+            await Core.HomeserverService.delete(file.src);
+          }
+        }
       }),
     );
   }

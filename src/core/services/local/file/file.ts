@@ -41,4 +41,8 @@ export class LocalFileService {
   static async findByIds(compositeFileIds: string[]): Promise<Core.NexusFileDetails[]> {
     return await Core.FileDetailsModel.findByIds(compositeFileIds);
   }
+
+  static async deleteById(compositeFileId: string) {
+    await Core.FileDetailsModel.deleteById(compositeFileId);
+  }
 }

@@ -117,7 +117,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async delete({ postId, deleterId }: Core.TDeletePostParams) {
+  static async delete({ postId, deleterId }: Core.TDeletePostParams): Promise<boolean> {
 
     const postCounts = await Core.PostCountsModel.findById(postId);
     if (!postCounts) {
@@ -125,8 +125,7 @@ export class LocalPostService {
     }
     if (this.isPostLinked(postCounts)) {
       await Core.PostDetailsModel.update(postId, { content: Core.DELETED });
-      // TODO: Has to return some kind of boolean to know if it has to delete the files
-      return;
+      return false;
     }
 
     const postRelationships = await Core.PostRelationshipsModel.findById(postId);
@@ -179,8 +178,9 @@ export class LocalPostService {
           await Promise.all(ops);
         },
       );
-
+      
       Libs.Logger.debug('Post deleted successfully', { postId, deleterId });
+      return true;
     } catch (error) {
       Libs.Logger.error('Failed to delete post', { postId, deleterId });
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
