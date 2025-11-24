@@ -32,7 +32,7 @@ export function EmojiPicker({ onEmojiSelect, maxLength, currentInput }: EmojiPic
       const current = currentInputRef.current;
 
       if (maxLen && current) {
-        const emojiLength = new Blob([emojiObject.native]).size / 2;
+        const emojiLength = [...emojiObject.native].length;
         if (current.length + emojiLength <= maxLen) {
           onEmojiSelectRef.current(emojiObject);
         }
