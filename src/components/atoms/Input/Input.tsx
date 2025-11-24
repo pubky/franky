@@ -4,7 +4,7 @@ import * as Libs from '@/libs';
 
 type InputTheme = 'default' | 'outline';
 
-export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'ref'> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: React.HTMLAttributes<HTMLInputElement>['className'];
   theme?: InputTheme;
 }
