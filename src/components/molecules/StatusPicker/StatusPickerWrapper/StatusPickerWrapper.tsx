@@ -1,12 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import * as Atoms from '@/components/atoms';
 import * as Icons from '@/libs/icons';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
 import { StatusPickerContent } from '../StatusPickerContent';
 import { parseStatus } from '../statusUtils';
+
+// Vertical offset for popover positioning relative to trigger
+// Negative value allows popover to overlap with a trigger element
+// We cannot use CSS variable here, it resolves to string; a Radix component expects number
+const POPOVER_SIDE_OFFSET = -30;
 
 export interface StatusPickerWrapperProps {
   emoji: string;
@@ -17,37 +22,44 @@ export interface StatusPickerWrapperProps {
 export function StatusPickerWrapper({ emoji, status, onStatusChange }: StatusPickerWrapperProps) {
   const [open, setOpen] = useState(false);
   const [localStatus, setLocalStatus] = useState<string | null>(null);
-  const [sideOffset, setSideOffset] = useState(-30); // Default fallback
   const isMobile = Hooks.useIsMobile();
-
-  // Read CSS variable for side offset
-  useEffect(() => {
-    const root = document.documentElement;
-    const offsetValue = getComputedStyle(root).getPropertyValue('--popover-side-offset').trim();
-    if (offsetValue) {
-      // Parse "-30px" to -30
-      const numericValue = parseInt(offsetValue, 10);
-      if (!isNaN(numericValue)) {
-        setSideOffset(numericValue);
-      }
-    }
-  }, []);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // Use local status if set, otherwise use prop
   const currentStatus = localStatus ?? status;
   const parsed = parseStatus(currentStatus, emoji);
 
+  // Blur trigger button when sheet opens to fix accessibility warning
+  // (aria-hidden is set on page container but trigger retains focus)
+  useEffect(() => {
+    if (open && isMobile && triggerRef.current) {
+      // Use setTimeout to ensure this happens after Radix sets aria-hidden
+      setTimeout(() => {
+        if (triggerRef.current) {
+          triggerRef.current.blur();
+        }
+      }, 0);
+    }
+  }, [open, isMobile]);
+
   const handleStatusSelect = (selectedStatus: string) => {
     setLocalStatus(selectedStatus);
     onStatusChange?.(selectedStatus);
     setOpen(false);
+    // Blur the trigger button after status is selected to prevent reopening on Enter
+    setTimeout(() => {
+      if (triggerRef.current) {
+        triggerRef.current.blur();
+      }
+    }, 0);
   };
 
   const triggerButton = (
     <Atoms.Button
+      ref={triggerRef}
       variant="ghost"
-      size="sm"
-      className="focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+      overrideDefaults={true}
+      className="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
     >
       <Atoms.Typography as="span" className="text-base leading-none">
         {parsed.emoji}
@@ -63,9 +75,12 @@ export function StatusPickerWrapper({ emoji, status, onStatusChange }: StatusPic
     return (
       <Atoms.Sheet open={open} onOpenChange={setOpen}>
         <Atoms.SheetTrigger asChild>{triggerButton}</Atoms.SheetTrigger>
-        <Atoms.SheetContent side="bottom">
+        <Atoms.SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()}>
           <Atoms.SheetHeader>
             <Atoms.SheetTitle>Select Status</Atoms.SheetTitle>
+            <Atoms.SheetDescription className="sr-only">
+              Choose a status to display on your profile
+            </Atoms.SheetDescription>
           </Atoms.SheetHeader>
           <Atoms.Container overrideDefaults className="mt-4">
             <StatusPickerContent onStatusSelect={handleStatusSelect} currentStatus={currentStatus} />
@@ -80,9 +95,10 @@ export function StatusPickerWrapper({ emoji, status, onStatusChange }: StatusPic
       <Atoms.PopoverTrigger asChild>{triggerButton}</Atoms.PopoverTrigger>
       <Atoms.PopoverContent
         className="w-[var(--popover-width)]"
-        sideOffset={sideOffset} // Uses --popover-side-offset CSS variable
-        side="top" // Position above the trigger
-        align="start" // Align to start (left) of trigger
+        sideOffset={POPOVER_SIDE_OFFSET}
+        side="top"
+        align="start"
+        onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <StatusPickerContent onStatusSelect={handleStatusSelect} currentStatus={currentStatus} />
       </Atoms.PopoverContent>

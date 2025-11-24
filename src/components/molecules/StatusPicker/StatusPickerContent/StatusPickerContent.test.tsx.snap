@@ -6,7 +6,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
   data-testid="container"
 >
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -25,7 +25,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -44,7 +44,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -63,7 +63,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -82,7 +82,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -101,7 +101,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -120,7 +120,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -139,7 +139,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -158,7 +158,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
     </div>
   </button>
   <div
-    class="mx-auto w-full flex flex-col gap-2.5 pt-1 pb-0"
+    class="mx-auto w-full flex-col flex gap-2.5 pt-1 pb-0"
     data-testid="container"
   >
     <label
@@ -168,7 +168,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
       Custom Status
     </label>
     <div
-      class="mx-auto w-full flex flex-col gap-3"
+      class="mx-auto w-full flex-col flex gap-3"
       data-testid="container"
     >
       <div
@@ -185,7 +185,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with custom status 1
         />
         <button
           aria-label="Change emoji"
-          class="h-6 w-auto shrink-0 p-0 inline-flex cursor-pointer items-center justify-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none hover:opacity-80"
+          class="h-9 w-9 shrink-0 p-0 inline-flex cursor-pointer items-center justify-center hover:opacity-80"
           data-slot="button"
         >
           <span
@@ -206,7 +206,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
   data-testid="container"
 >
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -225,7 +225,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -244,7 +244,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -263,7 +263,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -282,7 +282,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -301,7 +301,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -320,7 +320,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -339,7 +339,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -358,7 +358,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
     </div>
   </button>
   <div
-    class="mx-auto w-full flex flex-col gap-2.5 pt-1 pb-0"
+    class="mx-auto w-full flex-col flex gap-2.5 pt-1 pb-0"
     data-testid="container"
   >
     <label
@@ -368,7 +368,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
       Custom Status
     </label>
     <div
-      class="mx-auto w-full flex flex-col gap-3"
+      class="mx-auto w-full flex-col flex gap-3"
       data-testid="container"
     >
       <div
@@ -385,7 +385,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with no current stat
         />
         <button
           aria-label="Open emoji picker"
-          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none hover:shadow-xs-dark"
+          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center hover:shadow-xs-dark"
           data-slot="button"
         >
           <svg
@@ -435,7 +435,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
   data-testid="container"
 >
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -471,7 +471,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </svg>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -490,7 +490,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -509,7 +509,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -528,7 +528,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -547,7 +547,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -566,7 +566,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -585,7 +585,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <button
-    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none group"
+    class="w-full justify-between gap-2 p-0 inline-flex cursor-pointer items-center group"
     data-slot="button"
   >
     <div
@@ -604,7 +604,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
     </div>
   </button>
   <div
-    class="mx-auto w-full flex flex-col gap-2.5 pt-1 pb-0"
+    class="mx-auto w-full flex-col flex gap-2.5 pt-1 pb-0"
     data-testid="container"
   >
     <label
@@ -614,7 +614,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
       Custom Status
     </label>
     <div
-      class="mx-auto w-full flex flex-col gap-3"
+      class="mx-auto w-full flex-col flex gap-3"
       data-testid="container"
     >
       <div
@@ -631,7 +631,7 @@ exports[`StatusPickerContent > Snapshots > matches snapshot with predefined stat
         />
         <button
           aria-label="Open emoji picker"
-          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none hover:shadow-xs-dark"
+          class="size-9 shrink-0 rounded-full p-1 shadow-xs-dark inline-flex cursor-pointer items-center justify-center hover:shadow-xs-dark"
           data-slot="button"
         >
           <svg

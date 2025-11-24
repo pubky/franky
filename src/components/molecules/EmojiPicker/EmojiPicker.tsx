@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import data from '@emoji-mart/data';
 import { Picker, type EmojiData } from 'emoji-mart';
+import * as Atoms from '@/components/atoms';
 
 export interface EmojiPickerProps {
   onEmojiSelect: (emoji: { native: string }) => void;
@@ -60,5 +61,5 @@ export function EmojiPicker({ onEmojiSelect, maxLength, currentInput }: EmojiPic
     };
   }, []); // Only run once on mount
 
-  return <div ref={pickerRef} className="w-full max-w-full overflow-hidden" style={{ maxWidth: '100%' }} />;
+  return <Atoms.Container ref={pickerRef} overrideDefaults className="w-full overflow-hidden" />;
 }

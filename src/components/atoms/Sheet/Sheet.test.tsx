@@ -19,6 +19,11 @@ vi.mock('@radix-ui/react-dialog', () => ({
       {children}
     </h2>
   ),
+  Description: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <p data-testid="sheet-description" className={className}>
+      {children}
+    </p>
+  ),
   Portal: ({ children }: { children: React.ReactNode }) => <div data-testid="sheet-portal">{children}</div>,
   Overlay: ({ className }: { className?: string }) => <div data-testid="sheet-overlay" className={className} />,
   Close: ({ children, className }: { children: React.ReactNode; className?: string }) => (
@@ -37,7 +42,7 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from './Sheet';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './Sheet';
 
 describe('Sheet', () => {
   it('renders Sheet root correctly', () => {
@@ -127,6 +132,24 @@ describe('Sheet', () => {
     const title = screen.getByTestId('sheet-title');
     expect(title).toBeInTheDocument();
     expect(title).toHaveTextContent('My Sheet Title');
+  });
+
+  it('renders SheetDescription correctly', () => {
+    render(<SheetDescription>My Sheet Description</SheetDescription>);
+    const description = screen.getByTestId('sheet-description');
+    expect(description).toBeInTheDocument();
+    expect(description).toHaveTextContent('My Sheet Description');
+  });
+
+  it('renders SheetHeader with Title and Description', () => {
+    render(
+      <SheetHeader>
+        <SheetTitle>Sheet Title</SheetTitle>
+        <SheetDescription>Sheet Description</SheetDescription>
+      </SheetHeader>,
+    );
+    expect(screen.getByTestId('sheet-title')).toBeInTheDocument();
+    expect(screen.getByTestId('sheet-description')).toBeInTheDocument();
   });
 
   it('renders close button in SheetContent', () => {
@@ -223,6 +246,21 @@ describe('Sheet - Snapshots', () => {
 
   it('matches snapshot for SheetTitle', () => {
     const { container } = render(<SheetTitle>My Sheet Title</SheetTitle>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SheetDescription', () => {
+    const { container } = render(<SheetDescription>My Sheet Description</SheetDescription>);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for SheetHeader with Title and Description', () => {
+    const { container } = render(
+      <SheetHeader>
+        <SheetTitle>Sheet Title</SheetTitle>
+        <SheetDescription>Sheet Description</SheetDescription>
+      </SheetHeader>,
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 });

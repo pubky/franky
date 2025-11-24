@@ -4,16 +4,17 @@ import * as Libs from '@/libs';
 
 type InputTheme = 'default' | 'outline';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'ref'> {
   className?: React.HTMLAttributes<HTMLInputElement>['className'];
   theme?: InputTheme;
 }
+
 const defaultProps = {
   type: 'text',
   theme: 'default',
 };
 
-export function Input({ ...props }: InputProps) {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ ...props }, ref) => {
   const { theme } = { ...defaultProps, ...props };
 
   const inputClassName = Libs.cn(
@@ -23,5 +24,7 @@ export function Input({ ...props }: InputProps) {
     props.className,
   );
 
-  return <input data-testid="input" {...props} className={inputClassName} />;
-}
+  return <input ref={ref} data-testid="input" {...props} className={inputClassName} />;
+}) as React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
+
+Input.displayName = 'Input';

@@ -156,16 +156,6 @@ body {
   --popover-width: 280px;
 
   /**
-   * Popover side offset
-   * - Vertical offset for popover positioning relative to trigger
-   * - Negative value allows popover to overlap with trigger element
-   * - Applied to: StatusPicker PopoverContent sideOffset prop
-   * - Used for: Positioning popovers above/below triggers with overlap
-   * - Value is in pixels (negative for upward overlap)
-   */
-  --popover-side-offset: -30px;
-
-  /**
    * Avatar zoom modal size
    * - Size of the avatar when displayed in the zoom modal
    * - Used for full-screen avatar preview on profile page

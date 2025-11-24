@@ -2,21 +2,21 @@
 
 exports[`EmojiPicker - Snapshots > matches snapshot 1`] = `
 <div
-  class="w-full max-w-full overflow-hidden"
-  style="max-width: 100%;"
+  class="w-full overflow-hidden"
+  data-testid="container"
 />
 `;
 
 exports[`EmojiPicker - Snapshots > matches snapshot with currentInput 1`] = `
 <div
-  class="w-full max-w-full overflow-hidden"
-  style="max-width: 100%;"
+  class="w-full overflow-hidden"
+  data-testid="container"
 />
 `;
 
 exports[`EmojiPicker - Snapshots > matches snapshot with maxLength 1`] = `
 <div
-  class="w-full max-w-full overflow-hidden"
-  style="max-width: 100%;"
+  class="w-full overflow-hidden"
+  data-testid="container"
 />
 `;

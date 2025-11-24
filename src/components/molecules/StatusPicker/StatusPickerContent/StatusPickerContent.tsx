@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as Atoms from '@/components/atoms';
 import * as Molecules from '@/components/molecules';
 import { Smile, Check } from 'lucide-react';
@@ -8,9 +8,6 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import { statusHelper } from '../statusHelper';
 import { parseStatus } from '../statusUtils';
-
-const BUTTON_RESET_CLASSES =
-  'border-none bg-transparent shadow-none hover:bg-transparent hover:shadow-none focus-visible:ring-0 focus-visible:outline-none';
 
 export interface StatusPickerContentProps {
   onStatusSelect: (status: string) => void;
@@ -32,6 +29,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
   const [customStatus, setCustomStatus] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Parse current status to extract emoji and text if it's custom
   const parsed = parseStatus(currentStatus || '');
@@ -46,8 +44,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
       setCustomStatus('');
       setSelectedEmoji('');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStatus]);
+  }, [currentStatus, isCustomStatus, parsed.emoji, parsed.text]);
 
   const handlePredefinedStatusClick = (statusValue: string) => {
     onStatusSelect(statusValue);
@@ -70,6 +67,10 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
   const handleEmojiSelect = (emoji: { native: string }) => {
     setSelectedEmoji(emoji.native);
     setShowEmojiPicker(false);
+    // Refocus the input after emoji is selected so Enter key works
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   const handleKeyDown = Hooks.useEnterSubmit(isValidCustomStatus, handleCustomStatusSave);
@@ -84,12 +85,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
             key={option.value}
             overrideDefaults={true}
             onClick={() => handlePredefinedStatusClick(option.value)}
-            className={Libs.cn(
-              'w-full justify-between gap-2 p-0',
-              'inline-flex cursor-pointer items-center',
-              BUTTON_RESET_CLASSES,
-              'group',
-            )}
+            className={Libs.cn('w-full justify-between gap-2 p-0', 'inline-flex cursor-pointer items-center', 'group')}
           >
             <Atoms.Container overrideDefaults className="flex items-center gap-2">
               <span>{option.emoji}</span>
@@ -109,16 +105,17 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
       })}
 
       {/* Custom Status Section */}
-      <Atoms.Container className="flex flex-col gap-2.5 pt-1 pb-0">
+      <Atoms.Container className="gap-2.5 pt-1 pb-0">
         <Atoms.Label className="text-xs leading-5 tracking-[1.2px] text-muted-foreground uppercase">
           Custom Status
         </Atoms.Label>
-        <Atoms.Container className="flex flex-col gap-3">
+        <Atoms.Container className="gap-3">
           <Atoms.Container
             overrideDefaults={true}
             className="flex items-center gap-2 rounded-md border border-dashed border-input bg-background/10 px-5 py-4 shadow-sm focus-within:border-white/80"
           >
             <Atoms.Input
+              ref={inputRef}
               type="text"
               value={customStatus}
               placeholder="Add status"
@@ -138,9 +135,8 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
                 overrideDefaults={true}
                 onClick={() => setShowEmojiPicker(true)}
                 className={Libs.cn(
-                  'h-6 w-auto shrink-0 p-0',
+                  'h-9 w-9 shrink-0 p-0',
                   'inline-flex cursor-pointer items-center justify-center',
-                  BUTTON_RESET_CLASSES,
                   'hover:opacity-80',
                 )}
                 aria-label="Change emoji"
@@ -154,7 +150,6 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
                 className={Libs.cn(
                   'size-9 shrink-0 rounded-full p-1 shadow-xs-dark',
                   'inline-flex cursor-pointer items-center justify-center',
-                  BUTTON_RESET_CLASSES,
                   'hover:shadow-xs-dark',
                 )}
                 aria-label="Open emoji picker"

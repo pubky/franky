@@ -77,4 +77,12 @@ const SheetTitle = React.forwardRef<
 ));
 SheetTitle.displayName = DialogPrimitive.Title.displayName;
 
-export { Sheet, SheetPortal, SheetOverlay, SheetTrigger, SheetContent, SheetHeader, SheetTitle };
+const SheetDescription = React.forwardRef<
+  React.ComponentRef<typeof DialogPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Description ref={ref} className={Libs.cn('text-sm text-muted-foreground', className)} {...props} />
+));
+SheetDescription.displayName = DialogPrimitive.Description.displayName;
+
+export { Sheet, SheetPortal, SheetOverlay, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription };

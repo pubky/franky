@@ -255,6 +255,15 @@ exports[`Sheet - Snapshots > matches snapshot for SheetContent with top side 1`]
 </div>
 `;
 
+exports[`Sheet - Snapshots > matches snapshot for SheetDescription 1`] = `
+<p
+  class="text-sm text-muted-foreground"
+  data-testid="sheet-description"
+>
+  My Sheet Description
+</p>
+`;
+
 exports[`Sheet - Snapshots > matches snapshot for SheetHeader 1`] = `
 <div
   class="flex flex-col space-y-2 text-center sm:text-left"
@@ -265,6 +274,25 @@ exports[`Sheet - Snapshots > matches snapshot for SheetHeader 1`] = `
   >
     Sheet Title
   </h2>
+</div>
+`;
+
+exports[`Sheet - Snapshots > matches snapshot for SheetHeader with Title and Description 1`] = `
+<div
+  class="flex flex-col space-y-2 text-center sm:text-left"
+>
+  <h2
+    class="text-lg font-semibold text-foreground"
+    data-testid="sheet-title"
+  >
+    Sheet Title
+  </h2>
+  <p
+    class="text-sm text-muted-foreground"
+    data-testid="sheet-description"
+  >
+    Sheet Description
+  </p>
 </div>
 `;
 
