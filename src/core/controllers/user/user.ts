@@ -7,16 +7,17 @@ export class UserController {
    * Get user details from local database
    * This is a read-only operation that queries the local cache
    */
-  static async getDetails(userId: string): Promise<Core.UserDetailsModelSchema | null> {
-    return await Core.UserDetailsModel.findById(userId);
+  static async getDetails({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null | undefined> {
+    return await Core.ProfileApplication.read({ userId });
   }
 
   /**
    * Get user counts from local database
    * This is a read-only operation that queries the local cache
    */
-  static async getCounts(userId: string): Promise<Core.UserCountsModelSchema | null> {
-    return await Core.UserCountsModel.findById(userId);
+  static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    const counts = await Core.UserApplication.counts({ userId });
+    return counts ?? null;
   }
 
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {

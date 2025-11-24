@@ -13,7 +13,7 @@ describe('UserController', () => {
   });
 
   describe('getDetails', () => {
-    it('should delegate to UserDetailsModel.findById', async () => {
+    it('should delegate to ProfileApplication.read', async () => {
       const userId = 'test-user-id';
       const mockUserDetails = {
         id: userId,
@@ -22,37 +22,37 @@ describe('UserController', () => {
         image: '',
         links: [],
         status: '',
-      } as Core.UserDetailsModelSchema;
+      } as Core.NexusUserDetails;
 
-      const findByIdSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
+      const readSpy = vi.spyOn(Core.ProfileApplication, 'read').mockResolvedValue(mockUserDetails);
 
-      const result = await UserController.getDetails(userId);
+      const result = await UserController.getDetails({ userId });
 
       expect(result).toEqual(mockUserDetails);
-      expect(findByIdSpy).toHaveBeenCalledWith(userId);
+      expect(readSpy).toHaveBeenCalledWith({ userId });
     });
 
     it('should return null when user details not found', async () => {
       const userId = 'non-existent-user';
 
-      vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.ProfileApplication, 'read').mockResolvedValue(null);
 
-      const result = await UserController.getDetails(userId);
+      const result = await UserController.getDetails({ userId });
 
       expect(result).toBeNull();
     });
 
-    it('should propagate errors from model layer', async () => {
+    it('should propagate errors from application layer', async () => {
       const userId = 'test-user-id';
 
-      vi.spyOn(Core.UserDetailsModel, 'findById').mockRejectedValue(new Error('Database error'));
+      vi.spyOn(Core.ProfileApplication, 'read').mockRejectedValue(new Error('Database error'));
 
-      await expect(UserController.getDetails(userId)).rejects.toThrow('Database error');
+      await expect(UserController.getDetails({ userId })).rejects.toThrow('Database error');
     });
   });
 
   describe('getCounts', () => {
-    it('should delegate to UserCountsModel.findById', async () => {
+    it('should delegate to UserApplication.counts', async () => {
       const userId = 'test-user-id';
       const mockUserCounts = {
         id: userId,
@@ -65,32 +65,32 @@ describe('UserController', () => {
         tags: 2,
         unique_tags: 1,
         bookmarks: 7,
-      } as Core.UserCountsModelSchema;
+      } as Core.NexusUserCounts;
 
-      const findByIdSpy = vi.spyOn(Core.UserCountsModel, 'findById').mockResolvedValue(mockUserCounts);
+      const countsSpy = vi.spyOn(Core.UserApplication, 'counts').mockResolvedValue(mockUserCounts);
 
-      const result = await UserController.getCounts(userId);
+      const result = await UserController.getCounts({ userId });
 
       expect(result).toEqual(mockUserCounts);
-      expect(findByIdSpy).toHaveBeenCalledWith(userId);
+      expect(countsSpy).toHaveBeenCalledWith({ userId });
     });
 
     it('should return null when user counts not found', async () => {
       const userId = 'non-existent-user';
 
-      vi.spyOn(Core.UserCountsModel, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.UserApplication, 'counts').mockResolvedValue(undefined);
 
-      const result = await UserController.getCounts(userId);
+      const result = await UserController.getCounts({ userId });
 
       expect(result).toBeNull();
     });
 
-    it('should propagate errors from model layer', async () => {
+    it('should propagate errors from application layer', async () => {
       const userId = 'test-user-id';
 
-      vi.spyOn(Core.UserCountsModel, 'findById').mockRejectedValue(new Error('Database error'));
+      vi.spyOn(Core.UserApplication, 'counts').mockRejectedValue(new Error('Database error'));
 
-      await expect(UserController.getCounts(userId)).rejects.toThrow('Database error');
+      await expect(UserController.getCounts({ userId })).rejects.toThrow('Database error');
     });
   });
 
