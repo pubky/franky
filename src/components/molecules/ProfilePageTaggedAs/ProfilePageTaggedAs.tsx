@@ -2,18 +2,14 @@
 
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import { useRouter } from 'next/navigation';
 
 export interface ProfilePageTaggedAsProps {
-  tags?: Array<{ name: string; count?: number }>;
+  tags: Array<{ name: string; count?: number }>;
 }
 
-export const DEFAULT_TAGS = [
-  { name: 'satoshi', count: 36 },
-  { name: 'bitcoin', count: 21 },
-  { name: 'og', count: 5 },
-];
-
-export function ProfilePageTaggedAs({ tags = DEFAULT_TAGS }: ProfilePageTaggedAsProps) {
+export function ProfilePageTaggedAs({ tags }: ProfilePageTaggedAsProps) {
+  const router = useRouter();
   return (
     <Atoms.Container overrideDefaults={true} className="flex flex-col gap-2">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
@@ -29,9 +25,19 @@ export function ProfilePageTaggedAs({ tags = DEFAULT_TAGS }: ProfilePageTaggedAs
             </Atoms.Button>
           </Atoms.Container>
         ))}
+        {tags.length === 0 && (
+          <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">
+            No tags added yet.
+          </Atoms.Typography>
+        )}
       </Atoms.Container>
 
-      <Atoms.Button variant="outline" size="sm" className="border border-border bg-foreground/5">
+      <Atoms.Button
+        variant="outline"
+        size="sm"
+        className="border border-border bg-foreground/5"
+        onClick={() => router.push('/profile/tags')}
+      >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">
           Add Tag

@@ -26,6 +26,7 @@ export * from './LeftSidebar';
 export * from './PostActionsBar';
 export * from './PostContent';
 export * from './PostHeader';
+export * from './ProfilePageSidebar';
 export * from './CoordinatorsManager';
 export * from './PostMain';
 export * from './PublicKeyCard';

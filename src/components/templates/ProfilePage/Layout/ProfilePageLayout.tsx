@@ -1,14 +1,11 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import { ProfileStats } from '@/hooks/useProfileHeader/useProfileHeader';
 import { ProfilePageType, FilterBarPageType } from '@/app/profile/types';
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
-import * as Icons from '@/libs/icons';
 
 export interface ProfilePageLayoutProps {
   /** Child pages to render in the main content area */
@@ -81,25 +78,6 @@ export function ProfilePageLayout({
   isLoading,
 }: ProfilePageLayoutProps) {
   const [isAvatarZoomOpen, setIsAvatarZoomOpen] = useState(false);
-  const [links, setLinks] = useState<Molecules.ProfilePageSidebarLink[]>([]);
-  const { currentUserPubky } = Core.useAuthStore();
-
-  const userDetails = useLiveQuery(async () => {
-    if (!currentUserPubky) return null;
-    return await Core.ProfileController.read({ userId: currentUserPubky });
-  }, [currentUserPubky]);
-
-  useEffect(() => {
-    if (userDetails) {
-      setLinks(
-        userDetails.links?.map((link) => ({
-          icon: Icons.getIconFromUrl(link.url),
-          label: link.title,
-          url: link.url,
-        })) || [],
-      );
-    }
-  }, [userDetails]);
 
   // Stabilize callbacks to prevent unnecessary re-renders in child components
   const handleAvatarClick = useCallback(() => {
@@ -136,7 +114,7 @@ export function ProfilePageLayout({
           <Atoms.Container overrideDefaults={true} className="flex-1">
             {children}
           </Atoms.Container>
-          <Molecules.ProfilePageSidebar links={links} />
+          <Organisms.ProfilePageSidebar />
         </Atoms.Container>
       </Molecules.ProfilePageLayoutWrapper>
 

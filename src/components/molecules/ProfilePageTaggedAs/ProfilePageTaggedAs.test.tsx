@@ -1,36 +1,48 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageTaggedAs } from './ProfilePageTaggedAs';
-import { DEFAULT_TAGS } from './ProfilePageTaggedAs';
+
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+  }),
+}));
+
+const defaultTags = [
+  { name: 'bitcoin', count: 5 },
+  { name: 'nostr', count: 3 },
+  { name: 'web3', count: 2 },
+];
 
 describe('ProfilePageTaggedAs', () => {
   it('renders heading correctly', () => {
-    render(<ProfilePageTaggedAs />);
+    render(<ProfilePageTaggedAs tags={defaultTags} />);
     expect(screen.getByText('Tagged as')).toBeInTheDocument();
   });
 
-  it('renders all default tags', () => {
-    render(<ProfilePageTaggedAs />);
-    DEFAULT_TAGS.forEach((tag) => {
-      expect(screen.getByTestId(`tag-${DEFAULT_TAGS.indexOf(tag)}`)).toBeInTheDocument();
+  it('renders all tags', () => {
+    render(<ProfilePageTaggedAs tags={defaultTags} />);
+    defaultTags.forEach((_, index) => {
+      expect(screen.getByTestId(`tag-${index}`)).toBeInTheDocument();
     });
   });
 
   it('renders search buttons for each tag', () => {
-    const { container } = render(<ProfilePageTaggedAs />);
+    const { container } = render(<ProfilePageTaggedAs tags={defaultTags} />);
     const searchButtons = container.querySelectorAll('button[data-variant="secondary"]');
-    expect(searchButtons.length).toBe(DEFAULT_TAGS.length);
+    expect(searchButtons.length).toBe(defaultTags.length);
   });
 
   it('renders Add Tag button', () => {
-    render(<ProfilePageTaggedAs />);
+    render(<ProfilePageTaggedAs tags={defaultTags} />);
     const addTagButton = screen.getByText('Add Tag');
     expect(addTagButton).toBeInTheDocument();
   });
 
   it('Add Tag button has correct styling', () => {
-    render(<ProfilePageTaggedAs />);
+    render(<ProfilePageTaggedAs tags={defaultTags} />);
     const addTagButton = screen.getByText('Add Tag').closest('button');
     expect(addTagButton).toHaveClass('border', 'border-border', 'bg-foreground/5');
   });
@@ -46,15 +58,25 @@ describe('ProfilePageTaggedAs', () => {
   });
 
   it('has correct container structure', () => {
-    const { container } = render(<ProfilePageTaggedAs />);
+    const { container } = render(<ProfilePageTaggedAs tags={defaultTags} />);
     const rootElement = container.firstChild as HTMLElement;
     expect(rootElement).toHaveClass('flex', 'flex-col', 'gap-2');
+  });
+
+  it('renders no tags message when tags array is empty', () => {
+    render(<ProfilePageTaggedAs tags={[]} />);
+    expect(screen.getByText('No tags added yet.')).toBeInTheDocument();
+  });
+
+  it('does not render no tags message when tags exist', () => {
+    render(<ProfilePageTaggedAs tags={defaultTags} />);
+    expect(screen.queryByText('No tags added yet.')).not.toBeInTheDocument();
   });
 });
 
 describe('ProfilePageTaggedAs - Snapshots', () => {
-  it('matches snapshot with default props', () => {
-    const { container } = render(<ProfilePageTaggedAs />);
+  it('matches snapshot with tags', () => {
+    const { container } = render(<ProfilePageTaggedAs tags={defaultTags} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -64,6 +86,11 @@ describe('ProfilePageTaggedAs - Snapshots', () => {
       { name: 'custom2', count: 20 },
     ];
     const { container } = render(<ProfilePageTaggedAs tags={customTags} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with empty tags', () => {
+    const { container } = render(<ProfilePageTaggedAs tags={[]} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

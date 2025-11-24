@@ -31,7 +31,6 @@ export * from './PopoverPublicKey';
 export * from './PopoverTradeoffs';
 export * from './ProfilePageMobileMenu';
 export * from './ProfilePageFilterBar';
-export * from './ProfilePageSidebar';
 export * from './ProfilePageTaggedAs';
 export * from './ProfilePageLinks';
 export * from './ProfilePageLayoutWrapper';
