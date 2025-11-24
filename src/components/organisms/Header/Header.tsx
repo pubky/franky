@@ -71,21 +71,18 @@ export const HeaderHome = () => {
 export const HeaderSignIn = () => {
   const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
   const userDetails = useLiveQuery(
-    () => (currentUserPubky ? Core.db.user_details.get(currentUserPubky) : undefined),
+    () => (currentUserPubky ? Core.ProfileController.read({ userId: currentUserPubky }) : undefined),
     [currentUserPubky],
   );
-
-  // Get unread notifications count from NotificationStore
   const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
 
-  const avatarImage = userDetails?.image || undefined;
   const avatarInitial = Libs.extractInitials({ name: userDetails?.name || '' }) || 'U';
 
   return (
     <Atoms.Container className="flex-1 flex-row items-center justify-end gap-3">
       <Molecules.SearchInput />
       <Molecules.HeaderNavigationButtons
-        avatarImage={avatarImage}
+        avatarImage={currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined}
         avatarInitial={avatarInitial}
         counter={unreadNotifications}
       />
