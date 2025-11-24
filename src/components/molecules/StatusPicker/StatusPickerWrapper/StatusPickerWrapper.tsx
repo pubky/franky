@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import * as Atoms from '@/components/atoms';
 import * as Icons from '@/libs/icons';
 import * as Hooks from '@/hooks';
@@ -29,18 +29,18 @@ export function StatusPickerWrapper({ emoji, status, onStatusChange }: StatusPic
   const currentStatus = localStatus ?? status;
   const parsed = parseStatus(currentStatus, emoji);
 
-  // Blur trigger button when sheet opens to fix accessibility warning
-  // (aria-hidden is set on page container but trigger retains focus)
-  useEffect(() => {
-    if (open && isMobile && triggerRef.current) {
-      // Use setTimeout to ensure this happens after Radix sets aria-hidden
-      setTimeout(() => {
-        if (triggerRef.current) {
-          triggerRef.current.blur();
-        }
-      }, 0);
+  // Handle sheet open/close and blur trigger button immediately when opening
+  // This prevents the aria-hidden warning by blurring before Radix sets aria-hidden
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    // Blur trigger button immediately when sheet opens to prevent aria-hidden warning
+    if (newOpen && isMobile && triggerRef.current) {
+      // Use requestAnimationFrame for immediate execution before Radix sets aria-hidden
+      requestAnimationFrame(() => {
+        triggerRef.current?.blur();
+      });
     }
-  }, [open, isMobile]);
+  };
 
   const handleStatusSelect = (selectedStatus: string) => {
     setLocalStatus(selectedStatus);
@@ -73,7 +73,7 @@ export function StatusPickerWrapper({ emoji, status, onStatusChange }: StatusPic
 
   if (isMobile) {
     return (
-      <Atoms.Sheet open={open} onOpenChange={setOpen}>
+      <Atoms.Sheet open={open} onOpenChange={handleOpenChange}>
         <Atoms.SheetTrigger asChild>{triggerButton}</Atoms.SheetTrigger>
         <Atoms.SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()}>
           <Atoms.SheetHeader>
