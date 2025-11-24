@@ -1,10 +1,10 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import * as Libs from '@/libs';
+import { LucideProps } from 'lucide-react';
 
 export interface ProfilePageSidebarLink {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<LucideProps>;
   url: string;
   label: string;
 }
@@ -13,14 +13,7 @@ export interface ProfilePageLinksProps {
   links?: ProfilePageSidebarLink[];
 }
 
-export const DEFAULT_LINKS: ProfilePageSidebarLink[] = [
-  { icon: Libs.Link, url: 'https://bitcoin.org', label: 'bitcoin.org' },
-  { icon: Libs.XTwitter, url: 'https://x.com', label: 'x.com' },
-  { icon: Libs.CirclePlay, url: 'https://youtube.com', label: 'youtube.com' },
-  { icon: Libs.Telegram, url: 'https://telegram.chat', label: 'telegram.chat' },
-];
-
-export function ProfilePageLinks({ links = DEFAULT_LINKS }: ProfilePageLinksProps) {
+export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
   return (
     <Atoms.Container overrideDefaults={true} className="flex flex-col">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
@@ -28,7 +21,7 @@ export function ProfilePageLinks({ links = DEFAULT_LINKS }: ProfilePageLinksProp
       </Atoms.Heading>
 
       <Atoms.Container overrideDefaults={true} className="flex flex-col">
-        {links.map((link, index) => {
+        {links?.map((link, index) => {
           const Icon = link.icon;
           return (
             <a
@@ -45,6 +38,13 @@ export function ProfilePageLinks({ links = DEFAULT_LINKS }: ProfilePageLinksProp
             </a>
           );
         })}
+        {links?.length === 0 && (
+          <Atoms.Container className="mt-2 flex flex-col">
+            <Atoms.Typography as="span" className="text-base font-medium text-muted-foreground">
+              No links added yet.
+            </Atoms.Typography>
+          </Atoms.Container>
+        )}
       </Atoms.Container>
     </Atoms.Container>
   );
