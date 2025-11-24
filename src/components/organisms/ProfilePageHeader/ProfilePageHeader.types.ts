@@ -20,6 +20,7 @@ export interface ProfileHeaderActions {
   onCopyLink: () => void;
   onSignOut?: () => void;
   onStatusChange?: (status: string) => void;
+  onAvatarClick?: () => void;
 }
 
 /**

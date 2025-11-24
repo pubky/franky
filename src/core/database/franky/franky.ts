@@ -19,6 +19,7 @@ import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stre
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
 import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.schema';
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
+import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -43,6 +44,8 @@ export class AppDatabase extends Dexie {
   post_streams!: Dexie.Table<PostStreamModelSchema>;
   user_streams!: Dexie.Table<UserStreamModelSchema>;
   tag_streams!: Dexie.Table<TagStreamModelSchema>;
+  // Bookmarks
+  bookmarks!: Dexie.Table<Core.BookmarkModelSchema>;
   // Hot tags
   hot_tags!: Dexie.Table<HotTagsModelSchema>;
   constructor(databaseName: string = Config.DB_NAME) {
@@ -70,6 +73,8 @@ export class AppDatabase extends Dexie {
         post_streams: postStreamTableSchema,
         user_streams: userStreamTableSchema,
         tag_streams: tagStreamTableSchema,
+        // Bookmarks
+        bookmarks: bookmarkTableSchema,
         // Hot tags
         hot_tags: hotTagsTableSchema,
       });

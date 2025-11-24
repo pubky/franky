@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useState, useCallback } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -77,6 +77,22 @@ export function ProfilePageLayout({
   navigateToPage,
   isLoading,
 }: ProfilePageLayoutProps) {
+  const [isAvatarZoomOpen, setIsAvatarZoomOpen] = useState(false);
+
+  // Stabilize callbacks to prevent unnecessary re-renders in child components
+  const handleAvatarClick = useCallback(() => {
+    setIsAvatarZoomOpen(true);
+  }, []);
+
+  const handleCloseAvatarZoom = useCallback(() => {
+    setIsAvatarZoomOpen(false);
+  }, []);
+
+  const headerActions = {
+    ...actions,
+    onAvatarClick: handleAvatarClick,
+  };
+
   return (
     <>
       <Molecules.MobileHeader showLeftButton={false} showRightButton={false} />
@@ -85,7 +101,7 @@ export function ProfilePageLayout({
 
       <Molecules.ProfilePageLayoutWrapper>
         <Atoms.Container overrideDefaults={true} className="hidden bg-background pb-6 shadow-sm lg:block">
-          {!isLoading && <Organisms.ProfilePageHeader profile={profile} actions={actions} />}
+          {!isLoading && <Organisms.ProfilePageHeader profile={profile} actions={headerActions} />}
         </Atoms.Container>
 
         <Atoms.Container overrideDefaults={true} className="flex gap-6">
@@ -103,6 +119,13 @@ export function ProfilePageLayout({
       </Molecules.ProfilePageLayoutWrapper>
 
       <Molecules.MobileFooter />
+
+      <Molecules.AvatarZoomModal
+        open={isAvatarZoomOpen}
+        onClose={handleCloseAvatarZoom}
+        avatarUrl={profile.avatarUrl}
+        name={profile.name}
+      />
     </>
   );
 }

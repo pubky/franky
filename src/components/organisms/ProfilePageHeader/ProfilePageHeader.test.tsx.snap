@@ -7,18 +7,20 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
     data-testid="profile-page-header"
   >
     <div
-      class="relative lg:px-4"
+      class="relative cursor-pointer lg:px-4"
       data-testid="container"
     >
-      <span
-        class="relative flex shrink-0 overflow-hidden rounded-full size-16 lg:size-36"
+      <div
+        class="size-16 lg:size-36"
+        data-testid="avatar"
       >
-        <span
-          class="flex h-full w-full items-center justify-center rounded-full bg-muted text-2xl lg:text-4xl"
+        <div
+          class="text-2xl lg:text-4xl"
+          data-testid="avatar-fallback"
         >
           SN
-        </span>
-      </span>
+        </div>
+      </div>
       <div
         class="absolute -right-1 -bottom-1 flex size-10 items-center justify-center text-3xl leading-none lg:size-16 lg:text-5xl"
         data-testid="container"

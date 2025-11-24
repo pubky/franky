@@ -35,6 +35,37 @@ export class LocalStreamPostsService {
   }
 
   /**
+   * Prepend a post ID to a stream
+   * Only adds if not already present
+   *
+   * @param streamId - The stream to prepend to
+   * @param postId - The post ID to prepend
+   */
+  static async prependToStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
+    const existing = await this.findById(streamId);
+    const currentStream = existing?.stream || [];
+
+    if (currentStream.includes(postId)) return;
+
+    const updatedStream = [postId, ...currentStream];
+    await this.upsert({ streamId, stream: updatedStream });
+  }
+
+  /**
+   * Remove a post ID from a stream
+   *
+   * @param streamId - The stream to remove from
+   * @param postId - The post ID to remove
+   */
+  static async removeFromStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
+    const existing = await this.findById(streamId);
+    if (!existing) return;
+
+    const updatedStream = existing.stream.filter((id) => id !== postId);
+    await this.upsert({ streamId, stream: updatedStream });
+  }
+
+  /**
    * Adds a reply post to the post replies map if the post is a reply
    *
    * @param repliedUri - The URI of the parent post being replied to (optional)

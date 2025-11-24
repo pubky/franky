@@ -1,18 +1,22 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { PostLinkEmbeds } from './PostLinkEmbeds';
 
 vi.mock('@/atoms', () => ({
   Container: ({
     children,
     className,
+    onClick,
     'data-testid': dataTestId,
+    'data-theme': dataTheme,
   }: {
     children: React.ReactNode;
     className?: string;
+    onClick?: (e: React.MouseEvent) => void;
     'data-testid'?: string;
+    'data-theme'?: string;
   }) => (
-    <div data-testid={dataTestId || 'container'} className={className}>
+    <div data-testid={dataTestId || 'container'} data-theme={dataTheme} className={className} onClick={onClick}>
       {children}
     </div>
   ),
@@ -32,6 +36,14 @@ vi.mock('@/atoms', () => ({
       height={height}
       {...props}
     />
+  ),
+}));
+
+vi.mock('react-tweet', () => ({
+  Tweet: ({ id }: { id: string }) => (
+    <div data-testid="twitter-tweet" data-tweet-id={id}>
+      Mocked Tweet {id}
+    </div>
   ),
 }));
 
@@ -358,6 +370,169 @@ describe('PostLinkEmbeds', () => {
     });
   });
 
+  describe('Twitter/X URL parsing', () => {
+    it('renders Twitter embed for standard twitter.com URL', () => {
+      render(<PostLinkEmbeds content="Check out this tweet: https://twitter.com/jack/status/20" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '20');
+    });
+
+    it('renders Twitter embed for x.com URL', () => {
+      render(<PostLinkEmbeds content="Look at this: https://x.com/elonmusk/status/1234567890123456789" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '1234567890123456789');
+    });
+
+    it('renders Twitter embed for www.twitter.com URL', () => {
+      render(<PostLinkEmbeds content="https://www.twitter.com/user/status/98765432109876543" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '98765432109876543');
+    });
+
+    it('renders Twitter embed for www.x.com URL', () => {
+      render(<PostLinkEmbeds content="https://www.x.com/someone/status/111111111111111111" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '111111111111111111');
+    });
+
+    it('renders Twitter embed for mobile.twitter.com URL', () => {
+      render(<PostLinkEmbeds content="Mobile link: https://mobile.twitter.com/user/status/222222222222222222" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '222222222222222222');
+    });
+
+    it('renders Twitter embed for mobile.x.com URL', () => {
+      render(<PostLinkEmbeds content="https://mobile.x.com/user/status/333333333333333333" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '333333333333333333');
+    });
+
+    it('handles Twitter URL with query parameters', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/user/status/444444444444444444?s=20&t=abc123" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '444444444444444444');
+    });
+
+    it('handles Twitter URL with hash fragment', () => {
+      render(<PostLinkEmbeds content="https://x.com/user/status/555555555555555555#reply" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '555555555555555555');
+    });
+
+    it('handles Twitter URL with trailing slash', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/user/status/666666666666666666/" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '666666666666666666');
+    });
+
+    it('handles Twitter URL with trailing punctuation', () => {
+      render(<PostLinkEmbeds content="Check this: https://twitter.com/user/status/777777777777777777!" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '777777777777777777');
+    });
+
+    it('handles Twitter URL with trailing whitespace', () => {
+      render(<PostLinkEmbeds content="https://x.com/user/status/888888888888888888 " />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '888888888888888888');
+    });
+
+    it('handles very short numeric tweet IDs', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/jack/status/1" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '1');
+    });
+
+    it('handles very long numeric tweet IDs', () => {
+      render(<PostLinkEmbeds content="https://x.com/user/status/1234567890123456789012" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '1234567890123456789012');
+    });
+
+    it('does not render embed for Twitter status URL without ID', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/user/status/" />);
+
+      expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for Twitter URL with non-numeric ID', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/user/status/abc123def" />);
+
+      expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for Twitter URL with alphanumeric ID', () => {
+      render(<PostLinkEmbeds content="https://x.com/user/status/123abc456" />);
+
+      expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for Twitter profile URL (no status)', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/jack" />);
+
+      expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+    });
+
+    it('does not render embed for Twitter home URL', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/home" />);
+
+      expect(screen.queryByTestId('twitter-tweet')).not.toBeInTheDocument();
+    });
+
+    it('handles URLs without protocol', () => {
+      render(<PostLinkEmbeds content="No protocol: twitter.com/user/status/999999999999999999" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '999999999999999999');
+    });
+  });
+
+  describe('Twitter/X embed rendering', () => {
+    it('wraps Twitter embed in dark theme container', () => {
+      render(<PostLinkEmbeds content="https://twitter.com/user/status/123456789" />);
+
+      const twitterContainer = screen.getByTestId('twitter-container');
+      expect(twitterContainer).toBeInTheDocument();
+      expect(twitterContainer).toHaveAttribute('data-theme', 'dark');
+    });
+
+    it('renders Tweet component with correct ID prop', () => {
+      render(<PostLinkEmbeds content="https://x.com/user/status/987654321" />);
+
+      const tweet = screen.getByTestId('twitter-tweet');
+      expect(tweet).toBeInTheDocument();
+      expect(tweet).toHaveAttribute('data-tweet-id', '987654321');
+      expect(tweet).toHaveTextContent('Mocked Tweet 987654321');
+    });
+  });
+
   describe('Edge cases', () => {
     it('does not render embed for content without URLs', () => {
       render(<PostLinkEmbeds content="Just some regular text without any links" />);
@@ -394,6 +569,25 @@ describe('PostLinkEmbeds', () => {
       expect(iframe).toBeInTheDocument();
       expect(iframe).toHaveAttribute('src', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ');
     });
+
+    it('stops event propagation when clicking embed container', () => {
+      const handleParentClick = vi.fn();
+
+      render(
+        <div onClick={handleParentClick}>
+          <PostLinkEmbeds content="Check out this video: https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+        </div>,
+      );
+
+      const container = screen.getByTestId('container');
+      expect(container).toBeInTheDocument();
+
+      // Click the embed container
+      fireEvent.click(container);
+
+      // Parent click handler should not be called due to stopPropagation
+      expect(handleParentClick).not.toHaveBeenCalled();
+    });
   });
 });
 
@@ -410,6 +604,16 @@ describe('PostLinkEmbeds - Snapshots', () => {
 
   it('matches snapshot for no embed (no URL)', () => {
     const { container } = render(<PostLinkEmbeds content="Just some text without links" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for Twitter embed', () => {
+    const { container } = render(<PostLinkEmbeds content="https://twitter.com/jack/status/20" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for X.com embed', () => {
+    const { container } = render(<PostLinkEmbeds content="https://x.com/user/status/1234567890123456789" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

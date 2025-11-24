@@ -7,6 +7,11 @@ import * as ProviderUtils from '../Provider.utils';
  * Extract Vimeo video ID from URL
  * Vimeo uses purely numeric IDs (unlike YouTube's alphanumeric)
  *
+ * @example
+ * // Protocol-agnostic - works with or without http(s)://
+ * extractVimeoId('https://vimeo.com/123456789') // → '123456789'
+ * extractVimeoId('vimeo.com/123456789')         // → '123456789'
+ *
  * @security Regex Denial of Service (ReDoS) Prevention
  *
  * This function uses security-hardened regex patterns to prevent catastrophic
@@ -27,7 +32,7 @@ import * as ProviderUtils from '../Provider.utils';
  * @see ProviderVimeo.test.ts - "regex catastrophic backtracking prevention"
  */
 const extractVimeoId = (url: string): string | null => {
-  // Handle different Vimeo URL formats with security-hardened patterns
+  // Protocol-agnostic, security-hardened patterns - matches with or without http(s)://
   const patterns = [
     // Standard: vimeo.com/VIDEO_ID (with word boundary or end/query marker)
     /vimeo\.com\/(\d+)(?:[?#\s]|$)/,
@@ -112,7 +117,7 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
   /**
    * Parse Vimeo URL and return embed information
    */
-  parseEmbed: (url: string): { url: string } | null => {
+  parseEmbed: (url: string): ProviderTypes.EmbedData | null => {
     const id = extractVimeoId(url);
 
     if (!id) return null;
@@ -122,14 +127,18 @@ export const Vimeo: ProviderTypes.EmbedProvider = {
       ? `https://player.vimeo.com/video/${id}#t=${timestamp}s`
       : `https://player.vimeo.com/video/${id}`;
 
-    return { url: embedUrl };
+    return { type: 'url', value: embedUrl };
   },
 
   /**
    * Render Vimeo iframe embed with responsive aspect ratio wrapper
    * Following Vimeo's official embed pattern
    */
-  renderEmbed: (embedUrl: string) => {
+  renderEmbed: (embedData: ProviderTypes.EmbedData) => {
+    // Type guard: ensure we have a URL type
+    if (embedData.type !== 'url') return null;
+
+    const embedUrl = embedData.value;
     const videoId = extractVideoIdFromEmbedUrl(embedUrl);
 
     return (

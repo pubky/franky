@@ -75,13 +75,20 @@ export const HeaderSignIn = () => {
     [currentUserPubky],
   );
 
+  // Get unread notifications count from NotificationStore
+  const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
+
   const avatarImage = userDetails?.image || undefined;
   const avatarInitial = Libs.extractInitials({ name: userDetails?.name || '' }) || 'U';
 
   return (
     <Atoms.Container className="flex-1 flex-row items-center justify-end gap-3">
       <Molecules.SearchInput />
-      <Molecules.HeaderNavigationButtons avatarImage={avatarImage} avatarInitial={avatarInitial} />
+      <Molecules.HeaderNavigationButtons
+        avatarImage={avatarImage}
+        avatarInitial={avatarInitial}
+        counter={unreadNotifications}
+      />
     </Atoms.Container>
   );
 };

@@ -1,5 +1,25 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
+<div
+  data-testid="container"
+>
+  <div
+    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.react-tweet-theme]:max-h-75 [&_.react-tweet-theme]:overflow-y-auto!"
+    data-testid="twitter-container"
+    data-theme="dark"
+  >
+    <div
+      data-testid="twitter-tweet"
+      data-tweet-id="20"
+    >
+      Mocked Tweet 
+      20
+    </div>
+  </div>
+</div>
+`;
+
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 <div
   data-testid="container"
@@ -20,6 +40,26 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
       title="Vimeo video 123456789"
       width="100%"
     />
+  </div>
+</div>
+`;
+
+exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
+<div
+  data-testid="container"
+>
+  <div
+    class="mx-0 max-w-70 sm:mx-auto sm:max-w-none [&_.react-tweet-theme]:m-0! [&_.react-tweet-theme]:max-h-75 [&_.react-tweet-theme]:overflow-y-auto!"
+    data-testid="twitter-container"
+    data-theme="dark"
+  >
+    <div
+      data-testid="twitter-tweet"
+      data-tweet-id="1234567890123456789"
+    >
+      Mocked Tweet 
+      1234567890123456789
+    </div>
   </div>
 </div>
 `;

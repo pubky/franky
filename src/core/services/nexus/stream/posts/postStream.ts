@@ -24,6 +24,7 @@ export class NexusPostStreamService {
         break;
       case Core.StreamSource.FOLLOWING:
       case Core.StreamSource.FRIENDS:
+      case Core.StreamSource.BOOKMARKS:
         // TODO: from now, always is going to be
         if (!params.viewer_id) {
           throw new Error('Viewer ID is required for friends stream');

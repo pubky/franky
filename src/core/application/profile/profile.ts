@@ -2,6 +2,7 @@ import JSZip from 'jszip';
 
 import * as Specs from 'pubky-app-specs';
 import * as Core from '@/core';
+import * as Libs from '@/libs';
 
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
@@ -16,16 +17,23 @@ export class ProfileApplication {
     }
 
     // If not found locally, fetch from Nexus API
-    const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
+    try {
+      const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
 
-    // If found from Nexus, persist it to local database
-    if (nexusUserDetails) {
-      await Core.UserDetailsModel.upsert(nexusUserDetails);
-      return await Core.UserDetailsModel.findById(userId);
+      // If found from Nexus, persist it to local database
+      if (nexusUserDetails) {
+        await Core.UserDetailsModel.upsert(nexusUserDetails);
+        return await Core.UserDetailsModel.findById(userId);
+      }
+    } catch (error) {
+      // Handle 404 (user not found) gracefully - profile.json was not created yet
+      if (error instanceof Libs.AppError && error.statusCode === 404) {
+        // User doesn't exist in Nexus yet, return null
+        return null;
+      }
+      // Re-throw other errors (network issues, server errors, etc.)
+      throw error;
     }
-
-    // If not found anywhere, return null
-    return null;
   }
 
   static async create({ profile, url, pubky }: Core.TCreateProfileInput) {

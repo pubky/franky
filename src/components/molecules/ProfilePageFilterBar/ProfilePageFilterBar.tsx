@@ -66,8 +66,8 @@ const FILTER_ITEMS_CONFIG: Array<{
   {
     icon: Libs.Tag,
     label: 'Tagged',
-    pageType: Types.PROFILE_PAGE_TYPES.TAGGED,
-    statKey: 'tagged',
+    pageType: Types.PROFILE_PAGE_TYPES.UNIQUE_TAGS,
+    statKey: 'uniqueTags',
   },
 ];
 
