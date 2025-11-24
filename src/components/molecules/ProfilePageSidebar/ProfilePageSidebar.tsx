@@ -2,6 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 
 export interface ProfilePageSidebarProps {
   tags?: Array<{ name: string; count?: number }>;
@@ -16,7 +17,7 @@ export function ProfilePageSidebar({ tags, links }: ProfilePageSidebarProps) {
     >
       <Molecules.ProfilePageTaggedAs tags={tags} />
       <Molecules.ProfilePageLinks links={links} />
-      <Molecules.FeedbackCard />
+      <Organisms.FeedbackCard />
     </Atoms.Container>
   );
 }
