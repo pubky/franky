@@ -19,6 +19,7 @@ export * from './DialogRestoreEncryptedFile';
 export * from './DialogRestoreRecoveryPhrase';
 export * from './DialogTerms';
 export * from './DialogWelcome';
+export * from './FeedbackCard';
 export * from './Header';
 export * from './HomeserverCard';
 export * from './LeftSidebar';

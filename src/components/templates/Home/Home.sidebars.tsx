@@ -1,6 +1,7 @@
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
+import * as Organisms from '@/organisms';
 
 /**
  * HomeLeftSidebar
@@ -38,7 +39,7 @@ export function HomeRightSidebar() {
           { name: 'opensource', count: 289 },
         ]}
       />
-      <Molecules.FeedbackCard />
+      <Organisms.FeedbackCard />
     </>
   );
 }
@@ -77,7 +78,7 @@ export function HomeRightDrawer() {
           { name: 'opensource', count: 289 },
         ]}
       />
-      <Molecules.FeedbackCard />
+      <Organisms.FeedbackCard />
     </div>
   );
 }
