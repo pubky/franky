@@ -1,6 +1,5 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import type { TLocalSavePostParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
@@ -21,12 +20,13 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ postId, authorId, post }: TLocalSavePostParams) {
-    const compositePostId = Core.buildCompositeId({ pubky: authorId, id: postId });
+  static async create({ compositePostId, post }: Core.TLocalSavePostParams) {
     const { content, kind, parent: parentUri, attachments, embed } = post;
 
     const repostedUri = embed?.uri ?? null;
     const normalizedKind = Core.PostNormalizer.postKindToLowerCase(kind);
+
+    const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
 
     try {
       const postDetails: Core.PostDetailsModelSchema = {
@@ -84,21 +84,20 @@ export class LocalPostService {
           // Update author's user counts in a single operation
           ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
 
-          this.updatePostStream({ postId, authorId, kind: normalizedKind, parentUri, ops, action: Core.HomeserverAction.PUT })
+          this.updatePostStream({ compositePostId, kind: normalizedKind, parentUri, ops, action: Core.HomeserverAction.PUT })
 
           await Promise.all(ops);
         },
       );
 
-      Libs.Logger.debug('Post saved successfully', { postId, kind, parentUri, repostedUri });
+      Libs.Logger.debug('Post saved successfully', { compositePostId, kind, parentUri, repostedUri });
     } catch (error) {
-      Libs.Logger.error('Failed to save post', { postId, authorId });
+      Libs.Logger.error('Failed to save post', { compositePostId });
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
         error,
-        postId,
+        compositePostId,
         content,
         kind,
-        authorId,
       });
     }
   }
@@ -116,25 +115,29 @@ export class LocalPostService {
    * @param params.repostedUri - URI of original post if this is a repost
    *
    * @throws {DatabaseError} When database operations fail
+   * 
+   * @returns true if the post had connections like replies or reposts or tags, false otherwise
    */
-  static async delete({ postId, deleterId }: Core.TDeletePostParams): Promise<boolean> {
+  static async delete({ compositePostId }: Core.TDeletePostParams): Promise<boolean> {
 
-    const postCounts = await Core.PostCountsModel.findById(postId);
+    const { pubky: authorId } = Core.parseCompositeId(compositePostId);
+
+    const postCounts = await Core.PostCountsModel.findById(compositePostId);
     if (!postCounts) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Post counts not found', 404, { postId });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Post counts not found', 404, { compositePostId });
     }
     if (this.isPostLinked(postCounts)) {
-      await Core.PostDetailsModel.update(postId, { content: Core.DELETED });
-      return false;
+      await Core.PostDetailsModel.update(compositePostId, { content: Core.DELETED });
+      return true;
     }
 
-    const postRelationships = await Core.PostRelationshipsModel.findById(postId);
+    const postRelationships = await Core.PostRelationshipsModel.findById(compositePostId);
 
     const parentUri = postRelationships?.replied ?? undefined;
     const repostedUri = postRelationships?.reposted ?? undefined;
     
     // Fetch post details and relationships to get metadata
-    const postDetails = await Core.PostDetailsModel.findById(postId);
+    const postDetails = await Core.PostDetailsModel.findById(compositePostId);
     const kind = postDetails?.kind ?? 'short';
 
     try {
@@ -150,10 +153,10 @@ export class LocalPostService {
         ],
         async () => {
           await Promise.all([
-            Core.PostDetailsModel.deleteById(postId),
-            Core.PostRelationshipsModel.deleteById(postId),
-            Core.PostCountsModel.deleteById(postId),
-            Core.PostTagsModel.deleteById(postId),
+            Core.PostDetailsModel.deleteById(compositePostId),
+            Core.PostRelationshipsModel.deleteById(compositePostId),
+            Core.PostCountsModel.deleteById(compositePostId),
+            Core.PostTagsModel.deleteById(compositePostId),
           ]);
 
           const ops: Promise<unknown>[] = [];
@@ -167,32 +170,28 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts(deleterId, { posts: -1, replies: parentUri ? -1 : 0 }));
-
-          // Extract postId from composite ID
-          const { id: simplePostId } = Core.parseCompositeId(postId);
+          ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: -1, replies: parentUri ? -1 : 0 }));
 
           // Remove post from streams
-          this.updatePostStream({ postId: simplePostId, authorId: deleterId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });
+          this.updatePostStream({ compositePostId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });
 
           await Promise.all(ops);
         },
       );
       
-      Libs.Logger.debug('Post deleted successfully', { postId, deleterId });
-      return true;
+      Libs.Logger.debug('Post deleted successfully', { compositePostId });
+      return false;
     } catch (error) {
-      Libs.Logger.error('Failed to delete post', { postId, deleterId });
+      Libs.Logger.error('Failed to delete post', { compositePostId });
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
         error,
-        postId,
-        deleterId,
+        compositePostId,
       });
     }
   }
 
-  private static updatePostStream({ authorId, postId, kind, parentUri, ops, action }: Core.TLocalUpdatePostStreamParams) {
-    const compositePostId = Core.buildCompositeId({ pubky: authorId, id: postId });
+  private static updatePostStream({ compositePostId, kind, parentUri, ops, action }: Core.TLocalUpdatePostStreamParams) {
+    const { pubky: authorId } = Core.parseCompositeId(compositePostId);
     
     // Select the appropriate method name based on action
     const methodName = action === Core.HomeserverAction.PUT ? 'prependPosts' : 'removePosts';

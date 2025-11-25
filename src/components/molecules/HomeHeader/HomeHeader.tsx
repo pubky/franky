@@ -66,7 +66,13 @@ export function HomeHeader() {
       kind: Core.PubkyAppPostKind.Short,
       // parentPostId: "idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy:00348DPDEPTF0",
       // tags: ['test', 'test2', 'test3'],
-      // attachments: [new File(['test'], 'test.txt', { type: 'text/plain' })],
+      attachments: [new File(['test'], 'test.txt', { type: 'text/plain' })],
+    });
+  };
+
+  const handlePostDeletion = () => {
+    Core.PostController.delete({
+      compositePostId: "idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy:00348N937XAK0"
     });
   };
 
@@ -77,6 +83,9 @@ export function HomeHeader() {
       </Atoms.Heading>
       <Atoms.Button id="home-add-post-btn" variant="secondary" size="default" onClick={handlePostCreation}>
         + Post
+      </Atoms.Button>
+      <Atoms.Button id="home-add-post-btn" variant="secondary" size="default" onClick={handlePostDeletion}>
+        - Post
       </Atoms.Button>
       <Atoms.Button id="home-logout-btn" variant="secondary" size="default" onClick={handleLogout}>
         Logout

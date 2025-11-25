@@ -45,25 +45,57 @@ The fundamental issue: **Where does cross-domain orchestration belong?**
 1. **Horizontal calls permitted**: Application classes MAY call other Application classes within the same layer
 2. **Acyclic dependency graph**: Circular dependencies between Application classes are FORBIDDEN
 3. **Maximum call depth of 1**: If Application A calls Application B, then B MUST NOT call any other Application class within that execution flow
+4. **Orchestration privilege**: ONLY `PostApplication` and `UserApplication` are permitted to call other Application classes. All other Application classes (FileApplication, TagApplication, BookmarkApplication, etc.) MUST NOT call other Application classes, including PostApplication or UserApplication. This ensures that core domain entities (posts and users) can orchestrate specialized domains, but specialized domains remain independent and cannot create reverse dependencies on core entities.
 
 ### Example
 
 ```typescript
-// ✅ ALLOWED: Top-level orchestrator calls helper applications
+// ✅ ALLOWED: PostApplication (orchestrator) calls helper applications
 class PostApplication {
   static async createWithAttachments({ files, tags, post }) {
     // Depth 0 → Depth 1
-    await FileApplication.upload(files); // OK
-    await TagApplication.create(tags); // OK
+    await FileApplication.upload(files); // OK (PostApplication can call others)
     await PostApplication.create(post); // OK (same class)
+    await TagApplication.create(tags); // OK (PostApplication can call others)
   }
 }
 
-// ❌ FORBIDDEN: Deep chains
+// ✅ ALLOWED: UserApplication (orchestrator) calls helper applications
+class UserApplication {
+  static async createWithProfile({ user, avatar }) {
+    await FileApplication.upload([avatar]); // OK (UserApplication can call others)
+    await UserApplication.create(user); // OK (same class)
+  }
+}
+
+// ❌ FORBIDDEN: Specialized applications cannot call other applications
+class FileApplication {
+  static async upload(files) {
+    // NOT ALLOWED: FileApplication cannot call other Application classes
+    await TagApplication.create(tags); // ❌ VIOLATION
+    await PostApplication.validate(); // ❌ VIOLATION
+    await UserApplication.getProfile(); // ❌ VIOLATION
+  }
+}
+
+// ❌ FORBIDDEN: Specialized applications cannot call PostApplication or UserApplication
+class TagApplication {
+  static async create(tag) {
+    await PostApplication.getById(tag.postId); // ❌ VIOLATION
+    await UserApplication.getById(tag.userId); // ❌ VIOLATION
+  }
+}
+
+// ❌ FORBIDDEN: Deep chains (even from orchestrators)
+class PostApplication {
+  static async createWithAttachments({ files, tags, post }) {
+    await FileApplication.upload(files); // OK (Depth 0 → 1)
+  }
+}
 class FileApplication {
   static async upload(files) {
     // Depth 1 → Depth 2 (violates max depth rule)
-    await ImageProcessorApplication.process(); // NOT ALLOWED
+    await ImageProcessorApplication.process(); // ❌ NOT ALLOWED (also violates rule 4)
   }
 }
 
@@ -75,7 +107,7 @@ class PostApplication {
 }
 class FileApplication {
   static async upload() {
-    await PostApplication.validate(); // B → A (circular!)
+    await PostApplication.validate(); // B → A (circular! also violates rule 4)
   }
 }
 ```
@@ -91,7 +123,10 @@ class FileApplication {
 
 **We rely on:**
 
-1. **Code Reviews**: Reviewers MUST check for circular dependencies and excessive call depth
+1. **Code Reviews**: Reviewers MUST check for:
+   - Circular dependencies
+   - Excessive call depth (max depth 1)
+   - **Orchestration privilege violations** (only PostApplication/UserApplication can call other Applications)
 2. **Documentation**: This ADR as the source of truth
 3. **Testing**: Integration tests to catch violations at runtime
 4. **Code Comments**: Developers MUST document cross-Application calls with ADR reference
@@ -109,12 +144,14 @@ class FileApplication {
 - ✅ Single user action requires multi-domain coordination
 - ✅ Complex workflow with ordering/transactional requirements
 - ✅ Avoiding code duplication of orchestration logic
+- ✅ **Only from PostApplication or UserApplication** (core domain orchestrators)
 
 **When NOT to use:**
 
 - ❌ Simple read operations (use services directly)
 - ❌ Single-domain workflows (stay within one Application)
 - ❌ Deep processing chains (refactor to flatten)
+- ❌ **From specialized Application classes** (FileApplication, TagApplication, BookmarkApplication, etc.) - these must remain independent and cannot depend on PostApplication or UserApplication
 
 ## Consequences
 

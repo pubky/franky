@@ -32,12 +32,12 @@ export class FileApplication {
     );
   }
 
-  static async delete({ fileAttachments, postId }: { fileAttachments: string[], postId: string }) {
+  static async delete(fileAttachments: string[]) {
     await Promise.all(
       fileAttachments.map(async (fileUri) => {
         // Delete the file metadata
         await Core.HomeserverService.delete(fileUri);
-        const fileCompositeId = Core.buildCompositeIdFromPubkyUri({ uri: postId, domain: Core.CompositeIdDomain.FILES });
+        const fileCompositeId = Core.buildCompositeIdFromPubkyUri({ uri: fileUri, domain: Core.CompositeIdDomain.FILES });
         if (fileCompositeId) {
           const file = await Core.FileDetailsModel.findById(fileCompositeId);
           if (file) {

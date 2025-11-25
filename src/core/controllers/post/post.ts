@@ -4,8 +4,18 @@ import * as Libs from '@/libs';
 export class PostController {
   private constructor() {} // Prevent instantiation
 
-  static async read({ postId }: { postId: string }) {
+  static async getPostDetails({ postId }: { postId: string }) {
     return await Core.PostDetailsModel.findById(postId);
+  }
+
+  /**
+   * Get post counts for a specific post
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get counts for
+   * @returns Post counts (with default values if not found)
+   */
+  static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
+    return await Core.LocalPostService.getPostCounts(postId);
   }
 
   /**
@@ -41,7 +51,7 @@ export class PostController {
     }
 
     // TODO: In the future, we could decouple that action and do it asyncronously in the moment that we add a file to the post
-    const fileAttachments = attachments ? await this.normalizeFileAttachments({ attachments, authorId }) : [];
+    const fileAttachments = attachments ? await this.normalizeFileAttachments({ attachments, pubky: authorId }) : [];
 
     const { post, meta } = await Core.PostNormalizer.to(
       {
@@ -54,11 +64,13 @@ export class PostController {
       authorId,
     );
 
+    const { id: postId } = meta;
+
     if (tags) {
       const tagsMetadata = tags.map((tag) => {
         return {
           taggerId: authorId,
-          taggedId: `${authorId}:${meta.id}`,
+          taggedId: `${authorId}:${postId}`,
           label: tag,
           taggedKind: Core.TagKind.POST,
         };
@@ -66,9 +78,10 @@ export class PostController {
       tagList = this.normalizeTags({ tags: tagsMetadata });
     }
 
+    const compositePostId = Core.buildCompositeId({ pubky: authorId, id: postId });
+
     await Core.PostApplication.create({
-      postId: meta.id,
-      authorId,
+      compositePostId,
       post,
       postUrl: meta.url,
       fileAttachments,
@@ -80,51 +93,51 @@ export class PostController {
    * Delete a post
    * @param params - Parameters object
    * @param params.postId - ID of the post to delete
-   * @param params.deleterId - ID of the user deleting the post
    */
-  static async delete({ postId, deleterId }: Core.TDeletePostParams) {
-    const { pubky: authorId } = Core.parseCompositeId(postId);
+  static async delete({ compositePostId }: Core.TDeletePostParams) {
+    const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
+    const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
 
-    if (authorId !== deleterId) {
+    if (authorId !== userId) {
       throw Libs.createSanitizationError(
         Libs.SanitizationErrorType.POST_NOT_FOUND,
         'User is not the author of this post',
         403,
         {
           postId,
-          deleterId,
+          userId,
         },
       );
     }
 
-    await Core.PostApplication.delete({ postId, deleterId });
+    await Core.PostApplication.delete({ compositePostId });
   }
 
   /**
-   * Get post counts for a specific post
+   * Normalize file attachments
    * @param params - Parameters object
-   * @param params.postId - ID of the post to get counts for
-   * @returns Post counts (with default values if not found)
+   * @param params.attachments - Attachments to normalize
+   * @param params.pubky - Public key of the author
+   * @returns Normalized file attachments
    */
-  static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
-    return await Core.LocalPostService.getPostCounts(postId);
-  }
-
   private static async normalizeFileAttachments({
     attachments,
-    authorId,
-  }: {
-    attachments: File[];
-    authorId: Core.Pubky;
-  }): Promise<Core.TFileAttachmentResult[]> {
+    pubky,
+  }: Core.TFileAttachmentsParams): Promise<Core.TFileAttachmentResult[]> {
     return await Promise.all(
       attachments.map(async (attachment) => {
-        return await Core.FileNormalizer.toFileAttachment({ file: attachment, pubky: authorId });
+        return await Core.FileNormalizer.toFileAttachment({ file: attachment, pubky });
       }),
     );
   }
 
-  private static normalizeTags({ tags }: { tags: Core.TTagEventParams[] }): Core.TCreateTagInput[] {
+  /**
+   * Normalize tags
+   * @param params - Parameters object
+   * @param params.tags - Tags to normalize
+   * @returns Normalized tags
+   */
+  private static normalizeTags({ tags }: Core.TNormalizeTagsParams): Core.TCreateTagInput[] {
     return tags.map((param: Core.TTagEventParams) => {
       return Core.TagNormalizer.from(param);
     });

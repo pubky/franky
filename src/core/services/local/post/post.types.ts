@@ -1,15 +1,13 @@
 import * as Core from '@/core';
 import { PubkyAppPost } from 'pubky-app-specs';
 
-export type TLocalSavePostParams = {
-  postId: string;
-  authorId: Core.Pubky;
+export interface TLocalSavePostParams {
+  compositePostId: string;
   post: PubkyAppPost;
-};
+}
 
-export type TLocalUpdatePostStreamParams = {
-  authorId: Core.Pubky;
-  postId: string;
+export interface TLocalUpdatePostStreamParams {
+  compositePostId: string;
   kind: string;
   parentUri?: string;
   ops: Promise<unknown>[];
