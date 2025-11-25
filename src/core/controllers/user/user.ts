@@ -16,8 +16,7 @@ export class UserController {
    * This is a read-only operation that queries the local cache
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
-    const counts = await Core.UserApplication.counts({ userId });
-    return counts;
+    return await Core.UserApplication.counts({ userId });
   }
 
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {

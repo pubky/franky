@@ -78,7 +78,7 @@ describe('UserController', () => {
     it('should return null when user counts not found', async () => {
       const userId = 'non-existent-user';
 
-      vi.spyOn(Core.UserApplication, 'counts').mockResolvedValue(undefined);
+      vi.spyOn(Core.UserApplication, 'counts').mockResolvedValue(null);
 
       const result = await UserController.getCounts({ userId });
 
