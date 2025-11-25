@@ -43,7 +43,7 @@ export type TStreamBase = Core.TPaginationParams &
     sorting?: Core.StreamSorting;
     kind?: StreamKind;
     order?: StreamOrder;
-    tags?: string[]; // Max 5 tags
+    tags?: string; // Max 5 tags
   };
 
 // Specific parameter types for each source
@@ -77,9 +77,27 @@ export type TStreamQueryParams =
   | Core.TStreamAllParams
   | Core.TStreamPostsByIdsParams;
 
+/**
+ * Extra parameters needed for specific stream sources
+ */
+export type TStreamExtraParams = {
+  author_id?: string;
+  post_id?: string;
+};
+
 export type TPostStreamFetchParams = {
   params: TStreamBase;
-  invokeEndpoint: string;
-  extraParams: Record<string, string>;
-  // observer_id?: Core.Pubky;
+  invokeEndpoint: StreamSource;
+  extraParams: TStreamExtraParams;
 };
+
+/**
+ * Breakdown of a stream ID into its components
+ * [sorting, invokeEndpoint, kind, tags]
+ */
+export type TStreamIdBreakdown = [
+  sorting: string,
+  invokeEndpoint: StreamSource,
+  kind: string | undefined,
+  tags: string | undefined,
+];

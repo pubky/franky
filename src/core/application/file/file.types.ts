@@ -1,11 +1,9 @@
-import { BlobResult, FileResult } from 'pubky-app-specs';
 import * as Core from '@/core';
 
-export type TUploadFileInput = {
-  blobResult: BlobResult;
-  fileResult: FileResult;
-};
+export interface FilesListParams {
+  fileAttachments: Core.TFileAttachmentResult[];
+}
 
-export type TReadFilesInput = {
+export interface ReadFilesInput {
   fileUris: Core.Pubky[];
-};
+}
