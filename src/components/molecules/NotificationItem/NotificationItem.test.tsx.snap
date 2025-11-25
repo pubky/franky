@@ -1,0 +1,171 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NotificationItem - Snapshots > matches snapshot for Follow notification 1`] = `
+<div
+  class="flex items-center justify-between gap-2 w-full"
+  data-testid="container"
+>
+  <div
+    class="flex flex-1 gap-2 items-center min-w-0"
+    data-testid="container"
+  >
+    <div
+      class="shrink-0 lg:h-8 lg:w-8"
+      data-avatar="https://example.com/anna.jpg"
+      data-name="Anna"
+      data-testid="avatar-with-fallback"
+    >
+      <img
+        alt="Anna"
+        src="https://example.com/anna.jpg"
+      />
+    </div>
+    <div
+      class="flex gap-2 items-center min-w-0 flex-1"
+      data-testid="container"
+    >
+      <p
+        class="text-sm font-medium text-foreground leading-none lg:text-base lg:leading-normal"
+        data-testid="typography"
+      >
+        Anna followed you
+      </p>
+    </div>
+  </div>
+  <div
+    class="flex gap-2 items-center shrink-0"
+    data-testid="container"
+  >
+    <p
+      class="text-xs font-medium tracking-[1.2px] uppercase text-muted-foreground"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <div
+      data-badge="true"
+      data-testid="notification-icon"
+      data-type="follow"
+    >
+      Icon
+    </div>
+  </div>
+</div>
+`;
+
+exports[`NotificationItem - Snapshots > matches snapshot for Mention notification 1`] = `
+<div
+  class="flex items-center justify-between gap-2 w-full"
+  data-testid="container"
+>
+  <div
+    class="flex flex-1 gap-2 items-center min-w-0"
+    data-testid="container"
+  >
+    <div
+      class="shrink-0 lg:h-8 lg:w-8"
+      data-avatar="https://example.com/anna.jpg"
+      data-name="Anna"
+      data-testid="avatar-with-fallback"
+    >
+      <img
+        alt="Anna"
+        src="https://example.com/anna.jpg"
+      />
+    </div>
+    <div
+      class="flex gap-2 items-center min-w-0 flex-1"
+      data-testid="container"
+    >
+      <p
+        class="text-sm font-medium text-foreground leading-none lg:text-base lg:leading-normal"
+        data-testid="typography"
+      >
+        Anna mentioned you in post
+      </p>
+      <p
+        class="hidden text-base font-medium text-muted-foreground lg:inline"
+        data-testid="typography"
+      >
+        The reason why...
+      </p>
+    </div>
+  </div>
+  <div
+    class="flex gap-2 items-center shrink-0"
+    data-testid="container"
+  >
+    <p
+      class="text-xs font-medium tracking-[1.2px] uppercase text-muted-foreground"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <div
+      data-badge="true"
+      data-testid="notification-icon"
+      data-type="mention"
+    >
+      Icon
+    </div>
+  </div>
+</div>
+`;
+
+exports[`NotificationItem - Snapshots > matches snapshot for TagPost notification 1`] = `
+<div
+  class="flex items-center justify-between gap-2 w-full"
+  data-testid="container"
+>
+  <div
+    class="flex flex-1 gap-2 items-center min-w-0"
+    data-testid="container"
+  >
+    <div
+      class="shrink-0 lg:h-8 lg:w-8"
+      data-avatar="https://example.com/anna.jpg"
+      data-name="Anna"
+      data-testid="avatar-with-fallback"
+    >
+      <img
+        alt="Anna"
+        src="https://example.com/anna.jpg"
+      />
+    </div>
+    <div
+      class="flex gap-2 items-center min-w-0 flex-1"
+      data-testid="container"
+    >
+      <p
+        class="text-sm font-medium text-foreground leading-none lg:text-base lg:leading-normal"
+        data-testid="typography"
+      >
+        Anna tagged your post
+      </p>
+      <span
+        data-testid="post-tag"
+      >
+        bitcoin
+      </span>
+    </div>
+  </div>
+  <div
+    class="flex gap-2 items-center shrink-0"
+    data-testid="container"
+  >
+    <p
+      class="text-xs font-medium tracking-[1.2px] uppercase text-muted-foreground"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <div
+      data-badge="true"
+      data-testid="notification-icon"
+      data-type="tag_post"
+    >
+      Icon
+    </div>
+  </div>
+</div>
+`;

@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NotificationsList - Snapshots > matches snapshot with empty list 1`] = `
+<div
+  class="flex flex-col gap-4 rounded-md bg-card p-6 w-full"
+  data-testid="container"
+/>
+`;
+
+exports[`NotificationsList - Snapshots > matches snapshot with notifications 1`] = `
+<div
+  class="flex flex-col gap-4 rounded-md bg-card p-6 w-full"
+  data-testid="container"
+>
+  <div
+    data-testid="notification-item"
+    data-type="follow"
+  >
+    follow
+  </div>
+  <div
+    data-testid="notification-item"
+    data-type="reply"
+  >
+    reply
+  </div>
+</div>
+`;

@@ -1,0 +1,109 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NotificationsEmpty - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="flex flex-col gap-6 items-center justify-center h-[250px] p-6 rounded-md w-full max-w-[327px] lg:max-w-[792px] lg:h-auto relative custom-empty"
+  data-testid="container"
+>
+  <img
+    alt=""
+    aria-hidden="true"
+    class="absolute inset-0 max-w-none object-contain object-center pointer-events-none rounded-md size-full lg:hidden"
+    src="https://www.figma.com/api/mcp/asset/17c46006-41d1-4e5e-968b-d789aba0ebb4"
+  />
+  <img
+    alt=""
+    aria-hidden="true"
+    class="hidden absolute inset-0 max-w-none object-contain object-center pointer-events-none rounded-md size-full lg:block"
+    src="https://www.figma.com/api/mcp/asset/74e26d18-20af-4ee2-b3fe-03e50899ec67"
+  />
+  <div
+    class="relative flex items-center justify-center p-6 rounded-full bg-brand/16 shrink-0 z-10"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="frown-icon"
+    >
+      Frown
+    </svg>
+  </div>
+  <div
+    class="flex gap-2 items-center justify-center w-full z-10"
+    data-testid="container"
+  >
+    <h3
+      class="flex-1 text-2xl font-bold leading-8 text-foreground text-center whitespace-pre-wrap"
+      data-testid="typography"
+    >
+      Nothing to see here yet
+    </h3>
+  </div>
+  <div
+    class="flex gap-2 items-center justify-center w-full z-10"
+    data-testid="container"
+  >
+    <p
+      class="flex-1 text-base font-medium leading-6 text-secondary-foreground text-center whitespace-pre-wrap"
+      data-testid="typography"
+    >
+      Tags, follows, reposts and account information will be displayed here.
+    </p>
+  </div>
+</div>
+`;
+
+exports[`NotificationsEmpty - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="flex flex-col gap-6 items-center justify-center h-[250px] p-6 rounded-md w-full max-w-[327px] lg:max-w-[792px] lg:h-auto relative"
+  data-testid="container"
+>
+  <img
+    alt=""
+    aria-hidden="true"
+    class="absolute inset-0 max-w-none object-contain object-center pointer-events-none rounded-md size-full lg:hidden"
+    src="https://www.figma.com/api/mcp/asset/17c46006-41d1-4e5e-968b-d789aba0ebb4"
+  />
+  <img
+    alt=""
+    aria-hidden="true"
+    class="hidden absolute inset-0 max-w-none object-contain object-center pointer-events-none rounded-md size-full lg:block"
+    src="https://www.figma.com/api/mcp/asset/74e26d18-20af-4ee2-b3fe-03e50899ec67"
+  />
+  <div
+    class="relative flex items-center justify-center p-6 rounded-full bg-brand/16 shrink-0 z-10"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="frown-icon"
+    >
+      Frown
+    </svg>
+  </div>
+  <div
+    class="flex gap-2 items-center justify-center w-full z-10"
+    data-testid="container"
+  >
+    <h3
+      class="flex-1 text-2xl font-bold leading-8 text-foreground text-center whitespace-pre-wrap"
+      data-testid="typography"
+    >
+      Nothing to see here yet
+    </h3>
+  </div>
+  <div
+    class="flex gap-2 items-center justify-center w-full z-10"
+    data-testid="container"
+  >
+    <p
+      class="flex-1 text-base font-medium leading-6 text-secondary-foreground text-center whitespace-pre-wrap"
+      data-testid="typography"
+    >
+      Tags, follows, reposts and account information will be displayed here.
+    </p>
+  </div>
+</div>
+`;

@@ -229,6 +229,30 @@ export function timeAgo(date: Date): string {
 }
 
 /**
+ * Helper functions to create timestamps relative to now
+ */
+export const minutesAgo = (mins: number): number => Date.now() - mins * 60 * 1000;
+export const hoursAgo = (hours: number): number => Date.now() - hours * 60 * 60 * 1000;
+export const daysAgo = (days: number): number => Date.now() - days * 24 * 60 * 60 * 1000;
+
+/**
+ * Formats a timestamp for notifications display
+ * Returns short format: "now", "7m", "15m", "1h", "2d", etc.
+ */
+export function formatNotificationTime(timestamp: number): string {
+  const diffMs = Date.now() - timestamp;
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 1) return 'now';
+  if (diffMins < 60) return `${diffMins}m`;
+  if (diffHours < 24) return `${diffHours}h`;
+  if (diffDays < 7) return `${diffDays}d`;
+  return `${diffDays}d`;
+}
+
+/**
  * Formats a filename by truncating it if it exceeds the max length,
  * preserving the file extension
  * @param filename - The filename to format
