@@ -60,6 +60,12 @@ const envSchema = z.object({
     .transform((val) => val === 'true')
     .pipe(z.boolean()),
 
+  NEXT_MAX_STREAM_TAGS: z
+    .string()
+    .default('5')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
   NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app'),
 
   NEXT_PUBLIC_HOMESERVER: z.string().default('ufibwbmed6jeq9k4p583go95wofakh9fwpp4k734trq79pd9u1uy'),
@@ -111,6 +117,7 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS,
       NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
       NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
+      NEXT_MAX_STREAM_TAGS: process.env.NEXT_MAX_STREAM_TAGS,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
