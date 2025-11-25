@@ -108,6 +108,14 @@ vi.mock('@/molecules', () => ({
   SearchInput: () => <div data-testid="search-input">Search Input</div>,
 }));
 
+// Mock hooks
+vi.mock('@/hooks', () => ({
+  useCurrentUserProfile: vi.fn(() => ({
+    userDetails: { name: 'Test User', image: 'test-image.jpg' },
+    currentUserPubky: 'test-pubky-123',
+  })),
+}));
+
 describe('Header', () => {
   beforeEach(() => {
     vi.clearAllMocks();

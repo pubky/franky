@@ -3,20 +3,18 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
 
-export interface ProfilePageSidebarProps {
-  tags?: Array<{ name: string; count?: number }>;
-  links?: Molecules.ProfilePageSidebarLink[];
-}
+export function ProfilePageSidebar() {
+  const { userDetails } = Hooks.useCurrentUserProfile();
 
-export function ProfilePageSidebar({ tags, links }: ProfilePageSidebarProps) {
   return (
     <Atoms.Container
       overrideDefaults={true}
       className="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
     >
-      <Molecules.ProfilePageTaggedAs tags={tags} />
-      <Molecules.ProfilePageLinks links={links} />
+      <Molecules.ProfilePageTaggedAs tags={[]} />
+      <Molecules.ProfilePageLinks links={userDetails?.links} />
       <Organisms.FeedbackCard />
     </Atoms.Container>
   );
