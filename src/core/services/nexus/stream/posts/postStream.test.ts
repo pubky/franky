@@ -7,6 +7,34 @@ import { NexusPostStreamService } from './postStream';
 
 //TODO: Split the suite by module (postStream.api.test.ts, postStream.utils.test.ts, postStream.service.test.ts) so each file targets the key behaviours of that module under @posts.
 
+function callStreamEndpoint(
+  endpoint: keyof typeof postStreamApi,
+  params: Core.TStreamQueryParams,
+): string | { body: { post_ids: string[]; viewer_id?: string }; url: string } {
+  switch (endpoint) {
+    case 'all':
+      return postStreamApi.all(params as Core.TStreamAllParams);
+    case 'following':
+      return postStreamApi.following(params as Core.TStreamWithObserverParams);
+    case 'followers':
+      return postStreamApi.followers(params as Core.TStreamWithObserverParams);
+    case 'friends':
+      return postStreamApi.friends(params as Core.TStreamWithObserverParams);
+    case 'bookmarks':
+      return postStreamApi.bookmarks(params as Core.TStreamWithObserverParams);
+    case 'post_replies':
+      return postStreamApi.post_replies(params as Core.TStreamPostRepliesParams);
+    case 'author':
+      return postStreamApi.author(params as Core.TStreamAuthorParams);
+    case 'author_replies':
+      return postStreamApi.author_replies(params as Core.TStreamAuthorRepliesParams);
+    case 'postsByIds':
+      return postStreamApi.postsByIds(params as Core.TStreamPostsByIdsParams);
+    default:
+      throw new Error(`Unknown endpoint: ${endpoint}`);
+  }
+}
+
 describe('Stream API URL Generation', () => {
   const mockObserverId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
   const mockAuthorId = 'author-pubky-id';
@@ -98,7 +126,7 @@ describe('Stream API URL Generation', () => {
         ],
       },
     ])('$name endpoint generates correct URL with all parameters', ({ endpoint, params, expectedInUrl }) => {
-      const url = postStreamApi[endpoint](params as any);
+      const url = callStreamEndpoint(endpoint, params);
 
       expect(url).toContain('v0/stream/posts/keys?');
       expectedInUrl.forEach((fragment) => {
