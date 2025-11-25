@@ -17,7 +17,7 @@ export class UserController {
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     const counts = await Core.UserApplication.counts({ userId });
-    return counts ?? null;
+    return counts;
   }
 
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {

@@ -10,7 +10,7 @@ export class LocalProfileService {
    * @returns Promise resolving to user details or null if not found
    */
   static async details({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
-    return (await Core.UserDetailsModel.findById(userId)) ?? null;
+    return await Core.UserDetailsModel.findById(userId);
   }
 
   /**
@@ -19,7 +19,7 @@ export class LocalProfileService {
    * @returns Promise resolving to user counts or null if not found
    */
   static async counts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
-    return (await Core.UserCountsModel.findById(userId)) ?? null;
+    return await Core.UserCountsModel.findById(userId);
   }
 
   /**
