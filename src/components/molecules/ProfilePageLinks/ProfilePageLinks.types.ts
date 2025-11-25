@@ -1,4 +1,5 @@
 import * as Icons from '@/libs/icons';
+import * as Core from '@/core';
 
 export interface ProfilePageSidebarLink {
   icon: React.ComponentType<Icons.LucideProps>;
@@ -7,5 +8,5 @@ export interface ProfilePageSidebarLink {
 }
 
 export interface ProfilePageLinksProps {
-  links?: ProfilePageSidebarLink[];
+  links?: Core.NexusUserDetails['links'];
 }

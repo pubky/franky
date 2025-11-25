@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { FeedbackCard } from './FeedbackCard';
 import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
@@ -18,6 +19,11 @@ vi.mock('@/core', () => ({
   FileController: {
     getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
   },
+}));
+
+// Mock Hooks module - passthrough to the real implementation but using mocked dependencies
+vi.mock('@/hooks', () => ({
+  useCurrentUserProfile: vi.fn(),
 }));
 
 // Mock Molecules
@@ -114,9 +120,16 @@ describe('FeedbackCard', () => {
   const mockPubky = 'user123pubky';
   const mockUseLiveQuery = vi.mocked(useLiveQuery);
   const mockUseAuthStore = vi.mocked(Core.useAuthStore);
+  const mockUseCurrentUserProfile = vi.mocked(Hooks.useCurrentUserProfile);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Make useCurrentUserProfile delegate to the existing mocks
+    mockUseCurrentUserProfile.mockImplementation(() => {
+      const { currentUserPubky } = mockUseAuthStore() as { currentUserPubky: string | null };
+      const userDetails = mockUseLiveQuery(() => null, []);
+      return { userDetails, currentUserPubky };
+    });
   });
 
   describe('User Authentication', () => {
@@ -397,9 +410,16 @@ describe('FeedbackCard - Snapshots', () => {
   const mockPubky = 'user123pubky';
   const mockUseLiveQuery = vi.mocked(useLiveQuery);
   const mockUseAuthStore = vi.mocked(Core.useAuthStore);
+  const mockUseCurrentUserProfile = vi.mocked(Hooks.useCurrentUserProfile);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Make useCurrentUserProfile delegate to the existing mocks
+    mockUseCurrentUserProfile.mockImplementation(() => {
+      const { currentUserPubky } = mockUseAuthStore() as { currentUserPubky: string | null };
+      const userDetails = mockUseLiveQuery(() => null, []);
+      return { userDetails, currentUserPubky };
+    });
   });
 
   it('matches snapshot with authenticated user with avatar', async () => {

@@ -1,9 +1,22 @@
 'use client';
 
+import { useMemo } from 'react';
 import * as Atoms from '@/atoms';
+import * as Icons from '@/libs/icons';
 import * as Types from './index';
 
 export function ProfilePageLinks({ links }: Types.ProfilePageLinksProps) {
+  // Transform raw links from Nexus into the format we need for rendering
+  const transformedLinks = useMemo(
+    () =>
+      links?.map((link) => ({
+        icon: Icons.getIconFromUrl(link.url),
+        label: link.title,
+        url: link.url,
+      })) || [],
+    [links],
+  );
+
   return (
     <Atoms.Container overrideDefaults={true} className="flex flex-col">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
@@ -11,7 +24,7 @@ export function ProfilePageLinks({ links }: Types.ProfilePageLinksProps) {
       </Atoms.Heading>
 
       <Atoms.Container overrideDefaults={true} className="flex flex-col">
-        {links?.map((link, index) => {
+        {transformedLinks.map((link, index) => {
           const Icon = link.icon;
           return (
             <a
@@ -28,7 +41,7 @@ export function ProfilePageLinks({ links }: Types.ProfilePageLinksProps) {
             </a>
           );
         })}
-        {links?.length === 0 && (
+        {transformedLinks.length === 0 && (
           <Atoms.Container className="mt-2 flex flex-col">
             <Atoms.Typography as="span" className="text-base font-medium text-muted-foreground">
               No links added yet.

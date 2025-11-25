@@ -1,7 +1,6 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useLiveQuery } from 'dexie-react-hooks';
 
 import * as React from 'react';
 import * as Atoms from '@/atoms';
@@ -9,6 +8,7 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import * as App from '@/app';
+import * as Hooks from '@/hooks';
 // Map paths to step numbers and titles
 const pathToStepConfig: Record<string, { step: number; title: string }> = {
   '/onboarding/install': { step: 1, title: 'Identity keys' },
@@ -69,11 +69,7 @@ export const HeaderHome = () => {
 };
 
 export const HeaderSignIn = () => {
-  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
-  const userDetails = useLiveQuery(
-    () => (currentUserPubky ? Core.ProfileController.read({ userId: currentUserPubky }) : undefined),
-    [currentUserPubky],
-  );
+  const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
   const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
 
   const avatarInitial = Libs.extractInitials({ name: userDetails?.name || '' }) || 'U';

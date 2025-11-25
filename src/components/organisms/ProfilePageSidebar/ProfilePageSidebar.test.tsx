@@ -42,6 +42,14 @@ vi.mock('@/libs/icons', () => ({
   },
 }));
 
+// Mock @/hooks
+vi.mock('@/hooks', () => ({
+  useCurrentUserProfile: vi.fn(() => ({
+    userDetails: null,
+    currentUserPubky: 'test-pubky-123',
+  })),
+}));
+
 describe('ProfilePageSidebar', () => {
   beforeEach(() => {
     vi.clearAllMocks();

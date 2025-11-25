@@ -1,13 +1,25 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { Globe, Twitter, Github } from 'lucide-react';
-import { ProfilePageLinks, ProfilePageSidebarLink } from './ProfilePageLinks';
+import { ProfilePageLinks } from './ProfilePageLinks';
+import * as Core from '@/core';
 
-const defaultLinks: ProfilePageSidebarLink[] = [
-  { icon: Globe, url: 'https://bitcoin.org', label: 'bitcoin.org' },
-  { icon: Twitter, url: 'https://twitter.com/test', label: 'twitter.com/test' },
-  { icon: Github, url: 'https://github.com/test', label: 'github.com/test' },
+// Mock Icons
+vi.mock('@/libs/icons', () => ({
+  getIconFromUrl: () => {
+    const MockIcon = ({ size, className }: { size: number; className: string }) => (
+      <span data-testid="mock-icon" data-size={size} className={className}>
+        Icon
+      </span>
+    );
+    return MockIcon;
+  },
+}));
+
+const defaultLinks: Core.NexusUserDetails['links'] = [
+  { title: 'bitcoin.org', url: 'https://bitcoin.org' },
+  { title: 'twitter.com/test', url: 'https://twitter.com/test' },
+  { title: 'github.com/test', url: 'https://github.com/test' },
 ];
 
 describe('ProfilePageLinks', () => {
@@ -18,15 +30,15 @@ describe('ProfilePageLinks', () => {
 
   it('renders all links', () => {
     render(<ProfilePageLinks links={defaultLinks} />);
-    defaultLinks.forEach((link) => {
-      expect(screen.getByText(link.label)).toBeInTheDocument();
+    defaultLinks?.forEach((link) => {
+      expect(screen.getByText(link.title)).toBeInTheDocument();
     });
   });
 
   it('renders links with correct href attributes', () => {
     render(<ProfilePageLinks links={defaultLinks} />);
-    defaultLinks.forEach((link) => {
-      const linkElement = screen.getByText(link.label).closest('a');
+    defaultLinks?.forEach((link) => {
+      const linkElement = screen.getByText(link.title).closest('a');
       expect(linkElement).toHaveAttribute('href', link.url);
       expect(linkElement).toHaveAttribute('target', '_blank');
       expect(linkElement).toHaveAttribute('rel', 'noopener noreferrer');
@@ -34,7 +46,7 @@ describe('ProfilePageLinks', () => {
   });
 
   it('renders with custom links', () => {
-    const customLinks: ProfilePageSidebarLink[] = [{ icon: Globe, url: 'https://example.com', label: 'Example' }];
+    const customLinks: Core.NexusUserDetails['links'] = [{ title: 'Example', url: 'https://example.com' }];
     render(<ProfilePageLinks links={customLinks} />);
     expect(screen.getByText('Example')).toBeInTheDocument();
     expect(screen.getByText('Example').closest('a')).toHaveAttribute('href', 'https://example.com');
@@ -57,9 +69,9 @@ describe('ProfilePageLinks', () => {
     expect(screen.getByText('No links added yet.')).toBeInTheDocument();
   });
 
-  it('renders nothing when links is undefined', () => {
+  it('renders no links message when links is undefined', () => {
     render(<ProfilePageLinks />);
-    expect(screen.queryByText('No links added yet.')).not.toBeInTheDocument();
+    expect(screen.getByText('No links added yet.')).toBeInTheDocument();
   });
 });
 
@@ -70,7 +82,7 @@ describe('ProfilePageLinks - Snapshots', () => {
   });
 
   it('matches snapshot with custom links', () => {
-    const customLinks: ProfilePageSidebarLink[] = [{ icon: Globe, url: 'https://example.com', label: 'Example' }];
+    const customLinks: Core.NexusUserDetails['links'] = [{ title: 'Example', url: 'https://example.com' }];
     const { container } = render(<ProfilePageLinks links={customLinks} />);
     expect(container.firstChild).toMatchSnapshot();
   });

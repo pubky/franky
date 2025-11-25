@@ -1,18 +1,13 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 export function FeedbackCard() {
-  const { currentUserPubky } = Core.useAuthStore();
-
-  const userDetails = useLiveQuery(async () => {
-    if (!currentUserPubky) return null;
-    return await Core.ProfileController.read({ userId: currentUserPubky });
-  }, [currentUserPubky]);
+  const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
   const name = userDetails?.name || 'Your Name';
   const avatarUrl =
