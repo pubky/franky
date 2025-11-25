@@ -306,4 +306,63 @@ export class LocalPostService {
       });
     }
   }
+
+  /**
+   * Persists complete post data from Nexus to local database
+   *
+   * @param params.postId - Composite post ID (author:postId)
+   * @param params.postData - Complete post data from Nexus
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<void> {
+    try {
+      Libs.Logger.debug(`[LocalPostService] Starting persist for post ${postId}`);
+      Libs.Logger.debug(`[LocalPostService] postData.details.id: ${postData.details.id}`);
+      Libs.Logger.debug(`[LocalPostService] Match: ${postData.details.id === postId}`);
+
+      await Core.db.transaction(
+        'rw',
+        [
+          Core.PostDetailsModel.table,
+          Core.PostCountsModel.table,
+          Core.PostRelationshipsModel.table,
+          Core.PostTagsModel.table,
+        ],
+        async () => {
+          // Persist post details
+          Libs.Logger.debug(`[LocalPostService] Upserting post details for ${postId}`);
+          await Core.PostDetailsModel.upsert(postData.details);
+
+          // Persist post counts
+          await Core.PostCountsModel.upsert({
+            id: postId,
+            ...postData.counts,
+          });
+
+          // Persist post relationships
+          await Core.PostRelationshipsModel.upsert({
+            id: postId,
+            ...postData.relationships,
+          });
+
+          // Persist post tags if any
+          if (postData.tags && postData.tags.length > 0) {
+            await Core.PostTagsModel.upsert({
+              id: postId,
+              tags: postData.tags,
+            });
+          }
+        },
+      );
+
+      Libs.Logger.debug(`[LocalPostService] Post ${postId} with complete data persisted locally`);
+    } catch (error) {
+      Libs.Logger.error('Failed to persist post data', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to persist post data', 500, {
+        error,
+        postId,
+      });
+    }
+  }
 }

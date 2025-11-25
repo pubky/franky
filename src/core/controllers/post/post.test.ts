@@ -356,4 +356,61 @@ describe('PostController', () => {
       }
     });
   });
+
+  describe('getOrFetchPost', () => {
+    it('should return post from local database if exists', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      const post = await PostController.getOrFetchPost({ postId: testData.fullPostId });
+
+      expect(post).toBeTruthy();
+      expect(post?.id).toBe(testData.fullPostId);
+      expect(post?.content).toBe('Test post content');
+    });
+
+    it('should return null when PostApplication.getOrFetchPost returns null', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
+
+      try {
+        const post = await PostController.getOrFetchPost({ postId: 'nonexistent:post' });
+        expect(post).toBeNull();
+      } finally {
+        getOrFetchSpy.mockRestore();
+      }
+    });
+
+    it('should return null when PostApplication throws an error', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getOrFetchSpy = vi
+        .spyOn(ApplicationModule.PostApplication, 'getOrFetchPost')
+        .mockRejectedValueOnce(new Error('Nexus error'));
+
+      try {
+        const post = await PostController.getOrFetchPost({ postId: 'error:post' });
+        expect(post).toBeNull();
+      } finally {
+        getOrFetchSpy.mockRestore();
+      }
+    });
+
+    it('should call PostApplication.getOrFetchPost with correct postId', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
+
+      try {
+        await PostController.getOrFetchPost({ postId: 'author:post123' });
+        expect(getOrFetchSpy).toHaveBeenCalledWith('author:post123');
+      } finally {
+        getOrFetchSpy.mockRestore();
+      }
+    });
+  });
 });

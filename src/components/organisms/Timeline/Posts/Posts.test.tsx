@@ -15,6 +15,8 @@ vi.mock('@/hooks', async (importOriginal) => {
     ...actual,
     useStreamIdFromFilters: vi.fn(),
     useInfiniteScroll: vi.fn(),
+    useStreamPagination: vi.fn(),
+    usePostNavigation: vi.fn(),
   };
 });
 vi.mock('@/libs', async (importOriginal) => {
@@ -52,6 +54,22 @@ vi.mock('@/organisms', () => ({
     <div data-testid={`post-${postId}`} onClick={onClick} {...props} />
   ),
   TimelinePostReplies: ({ postId }: { postId: string }) => <div data-testid={`replies-${postId}`} />,
+  TimelineStateWrapper: ({
+    loading,
+    error,
+    hasItems,
+    children,
+  }: {
+    loading: boolean;
+    error: string | null;
+    hasItems: boolean;
+    children: React.ReactNode;
+  }) => {
+    if (loading) return <div data-testid="timeline-loading">Loading...</div>;
+    if (error && !hasItems) return <div data-testid="timeline-initial-error">Error: {error}</div>;
+    if (!hasItems) return <div data-testid="timeline-empty">No posts</div>;
+    return <>{children}</>;
+  },
 }));
 
 const mockPush = vi.fn();
@@ -59,6 +77,8 @@ const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockUseRouter = vi.mocked(useRouter);
 const mockUseStreamIdFromFilters = vi.mocked(Hooks.useStreamIdFromFilters);
 const mockUseInfiniteScroll = vi.mocked(Hooks.useInfiniteScroll);
+const mockUseStreamPagination = vi.mocked(Hooks.useStreamPagination);
+const mockUsePostNavigation = vi.mocked(Hooks.usePostNavigation);
 
 describe('TimelinePosts', () => {
   const mockStreamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
@@ -85,6 +105,22 @@ describe('TimelinePosts', () => {
       sentinelRef: { current: null },
     });
 
+    // Mock useStreamPagination
+    mockUseStreamPagination.mockReturnValue({
+      postIds: mockPostIds,
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
+
+    // Mock usePostNavigation
+    mockUsePostNavigation.mockReturnValue({
+      navigateToPost: mockPush,
+    });
+
     // Mock useLiveQuery to return no replies by default
     mockUseLiveQuery.mockReturnValue({ id: 'test', replies: 0, tags: 0, unique_tags: 0, reposts: 0 });
   });
@@ -95,9 +131,15 @@ describe('TimelinePosts', () => {
 
   describe('Loading States', () => {
     it('should render loading state initially', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockImplementation(
-        () => new Promise(() => {}), // Never resolves
-      );
+      mockUseStreamPagination.mockReturnValue({
+        postIds: [],
+        loading: true,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
+      });
 
       render(<TimelinePosts />);
 
@@ -105,9 +147,14 @@ describe('TimelinePosts', () => {
     });
 
     it('should render posts after successful fetch', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -118,22 +165,17 @@ describe('TimelinePosts', () => {
     });
 
     it('should show loading more indicator when paginating', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice')
-        .mockResolvedValueOnce({
-          nextPageIds: mockPostIds,
-          timestamp: Date.now(),
-        })
-        .mockImplementation(() => new Promise(() => {})); // Never resolves for pagination
-
-      render(<TimelinePosts />);
-
-      await waitFor(() => {
-        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: true,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
-      // Trigger pagination
-      const { onLoadMore } = mockUseInfiniteScroll.mock.calls[0][0];
-      onLoadMore();
+      render(<TimelinePosts />);
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-loading-more')).toBeInTheDocument();
@@ -143,9 +185,14 @@ describe('TimelinePosts', () => {
 
   describe('Empty States', () => {
     it('should render empty state when no posts are returned', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: [],
-        timestamp: undefined,
+      mockUseStreamPagination.mockReturnValue({
+        postIds: [],
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -158,9 +205,14 @@ describe('TimelinePosts', () => {
     it('should render end message when no more posts to load', async () => {
       const fewPosts = ['author1:post1', 'author2:post2']; // Less than NEXUS_POSTS_PER_PAGE
 
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: fewPosts,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: fewPosts,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -173,7 +225,15 @@ describe('TimelinePosts', () => {
 
   describe('Error States', () => {
     it('should render error state on initial fetch failure', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockRejectedValueOnce(new Error('Network error'));
+      mockUseStreamPagination.mockReturnValue({
+        postIds: [],
+        loading: false,
+        loadingMore: false,
+        error: 'Network error',
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
+      });
 
       render(<TimelinePosts />);
 
@@ -184,22 +244,17 @@ describe('TimelinePosts', () => {
     });
 
     it('should show error message when pagination fails', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice')
-        .mockResolvedValueOnce({
-          nextPageIds: mockPostIds,
-          timestamp: Date.now(),
-        })
-        .mockRejectedValueOnce(new Error('Pagination failed'));
-
-      render(<TimelinePosts />);
-
-      await waitFor(() => {
-        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: 'Pagination failed',
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
-      // Trigger pagination
-      const { onLoadMore } = mockUseInfiniteScroll.mock.calls[0][0];
-      await onLoadMore();
+      render(<TimelinePosts />);
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-error')).toBeInTheDocument();
@@ -207,25 +262,20 @@ describe('TimelinePosts', () => {
     });
 
     it('should stop loading more posts after pagination error', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice')
-        .mockResolvedValueOnce({
-          nextPageIds: mockPostIds,
-          timestamp: Date.now(),
-        })
-        .mockRejectedValueOnce(new Error('Pagination failed'));
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: 'Pagination failed',
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
+      });
 
       render(<TimelinePosts />);
 
       await waitFor(() => {
-        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
-      });
-
-      // Trigger pagination
-      const { onLoadMore } = mockUseInfiniteScroll.mock.calls[0][0];
-      await onLoadMore();
-
-      await waitFor(() => {
-        const { hasMore } = mockUseInfiniteScroll.mock.calls[mockUseInfiniteScroll.mock.calls.length - 1][0];
+        const { hasMore } = mockUseInfiniteScroll.mock.calls[0][0];
         expect(hasMore).toBe(false);
       });
     });
@@ -233,9 +283,14 @@ describe('TimelinePosts', () => {
 
   describe('Post Rendering', () => {
     it('should render all fetched posts', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -248,9 +303,14 @@ describe('TimelinePosts', () => {
     });
 
     it('should render PostWithReplies for each post', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -262,9 +322,14 @@ describe('TimelinePosts', () => {
     });
 
     it('should render posts with correct keys', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       const { container } = render(<TimelinePosts />);
@@ -278,9 +343,14 @@ describe('TimelinePosts', () => {
 
   describe('Navigation', () => {
     it('should navigate to post detail when post is clicked', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: ['author1:post123'],
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: ['author1:post123'],
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -290,13 +360,18 @@ describe('TimelinePosts', () => {
         post.click();
       });
 
-      expect(mockPush).toHaveBeenCalledWith('/post/author1/post123');
+      expect(mockPush).toHaveBeenCalledWith('author1:post123');
     });
 
     it('should navigate with correct URL format for different posts', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValueOnce({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -306,24 +381,22 @@ describe('TimelinePosts', () => {
         post1.click();
       });
 
-      expect(mockPush).toHaveBeenCalledWith('/post/author1/post1');
+      expect(mockPush).toHaveBeenCalledWith('author1:post1');
     });
   });
 
   describe('Pagination', () => {
-    it('should load more posts when scrolling', async () => {
-      const initialPosts = ['author1:post1', 'author2:post2'];
-      const morePosts = ['author3:post3', 'author4:post4'];
-
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice')
-        .mockResolvedValueOnce({
-          nextPageIds: initialPosts,
-          timestamp: 1000,
-        })
-        .mockResolvedValueOnce({
-          nextPageIds: morePosts,
-          timestamp: 2000,
-        });
+    it('should call loadMore when infinite scroll triggers', async () => {
+      const mockLoadMore = vi.fn();
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: mockLoadMore,
+        refresh: vi.fn(),
+      });
 
       render(<TimelinePosts />);
 
@@ -335,123 +408,101 @@ describe('TimelinePosts', () => {
       const { onLoadMore } = mockUseInfiniteScroll.mock.calls[0][0];
       await onLoadMore();
 
-      await waitFor(() => {
-        expect(screen.getByTestId('post-author3:post3')).toBeInTheDocument();
-        expect(screen.getByTestId('post-author4:post4')).toBeInTheDocument();
-      });
+      expect(mockLoadMore).toHaveBeenCalled();
     });
 
-    it('should deduplicate posts when pagination returns duplicates', async () => {
-      const initialPosts = ['author1:post1', 'author2:post2'];
-      const duplicatePosts = ['author2:post2', 'author3:post3']; // post2 is duplicate
-
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice')
-        .mockResolvedValueOnce({
-          nextPageIds: initialPosts,
-          timestamp: 1000,
-        })
-        .mockResolvedValueOnce({
-          nextPageIds: duplicatePosts,
-          timestamp: 2000,
-        });
-
-      render(<TimelinePosts />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('post-author1:post1')).toBeInTheDocument();
-      });
-
-      const { onLoadMore } = mockUseInfiniteScroll.mock.calls[0][0];
-      await onLoadMore();
-
-      await waitFor(() => {
-        const post2Elements = screen.getAllByTestId('post-author2:post2');
-        expect(post2Elements).toHaveLength(1); // Should only have one instance
-      });
-    });
-
-    it('should pass correct pagination parameters for engagement streams', async () => {
-      mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.POPULARITY_ALL_ALL);
-
-      const spy = vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds: mockPostIds,
-        timestamp: undefined,
+    it('should pass hasMore to infinite scroll hook', async () => {
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
 
       await waitFor(() => {
-        expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
+        const { hasMore } = mockUseInfiniteScroll.mock.calls[0][0];
+        expect(hasMore).toBe(false);
+      });
+    });
+
+    it('should pass loadingMore to infinite scroll hook', async () => {
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: true,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
-      const { onLoadMore } = mockUseInfiniteScroll.mock.calls[0][0];
-      await onLoadMore();
+      render(<TimelinePosts />);
 
       await waitFor(() => {
-        expect(spy).toHaveBeenNthCalledWith(2, {
-          streamId: Core.PostStreamTypes.POPULARITY_ALL_ALL,
-          lastPostId: undefined, // Engagement streams don't use lastPostId for pagination
-          streamTail: 3, // Should use count for engagement (skip)
-        });
+        const { isLoading } = mockUseInfiniteScroll.mock.calls[0][0];
+        expect(isLoading).toBe(true);
       });
     });
   });
 
   describe('Stream Changes', () => {
-    it('should refetch posts when streamId changes', async () => {
-      const spy = vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+    it('should use streamId from filters when not provided', async () => {
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
-      const { rerender } = render(<TimelinePosts />);
+      render(<TimelinePosts />);
 
       await waitFor(() => {
-        expect(spy).toHaveBeenCalledTimes(1);
-      });
-
-      // Change stream
-      mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.POPULARITY_ALL_ALL);
-      rerender(<TimelinePosts />);
-
-      await waitFor(() => {
-        expect(spy).toHaveBeenCalledTimes(2);
+        expect(mockUseStreamPagination).toHaveBeenCalledWith({
+          streamId: mockStreamId,
+        });
       });
     });
 
-    it('should clear posts when streamId changes', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice')
-        .mockResolvedValueOnce({
-          nextPageIds: ['author1:post1'],
-          timestamp: Date.now(),
-        })
-        .mockResolvedValueOnce({
-          nextPageIds: ['author2:post2'],
-          timestamp: Date.now(),
-        });
-
-      const { rerender } = render(<TimelinePosts />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('post-author1:post1')).toBeInTheDocument();
+    it('should use provided streamId prop over filters', async () => {
+      const customStreamId = Core.PostStreamTypes.POPULARITY_ALL_ALL;
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
-      // Change stream
-      mockUseStreamIdFromFilters.mockReturnValue(Core.PostStreamTypes.POPULARITY_ALL_ALL);
-      rerender(<TimelinePosts />);
+      render(<TimelinePosts streamId={customStreamId} />);
 
       await waitFor(() => {
-        expect(screen.queryByTestId('post-author1:post1')).not.toBeInTheDocument();
-        expect(screen.getByTestId('post-author2:post2')).toBeInTheDocument();
+        expect(mockUseStreamPagination).toHaveBeenCalledWith({
+          streamId: customStreamId,
+        });
       });
     });
   });
 
   describe('Infinite Scroll Configuration', () => {
     it('should configure infinite scroll with correct parameters', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       render(<TimelinePosts />);
@@ -468,9 +519,14 @@ describe('TimelinePosts', () => {
     });
 
     it('should render sentinel element for infinite scroll', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       const { container } = render(<TimelinePosts />);
@@ -484,7 +540,15 @@ describe('TimelinePosts', () => {
 
   describe('Snapshots', () => {
     it('should match snapshot for loading state', () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockImplementation(() => new Promise(() => {}));
+      mockUseStreamPagination.mockReturnValue({
+        postIds: [],
+        loading: true,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
+      });
 
       const { container } = render(<TimelinePosts />);
 
@@ -492,9 +556,14 @@ describe('TimelinePosts', () => {
     });
 
     it('should match snapshot for empty state', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds: [],
-        timestamp: undefined,
+      mockUseStreamPagination.mockReturnValue({
+        postIds: [],
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       const { container } = render(<TimelinePosts />);
@@ -507,7 +576,15 @@ describe('TimelinePosts', () => {
     });
 
     it('should match snapshot for error state', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockRejectedValue(new Error('Network error'));
+      mockUseStreamPagination.mockReturnValue({
+        postIds: [],
+        loading: false,
+        loadingMore: false,
+        error: 'Network error',
+        hasMore: false,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
+      });
 
       const { container } = render(<TimelinePosts />);
 
@@ -519,9 +596,14 @@ describe('TimelinePosts', () => {
     });
 
     it('should match snapshot with posts', async () => {
-      vi.spyOn(Core.StreamPostsController, 'getOrFetchStreamSlice').mockResolvedValue({
-        nextPageIds: mockPostIds,
-        timestamp: Date.now(),
+      mockUseStreamPagination.mockReturnValue({
+        postIds: mockPostIds,
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
       });
 
       const { container } = render(<TimelinePosts />);

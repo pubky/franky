@@ -29,4 +29,14 @@ export class PostRelationshipsModel
   static async getReplies(postId: string) {
     return this.table.where('replied').equals(postId).toArray();
   }
+
+  /**
+   * Get the parent post ID for a given post ID
+   * @param postId - The ID of the post to get the parent post ID for
+   * @returns The parent post ID
+   */
+  static async getParentPostId(postId: string) {
+    const relationships = await this.table.where('replied').equals(postId).first();
+    return relationships?.replied;
+  }
 }
