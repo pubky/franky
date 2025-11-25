@@ -56,7 +56,7 @@ describe('Tag Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      await TagApplication.create(mockData);
+      await TagApplication.create({ tagList: [mockData] });
 
       expect(saveSpy).toHaveBeenCalledWith({
         taggedId: mockData.taggedId,
@@ -72,7 +72,7 @@ describe('Tag Application', () => {
 
       saveSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(TagApplication.create(mockData)).rejects.toThrow('Database error');
+      await expect(TagApplication.create({ tagList: [mockData] })).rejects.toThrow('Database error');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).not.toHaveBeenCalled();
     });
@@ -84,7 +84,7 @@ describe('Tag Application', () => {
       saveSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(TagApplication.create(mockData)).rejects.toThrow('Failed to PUT to homeserver: 500');
+      await expect(TagApplication.create({ tagList: [mockData] })).rejects.toThrow('Failed to PUT to homeserver: 500');
       expect(saveSpy).toHaveBeenCalledOnce();
       expect(requestSpy).toHaveBeenCalledOnce();
     });

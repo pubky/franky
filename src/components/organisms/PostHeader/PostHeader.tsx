@@ -15,7 +15,7 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
 
   // Fetch post details to get indexed_at
   const postDetails = useLiveQuery(async () => {
-    return await Core.PostController.read({ postId });
+    return await Core.PostController.getPostDetails({ postId });
   }, [postId]);
 
   // Fetch user details for avatar and name

@@ -16,7 +16,7 @@ export class LocalFileService {
    * @param blobResult - Blob result
    * @param fileResult - File result
    */
-  static async create({ blobResult, fileResult }: Core.TUploadFileInput) {
+  static async create({ blobResult, fileResult }: Core.TFileAttachmentResult) {
     const uri = fileResult.meta.url;
     const fileCompositeId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.FILES });
 
@@ -40,5 +40,9 @@ export class LocalFileService {
 
   static async findByIds(compositeFileIds: string[]): Promise<Core.NexusFileDetails[]> {
     return await Core.FileDetailsModel.findByIds(compositeFileIds);
+  }
+
+  static async deleteById(compositeFileId: string) {
+    await Core.FileDetailsModel.deleteById(compositeFileId);
   }
 }
