@@ -52,7 +52,7 @@ export function useUserProfile(userId: string): UseUserProfileResult {
   // This will reactively update when the database changes
   const userDetails = useLiveQuery(async () => {
     if (!userId) return null;
-    return await Core.UserController.getDetails(userId);
+    return await Core.UserController.getDetails({ userId });
   }, [userId]);
 
   // If no user details yet, return null profile

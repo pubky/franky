@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import { postUriBuilder, PubkyAppTag, userUriBuilder } from 'pubky-app-specs';
 
 export class TagController {
   private constructor() {}
@@ -12,18 +11,9 @@ export class TagController {
    * @param params.taggerId - ID of the user adding the tag
    */
   static async create(params: Core.TTagEventParams) {
-    const { tagUrl, tag } = await TagController.generateTagUri(params);
-    const { taggedId, taggedKind, taggerId } = params;
+    const tag = Core.TagNormalizer.from(params);
 
-    // Use composite targetId for local persistence to align with delete flow and tests
-    await Core.TagApplication.create({
-      taggerId,
-      taggedId,
-      label: tag.label.toLowerCase(),
-      taggedKind,
-      tagUrl,
-      tagJson: tag.toJson(),
-    });
+    await Core.TagApplication.create({ tagList: [tag] });
   }
 
   /**
@@ -34,32 +24,14 @@ export class TagController {
    * @param params.taggerId - ID of the user removing the tag
    */
   static async delete(params: Core.TTagEventParams) {
-    const { tagUrl, tag } = await TagController.generateTagUri(params);
-    const { taggerId, taggedId, taggedKind } = params;
+    const { tagUrl, label, taggerId, taggedId, taggedKind } = Core.TagNormalizer.from(params);
 
     await Core.TagApplication.delete({
       taggedId,
-      label: tag.label.toLowerCase(),
+      label,
       taggedKind,
       taggerId,
       tagUrl,
     });
-  }
-
-  private static async generateTagUri({
-    taggedId,
-    label,
-    taggerId,
-    taggedKind,
-  }: Core.TTagEventParams): Promise<{ tagUrl: string; tag: PubkyAppTag }> {
-    let uri: string;
-    if (taggedKind === Core.TagKind.POST) {
-      const { pubky, id: postId } = Core.parseCompositeId(taggedId);
-      uri = postUriBuilder(pubky, postId);
-    } else {
-      uri = userUriBuilder(taggedId);
-    }
-    const { tag, meta } = await Core.TagNormalizer.to(uri, label.trim(), taggerId);
-    return { tagUrl: meta.url, tag };
   }
 }

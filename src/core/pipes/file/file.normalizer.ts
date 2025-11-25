@@ -5,16 +5,25 @@ import * as Libs from '@/libs';
 export class FileNormalizer {
   private constructor() {}
 
-  static toBlob(blob: Uint8Array, pubky: Core.Pubky): BlobResult {
+  static async toFileAttachment({ file, pubky }: Core.TUploadFileParams): Promise<Core.TFileAttachmentResult> {
+    const blobResult = await this.toBlob({ file, pubky });
+    const fileResult = this.toFile({ file, url: blobResult.meta.url, pubky });
+    return { blobResult, fileResult };
+  }
+
+  private static async toBlob({ file, pubky }: Core.TUploadFileParams): Promise<BlobResult> {
+    const fileContent = await file.arrayBuffer();
+    const blobData = new Uint8Array(fileContent);
+
     const builder = Core.PubkySpecsSingleton.get(pubky);
-    const result = builder.createBlob(blob);
+    const result = builder.createBlob(blobData);
 
     Libs.Logger.debug('Blob validated', { result });
 
     return result;
   }
 
-  static toFile(file: File, url: string, pubky: Core.Pubky): FileResult {
+  private static toFile({ file, url, pubky }: Core.TToFileParams): FileResult {
     const builder = Core.PubkySpecsSingleton.get(pubky);
     const result = builder.createFile(file.name, url, file.type, file.size);
 

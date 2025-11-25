@@ -17,3 +17,4 @@ export * from './useUserProfile';
 export * from './useProfileStats';
 export * from './useProfileActions';
 export * from './useBodyScrollLock';
+export * from './useCurrentUserProfile';

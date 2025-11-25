@@ -235,8 +235,8 @@ describe('useProfileStats', () => {
     it('calls UserController.getCounts with correct userId', () => {
       renderHook(() => useProfileStats('test-user-id'));
 
-      // UserController.getCounts should be called
-      expect(Core.UserController.getCounts).toHaveBeenCalledWith('test-user-id');
+      // UserController.getCounts should be called with object parameter
+      expect(Core.UserController.getCounts).toHaveBeenCalledWith({ userId: 'test-user-id' });
     });
   });
 });
