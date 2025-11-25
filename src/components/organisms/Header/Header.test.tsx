@@ -68,6 +68,12 @@ vi.mock('@/app', () => ({
 vi.mock('@/core', () => ({
   useAuthStore: () => mockUseProfileStore(),
   useNotificationStore: () => ({ selectUnread: () => 0 }),
+  ProfileController: {
+    read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
+  },
+  FileController: {
+    getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
+  },
   db: {
     user_details: {
       get: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
@@ -100,6 +106,14 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   SearchInput: () => <div data-testid="search-input">Search Input</div>,
+}));
+
+// Mock hooks
+vi.mock('@/hooks', () => ({
+  useCurrentUserProfile: vi.fn(() => ({
+    userDetails: { name: 'Test User', image: 'test-image.jpg' },
+    currentUserPubky: 'test-pubky-123',
+  })),
 }));
 
 describe('Header', () => {

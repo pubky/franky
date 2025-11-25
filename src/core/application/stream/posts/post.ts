@@ -12,6 +12,7 @@ export class PostStreamApplication {
     try {
       const postStream = await Core.PostStreamModel.findById(streamId);
       if (!postStream || postStream.stream.length === 0) {
+        Libs.Logger.warn('StreamId not found in cache', { streamId });
         return 0;
       }
 

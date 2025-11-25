@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Organisms from '@/organisms';
 
 export interface RightSidebarProps {
   className?: string;
@@ -18,7 +19,7 @@ export function RightSidebar({ className }: RightSidebarProps) {
       <Molecules.WhoToFollow />
       <Molecules.ActiveUsers />
       <Atoms.Container overrideDefaults className="sticky top-[100px] self-start">
-        <Molecules.FeedbackCard />
+        <Organisms.FeedbackCard />
       </Atoms.Container>
     </Atoms.Container>
   );
