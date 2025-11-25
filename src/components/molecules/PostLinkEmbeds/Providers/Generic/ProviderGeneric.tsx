@@ -42,7 +42,10 @@ export const Generic: ProviderTypes.EmbedProvider = {
             <Atoms.Container className="flex-row items-center gap-x-1">
               <Icons.Globe size={13} className="shrink-0 text-muted-foreground" />
 
-              <Atoms.Typography size="sm" className="font-medium text-muted-foreground">
+              <Atoms.Typography
+                size="sm"
+                className="max-w-50 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground sm:max-w-none sm:whitespace-normal"
+              >
                 {url}
               </Atoms.Typography>
             </Atoms.Container>
