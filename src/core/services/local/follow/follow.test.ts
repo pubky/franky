@@ -410,3 +410,258 @@ describe('LocalFollowService.delete', () => {
     expect(bConn?.followers ?? []).not.toContain(userA);
   });
 });
+
+describe('LocalFollowService - Stream Updates', () => {
+  beforeEach(async () => {
+    await Core.db.initialize();
+    await clearUserTables();
+
+    // Clear stream tables
+    await Core.db.transaction(
+      'rw',
+      [Core.UserStreamModel.table, Core.PostStreamModel.table, Core.UserCountsModel.table],
+      async () => {
+        await Core.UserStreamModel.table.clear();
+        await Core.PostStreamModel.table.clear();
+        // Precreate counts rows
+        await Core.UserCountsModel.table.bulkAdd([
+          { id: userA, ...DEFAULT_USER_COUNTS },
+          { id: userB, ...DEFAULT_USER_COUNTS },
+        ]);
+      },
+    );
+  });
+
+  describe('follow - user stream updates', () => {
+    it('adds followee to follower following stream', async () => {
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      const followingStream = await Core.UserStreamModel.findById(`${userA}:following`);
+      expect(followingStream?.stream).toContain(userB);
+    });
+
+    it('adds follower to followee followers stream', async () => {
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      const followersStream = await Core.UserStreamModel.findById(`${userB}:followers`);
+      expect(followersStream?.stream).toContain(userA);
+    });
+
+    it('adds both users to friends streams when becoming friends', async () => {
+      // Setup: B already follows A
+      await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
+
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      const [aFriendsStream, bFriendsStream] = await Promise.all([
+        Core.UserStreamModel.findById(`${userA}:friends`),
+        Core.UserStreamModel.findById(`${userB}:friends`),
+      ]);
+
+      expect(aFriendsStream?.stream).toContain(userB);
+      expect(bFriendsStream?.stream).toContain(userA);
+    });
+
+    it('does not add to friends stream when not mutual follow', async () => {
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      const [aFriendsStream, bFriendsStream] = await Promise.all([
+        Core.UserStreamModel.findById(`${userA}:friends`),
+        Core.UserStreamModel.findById(`${userB}:friends`),
+      ]);
+
+      expect(aFriendsStream).toBeNull();
+      expect(bFriendsStream).toBeNull();
+    });
+
+    it('does not duplicate entries when following same user twice', async () => {
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      const followingStream = await Core.UserStreamModel.findById(`${userA}:following`);
+      const followersStream = await Core.UserStreamModel.findById(`${userB}:followers`);
+
+      expect(followingStream?.stream.filter((id) => id === userB).length).toBe(1);
+      expect(followersStream?.stream.filter((id) => id === userA).length).toBe(1);
+    });
+  });
+
+  describe('unfollow - user stream updates', () => {
+    beforeEach(async () => {
+      // Setup existing follow relationship with streams
+      await Core.db.transaction('rw', [Core.UserConnectionsModel.table, Core.UserCountsModel.table], async () => {
+        await Core.UserConnectionsModel.create({ id: userA, following: [userB], followers: [] });
+        await Core.UserConnectionsModel.create({ id: userB, following: [], followers: [userA] });
+        await Core.UserCountsModel.update(userA, { following: 1 });
+        await Core.UserCountsModel.update(userB, { followers: 1 });
+      });
+
+      // Setup streams
+      await Core.db.transaction('rw', [Core.UserStreamModel.table], async () => {
+        await Core.UserStreamModel.upsert(`${userA}:following`, [userB]);
+        await Core.UserStreamModel.upsert(`${userB}:followers`, [userA]);
+      });
+    });
+
+    it('removes followee from follower following stream', async () => {
+      await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+      const followingStream = await Core.UserStreamModel.findById(`${userA}:following`);
+      expect(followingStream?.stream).not.toContain(userB);
+    });
+
+    it('removes follower from followee followers stream', async () => {
+      await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+      const followersStream = await Core.UserStreamModel.findById(`${userB}:followers`);
+      expect(followersStream?.stream).not.toContain(userA);
+    });
+
+    it('removes both users from friends streams when breaking friendship', async () => {
+      // Setup mutual follow (friends)
+      await Core.UserRelationshipsModel.create({ id: userB, following: true, followed_by: true, muted: false });
+      await Core.db.transaction('rw', [Core.UserStreamModel.table, Core.UserCountsModel.table], async () => {
+        await Core.UserStreamModel.upsert(`${userA}:friends`, [userB]);
+        await Core.UserStreamModel.upsert(`${userB}:friends`, [userA]);
+        await Core.UserCountsModel.update(userA, { friends: 1 });
+        await Core.UserCountsModel.update(userB, { friends: 1 });
+      });
+
+      await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+      const [aFriendsStream, bFriendsStream] = await Promise.all([
+        Core.UserStreamModel.findById(`${userA}:friends`),
+        Core.UserStreamModel.findById(`${userB}:friends`),
+      ]);
+
+      expect(aFriendsStream?.stream).not.toContain(userB);
+      expect(bFriendsStream?.stream).not.toContain(userA);
+    });
+
+    it('does not modify friends streams when not breaking friendship', async () => {
+      await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+      const [aFriendsStream, bFriendsStream] = await Promise.all([
+        Core.UserStreamModel.findById(`${userA}:friends`),
+        Core.UserStreamModel.findById(`${userB}:friends`),
+      ]);
+
+      // Streams should not exist if they were never created
+      expect(aFriendsStream).toBeNull();
+      expect(bFriendsStream).toBeNull();
+    });
+  });
+
+  describe('timeline stream invalidation', () => {
+    beforeEach(async () => {
+      // Seed some timeline streams
+      await Core.db.transaction('rw', [Core.PostStreamModel.table], async () => {
+        await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, ['post1', 'post2']);
+        await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT, ['post1']);
+        await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, ['post3', 'post4']);
+        await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FRIENDS_SHORT, ['post3']);
+        await Core.PostStreamModel.upsert(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL, ['post5']);
+        await Core.PostStreamModel.upsert(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL, ['post6']);
+      });
+    });
+
+    it('invalidates following timeline streams on follow', async () => {
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      // Following streams should be deleted
+      const [timelineAll, timelineShort, popularityAll] = await Promise.all([
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
+      ]);
+
+      expect(timelineAll).toBeNull();
+      expect(timelineShort).toBeNull();
+      expect(popularityAll).toBeNull();
+    });
+
+    it('does not invalidate friends streams when not becoming friends', async () => {
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      // Friends streams should still exist
+      const [friendsAll, friendsShort, popularityFriends] = await Promise.all([
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_SHORT),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL),
+      ]);
+
+      expect(friendsAll?.stream).toEqual(['post3', 'post4']);
+      expect(friendsShort?.stream).toEqual(['post3']);
+      expect(popularityFriends?.stream).toEqual(['post6']);
+    });
+
+    it('invalidates both following and friends streams when becoming friends', async () => {
+      // Setup: B already follows A
+      await Core.UserRelationshipsModel.create({ id: userB, following: false, followed_by: true, muted: false });
+
+      await Core.LocalFollowService.create({ follower: userA, followee: userB });
+
+      // All streams should be deleted
+      const [followingAll, friendsAll, popularityFollowing, popularityFriends] = await Promise.all([
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL),
+      ]);
+
+      expect(followingAll).toBeNull();
+      expect(friendsAll).toBeNull();
+      expect(popularityFollowing).toBeNull();
+      expect(popularityFriends).toBeNull();
+    });
+
+    it('invalidates following timeline streams on unfollow', async () => {
+      // Setup existing follow
+      await Core.db.transaction('rw', [Core.UserConnectionsModel.table, Core.UserCountsModel.table], async () => {
+        await Core.UserConnectionsModel.create({ id: userA, following: [userB], followers: [] });
+        await Core.UserConnectionsModel.create({ id: userB, following: [], followers: [userA] });
+        await Core.UserCountsModel.update(userA, { following: 1 });
+        await Core.UserCountsModel.update(userB, { followers: 1 });
+      });
+
+      await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+      // Following streams should be deleted
+      const [timelineAll, timelineShort, popularityAll] = await Promise.all([
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
+      ]);
+
+      expect(timelineAll).toBeNull();
+      expect(timelineShort).toBeNull();
+      expect(popularityAll).toBeNull();
+    });
+
+    it('invalidates both following and friends streams when breaking friendship', async () => {
+      // Setup mutual follow (friends)
+      await Core.UserRelationshipsModel.create({ id: userB, following: true, followed_by: true, muted: false });
+      await Core.db.transaction('rw', [Core.UserConnectionsModel.table, Core.UserCountsModel.table], async () => {
+        await Core.UserConnectionsModel.create({ id: userA, following: [userB], followers: [] });
+        await Core.UserConnectionsModel.create({ id: userB, following: [], followers: [userA] });
+        await Core.UserCountsModel.update(userA, { following: 1, friends: 1 });
+        await Core.UserCountsModel.update(userB, { followers: 1, friends: 1 });
+      });
+
+      await Core.LocalFollowService.delete({ follower: userA, followee: userB });
+
+      // All streams should be deleted
+      const [followingAll, friendsAll, popularityFollowing, popularityFriends] = await Promise.all([
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
+        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL),
+      ]);
+
+      expect(followingAll).toBeNull();
+      expect(friendsAll).toBeNull();
+      expect(popularityFollowing).toBeNull();
+      expect(popularityFriends).toBeNull();
+    });
+  });
+});
