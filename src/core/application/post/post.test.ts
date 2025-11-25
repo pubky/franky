@@ -293,7 +293,13 @@ describe('Post Application', () => {
       it('should propagate tag creation error after post sync', async () => {
         const mockTags = [createMockTag('author:post-with-tags-fail', 'science')];
 
-        const mockPost = new PubkyAppPost('Post with failing tags', PubkyAppPostKind.Short, undefined, undefined, undefined);
+        const mockPost = new PubkyAppPost(
+          'Post with failing tags',
+          PubkyAppPostKind.Short,
+          undefined,
+          undefined,
+          undefined,
+        );
         const mockData: Core.TCreatePostInput = {
           compositePostId: 'author:post-with-tags-fail',
           post: mockPost,
@@ -328,7 +334,13 @@ describe('Post Application', () => {
         const mockFileAttachments = [createMockFileAttachment('file-combo')];
         const mockTags = [createMockTag('author:post-combo', 'photography')];
 
-        const mockPost = new PubkyAppPost('Post with files and tags', PubkyAppPostKind.Short, undefined, undefined, undefined);
+        const mockPost = new PubkyAppPost(
+          'Post with files and tags',
+          PubkyAppPostKind.Short,
+          undefined,
+          undefined,
+          undefined,
+        );
         const mockData: Core.TCreatePostInput = {
           compositePostId: 'author:post-combo',
           post: mockPost,
@@ -364,7 +376,13 @@ describe('Post Application', () => {
         const mockFileAttachments = [createMockFileAttachment('file-fail')];
         const mockTags = [createMockTag('author:post-fail', 'art')];
 
-        const mockPost = new PubkyAppPost('Post with homeserver failure', PubkyAppPostKind.Short, undefined, undefined, undefined);
+        const mockPost = new PubkyAppPost(
+          'Post with homeserver failure',
+          PubkyAppPostKind.Short,
+          undefined,
+          undefined,
+          undefined,
+        );
         const mockData: Core.TCreatePostInput = {
           compositePostId: 'author:post-fail',
           post: mockPost,
@@ -376,7 +394,9 @@ describe('Post Application', () => {
         const { uploadSpy, saveSpy, requestSpy, tagCreateSpy } = setupCreateSpies();
         requestSpy.mockRejectedValue(new Error('Homeserver sync failed: 503 Service Unavailable'));
 
-        await expect(Core.PostApplication.create(mockData)).rejects.toThrow('Homeserver sync failed: 503 Service Unavailable');
+        await expect(Core.PostApplication.create(mockData)).rejects.toThrow(
+          'Homeserver sync failed: 503 Service Unavailable',
+        );
 
         expect(uploadSpy).toHaveBeenCalledWith({ fileAttachments: mockFileAttachments });
         expect(saveSpy).toHaveBeenCalledWith({
@@ -416,10 +436,7 @@ describe('Post Application', () => {
       kind: PubkyAppPostKind.Short,
       uri: 'pubky://author/pub/pubky.app/posts/post-with-files',
       indexed_at: Date.now(),
-      attachments: [
-        'pubky://author/pub/pubky.app/files/file1',
-        'pubky://author/pub/pubky.app/files/file2',
-      ],
+      attachments: ['pubky://author/pub/pubky.app/files/file1', 'pubky://author/pub/pubky.app/files/file2'],
     };
 
     it('should fetch post, delete locally and sync to homeserver', async () => {
@@ -494,7 +511,7 @@ describe('Post Application', () => {
 
     // --- Connection Scenarios ---
     describe('when post has connections (hadConnections = true)', () => {
-      it('should not call homeserver DELETE or FileApplication.delete', async () => {
+      it('should call homeserver DELETE but skip file deletion', async () => {
         const mockData = createMockDeleteData();
         const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
         findByIdSpy.mockResolvedValue(mockPostDetailsWithAttachments);
@@ -506,11 +523,13 @@ describe('Post Application', () => {
         expect(deleteSpy).toHaveBeenCalledWith({
           compositePostId: mockData.compositePostId,
         });
-        expect(requestSpy).not.toHaveBeenCalled();
+        // Homeserver DELETE is always called, even for soft deletes
+        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, mockPostDetailsWithAttachments.uri);
+        // File cleanup is skipped when post has connections
         expect(fileDeleteSpy).not.toHaveBeenCalled();
       });
 
-      it('should skip cleanup when post has connections', async () => {
+      it('should delete from homeserver but skip file cleanup when post has connections', async () => {
         const mockData = { compositePostId: 'author:post-with-connections' };
         const postWithAttachments = {
           ...mockPostDetailsWithAttachments,
@@ -525,11 +544,13 @@ describe('Post Application', () => {
         findByIdSpy.mockResolvedValue(postWithAttachments);
         deleteSpy.mockResolvedValue(true);
 
-        await expect(Core.PostApplication.delete(mockData)).resolves.toBeUndefined();
+        await Core.PostApplication.delete(mockData);
 
         expect(findByIdSpy).toHaveBeenCalledWith(mockData.compositePostId);
         expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: mockData.compositePostId });
-        expect(requestSpy).not.toHaveBeenCalled();
+        // Always sync deletion to homeserver (Nexus determines definitive state)
+        expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, postWithAttachments.uri);
+        // Files are preserved when post has connections (soft delete)
         expect(fileDeleteSpy).not.toHaveBeenCalled();
       });
     });
@@ -544,10 +565,7 @@ describe('Post Application', () => {
           kind: PubkyAppPostKind.Short,
           uri: 'pubky://author/pub/pubky.app/posts/post-with-files-delete',
           indexed_at: Date.now(),
-          attachments: [
-            'pubky://author/pub/pubky.app/files/file1',
-            'pubky://author/pub/pubky.app/files/file2',
-          ],
+          attachments: ['pubky://author/pub/pubky.app/files/file1', 'pubky://author/pub/pubky.app/files/file2'],
         };
 
         const { findByIdSpy, deleteSpy, requestSpy, fileDeleteSpy } = setupDeleteSpies();
@@ -614,7 +632,13 @@ describe('Post Application', () => {
     // --- Edge Cases ---
     describe('edge cases with empty arrays', () => {
       it('should skip tag creation with empty array', async () => {
-        const mockPost = new PubkyAppPost('Post with empty tags', PubkyAppPostKind.Short, undefined, undefined, undefined);
+        const mockPost = new PubkyAppPost(
+          'Post with empty tags',
+          PubkyAppPostKind.Short,
+          undefined,
+          undefined,
+          undefined,
+        );
         const mockData: Core.TCreatePostInput = {
           compositePostId: 'author:post-empty-tags',
           post: mockPost,
@@ -642,7 +666,13 @@ describe('Post Application', () => {
       });
 
       it('should skip file upload with empty array', async () => {
-        const mockPost = new PubkyAppPost('Post with empty files', PubkyAppPostKind.Short, undefined, undefined, undefined);
+        const mockPost = new PubkyAppPost(
+          'Post with empty files',
+          PubkyAppPostKind.Short,
+          undefined,
+          undefined,
+          undefined,
+        );
         const mockData: Core.TCreatePostInput = {
           compositePostId: 'author:post-empty-files',
           post: mockPost,
@@ -670,7 +700,13 @@ describe('Post Application', () => {
       });
 
       it('should handle empty files and tags', async () => {
-        const mockPost = new PubkyAppPost('Post with all empty arrays', PubkyAppPostKind.Short, undefined, undefined, undefined);
+        const mockPost = new PubkyAppPost(
+          'Post with all empty arrays',
+          PubkyAppPostKind.Short,
+          undefined,
+          undefined,
+          undefined,
+        );
         const mockData: Core.TCreatePostInput = {
           compositePostId: 'author:post-all-empty',
           post: mockPost,

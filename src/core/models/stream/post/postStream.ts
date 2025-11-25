@@ -37,12 +37,12 @@ export class PostStreamModel extends BaseStreamModel<PostStreamId, string, PostS
   /**
    * Adds post IDs to the head of the stream array in the database (atomic operation)
    * Creates the stream if it doesn't exist, filters out duplicates before adding
-   * 
+   *
    * @param id - The stream ID to update
    * @param postIds - Array of post IDs to add to the head of the stream
    * @returns Promise that resolves when the operation completes
    * @throws {DatabaseError} When the update fails
-   * 
+   *
    * @example
    * ```typescript
    * await PostStreamModel.prependPosts('home-feed', ['author:postId1', 'author:postId2']);
@@ -89,12 +89,12 @@ export class PostStreamModel extends BaseStreamModel<PostStreamId, string, PostS
   /**
    * Removes post IDs from the stream array in the database (atomic operation)
    * Silently succeeds if stream doesn't exist
-   * 
+   *
    * @param id - The stream ID to update
    * @param postIds - Array of post IDs to remove from the stream
    * @returns Promise that resolves when the operation completes
    * @throws {DatabaseError} When the update fails
-   * 
+   *
    * @example
    * ```typescript
    * await PostStreamModel.removePosts('home-feed', ['author:postId1', 'author:postId2']);
@@ -138,12 +138,12 @@ export class PostStreamModel extends BaseStreamModel<PostStreamId, string, PostS
 
   /**
    * Removes a single post ID from the stream array in the database (atomic operation)
-   * 
+   *
    * @param id - The stream ID to update
    * @param postId - Post ID to remove from the stream
    * @returns Promise that resolves when the operation completes
    * @throws {DatabaseError} When the update fails
-   * 
+   *
    * @example
    * ```typescript
    * await PostStreamModel.removePost('home-feed', 'author:postId1');

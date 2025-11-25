@@ -8,11 +8,11 @@ export interface TCreatePostParams {
   attachments?: File[];
   parentPostId?: string;
   originalPostId?: string;
-};
+}
 
 export interface TDeletePostParams {
   compositePostId: string;
-};
+}
 
 export interface TFileAttachmentsParams {
   attachments: File[];

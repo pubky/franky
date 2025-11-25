@@ -84,7 +84,13 @@ export class LocalPostService {
           // Update author's user counts in a single operation
           ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
 
-          this.updatePostStream({ compositePostId, kind: normalizedKind, parentUri, ops, action: Core.HomeserverAction.PUT })
+          this.updatePostStream({
+            compositePostId,
+            kind: normalizedKind,
+            parentUri,
+            ops,
+            action: Core.HomeserverAction.PUT,
+          });
 
           await Promise.all(ops);
         },
@@ -115,16 +121,17 @@ export class LocalPostService {
    * @param params.repostedUri - URI of original post if this is a repost
    *
    * @throws {DatabaseError} When database operations fail
-   * 
+   *
    * @returns true if the post had connections like replies or reposts or tags, false otherwise
    */
   static async delete({ compositePostId }: Core.TDeletePostParams): Promise<boolean> {
-
     const { pubky: authorId } = Core.parseCompositeId(compositePostId);
 
     const postCounts = await Core.PostCountsModel.findById(compositePostId);
     if (!postCounts) {
-      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Post counts not found', 404, { compositePostId });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Post counts not found', 404, {
+        compositePostId,
+      });
     }
     if (this.isPostLinked(postCounts)) {
       await Core.PostDetailsModel.update(compositePostId, { content: Core.DELETED });
@@ -135,7 +142,7 @@ export class LocalPostService {
 
     const parentUri = postRelationships?.replied ?? undefined;
     const repostedUri = postRelationships?.reposted ?? undefined;
-    
+
     // Fetch post details and relationships to get metadata
     const postDetails = await Core.PostDetailsModel.findById(compositePostId);
     const kind = postDetails?.kind ?? 'short';
@@ -178,7 +185,7 @@ export class LocalPostService {
           await Promise.all(ops);
         },
       );
-      
+
       Libs.Logger.debug('Post deleted successfully', { compositePostId });
       return false;
     } catch (error) {
@@ -190,21 +197,32 @@ export class LocalPostService {
     }
   }
 
-  private static updatePostStream({ compositePostId, kind, parentUri, ops, action }: Core.TLocalUpdatePostStreamParams) {
+  private static updatePostStream({
+    compositePostId,
+    kind,
+    parentUri,
+    ops,
+    action,
+  }: Core.TLocalUpdatePostStreamParams) {
     const { pubky: authorId } = Core.parseCompositeId(compositePostId);
-    
+
     // Select the appropriate method name based on action
     const methodName = action === Core.HomeserverAction.PUT ? 'prependPosts' : 'removePosts';
-      
+
     if (parentUri) {
-      const parentCompositeId = Core.buildCompositeIdFromPubkyUri({ uri: parentUri, domain: Core.CompositeIdDomain.POSTS });
+      const parentCompositeId = Core.buildCompositeIdFromPubkyUri({
+        uri: parentUri,
+        domain: Core.CompositeIdDomain.POSTS,
+      });
       ops.push(Core.PostStreamModel[methodName](`author_replies:${authorId}`, [compositePostId]));
       ops.push(Core.PostStreamModel[methodName](`post_replies:${parentCompositeId}`, [compositePostId]));
     } else {
       ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_ALL_ALL, [compositePostId]));
       ops.push(Core.PostStreamModel[methodName](`timeline:all:${kind}` as Core.PostStreamTypes, [compositePostId]));
       ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, [compositePostId]));
-      ops.push(Core.PostStreamModel[methodName](`timeline:following:${kind}` as Core.PostStreamTypes, [compositePostId]));
+      ops.push(
+        Core.PostStreamModel[methodName](`timeline:following:${kind}` as Core.PostStreamTypes, [compositePostId]),
+      );
       ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, [compositePostId]));
       ops.push(Core.PostStreamModel[methodName](`timeline:friends:${kind}` as Core.PostStreamTypes, [compositePostId]));
       ops.push(Core.PostStreamModel[methodName](`author:${authorId}`, [compositePostId]));

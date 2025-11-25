@@ -155,13 +155,10 @@ describe('PostNormalizer', () => {
 
       await Core.PostNormalizer.to(postData, testData.authorPubky);
 
-      expect(mockBuilder.createPost).toHaveBeenCalledWith(
-        postData.content,
-        postData.kind,
-        null,
-        null,
-        ['pubky://author/pub/pubky.app/files/file123', 'pubky://author/pub/pubky.app/files/file456'],
-      );
+      expect(mockBuilder.createPost).toHaveBeenCalledWith(postData.content, postData.kind, null, null, [
+        'pubky://author/pub/pubky.app/files/file123',
+        'pubky://author/pub/pubky.app/files/file456',
+      ]);
     });
 
     it('should handle all options together', async () => {
@@ -211,4 +208,3 @@ describe('PostNormalizer', () => {
     });
   });
 });
-

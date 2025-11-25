@@ -22,13 +22,13 @@ export class PostApplication {
     }
     const hadConnections = await Core.LocalPostService.delete({ compositePostId });
 
-    if (!hadConnections) {
-      const postUrl = post.uri;
-      await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);
+    // Always delete from homeserver, even if the post had connections (soft delete).
+    // Nexus will determine the definitive state based on graph state.
+    const postUrl = post.uri;
+    await Core.HomeserverService.request(Core.HomeserverAction.DELETE, postUrl);
 
-      if (post.attachments && post.attachments.length > 0) {
-        await Core.FileApplication.delete(post.attachments);
-      }
+    if (!hadConnections && post.attachments && post.attachments.length > 0) {
+      await Core.FileApplication.delete(post.attachments);
     }
   }
 }

@@ -12,4 +12,4 @@ export interface TLocalUpdatePostStreamParams {
   parentUri?: string;
   ops: Promise<unknown>[];
   action: Core.HomeserverAction.PUT | Core.HomeserverAction.DELETE;
-};
+}

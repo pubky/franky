@@ -600,9 +600,7 @@ describe('LocalPostService', () => {
     it('should throw error when trying to delete non-existent post', async () => {
       const nonExistentPostId = 'nonexistent:post123';
 
-      await expect(
-        Core.LocalPostService.delete({ compositePostId: nonExistentPostId })
-      ).rejects.toMatchObject({
+      await expect(Core.LocalPostService.delete({ compositePostId: nonExistentPostId })).rejects.toMatchObject({
         type: 'RECORD_NOT_FOUND',
         message: 'Post counts not found',
         statusCode: 404,
@@ -695,10 +693,14 @@ describe('LocalPostService', () => {
         const timelineAllAll = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_ALL);
         const timelineAllShort = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_SHORT);
         const timelineFollowingAll = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL);
-        const timelineFollowingShort = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT);
+        const timelineFollowingShort = await Core.PostStreamModel.table.get(
+          Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT,
+        );
         const timelineFriendsAll = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL);
         const timelineFriendsShort = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_FRIENDS_SHORT);
-        const authorStream = await Core.PostStreamModel.table.get(`author:${testData.authorPubky}` as Core.PostStreamId);
+        const authorStream = await Core.PostStreamModel.table.get(
+          `author:${testData.authorPubky}` as Core.PostStreamId,
+        );
 
         expect(timelineAllAll?.stream).toContain(postId);
         expect(timelineAllShort?.stream).toContain(postId);
@@ -717,7 +719,9 @@ describe('LocalPostService', () => {
 
         // Verify post was added to long-form streams
         const timelineAllLong = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_LONG);
-        const timelineFollowingLong = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_FOLLOWING_LONG);
+        const timelineFollowingLong = await Core.PostStreamModel.table.get(
+          Core.PostStreamTypes.TIMELINE_FOLLOWING_LONG,
+        );
         const timelineFriendsLong = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_FRIENDS_LONG);
 
         expect(timelineAllLong?.stream).toContain(postId);
@@ -746,8 +750,12 @@ describe('LocalPostService', () => {
         await Core.LocalPostService.create(saveParams);
 
         // Verify reply was added to reply streams
-        const authorRepliesStream = await Core.PostStreamModel.table.get(`author_replies:${testData.authorPubky}` as Core.PostStreamId);
-        const postRepliesStream = await Core.PostStreamModel.table.get(`post_replies:${parentPostId}` as Core.PostStreamId);
+        const authorRepliesStream = await Core.PostStreamModel.table.get(
+          `author_replies:${testData.authorPubky}` as Core.PostStreamId,
+        );
+        const postRepliesStream = await Core.PostStreamModel.table.get(
+          `post_replies:${parentPostId}` as Core.PostStreamId,
+        );
 
         expect(authorRepliesStream?.stream).toContain(replyId);
         expect(postRepliesStream?.stream).toContain(replyId);
@@ -760,17 +768,17 @@ describe('LocalPostService', () => {
       it('should prepend posts to beginning of stream (most recent first)', async () => {
         const postId1 = testData.fullPostId1;
         const postId2 = Core.buildCompositeId({ pubky: testData.authorPubky, id: 'xyz789' });
-        
+
         await setupUserCounts(testData.authorPubky);
 
         // Create first post
         await Core.LocalPostService.create(createSaveParams('First post', postId1));
-        
+
         // Create second post
         await Core.LocalPostService.create(createSaveParams('Second post', postId2));
 
         const timelineAllAll = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_ALL);
-        
+
         // Second post should be at index 0 (most recent)
         expect(timelineAllAll?.stream[0]).toBe(postId2);
         expect(timelineAllAll?.stream[1]).toBe(postId1);
@@ -794,7 +802,9 @@ describe('LocalPostService', () => {
         // Verify post was removed from streams
         const timelineAllAll = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_ALL);
         const timelineAllShort = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_SHORT);
-        const authorStream = await Core.PostStreamModel.table.get(`author:${testData.authorPubky}` as Core.PostStreamId);
+        const authorStream = await Core.PostStreamModel.table.get(
+          `author:${testData.authorPubky}` as Core.PostStreamId,
+        );
 
         expect(timelineAllAll?.stream || []).not.toContain(postId);
         expect(timelineAllShort?.stream || []).not.toContain(postId);
@@ -811,15 +821,21 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add reply to streams first
-        await Core.PostStreamModel.prependPosts(`author_replies:${testData.authorPubky}` as Core.PostStreamId, [replyId]);
+        await Core.PostStreamModel.prependPosts(`author_replies:${testData.authorPubky}` as Core.PostStreamId, [
+          replyId,
+        ]);
         await Core.PostStreamModel.prependPosts(`post_replies:${parentPostId}` as Core.PostStreamId, [replyId]);
 
         // Delete the reply
         await Core.LocalPostService.delete({ compositePostId: replyId });
 
         // Verify reply was removed from streams
-        const authorRepliesStream = await Core.PostStreamModel.table.get(`author_replies:${testData.authorPubky}` as Core.PostStreamId);
-        const postRepliesStream = await Core.PostStreamModel.table.get(`post_replies:${parentPostId}` as Core.PostStreamId);
+        const authorRepliesStream = await Core.PostStreamModel.table.get(
+          `author_replies:${testData.authorPubky}` as Core.PostStreamId,
+        );
+        const postRepliesStream = await Core.PostStreamModel.table.get(
+          `post_replies:${parentPostId}` as Core.PostStreamId,
+        );
 
         expect(authorRepliesStream?.stream || []).not.toContain(replyId);
         expect(postRepliesStream?.stream || []).not.toContain(replyId);
@@ -868,7 +884,7 @@ describe('LocalPostService', () => {
 
         timelineAllAll = await Core.PostStreamModel.table.get(Core.PostStreamTypes.TIMELINE_ALL_ALL);
         const finalCount = timelineAllAll?.stream.length || 0;
-        
+
         // Stream should be back to original state
         expect(finalCount).toBe(initialCount - 1);
         expect(timelineAllAll?.stream || []).not.toContain(postId);

@@ -37,7 +37,10 @@ export class FileApplication {
       fileAttachments.map(async (fileUri) => {
         // Delete the file metadata
         await Core.HomeserverService.delete(fileUri);
-        const fileCompositeId = Core.buildCompositeIdFromPubkyUri({ uri: fileUri, domain: Core.CompositeIdDomain.FILES });
+        const fileCompositeId = Core.buildCompositeIdFromPubkyUri({
+          uri: fileUri,
+          domain: Core.CompositeIdDomain.FILES,
+        });
         if (fileCompositeId) {
           const file = await Core.FileDetailsModel.findById(fileCompositeId);
           if (file) {
@@ -45,7 +48,7 @@ export class FileApplication {
             await Core.HomeserverService.delete(file.src);
             await Core.LocalFileService.deleteById(fileCompositeId);
           } else {
-            const file = await Core.HomeserverService.request(Core.HomeserverAction.GET, fileUri) as { src: string};
+            const file = (await Core.HomeserverService.request(Core.HomeserverAction.GET, fileUri)) as { src: string };
             // Delete the file blob
             await Core.HomeserverService.delete(file.src);
           }

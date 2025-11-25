@@ -1,1 +1,1 @@
-export const DELETED = "[DELETED]";
+export const DELETED = '[DELETED]';

@@ -29,11 +29,11 @@ const getRandomSentence = (): string => {
     'Prod is down. This is fine. 🔥',
     'Rubber duck debugging strikes again 🦆',
     'TODO: actually write the TODO 📝',
-    'Code works. Don\'t touch it. 🙏',
-    'If it ain\'t broke, you\'re not trying hard enough 💪',
+    "Code works. Don't touch it. 🙏",
+    "If it ain't broke, you're not trying hard enough 💪",
     'Premature optimization is the root of all evil 😈',
-    'YAGNI: You Aren\'t Gonna Need It 🚫',
-    'DRY: Don\'t Repeat Yourself... Don\'t Repeat Yourself 🔁',
+    "YAGNI: You Aren't Gonna Need It 🚫",
+    "DRY: Don't Repeat Yourself... Don't Repeat Yourself 🔁",
     'Weekend? More like debug-end 🎮',
     'The best error message is the one that never shows up ✅',
     'git blame: the code of shame 👻',
@@ -61,7 +61,7 @@ export function HomeHeader() {
 
   const handlePostCreation = () => {
     Core.PostController.create({
-      authorId: "idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy",
+      authorId: 'idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy',
       content: getRandomSentence(),
       kind: Core.PubkyAppPostKind.Short,
       // parentPostId: "idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy:00348DPDEPTF0",
@@ -72,7 +72,7 @@ export function HomeHeader() {
 
   const handlePostDeletion = () => {
     Core.PostController.delete({
-      compositePostId: "idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy:00348N937XAK0"
+      compositePostId: 'idg3qibn87ror49jahc1wt8ecg61y8ip6ydxts6ox9su3ko3wpoy:00348N937XAK0',
     });
   };
 

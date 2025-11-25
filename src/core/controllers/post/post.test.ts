@@ -29,7 +29,10 @@ vi.mock('pubky-app-specs', () => ({
     Long: 1,
   },
   PubkyAppPostEmbed: class {
-    constructor(public uri: string, public content: string) {}
+    constructor(
+      public uri: string,
+      public content: string,
+    ) {}
   },
   postUriBuilder: (authorId: string, postId: string) => `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
 }));
@@ -176,7 +179,7 @@ describe('PostController', () => {
 
     it('should include all count fields in response', async () => {
       await setupExistingPost();
-      
+
       // Update counts to non-zero values
       await Core.PostCountsModel.table.update(testData.fullPostId, {
         tags: 5,
@@ -324,9 +327,9 @@ describe('PostController', () => {
       const { PostController } = await import('./post');
 
       try {
-        await expect(
-          PostController.delete({ compositePostId: testData.fullPostId }),
-        ).rejects.toThrow('User is not the author of this post');
+        await expect(PostController.delete({ compositePostId: testData.fullPostId })).rejects.toThrow(
+          'User is not the author of this post',
+        );
       } finally {
         cleanupAuthUser();
       }
@@ -344,9 +347,9 @@ describe('PostController', () => {
         .mockRejectedValueOnce(new Error('Database transaction failed'));
 
       try {
-        await expect(
-          PostController.delete({ compositePostId: testData.fullPostId }),
-        ).rejects.toThrow('Database transaction failed');
+        await expect(PostController.delete({ compositePostId: testData.fullPostId })).rejects.toThrow(
+          'Database transaction failed',
+        );
       } finally {
         deleteSpy.mockRestore();
         cleanupAuthUser();
