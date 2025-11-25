@@ -1,19 +1,9 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import { LucideProps } from 'lucide-react';
+import * as Types from './index';
 
-export interface ProfilePageSidebarLink {
-  icon: React.ComponentType<LucideProps>;
-  url: string;
-  label: string;
-}
-
-export interface ProfilePageLinksProps {
-  links?: ProfilePageSidebarLink[];
-}
-
-export function ProfilePageLinks({ links }: ProfilePageLinksProps) {
+export function ProfilePageLinks({ links }: Types.ProfilePageLinksProps) {
   return (
     <Atoms.Container overrideDefaults={true} className="flex flex-col">
       <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
