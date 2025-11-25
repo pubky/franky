@@ -1,0 +1,145 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Anchor - Snapshots > matches snapshot for HTTP link 1`] = `
+<a
+  class=""
+  href="https://example.com"
+>
+  <span>
+    HTTP Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot for email link 1`] = `
+<a
+  class=""
+  href="mailto:test@example.com"
+>
+  <span>
+    Email Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot for phone link 1`] = `
+<a
+  class=""
+  href="tel:+1234567890"
+>
+  <span>
+    Phone Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with SVG children 1`] = `
+<a
+  class=""
+  href="https://example.com"
+>
+  <svg
+    data-testid="svg-icon"
+  >
+    <circle
+      cx="50"
+      cy="50"
+      r="40"
+    />
+  </svg>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with combined props 1`] = `
+<a
+  class="custom-class"
+  href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
+>
+  <span>
+    Combined Props Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with custom className 1`] = `
+<a
+  class="custom-class"
+  href="https://example.com"
+>
+  <span>
+    Custom Class Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with default props 1`] = `
+<a
+  class=""
+  href="https://example.com"
+>
+  <span>
+    Default Anchor
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with download attribute 1`] = `
+<a
+  class=""
+  download=""
+  href="/document.pdf"
+>
+  <span>
+    Download Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with image children 1`] = `
+<a
+  class=""
+  href="https://example.com"
+>
+  <img
+    alt="Icon"
+    src="/icon.png"
+  />
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with rel attribute 1`] = `
+<a
+  class=""
+  href="https://example.com"
+  rel="noopener noreferrer"
+>
+  <span>
+    Secure Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with target blank 1`] = `
+<a
+  class=""
+  href="https://example.com"
+  target="_blank"
+>
+  <span>
+    External Link
+  </span>
+</a>
+`;
+
+exports[`Anchor - Snapshots > matches snapshot with text children 1`] = `
+<a
+  class=""
+  href="https://example.com"
+>
+  <span>
+    Text Link
+  </span>
+</a>
+`;

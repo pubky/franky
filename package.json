@@ -38,6 +38,7 @@
     "@radix-ui/react-toggle": "1.1.10",
     "@synonymdev/pubky": "0.5.0-rc.2",
     "bip39": "3.1.0",
+    "cheerio": "1.1.2",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "date-fns": "4.1.0",

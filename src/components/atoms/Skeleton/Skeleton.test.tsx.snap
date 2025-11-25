@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Skeleton - Snapshots > matches snapshot with aria-label 1`] = `
+<div
+  aria-label="Loading..."
+  class="animate-pulse rounded-md bg-accent"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with card skeleton layout 1`] = `
+<div
+  class="animate-pulse bg-accent h-[200px] w-full rounded-xl"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with circular shape 1`] = `
+<div
+  class="animate-pulse bg-accent h-12 w-12 rounded-full"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with custom background 1`] = `
+<div
+  class="animate-pulse rounded-md bg-muted"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with custom className 1`] = `
+<div
+  class="animate-pulse rounded-md bg-accent h-4 w-full"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with data-testid prop 1`] = `
+<div
+  class="animate-pulse rounded-md bg-accent"
+  data-slot="skeleton"
+  data-testid="custom-test-id"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="animate-pulse rounded-md bg-accent"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with id prop 1`] = `
+<div
+  class="animate-pulse rounded-md bg-accent"
+  data-slot="skeleton"
+  id="skeleton-loader"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with multiple custom attributes 1`] = `
+<div
+  aria-label="Loading user avatar"
+  class="animate-pulse bg-accent h-20 w-20 rounded-full"
+  data-slot="skeleton"
+  id="avatar-skeleton"
+  role="status"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with rectangle shape 1`] = `
+<div
+  class="animate-pulse bg-accent h-24 w-full rounded-lg"
+  data-slot="skeleton"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with role attribute 1`] = `
+<div
+  class="animate-pulse rounded-md bg-accent"
+  data-slot="skeleton"
+  role="status"
+/>
+`;
+
+exports[`Skeleton - Snapshots > matches snapshot with text line dimensions 1`] = `
+<div
+  class="animate-pulse rounded-md bg-accent h-4 w-[250px]"
+  data-slot="skeleton"
+/>
+`;

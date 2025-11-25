@@ -1,0 +1,107 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Image - Snapshots > matches snapshot with JPG image 1`] = `
+<img
+  alt="JPG photo"
+  class="h-auto max-w-full"
+  src="/photo.jpg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with PNG image 1`] = `
+<img
+  alt="PNG graphic"
+  class="h-auto max-w-full"
+  src="/graphic.png"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with SVG image 1`] = `
+<img
+  alt="SVG icon"
+  class="h-auto max-w-full"
+  src="/icon.svg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with WebP image 1`] = `
+<img
+  alt="WebP image"
+  class="h-auto max-w-full"
+  src="/modern.webp"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with custom className 1`] = `
+<img
+  alt="Image"
+  class="h-auto max-w-full rounded-full border-2"
+  src="/image.jpg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with data-testid prop 1`] = `
+<img
+  alt="Image"
+  class="h-auto max-w-full"
+  data-testid="custom-test-id"
+  src="/image.jpg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with id prop 1`] = `
+<img
+  alt="Image"
+  class="h-auto max-w-full"
+  id="hero-image"
+  src="/image.jpg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with loading attribute 1`] = `
+<img
+  alt="Lazy loaded"
+  class="h-auto max-w-full"
+  loading="lazy"
+  src="/lazy.jpg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with multiple custom attributes 1`] = `
+<img
+  alt="Complex image"
+  class="h-auto max-w-full rounded-lg shadow-md"
+  height="300"
+  loading="lazy"
+  src="/complex.jpg"
+  title="A complex image"
+  width="400"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with required props 1`] = `
+<img
+  alt="Test image"
+  class="h-auto max-w-full"
+  src="/image.jpg"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with title attribute 1`] = `
+<img
+  alt="Image"
+  class="h-auto max-w-full"
+  src="/image.jpg"
+  title="Image tooltip"
+/>
+`;
+
+exports[`Image - Snapshots > matches snapshot with width and height attributes 1`] = `
+<img
+  alt="Sized image"
+  class="h-auto max-w-full"
+  height="200"
+  src="/sized.jpg"
+  width="300"
+/>
+`;

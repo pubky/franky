@@ -55,3 +55,48 @@ export const convertHmsToSeconds = (
 
   return h * 3600 + m * 60 + s;
 };
+
+/**
+ * Validates if a URL is safe to fetch (prevents SSRF attacks)
+ */
+export function isUrlSafe(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+
+    // Only allow HTTP and HTTPS protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return false;
+    }
+
+    // Block localhost and private IP ranges
+    let hostname = parsed.hostname.toLowerCase();
+
+    // Remove brackets from IPv6 addresses for consistent checking
+    if (hostname.startsWith('[') && hostname.endsWith(']')) {
+      hostname = hostname.slice(1, -1);
+    }
+
+    // Block localhost variations
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '0.0.0.0') {
+      return false;
+    }
+
+    // Block private IP ranges (basic check)
+    const privateRanges = [
+      /^10\./,
+      /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
+      /^192\.168\./,
+      /^169\.254\./, // Link-local
+      /^fd[0-9a-f]{2}:/i, // IPv6 private
+      /^fe80:/i, // IPv6 link-local
+    ];
+
+    if (privateRanges.some((range) => range.test(hostname))) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
