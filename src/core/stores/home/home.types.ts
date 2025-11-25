@@ -19,15 +19,15 @@ export const REACH = {
   //ME: 'me',
 } as const;
 
-export const CONTENT = {
-  ALL: 'all',
-  SHORT: 'short',
-  LONG: 'long',
-  IMAGES: 'images',
-  VIDEOS: 'videos',
-  LINKS: 'links',
-  FILES: 'files',
-} as const;
+export enum CONTENT {
+  ALL = 'all',
+  SHORT = 'short',
+  LONG = 'long',
+  IMAGES = 'images',
+  VIDEOS = 'videos',
+  LINKS = 'links',
+  FILES = 'files',
+}
 
 // Home types
 export type LayoutType = (typeof LAYOUT)[keyof typeof LAYOUT];

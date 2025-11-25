@@ -20,7 +20,7 @@ vi.mock('@/core', () => ({
     getAvatarUrl: vi.fn((userId: string) => `https://example.com/avatar/${userId}.png`),
   },
   PostController: {
-    read: vi.fn(),
+    getPostDetails: vi.fn(),
   },
   ProfileController: {
     read: vi.fn(),
@@ -46,7 +46,7 @@ describe('PostHeader', () => {
   it('shows loading when details are unavailable', () => {
     // First call (postDetails) returns null, second (userDetails) returns null
     mockUseLiveQuery
-      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.PostController.read>>)
+      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.PostController.getPostDetails>>)
       .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.ProfileController.read>>);
 
     const { container } = render(<PostHeader postId="user123:post456" />);
@@ -87,7 +87,7 @@ describe('PostHeader - Snapshots', () => {
   it('matches snapshot in loading state', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
     mockUseLiveQuery
-      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.PostController.read>>)
+      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.PostController.getPostDetails>>)
       .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.ProfileController.read>>);
 
     const { container } = render(<PostHeader postId="user123:post456" />);
