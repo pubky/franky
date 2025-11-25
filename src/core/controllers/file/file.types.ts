@@ -5,6 +5,12 @@ export type TUploadFileParams = {
   pubky: Core.Pubky;
 };
 
+export type TToFileParams = {
+  file: File;
+  url: string;
+  pubky: Core.Pubky;
+};
+
 export type TGetMetadataParams = {
   fileAttachments: string[];
 };

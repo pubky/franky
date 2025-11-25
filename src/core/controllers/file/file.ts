@@ -19,17 +19,12 @@ export class FileController {
    * @returns Promise resolving to the file URL
    */
   static async upload({ file, pubky }: Core.TUploadFileParams): Promise<string> {
-    const fileContent = await file.arrayBuffer();
-    const blobData = new Uint8Array(fileContent);
+    // 1. Normalize File Attachment
+    const fileAttachment = await Core.FileNormalizer.toFileAttachment({ file, pubky });
+    // 2. Upload to homeserver
+    await Core.FileApplication.upload({ fileAttachments: [fileAttachment] });
 
-    // 1. Normalize Blob
-    const blobResult = Core.FileNormalizer.toBlob(blobData, pubky);
-    // 2. Normalize File Record
-    const fileResult = Core.FileNormalizer.toFile(file, blobResult.meta.url, pubky);
-    // 3. Upload to homeserver
-    await Core.FileApplication.upload({ blobResult, fileResult });
-
-    return fileResult.meta.url;
+    return fileAttachment.fileResult.meta.url;
   }
 
   /**

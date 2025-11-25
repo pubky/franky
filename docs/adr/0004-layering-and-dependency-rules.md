@@ -18,3 +18,7 @@ Codify dependency boundaries: UI → controllers → pipes/application → servi
 - ✅ Prevents IO or business logic leakage into UI/store layers.
 - ⚠️ Adds overhead when a feature spans multiple layers; requires coordination.
 - ⚠️ Architectural violations must be caught via linting/review or module boundary tooling.
+
+## Related Decisions
+
+- **ADR-0009: Application Layer Cross-Domain Orchestration** — Extends this ADR to allow Application-to-Application calls for cross-domain workflow orchestration while maintaining unidirectional flow principles.
