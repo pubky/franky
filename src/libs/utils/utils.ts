@@ -254,3 +254,15 @@ export function formatFileName(filename: string, maxLength = 18): string {
 
   return `${filename.slice(0, baseLength)}…${extension}`;
 }
+
+/**
+ * Truncates a string to a maximum length and appends an ellipsis if truncated.
+ * @param str - The string to truncate
+ * @param maxLength - Maximum length of the string
+ * @returns Truncated string
+ */
+export function truncateString(str: string, maxLength: number): string {
+  if (!str) return '';
+  if (str.length <= maxLength) return str;
+  return `${str.slice(0, maxLength)}...`;
+}

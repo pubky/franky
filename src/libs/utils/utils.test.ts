@@ -10,6 +10,7 @@ import {
   hexToRgba,
   extractInitials,
   normaliseRadixIds,
+  truncateString,
 } from './utils';
 
 describe('Utils', () => {
@@ -540,6 +541,99 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       expect(normalized).toBeDefined();
       expect(normalized.children.length).toBe(0);
+    });
+  });
+
+  describe('truncateString', () => {
+    it('should truncate strings longer than maxLength', () => {
+      expect(truncateString('VeryLongUserName', 10)).toBe('VeryLongUs...');
+      expect(truncateString('Miguel Medeiros', 10)).toBe('Miguel Med...');
+    });
+
+    it('should not truncate strings shorter than maxLength', () => {
+      expect(truncateString('John', 10)).toBe('John');
+      expect(truncateString('Short', 10)).toBe('Short');
+    });
+
+    it('should handle strings exactly at maxLength', () => {
+      expect(truncateString('1234567890', 10)).toBe('1234567890');
+      expect(truncateString('ExactlyTen', 10)).toBe('ExactlyTen');
+    });
+
+    it('should handle empty string', () => {
+      expect(truncateString('', 10)).toBe('');
+    });
+
+    it('should handle very short maxLength', () => {
+      expect(truncateString('Hello World', 1)).toBe('H...');
+      expect(truncateString('Test', 2)).toBe('Te...');
+    });
+
+    it('should handle maxLength of 0', () => {
+      expect(truncateString('Test', 0)).toBe('...');
+    });
+
+    it('should handle single character strings', () => {
+      expect(truncateString('A', 1)).toBe('A');
+      expect(truncateString('A', 5)).toBe('A');
+    });
+
+    it('should handle special characters', () => {
+      expect(truncateString('Special!@#$%Characters', 10)).toBe('Special!@#...');
+      expect(truncateString('Email@domain.com', 10)).toBe('Email@doma...');
+    });
+
+    it('should handle unicode characters', () => {
+      // Note: Emojis are multi-byte characters, so string.length may not match visual character count
+      // This test verifies the function works correctly with the JavaScript string API
+      expect(truncateString('Hello 世界', 7)).toBe('Hello 世...');
+      expect(truncateString('Test 你好', 6)).toBe('Test 你...');
+    });
+
+    it('should handle strings with spaces', () => {
+      expect(truncateString('Hello World Test', 10)).toBe('Hello Worl...');
+      expect(truncateString('   Spaces   ', 5)).toBe('   Sp...');
+    });
+
+    it('should handle null and undefined as empty strings', () => {
+      expect(truncateString(null as unknown as string, 10)).toBe('');
+      expect(truncateString(undefined as unknown as string, 10)).toBe('');
+    });
+
+    it('should add exactly three dots as ellipsis', () => {
+      const result = truncateString('LongString', 5);
+      expect(result.endsWith('...')).toBe(true);
+      expect(result.split('...').length).toBe(2);
+    });
+
+    it('should preserve the first N characters before ellipsis', () => {
+      const result = truncateString('HelloWorld', 5);
+      expect(result.startsWith('Hello')).toBe(true);
+      expect(result).toBe('Hello...');
+    });
+
+    it('should handle consecutive truncations consistently', () => {
+      const str = 'ConsistentString';
+      const result1 = truncateString(str, 8);
+      const result2 = truncateString(str, 8);
+      expect(result1).toBe(result2);
+      expect(result1).toBe('Consiste...');
+    });
+
+    it('should handle different maxLength values for same string', () => {
+      const str = 'TestString';
+      expect(truncateString(str, 4)).toBe('Test...');
+      expect(truncateString(str, 6)).toBe('TestSt...');
+      expect(truncateString(str, 8)).toBe('TestStri...');
+      expect(truncateString(str, 10)).toBe('TestString');
+    });
+
+    it('should handle numbers as strings', () => {
+      expect(truncateString('123456789012345', 10)).toBe('1234567890...');
+    });
+
+    it('should handle mixed alphanumeric strings', () => {
+      expect(truncateString('User123Name456', 8)).toBe('User123N...');
     });
   });
 });

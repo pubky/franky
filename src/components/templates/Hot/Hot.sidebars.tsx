@@ -1,6 +1,7 @@
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 import { FilterTimeframe } from './FilterTimeframe';
+import * as Organisms from '@/organisms';
 
 export interface HotSidebarProps {
   reach: Core.ReachType;
@@ -25,7 +26,7 @@ export function HotRightSidebar() {
     <>
       <Molecules.WhoToFollow />
       <div className="sticky top-[100px] self-start">
-        <Molecules.FeedbackCard />
+        <Organisms.FeedbackCard />
       </div>
     </>
   );
@@ -44,7 +45,7 @@ export function HotRightDrawer() {
   return (
     <div className="flex flex-col gap-6">
       <Molecules.WhoToFollow />
-      <Molecules.FeedbackCard />
+      <Organisms.FeedbackCard />
     </div>
   );
 }
