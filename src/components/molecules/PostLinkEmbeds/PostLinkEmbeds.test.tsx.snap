@@ -31,7 +31,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Generic website previ
             width="13"
           />
           <span
-            class="font-medium text-muted-foreground"
+            class="max-w-50 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground sm:max-w-none sm:whitespace-normal"
           >
             https://example.com/article
           </span>
