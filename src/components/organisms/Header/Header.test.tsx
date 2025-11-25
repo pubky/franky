@@ -68,6 +68,12 @@ vi.mock('@/app', () => ({
 vi.mock('@/core', () => ({
   useAuthStore: () => mockUseProfileStore(),
   useNotificationStore: () => ({ selectUnread: () => 0 }),
+  ProfileController: {
+    read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
+  },
+  FileController: {
+    getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
+  },
   db: {
     user_details: {
       get: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),

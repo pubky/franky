@@ -62,4 +62,39 @@ export class UserApplication {
   static async taggers(params: Core.TUserTaggersParams): Promise<Core.NexusUser[]> {
     return await Core.NexusUserService.taggers(params);
   }
+
+  /**
+   * Retrieves user details from local database. If not found, fetches from Nexus API and persists to local database.
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user details or null if not found
+   */
+  static async details({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+    const userDetails = await Core.LocalProfileService.details({ userId });
+    if (userDetails) {
+      return userDetails;
+    }
+    const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
+    if (nexusUserDetails) {
+      await Core.LocalProfileService.upsert(nexusUserDetails);
+    }
+    return await Core.LocalProfileService.details({ userId });
+  }
+
+  /**
+   * Retrieves user counts from local database. If not found, fetches from Nexus API and persists to local database.
+   * @param params - Parameters containing user ID
+   * @returns Promise resolving to user counts or null if not found
+   */
+  static async counts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    const userCounts = await Core.LocalProfileService.counts({ userId });
+    if (userCounts) {
+      return userCounts;
+    }
+    const nexusUserCounts = await Core.NexusUserService.counts({ user_id: userId });
+    if (nexusUserCounts) {
+      await Core.LocalProfileService.upsertCounts({ userId }, nexusUserCounts);
+      return await Core.LocalProfileService.counts({ userId });
+    }
+    return null;
+  }
 }
