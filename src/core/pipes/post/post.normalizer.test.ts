@@ -51,14 +51,14 @@ describe('PostNormalizer', () => {
           blobResult: {
             blob: { data: new Uint8Array([1, 2, 3]) },
             meta: { url: 'pubky://author/pub/pubky.app/blobs/blob123' },
-          } as unknown as any,
+          } as unknown as Core.TFileAttachmentResult['blobResult'],
           fileResult: mockFileResult1,
         },
         {
           blobResult: {
             blob: { data: new Uint8Array([4, 5, 6]) },
             meta: { url: 'pubky://author/pub/pubky.app/blobs/blob456' },
-          } as unknown as any,
+          } as unknown as Core.TFileAttachmentResult['blobResult'],
           fileResult: mockFileResult2,
         },
       ],

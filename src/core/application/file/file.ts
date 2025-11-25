@@ -1,5 +1,4 @@
 import * as Core from '@/core';
-import { PubkyAppFile } from 'pubky-app-specs';
 
 /**
  * File Application
