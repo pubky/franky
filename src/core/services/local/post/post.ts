@@ -3,6 +3,24 @@ import * as Libs from '@/libs';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
+  private constructor() {}
+
+  /**
+   * Read a post from the local database.
+   * @param postId - ID of the post to read
+   * @returns Post details
+   */
+  static async read({ postId }: { postId: string }) {
+    try {
+      return await Core.PostDetailsModel.findById(postId);
+    } catch (error) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
   /**
    * Save a new post to the local database.
    *
@@ -272,5 +290,20 @@ export class LocalPostService {
     const newCount = Math.max(0, currentCount + countChange);
 
     await Core.PostCountsModel.update(postId, { [countField]: newCount });
+  }
+
+  static async getPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
+    try {
+      const tags = await Core.PostTagsModel.findById(postId);
+      if (!tags) return [];
+
+      return [tags] as unknown as Core.TagCollectionModelSchema<string>[];
+    } catch (error) {
+      Libs.Logger.error('Failed to get post tags', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post tags', 500, {
+        error,
+        postId,
+      });
+    }
   }
 }

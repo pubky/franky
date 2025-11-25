@@ -14,7 +14,9 @@ export class PostController {
    * @param params.postId - ID of the post to get counts for
    * @returns Post counts (with default values if not found)
    */
-  static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
+  static async getPostCounts({ postId }: { postId: string }) {
+    // Calling local service directly to avoid unnecessary network calls
+    // since we are not using the application layer for this operation
     return await Core.LocalPostService.getPostCounts(postId);
   }
 
