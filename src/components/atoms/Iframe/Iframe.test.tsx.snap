@@ -2,14 +2,16 @@
 
 exports[`Iframe - Snapshots > matches snapshot with custom props 1`] = `
 <iframe
+  allow="accelerometer; autoplay"
   allowfullscreen=""
-  class="rounded-md"
-  data-testid="test-iframe"
-  height="315"
+  class="rounded-md custom-class"
+  data-testid="iframe"
+  height="360"
   loading="lazy"
+  sandbox="allow-scripts allow-same-origin"
   src="https://example.com/embed"
   title="Example embed"
-  width="100%"
+  width="640"
 />
 `;
 

@@ -1,4 +1,5 @@
 import { createRef } from 'react';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Iframe } from './Iframe';
 
@@ -62,6 +63,14 @@ describe('Iframe', () => {
     expect(iframe).toHaveAttribute('allow', 'accelerometer; autoplay');
     expect(iframe).toHaveAttribute('sandbox', 'allow-scripts allow-same-origin');
   });
+
+  it('supports custom data-testid override', () => {
+    render(<Iframe src="https://example.com/embed" title="Example embed" data-testid="custom-iframe" />);
+    const iframe = screen.getByTestId('custom-iframe');
+
+    expect(iframe).toBeInTheDocument();
+    expect(iframe).toHaveAttribute('src', 'https://example.com/embed');
+  });
 });
 
 describe('Iframe - Snapshots', () => {
@@ -75,9 +84,11 @@ describe('Iframe - Snapshots', () => {
       <Iframe
         src="https://example.com/embed"
         title="Example embed"
-        width="100%"
-        height="315"
-        data-testid="test-iframe"
+        className="custom-class"
+        width="640"
+        height="360"
+        allow="accelerometer; autoplay"
+        sandbox="allow-scripts allow-same-origin"
       />,
     );
     expect(container.firstChild).toMatchSnapshot();
