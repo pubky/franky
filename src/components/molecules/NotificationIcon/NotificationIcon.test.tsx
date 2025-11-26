@@ -22,8 +22,8 @@ vi.mock('@/atoms', () => ({
   ),
 }));
 
-// Mock lucide-react icons
-vi.mock('lucide-react', () => ({
+// Mock @/libs/icons
+vi.mock('@/libs/icons', () => ({
   UserRoundPlus: ({ className, size }: { className?: string; size?: number }) => (
     <svg data-testid="icon-follow" data-size={size} className={className}>
       FollowIcon
