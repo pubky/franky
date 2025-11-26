@@ -2,27 +2,28 @@
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Generic website preview embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <a
     data-testid="generic-website-preview"
     href="https://example.com/article"
-    rel="noopener noreferrer"
-    target="_blank"
   >
     <div
-      class="justify-between gap-6 rounded-md bg-muted p-6 lg:flex-row"
+      class="flex w-full max-w-full min-w-auto flex-wrap items-start gap-6 rounded-md bg-muted p-6 lg:max-w-[520px] xl:max-w-full"
       data-testid="container"
     >
       <div
-        class="gap-y-2"
+        class="flex min-w-0 flex-1 flex-col gap-2"
         data-testid="container"
       >
-        <span>
+        <span
+          class="wrap-break-word"
+        >
           Example Article Title
         </span>
         <div
-          class="flex-row items-center gap-x-1"
+          class="flex flex-row items-center gap-1"
           data-testid="container"
         >
           <svg
@@ -31,7 +32,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Generic website previ
             width="13"
           />
           <span
-            class="max-w-50 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground sm:max-w-none sm:whitespace-normal"
+            class="min-w-0 flex-1 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground"
           >
             https://example.com/article
           </span>
@@ -39,7 +40,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Generic website previ
       </div>
       <img
         alt="Website social image"
-        class="h-25 w-45 rounded-md object-cover object-center"
+        class="h-25 w-45 shrink-0 rounded-md object-cover object-center"
         src="https://example.com/og-image.jpg"
       />
     </div>
@@ -49,6 +50,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Generic website previ
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -69,6 +71,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -93,6 +96,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -113,6 +117,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div

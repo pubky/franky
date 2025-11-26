@@ -59,6 +59,16 @@ vi.mock('@/atoms', () => ({
       {children}
     </a>
   ),
+  Link: ({
+    children,
+    href,
+    'data-testid': dataTestId,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { 'data-testid'?: string }) => (
+    <a data-testid={dataTestId} href={href?.toString()} {...props}>
+      {children}
+    </a>
+  ),
   Typography: ({ children, className }: { children: React.ReactNode; className?: string; size?: string }) => (
     <span className={className}>{children}</span>
   ),
