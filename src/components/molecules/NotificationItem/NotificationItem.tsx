@@ -5,14 +5,9 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
-import { FlatNotification, NotificationType } from '@/core';
-import { useNotificationLink } from './useNotificationLink';
-import { hasPreviewText, getNotificationPreviewText } from './useNotificationPreview';
-
-interface NotificationItemProps {
-  notification: FlatNotification;
-  isUnread: boolean;
-}
+import { NotificationType } from '@/core';
+import { getNotificationLink, hasPreviewText, getNotificationPreviewText } from './NotificationItem.utils';
+import type { NotificationItemProps } from './NotificationItem.types';
 
 export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
   // Get notification display data
@@ -22,8 +17,8 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   const timestampShort = Libs.formatNotificationTime(notification.timestamp, false);
   const timestampLong = Libs.formatNotificationTime(notification.timestamp, true);
 
-  // Calculate notification links (business logic separated in hook)
-  const { notificationLink } = useNotificationLink(notification);
+  // Calculate notification links (business logic separated in pure function)
+  const { notificationLink } = getNotificationLink(notification);
 
   const contentElement = (
     <>

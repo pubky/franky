@@ -3,12 +3,7 @@
 import { useMemo } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import type { FlatNotification } from '@/core';
-
-interface NotificationsListProps {
-  notifications: FlatNotification[];
-  unreadNotifications: FlatNotification[];
-}
+import type { NotificationsListProps } from './NotificationsList.types';
 
 export function NotificationsList({ notifications, unreadNotifications }: NotificationsListProps) {
   // Create a Set of unread timestamps for O(1) lookup instead of O(n) search

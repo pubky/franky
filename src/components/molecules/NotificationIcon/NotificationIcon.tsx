@@ -1,42 +1,12 @@
 'use client';
 
-import {
-  StickyNote,
-  AtSign,
-  Tag,
-  UserRoundPlus,
-  UserRoundMinus,
-  MessageCircle,
-  Repeat,
-  Trash2,
-  HeartHandshake,
-} from 'lucide-react';
-import { NotificationType } from '@/core/models/notification/notification.types';
+import * as Icons from '@/libs/icons';
 import * as Atoms from '@/atoms';
-
-interface NotificationIconProps {
-  type: NotificationType;
-  showBadge: boolean;
-}
-
-const iconMap = {
-  [NotificationType.Follow]: UserRoundPlus,
-  [NotificationType.NewFriend]: HeartHandshake,
-  [NotificationType.LostFriend]: UserRoundMinus,
-  [NotificationType.TagPost]: Tag,
-  [NotificationType.TagProfile]: Tag,
-  [NotificationType.Reply]: MessageCircle,
-  [NotificationType.Repost]: Repeat,
-  [NotificationType.Mention]: AtSign,
-  [NotificationType.PostDeleted]: Trash2,
-  [NotificationType.PostEdited]: StickyNote,
-};
-
-const ICON_SIZE = 24;
-const BADGE_SIZE = 11;
+import type { NotificationIconProps } from './NotificationIcon.types';
+import { NOTIFICATION_ICON_MAP, ICON_SIZE, BADGE_SIZE } from './NotificationIcon.constants';
 
 export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
-  const IconComponent = iconMap[type] || StickyNote;
+  const IconComponent = NOTIFICATION_ICON_MAP[type] || Icons.StickyNote;
 
   return (
     <Atoms.Container
