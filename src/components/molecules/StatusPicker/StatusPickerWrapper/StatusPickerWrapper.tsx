@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
@@ -17,40 +17,19 @@ export function StatusPickerWrapper({
   const [open, setOpen] = useState(false);
   const [localStatus, setLocalStatus] = useState<string | null>(null);
   const isMobile = Hooks.useIsMobile();
-  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // Use local status if set, otherwise use prop
   const currentStatus = localStatus ?? status;
   const parsed = Libs.parseStatus(currentStatus, emoji);
 
-  // Handle sheet open/close and blur trigger button immediately when opening
-  // This prevents the aria-hidden warning by blurring before Radix sets aria-hidden
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-    // Blur trigger button immediately when sheet opens to prevent aria-hidden warning
-    if (newOpen && isMobile && triggerRef.current) {
-      // Use requestAnimationFrame for immediate execution before Radix sets aria-hidden
-      requestAnimationFrame(() => {
-        triggerRef.current?.blur();
-      });
-    }
-  };
-
   const handleStatusSelect = (selectedStatus: string) => {
     setLocalStatus(selectedStatus);
     onStatusChange?.(selectedStatus);
     setOpen(false);
-    // Blur the trigger button after status is selected to prevent reopening on Enter
-    setTimeout(() => {
-      if (triggerRef.current) {
-        triggerRef.current.blur();
-      }
-    }, 0);
   };
 
   const triggerButton = (
     <Atoms.Button
-      ref={triggerRef}
       variant="ghost"
       overrideDefaults={true}
       className="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
@@ -67,7 +46,7 @@ export function StatusPickerWrapper({
 
   if (isMobile) {
     return (
-      <Atoms.Sheet open={open} onOpenChange={handleOpenChange}>
+      <Atoms.Sheet open={open} onOpenChange={setOpen}>
         <Atoms.SheetTrigger asChild>{triggerButton}</Atoms.SheetTrigger>
         <Atoms.SheetContent side="bottom" onOpenAutoFocus={(e) => e.preventDefault()}>
           <Atoms.SheetHeader>
