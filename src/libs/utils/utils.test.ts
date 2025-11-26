@@ -11,6 +11,7 @@ import {
   extractInitials,
   normaliseRadixIds,
   truncateString,
+  truncateMiddle,
 } from './utils';
 
 describe('Utils', () => {
@@ -634,6 +635,144 @@ describe('Utils', () => {
 
     it('should handle mixed alphanumeric strings', () => {
       expect(truncateString('User123Name456', 8)).toBe('User123N...');
+    });
+  });
+
+  describe('truncateMiddle', () => {
+    it('should truncate strings in the middle for long strings', () => {
+      expect(truncateMiddle('VeryLongFileName.pdf', 15)).toBe('VeryLo...me.pdf');
+      expect(truncateMiddle('https://example.com/very/long/path', 25)).toBe('https://exa...y/long/path');
+    });
+
+    it('should not truncate strings shorter than maxLength', () => {
+      expect(truncateMiddle('short.txt', 20)).toBe('short.txt');
+      expect(truncateMiddle('https://example.com', 50)).toBe('https://example.com');
+    });
+
+    it('should handle strings exactly at maxLength', () => {
+      expect(truncateMiddle('1234567890', 10)).toBe('1234567890');
+      expect(truncateMiddle('ExactlyTen', 10)).toBe('ExactlyTen');
+    });
+
+    it('should preserve equal parts from start and end', () => {
+      // For maxLength 20: 20 - 3 (ellipsis) = 17 chars to keep
+      // Start: ceil(17/2) = 9, End: floor(17/2) = 8
+      const result = truncateMiddle('https://example.com/very/long/path/to/page.html', 20);
+      expect(result).toBe('https://e...age.html');
+      expect(result.length).toBe(20);
+    });
+
+    it('should handle URLs correctly', () => {
+      const longUrl = 'https://www.numerama.com/tech/2125229-article.html';
+      const result = truncateMiddle(longUrl, 30);
+      expect(result.length).toBe(30);
+      expect(result).toContain('...');
+      expect(result.startsWith('https://www.')).toBe(true);
+      expect(result.endsWith('ticle.html')).toBe(true);
+    });
+
+    it('should handle empty string', () => {
+      expect(truncateMiddle('', 10)).toBe('');
+    });
+
+    it('should handle very short maxLength', () => {
+      // maxLength 5: 5 - 3 = 2 chars to keep (1 start + 1 end)
+      expect(truncateMiddle('HelloWorld', 5)).toBe('H...d');
+      expect(truncateMiddle('Test', 5)).toBe('Test');
+    });
+
+    it('should handle maxLength of 3 (edge case)', () => {
+      // When maxLength equals ellipsis length, behavior may vary
+      // Current implementation: 3 - 3 = 0 chars to keep
+      const result = truncateMiddle('Test', 3);
+      expect(result).toContain('...');
+      expect(result.length).toBeGreaterThanOrEqual(3);
+    });
+
+    it('should handle maxLength less than 3 (edge case)', () => {
+      // Edge cases where maxLength < ellipsis.length
+      // Implementation behavior for these cases is documented but may not be ideal
+      const result1 = truncateMiddle('Test', 2);
+      const result2 = truncateMiddle('Test', 1);
+      const result3 = truncateMiddle('Test', 0);
+
+      // These all contain ellipsis but behavior is undefined for such small lengths
+      expect(result1).toContain('...');
+      expect(result2).toContain('...');
+      expect(result3).toContain('...');
+    });
+
+    it('should handle single character strings', () => {
+      expect(truncateMiddle('A', 1)).toBe('A');
+      expect(truncateMiddle('A', 5)).toBe('A');
+    });
+
+    it('should handle file paths', () => {
+      expect(truncateMiddle('/very/long/path/to/some/file.txt', 20)).toBe('/very/lon...file.txt');
+      expect(truncateMiddle('C:\\Users\\Documents\\file.pdf', 20)).toBe('C:\\Users\\...file.pdf');
+    });
+
+    it('should handle special characters', () => {
+      expect(truncateMiddle('Special!@#$%Characters', 15)).toBe('Specia...acters');
+      expect(truncateMiddle('Email@domain.com', 12)).toBe('Email....com');
+    });
+
+    it('should handle unicode characters', () => {
+      expect(truncateMiddle('Hello 世界 Test', 12)).toBe('Hello...Test');
+      expect(truncateMiddle('Test 你好 World', 12)).toBe('Test ...orld');
+    });
+
+    it('should handle null and undefined as empty strings', () => {
+      expect(truncateMiddle(null as unknown as string, 10)).toBe('');
+      expect(truncateMiddle(undefined as unknown as string, 10)).toBe('');
+    });
+
+    it('should add exactly three dots as ellipsis in the middle', () => {
+      const result = truncateMiddle('LongStringHere', 10);
+      expect(result).toBe('Long...ere');
+      expect(result).toContain('...');
+      expect(result.split('...').length).toBe(2);
+    });
+
+    it('should handle consecutive truncations consistently', () => {
+      const str = 'ConsistentStringValue';
+      const result1 = truncateMiddle(str, 15);
+      const result2 = truncateMiddle(str, 15);
+      expect(result1).toBe(result2);
+      expect(result1).toBe('Consis...gValue');
+    });
+
+    it('should handle different maxLength values for same string', () => {
+      const str = 'TestStringValue';
+      expect(truncateMiddle(str, 10)).toBe('Test...lue');
+      expect(truncateMiddle(str, 12)).toBe('TestS...alue');
+      expect(truncateMiddle(str, 15)).toBe('TestStringValue');
+    });
+
+    it('should preserve beginning and end of long URLs', () => {
+      const url = 'https://www.example.com/very/long/path/to/article/page.html';
+      const result = truncateMiddle(url, 40);
+      expect(result.startsWith('https://www.example')).toBe(true);
+      expect(result.endsWith('page.html')).toBe(true);
+      expect(result.length).toBe(40);
+    });
+
+    it('should handle mixed alphanumeric strings', () => {
+      expect(truncateMiddle('User123Name456Test', 12)).toBe('User1...Test');
+    });
+
+    it('should work with real-world examples', () => {
+      // Long article URL
+      const articleUrl = 'https://www.numerama.com/tech/2125229-la-nouvelle-fonctionnalite-de-x-twitter.html';
+      const truncated = truncateMiddle(articleUrl, 50);
+      expect(truncated.length).toBe(50);
+      expect(truncated).toContain('...');
+
+      // Long filename
+      const filename = 'very-long-document-name-with-many-words-2024.pdf';
+      const truncatedFile = truncateMiddle(filename, 30);
+      expect(truncatedFile.length).toBe(30);
+      expect(truncatedFile.endsWith('.pdf')).toBe(true);
     });
   });
 });

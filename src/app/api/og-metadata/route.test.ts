@@ -491,4 +491,186 @@ describe('API Route: /api/og-metadata', () => {
       expect(data.image).toBeNull(); // file:// protocol should be blocked
     });
   });
+
+  describe('Title and URL Truncation', () => {
+    it('should truncate long titles with "..." at the end', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      // Create a title longer than 100 chars (176 chars total)
+      const longTitle =
+        'This is a very long title that should be truncated because it exceeds the maximum length allowed for titles in the metadata which is set to one hundred characters plus ellipsis';
+
+      // Build HTML with the long title embedded directly
+      const mockHtml =
+        '<!DOCTYPE html><html><head><meta property="og:title" content="' +
+        longTitle +
+        '" /></head><body></body></html>';
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com');
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      // Title should be truncated to max 103 characters (100 + "...")
+      expect(data.title).toContain('...');
+      expect(data.title?.length).toBe(103);
+      expect(data.title?.endsWith('...')).toBe(true);
+      expect(data.title?.startsWith('This is a very long title')).toBe(true);
+    });
+
+    it('should truncate long URLs with "..." in the middle', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const longUrl =
+        'https://example.com/very/long/path/that/needs/to/be/truncated/because/it/is/too/long/for/display';
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Test" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest(longUrl);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.url?.length).toBeLessThanOrEqual(80);
+      expect(data.url).toContain('...');
+      expect(data.url).toMatch(/^https:\/\/example\.com.*\.\.\..*display$/); // Starts with beginning, has "...", ends with end
+    });
+
+    it('should not truncate short titles', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const shortTitle = 'Short Title';
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="${shortTitle}" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com');
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.title).toBe(shortTitle); // No truncation
+    });
+
+    it('should not truncate short URLs', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const shortUrl = 'https://example.com/short';
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Test" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest(shortUrl);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.url).toBe(shortUrl); // No truncation
+    });
+  });
 });

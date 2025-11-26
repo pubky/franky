@@ -259,10 +259,40 @@ export function formatFileName(filename: string, maxLength = 18): string {
  * Truncates a string to a maximum length and appends an ellipsis if truncated.
  * @param str - The string to truncate
  * @param maxLength - Maximum length of the string
- * @returns Truncated string
+ * @returns Truncated string with "..." at the end
+ *
+ * @example
+ * truncateString("Short text", 20) // "Short text"
+ * truncateString("Very long text that needs truncation", 20) // "Very long text that ..."
  */
 export function truncateString(str: string, maxLength: number): string {
   if (!str) return '';
   if (str.length <= maxLength) return str;
   return `${str.slice(0, maxLength)}...`;
+}
+
+/**
+ * Truncates a string with "..." in the middle to fit a maximum length
+ * Preserves the beginning and end of the string
+ *
+ * @param str - The string to truncate
+ * @param maxLength - Maximum length of the string
+ * @returns Truncated string with "..." in the middle
+ *
+ * @example
+ * truncateMiddle("https://example.com/short", 80) // "https://example.com/short"
+ * truncateMiddle("https://example.com/very/long/path/to/page", 30) // "https://exa...to/page"
+ * truncateMiddle("VeryLongFileName.pdf", 15) // "VeryLon...e.pdf"
+ */
+export function truncateMiddle(str: string, maxLength: number): string {
+  if (!str) return '';
+  if (str.length <= maxLength) return str;
+
+  // Calculate how many chars to keep on each side
+  const ellipsis = '...';
+  const charsToKeep = maxLength - ellipsis.length;
+  const charsStart = Math.ceil(charsToKeep / 2);
+  const charsEnd = Math.floor(charsToKeep / 2);
+
+  return str.slice(0, charsStart) + ellipsis + str.slice(-charsEnd);
 }

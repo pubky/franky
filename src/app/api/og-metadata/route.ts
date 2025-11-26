@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
 import dns from 'dns/promises';
 import { isIP } from 'net';
+import { truncateString, truncateMiddle } from '@/libs/utils';
 
 /**
  * API Route for secure OpenGraph metadata fetching
@@ -129,16 +129,25 @@ export async function POST(request: NextRequest) {
     // 9. Decode HTML
     const html = new TextDecoder().decode(Buffer.concat(chunks));
 
-    // 10. Parse metadata with cheerio
-    const $ = cheerio.load(html);
+    // 10. Parse metadata using regex (lighter than cheerio)
+    // Extract og:title
+    const ogTitleMatch =
+      html.match(/<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i) ||
+      html.match(/<meta\s+name=["']og:title["']\s+content=["']([^"']+)["']/i) ||
+      html.match(/<meta\s+content=["']([^"']+)["']\s+property=["']og:title["']/i) ||
+      html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']og:title["']/i);
 
-    const title =
-      $('meta[property="og:title"]').attr('content') ||
-      $('meta[name="og:title"]').attr('content') ||
-      $('title').text() ||
-      null;
+    const titleTagMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+    const title = ogTitleMatch?.[1] || titleTagMatch?.[1] || null;
 
-    const image = $('meta[property="og:image"]').attr('content') || $('meta[name="og:image"]').attr('content') || null;
+    // Extract og:image
+    const ogImageMatch =
+      html.match(/<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i) ||
+      html.match(/<meta\s+name=["']og:image["']\s+content=["']([^"']+)["']/i) ||
+      html.match(/<meta\s+content=["']([^"']+)["']\s+property=["']og:image["']/i) ||
+      html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']og:image["']/i);
+
+    const image = ogImageMatch?.[1] || null;
 
     // 11. Normalize and validate image URL (must also be safe)
     let normalizedImage: string | null = null;
@@ -177,10 +186,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 12. Return normalized metadata
+    // 12. Return normalized metadata with truncation
     return NextResponse.json({
-      url,
-      title: title ? title.trim().slice(0, 200) : null, // Limit title length
+      url: truncateMiddle(url, 80), // Truncate URL with "..." in the middle (max 80 chars)
+      title: title ? truncateString(title.trim(), 100) : null, // Truncate title with "..." at the end (max 100 chars)
       image: normalizedImage,
     });
   } catch (error) {
