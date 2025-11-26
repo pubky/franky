@@ -46,10 +46,11 @@ describe('NotificationsEmpty', () => {
     expect(screen.getByTestId('frown-icon')).toBeInTheDocument();
   });
 
-  it('renders background images', () => {
+  it('renders background image', () => {
     const { container } = render(<NotificationsEmpty />);
     const images = container.querySelectorAll('img');
-    expect(images.length).toBe(2);
+    expect(images.length).toBe(1);
+    expect(images[0]).toHaveAttribute('src', expect.stringContaining('notifications-empty-state.png'));
   });
 });
 

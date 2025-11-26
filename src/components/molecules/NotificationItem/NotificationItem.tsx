@@ -46,7 +46,7 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
           {timestamp}
         </Atoms.Typography>
 
-        <Atoms.NotificationIcon type={notification.type} showBadge={isUnread} size={24} />
+        <Molecules.NotificationIcon type={notification.type} showBadge={isUnread} />
       </Atoms.Container>
     </Atoms.Container>
   );

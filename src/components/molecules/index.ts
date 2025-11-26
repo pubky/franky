@@ -22,6 +22,7 @@ export * from './Logo';
 export * from './Metadata';
 export * from './Logout';
 export * from './MobileFooter';
+export * from './NotificationIcon';
 export * from './NotificationItem';
 export * from './NotificationsEmpty';
 export * from './NotificationsList';

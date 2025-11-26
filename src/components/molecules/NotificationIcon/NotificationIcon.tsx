@@ -12,13 +12,11 @@ import {
   HeartHandshake,
 } from 'lucide-react';
 import { NotificationType } from '@/core/models/notification/notification.types';
-import { cn } from '@/libs';
+import * as Atoms from '@/atoms';
 
 export interface NotificationIconProps {
   type: NotificationType;
-  className?: string;
   showBadge?: boolean;
-  size?: number;
 }
 
 const iconMap = {
@@ -34,28 +32,30 @@ const iconMap = {
   [NotificationType.PostEdited]: StickyNote,
 };
 
-export function NotificationIcon({ type, className, showBadge = false, size = 24 }: NotificationIconProps) {
+const ICON_SIZE = 20;
+const BADGE_SIZE = 11;
+
+export function NotificationIcon({ type, showBadge = false }: NotificationIconProps) {
   const IconComponent = iconMap[type] || StickyNote;
 
   return (
-    <div className={cn('relative shrink-0', className)} style={{ width: size, height: size }}>
-      <IconComponent className="text-foreground" size={size} />
+    <Atoms.Container
+      overrideDefaults={true}
+      className="relative shrink-0"
+      style={{ width: ICON_SIZE, height: ICON_SIZE }}
+    >
+      <IconComponent className="text-foreground" size={ICON_SIZE} />
       {showBadge && (
-        <div
-          className="absolute top-[54.17%] right-0 bottom-0 left-[54.17%]"
+        <Atoms.Container
+          overrideDefaults={true}
+          className="absolute -right-0.5 -bottom-0.5 rounded-full"
           style={{
-            width: '46%',
-            height: '46%',
+            width: BADGE_SIZE,
+            height: BADGE_SIZE,
+            backgroundColor: 'var(--brand)',
           }}
-        >
-          <div
-            className="absolute inset-0 rounded-full"
-            style={{
-              backgroundColor: 'var(--brand)',
-            }}
-          />
-        </div>
+        />
       )}
-    </div>
+    </Atoms.Container>
   );
 }

@@ -3,10 +3,7 @@
 import { useMemo, useCallback } from 'react';
 import type { FlatNotification } from '@/core';
 import * as Libs from '@/libs';
-import {
-  getNotificationText,
-  getUserIdFromNotification,
-} from '@/components/molecules/NotificationItem/NotificationItem.utils';
+import { getNotificationText, getUserIdFromNotification } from '@/components/molecules/NotificationItem';
 
 export interface UseNotificationsResult {
   notifications: FlatNotification[];

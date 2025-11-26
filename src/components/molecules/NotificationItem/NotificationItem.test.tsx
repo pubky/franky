@@ -43,6 +43,11 @@ vi.mock('@/molecules', () => ({
     </div>
   ),
   PostTag: ({ label }: { label: string }) => <span data-testid="post-tag">{label}</span>,
+  NotificationIcon: ({ type, showBadge }: { type: NotificationType; showBadge?: boolean }) => (
+    <div data-testid="notification-icon" data-type={type} data-badge={showBadge ? 'true' : 'false'}>
+      Icon
+    </div>
+  ),
 }));
 
 // Mock atoms
@@ -60,11 +65,6 @@ vi.mock('@/atoms', () => ({
       </Tag>
     );
   },
-  NotificationIcon: ({ type, showBadge }: { type: NotificationType; showBadge?: boolean }) => (
-    <div data-testid="notification-icon" data-type={type} data-badge={showBadge ? 'true' : 'false'}>
-      Icon
-    </div>
-  ),
 }));
 
 describe('NotificationItem', () => {
