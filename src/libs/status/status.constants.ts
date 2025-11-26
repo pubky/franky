@@ -34,7 +34,21 @@ export const STATUS_EMOJIS = {
 export const DEFAULT_STATUS = 'vacationing' as const;
 
 /**
- * Emoji regex pattern for extracting emojis from strings
- * Matches Unicode emoji sequences including skin tones and combinations
+ * Emoji regex pattern for extracting emojis from strings.
+ *
+ * Matches:
+ * - Regional indicators (flags): \p{RI}\p{RI}
+ * - Extended pictographic emojis with optional modifiers:
+ *   - Skin tone modifiers: \p{Emoji_Modifier}
+ *   - Variation selectors: \uFE0F
+ *   - Zero-width joiners (ZWJ sequences): \u200D
+ *
+ * Examples covered:
+ * - Simple: 😊 🎉
+ * - Flags: 🇺🇸 🇬🇧
+ * - Skin tones: 👋🏿 👨🏻‍💻
+ * - Variation selectors: ☹️ ⚠️
+ * - ZWJ sequences: 👨‍💻 👨‍👩‍👧‍👦
  */
-export const EMOJI_REGEX = /\p{RI}\p{RI}|\p{Extended_Pictographic}(?:\u200D\p{Extended_Pictographic})*/gu;
+export const EMOJI_REGEX =
+  /\p{RI}\p{RI}|\p{Extended_Pictographic}(?:\p{Emoji_Modifier}|\uFE0F|\u200D\p{Extended_Pictographic})*/gu;

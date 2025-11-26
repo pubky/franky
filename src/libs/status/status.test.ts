@@ -240,8 +240,8 @@ describe('status', () => {
 
       it('should handle emoji with skin tone modifiers', () => {
         const result = parseStatus('👋🏿 Waving');
-        expect(result.emoji).toBe('👋');
-        expect(result.text).toBe('🏿 Waving');
+        expect(result.emoji).toBe('👋🏿');
+        expect(result.text).toBe('Waving');
         expect(result.isCustom).toBe(true);
       });
 
@@ -249,6 +249,27 @@ describe('status', () => {
         const result = parseStatus('🇺🇸 In USA');
         expect(result.emoji).toBe('🇺🇸');
         expect(result.text).toBe('In USA');
+        expect(result.isCustom).toBe(true);
+      });
+
+      it('should handle multi-codepoint emojis with skin tones in ZWJ sequences', () => {
+        const result = parseStatus('👨🏻‍💻 Coding');
+        expect(result.emoji).toBe('👨🏻‍💻');
+        expect(result.text).toBe('Coding');
+        expect(result.isCustom).toBe(true);
+      });
+
+      it('should handle emojis with variation selectors', () => {
+        const result = parseStatus('☹️ Sad');
+        expect(result.emoji).toBe('☹️');
+        expect(result.text).toBe('Sad');
+        expect(result.isCustom).toBe(true);
+      });
+
+      it('should handle family emoji sequences', () => {
+        const result = parseStatus('👨‍👩‍👧‍👦 Family time');
+        expect(result.emoji).toBe('👨‍👩‍👧‍👦');
+        expect(result.text).toBe('Family time');
         expect(result.isCustom).toBe(true);
       });
     });
@@ -403,7 +424,7 @@ describe('status', () => {
 
       it('should handle emoji with skin tone modifiers', () => {
         const result = extractEmojiFromStatus('👋🏿 Waving');
-        expect(result).toBe('👋');
+        expect(result).toBe('👋🏿');
       });
 
       it('should handle flag emojis', () => {
@@ -414,6 +435,21 @@ describe('status', () => {
       it('should handle emoji sequences (regional indicators)', () => {
         const result = extractEmojiFromStatus('🇬🇧 In UK');
         expect(result).toBe('🇬🇧');
+      });
+
+      it('should handle multi-codepoint emojis with skin tones in ZWJ sequences', () => {
+        const result = extractEmojiFromStatus('👨🏻‍💻 Coding');
+        expect(result).toBe('👨🏻‍💻');
+      });
+
+      it('should handle emojis with variation selectors', () => {
+        const result = extractEmojiFromStatus('☹️ Sad');
+        expect(result).toBe('☹️');
+      });
+
+      it('should handle family emoji sequences', () => {
+        const result = extractEmojiFromStatus('👨‍👩‍👧‍👦 Family time');
+        expect(result).toBe('👨‍👩‍👧‍👦');
       });
     });
 
