@@ -9,6 +9,5 @@ export interface TimelineRepliesWithParentProps {
 
 export interface ReplyWithParentProps {
   replyPostId: string;
-  previousReplyId: string | null;
   onPostClick: (postId: string) => void;
 }

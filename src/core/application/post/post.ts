@@ -45,8 +45,11 @@ export class PostApplication {
     const localPost = await Core.LocalPostService.read({ postId });
 
     if (localPost) {
+      Libs.Logger.debug(`[PostApplication] Post found in local DB: ${postId}`);
       return localPost;
     }
+
+    Libs.Logger.debug(`[PostApplication] Post NOT found locally, fetching from Nexus: ${postId}`);
 
     // If not found locally, fetch from Nexus
     const [authorId, pId] = postId.split(':');
@@ -64,14 +67,21 @@ export class PostApplication {
     });
 
     if (!postData) {
+      Libs.Logger.warn(`[PostApplication] Post not found in Nexus: ${postId}`);
       return null;
     }
+
+    Libs.Logger.debug(`[PostApplication] Post fetched from Nexus, persisting locally: ${postId}`);
 
     // Persist all post data locally
     await Core.LocalPostService.persistPostData({ postId, postData });
 
+    Libs.Logger.debug(`[PostApplication] Post persisted, ensuring author exists: ${authorId}`);
+
     // Fetch and persist author if not in local DB
     await this.ensureAuthorExists(authorId as Core.Pubky);
+
+    Libs.Logger.debug(`[PostApplication] getOrFetchPost completed successfully: ${postId}`);
 
     return postData.details;
   }
@@ -84,17 +94,25 @@ export class PostApplication {
     const localAuthor = await Core.UserDetailsModel.findById(authorId);
 
     if (localAuthor) {
+      Libs.Logger.debug(`[PostApplication] Author already exists in DB: ${authorId}`);
       return;
     }
+
+    Libs.Logger.debug(`[PostApplication] Author NOT found, fetching from Nexus: ${authorId}`);
 
     try {
       const authorDetails = await Core.NexusUserService.details({ user_id: authorId });
 
       if (authorDetails) {
+        Libs.Logger.debug(`[PostApplication] Author fetched, upserting:`, authorDetails);
         await Core.UserDetailsModel.upsert(authorDetails);
+        Libs.Logger.debug(`[PostApplication] Author upserted successfully: ${authorId}`);
+      } else {
+        Libs.Logger.warn(`[PostApplication] Author details not found in Nexus: ${authorId}`);
       }
     } catch (error) {
       // Author fetch is not critical for post display, just log
+      Libs.Logger.error(`[PostApplication] Failed to fetch author: ${authorId}`, error);
       // The UI will show a placeholder for missing author data
       throw error; // Re-throw to let caller decide how to handle
     }

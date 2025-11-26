@@ -45,7 +45,19 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with repl
         data-testid="container"
       >
         <div
-          class=""
+          data-is-reply="false"
+          data-testid="post-[object Object]"
+        />
+        <div
+          class="pl-3"
+          data-testid="container"
+        >
+          <div
+            data-testid="post-thread-spacer"
+          />
+        </div>
+        <div
+          class="pl-3"
           data-testid="container"
         >
           <div
@@ -59,7 +71,19 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with repl
         data-testid="container"
       >
         <div
-          class=""
+          data-is-reply="false"
+          data-testid="post-[object Object]"
+        />
+        <div
+          class="pl-3"
+          data-testid="container"
+        >
+          <div
+            data-testid="post-thread-spacer"
+          />
+        </div>
+        <div
+          class="pl-3"
           data-testid="container"
         >
           <div

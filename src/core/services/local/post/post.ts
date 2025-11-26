@@ -318,6 +318,8 @@ export class LocalPostService {
   static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<void> {
     try {
       Libs.Logger.debug(`[LocalPostService] Starting persist for post ${postId}`);
+      Libs.Logger.debug(`[LocalPostService] postData.details:`, postData.details);
+      Libs.Logger.debug(`[LocalPostService] postData.counts:`, postData.counts);
       Libs.Logger.debug(`[LocalPostService] postData.details.id: ${postData.details.id}`);
       Libs.Logger.debug(`[LocalPostService] Match: ${postData.details.id === postId}`);
 
@@ -330,9 +332,20 @@ export class LocalPostService {
           Core.PostTagsModel.table,
         ],
         async () => {
-          // Persist post details
+          // Persist post details (remove 'author' field and ensure correct composite ID)
           Libs.Logger.debug(`[LocalPostService] Upserting post details for ${postId}`);
-          await Core.PostDetailsModel.upsert(postData.details);
+          Libs.Logger.debug(`[LocalPostService] Post details from Nexus:`, postData.details);
+
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { author, ...postDetailsWithoutAuthor } = postData.details;
+          const postDetailsToUpsert = {
+            ...postDetailsWithoutAuthor,
+            id: postId, // Use the composite ID (author:postId)
+          };
+
+          Libs.Logger.debug(`[LocalPostService] Post details to upsert:`, postDetailsToUpsert);
+          await Core.PostDetailsModel.upsert(postDetailsToUpsert);
+          Libs.Logger.debug(`[LocalPostService] Post details upserted successfully with id:`, postId);
 
           // Persist post counts
           await Core.PostCountsModel.upsert({

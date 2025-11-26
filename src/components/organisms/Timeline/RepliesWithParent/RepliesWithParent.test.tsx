@@ -241,13 +241,11 @@ describe('TimelineRepliesWithParent', () => {
       });
 
       // Mock useLiveQuery to handle multiple calls:
-      // 1st call: parentPostId from relationships
-      // 2nd call: parentPost from database
-      // 3rd call: previousParentPost
+      // 1st call: parentPostId (string)
+      // 2nd call: parentPost (object)
       mockUseLiveQuery
         .mockReturnValueOnce(mockParentId) // 1st: parentPostId
-        .mockReturnValueOnce({ id: mockParentId }) // 2nd: parentPost
-        .mockReturnValueOnce(null); // 3rd: previousParentPost
+        .mockReturnValueOnce({ id: mockParentId }); // 2nd: parentPost
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
@@ -270,7 +268,7 @@ describe('TimelineRepliesWithParent', () => {
         refresh: vi.fn(),
       });
 
-      mockUseLiveQuery.mockReturnValue(null);
+      mockUseLiveQuery.mockReturnValue({ parentPostId: null, parentPost: null });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
@@ -295,13 +293,11 @@ describe('TimelineRepliesWithParent', () => {
       });
 
       // Mock useLiveQuery to handle multiple calls:
-      // 1st call: parentPostId from relationships
-      // 2nd call: parentPost from database
-      // 3rd call: previousParentPost
+      // 1st call: parentPostId (string)
+      // 2nd call: parentPost (object)
       mockUseLiveQuery
         .mockReturnValueOnce(mockParentId) // 1st: parentPostId
-        .mockReturnValueOnce({ id: mockParentId }) // 2nd: parentPost
-        .mockReturnValueOnce(null); // 3rd: previousParentPost
+        .mockReturnValueOnce({ id: mockParentId }); // 2nd: parentPost
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
@@ -326,7 +322,7 @@ describe('TimelineRepliesWithParent', () => {
         refresh: vi.fn(),
       });
 
-      mockUseLiveQuery.mockReturnValue(null);
+      mockUseLiveQuery.mockReturnValue({ parentPostId: null, parentPost: null });
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
@@ -424,7 +420,7 @@ describe('TimelineRepliesWithParent', () => {
         refresh: vi.fn(),
       });
 
-      mockUseLiveQuery.mockReturnValue(null);
+      mockUseLiveQuery.mockReturnValue({ parentPostId: null, parentPost: null });
 
       const { container } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 

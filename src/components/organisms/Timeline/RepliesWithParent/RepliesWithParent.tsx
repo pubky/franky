@@ -1,7 +1,7 @@
 'use client';
 
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -34,19 +34,9 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
     <Organisms.TimelineStateWrapper loading={loading} error={error} hasItems={postIds.length > 0}>
       <Atoms.Container>
         <Atoms.Container overrideDefaults className="space-y-4">
-          {postIds.map((postId, index) => {
-            // Get previous reply's parent to avoid duplicates
-            const previousReplyId = index > 0 ? postIds[index - 1] : null;
-
-            return (
-              <ReplyWithParent
-                key={`reply_${postId}`}
-                replyPostId={postId}
-                previousReplyId={previousReplyId}
-                onPostClick={navigateToPost}
-              />
-            );
-          })}
+          {postIds.map((postId) => (
+            <ReplyWithParent key={`reply_${postId}`} replyPostId={postId} onPostClick={navigateToPost} />
+          ))}
 
           {/* Loading More Indicator */}
           {loadingMore && <Molecules.TimelineLoadingMore />}
@@ -65,103 +55,60 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
   );
 }
 
+// Cache to track in-flight parent post fetches across all component instances
+const fetchingParentPosts = new Set<string>();
+
 /**
  * ReplyWithParent
  *
  * Component that fetches and displays a reply post along with its parent.
- * If the parent is the same as the previous reply's parent, it won't show the parent again.
+ * Always shows the parent post if it exists.
  */
-function ReplyWithParent({ replyPostId, previousReplyId, onPostClick }: Types.ReplyWithParentProps) {
-  const fetchedParentsRef = useRef<Set<string>>(new Set());
-
-  // First useLiveQuery: Get parent post ID from relationships
+function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProps) {
+  // First: Get parent post ID from relationships
   const parentPostId = useLiveQuery(async () => {
     const relationships = await Core.PostRelationshipsModel.findById(replyPostId);
 
     if (!relationships?.replied) {
-      console.log('[ReplyWithParent] No replied relationship for:', replyPostId);
       return null;
     }
 
     const parentCompositeId = Core.buildCompositeIdFromPubkyUri({
-      uri: relationships.replied, // parent post URI
-      domain: Core.CompositeIdDomain.POSTS,
-    });
-
-    if (!parentCompositeId) {
-      console.log('[ReplyWithParent] Could not build parentCompositeId');
-      return null;
-    }
-
-    console.log('[ReplyWithParent] Parent ID resolved:', parentCompositeId);
-    return parentCompositeId;
-  }, [replyPostId]);
-
-  // Fetch parent post if not in local DB (separate from observation)
-  useEffect(() => {
-    if (!parentPostId) return;
-    if (fetchedParentsRef.current.has(parentPostId)) return; // Already fetched or fetching
-
-    const fetchParentIfNeeded = async () => {
-      const localPost = await Core.PostDetailsModel.findById(parentPostId);
-
-      if (!localPost) {
-        console.log('[ReplyWithParent] Parent post NOT found locally, fetching from Nexus:', parentPostId);
-        fetchedParentsRef.current.add(parentPostId); // Mark as fetched to prevent loops
-
-        const result = await Core.PostController.getOrFetchPost({ postId: parentPostId });
-        console.log('[ReplyWithParent] Fetch result:', result ? 'SUCCESS' : 'NULL', parentPostId);
-
-        // Double-check if it's now in the database
-        const verifyPost = await Core.PostDetailsModel.findById(parentPostId);
-        console.log('[ReplyWithParent] Verify after fetch:', verifyPost ? 'FOUND' : 'NOT FOUND', parentPostId);
-      }
-    };
-
-    fetchParentIfNeeded();
-  }, [parentPostId]);
-
-  // Second useLiveQuery: Just observe the parent post in the database (reactive to upserts)
-  const parentPost = useLiveQuery(async () => {
-    if (!parentPostId) return null;
-
-    const post = await Core.PostDetailsModel.findById(parentPostId);
-
-    if (post) {
-      console.log('[ReplyWithParent] Parent post found in DB:', parentPostId);
-    } else {
-      console.log('[ReplyWithParent] Parent post still not in DB:', parentPostId);
-    }
-
-    return post;
-  }, [parentPostId]);
-
-  // Get previous reply's parent to check if we should show parent again
-  const previousParentPost = useLiveQuery(async () => {
-    if (!previousReplyId) return null;
-
-    const relationships = await Core.PostRelationshipsModel.findById(previousReplyId);
-    if (!relationships?.replied) return null;
-
-    const previousParentId = Core.buildCompositeIdFromPubkyUri({
       uri: relationships.replied,
       domain: Core.CompositeIdDomain.POSTS,
     });
 
-    return previousParentId;
-  }, [previousReplyId]);
+    return parentCompositeId;
+  }, [replyPostId]);
 
-  // Only show parent if it's different from the previous reply's parent
-  const shouldShowParent = parentPostId && parentPostId !== previousParentPost;
+  // Second: Observe parent post details reactively
+  // Query the table to ensure reactivity to updates
+  const parentPost = useLiveQuery(async () => {
+    if (!parentPostId) return null;
 
-  console.log(
-    '[ReplyWithParent] Rendering - parentPost:',
-    parentPost?.id,
-    'previousParent:',
-    previousParentPost,
-    'shouldShow:',
-    shouldShowParent,
-  );
+    // Query via table.get() to ensure Dexie observes the table
+    const post = await Core.PostDetailsModel.table.get(parentPostId);
+
+    return post;
+  }, [parentPostId]);
+
+  // Fetch parent post if missing (user-initiated action)
+  // UI → Controller → Application → Services (Local + Nexus)
+  useEffect(() => {
+    if (parentPostId && !parentPost && !fetchingParentPosts.has(parentPostId)) {
+      fetchingParentPosts.add(parentPostId);
+
+      // Parent post ID exists but post details are missing
+      // Fetch via Controller (fire-and-forget, useLiveQuery will react to DB updates)
+      Core.PostController.getOrFetchPost({ postId: parentPostId }).finally(() => {
+        // Remove from cache after fetch completes (success or failure)
+        fetchingParentPosts.delete(parentPostId);
+      });
+    }
+  }, [parentPostId, parentPost]);
+
+  // Always show parent if it exists
+  const shouldShowParent = !!parentPostId;
 
   return (
     <Atoms.Container overrideDefaults className="flex flex-col">

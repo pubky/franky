@@ -839,11 +839,25 @@ describe('Post Application', () => {
     });
 
     it('should fetch and persist author if not in local database', async () => {
+      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const getPostSpy = vi.spyOn(Core.NexusPostStreamService, 'getPost').mockResolvedValue(mockNexusPost);
+      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
+      const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null); // Author not found
       const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
       const upsertAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'upsert').mockResolvedValue(undefined);
 
       const result = await Core.PostApplication.getOrFetchPost('author:post123');
 
+      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(getPostSpy).toHaveBeenCalledWith({
+        authorId: 'author',
+        postId: 'post123',
+      });
+      expect(persistSpy).toHaveBeenCalledWith({
+        postId: 'author:post123',
+        postData: mockNexusPost,
+      });
+      expect(findAuthorSpy).toHaveBeenCalledWith('author');
       expect(getAuthorSpy).toHaveBeenCalledWith({ user_id: 'author' });
       expect(upsertAuthorSpy).toHaveBeenCalledWith(mockUserDetails);
       expect(result).toEqual(mockNexusPost.details);
