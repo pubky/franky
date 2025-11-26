@@ -9,6 +9,7 @@ export * from './Filter';
 export * from './FooterLinks';
 export * from './Heading';
 export * from './Iframe';
+export * from './Image';
 export * from './ImageBackground';
 export * from './Input';
 export * from './Link';

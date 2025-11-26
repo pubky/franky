@@ -10,6 +10,7 @@ export const Container = forwardRef<HTMLDivElement | HTMLHtmlElement | HTMLBodyE
       display = 'flex',
       overrideDefaults = false,
       'data-testid': dataTestId,
+      className,
       ...props
     }: Types.ContainerProps,
     ref,
@@ -30,8 +31,8 @@ export const Container = forwardRef<HTMLDivElement | HTMLHtmlElement | HTMLBodyE
     };
 
     const containerClassName = overrideDefaults
-      ? cn(props.className)
-      : cn(defaultClasses, displayClasses[display], sizeClasses[size], props.className);
+      ? cn(className)
+      : cn(defaultClasses, displayClasses[display], sizeClasses[size], className);
 
     const Tag = (as || 'div') as React.ElementType;
 

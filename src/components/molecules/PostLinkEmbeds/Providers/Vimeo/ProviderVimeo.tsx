@@ -1,7 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as ProviderTypes from '../Provider.types';
 import * as ProviderConstants from '../Provider.constants';
-import * as ProviderUtils from '../Provider.utils';
+import * as Libs from '@/libs';
 
 /**
  * Extract Vimeo video ID from URL
@@ -75,9 +75,9 @@ const extractVimeoTimestamp = (url: string): number | null => {
 
     // Match h/m/s format using shared regex pattern
     // Supports: "1h2m3s", "5m", "30s", or plain "30" (treated as seconds)
-    const hmsMatch = timeHash.match(ProviderUtils.HMS_TIMESTAMP_REGEX);
+    const hmsMatch = timeHash.match(Libs.HMS_TIMESTAMP_REGEX);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
-      const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      const timestamp = Libs.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
       // convertHmsToSeconds returns null if any value is NaN (defense in depth)
       return timestamp;
     }
