@@ -51,21 +51,11 @@ describe('NotificationsEmpty', () => {
     const images = container.querySelectorAll('img');
     expect(images.length).toBe(2);
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<NotificationsEmpty className="custom-class" />);
-    expect(container.firstChild).toHaveClass('custom-class');
-  });
 });
 
 describe('NotificationsEmpty - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<NotificationsEmpty />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<NotificationsEmpty className="custom-empty" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

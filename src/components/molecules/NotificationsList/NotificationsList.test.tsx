@@ -45,19 +45,19 @@ describe('NotificationsList', () => {
   ];
 
   it('renders list of notifications', () => {
-    render(<NotificationsList notifications={mockNotifications} />);
+    render(<NotificationsList notifications={mockNotifications} unreadNotifications={[]} />);
     const items = screen.getAllByTestId('notification-item');
     expect(items).toHaveLength(3);
   });
 
   it('renders empty list when no notifications', () => {
-    render(<NotificationsList notifications={[]} />);
+    render(<NotificationsList notifications={[]} unreadNotifications={[]} />);
     const items = screen.queryAllByTestId('notification-item');
     expect(items).toHaveLength(0);
   });
 
   it('renders notifications in correct order', () => {
-    render(<NotificationsList notifications={mockNotifications} />);
+    render(<NotificationsList notifications={mockNotifications} unreadNotifications={[]} />);
     const items = screen.getAllByTestId('notification-item');
     expect(items[0]).toHaveAttribute('data-type', NotificationType.Follow);
     expect(items[1]).toHaveAttribute('data-type', NotificationType.Reply);
@@ -81,12 +81,12 @@ describe('NotificationsList - Snapshots', () => {
         reply_uri: 'user2:reply456',
       },
     ];
-    const { container } = render(<NotificationsList notifications={notifications} />);
+    const { container } = render(<NotificationsList notifications={notifications} unreadNotifications={[]} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with empty list', () => {
-    const { container } = render(<NotificationsList notifications={[]} />);
+    const { container } = render(<NotificationsList notifications={[]} unreadNotifications={[]} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

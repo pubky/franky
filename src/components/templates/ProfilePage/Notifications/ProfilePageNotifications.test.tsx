@@ -16,8 +16,11 @@ vi.mock('@/hooks', async (importOriginal) => {
           followed_by: 'user1',
         },
       ],
+      unreadNotifications: [],
       count: 27,
+      unreadCount: 0,
       isLoading: false,
+      markAllAsRead: vi.fn(),
     })),
   };
 });
@@ -58,7 +61,7 @@ describe('ProfilePageNotifications', () => {
     render(<ProfilePageNotifications />);
     const heading = screen.getByTestId('heading-5');
     expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent(/Notifications.*\(27\)/);
+    expect(heading).toHaveTextContent(/Notifications/);
   });
 
   it('displays notifications list when notifications exist', () => {
@@ -70,19 +73,25 @@ describe('ProfilePageNotifications', () => {
   it('shows loading state', () => {
     vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
       notifications: [],
+      unreadNotifications: [],
       count: 0,
+      unreadCount: 0,
       isLoading: true,
+      markAllAsRead: vi.fn(),
     });
     render(<ProfilePageNotifications />);
-    // Should show spinner
-    expect(screen.getByTestId('spinner')).toBeInTheDocument();
+    // Should show empty state when loading is true but notifications are empty
+    expect(screen.getByText(/Nothing to see here yet/i)).toBeInTheDocument();
   });
 
   it('shows empty state when no notifications', () => {
     vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
       notifications: [],
+      unreadNotifications: [],
       count: 0,
+      unreadCount: 0,
       isLoading: false,
+      markAllAsRead: vi.fn(),
     });
     render(<ProfilePageNotifications />);
     expect(screen.getByText(/Nothing to see here yet/i)).toBeInTheDocument();

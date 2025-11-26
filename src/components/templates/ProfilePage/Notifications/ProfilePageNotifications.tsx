@@ -1,42 +1,43 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import { PROFILE_ROUTES } from '@/app';
 
 export function ProfilePageNotifications() {
-  const { notifications, count, isLoading } = Hooks.useNotifications();
+  const { notifications, unreadNotifications, unreadCount, markAllAsRead } = Hooks.useNotifications();
 
-  if (isLoading) {
-    return (
-      <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0">
-        <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
-          Notifications {count > 0 && `(${count})`}
-        </Atoms.Heading>
-        <Atoms.Container overrideDefaults={true} className="flex items-center justify-center py-8">
-          <Atoms.Spinner size="lg" />
-        </Atoms.Container>
-      </Atoms.Container>
-    );
-  }
+  const pathname = usePathname();
+  const prevPathnameRef = useRef<string | null>(null);
+
+  // Mark all notifications as read when leaving the notifications page
+  useEffect(() => {
+    const isLeavingPage = prevPathnameRef.current === PROFILE_ROUTES.PROFILE && pathname !== PROFILE_ROUTES.PROFILE;
+
+    if (isLeavingPage && unreadCount > 0) {
+      markAllAsRead();
+    }
+
+    prevPathnameRef.current = pathname;
+  }, [pathname, unreadCount, markAllAsRead]);
 
   if (notifications.length === 0) {
     return (
-      <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0">
-        <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
-          Notifications {count > 0 && `(${count})`}
-        </Atoms.Heading>
+      <Atoms.Container className="mt-6 lg:mt-0">
         <Molecules.NotificationsEmpty />
       </Atoms.Container>
     );
   }
 
   return (
-    <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0">
+    <Atoms.Container className="mt-6 gap-4 lg:mt-0">
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
-        Notifications {count > 0 && `(${count})`}
+        Notifications {unreadCount > 0 && `(${unreadCount})`}
       </Atoms.Heading>
-      <Molecules.NotificationsList notifications={notifications} />
+      <Molecules.NotificationsList notifications={notifications} unreadNotifications={unreadNotifications} />
     </Atoms.Container>
   );
 }

@@ -37,8 +37,11 @@ vi.mock('@/hooks', async (importOriginal) => {
     ...actual,
     useNotifications: vi.fn(() => ({
       notifications: [],
-      count: mockNotificationsCount.current,
+      unreadNotifications: [],
+      count: 0,
+      unreadCount: mockNotificationsCount.current,
       isLoading: false,
+      markAllAsRead: vi.fn(),
     })),
   };
 });
@@ -167,6 +170,8 @@ describe('useProfileStats', () => {
         unique_tags: 3,
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
+
+      setMockNotificationsCount(15);
 
       const { result } = renderHook(() => useProfileStats('test-user-id'));
 

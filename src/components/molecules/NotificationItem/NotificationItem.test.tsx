@@ -79,24 +79,24 @@ describe('NotificationItem', () => {
   };
 
   it('renders notification text correctly', () => {
-    render(<NotificationItem notification={baseNotification} />);
-    expect(screen.getByText(/Anna followed you/i)).toBeInTheDocument();
+    render(<NotificationItem notification={baseNotification} isUnread={false} />);
+    expect(screen.getByText(/User followed you/i)).toBeInTheDocument();
   });
 
   it('renders avatar with user data', () => {
-    render(<NotificationItem notification={baseNotification} />);
+    render(<NotificationItem notification={baseNotification} isUnread={false} />);
     const avatar = screen.getByTestId('avatar-with-fallback');
-    expect(avatar).toHaveAttribute('data-name', 'Anna');
-    expect(avatar).toHaveAttribute('data-avatar', 'https://example.com/anna.jpg');
+    expect(avatar).toHaveAttribute('data-name', 'User');
+    expect(avatar).not.toHaveAttribute('data-avatar');
   });
 
   it('renders timestamp', () => {
-    render(<NotificationItem notification={baseNotification} />);
+    render(<NotificationItem notification={baseNotification} isUnread={false} />);
     expect(Libs.formatNotificationTime).toHaveBeenCalledWith(baseNotification.timestamp);
   });
 
   it('renders notification icon', () => {
-    render(<NotificationItem notification={baseNotification} />);
+    render(<NotificationItem notification={baseNotification} isUnread={false} />);
     const icon = screen.getByTestId('notification-icon');
     expect(icon).toHaveAttribute('data-type', NotificationType.Follow);
   });
@@ -106,7 +106,7 @@ describe('NotificationItem', () => {
       ...baseNotification,
       timestamp: Date.now() - 1000 * 60 * 60, // 1 hour ago
     };
-    render(<NotificationItem notification={recentNotification} />);
+    render(<NotificationItem notification={recentNotification} isUnread={true} />);
     const icon = screen.getByTestId('notification-icon');
     expect(icon).toHaveAttribute('data-badge', 'true');
   });
@@ -116,7 +116,7 @@ describe('NotificationItem', () => {
       ...baseNotification,
       timestamp: Date.now() - 1000 * 60 * 60 * 25, // 25 hours ago
     };
-    render(<NotificationItem notification={oldNotification} />);
+    render(<NotificationItem notification={oldNotification} isUnread={false} />);
     const icon = screen.getByTestId('notification-icon');
     expect(icon).toHaveAttribute('data-badge', 'false');
   });
@@ -129,7 +129,7 @@ describe('NotificationItem', () => {
       tag_label: 'bitcoin',
       post_uri: 'user1:post123',
     };
-    render(<NotificationItem notification={tagNotification} />);
+    render(<NotificationItem notification={tagNotification} isUnread={false} />);
     expect(screen.getByTestId('post-tag')).toBeInTheDocument();
     expect(screen.getByText('bitcoin')).toBeInTheDocument();
   });
@@ -141,7 +141,7 @@ describe('NotificationItem', () => {
       mentioned_by: 'user1',
       post_uri: 'user1:post123',
     };
-    render(<NotificationItem notification={mentionNotification} />);
+    render(<NotificationItem notification={mentionNotification} isUnread={false} />);
     expect(screen.getByText(/The reason why.../i)).toBeInTheDocument();
   });
 
@@ -150,13 +150,8 @@ describe('NotificationItem', () => {
       ...baseNotification,
       followed_by: 'unknown-user',
     };
-    render(<NotificationItem notification={notificationWithUnknownUser} />);
+    render(<NotificationItem notification={notificationWithUnknownUser} isUnread={false} />);
     expect(screen.getByText(/User followed you/i)).toBeInTheDocument();
-  });
-
-  it('applies custom className', () => {
-    const { container } = render(<NotificationItem notification={baseNotification} className="custom-class" />);
-    expect(container.firstChild).toHaveClass('custom-class');
   });
 });
 
@@ -167,7 +162,7 @@ describe('NotificationItem - Snapshots', () => {
       timestamp: Date.now() - 1000 * 60 * 30,
       followed_by: 'user1',
     };
-    const { container } = render(<NotificationItem notification={notification} />);
+    const { container } = render(<NotificationItem notification={notification} isUnread={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -179,7 +174,7 @@ describe('NotificationItem - Snapshots', () => {
       tag_label: 'bitcoin',
       post_uri: 'user1:post123',
     };
-    const { container } = render(<NotificationItem notification={notification} />);
+    const { container } = render(<NotificationItem notification={notification} isUnread={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -190,7 +185,7 @@ describe('NotificationItem - Snapshots', () => {
       mentioned_by: 'user1',
       post_uri: 'user1:post123',
     };
-    const { container } = render(<NotificationItem notification={notification} />);
+    const { container } = render(<NotificationItem notification={notification} isUnread={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

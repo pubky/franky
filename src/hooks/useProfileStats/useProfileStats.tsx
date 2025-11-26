@@ -33,9 +33,9 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     return await Core.UserController.getCounts({ userId });
   }, [userId]);
 
-  // Get notifications count from useNotifications hook
-  // TODO: Replace with actual unread count when notification read/unread state is implemented
-  const { count: notificationsCount } = Hooks.useNotifications();
+  // Get unread notifications count from useNotifications hook (UI only - using mock data)
+  // TODO: Replace with real notification store when backend is integrated
+  const { unreadCount: unreadNotificationsCount } = Hooks.useNotifications();
 
   // Build stats object from user counts
   // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts
@@ -44,7 +44,7 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   const actualPostsCount = Math.max(0, totalPosts - repliesCount);
 
   const stats: ProfileStats = {
-    notifications: notificationsCount,
+    notifications: unreadNotificationsCount,
     posts: actualPostsCount,
     replies: repliesCount,
     followers: userCounts?.followers ?? 0,

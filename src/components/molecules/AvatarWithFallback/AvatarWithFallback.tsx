@@ -16,7 +16,7 @@ export interface AvatarWithFallbackProps {
 export function AvatarWithFallback({
   avatarUrl,
   name,
-  size,
+  size = 'default',
   className,
   fallbackClassName,
   alt,

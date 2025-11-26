@@ -1,22 +1,25 @@
 'use client';
 
+import { useMemo } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import { FlatNotification } from '@/core/models/notification/notification.types';
+import type { FlatNotification } from '@/core';
 
 export interface NotificationsListProps {
   notifications: FlatNotification[];
+  unreadNotifications: FlatNotification[];
 }
 
-export function NotificationsList({ notifications }: NotificationsListProps) {
+export function NotificationsList({ notifications, unreadNotifications }: NotificationsListProps) {
+  // Create a Set of unread timestamps for O(1) lookup instead of O(n) search
+  const unreadTimestamps = useMemo(() => new Set(unreadNotifications.map((n) => n.timestamp)), [unreadNotifications]);
+
   return (
-    <Atoms.Container overrideDefaults={true} className="flex w-full flex-col gap-4 rounded-md bg-card p-6">
-      {notifications.map((notification, index) => (
-        <Molecules.NotificationItem
-          key={`notification-${index}-${notification.timestamp}`}
-          notification={notification}
-        />
-      ))}
+    <Atoms.Container className="gap-3 rounded-md bg-card p-6">
+      {notifications.map((notification, index) => {
+        const isUnread = unreadTimestamps.has(notification.timestamp);
+        return <Molecules.NotificationItem key={index} notification={notification} isUnread={isUnread} />;
+      })}
     </Atoms.Container>
   );
 }

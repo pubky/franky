@@ -31,7 +31,7 @@ export function getNotificationText(notification: FlatNotification, userName: st
 /**
  * Helper function to extract user ID from notification
  */
-export function getUserId(notification: FlatNotification): string {
+export function getUserIdFromNotification(notification: FlatNotification): string {
   switch (notification.type) {
     case NotificationType.Follow:
     case NotificationType.NewFriend:

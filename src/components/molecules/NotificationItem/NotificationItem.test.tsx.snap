@@ -2,48 +2,46 @@
 
 exports[`NotificationItem - Snapshots > matches snapshot for Follow notification 1`] = `
 <div
-  class="flex items-center justify-between gap-2 w-full"
+  class="flex w-full items-center justify-between gap-2"
   data-testid="container"
 >
   <div
-    class="flex flex-1 gap-2 items-center min-w-0"
+    class="flex items-center gap-2"
     data-testid="container"
   >
     <div
-      class="shrink-0 lg:h-8 lg:w-8"
-      data-avatar="https://example.com/anna.jpg"
-      data-name="Anna"
+      class="lg:size-8"
+      data-name="User"
       data-testid="avatar-with-fallback"
     >
-      <img
-        alt="Anna"
-        src="https://example.com/anna.jpg"
-      />
+      <span>
+        U
+      </span>
     </div>
     <div
-      class="flex gap-2 items-center min-w-0 flex-1"
+      class="flex items-center gap-2"
       data-testid="container"
     >
       <p
-        class="text-sm font-medium text-foreground leading-none lg:text-base lg:leading-normal"
+        class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
         data-testid="typography"
       >
-        Anna followed you
+        User followed you
       </p>
     </div>
   </div>
   <div
-    class="flex gap-2 items-center shrink-0"
+    class="flex items-center gap-2"
     data-testid="container"
   >
     <p
-      class="text-xs font-medium tracking-[1.2px] uppercase text-muted-foreground"
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
       data-testid="typography"
     >
       30m
     </p>
     <div
-      data-badge="true"
+      data-badge="false"
       data-testid="notification-icon"
       data-type="follow"
     >
@@ -55,33 +53,31 @@ exports[`NotificationItem - Snapshots > matches snapshot for Follow notification
 
 exports[`NotificationItem - Snapshots > matches snapshot for Mention notification 1`] = `
 <div
-  class="flex items-center justify-between gap-2 w-full"
+  class="flex w-full items-center justify-between gap-2"
   data-testid="container"
 >
   <div
-    class="flex flex-1 gap-2 items-center min-w-0"
+    class="flex items-center gap-2"
     data-testid="container"
   >
     <div
-      class="shrink-0 lg:h-8 lg:w-8"
-      data-avatar="https://example.com/anna.jpg"
-      data-name="Anna"
+      class="lg:size-8"
+      data-name="User"
       data-testid="avatar-with-fallback"
     >
-      <img
-        alt="Anna"
-        src="https://example.com/anna.jpg"
-      />
+      <span>
+        U
+      </span>
     </div>
     <div
-      class="flex gap-2 items-center min-w-0 flex-1"
+      class="flex items-center gap-2"
       data-testid="container"
     >
       <p
-        class="text-sm font-medium text-foreground leading-none lg:text-base lg:leading-normal"
+        class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
         data-testid="typography"
       >
-        Anna mentioned you in post
+        User mentioned you in post
       </p>
       <p
         class="hidden text-base font-medium text-muted-foreground lg:inline"
@@ -92,17 +88,17 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
     </div>
   </div>
   <div
-    class="flex gap-2 items-center shrink-0"
+    class="flex items-center gap-2"
     data-testid="container"
   >
     <p
-      class="text-xs font-medium tracking-[1.2px] uppercase text-muted-foreground"
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
       data-testid="typography"
     >
       30m
     </p>
     <div
-      data-badge="true"
+      data-badge="false"
       data-testid="notification-icon"
       data-type="mention"
     >
@@ -114,33 +110,31 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
 
 exports[`NotificationItem - Snapshots > matches snapshot for TagPost notification 1`] = `
 <div
-  class="flex items-center justify-between gap-2 w-full"
+  class="flex w-full items-center justify-between gap-2"
   data-testid="container"
 >
   <div
-    class="flex flex-1 gap-2 items-center min-w-0"
+    class="flex items-center gap-2"
     data-testid="container"
   >
     <div
-      class="shrink-0 lg:h-8 lg:w-8"
-      data-avatar="https://example.com/anna.jpg"
-      data-name="Anna"
+      class="lg:size-8"
+      data-name="User"
       data-testid="avatar-with-fallback"
     >
-      <img
-        alt="Anna"
-        src="https://example.com/anna.jpg"
-      />
+      <span>
+        U
+      </span>
     </div>
     <div
-      class="flex gap-2 items-center min-w-0 flex-1"
+      class="flex items-center gap-2"
       data-testid="container"
     >
       <p
-        class="text-sm font-medium text-foreground leading-none lg:text-base lg:leading-normal"
+        class="text-sm leading-none font-medium text-foreground lg:text-base lg:leading-normal"
         data-testid="typography"
       >
-        Anna tagged your post
+        User tagged your post
       </p>
       <span
         data-testid="post-tag"
@@ -150,17 +144,17 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
     </div>
   </div>
   <div
-    class="flex gap-2 items-center shrink-0"
+    class="flex items-center gap-2"
     data-testid="container"
   >
     <p
-      class="text-xs font-medium tracking-[1.2px] uppercase text-muted-foreground"
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
       data-testid="typography"
     >
       30m
     </p>
     <div
-      data-badge="true"
+      data-badge="false"
       data-testid="notification-icon"
       data-type="tag_post"
     >
