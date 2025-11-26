@@ -6,6 +6,7 @@ import { FileVariant } from '@/core/services/nexus/file/file.types';
 const mockFileNormalizer = {
   toBlob: vi.fn(),
   toFile: vi.fn(),
+  toFileAttachment: vi.fn(),
 };
 
 const mockFileApplication = {
@@ -77,6 +78,7 @@ describe('FileController', () => {
 
     mockFileNormalizer.toBlob.mockReset();
     mockFileNormalizer.toFile.mockReset();
+    mockFileNormalizer.toFileAttachment.mockReset();
     mockFileApplication.upload.mockReset();
     mockFileApplication.getAvatarUrl.mockReset();
     mockFileApplication.getImageUrl.mockReset();
@@ -90,36 +92,29 @@ describe('FileController', () => {
       const file = createMockFile();
       const blobResult = createMockBlobResult();
       const fileResult = createMockFileResult();
+      const fileAttachment = { blobResult, fileResult };
 
-      mockFileNormalizer.toBlob.mockReturnValue(blobResult);
-      mockFileNormalizer.toFile.mockReturnValue(fileResult);
+      mockFileNormalizer.toFileAttachment.mockResolvedValue(fileAttachment);
       mockFileApplication.upload.mockResolvedValue(undefined);
 
       const result = await FileController.upload({ file, pubky: testPubky });
 
-      expect(mockFileNormalizer.toBlob).toHaveBeenCalledWith(expect.any(Uint8Array), testPubky);
-      expect(mockFileNormalizer.toFile).toHaveBeenCalledWith(file, blobResult.meta.url, testPubky);
-      expect(mockFileApplication.upload).toHaveBeenCalledWith({ blobResult, fileResult });
+      expect(mockFileNormalizer.toFileAttachment).toHaveBeenCalledWith({ file, pubky: testPubky });
+      expect(mockFileApplication.upload).toHaveBeenCalledWith({ fileAttachments: [fileAttachment] });
       expect(result).toBe(fileResult.meta.url);
     });
 
     it('propagates errors when blob normalization fails', async () => {
       const file = createMockFile();
-      mockFileNormalizer.toBlob.mockImplementation(() => {
-        throw new Error('normalizer failed');
-      });
+      mockFileNormalizer.toFileAttachment.mockRejectedValue(new Error('normalizer failed'));
 
       await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('normalizer failed');
-      expect(mockFileNormalizer.toFile).not.toHaveBeenCalled();
       expect(mockFileApplication.upload).not.toHaveBeenCalled();
     });
 
     it('propagates errors when file normalization fails', async () => {
       const file = createMockFile();
-      mockFileNormalizer.toBlob.mockReturnValue(createMockBlobResult());
-      mockFileNormalizer.toFile.mockImplementation(() => {
-        throw new Error('file failed');
-      });
+      mockFileNormalizer.toFileAttachment.mockRejectedValue(new Error('file failed'));
 
       await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('file failed');
       expect(mockFileApplication.upload).not.toHaveBeenCalled();
@@ -127,8 +122,9 @@ describe('FileController', () => {
 
     it('propagates errors when homeserver upload fails', async () => {
       const file = createMockFile();
-      mockFileNormalizer.toBlob.mockReturnValue(createMockBlobResult());
-      mockFileNormalizer.toFile.mockReturnValue(createMockFileResult());
+      const blobResult = createMockBlobResult();
+      const fileResult = createMockFileResult();
+      mockFileNormalizer.toFileAttachment.mockResolvedValue({ blobResult, fileResult });
       mockFileApplication.upload.mockRejectedValue(new Error('upload failed'));
 
       await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('upload failed');
@@ -137,10 +133,10 @@ describe('FileController', () => {
     it('propagates errors when file.arrayBuffer() fails', async () => {
       const file = createMockFile();
       vi.spyOn(file, 'arrayBuffer').mockRejectedValue(new Error('arrayBuffer failed'));
+      mockFileNormalizer.toFileAttachment.mockRejectedValue(new Error('arrayBuffer failed'));
 
       await expect(FileController.upload({ file, pubky: testPubky })).rejects.toThrow('arrayBuffer failed');
-      expect(mockFileNormalizer.toBlob).not.toHaveBeenCalled();
-      expect(mockFileNormalizer.toFile).not.toHaveBeenCalled();
+      expect(mockFileNormalizer.toFileAttachment).toHaveBeenCalledWith({ file, pubky: testPubky });
       expect(mockFileApplication.upload).not.toHaveBeenCalled();
     });
   });

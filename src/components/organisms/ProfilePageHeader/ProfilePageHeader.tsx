@@ -8,9 +8,10 @@ import * as Types from './ProfilePageHeader.types';
 
 export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
-  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusClick, onAvatarClick } = actions;
+  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusChange, onAvatarClick } = actions;
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
+  const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (
     <Atoms.Container
@@ -26,7 +27,7 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
           fallbackClassName="text-2xl lg:text-4xl"
           alt={name}
         />
-        <Atoms.AvatarEmojiBadge emoji={emoji} />
+        <Atoms.AvatarEmojiBadge emoji={displayEmoji} />
       </Atoms.Container>
 
       <Atoms.Container overrideDefaults={true} className="flex flex-1 flex-col gap-5">
@@ -64,7 +65,7 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
             <Icons.LogOut className="size-4" />
             Sign out
           </Atoms.Button>
-          <Molecules.StatusPicker emoji={emoji} status={status} onClick={onStatusClick} />
+          <Molecules.StatusPickerWrapper emoji={displayEmoji} status={status || ''} onStatusChange={onStatusChange} />
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>

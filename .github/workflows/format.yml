@@ -1,4 +1,4 @@
-name: Format
+name: Code Quality
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  format:
-    name: Check Code Format
+  code-quality:
+    name: Check Code Quality
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +30,6 @@ jobs:
 
       - name: Check formatting
         run: npm run format:check
+
+      - name: Run linter
+        run: npm run lint

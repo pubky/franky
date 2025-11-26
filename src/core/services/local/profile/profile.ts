@@ -2,6 +2,49 @@ import * as Core from '@/core';
 import { Logger, createDatabaseError, DatabaseErrorType } from '@/libs';
 
 export class LocalProfileService {
+  private constructor() {} // Prevent instantiation
+
+  /**
+   * Retrieves user details from local database.
+   * @param userId - The user ID to fetch details for
+   * @returns Promise resolving to user details or null if not found
+   */
+  static async details({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null> {
+    return await Core.UserDetailsModel.findById(userId);
+  }
+
+  /**
+   * Retrieves user counts from local database.
+   * @param userId - The user ID to fetch counts for
+   * @returns Promise resolving to user counts or null if not found
+   */
+  static async counts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
+    return await Core.UserCountsModel.findById(userId);
+  }
+
+  /**
+   * Upserts user details into local database.
+   * @param userDetails - The user details to upsert
+   * @returns Promise resolving to void
+   */
+  static async upsert(userDetails: Core.NexusUserDetails): Promise<void> {
+    await Core.UserDetailsModel.upsert(userDetails);
+  }
+
+  /**
+   * Upserts user counts into local database.
+   * @param params - Parameters containing user ID and user counts
+   * @param userCounts - The user counts to upsert
+   * @returns Promise resolving to void
+   */
+  static async upsertCounts(params: Core.TReadProfileParams, userCounts: Core.NexusUserCounts): Promise<void> {
+    await Core.UserCountsModel.updateCounts(params.userId, userCounts);
+  }
+
+  /**
+   * Deletes the user account from the local database.
+   * @returns Promise resolving to void
+   */
   static async deleteAccount() {
     try {
       await Core.db.transaction(

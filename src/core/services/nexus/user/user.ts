@@ -63,4 +63,19 @@ export class NexusUserService {
     }
     return userDetails;
   }
+
+  /**
+   * Retrieves user counts from Nexus API
+   *
+   * @param params - Parameters containing user ID
+   * @returns User counts including followers, following, and friends
+   */
+  static async counts(params: Core.TUserId): Promise<Core.NexusUserCounts | undefined> {
+    const url = Core.userApi.counts(params);
+    const userCounts = await Core.queryNexus<Core.NexusUserCounts>(url);
+    if (userCounts) {
+      Libs.Logger.debug(`User counts fetched successfully for user ${params.user_id}`);
+    }
+    return userCounts;
+  }
 }
