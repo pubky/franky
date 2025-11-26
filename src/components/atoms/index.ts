@@ -1,4 +1,3 @@
-export * from './Anchor';
 export * from './Avatar';
 export * from './AvatarEmojiBadge';
 export * from './Badge';

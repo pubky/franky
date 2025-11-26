@@ -34,7 +34,7 @@ export const Generic: ProviderTypes.EmbedProvider = {
     const { url, title, image } = embedData.value;
 
     return (
-      <Atoms.Anchor data-testid="generic-website-preview" href={url} target="_blank" rel="noopener noreferrer">
+      <Atoms.Link data-testid="generic-website-preview" href={url}>
         <Atoms.Container className="justify-between gap-6 rounded-md bg-muted p-6 lg:flex-row">
           <Atoms.Container className="gap-y-2">
             {title && <Atoms.Typography size="lg">{title}</Atoms.Typography>}
@@ -62,7 +62,7 @@ export const Generic: ProviderTypes.EmbedProvider = {
             />
           )}
         </Atoms.Container>
-      </Atoms.Anchor>
+      </Atoms.Link>
     );
   },
 };
