@@ -497,7 +497,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
-      // Create a title longer than 100 chars (176 chars total)
+      // Create a title longer than 50 chars (176 chars total)
       const longTitle =
         'This is a very long title that should be truncated because it exceeds the maximum length allowed for titles in the metadata which is set to one hundred characters plus ellipsis';
 
@@ -532,9 +532,9 @@ describe('API Route: /api/og-metadata', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      // Title should be truncated to max 103 characters (100 + "...")
+      // Title should be truncated to max 53 characters (50 + "...")
       expect(data.title).toContain('...');
-      expect(data.title?.length).toBe(103);
+      expect(data.title?.length).toBe(53);
       expect(data.title?.endsWith('...')).toBe(true);
       expect(data.title?.startsWith('This is a very long title')).toBe(true);
     });
@@ -581,7 +581,7 @@ describe('API Route: /api/og-metadata', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.url?.length).toBeLessThanOrEqual(80);
+      expect(data.url?.length).toBeLessThanOrEqual(40);
       expect(data.url).toContain('...');
       expect(data.url).toMatch(/^https:\/\/example\.com.*\.\.\..*display$/); // Starts with beginning, has "...", ends with end
     });
@@ -671,6 +671,137 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(200);
       expect(data.url).toBe(shortUrl); // No truncation
+    });
+  });
+
+  describe('HTML Entity Decoding', () => {
+    it('should decode HTML entities in title (apostrophe &#039;)', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Les chercheurs montrent que l&#039;usage de ChatGPT compromet notre cerveau" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com');
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      // Title is truncated to 50 chars, but should contain decoded apostrophe
+      expect(data.title).toContain("l'usage");
+      expect(data.title).not.toContain('&#039;');
+      expect(data.title?.length).toBeLessThanOrEqual(53); // Max 50 + "..."
+    });
+
+    it('should decode multiple HTML entities in title', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Test &quot;quotes&quot; &amp; &lt;tags&gt; &#39;apostrophe&#39;" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com');
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.title).toBe('Test "quotes" & <tags> \'apostrophe\'');
+    });
+
+    it('should decode hexadecimal HTML entities', async () => {
+      vi.mocked(isIP).mockReturnValue(0);
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Title with &#x27;hex&#x27; entities" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://example.com');
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.title).toBe("Title with 'hex' entities");
     });
   });
 });

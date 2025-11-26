@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dns from 'dns/promises';
 import { isIP } from 'net';
-import { truncateString, truncateMiddle } from '@/libs/utils';
+import { truncateString, truncateMiddle, decodeHtmlEntities } from '@/libs/utils';
+import { isIpSafe } from '@/libs/network';
+import { OG_PATTERNS, extractFromHtml } from '@/libs/html';
 
 /**
  * API Route for secure OpenGraph metadata fetching
@@ -130,24 +132,13 @@ export async function POST(request: NextRequest) {
     const html = new TextDecoder().decode(Buffer.concat(chunks));
 
     // 10. Parse metadata using regex (lighter than cheerio)
-    // Extract og:title
-    const ogTitleMatch =
-      html.match(/<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i) ||
-      html.match(/<meta\s+name=["']og:title["']\s+content=["']([^"']+)["']/i) ||
-      html.match(/<meta\s+content=["']([^"']+)["']\s+property=["']og:title["']/i) ||
-      html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']og:title["']/i);
-
-    const titleTagMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-    const title = ogTitleMatch?.[1] || titleTagMatch?.[1] || null;
+    const ogTitle = extractFromHtml(html, OG_PATTERNS.TITLE);
+    const titleTag = html.match(OG_PATTERNS.TITLE_TAG)?.[1] || null;
+    const rawTitle = ogTitle || titleTag;
+    const title = rawTitle ? decodeHtmlEntities(rawTitle) : null;
 
     // Extract og:image
-    const ogImageMatch =
-      html.match(/<meta\s+property=["']og:image["']\s+content=["']([^"']+)["']/i) ||
-      html.match(/<meta\s+name=["']og:image["']\s+content=["']([^"']+)["']/i) ||
-      html.match(/<meta\s+content=["']([^"']+)["']\s+property=["']og:image["']/i) ||
-      html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']og:image["']/i);
-
-    const image = ogImageMatch?.[1] || null;
+    const image = extractFromHtml(html, OG_PATTERNS.IMAGE);
 
     // 11. Normalize and validate image URL (must also be safe)
     let normalizedImage: string | null = null;
@@ -188,56 +179,12 @@ export async function POST(request: NextRequest) {
 
     // 12. Return normalized metadata with truncation
     return NextResponse.json({
-      url: truncateMiddle(url, 80), // Truncate URL with "..." in the middle (max 80 chars)
-      title: title ? truncateString(title.trim(), 100) : null, // Truncate title with "..." at the end (max 100 chars)
+      url: truncateMiddle(url, 40), // Truncate URL with "..." in the middle (max 40 chars)
+      title: title ? truncateString(title.trim(), 50) : null, // Truncate title with "..." at the end (max 50 chars)
       image: normalizedImage,
     });
   } catch (error) {
     console.error('OG metadata fetch error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
-}
-
-/**
- * Validates if an IP address is safe to fetch from
- * Blocks localhost, private IP ranges, and link-local addresses
- *
- * @param ip - The IP address to validate (IPv4 format)
- * @returns true if IP is safe to fetch from, false otherwise
- *
- * @security SSRF Prevention
- * This function is critical for preventing SSRF attacks.
- * It blocks all private IP ranges defined in RFC 1918, RFC 3927, and RFC 4193.
- */
-function isIpSafe(ip: string): boolean {
-  // Block localhost
-  if (ip === '127.0.0.1' || ip === '::1' || ip === '0.0.0.0') {
-    return false;
-  }
-
-  // Parse IPv4 octets
-  const octets = ip.split('.').map(Number);
-
-  // Validate IPv4 format
-  if (octets.length !== 4 || octets.some((octet) => isNaN(octet) || octet < 0 || octet > 255)) {
-    // Invalid IPv4, block it (could be IPv6 or malformed)
-    return false;
-  }
-
-  // Block private IP ranges (RFC 1918)
-  if (octets[0] === 10) return false; // 10.0.0.0/8
-  if (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) return false; // 172.16.0.0/12
-  if (octets[0] === 192 && octets[1] === 168) return false; // 192.168.0.0/16
-
-  // Block link-local addresses (RFC 3927)
-  if (octets[0] === 169 && octets[1] === 254) return false; // 169.254.0.0/16
-
-  // Block IPv6 private ranges (basic check for common formats)
-  if (ip.startsWith('fd') || ip.startsWith('fc')) return false; // fc00::/7 (unique local)
-  if (ip.startsWith('fe80')) return false; // fe80::/10 (link-local)
-
-  // Block carrier-grade NAT (RFC 6598)
-  if (octets[0] === 100 && octets[1] >= 64 && octets[1] <= 127) return false; // 100.64.0.0/10
-
-  return true;
 }
