@@ -792,9 +792,9 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add post to streams first
-        await Core.PostStreamModel.prependPosts(Core.PostStreamTypes.TIMELINE_ALL_ALL, [postId]);
-        await Core.PostStreamModel.prependPosts(Core.PostStreamTypes.TIMELINE_ALL_SHORT, [postId]);
-        await Core.PostStreamModel.prependPosts(`author:${testData.authorPubky}` as Core.PostStreamId, [postId]);
+        await Core.PostStreamModel.prependItems(Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId, [postId]);
+        await Core.PostStreamModel.prependItems(Core.PostStreamTypes.TIMELINE_ALL_SHORT as Core.PostStreamId, [postId]);
+        await Core.PostStreamModel.prependItems(`author:${testData.authorPubky}` as Core.PostStreamId, [postId]);
 
         // Delete the post
         await Core.LocalPostService.delete({ compositePostId: postId });
@@ -821,10 +821,10 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add reply to streams first
-        await Core.PostStreamModel.prependPosts(`author_replies:${testData.authorPubky}` as Core.PostStreamId, [
+        await Core.PostStreamModel.prependItems(`author_replies:${testData.authorPubky}` as Core.PostStreamId, [
           replyId,
         ]);
-        await Core.PostStreamModel.prependPosts(`post_replies:${parentPostId}` as Core.PostStreamId, [replyId]);
+        await Core.PostStreamModel.prependItems(`post_replies:${parentPostId}` as Core.PostStreamId, [replyId]);
 
         // Delete the reply
         await Core.LocalPostService.delete({ compositePostId: replyId });
@@ -856,7 +856,10 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add post multiple times (edge case / data integrity issue)
-        await Core.PostStreamModel.prependPosts(Core.PostStreamTypes.TIMELINE_ALL_ALL, [postId, postId]);
+        await Core.PostStreamModel.prependItems(Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId, [
+          postId,
+          postId,
+        ]);
 
         // Delete the post
         await Core.LocalPostService.delete({ compositePostId: postId });

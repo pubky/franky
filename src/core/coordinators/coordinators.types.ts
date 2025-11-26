@@ -8,7 +8,7 @@
 
 /**
  * Base internal state for polling coordinators
- * 
+ *
  * This represents the common state managed internally by all polling coordinators.
  */
 export interface PollingServiceState {
@@ -93,10 +93,7 @@ export interface PollingServiceConfig {
 /**
  * Options for initializing a coordinator instance
  */
-export interface CoordinatorInitOptions<
-  Config extends PollingServiceConfig,
-  State extends PollingServiceState,
-> {
+export interface CoordinatorInitOptions<Config extends PollingServiceConfig, State extends PollingServiceState> {
   /**
    * Initial configuration to merge with defaults
    */
@@ -106,4 +103,3 @@ export interface CoordinatorInitOptions<
    */
   initialState?: Partial<State>;
 }
-

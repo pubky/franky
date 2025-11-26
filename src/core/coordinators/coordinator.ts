@@ -24,17 +24,14 @@ import {
  * - getInactiveReason() - Get reason why polling is inactive
  * - isRouteAllowed() - Check if current route allows polling
  */
-export abstract class Coordinator<
-  Config extends PollingServiceConfig,
-  State extends PollingServiceState,
-> {
+export abstract class Coordinator<Config extends PollingServiceConfig, State extends PollingServiceState> {
   // Configuration
   protected config: Required<Config> = {
     intervalMs: Env.NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS,
     pollOnStart: Env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
     respectPageVisibility: Env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
   } as Required<Config>;
-  
+
   // State
   protected state: Required<State> = {
     intervalId: null,

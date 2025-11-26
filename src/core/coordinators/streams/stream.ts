@@ -41,10 +41,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
 
   // Extended configuration
   private streamConfig: Required<Pick<StreamCoordinatorConfig, 'enabledRoutes' | 'fetchLimit'>> = {
-    enabledRoutes: [
-      routeToRegex(APP_ROUTES.HOME),
-      routeToRegex(POST_ROUTES.POST),
-    ],
+    enabledRoutes: [routeToRegex(APP_ROUTES.HOME), routeToRegex(POST_ROUTES.POST)],
     fetchLimit: Env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
   };
 
@@ -60,7 +57,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   private constructor() {
     super({
       initialConfig: {
-        intervalMs: 5000,//Env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
+        intervalMs: 5000, //Env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
         pollOnStart: Env.NEXT_PUBLIC_STREAM_POLL_ON_START,
         respectPageVisibility: Env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
       },
@@ -134,9 +131,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
       const currentState = this.getState();
       if (currentState.currentRoute === APP_ROUTES.HOME) {
         const stateChanged =
-          state.sort !== prevState.sort ||
-          state.reach !== prevState.reach ||
-          state.content !== prevState.content;
+          state.sort !== prevState.sort || state.reach !== prevState.reach || state.content !== prevState.content;
 
         if (stateChanged) {
           Logger.debug('Home store changed, re-evaluating stream', {
@@ -231,6 +226,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
         streamTail: 0,
         limit: this.streamConfig.fetchLimit,
       });
+      // TODO: Get the 0 index from the stream and update the streamHead
 
       // Get cached stream from IndexedDB
       const cachedStream = await Core.PostStreamModel.table.get(this.streamState.currentStreamId);
@@ -297,10 +293,9 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
       Logger.debug('Built home stream ID', { homeStreamId: this.streamState.currentStreamId });
     }
     // Post route: extract from URL and build reply stream ID
-     else if (this.state.currentRoute.startsWith(POST_ROUTES.POST)) {
+    else if (this.state.currentRoute.startsWith(POST_ROUTES.POST)) {
       this.buildPostReplyStreamId();
-    }
-    else {
+    } else {
       this.streamState.currentStreamId = null;
     }
   }
@@ -322,7 +317,6 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
       this.streamState.currentStreamId = Core.buildPostReplyStreamId(compositePostId);
 
       Logger.debug('Built post reply stream ID', { replyStreamId: this.streamState.currentStreamId });
-
     } catch (error) {
       Logger.error('Failed to build post reply stream ID', { error });
       this.streamState.currentStreamId = null;
@@ -355,4 +349,3 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     return null;
   }
 }
-

@@ -6,14 +6,11 @@
  */
 
 import type { PostStreamId } from '@/core/models/stream/post/postStream.types';
-import {
-  type PollingServiceState,
-  type PollingServiceConfig,
-} from '../coordinators.types';
+import { type PollingServiceState, type PollingServiceConfig } from '../coordinators.types';
 
 /**
  * Stream coordinator internal state
- * 
+ *
  * Extends base polling state with stream-specific properties.
  */
 export interface StreamCoordinatorState extends PollingServiceState {
@@ -49,4 +46,3 @@ export interface StreamCoordinatorConfig extends PollingServiceConfig {
    */
   fetchLimit?: number;
 }
-

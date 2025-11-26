@@ -224,26 +224,30 @@ export class LocalPostService {
   }: Core.TLocalUpdatePostStreamParams) {
     const { pubky: authorId } = Core.parseCompositeId(compositePostId);
 
-    // Select the appropriate method name based on action
-    const methodName = action === Core.HomeserverAction.PUT ? 'prependPosts' : 'removePosts';
+    // Helper to call the appropriate method with proper class context
+    const updateStream = (streamId: Core.PostStreamId, items: string[]) => {
+      if (action === Core.HomeserverAction.PUT) {
+        return Core.PostStreamModel.prependItems(streamId, items);
+      } else {
+        return Core.PostStreamModel.removeItems(streamId, items);
+      }
+    };
 
     if (parentUri) {
       const parentCompositeId = Core.buildCompositeIdFromPubkyUri({
         uri: parentUri,
         domain: Core.CompositeIdDomain.POSTS,
       });
-      ops.push(Core.PostStreamModel[methodName](`author_replies:${authorId}`, [compositePostId]));
-      ops.push(Core.PostStreamModel[methodName](`post_replies:${parentCompositeId}`, [compositePostId]));
+      ops.push(updateStream(`author_replies:${authorId}`, [compositePostId]));
+      ops.push(updateStream(`post_replies:${parentCompositeId}`, [compositePostId]));
     } else {
-      ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_ALL_ALL, [compositePostId]));
-      ops.push(Core.PostStreamModel[methodName](`timeline:all:${kind}` as Core.PostStreamTypes, [compositePostId]));
-      ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, [compositePostId]));
-      ops.push(
-        Core.PostStreamModel[methodName](`timeline:following:${kind}` as Core.PostStreamTypes, [compositePostId]),
-      );
-      ops.push(Core.PostStreamModel[methodName](Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, [compositePostId]));
-      ops.push(Core.PostStreamModel[methodName](`timeline:friends:${kind}` as Core.PostStreamTypes, [compositePostId]));
-      ops.push(Core.PostStreamModel[methodName](`author:${authorId}`, [compositePostId]));
+      ops.push(updateStream(Core.PostStreamTypes.TIMELINE_ALL_ALL, [compositePostId]));
+      ops.push(updateStream(`timeline:all:${kind}` as Core.PostStreamId, [compositePostId]));
+      ops.push(updateStream(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, [compositePostId]));
+      ops.push(updateStream(`timeline:following:${kind}` as Core.PostStreamId, [compositePostId]));
+      ops.push(updateStream(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, [compositePostId]));
+      ops.push(updateStream(`timeline:friends:${kind}` as Core.PostStreamId, [compositePostId]));
+      ops.push(updateStream(`author:${authorId}`, [compositePostId]));
     }
   }
 
