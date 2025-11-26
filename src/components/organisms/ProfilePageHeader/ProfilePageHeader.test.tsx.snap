@@ -173,10 +173,16 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           Sign out
         </button>
         <button
-          class="inline-flex items-center justify-center whitespace-nowrap text-sm transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*=\\"size-\\"])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/40 aria-invalid:border-destructive font-semibold cursor-pointer rounded-full border hover:text-accent-foreground border-none h-8 has-[>svg]:px-2.5 gap-1 px-0 shadow-none hover:bg-transparent"
-          data-size="sm"
-          data-slot="button"
+          aria-controls="radix-[id]"
+          aria-expanded="false"
+          aria-haspopup="dialog"
+          class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+          data-as-child="true"
+          data-slot="popover-trigger"
+          data-state="closed"
+          data-testid="popover-trigger"
           data-variant="ghost"
+          type="button"
         >
           <span
             class="font-semibold text-foreground text-base leading-none"
@@ -192,7 +198,7 @@ exports[`ProfilePageHeader > matches snapshot 1`] = `
           </span>
           <svg
             aria-hidden="true"
-            class="lucide lucide-chevron-down size-6"
+            class="lucide lucide-chevron-down size-6 transition-transform duration-300"
             fill="none"
             height="24"
             stroke="currentColor"

@@ -59,6 +59,7 @@ This layered design ensures strict separation of concerns, testability, and code
 - coordinators → controllers (system-initiated actions)
 - controllers → pipes, application, stores
 - application → services (local, homeserver, nexus)
+- **application → application** (same layer, for cross-domain orchestration, acyclic only, max depth 1)
 - services
   - local → models
   - homeserver -> network only
@@ -67,6 +68,8 @@ This layered design ensures strict separation of concerns, testability, and code
 - pipes → no IO; transform only
 
 **Key Rule:** Application is called BY controllers, never calls them back. Unidirectional flow.
+
+**⚠️ Enforcement Note:** Since our architecture uses static classes without dependency injection, the constraints on Application → Application calls (acyclic, max-depth-1) **cannot be enforced at compile time**. These rules are enforced through code reviews, documentation, and testing. See ADR-0009 for details.
 
 ### Anti-patterns to avoid
 
@@ -78,6 +81,8 @@ This layered design ensures strict separation of concerns, testability, and code
 - Encoding business logic inside services beyond minimal prerequisites.
 - Returning external (un-normalized) shapes into controllers/UI.
 - Duplicating stream logic across layers (keep in `PostStreamApplication` and local stream services).
+- **Circular application dependencies** (Application A → B → A forbidden).
+- **Deep application call chains** (max depth 1: if A calls B, B cannot call another Application).
 
 ## IO boundaries
 
@@ -142,3 +147,4 @@ Stored in `docs/adr/` for traceability and collaboration.
 - _0006-pipes-normalization_ — Normalization/validation pipeline at the pipes layer
 - _0007-dexie-version-normalization (TBD)_ — Consistent Dexie versioning
 - _0008-coordinators-layer_ — Coordinators for system-initiated workflows
+- _0009-application-cross-domain-orchestration_ — Application-to-Application calls for workflow orchestration

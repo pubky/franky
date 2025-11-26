@@ -28,7 +28,7 @@ export interface ProfilePageLayoutProps {
     onCopyPublicKey: () => void;
     onCopyLink: () => void;
     onSignOut: () => void;
-    onStatusClick: () => void;
+    onStatusChange: (status: string) => void;
   };
   /** Currently active page */
   activePage: ProfilePageType;
@@ -114,7 +114,7 @@ export function ProfilePageLayout({
           <Atoms.Container overrideDefaults={true} className="flex-1">
             {children}
           </Atoms.Container>
-          <Molecules.ProfilePageSidebar />
+          <Organisms.ProfilePageSidebar />
         </Atoms.Container>
       </Molecules.ProfilePageLayoutWrapper>
 

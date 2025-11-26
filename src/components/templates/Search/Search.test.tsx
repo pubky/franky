@@ -24,6 +24,7 @@ vi.mock('@/organisms', () => ({
         Mocked DialogWelcome
       </div>
     ) : null,
+  FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
 }));
 
 // Mock molecules - REQUIRED: complex filter components
@@ -43,7 +44,6 @@ vi.mock('@/molecules', () => ({
   WhoToFollow: () => <div data-testid="who-to-follow">Who to Follow</div>,
   ActiveUsers: () => <div data-testid="active-users">Active Users</div>,
   HotTags: ({ tags }: { tags: string[] }) => <div data-testid="hot-tags">Hot Tags: {tags.join(', ')}</div>,
-  FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
 }));
 
 // Mock the Core module - REQUIRED: stores

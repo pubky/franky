@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -49,7 +48,7 @@ export function Search() {
               ]}
             />
             <div className="sticky top-[100px] self-start">
-              <Molecules.FeedbackCard />
+              <Organisms.FeedbackCard />
             </div>
           </>
         }

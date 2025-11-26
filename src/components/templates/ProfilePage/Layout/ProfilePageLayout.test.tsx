@@ -45,7 +45,6 @@ vi.mock('@/molecules', () => ({
       Filter Bar
     </div>
   ),
-  ProfilePageSidebar: () => <div data-testid="profile-sidebar">Sidebar</div>,
   ProfilePageLayoutWrapper: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="profile-page-layout-wrapper">{children}</div>
   ),
@@ -92,6 +91,7 @@ vi.mock('@/organisms', () => ({
       </div>
     );
   },
+  ProfilePageSidebar: () => <div data-testid="profile-sidebar">Sidebar</div>,
 }));
 
 const mockProfile = {

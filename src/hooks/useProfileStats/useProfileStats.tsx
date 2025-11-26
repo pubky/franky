@@ -29,7 +29,7 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   // Fetch user counts from local database using live query
   const userCounts = useLiveQuery(async () => {
     if (!userId) return null;
-    return await Core.UserController.getCounts(userId);
+    return await Core.UserController.getCounts({ userId });
   }, [userId]);
 
   // Get unread notifications count from store
