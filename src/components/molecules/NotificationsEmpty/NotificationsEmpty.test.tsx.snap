@@ -1,0 +1,50 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NotificationsEmpty - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  data-testid="container"
+>
+  <img
+    alt="Notifications - Empty state"
+    aria-hidden="true"
+    class="pointer-events-none object-contain object-center"
+    data-nimg="fill"
+    decoding="async"
+    loading="lazy"
+    sizes="100vw"
+    src="/_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=3840&q=75"
+    srcset="/_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=640&q=75 640w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=750&q=75 750w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=828&q=75 828w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=1080&q=75 1080w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=1200&q=75 1200w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=1920&q=75 1920w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=2048&q=75 2048w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=3840&q=75 3840w"
+    style="position: absolute; height: 100%; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; color: transparent;"
+  />
+  <div
+    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="frown-icon"
+    >
+      Frown
+    </svg>
+  </div>
+  <div
+    class="relative z-10 flex w-full flex-col items-center justify-center"
+    data-testid="container"
+  >
+    <h3
+      class="pb-6 text-center leading-8"
+      data-testid="typography"
+    >
+      Nothing to see here yet
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      Tags, follows, reposts and account information will be displayed here.
+    </p>
+  </div>
+</div>
+`;

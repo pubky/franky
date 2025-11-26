@@ -1,0 +1,104 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`NotificationIcon - Snapshots > matches snapshot for Follow notification with badge 1`] = `
+<div
+  class="relative shrink-0"
+  data-override="true"
+  data-testid="container"
+  style="width: 24px; height: 24px;"
+>
+  <svg
+    class="text-foreground"
+    data-size="24"
+    data-testid="icon-follow"
+  >
+    FollowIcon
+  </svg>
+  <div
+    class="absolute right-0 bottom-0 rounded-full bg-brand"
+    data-override="true"
+    data-testid="container"
+    style="width: 11px; height: 11px;"
+  />
+</div>
+`;
+
+exports[`NotificationIcon - Snapshots > matches snapshot for Follow notification without badge 1`] = `
+<div
+  class="relative shrink-0"
+  data-override="true"
+  data-testid="container"
+  style="width: 24px; height: 24px;"
+>
+  <svg
+    class="text-foreground"
+    data-size="24"
+    data-testid="icon-follow"
+  >
+    FollowIcon
+  </svg>
+</div>
+`;
+
+exports[`NotificationIcon - Snapshots > matches snapshot for Mention notification with badge 1`] = `
+<div
+  class="relative shrink-0"
+  data-override="true"
+  data-testid="container"
+  style="width: 24px; height: 24px;"
+>
+  <svg
+    class="text-foreground"
+    data-size="24"
+    data-testid="icon-mention"
+  >
+    MentionIcon
+  </svg>
+  <div
+    class="absolute right-0 bottom-0 rounded-full bg-brand"
+    data-override="true"
+    data-testid="container"
+    style="width: 11px; height: 11px;"
+  />
+</div>
+`;
+
+exports[`NotificationIcon - Snapshots > matches snapshot for Reply notification without badge 1`] = `
+<div
+  class="relative shrink-0"
+  data-override="true"
+  data-testid="container"
+  style="width: 24px; height: 24px;"
+>
+  <svg
+    class="text-foreground"
+    data-size="24"
+    data-testid="icon-reply"
+  >
+    ReplyIcon
+  </svg>
+</div>
+`;
+
+exports[`NotificationIcon - Snapshots > matches snapshot for TagPost notification with badge 1`] = `
+<div
+  class="relative shrink-0"
+  data-override="true"
+  data-testid="container"
+  style="width: 24px; height: 24px;"
+>
+  <svg
+    class="text-foreground"
+    data-size="24"
+    data-testid="icon-tag"
+  >
+    TagIcon
+  </svg>
+  <div
+    class="absolute right-0 bottom-0 rounded-full bg-brand"
+    data-override="true"
+    data-testid="container"
+    style="width: 11px; height: 11px;"
+  />
+</div>
+`;
