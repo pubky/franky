@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { POST } from './route';
+import { GET } from './route';
 
 // Mock dns module
 vi.mock('dns/promises', () => ({
@@ -32,19 +32,16 @@ describe('API Route: /api/og-metadata', () => {
   });
 
   const createRequest = (url: string) => {
-    return new NextRequest('http://localhost:3000/api/og-metadata', {
-      method: 'POST',
-      body: JSON.stringify({ url }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const searchParams = new URLSearchParams({ url });
+    return new NextRequest(`http://localhost:3000/api/og-metadata?${searchParams.toString()}`, {
+      method: 'GET',
     });
   };
 
   describe('Input Validation', () => {
     it('should reject empty URL', async () => {
       const request = createRequest('');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -59,7 +56,7 @@ describe('API Route: /api/og-metadata', () => {
           'Content-Type': 'application/json',
         },
       });
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -68,7 +65,7 @@ describe('API Route: /api/og-metadata', () => {
 
     it('should reject malformed URL', async () => {
       const request = createRequest('not-a-valid-url');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -77,7 +74,7 @@ describe('API Route: /api/og-metadata', () => {
 
     it('should reject file:// protocol', async () => {
       const request = createRequest('file:///etc/passwd');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -86,7 +83,7 @@ describe('API Route: /api/og-metadata', () => {
 
     it('should reject ftp:// protocol', async () => {
       const request = createRequest('ftp://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -95,7 +92,7 @@ describe('API Route: /api/og-metadata', () => {
 
     it('should reject javascript: protocol', async () => {
       const request = createRequest('javascript:alert(1)');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -109,7 +106,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['127.0.0.1']);
 
       const request = createRequest('http://localhost/admin');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -121,7 +118,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(isIP).mockReturnValue(4); // IPv4
 
       const request = createRequest('http://127.0.0.1/admin');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -135,7 +132,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['10.0.0.1']);
 
       const request = createRequest('http://internal.company.com/secrets');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -147,7 +144,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['172.16.0.1']);
 
       const request = createRequest('http://evil.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -159,7 +156,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['192.168.1.1']);
 
       const request = createRequest('http://router.local');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -171,7 +168,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['169.254.169.254']);
 
       const request = createRequest('http://metadata.aws');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -183,7 +180,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['100.64.0.1']);
 
       const request = createRequest('http://cgnat.example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -194,7 +191,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(isIP).mockReturnValue(4);
 
       const request = createRequest('http://0.0.0.0/');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(403);
@@ -206,7 +203,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockRejectedValue(new Error('ENOTFOUND'));
 
       const request = createRequest('http://nonexistent.example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -218,7 +215,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue([]);
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -240,7 +237,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValue(['192.168.1.1']);
 
       const request = createRequest('http://evil.com/rebind-attack');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       // Our implementation resolves DNS BEFORE fetch, so it should block
@@ -291,7 +288,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValueOnce(['1.1.1.1']).mockResolvedValueOnce(['1.1.1.1']);
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -324,7 +321,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(413);
@@ -348,7 +345,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com/api/data');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -397,7 +394,7 @@ describe('API Route: /api/og-metadata', () => {
       vi.mocked(dns.resolve4).mockResolvedValueOnce(['192.168.1.1']);
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -441,7 +438,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com/article');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -484,7 +481,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -528,7 +525,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -577,7 +574,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest(longUrl);
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -622,7 +619,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -666,7 +663,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest(shortUrl);
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -710,7 +707,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -755,7 +752,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -797,7 +794,7 @@ describe('API Route: /api/og-metadata', () => {
       });
 
       const request = createRequest('http://example.com');
-      const response = await POST(request);
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);

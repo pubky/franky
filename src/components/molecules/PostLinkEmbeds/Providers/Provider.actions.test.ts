@@ -96,13 +96,9 @@ describe('Provider.actions', () => {
         await fetchOpenGraphMetadata('https://example.com');
 
         expect(mockFetch).toHaveBeenCalledWith(
-          'http://localhost:3000/api/og-metadata',
+          'http://localhost:3000/api/og-metadata?url=https%3A%2F%2Fexample.com',
           expect.objectContaining({
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ url: 'https://example.com' }),
+            method: 'GET',
             next: { revalidate: 3600 },
           }),
         );
@@ -121,7 +117,12 @@ describe('Provider.actions', () => {
 
         await fetchOpenGraphMetadata('https://example.com');
 
-        expect(mockFetch).toHaveBeenCalledWith('https://myapp.com/api/og-metadata', expect.anything());
+        expect(mockFetch).toHaveBeenCalledWith(
+          'https://myapp.com/api/og-metadata?url=https%3A%2F%2Fexample.com',
+          expect.objectContaining({
+            method: 'GET',
+          }),
+        );
       });
 
       it('includes cache revalidation config', async () => {

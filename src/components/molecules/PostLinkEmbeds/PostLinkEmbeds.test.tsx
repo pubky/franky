@@ -2,9 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { PostLinkEmbeds } from './PostLinkEmbeds';
 
-// Mock the Generic provider's parseEmbed to prevent actual network calls
-import * as ProviderActions from './Providers/Provider.actions';
-
 vi.mock('./Providers/Provider.actions', () => ({
   fetchOpenGraphMetadata: vi.fn().mockResolvedValue(null),
 }));
@@ -43,11 +40,6 @@ vi.mock('@/atoms', () => ({
       height={height}
       {...props}
     />
-  ),
-  Skeleton: ({ className }: { className?: string }) => (
-    <div data-testid="skeleton" className={className}>
-      Loading...
-    </div>
   ),
   Anchor: ({
     children,
@@ -665,11 +657,11 @@ describe('PostLinkEmbeds', () => {
       expect(handleParentClick).not.toHaveBeenCalled();
     });
 
-    it('shows loading skeleton while fetching embed data', async () => {
+    it('shows loading message while fetching embed data', async () => {
       render(<PostLinkEmbeds content="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />);
 
-      // The skeleton should appear briefly, then be replaced by the embed
-      // Since YouTube provider is sync, we may not catch the skeleton, but the test ensures no errors
+      // The loading message should appear briefly, then be replaced by the embed
+      // Since YouTube provider is sync, we may not catch the loading state, but the test ensures no errors
       await screen.findByTestId('YouTube video player');
     });
   });
@@ -712,15 +704,6 @@ describe('PostLinkEmbeds - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot for Generic website preview embed', async () => {
-    vi.mocked(ProviderActions.fetchOpenGraphMetadata).mockResolvedValueOnce({
-      url: 'https://example.com/article',
-      title: 'Example Article Title',
-      image: 'https://example.com/og-image.jpg',
-    });
-
-    const { container } = render(<PostLinkEmbeds content="Check this out: https://example.com/article" />);
-    await screen.findByTestId('generic-website-preview');
-    expect(container.firstChild).toMatchSnapshot();
-  });
+  // Note: Generic preview snapshot test removed as it now uses SWR
+  // which requires mocking fetch and is tested separately in GenericPreview.test.tsx
 });

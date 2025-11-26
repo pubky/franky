@@ -14,11 +14,14 @@ import { OG_PATTERNS, extractFromHtml } from '@/libs/html';
  * 3. Using stream reading to enforce real size limits
  * 4. Validating content types and response headers
  *
+ * Uses GET method to enable HTTP caching on CDN/Edge
+ *
  * @see docs/adr/XXXX-secure-og-metadata-fetching.md (TODO: Create ADR)
  */
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { url } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const url = searchParams.get('url');
 
     // 1. Validate URL format
     if (!url || typeof url !== 'string') {
@@ -177,12 +180,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 12. Return normalized metadata with truncation
-    return NextResponse.json({
-      url: truncateMiddle(url, 40), // Truncate URL with "..." in the middle (max 40 chars)
-      title: title ? truncateString(title.trim(), 50) : null, // Truncate title with "..." at the end (max 50 chars)
-      image: normalizedImage,
-    });
+    // 12. Return normalized metadata with truncation and cache headers
+    return NextResponse.json(
+      {
+        url: truncateMiddle(url, 40), // Truncate URL with "..." in the middle (max 40 chars)
+        title: title ? truncateString(title.trim(), 50) : null, // Truncate title with "..." at the end (max 50 chars)
+        image: normalizedImage,
+      },
+      {
+        headers: {
+          // Cache for 1 hour on CDN, stale-while-revalidate for 24 hours
+          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        },
+      },
+    );
   } catch (error) {
     console.error('OG metadata fetch error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

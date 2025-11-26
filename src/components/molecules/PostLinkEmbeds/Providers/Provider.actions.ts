@@ -26,13 +26,10 @@ export async function fetchOpenGraphMetadata(url: string): Promise<ProviderTypes
     // Determine the API base URL
     const apiBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-    // Call the secure API route
-    const response = await fetch(`${apiBaseUrl}/api/og-metadata`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url }),
+    // Call the secure API route (GET for better caching)
+    const searchParams = new URLSearchParams({ url });
+    const response = await fetch(`${apiBaseUrl}/api/og-metadata?${searchParams.toString()}`, {
+      method: 'GET',
       // Cache metadata for 1 hour to reduce load on external sites
       next: { revalidate: 3600 },
     });
