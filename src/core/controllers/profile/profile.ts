@@ -31,4 +31,8 @@ export class ProfileController {
   static async downloadData({ pubky, setProgress }: Core.TDownloadDataInput) {
     await Core.ProfileApplication.downloadData({ pubky, setProgress });
   }
+
+  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+    return await Core.ProfileApplication.update({ pubky, status });
+  }
 }

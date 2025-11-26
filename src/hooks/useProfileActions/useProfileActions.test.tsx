@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import * as Core from '@/core';
 import { useProfileActions } from './useProfileActions';
 
 // Mock next/navigation
@@ -40,13 +41,13 @@ describe('useProfileActions', () => {
       expect(result.current.onCopyPublicKey).toBeDefined();
       expect(result.current.onCopyLink).toBeDefined();
       expect(result.current.onSignOut).toBeDefined();
-      expect(result.current.onStatusClick).toBeDefined();
+      expect(result.current.onStatusChange).toBeDefined();
 
       expect(typeof result.current.onEdit).toBe('function');
       expect(typeof result.current.onCopyPublicKey).toBe('function');
       expect(typeof result.current.onCopyLink).toBe('function');
       expect(typeof result.current.onSignOut).toBe('function');
-      expect(typeof result.current.onStatusClick).toBe('function');
+      expect(typeof result.current.onStatusChange).toBe('function');
     });
   });
 
@@ -149,17 +150,24 @@ describe('useProfileActions', () => {
     });
   });
 
-  describe('onStatusClick', () => {
-    it('logs to console (not implemented yet)', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+  describe('onStatusChange', () => {
+    it('calls ProfileController.updateStatus with status', async () => {
+      const mockUpdateStatus = vi.spyOn(Core.ProfileController, 'updateStatus').mockResolvedValue(undefined);
+      const mockAuthStore = {
+        currentUserPubky: 'pk:test-user',
+        setCurrentUserPubky: vi.fn(),
+        setAuthenticated: vi.fn(),
+      };
+      vi.spyOn(Core, 'useAuthStore').mockReturnValue(mockAuthStore as ReturnType<typeof Core.useAuthStore>);
 
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
-      result.current.onStatusClick();
+      await result.current.onStatusChange('available');
 
-      expect(consoleSpy).toHaveBeenCalledWith('Status clicked');
+      expect(mockUpdateStatus).toHaveBeenCalledWith({ pubky: 'pk:test-user', status: 'available' });
+      expect(mockUpdateStatus).toHaveBeenCalledTimes(1);
 
-      consoleSpy.mockRestore();
+      mockUpdateStatus.mockRestore();
     });
   });
 
@@ -225,7 +233,7 @@ describe('useProfileActions', () => {
       });
 
       const firstOnEdit = result.current.onEdit;
-      const firstOnStatusClick = result.current.onStatusClick;
+      const firstOnStatusChange = result.current.onStatusChange;
 
       // Rerender with different props
       rerender({
@@ -233,9 +241,9 @@ describe('useProfileActions', () => {
         link: 'https://new-link.com',
       });
 
-      // onEdit and onStatusClick don't depend on props, so they should remain stable
+      // onEdit and onStatusChange don't depend on props, so they should remain stable
       expect(result.current.onEdit).toBe(firstOnEdit);
-      expect(result.current.onStatusClick).toBe(firstOnStatusClick);
+      expect(result.current.onStatusChange).toBe(firstOnStatusChange);
     });
   });
 

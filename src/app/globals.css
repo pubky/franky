@@ -147,6 +147,15 @@ body {
   --filter-bar-width: 180px;
 
   /**
+   * Popover width
+   * - Standard width for popover components (dropdowns, pickers)
+   * - Ensures consistent popover sizing across the application
+   * - Applied to: StatusPicker PopoverContent
+   * - Used for: Status selection dropdowns and similar picker components
+   */
+  --popover-width: 280px;
+
+  /**
    * Avatar zoom modal size
    * - Size of the avatar when displayed in the zoom modal
    * - Used for full-screen avatar preview on profile page
