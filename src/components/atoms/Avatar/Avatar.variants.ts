@@ -5,6 +5,7 @@ export const avatarVariants = cva('relative flex shrink-0 overflow-hidden rounde
     size: {
       sm: 'h-6 w-6',
       default: 'h-10 w-10',
+      md: 'h-8 w-8',
       lg: 'h-12 w-12',
       xl: 'h-16 w-16',
     },
@@ -14,4 +15,4 @@ export const avatarVariants = cva('relative flex shrink-0 overflow-hidden rounde
   },
 });
 
-export type AvatarSize = 'sm' | 'default' | 'lg' | 'xl';
+export type AvatarSize = 'sm' | 'default' | 'md' | 'lg' | 'xl';

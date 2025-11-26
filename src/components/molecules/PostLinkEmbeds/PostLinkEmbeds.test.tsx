@@ -77,11 +77,15 @@ vi.mock('react-tweet', () => ({
   ),
 }));
 
-vi.mock('@/libs/icons', () => ({
-  Globe: ({ size, className }: { size?: number; className?: string }) => (
-    <svg data-testid="globe-icon" width={size} className={className} />
-  ),
-}));
+vi.mock('@/libs/icons', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs/icons')>();
+  return {
+    ...actual,
+    Globe: ({ size, className }: { size?: number; className?: string }) => (
+      <svg data-testid="globe-icon" width={size} className={className} />
+    ),
+  };
+});
 
 describe('PostLinkEmbeds', () => {
   beforeEach(() => {
