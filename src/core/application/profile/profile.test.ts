@@ -185,4 +185,168 @@ describe('ProfileApplication', () => {
       expect(mockAuthState.setCurrentUserPubky).toHaveBeenCalledWith(null);
     });
   });
+
+  describe('update', () => {
+    const testPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Pubky;
+
+    beforeEach(async () => {
+      await Core.UserDetailsModel.table.clear();
+    });
+
+    it('updates status in both homeserver and local database', async () => {
+      // Setup: Create existing user in local DB
+      const existingUser = {
+        id: testPubky,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: 'https://example.com/avatar.jpg',
+        status: 'available',
+        links: [{ title: 'Website', url: 'https://example.com' }],
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      // Mock UserNormalizer
+      const mockUserResult = {
+        user: {
+          toJson: vi.fn(() => ({
+            name: 'Test User',
+            bio: 'Test bio',
+            image: 'https://example.com/avatar.jpg',
+            links: [{ title: 'Website', url: 'https://example.com' }],
+            status: 'vacationing',
+          })),
+        },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      const normalizerSpy = vi
+        .spyOn(Core.UserNormalizer, 'to')
+        .mockReturnValue(mockUserResult as unknown as UserResult);
+
+      // Mock HomeserverService
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      // Execute
+      await ProfileApplication.update({ pubky: testPubky, status: 'vacationing' });
+
+      // Verify UserNormalizer called with complete profile data
+      expect(normalizerSpy).toHaveBeenCalledWith(
+        {
+          name: 'Test User',
+          bio: 'Test bio',
+          image: 'https://example.com/avatar.jpg',
+          links: [{ title: 'Website', url: 'https://example.com' }],
+          status: 'vacationing',
+        },
+        testPubky,
+      );
+
+      // Verify homeserver PUT request
+      expect(requestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        `pubky://${testPubky}/pub/pubky.app/profile.json`,
+        mockUserResult.user.toJson(),
+      );
+
+      // Verify local database update
+      const updatedUser = await Core.UserDetailsModel.findById(testPubky);
+      expect(updatedUser).not.toBeNull();
+      expect(updatedUser!.status).toBe('vacationing');
+    });
+
+    it('handles empty status string', async () => {
+      const existingUser = {
+        id: testPubky,
+        name: 'Test User',
+        bio: '',
+        image: null,
+        status: 'available',
+        links: null,
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      const mockUserResult = {
+        user: { toJson: vi.fn(() => ({ name: 'Test User', bio: '', image: '', links: [], status: '' })) },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
+      vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await ProfileApplication.update({ pubky: testPubky, status: '' });
+
+      const updatedUser = await Core.UserDetailsModel.findById(testPubky);
+      expect(updatedUser!.status).toBeNull();
+    });
+
+    it('throws error when user not found', async () => {
+      await expect(ProfileApplication.update({ pubky: testPubky, status: 'available' })).rejects.toThrow(
+        'User profile not found',
+      );
+    });
+
+    it('rollback: does not update local DB if homeserver request fails', async () => {
+      const existingUser = {
+        id: testPubky,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'available',
+        links: null,
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      const mockUserResult = {
+        user: { toJson: vi.fn(() => ({ name: 'Test User', status: 'vacationing' })) },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
+      vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('Network error'));
+
+      await expect(ProfileApplication.update({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
+        'Network error',
+      );
+
+      // Verify local DB was NOT updated
+      const unchangedUser = await Core.UserDetailsModel.findById(testPubky);
+      expect(unchangedUser!.status).toBe('available'); // Still the old status
+    });
+
+    it('handles null links and image correctly', async () => {
+      const existingUser = {
+        id: testPubky,
+        name: 'Minimal User',
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      const mockUserResult = {
+        user: { toJson: vi.fn(() => ({ name: 'Minimal User', bio: '', image: '', links: [], status: 'busy' })) },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      const normalizerSpy = vi
+        .spyOn(Core.UserNormalizer, 'to')
+        .mockReturnValue(mockUserResult as unknown as UserResult);
+      vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await ProfileApplication.update({ pubky: testPubky, status: 'busy' });
+
+      // Verify normalizer called with empty strings/arrays for null values
+      expect(normalizerSpy).toHaveBeenCalledWith(
+        {
+          name: 'Minimal User',
+          bio: '',
+          image: '',
+          links: [],
+          status: 'busy',
+        },
+        testPubky,
+      );
+    });
+  });
 });
