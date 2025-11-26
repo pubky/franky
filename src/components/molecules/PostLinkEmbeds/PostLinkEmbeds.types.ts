@@ -4,7 +4,7 @@ export type PostLinkEmbedsProps = {
   content: string;
 };
 
-export type ParseContentForLinkEmbedResult = {
+export type ParseUrlForLinkEmbedResult = {
   embed: Providers.EmbedData | null;
   provider: Providers.EmbedProvider | null;
 };

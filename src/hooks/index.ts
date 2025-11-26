@@ -18,3 +18,4 @@ export * from './useProfileStats';
 export * from './useProfileActions';
 export * from './useBodyScrollLock';
 export * from './useCurrentUserProfile';
+export * from './useOgMetadata';
