@@ -1,2 +1,2 @@
-export { StatusPickerWrapper as StatusPicker } from './StatusPickerWrapper';
-export type { StatusPickerWrapperProps as StatusPickerProps } from './StatusPickerWrapper';
+export * from './StatusPickerContent';
+export * from './StatusPickerWrapper';

@@ -1,38 +1,21 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import * as Atoms from '@/components/atoms';
-import * as Molecules from '@/components/molecules';
-import { Smile, Check } from 'lucide-react';
+import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
+import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
-import { statusHelper } from '../statusHelper';
-import { parseStatus } from '../statusUtils';
+import * as Types from './index';
 
-export interface StatusPickerContentProps {
-  onStatusSelect: (status: string) => void;
-  currentStatus?: string;
-}
-
-const STATUS_OPTIONS = [
-  { value: 'available', label: statusHelper.labels.available, emoji: statusHelper.emojis.available },
-  { value: 'away', label: statusHelper.labels.away, emoji: statusHelper.emojis.away },
-  { value: 'vacationing', label: statusHelper.labels.vacationing, emoji: statusHelper.emojis.vacationing },
-  { value: 'working', label: statusHelper.labels.working, emoji: statusHelper.emojis.working },
-  { value: 'traveling', label: statusHelper.labels.traveling, emoji: statusHelper.emojis.traveling },
-  { value: 'celebrating', label: statusHelper.labels.celebrating, emoji: statusHelper.emojis.celebrating },
-  { value: 'sick', label: statusHelper.labels.sick, emoji: statusHelper.emojis.sick },
-  { value: 'noStatus', label: statusHelper.labels.noStatus, emoji: statusHelper.emojis.noStatus },
-] as const;
-
-export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPickerContentProps) {
+export function StatusPickerContent({ onStatusSelect, currentStatus }: Types.StatusPickerContentProps) {
   const [customStatus, setCustomStatus] = useState('');
   const [selectedEmoji, setSelectedEmoji] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Parse current status to extract emoji and text if it's custom
-  const parsed = parseStatus(currentStatus || '');
+  const parsed = Libs.parseStatus(currentStatus || '');
   const isCustomStatus = parsed.isCustom;
 
   // Initialize custom status state from current status if it's custom
@@ -78,7 +61,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
   return (
     <Atoms.Container className="gap-2">
       {/* Predefined status options */}
-      {STATUS_OPTIONS.map((option) => {
+      {Types.STATUS_OPTIONS.map((option) => {
         const isSelected = !isCustomStatus && currentStatus === option.value;
         return (
           <Atoms.Button
@@ -99,7 +82,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
                 {option.label}
               </Atoms.Typography>
             </Atoms.Container>
-            {isSelected && <Check className="size-5 text-popover-foreground" />}
+            {isSelected && <Icons.Check className="size-5 text-popover-foreground" />}
           </Atoms.Button>
         );
       })}
@@ -154,7 +137,7 @@ export function StatusPickerContent({ onStatusSelect, currentStatus }: StatusPic
                 )}
                 aria-label="Open emoji picker"
               >
-                <Smile className="size-5" strokeWidth={2} />
+                <Icons.Smile className="size-5" strokeWidth={2} />
               </Atoms.Button>
             )}
           </Atoms.Container>

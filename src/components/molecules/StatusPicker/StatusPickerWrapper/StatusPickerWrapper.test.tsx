@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StatusPickerWrapper } from './StatusPickerWrapper';
-import { statusHelper } from '../statusHelper';
+import * as Libs from '@/libs';
 
 // Mock StatusPickerContent
 vi.mock('../StatusPickerContent', () => ({
@@ -45,7 +45,7 @@ describe('StatusPickerWrapper', () => {
       render(<StatusPickerWrapper emoji="🌴" status="vacationing" />);
 
       expect(screen.getByText('🌴')).toBeInTheDocument();
-      expect(screen.getByText(statusHelper.labels.vacationing)).toBeInTheDocument();
+      expect(screen.getByText(Libs.STATUS_LABELS.vacationing)).toBeInTheDocument();
     });
 
     it('renders emoji and status correctly for custom status', () => {
@@ -192,6 +192,41 @@ describe('StatusPickerWrapper', () => {
     });
   });
 
+  describe('Custom Configuration', () => {
+    it('uses default sideOffset when not provided', async () => {
+      render(<StatusPickerWrapper emoji="🌴" status="vacationing" />);
+
+      const triggerButton = screen.getByText('🌴').closest('button');
+      fireEvent.click(triggerButton!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('status-picker-content')).toBeInTheDocument();
+      });
+    });
+
+    it('uses custom sideOffset when provided', async () => {
+      render(<StatusPickerWrapper emoji="🌴" status="vacationing" sideOffset={-50} />);
+
+      const triggerButton = screen.getByText('🌴').closest('button');
+      fireEvent.click(triggerButton!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('status-picker-content')).toBeInTheDocument();
+      });
+    });
+
+    it('accepts zero as sideOffset', async () => {
+      render(<StatusPickerWrapper emoji="🌴" status="vacationing" sideOffset={0} />);
+
+      const triggerButton = screen.getByText('🌴').closest('button');
+      fireEvent.click(triggerButton!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('status-picker-content')).toBeInTheDocument();
+      });
+    });
+  });
+
   describe('StatusPickerWrapper - Snapshots', () => {
     it('matches snapshot with predefined status', () => {
       const { container } = render(<StatusPickerWrapper emoji="🌴" status="vacationing" />);
@@ -207,6 +242,11 @@ describe('StatusPickerWrapper', () => {
       const { container } = render(
         <StatusPickerWrapper emoji="🌴" status="vacationing" onStatusChange={mockOnStatusChange} />,
       );
+      expect(container.firstChild).toMatchSnapshot();
+    });
+
+    it('matches snapshot with custom sideOffset', () => {
+      const { container } = render(<StatusPickerWrapper emoji="🌴" status="vacationing" sideOffset={-50} />);
       expect(container.firstChild).toMatchSnapshot();
     });
   });

@@ -1,15 +1,97 @@
 import { describe, it, expect } from 'vitest';
-import { parseStatus, extractEmojiFromStatus } from './statusUtils';
-import { statusHelper } from './statusHelper';
+import { parseStatus, extractEmojiFromStatus } from './status';
+import { STATUS_LABELS, STATUS_EMOJIS, DEFAULT_STATUS, EMOJI_REGEX } from './status.constants';
 
-describe('statusUtils', () => {
+describe('status', () => {
+  describe('constants', () => {
+    describe('STATUS_LABELS', () => {
+      it('should export all predefined status labels', () => {
+        expect(STATUS_LABELS.available).toBe('Available');
+        expect(STATUS_LABELS.away).toBe('Away');
+        expect(STATUS_LABELS.vacationing).toBe('Vacationing');
+        expect(STATUS_LABELS.working).toBe('Working');
+        expect(STATUS_LABELS.traveling).toBe('Traveling');
+        expect(STATUS_LABELS.celebrating).toBe('Celebrating');
+        expect(STATUS_LABELS.sick).toBe('Sick');
+        expect(STATUS_LABELS.noStatus).toBe('No Status');
+        expect(STATUS_LABELS.loading).toBe('Loading');
+      });
+
+      it('should have all labels as non-empty strings', () => {
+        Object.values(STATUS_LABELS).forEach((label) => {
+          expect(typeof label).toBe('string');
+          expect(label.length).toBeGreaterThan(0);
+        });
+      });
+
+      it('should have consistent keys between labels and emojis', () => {
+        const labelKeys = Object.keys(STATUS_LABELS).sort();
+        const emojiKeys = Object.keys(STATUS_EMOJIS).sort();
+        expect(labelKeys).toEqual(emojiKeys);
+      });
+    });
+
+    describe('STATUS_EMOJIS', () => {
+      it('should export all predefined status emojis', () => {
+        expect(STATUS_EMOJIS.available).toBe('👋');
+        expect(STATUS_EMOJIS.away).toBe('🕓');
+        expect(STATUS_EMOJIS.vacationing).toBe('🌴');
+        expect(STATUS_EMOJIS.working).toBe('👨‍💻');
+        expect(STATUS_EMOJIS.traveling).toBe('✈️');
+        expect(STATUS_EMOJIS.celebrating).toBe('🥂');
+        expect(STATUS_EMOJIS.sick).toBe('🤒');
+        expect(STATUS_EMOJIS.noStatus).toBe('💭');
+        expect(STATUS_EMOJIS.loading).toBe('⏳');
+      });
+
+      it('should have all emojis as non-empty strings', () => {
+        Object.values(STATUS_EMOJIS).forEach((emoji) => {
+          expect(typeof emoji).toBe('string');
+          expect(emoji.length).toBeGreaterThan(0);
+        });
+      });
+
+      it('should have emojis that match Unicode emoji pattern', () => {
+        Object.values(STATUS_EMOJIS).forEach((emoji) => {
+          expect(emoji).toMatch(/\p{Extended_Pictographic}/u);
+        });
+      });
+    });
+
+    describe('DEFAULT_STATUS', () => {
+      it('should be a valid status key', () => {
+        expect(DEFAULT_STATUS).toBe('vacationing');
+        expect(STATUS_LABELS[DEFAULT_STATUS]).toBeDefined();
+        expect(STATUS_EMOJIS[DEFAULT_STATUS]).toBeDefined();
+      });
+    });
+
+    describe('EMOJI_REGEX', () => {
+      it('should match standard emojis', () => {
+        expect('😊'.match(EMOJI_REGEX)?.[0]).toBe('😊');
+        expect('🎉'.match(EMOJI_REGEX)?.[0]).toBe('🎉');
+        expect('🚀'.match(EMOJI_REGEX)?.[0]).toBe('🚀');
+      });
+
+      it('should match complex emojis', () => {
+        expect('👨‍💻'.match(EMOJI_REGEX)?.[0]).toBe('👨‍💻');
+        expect('👋'.match(EMOJI_REGEX)?.[0]).toBe('👋');
+      });
+
+      it('should match flag emojis', () => {
+        expect('🇺🇸'.match(EMOJI_REGEX)?.[0]).toBe('🇺🇸');
+        expect('🇬🇧'.match(EMOJI_REGEX)?.[0]).toBe('🇬🇧');
+      });
+    });
+  });
+
   describe('parseStatus', () => {
     describe('empty status', () => {
       it('should return default vacationing status for empty string', () => {
         const result = parseStatus('');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.vacationing,
-          text: statusHelper.labels.vacationing,
+          emoji: STATUS_EMOJIS.vacationing,
+          text: STATUS_LABELS.vacationing,
           isCustom: false,
         });
       });
@@ -17,8 +99,8 @@ describe('statusUtils', () => {
       it('should return default vacationing status for empty string with custom default emoji', () => {
         const result = parseStatus('', '🎉');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.vacationing,
-          text: statusHelper.labels.vacationing,
+          emoji: STATUS_EMOJIS.vacationing,
+          text: STATUS_LABELS.vacationing,
           isCustom: false,
         });
       });
@@ -28,8 +110,8 @@ describe('statusUtils', () => {
       it('should parse "available" status', () => {
         const result = parseStatus('available');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.available,
-          text: statusHelper.labels.available,
+          emoji: STATUS_EMOJIS.available,
+          text: STATUS_LABELS.available,
           isCustom: false,
         });
       });
@@ -37,8 +119,8 @@ describe('statusUtils', () => {
       it('should parse "away" status', () => {
         const result = parseStatus('away');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.away,
-          text: statusHelper.labels.away,
+          emoji: STATUS_EMOJIS.away,
+          text: STATUS_LABELS.away,
           isCustom: false,
         });
       });
@@ -46,8 +128,8 @@ describe('statusUtils', () => {
       it('should parse "vacationing" status', () => {
         const result = parseStatus('vacationing');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.vacationing,
-          text: statusHelper.labels.vacationing,
+          emoji: STATUS_EMOJIS.vacationing,
+          text: STATUS_LABELS.vacationing,
           isCustom: false,
         });
       });
@@ -55,8 +137,8 @@ describe('statusUtils', () => {
       it('should parse "working" status', () => {
         const result = parseStatus('working');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.working,
-          text: statusHelper.labels.working,
+          emoji: STATUS_EMOJIS.working,
+          text: STATUS_LABELS.working,
           isCustom: false,
         });
       });
@@ -64,8 +146,8 @@ describe('statusUtils', () => {
       it('should parse "traveling" status', () => {
         const result = parseStatus('traveling');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.traveling,
-          text: statusHelper.labels.traveling,
+          emoji: STATUS_EMOJIS.traveling,
+          text: STATUS_LABELS.traveling,
           isCustom: false,
         });
       });
@@ -73,8 +155,8 @@ describe('statusUtils', () => {
       it('should parse "celebrating" status', () => {
         const result = parseStatus('celebrating');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.celebrating,
-          text: statusHelper.labels.celebrating,
+          emoji: STATUS_EMOJIS.celebrating,
+          text: STATUS_LABELS.celebrating,
           isCustom: false,
         });
       });
@@ -82,8 +164,8 @@ describe('statusUtils', () => {
       it('should parse "sick" status', () => {
         const result = parseStatus('sick');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.sick,
-          text: statusHelper.labels.sick,
+          emoji: STATUS_EMOJIS.sick,
+          text: STATUS_LABELS.sick,
           isCustom: false,
         });
       });
@@ -91,8 +173,8 @@ describe('statusUtils', () => {
       it('should parse "noStatus" status', () => {
         const result = parseStatus('noStatus');
         expect(result).toEqual({
-          emoji: statusHelper.emojis.noStatus,
-          text: statusHelper.labels.noStatus,
+          emoji: STATUS_EMOJIS.noStatus,
+          text: STATUS_LABELS.noStatus,
           isCustom: false,
         });
       });
@@ -108,9 +190,8 @@ describe('statusUtils', () => {
 
       it('should use default emoji when predefined key has no emoji mapping', () => {
         const result = parseStatus('loading', '🎯');
-        // loading exists in statusHelper but test the fallback behavior
         expect(result.emoji).toBeDefined();
-        expect(result.text).toBe(statusHelper.labels.loading);
+        expect(result.text).toBe(STATUS_LABELS.loading);
         expect(result.isCustom).toBe(false);
       });
     });
@@ -129,7 +210,7 @@ describe('statusUtils', () => {
         const result = parseStatus('🎉');
         expect(result).toEqual({
           emoji: '🎉',
-          text: statusHelper.labels.noStatus,
+          text: STATUS_LABELS.noStatus,
           isCustom: true,
         });
       });
@@ -146,7 +227,6 @@ describe('statusUtils', () => {
       it('should extract first emoji when multiple emojis are present', () => {
         const result = parseStatus('😊🎉🎈 Multiple emojis');
         expect(result.emoji).toBe('😊');
-        // The regex removes all emojis when replacing, so only text remains
         expect(result.text).toBe('Multiple emojis');
         expect(result.isCustom).toBe(true);
       });
@@ -160,9 +240,7 @@ describe('statusUtils', () => {
 
       it('should handle emoji with skin tone modifiers', () => {
         const result = parseStatus('👋🏿 Waving');
-        // The regex only matches the base emoji, not the skin tone modifier
         expect(result.emoji).toBe('👋');
-        // The skin tone modifier remains in the text
         expect(result.text).toBe('🏿 Waving');
         expect(result.isCustom).toBe(true);
       });
@@ -179,7 +257,7 @@ describe('statusUtils', () => {
       it('should handle status with only whitespace after emoji removal', () => {
         const result = parseStatus('😊   ');
         expect(result.emoji).toBe('😊');
-        expect(result.text).toBe(statusHelper.labels.noStatus);
+        expect(result.text).toBe(STATUS_LABELS.noStatus);
         expect(result.isCustom).toBe(true);
       });
 
@@ -246,49 +324,49 @@ describe('statusUtils', () => {
     describe('empty status', () => {
       it('should return vacationing emoji for empty string', () => {
         const result = extractEmojiFromStatus('');
-        expect(result).toBe(statusHelper.emojis.vacationing);
+        expect(result).toBe(STATUS_EMOJIS.vacationing);
       });
 
       it('should return vacationing emoji for empty string with custom default', () => {
         const result = extractEmojiFromStatus('', '🎯');
-        expect(result).toBe(statusHelper.emojis.vacationing);
+        expect(result).toBe(STATUS_EMOJIS.vacationing);
       });
     });
 
     describe('predefined status keys', () => {
       it('should extract emoji for "available" status', () => {
         const result = extractEmojiFromStatus('available');
-        expect(result).toBe(statusHelper.emojis.available);
+        expect(result).toBe(STATUS_EMOJIS.available);
       });
 
       it('should extract emoji for "away" status', () => {
         const result = extractEmojiFromStatus('away');
-        expect(result).toBe(statusHelper.emojis.away);
+        expect(result).toBe(STATUS_EMOJIS.away);
       });
 
       it('should extract emoji for "vacationing" status', () => {
         const result = extractEmojiFromStatus('vacationing');
-        expect(result).toBe(statusHelper.emojis.vacationing);
+        expect(result).toBe(STATUS_EMOJIS.vacationing);
       });
 
       it('should extract emoji for "working" status', () => {
         const result = extractEmojiFromStatus('working');
-        expect(result).toBe(statusHelper.emojis.working);
+        expect(result).toBe(STATUS_EMOJIS.working);
       });
 
       it('should extract emoji for "traveling" status', () => {
         const result = extractEmojiFromStatus('traveling');
-        expect(result).toBe(statusHelper.emojis.traveling);
+        expect(result).toBe(STATUS_EMOJIS.traveling);
       });
 
       it('should extract emoji for "celebrating" status', () => {
         const result = extractEmojiFromStatus('celebrating');
-        expect(result).toBe(statusHelper.emojis.celebrating);
+        expect(result).toBe(STATUS_EMOJIS.celebrating);
       });
 
       it('should extract emoji for "sick" status', () => {
         const result = extractEmojiFromStatus('sick');
-        expect(result).toBe(statusHelper.emojis.sick);
+        expect(result).toBe(STATUS_EMOJIS.sick);
       });
 
       it('should use default emoji for unknown status key', () => {
@@ -298,8 +376,7 @@ describe('statusUtils', () => {
 
       it('should use default emoji when status key has no emoji mapping', () => {
         const result = extractEmojiFromStatus('loading', '🎯');
-        // loading exists in statusHelper, so it should return the actual emoji
-        expect(result).toBe(statusHelper.emojis.loading);
+        expect(result).toBe(STATUS_EMOJIS.loading);
       });
     });
 
@@ -326,7 +403,6 @@ describe('statusUtils', () => {
 
       it('should handle emoji with skin tone modifiers', () => {
         const result = extractEmojiFromStatus('👋🏿 Waving');
-        // The regex only matches the base emoji, not the skin tone modifier
         expect(result).toBe('👋');
       });
 
@@ -392,7 +468,6 @@ describe('statusUtils', () => {
         ];
 
         results.forEach((result) => {
-          // Should match Unicode emoji pattern or be a valid emoji
           expect(result).toMatch(/\p{Extended_Pictographic}/u);
         });
       });
@@ -422,7 +497,7 @@ describe('statusUtils', () => {
       const parsed = parseStatus('');
       const extracted = extractEmojiFromStatus('');
       expect(parsed.emoji).toBe(extracted);
-      expect(extracted).toBe(statusHelper.emojis.vacationing);
+      expect(extracted).toBe(STATUS_EMOJIS.vacationing);
     });
   });
 });
