@@ -5,7 +5,7 @@ import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import { FlatNotification, NotificationType } from '@/core';
 
-export interface NotificationItemProps {
+interface NotificationItemProps {
   notification: FlatNotification;
   isUnread: boolean;
 }

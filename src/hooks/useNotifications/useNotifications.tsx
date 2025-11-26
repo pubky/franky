@@ -5,7 +5,7 @@ import type { FlatNotification } from '@/core';
 import * as Libs from '@/libs';
 import { getNotificationText, getUserIdFromNotification } from '@/components/molecules/NotificationItem';
 
-export interface UseNotificationsResult {
+interface UseNotificationsResult {
   notifications: FlatNotification[];
   unreadNotifications: FlatNotification[];
   count: number;

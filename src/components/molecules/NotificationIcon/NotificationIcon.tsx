@@ -14,7 +14,7 @@ import {
 import { NotificationType } from '@/core/models/notification/notification.types';
 import * as Atoms from '@/atoms';
 
-export interface NotificationIconProps {
+interface NotificationIconProps {
   type: NotificationType;
   showBadge: boolean;
 }
@@ -48,11 +48,10 @@ export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
       {showBadge && (
         <Atoms.Container
           overrideDefaults={true}
-          className="absolute -right-0.5 -bottom-0.5 rounded-full"
+          className="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
           style={{
             width: BADGE_SIZE,
             height: BADGE_SIZE,
-            backgroundColor: 'var(--brand)',
           }}
         />
       )}

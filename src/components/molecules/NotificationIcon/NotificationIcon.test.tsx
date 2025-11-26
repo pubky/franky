@@ -159,10 +159,10 @@ describe('NotificationIcon', () => {
     expect(badge).toHaveClass('absolute', '-right-0.5', '-bottom-0.5', 'rounded-full');
   });
 
-  it('applies brand color to badge', () => {
+  it('applies brand color to badge class', () => {
     const { container } = render(<NotificationIcon type={NotificationType.Follow} showBadge={true} />);
     const badge = container.querySelector('[style*="width: 11px"]') as HTMLElement;
-    expect(badge).toHaveStyle({ backgroundColor: 'var(--brand)' });
+    expect(badge).toHaveClass('bg-brand');
   });
 });
 

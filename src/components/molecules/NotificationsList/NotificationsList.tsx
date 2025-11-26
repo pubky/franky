@@ -5,7 +5,7 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import type { FlatNotification } from '@/core';
 
-export interface NotificationsListProps {
+interface NotificationsListProps {
   notifications: FlatNotification[];
   unreadNotifications: FlatNotification[];
 }

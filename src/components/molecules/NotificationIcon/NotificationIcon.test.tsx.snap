@@ -15,10 +15,10 @@ exports[`NotificationIcon - Snapshots > matches snapshot for Follow notification
     FollowIcon
   </svg>
   <div
-    class="absolute -right-0.5 -bottom-0.5 rounded-full"
+    class="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
     data-override="true"
     data-testid="container"
-    style="width: 11px; height: 11px; background-color: var(--brand);"
+    style="width: 11px; height: 11px;"
   />
 </div>
 `;
@@ -55,10 +55,10 @@ exports[`NotificationIcon - Snapshots > matches snapshot for Mention notificatio
     MentionIcon
   </svg>
   <div
-    class="absolute -right-0.5 -bottom-0.5 rounded-full"
+    class="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
     data-override="true"
     data-testid="container"
-    style="width: 11px; height: 11px; background-color: var(--brand);"
+    style="width: 11px; height: 11px;"
   />
 </div>
 `;
@@ -95,10 +95,10 @@ exports[`NotificationIcon - Snapshots > matches snapshot for TagPost notificatio
     TagIcon
   </svg>
   <div
-    class="absolute -right-0.5 -bottom-0.5 rounded-full"
+    class="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
     data-override="true"
     data-testid="container"
-    style="width: 11px; height: 11px; background-color: var(--brand);"
+    style="width: 11px; height: 11px;"
   />
 </div>
 `;
