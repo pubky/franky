@@ -4,6 +4,9 @@ import * as Libs from '@/libs';
 /**
  * Timeline stream groups for invalidation
  * Grouped by reach type (following/friends) for efficient cache clearing
+ *
+ * Note: Only TIMELINE (recent) streams are cached locally.
+ * POPULARITY (engagement) streams are not cached, so no need to invalidate them.
  */
 const FOLLOWING_TIMELINE_STREAMS = [
   Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL,
@@ -13,13 +16,6 @@ const FOLLOWING_TIMELINE_STREAMS = [
   Core.PostStreamTypes.TIMELINE_FOLLOWING_VIDEO,
   Core.PostStreamTypes.TIMELINE_FOLLOWING_LINK,
   Core.PostStreamTypes.TIMELINE_FOLLOWING_FILE,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_SHORT,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_LONG,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_IMAGE,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_VIDEO,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_LINK,
-  Core.PostStreamTypes.POPULARITY_FOLLOWING_FILE,
 ] as const;
 
 const FRIENDS_TIMELINE_STREAMS = [
@@ -30,13 +26,6 @@ const FRIENDS_TIMELINE_STREAMS = [
   Core.PostStreamTypes.TIMELINE_FRIENDS_VIDEO,
   Core.PostStreamTypes.TIMELINE_FRIENDS_LINK,
   Core.PostStreamTypes.TIMELINE_FRIENDS_FILE,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_ALL,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_SHORT,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_LONG,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_IMAGE,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_VIDEO,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_LINK,
-  Core.PostStreamTypes.POPULARITY_FRIENDS_FILE,
 ] as const;
 
 export class LocalFollowService {

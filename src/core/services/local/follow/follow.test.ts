@@ -554,14 +554,12 @@ describe('LocalFollowService - Stream Updates', () => {
 
   describe('timeline stream invalidation', () => {
     beforeEach(async () => {
-      // Seed some timeline streams
+      // Seed some timeline streams (only TIMELINE streams are cached, not POPULARITY/engagement)
       await Core.db.transaction('rw', [Core.PostStreamModel.table], async () => {
         await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, ['post1', 'post2']);
         await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT, ['post1']);
         await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, ['post3', 'post4']);
         await Core.PostStreamModel.upsert(Core.PostStreamTypes.TIMELINE_FRIENDS_SHORT, ['post3']);
-        await Core.PostStreamModel.upsert(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL, ['post5']);
-        await Core.PostStreamModel.upsert(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL, ['post6']);
       });
     });
 
@@ -569,30 +567,26 @@ describe('LocalFollowService - Stream Updates', () => {
       await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
       // Following streams should be deleted
-      const [timelineAll, timelineShort, popularityAll] = await Promise.all([
+      const [timelineAll, timelineShort] = await Promise.all([
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
       ]);
 
       expect(timelineAll).toBeNull();
       expect(timelineShort).toBeNull();
-      expect(popularityAll).toBeNull();
     });
 
     it('does not invalidate friends streams when not becoming friends', async () => {
       await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
       // Friends streams should still exist
-      const [friendsAll, friendsShort, popularityFriends] = await Promise.all([
+      const [friendsAll, friendsShort] = await Promise.all([
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL),
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_SHORT),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL),
       ]);
 
       expect(friendsAll?.stream).toEqual(['post3', 'post4']);
       expect(friendsShort?.stream).toEqual(['post3']);
-      expect(popularityFriends?.stream).toEqual(['post6']);
     });
 
     it('invalidates both following and friends streams when becoming friends', async () => {
@@ -601,18 +595,14 @@ describe('LocalFollowService - Stream Updates', () => {
 
       await Core.LocalFollowService.create({ follower: userA, followee: userB });
 
-      // All streams should be deleted
-      const [followingAll, friendsAll, popularityFollowing, popularityFriends] = await Promise.all([
+      // All timeline streams should be deleted
+      const [followingAll, friendsAll] = await Promise.all([
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL),
       ]);
 
       expect(followingAll).toBeNull();
       expect(friendsAll).toBeNull();
-      expect(popularityFollowing).toBeNull();
-      expect(popularityFriends).toBeNull();
     });
 
     it('invalidates following timeline streams on unfollow', async () => {
@@ -627,15 +617,13 @@ describe('LocalFollowService - Stream Updates', () => {
       await Core.LocalFollowService.delete({ follower: userA, followee: userB });
 
       // Following streams should be deleted
-      const [timelineAll, timelineShort, popularityAll] = await Promise.all([
+      const [timelineAll, timelineShort] = await Promise.all([
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
       ]);
 
       expect(timelineAll).toBeNull();
       expect(timelineShort).toBeNull();
-      expect(popularityAll).toBeNull();
     });
 
     it('invalidates both following and friends streams when breaking friendship', async () => {
@@ -650,18 +638,14 @@ describe('LocalFollowService - Stream Updates', () => {
 
       await Core.LocalFollowService.delete({ follower: userA, followee: userB });
 
-      // All streams should be deleted
-      const [followingAll, friendsAll, popularityFollowing, popularityFriends] = await Promise.all([
+      // All timeline streams should be deleted
+      const [followingAll, friendsAll] = await Promise.all([
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL),
         Core.PostStreamModel.findById(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FOLLOWING_ALL),
-        Core.PostStreamModel.findById(Core.PostStreamTypes.POPULARITY_FRIENDS_ALL),
       ]);
 
       expect(followingAll).toBeNull();
       expect(friendsAll).toBeNull();
-      expect(popularityFollowing).toBeNull();
-      expect(popularityFriends).toBeNull();
     });
   });
 });
