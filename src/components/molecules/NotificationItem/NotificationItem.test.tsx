@@ -92,7 +92,8 @@ describe('NotificationItem', () => {
 
   it('renders timestamp', () => {
     render(<NotificationItem notification={baseNotification} isUnread={false} />);
-    expect(Libs.formatNotificationTime).toHaveBeenCalledWith(baseNotification.timestamp);
+    expect(Libs.formatNotificationTime).toHaveBeenCalledWith(baseNotification.timestamp, false);
+    expect(Libs.formatNotificationTime).toHaveBeenCalledWith(baseNotification.timestamp, true);
   });
 
   it('renders notification icon', () => {

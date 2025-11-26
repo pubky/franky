@@ -49,6 +49,8 @@ export function getUserIdFromNotification(notification: FlatNotification): strin
       return notification.mentioned_by;
     case NotificationType.PostDeleted:
       return notification.deleted_by;
+    case NotificationType.PostEdited:
+      return notification.edited_by;
     default:
       return '';
   }

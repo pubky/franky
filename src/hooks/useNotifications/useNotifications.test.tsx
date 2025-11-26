@@ -99,20 +99,6 @@ describe('getNotificationDisplayData', () => {
     expect(result.userName).toBe('User');
     expect(result.avatarUrl).toBeUndefined();
     expect(result.notificationText).toBe('User did something');
-    expect(result.timestamp).toBeDefined();
-  });
-
-  it('should return display data with formatted timestamp', () => {
-    const notification = {
-      type: NotificationType.Follow,
-      timestamp: Date.now() - 1000 * 60 * 30,
-      followed_by: 'user1',
-    };
-
-    const result = getNotificationDisplayData(notification);
-
-    expect(result.timestamp).toBeDefined();
-    expect(typeof result.timestamp).toBe('string');
   });
 
   it('should handle different notification types', () => {
@@ -135,11 +121,9 @@ describe('getNotificationDisplayData', () => {
 
     expect(followResult).toHaveProperty('userName');
     expect(followResult).toHaveProperty('notificationText');
-    expect(followResult).toHaveProperty('timestamp');
 
     expect(replyResult).toHaveProperty('userName');
     expect(replyResult).toHaveProperty('notificationText');
-    expect(replyResult).toHaveProperty('timestamp');
   });
 
   it('should return all required properties', () => {
@@ -154,6 +138,5 @@ describe('getNotificationDisplayData', () => {
     expect(result).toHaveProperty('userName');
     expect(result).toHaveProperty('avatarUrl');
     expect(result).toHaveProperty('notificationText');
-    expect(result).toHaveProperty('timestamp');
   });
 });

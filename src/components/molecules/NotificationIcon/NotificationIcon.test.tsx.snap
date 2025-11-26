@@ -5,17 +5,17 @@ exports[`NotificationIcon - Snapshots > matches snapshot for Follow notification
   class="relative shrink-0"
   data-override="true"
   data-testid="container"
-  style="width: 20px; height: 20px;"
+  style="width: 24px; height: 24px;"
 >
   <svg
     class="text-foreground"
-    data-size="20"
+    data-size="24"
     data-testid="icon-follow"
   >
     FollowIcon
   </svg>
   <div
-    class="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
+    class="absolute right-0 bottom-0 rounded-full bg-brand"
     data-override="true"
     data-testid="container"
     style="width: 11px; height: 11px;"
@@ -28,11 +28,11 @@ exports[`NotificationIcon - Snapshots > matches snapshot for Follow notification
   class="relative shrink-0"
   data-override="true"
   data-testid="container"
-  style="width: 20px; height: 20px;"
+  style="width: 24px; height: 24px;"
 >
   <svg
     class="text-foreground"
-    data-size="20"
+    data-size="24"
     data-testid="icon-follow"
   >
     FollowIcon
@@ -45,17 +45,17 @@ exports[`NotificationIcon - Snapshots > matches snapshot for Mention notificatio
   class="relative shrink-0"
   data-override="true"
   data-testid="container"
-  style="width: 20px; height: 20px;"
+  style="width: 24px; height: 24px;"
 >
   <svg
     class="text-foreground"
-    data-size="20"
+    data-size="24"
     data-testid="icon-mention"
   >
     MentionIcon
   </svg>
   <div
-    class="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
+    class="absolute right-0 bottom-0 rounded-full bg-brand"
     data-override="true"
     data-testid="container"
     style="width: 11px; height: 11px;"
@@ -68,11 +68,11 @@ exports[`NotificationIcon - Snapshots > matches snapshot for Reply notification 
   class="relative shrink-0"
   data-override="true"
   data-testid="container"
-  style="width: 20px; height: 20px;"
+  style="width: 24px; height: 24px;"
 >
   <svg
     class="text-foreground"
-    data-size="20"
+    data-size="24"
     data-testid="icon-reply"
   >
     ReplyIcon
@@ -85,17 +85,17 @@ exports[`NotificationIcon - Snapshots > matches snapshot for TagPost notificatio
   class="relative shrink-0"
   data-override="true"
   data-testid="container"
-  style="width: 20px; height: 20px;"
+  style="width: 24px; height: 24px;"
 >
   <svg
     class="text-foreground"
-    data-size="20"
+    data-size="24"
     data-testid="icon-tag"
   >
     TagIcon
   </svg>
   <div
-    class="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
+    class="absolute right-0 bottom-0 rounded-full bg-brand"
     data-override="true"
     data-testid="container"
     style="width: 11px; height: 11px;"

@@ -125,7 +125,7 @@ describe('NotificationIcon', () => {
   it('renders icon with correct size', () => {
     render(<NotificationIcon type={NotificationType.Follow} showBadge={false} />);
     const icon = screen.getByTestId('icon-follow');
-    expect(icon).toHaveAttribute('data-size', '20');
+    expect(icon).toHaveAttribute('data-size', '24');
   });
 
   it('renders badge when showBadge is true', () => {
@@ -144,7 +144,7 @@ describe('NotificationIcon', () => {
   it('renders container with correct size', () => {
     const { container } = render(<NotificationIcon type={NotificationType.Follow} showBadge={false} />);
     const mainContainer = container.firstChild as HTMLElement;
-    expect(mainContainer).toHaveStyle({ width: '20px', height: '20px' });
+    expect(mainContainer).toHaveStyle({ width: '24px', height: '24px' });
   });
 
   it('applies correct classes to container', () => {
@@ -156,7 +156,7 @@ describe('NotificationIcon', () => {
   it('applies correct classes to badge', () => {
     const { container } = render(<NotificationIcon type={NotificationType.Follow} showBadge={true} />);
     const badge = container.querySelector('[style*="width: 11px"]') as HTMLElement;
-    expect(badge).toHaveClass('absolute', '-right-0.5', '-bottom-0.5', 'rounded-full');
+    expect(badge).toHaveClass('absolute', 'right-0', 'bottom-0', 'rounded-full');
   });
 
   it('applies brand color to badge class', () => {
