@@ -11,7 +11,7 @@ import {
   Trash2,
   HeartHandshake,
 } from 'lucide-react';
-import { NotificationType } from '@/core/models/notification/notification.types';
+import { NotificationType } from '@/core';
 import * as Atoms from '@/atoms';
 
 interface NotificationIconProps {
