@@ -109,9 +109,19 @@ export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
     };
   }, [content]);
 
-  if (isLoading) return <Atoms.Skeleton className="h-37 w-full" />;
+  if (isLoading) {
+    return (
+      <Atoms.Typography size="sm" className="text-muted-foreground">
+        Loading preview...
+      </Atoms.Typography>
+    );
+  }
 
   if (!embed || !provider) return null;
 
-  return <Atoms.Container onClick={(e) => e.stopPropagation()}>{provider.renderEmbed(embed)}</Atoms.Container>;
+  return (
+    <Atoms.Container className="w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+      {provider.renderEmbed(embed)}
+    </Atoms.Container>
+  );
 };

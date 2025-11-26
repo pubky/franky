@@ -67,6 +67,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
       href="https://github.com"
+      rel="noopener noreferrer"
       target="_blank"
     >
       <svg
@@ -89,6 +90,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
       href="https://twitter.com/getpubky"
+      rel="noopener noreferrer"
       target="_blank"
     >
       <svg
@@ -124,6 +126,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderHome 1`] = `
     <a
       class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
       href="https://t.me/getpubky"
+      rel="noopener noreferrer"
       target="_blank"
     >
       <svg
@@ -703,6 +706,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
     href="https://github.com"
+    rel="noopener noreferrer"
     target="_blank"
   >
     <svg
@@ -725,6 +729,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
     href="https://twitter.com/getpubky"
+    rel="noopener noreferrer"
     target="_blank"
   >
     <svg
@@ -760,6 +765,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSocialLinks 
   <a
     class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-muted-foreground hover:text-brand text-sm"
     href="https://t.me/getpubky"
+    rel="noopener noreferrer"
     target="_blank"
   >
     <svg

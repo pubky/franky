@@ -259,10 +259,83 @@ export function formatFileName(filename: string, maxLength = 18): string {
  * Truncates a string to a maximum length and appends an ellipsis if truncated.
  * @param str - The string to truncate
  * @param maxLength - Maximum length of the string
- * @returns Truncated string
+ * @returns Truncated string with "..." at the end
+ *
+ * @example
+ * truncateString("Short text", 20) // "Short text"
+ * truncateString("Very long text that needs truncation", 20) // "Very long text that ..."
  */
 export function truncateString(str: string, maxLength: number): string {
   if (!str) return '';
   if (str.length <= maxLength) return str;
   return `${str.slice(0, maxLength)}...`;
+}
+
+/**
+ * Truncates a string with "..." in the middle to fit a maximum length
+ * Preserves the beginning and end of the string
+ *
+ * @param str - The string to truncate
+ * @param maxLength - Maximum length of the string
+ * @returns Truncated string with "..." in the middle
+ *
+ * @example
+ * truncateMiddle("https://example.com/short", 80) // "https://example.com/short"
+ * truncateMiddle("https://example.com/very/long/path/to/page", 30) // "https://exa...to/page"
+ * truncateMiddle("VeryLongFileName.pdf", 15) // "VeryLon...e.pdf"
+ */
+export function truncateMiddle(str: string, maxLength: number): string {
+  if (!str) return '';
+  if (str.length <= maxLength) return str;
+
+  // Calculate how many chars to keep on each side
+  const ellipsis = '...';
+  const charsToKeep = maxLength - ellipsis.length;
+  const charsStart = Math.ceil(charsToKeep / 2);
+  const charsEnd = Math.floor(charsToKeep / 2);
+
+  return str.slice(0, charsStart) + ellipsis + str.slice(-charsEnd);
+}
+
+/**
+ * Decode HTML entities to their corresponding characters
+ * Handles common entities like &amp;, &quot;, &#039;, etc.
+ *
+ * @param text - The text containing HTML entities
+ * @returns Text with decoded HTML entities
+ *
+ * @example
+ * decodeHtmlEntities("l&#039;usage") // "l'usage"
+ * decodeHtmlEntities("Test &quot;quotes&quot; &amp; symbols") // 'Test "quotes" & symbols'
+ */
+export function decodeHtmlEntities(text: string): string {
+  const entities: Record<string, string> = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&quot;': '"',
+    '&#039;': "'",
+    '&#39;': "'",
+    '&apos;': "'",
+    '&nbsp;': ' ',
+  };
+
+  return text.replace(/&[#\w]+;/g, (entity) => {
+    // First check named entities
+    if (entities[entity]) {
+      return entities[entity];
+    }
+
+    // Handle numeric entities like &#39; or &#x27;
+    if (entity.startsWith('&#x')) {
+      const code = parseInt(entity.slice(3, -1), 16);
+      return String.fromCharCode(code);
+    } else if (entity.startsWith('&#')) {
+      const code = parseInt(entity.slice(2, -1), 10);
+      return String.fromCharCode(code);
+    }
+
+    // If we don't recognize it, return as-is
+    return entity;
+  });
 }

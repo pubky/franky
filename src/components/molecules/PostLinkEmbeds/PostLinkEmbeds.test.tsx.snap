@@ -1,54 +1,8 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostLinkEmbeds - Snapshots > matches snapshot for Generic website preview embed 1`] = `
-<div
-  data-testid="container"
->
-  <a
-    data-testid="generic-website-preview"
-    href="https://example.com/article"
-    rel="noopener noreferrer"
-    target="_blank"
-  >
-    <div
-      class="justify-between gap-6 rounded-md bg-muted p-6 lg:flex-row"
-      data-testid="container"
-    >
-      <div
-        class="gap-y-2"
-        data-testid="container"
-      >
-        <span>
-          Example Article Title
-        </span>
-        <div
-          class="flex-row items-center gap-x-1"
-          data-testid="container"
-        >
-          <svg
-            class="shrink-0 text-muted-foreground"
-            data-testid="globe-icon"
-            width="13"
-          />
-          <span
-            class="max-w-50 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-muted-foreground sm:max-w-none sm:whitespace-normal"
-          >
-            https://example.com/article
-          </span>
-        </div>
-      </div>
-      <img
-        alt="Website social image"
-        class="h-25 w-45 rounded-md object-cover object-center"
-        src="https://example.com/og-image.jpg"
-      />
-    </div>
-  </a>
-</div>
-`;
-
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -69,6 +23,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -93,6 +48,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -113,6 +69,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
