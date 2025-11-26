@@ -25,6 +25,6 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ ...props 
   );
 
   return <input ref={ref} data-testid="input" {...props} className={inputClassName} />;
-}) as React.ForwardRefExoticComponent<InputProps & React.RefAttributes<HTMLInputElement>>;
+});
 
 Input.displayName = 'Input';

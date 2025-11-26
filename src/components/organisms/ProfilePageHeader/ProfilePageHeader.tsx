@@ -5,14 +5,13 @@ import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
-import { extractEmojiFromStatus } from '@/components/molecules/StatusPicker/statusUtils';
 
 export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
   const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusChange, onAvatarClick } = actions;
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
-  const displayEmoji = extractEmojiFromStatus(status || '', emoji);
+  const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
 
   return (
     <Atoms.Container
@@ -66,7 +65,7 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
             <Icons.LogOut className="size-4" />
             Sign out
           </Atoms.Button>
-          <Molecules.StatusPicker emoji={displayEmoji} status={status} onStatusChange={onStatusChange} />
+          <Molecules.StatusPickerWrapper emoji={displayEmoji} status={status || ''} onStatusChange={onStatusChange} />
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>
