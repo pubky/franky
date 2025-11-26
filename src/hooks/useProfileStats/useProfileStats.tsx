@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 export interface ProfileStats {
   notifications: number;
@@ -35,11 +36,20 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   // Get unread notifications count from store
   const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
 
+  // Get tagged count from useTagged hook (for mocked data support)
+  // TODO: Remove this when real data is implemented - tags should come from database
+  const { count: taggedCount } = Hooks.useTagged();
+
   // Build stats object from user counts
   // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts
   const totalPosts = userCounts?.posts ?? 0;
   const repliesCount = userCounts?.replies ?? 0;
   const actualPostsCount = Math.max(0, totalPosts - repliesCount);
+
+  // Use tagged count from useTagged if database count is 0 (mocked data scenario)
+  // Otherwise use database count
+  const databaseTagCount = userCounts?.unique_tags ?? 0;
+  const uniqueTagsCount = databaseTagCount > 0 ? databaseTagCount : taggedCount;
 
   const stats: ProfileStats = {
     notifications: unreadNotifications,
@@ -48,7 +58,7 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     followers: userCounts?.followers ?? 0,
     following: userCounts?.following ?? 0,
     friends: userCounts?.friends ?? 0,
-    uniqueTags: userCounts?.unique_tags ?? 0,
+    uniqueTags: uniqueTagsCount,
   };
 
   return {

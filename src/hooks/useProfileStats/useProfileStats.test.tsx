@@ -25,6 +25,20 @@ vi.mock('dexie-react-hooks', () => ({
   }),
 }));
 
+// Mock useTagged hook
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useTagged: () => ({
+      tags: [],
+      count: 0,
+      isLoading: false,
+      handleTagAdd: vi.fn(),
+    }),
+  };
+});
+
 // Mock Core controllers
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
