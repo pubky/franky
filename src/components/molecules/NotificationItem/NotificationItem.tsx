@@ -136,28 +136,21 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   const timestampShort = Libs.formatNotificationTime(notification.timestamp, false);
   const timestampLong = Libs.formatNotificationTime(notification.timestamp, true);
 
-  // Get user ID to create profile link
-  const userId = getUserIdFromNotification(notification);
-  const userProfileLink = userId ? getUserProfileLink(userId) : null;
-
   // Determine the main notification link
   // For user-centric notifications (follow/unfollow/friend), use profile link
   // For post-centric notifications, use post link
   const postLink = getNotificationLink(notification);
   const usePrimaryUserLink = shouldUsePrimaryUserLink(notification);
+
+  const userId = getUserIdFromNotification(notification);
+  const userProfileLink = userId ? getUserProfileLink(userId) : null;
   const notificationLink = usePrimaryUserLink ? userProfileLink : postLink;
 
   const contentElement = (
     <>
       <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
-        {/* Avatar with optional link to user profile (only if no notification link exists to avoid nested anchors) */}
-        {userProfileLink && !notificationLink ? (
-          <Link href={userProfileLink} className="shrink-0 transition-opacity hover:opacity-80">
-            <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="lg:size-8" />
-          </Link>
-        ) : (
-          <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="lg:size-8" />
-        )}
+        {/* Avatar - navigation handled by parent notificationLink wrapper */}
+        <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userName} size="sm" className="lg:size-8" />
 
         <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
           <Atoms.Typography
