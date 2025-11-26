@@ -32,7 +32,7 @@ const iconMap = {
   [NotificationType.PostEdited]: StickyNote,
 };
 
-const ICON_SIZE = 20;
+const ICON_SIZE = 24;
 const BADGE_SIZE = 11;
 
 export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
@@ -48,7 +48,7 @@ export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
       {showBadge && (
         <Atoms.Container
           overrideDefaults={true}
-          className="absolute -right-0.5 -bottom-0.5 rounded-full bg-brand"
+          className="absolute right-0 bottom-0 rounded-full bg-brand"
           style={{
             width: BADGE_SIZE,
             height: BADGE_SIZE,

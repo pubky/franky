@@ -2,7 +2,6 @@
 
 import { useMemo, useCallback } from 'react';
 import type { FlatNotification } from '@/core';
-import * as Libs from '@/libs';
 import { getNotificationText, getUserIdFromNotification } from '@/components/molecules/NotificationItem';
 
 interface UseNotificationsResult {
@@ -72,7 +71,6 @@ export interface NotificationDisplayData {
   userName: string;
   avatarUrl?: string;
   notificationText: string;
-  timestamp: string;
 }
 
 export function getNotificationDisplayData(notification: FlatNotification): NotificationDisplayData {
@@ -81,12 +79,10 @@ export function getNotificationDisplayData(notification: FlatNotification): Noti
   const userName = userData?.name || 'User';
   const avatarUrl = userData?.avatar;
   const notificationText = getNotificationText(notification, userName);
-  const timestamp = Libs.formatNotificationTime(notification.timestamp);
 
   return {
     userName,
     avatarUrl,
     notificationText,
-    timestamp,
   };
 }

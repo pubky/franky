@@ -35,7 +35,13 @@ exports[`NotificationItem - Snapshots > matches snapshot for Follow notification
     data-testid="container"
   >
     <p
-      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <p
+      class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
       data-testid="typography"
     >
       30m
@@ -80,10 +86,10 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
         User mentioned you in post
       </p>
       <p
-        class="hidden text-base font-medium text-muted-foreground lg:inline"
+        class="hidden text-base font-medium text-muted-foreground xl:inline"
         data-testid="typography"
       >
-        The reason why...
+        'The reason why...'
       </p>
     </div>
   </div>
@@ -92,7 +98,13 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
     data-testid="container"
   >
     <p
-      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <p
+      class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
       data-testid="typography"
     >
       30m
@@ -136,6 +148,12 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
       >
         User tagged your post
       </p>
+      <p
+        class="hidden text-base font-medium text-muted-foreground xl:inline"
+        data-testid="typography"
+      >
+        'I have said it...'
+      </p>
       <span
         data-testid="post-tag"
       >
@@ -148,7 +166,13 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
     data-testid="container"
   >
     <p
-      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+      class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:hidden"
+      data-testid="typography"
+    >
+      30m
+    </p>
+    <p
+      class="hidden text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase xl:block"
       data-testid="typography"
     >
       30m
