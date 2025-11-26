@@ -58,6 +58,17 @@ export const convertHmsToSeconds = (
 
 /**
  * Validates if a URL is safe to fetch (prevents SSRF attacks)
+ *
+ * @deprecated This function is kept for client-side URL validation only.
+ * For server-side metadata fetching, use /api/og-metadata which performs
+ * DNS resolution before fetching to prevent DNS rebinding attacks.
+ *
+ * @see app/api/og-metadata/route.ts
+ * @see docs/adr/0010-secure-og-metadata-fetching.md
+ *
+ * @warning This function CANNOT prevent DNS rebinding attacks because it only
+ * validates the hostname string, not the resolved IP address. An attacker can
+ * change DNS records between validation and fetch.
  */
 export function isUrlSafe(url: string): boolean {
   try {
