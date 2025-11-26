@@ -60,41 +60,47 @@ const MOCK_NOTIFICATION_PREVIEW_TEXT: Record<string, string> = {
  * Get the appropriate link for a notification based on its type
  * - For post-related notifications: link to the post
  * - For user-related notifications: link to the user profile
+ * 
+ * Uses TypeScript's discriminated union type narrowing for type safety
  */
 function getNotificationLink(notification: FlatNotification): string | null {
-  // Use Record to access notification properties dynamically
-  // This is needed because FlatNotification is a discriminated union
-  const notif = notification as Record<string, unknown>;
-
   switch (notification.type) {
     case NotificationType.Reply:
-      // Link to the reply post
-      return notif.reply_uri ? `${POST_ROUTES.POST}/${notif.reply_uri}` : null;
+      // TypeScript knows notification.reply_uri exists for Reply type
+      return notification.reply_uri ? `${POST_ROUTES.POST}/${notification.reply_uri}` : null;
+      
     case NotificationType.Mention:
+      // TypeScript knows notification.post_uri exists for Mention type
+      return notification.post_uri ? `${POST_ROUTES.POST}/${notification.post_uri}` : null;
+      
     case NotificationType.TagPost:
-      // Link to the post where user was mentioned/tagged
-      return notif.post_uri ? `${POST_ROUTES.POST}/${notif.post_uri}` : null;
+      // TypeScript knows notification.post_uri exists for TagPost type
+      return notification.post_uri ? `${POST_ROUTES.POST}/${notification.post_uri}` : null;
+      
     case NotificationType.Repost:
-      // Link to the repost
-      return notif.repost_uri ? `${POST_ROUTES.POST}/${notif.repost_uri}` : null;
+      // TypeScript knows notification.repost_uri exists for Repost type
+      return notification.repost_uri ? `${POST_ROUTES.POST}/${notification.repost_uri}` : null;
+      
     case NotificationType.PostDeleted:
-      // Link to the linked post (parent or related post)
-      return notif.linked_uri ? `${POST_ROUTES.POST}/${notif.linked_uri}` : null;
+      // TypeScript knows notification.linked_uri exists for PostDeleted type
+      return notification.linked_uri ? `${POST_ROUTES.POST}/${notification.linked_uri}` : null;
+      
     case NotificationType.PostEdited:
-      // Link to the edited post
-      return notif.edited_uri ? `${POST_ROUTES.POST}/${notif.edited_uri}` : null;
+      // TypeScript knows notification.edited_uri exists for PostEdited type
+      return notification.edited_uri ? `${POST_ROUTES.POST}/${notification.edited_uri}` : null;
+      
     case NotificationType.Follow:
     case NotificationType.NewFriend:
-      // For follow notifications, link to user profile will be set below
-      return null;
     case NotificationType.LostFriend:
-      // When someone unfollows you, link to their profile
-      // We'll return the user profile link directly for this case
-      return null; // Will be handled by getUserProfileLink
+      // User-centric notifications - link handled by shouldUsePrimaryUserLink
+      return null;
+      
     case NotificationType.TagProfile:
       // When someone tags your profile, link to your tagged page
       return PROFILE_ROUTES.UNIQUE_TAGS;
+      
     default:
+      // Exhaustiveness check - TypeScript will error if we miss a case
       return null;
   }
 }
