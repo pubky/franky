@@ -9,10 +9,15 @@ import { PROFILE_ROUTES } from '@/app';
 import { FlatNotification, NotificationType } from '@/core';
 
 export function ProfilePageNotifications() {
-  const { unreadCount, markAllAsRead } = Hooks.useNotifications();
+  const { unreadCount, markAllAsRead, notifications: hookNotifications } = Hooks.useNotifications();
 
   const pathname = usePathname();
   const prevPathnameRef = useRef<string | null>(null);
+
+  // TODO: Remove mock data when backend is implemented
+  // For now, only use mock data when explicitly enabled for development
+  // In tests, hookNotifications will be provided by the mock
+  const USE_MOCK_DATA = false; // Set to true for UI development, false for tests
 
   // mock notifications with 10-minute intervals
   const now = new Date().getTime();
@@ -150,6 +155,10 @@ export function ProfilePageNotifications() {
     },
   ] as unknown as FlatNotification[];
 
+  // Determine which data to use
+  const displayNotifications = USE_MOCK_DATA ? notifications : hookNotifications;
+  const displayUnreadNotifications = USE_MOCK_DATA ? mockUnreadNotifications : [];
+
   // Mark all notifications as read when leaving the notifications page
   useEffect(() => {
     const isLeavingPage = prevPathnameRef.current === PROFILE_ROUTES.PROFILE && pathname !== PROFILE_ROUTES.PROFILE;
@@ -161,7 +170,7 @@ export function ProfilePageNotifications() {
     prevPathnameRef.current = pathname;
   }, [pathname, unreadCount, markAllAsRead]);
 
-  if (notifications.length === 0) {
+  if (displayNotifications.length === 0) {
     return (
       <Atoms.Container className="mt-6 lg:mt-0">
         <Molecules.NotificationsEmpty />
@@ -172,9 +181,12 @@ export function ProfilePageNotifications() {
   return (
     <Atoms.Container className="mt-6 gap-4 lg:mt-0">
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
-        Notifications {mockUnreadNotifications.length > 0 && `(${mockUnreadNotifications.length})`}
+        Notifications {displayUnreadNotifications.length > 0 && `(${displayUnreadNotifications.length})`}
       </Atoms.Heading>
-      <Molecules.NotificationsList notifications={notifications} unreadNotifications={mockUnreadNotifications} />
+      <Molecules.NotificationsList
+        notifications={displayNotifications}
+        unreadNotifications={displayUnreadNotifications}
+      />
     </Atoms.Container>
   );
 }

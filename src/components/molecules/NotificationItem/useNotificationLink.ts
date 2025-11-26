@@ -1,4 +1,5 @@
-import { FlatNotification, NotificationType } from '@/core';
+import type { FlatNotification } from '@/core';
+import { NotificationType } from '@/core/models/notification/notification.types';
 import { POST_ROUTES, PROFILE_ROUTES } from '@/app';
 import { getUserIdFromNotification } from './NotificationItem.utils';
 

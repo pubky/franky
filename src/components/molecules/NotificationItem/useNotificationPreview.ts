@@ -1,4 +1,4 @@
-import { NotificationType } from '@/core';
+import { NotificationType } from '@/core/models/notification/notification.types';
 
 /**
  * MOCK: Preview text configuration for notification types
