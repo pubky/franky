@@ -2,16 +2,11 @@
 
 import { useEffect, useRef } from 'react';
 import data from '@emoji-mart/data';
-import { Picker, type EmojiData } from 'emoji-mart';
+import { Picker } from 'emoji-mart';
 import * as Atoms from '@/components/atoms';
+import * as Types from './EmojiPicker.types';
 
-export interface EmojiPickerProps {
-  onEmojiSelect: (emoji: { native: string }) => void;
-  maxLength?: number;
-  currentInput?: string;
-}
-
-export function EmojiPicker({ onEmojiSelect, maxLength, currentInput }: EmojiPickerProps) {
+export function EmojiPicker({ onEmojiSelect, maxLength, currentInput }: Types.EmojiPickerProps) {
   const pickerRef = useRef<HTMLDivElement>(null);
   const onEmojiSelectRef = useRef(onEmojiSelect);
   const maxLengthRef = useRef(maxLength);
@@ -28,7 +23,7 @@ export function EmojiPicker({ onEmojiSelect, maxLength, currentInput }: EmojiPic
     const pickerElement = pickerRef.current;
     if (!pickerElement) return;
 
-    const handleEmojiSelect = (emojiObject: EmojiData) => {
+    const handleEmojiSelect = (emojiObject: Types.EmojiData) => {
       const maxLen = maxLengthRef.current;
       const current = currentInputRef.current;
 
@@ -51,7 +46,7 @@ export function EmojiPicker({ onEmojiSelect, maxLength, currentInput }: EmojiPic
       theme: 'dark',
       onEmojiSelect: handleEmojiSelect,
       parent: pickerElement,
-    });
+    } as Types.PickerOptions);
 
     return () => {
       // Cleanup
