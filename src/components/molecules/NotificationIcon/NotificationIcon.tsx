@@ -16,7 +16,7 @@ import * as Atoms from '@/atoms';
 
 export interface NotificationIconProps {
   type: NotificationType;
-  showBadge?: boolean;
+  showBadge: boolean;
 }
 
 const iconMap = {
@@ -35,7 +35,7 @@ const iconMap = {
 const ICON_SIZE = 20;
 const BADGE_SIZE = 11;
 
-export function NotificationIcon({ type, showBadge = false }: NotificationIconProps) {
+export function NotificationIcon({ type, showBadge }: NotificationIconProps) {
   const IconComponent = iconMap[type] || StickyNote;
 
   return (
