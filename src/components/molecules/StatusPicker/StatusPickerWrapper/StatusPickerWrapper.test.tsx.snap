@@ -1,0 +1,181 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapshot with custom sideOffset 1`] = `
+<button
+  aria-controls="radix-_r_g_"
+  aria-expanded="false"
+  aria-haspopup="dialog"
+  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  data-as-child="true"
+  data-slot="popover-trigger"
+  data-state="closed"
+  data-testid="popover-trigger"
+  data-variant="ghost"
+  type="button"
+>
+  <span
+    class="font-semibold text-foreground text-base leading-none"
+    data-testid="typography"
+  >
+    🌴
+  </span>
+  <span
+    class="text-base font-bold text-white"
+    data-testid="typography"
+  >
+    Vacationing
+  </span>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-chevron-down size-6 transition-transform duration-300"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m6 9 6 6 6-6"
+    />
+  </svg>
+</button>
+`;
+
+exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapshot with custom status 1`] = `
+<button
+  aria-controls="radix-_r_e_"
+  aria-expanded="false"
+  aria-haspopup="dialog"
+  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  data-as-child="true"
+  data-slot="popover-trigger"
+  data-state="closed"
+  data-testid="popover-trigger"
+  data-variant="ghost"
+  type="button"
+>
+  <span
+    class="font-semibold text-foreground text-base leading-none"
+    data-testid="typography"
+  >
+    😊
+  </span>
+  <span
+    class="text-base font-bold text-white"
+    data-testid="typography"
+  >
+    Working
+  </span>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-chevron-down size-6 transition-transform duration-300"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m6 9 6 6 6-6"
+    />
+  </svg>
+</button>
+`;
+
+exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapshot with onStatusChange handler 1`] = `
+<button
+  aria-controls="radix-_r_f_"
+  aria-expanded="false"
+  aria-haspopup="dialog"
+  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  data-as-child="true"
+  data-slot="popover-trigger"
+  data-state="closed"
+  data-testid="popover-trigger"
+  data-variant="ghost"
+  type="button"
+>
+  <span
+    class="font-semibold text-foreground text-base leading-none"
+    data-testid="typography"
+  >
+    🌴
+  </span>
+  <span
+    class="text-base font-bold text-white"
+    data-testid="typography"
+  >
+    Vacationing
+  </span>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-chevron-down size-6 transition-transform duration-300"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m6 9 6 6 6-6"
+    />
+  </svg>
+</button>
+`;
+
+exports[`StatusPickerWrapper > StatusPickerWrapper - Snapshots > matches snapshot with predefined status 1`] = `
+<button
+  aria-controls="radix-_r_d_"
+  aria-expanded="false"
+  aria-haspopup="dialog"
+  class="flex h-8 cursor-pointer items-center gap-1.5 p-0 focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
+  data-as-child="true"
+  data-slot="popover-trigger"
+  data-state="closed"
+  data-testid="popover-trigger"
+  data-variant="ghost"
+  type="button"
+>
+  <span
+    class="font-semibold text-foreground text-base leading-none"
+    data-testid="typography"
+  >
+    🌴
+  </span>
+  <span
+    class="text-base font-bold text-white"
+    data-testid="typography"
+  >
+    Vacationing
+  </span>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-chevron-down size-6 transition-transform duration-300"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="m6 9 6 6 6-6"
+    />
+  </svg>
+</button>
+`;

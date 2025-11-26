@@ -43,6 +43,8 @@
     "date-fns": "4.1.0",
     "dexie": "4.2.1",
     "dexie-react-hooks": "4.2.0",
+    "emoji-mart": "^5.6.0",
+    "@emoji-mart/data": "^1.2.1",
     "jszip": "3.10.1",
     "linkify-it": "5.0.0",
     "lucide-react": "0.554.0",

@@ -89,6 +89,53 @@ export class ProfileApplication {
   }
 
   /**
+   * Updates user status in both homeserver and local database.
+   * Follows local-first pattern: updates homeserver first, then local DB.
+   *
+   * According to PubkyAppUser spec:
+   * - URI: /pub/pubky.app/profile.json
+   * - status field: Optional, max 50 characters
+   * - Must send complete profile object (name, bio, image, links, status)
+   *
+   * @see https://github.com/pubky/pubky-app-specs#pubkyappuser
+   * @param params - Parameters containing user's public key and status
+   */
+  static async update({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+    try {
+      // Get current user details from local DB
+      const currentUser = await Core.UserDetailsModel.findById(pubky);
+      if (!currentUser) {
+        throw new Error('User profile not found');
+      }
+
+      // Build complete user object with updated status
+      // According to spec, we must send the full profile, not just the status field
+      const { user, meta } = Core.UserNormalizer.to(
+        {
+          name: currentUser.name,
+          bio: currentUser.bio,
+          image: currentUser.image ?? '',
+          links: (currentUser.links ?? []).map((link) => ({ title: link.title, url: link.url })),
+          status: status || '',
+        },
+        pubky,
+      );
+
+      // Update homeserver with complete profile
+      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
+
+      // Update local database after successful homeserver sync
+      await Core.UserDetailsModel.upsert({
+        ...currentUser,
+        status: status || null,
+      });
+    } catch (error) {
+      console.error('Failed to update status', { error, pubky, status });
+      throw error;
+    }
+  }
+
+  /**
    * Downloads all user data from the homeserver and packages it into a ZIP file.
    * Fetches all files at once (using Infinity limit), formats JSON files with indentation, and preserves binary files.
    * Automatically triggers a browser download of the generated ZIP file.
