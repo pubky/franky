@@ -18,7 +18,9 @@ export class PostApplication {
     const post = await Core.PostDetailsModel.findById(compositePostId);
 
     if (!post) {
-      throw Libs.createSanitizationError(Libs.SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, { compositePostId });
+      throw Libs.createSanitizationError(Libs.SanitizationErrorType.POST_NOT_FOUND, 'Post not found', 404, {
+        compositePostId,
+      });
     }
     const hadConnections = await Core.LocalPostService.delete({ compositePostId });
 

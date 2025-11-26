@@ -21,6 +21,31 @@ export class PostController {
   }
 
   /**
+   * Get or fetch a post - reads from local DB first, fetches from Nexus if not found
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get (format: "authorId:postId")
+   * @returns Post details or null if not found
+   */
+  static async getOrFetchPost({ postId }: { postId: string }): Promise<Core.PostDetailsModelSchema | null> {
+    try {
+      return await Core.PostApplication.getOrFetchPost(postId);
+    } catch (error) {
+      Libs.Logger.error('Failed to get or fetch post', { postId, error });
+      return null;
+    }
+  }
+
+  /**
+   * Get post tags for a specific post
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get tags for
+   * @returns Post tags
+   */
+  static async getPostTags({ postId }: { postId: string }): Promise<Core.TagCollectionModelSchema<string>[]> {
+    return await Core.LocalPostService.getPostTags(postId);
+  }
+
+  /**
    * Create a post (including replies and reposts)
    * @param params - Parameters object
    * @param params.authorId - ID of the user creating the post

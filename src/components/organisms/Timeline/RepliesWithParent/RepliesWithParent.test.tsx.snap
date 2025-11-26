@@ -45,7 +45,7 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with repl
         data-testid="container"
       >
         <div
-          class="pl-3"
+          class=""
           data-testid="container"
         >
           <div
@@ -59,7 +59,7 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with repl
         data-testid="container"
       >
         <div
-          class="pl-3"
+          class=""
           data-testid="container"
         >
           <div
