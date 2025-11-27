@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 
 describe('FeedModel', () => {
@@ -10,7 +10,7 @@ describe('FeedModel', () => {
     reach: PubkyAppFeedReach.All,
     sort: PubkyAppFeedSort.Recent,
     content: null,
-    layout: Core.FeedLayout.COLUMNS,
+    layout: PubkyAppFeedLayout.Columns,
     created_at: Date.now(),
     updated_at: Date.now(),
     ...overrides,
@@ -145,7 +145,7 @@ describe('FeedModel', () => {
         reach: PubkyAppFeedReach.Following,
         sort: PubkyAppFeedSort.Popularity,
         content: PubkyAppPostKind.Image,
-        layout: Core.FeedLayout.VISUAL,
+        layout: PubkyAppFeedLayout.Visual,
       });
 
       await Core.FeedModel.upsert(feed);
@@ -156,7 +156,7 @@ describe('FeedModel', () => {
       expect(saved!.reach).toBe(PubkyAppFeedReach.Following);
       expect(saved!.sort).toBe(PubkyAppFeedSort.Popularity);
       expect(saved!.content).toBe(PubkyAppPostKind.Image);
-      expect(saved!.layout).toBe(Core.FeedLayout.VISUAL);
+      expect(saved!.layout).toBe(PubkyAppFeedLayout.Visual);
     });
 
     it('should handle null content (All content types)', async () => {

@@ -1,5 +1,4 @@
-import { PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
-import { FeedLayout } from './feed.types';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 
 export interface FeedModelSchema {
   id: string;
@@ -8,7 +7,7 @@ export interface FeedModelSchema {
   reach: PubkyAppFeedReach;
   sort: PubkyAppFeedSort;
   content: PubkyAppPostKind | null;
-  layout: FeedLayout;
+  layout: PubkyAppFeedLayout;
   created_at: number;
   updated_at: number;
 }

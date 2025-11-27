@@ -1,8 +1,7 @@
 import { Table } from 'dexie';
-import { PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 import { RecordModelBase } from '@/core/models/shared/base/record/baseRecord';
-import { FeedLayout } from './feed.types';
 
 export class FeedModel extends RecordModelBase<string, Core.FeedModelSchema> implements Core.FeedModelSchema {
   static table: Table<Core.FeedModelSchema> = Core.db.table('feeds');
@@ -12,7 +11,7 @@ export class FeedModel extends RecordModelBase<string, Core.FeedModelSchema> imp
   reach: PubkyAppFeedReach;
   sort: PubkyAppFeedSort;
   content: PubkyAppPostKind | null;
-  layout: FeedLayout;
+  layout: PubkyAppFeedLayout;
   created_at: number;
   updated_at: number;
 

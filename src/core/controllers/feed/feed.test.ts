@@ -1,22 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 import * as Core from '@/core';
 import type { TFeedCreateParams, TFeedUpdateParams, TFeedDeleteParams } from './feed.types';
 import type { AuthStore } from '@/core/stores/auth/auth.types';
 
-// Test data
 const testData = {
   userPubky: 'o1gg96ewuojmopcjbz8895478wdtxtzzuxnfjjz8o8e77csa1ngo' as Core.Pubky,
 };
 
-// Helper functions
 const createFeedParams = (overrides: Partial<TFeedCreateParams> = {}): TFeedCreateParams => ({
   name: 'Bitcoin News',
   tags: ['bitcoin', 'lightning'],
   reach: PubkyAppFeedReach.All,
   sort: PubkyAppFeedSort.Recent,
   content: null,
-  layout: Core.FeedLayout.COLUMNS,
+  layout: PubkyAppFeedLayout.Columns,
   ...overrides,
 });
 
@@ -27,7 +25,7 @@ const createMockFeedSchema = (overrides: Partial<Core.FeedModelSchema> = {}): Co
   reach: PubkyAppFeedReach.All,
   sort: PubkyAppFeedSort.Recent,
   content: null,
-  layout: Core.FeedLayout.COLUMNS,
+  layout: PubkyAppFeedLayout.Columns,
   created_at: Date.now(),
   updated_at: Date.now(),
   ...overrides,
@@ -81,20 +79,6 @@ describe('FeedController', () => {
       vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(undefined);
 
       await expect(FeedController.create(createFeedParams())).rejects.toThrow('Failed to create feed');
-    });
-
-    it('should preserve layout including FOCUS', async () => {
-      const params = createFeedParams({ layout: Core.FeedLayout.FOCUS });
-      const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
-
-      await FeedController.create(params);
-
-      expect(persistSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.objectContaining({
-          layout: Core.FeedLayout.FOCUS,
-        }),
-      );
     });
   });
 

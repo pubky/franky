@@ -1,8 +1,9 @@
+import { PubkyAppFeedLayout } from 'pubky-app-specs';
 import * as Core from '@/core';
 
 export type TFeedPersistCreateParams = {
   params: Core.TFeedCreateParams;
-  layout: Core.FeedLayout;
+  layout: PubkyAppFeedLayout;
   existingId?: string;
 };
 

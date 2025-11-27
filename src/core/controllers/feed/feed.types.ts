@@ -1,5 +1,4 @@
-import { PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
-import * as Core from '@/core';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 
 export type TFeedCreateParams = {
   name: string;
@@ -7,7 +6,7 @@ export type TFeedCreateParams = {
   reach: PubkyAppFeedReach;
   sort: PubkyAppFeedSort;
   content: PubkyAppPostKind | null;
-  layout: Core.FeedLayout;
+  layout: PubkyAppFeedLayout;
 };
 
 export type TFeedUpdateParams = {

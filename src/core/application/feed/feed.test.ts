@@ -63,9 +63,9 @@ describe('FeedApplication', () => {
       reach: PubkyAppFeedReach.All,
       sort: PubkyAppFeedSort.Recent,
       content: null,
-      layout: Core.FeedLayout.COLUMNS,
+      layout: PubkyAppFeedLayout.Columns,
     },
-    layout: Core.FeedLayout.COLUMNS,
+    layout: PubkyAppFeedLayout.Columns,
   });
 
   const createMockDeleteParams = (): Core.TFeedPersistDeleteParams => ({

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PubkyAppFeedReach, PubkyAppFeedSort } from 'pubky-app-specs';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort } from 'pubky-app-specs';
 import * as Core from '@/core';
 
 describe('LocalFeedService', () => {
@@ -10,7 +10,7 @@ describe('LocalFeedService', () => {
     reach: PubkyAppFeedReach.All,
     sort: PubkyAppFeedSort.Recent,
     content: null,
-    layout: Core.FeedLayout.COLUMNS,
+    layout: PubkyAppFeedLayout.Columns,
     created_at: Date.now(),
     updated_at: Date.now(),
     ...overrides,

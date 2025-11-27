@@ -137,7 +137,7 @@ describe('Feed Helpers', () => {
       reach: PubkyAppFeedReach.All,
       sort: PubkyAppFeedSort.Recent,
       content: null,
-      layout: Core.FeedLayout.COLUMNS,
+      layout: PubkyAppFeedLayout.Columns,
       created_at: Date.now(),
       updated_at: Date.now(),
       ...overrides,

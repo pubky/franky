@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind, FeedResult, PubkySpecsBuilder } from 'pubky-app-specs';
+import {
+  PubkyAppFeedLayout,
+  PubkyAppFeedReach,
+  PubkyAppFeedSort,
+  PubkyAppPostKind,
+  FeedResult,
+  PubkySpecsBuilder,
+} from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
@@ -57,7 +64,7 @@ describe('FeedNormalizer', () => {
       reach: PubkyAppFeedReach.All,
       sort: PubkyAppFeedSort.Recent,
       content: null,
-      layout: Core.FeedLayout.COLUMNS,
+      layout: PubkyAppFeedLayout.Columns,
     });
 
     it('should create feed using builder with correct parameters', () => {
@@ -138,22 +145,6 @@ describe('FeedNormalizer', () => {
         expect.any(String),
         expect.any(Object),
         'Bitcoin News',
-      );
-    });
-
-    it('should convert FeedLayout.FOCUS to Visual for homeserver', () => {
-      const params = createValidParams();
-      params.layout = Core.FeedLayout.FOCUS;
-
-      Core.FeedNormalizer.to(params, testData.userPubky);
-
-      expect(mockBuilder.createFeed).toHaveBeenCalledWith(
-        expect.any(Array),
-        expect.any(String),
-        'visual',
-        expect.any(String),
-        expect.any(Object),
-        expect.any(String),
       );
     });
 
