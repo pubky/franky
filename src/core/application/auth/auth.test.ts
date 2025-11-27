@@ -194,4 +194,26 @@ describe('AuthApplication', () => {
       expect(mockInstance.logout).toHaveBeenCalledOnce();
     });
   });
+
+  describe('generateSignupToken', () => {
+    it('should generate signup token successfully', async () => {
+      const generateSignupTokenSpy = vi
+        .spyOn(Core.HomeserverService, 'generateSignupToken')
+        .mockResolvedValue('test-token');
+
+      const result = await Core.AuthApplication.generateSignupToken();
+
+      expect(generateSignupTokenSpy).toHaveBeenCalled();
+      expect(result).toBe('test-token');
+    });
+
+    it('should propagate error when signup token generation fails', async () => {
+      const generateSignupTokenSpy = vi
+        .spyOn(Core.HomeserverService, 'generateSignupToken')
+        .mockRejectedValue(new Error('Failed to generate signup token'));
+
+      await expect(Core.AuthApplication.generateSignupToken()).rejects.toThrow('Failed to generate signup token');
+      expect(generateSignupTokenSpy).toHaveBeenCalledOnce();
+    });
+  });
 });
