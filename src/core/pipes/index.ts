@@ -13,5 +13,14 @@ export * from './mute';
 export * from './bookmark';
 export * from './notification';
 export * from './lastRead';
+export * from './feed';
 // Re-export pubky-app-specs types
-export { PubkyAppPostKind } from 'pubky-app-specs';
+export {
+  PubkyAppPostKind,
+  PubkyAppFeedLayout,
+  PubkyAppFeedReach,
+  PubkyAppFeedSort,
+  FeedResult,
+  PubkyAppFeed,
+  PubkyAppFeedConfig,
+} from 'pubky-app-specs';
