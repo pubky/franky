@@ -154,18 +154,18 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
    */
   protected setupListeners() {
     // Listen to auth store changes
-    this.authStoreUnsubscribe = Core.useAuthStore.subscribe(async (state, prevState) => {
+    this.authStoreUnsubscribe = Core.useAuthStore.subscribe((state, prevState) => {
       if (state.isAuthenticated !== prevState.isAuthenticated) {
         Logger.debug('Auth state changed', {
           isAuthenticated: state.isAuthenticated,
         });
-        await this.evaluateAndStartPolling();
+        this.evaluateAndStartPolling();
       }
     });
 
     // Listen to page visibility changes (browser tab active/inactive)
     if (this.config.respectPageVisibility && typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', this.handleVisibilityChangeWrapper);
+      document.addEventListener('visibilitychange', this.handleVisibilityChange);
     }
   }
 
@@ -180,15 +180,15 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
     }
 
     if (typeof document !== 'undefined') {
-      document.removeEventListener('visibilitychange', this.handleVisibilityChangeWrapper);
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
     }
   }
 
   /**
    * Evaluate conditions and start/stop polling accordingly
    */
-  protected async evaluateAndStartPolling(): Promise<void> {
-    if (await this.shouldPoll()) {
+  protected evaluateAndStartPolling() {
+    if (this.shouldPoll()) {
       this.startPolling();
     } else {
       const reason = this.getInactiveReason();
@@ -236,7 +236,7 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
    * Base implementation handles common checks (auth, visibility, manual start)
    * Subclasses can override shouldPollAdditionalChecks() for coordinator-specific checks
    */
-  protected async shouldPoll(): Promise<boolean> {
+  protected shouldPoll(): boolean {
     const state = this.getState();
     const config = this.getConfig();
 
@@ -268,7 +268,7 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
     }
 
     // Additional coordinator-specific checks (subclass can override)
-    if (!await this.shouldPollAdditionalChecks()) {
+    if (!this.shouldPollAdditionalChecks()) {
       return false;
     }
 
@@ -280,9 +280,9 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
    * Override this method to add coordinator-specific polling conditions
    * @returns true if additional checks pass, false otherwise
    */
-  protected shouldPollAdditionalChecks(): Promise<boolean> {
+  protected shouldPollAdditionalChecks(): boolean {
     // Default: no additional checks
-    return Promise.resolve(true);
+    return true;
   }
 
   /**
@@ -340,27 +340,14 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
   // ============================================================================
 
   /**
-   * Wrapper for handleVisibilityChange to properly handle async errors
-   * Event listeners can't be awaited, so we wrap the async call to catch errors
-   */
-  private handleVisibilityChangeWrapper = () => {
-    void this.handleVisibilityChange().catch((error) => {
-      Logger.error(`${this.constructor.name} visibility change handler failed`, {
-        error,
-        errorMessage: error instanceof Error ? error.message : String(error),
-      });
-    });
-  };
-
-  /**
    * Handle page visibility change events
    */
-  private async handleVisibilityChange() {
+  private handleVisibilityChange() {
     const isVisible = document.visibilityState === 'visible';
     if (this.state.isPageVisible !== isVisible) {
       this.state.isPageVisible = isVisible;
       Logger.debug('Page visibility changed', { isVisible });
-      await this.evaluateAndStartPolling();
+      this.evaluateAndStartPolling();
     }
   };
 

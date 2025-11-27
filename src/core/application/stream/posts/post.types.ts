@@ -2,6 +2,7 @@ import * as Core from '@/core';
 
 export interface TFetchStreamParams {
   streamId: Core.PostStreamId;
+  streamHead: number;
   streamTail: number;
   limit: number;
   viewerId: Core.Pubky;

@@ -33,7 +33,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   // Extended state
   private streamState: Required<Pick<StreamCoordinatorState, 'currentStreamId' | 'streamHead'>> = {
     currentStreamId: null,
-    streamHead: null,
+    streamHead: 0,
   };
 
   // Store unsubscribers
@@ -126,9 +126,9 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   /**
    * Resolve the stream head based on current stream ID
    */
-  private async resolveStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
+  private async resolvedStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
     const streamHead = await Core.StreamPostsController.getStreamHead(currentStreamId);
-    if (!streamHead) {
+    if (streamHead === 0) {
       Logger.warn('Failed to resolve stream head', { streamId: currentStreamId });
       return false;
     }
@@ -200,7 +200,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
             content: state.content,
           });
 
-          await this.evaluateAndStartPolling();
+          this.evaluateAndStartPolling();
         }
       }
     });
@@ -224,7 +224,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
    * Additional checks specific to stream coordinator
    * Must be able to determine stream ID
    */
-  protected async shouldPollAdditionalChecks(): Promise<boolean> {
+  protected shouldPollAdditionalChecks(): boolean {
     // Ensure we try to resolve the stream ID before deciding
     this.resolveStreamId();
 
@@ -232,8 +232,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     if (!this.streamState.currentStreamId) {
       return false;
     }
-    // Must be able to determine stream head
-    return await this.resolveStreamHead(this.streamState.currentStreamId);
+    return true;
   }
 
   /**
@@ -266,67 +265,30 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   /**
    * Execute a single poll operation
    */
-  protected async poll(): Promise<void> {
+  protected async poll() {
     try {
-      // Re-resolve stream ID in case route/state changed
       this.resolveStreamId();
+
       if (!this.streamState.currentStreamId) {
         Logger.warn('Cannot poll: invalid stream ID');
         return;
       }
 
-      Logger.debug('Polling stream for new posts', { streamId: this.streamState.currentStreamId });
+      if (!await this.resolvedStreamHead(this.streamState.currentStreamId)) return;
 
-      // Fetch latest posts from Nexus (streamTail: 0 means fetch from the top/latest)
-      const { nextPageIds } = await Core.StreamPostsController.getOrFetchStreamSlice({
+      // Do not poll engagement streams
+      if (this.streamState.currentStreamId.split(':')[0] === Core.StreamSorting.ENGAGEMENT) {
+        Logger.debug('Skipping poll: engagement stream', { streamId: this.streamState.currentStreamId });
+        return;
+      }
+
+      await Core.StreamPostsController.getOrFetchStreamSlice({
         streamId: this.streamState.currentStreamId,
-        streamTail: 0,
+        streamHead: this.streamState.streamHead,
         limit: this.streamConfig.fetchLimit,
       });
-      // TODO: Get the 0 index from the stream and update the streamHead
-
-      // Get cached stream from IndexedDB
-      const cachedStream = await Core.PostStreamModel.table.get(this.streamState.currentStreamId);
-      Logger.debug('Cached stream', { cachedStream });
-
-      // Determine new posts (posts not in cache)
-      let newPosts: string[] = [];
-      if (!cachedStream) {
-        // No cache yet, all posts are "new"
-        newPosts = nextPageIds;
-        Logger.debug('First time polling this stream, all posts are new', {
-          streamId: this.streamState.currentStreamId,
-          newPostsCount: newPosts.length,
-        });
-      } else {
-        // Filter out posts that already exist in cache
-        newPosts = nextPageIds.filter((postId) => !cachedStream.stream.includes(postId));
-        Logger.debug('Found new posts in stream', {
-          streamId: this.streamState.currentStreamId,
-          totalFetched: nextPageIds.length,
-          newPostsCount: newPosts.length,
-        });
-      }
-
-      // Update cache with new posts if any
-      if (newPosts.length > 0) {
-        if (cachedStream) {
-          // Prepend new posts to existing stream (chronological order - newest first)
-          const updatedStream = [...newPosts, ...cachedStream.stream];
-          //await Core.PostStreamModel.upsert(streamId, updatedStream);
-        } else {
-          // Create new cache entry
-          //await Core.PostStreamModel.create(streamId, newPosts);
-        }
-
-        Logger.info('Stream cache updated with new posts', {
-          streamId: this.streamState.currentStreamId,
-          newPostsCount: newPosts.length,
-        });
-      }
     } catch (error) {
       Logger.error('Error polling stream', { error });
-      // Don't stop polling on error - just log and continue
     }
   }
 

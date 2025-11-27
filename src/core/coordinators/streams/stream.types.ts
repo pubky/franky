@@ -21,7 +21,7 @@ export interface StreamCoordinatorState extends PollingServiceState {
   /**
    * The head of the cached stream
    */
-  streamHead: number | null;
+  streamHead: number;
 }
 
 /**

@@ -37,11 +37,20 @@ export class LocalStreamPostsService {
   /**
    * Get the head composite post ID of a stream
    */
-  static async getStreamHead(streamId: Core.PostStreamId): Promise<number | null> {
+  static async getStreamHead(streamId: Core.PostStreamId): Promise<number> {
     const streamHeadPostId = await Core.PostStreamModel.getStreamHead(streamId);
-    if (!streamHeadPostId) return null;
+    if (!streamHeadPostId) {
+      const [sorting, invokeEndpoint, content] = Core.breakDownStreamId(streamId);
+      if (invokeEndpoint === Core.StreamSource.REPLIES) {
+        const postCompositeId = Core.buildCompositeId({ pubky: sorting, id: content as string });
+        const postCounts = await Core.PostCountsModel.findById(postCompositeId);
+        // Return the smallest timestamp for replies
+        if (postCounts && postCounts.replies > 0) return 1;
+        return 0;
+      }
+    };
     const postDetails = await Core.PostDetailsModel.findById(streamHeadPostId);
-    if (!postDetails) return null;
+    if (!postDetails) return 0;
     return postDetails.indexed_at;
   }
 
@@ -183,6 +192,9 @@ export class LocalStreamPostsService {
     // Combine existing and new posts
     const combinedStream = [...postStream.stream, ...newPostsToAdd];
 
+    // TODO: Not sure if we need line 189-202. From nexus we bring from a SORTED SET being the score the timestamp
+    // and if they are new posts, it does not exist in the cache
+
     // Sort by timestamp (indexed_at) in descending order (most recent first)
     // Use bulk fetch to get all post details at once
     const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
@@ -198,5 +210,18 @@ export class LocalStreamPostsService {
       .map((item) => item.postId);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
+  }
+
+  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
+    const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadPostStream) {
+      await Core.UnreadPostStreamModel.upsert(streamId, stream);
+      return;
+    }
+    const existingIds = new Set(unreadPostStream.stream);
+    const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
+    if (newPostsToAdd.length === 0) return;
+    const combinedStream = [...unreadPostStream.stream, ...newPostsToAdd];
+    await Core.UnreadPostStreamModel.upsert(streamId, combinedStream);
   }
 }
