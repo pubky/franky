@@ -91,7 +91,18 @@ describe('PostTagsList', () => {
     const bitcoinTag = screen.getByText('bitcoin').closest('button');
     fireEvent.click(bitcoinTag!);
 
-    expect(mockOnTagClick).toHaveBeenCalledWith(expect.objectContaining({ label: 'bitcoin' }), 0);
+    expect(mockOnTagClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: 'bitcoin',
+        taggers_count: 21, // Verify Core.NexusTag structure (not 'count')
+      }),
+      0,
+      expect.objectContaining({ type: 'click' }),
+    );
+
+    // Verify event propagation was stopped
+    const event = mockOnTagClick.mock.calls[0][2];
+    expect(event.isPropagationStopped()).toBe(true);
   });
 
   it('calls onTagClose when tag close button is clicked', () => {
@@ -101,7 +112,18 @@ describe('PostTagsList', () => {
     const closeButtons = screen.getAllByLabelText(/remove.*tag/i);
     fireEvent.click(closeButtons[0]);
 
-    expect(mockOnTagClose).toHaveBeenCalledWith(expect.objectContaining({ label: 'bitcoin' }), 0);
+    expect(mockOnTagClose).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: 'bitcoin',
+        taggers_count: 21, // Verify Core.NexusTag structure (not 'count')
+      }),
+      0,
+      expect.objectContaining({ type: 'click' }),
+    );
+
+    // Verify event propagation was stopped by PostTag component
+    const event = mockOnTagClose.mock.calls[0][2];
+    expect(event.isPropagationStopped()).toBe(true);
   });
 
   it('calls onTagAdd when a new tag is submitted', () => {

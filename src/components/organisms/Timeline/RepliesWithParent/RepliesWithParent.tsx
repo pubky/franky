@@ -1,7 +1,7 @@
 'use client';
 
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -55,9 +55,6 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
   );
 }
 
-// Cache to track in-flight parent post fetches across all component instances
-const fetchingParentPosts = new Set<string>();
-
 /**
  * ReplyWithParent
  *
@@ -65,6 +62,10 @@ const fetchingParentPosts = new Set<string>();
  * Always shows the parent post if it exists.
  */
 function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProps) {
+  // Component-level cache to track in-flight parent post fetches
+  // Using useRef to avoid SSR memory leaks and state pollution
+  const fetchingParentPostsRef = useRef(new Set<string>());
+
   // First: Get parent post ID from relationships
   const parentPostId = useLiveQuery(async () => {
     const relationships = await Core.PostRelationshipsModel.findById(replyPostId);
@@ -95,14 +96,16 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   // Fetch parent post if missing (user-initiated action)
   // UI → Controller → Application → Services (Local + Nexus)
   useEffect(() => {
-    if (parentPostId && !parentPost && !fetchingParentPosts.has(parentPostId)) {
-      fetchingParentPosts.add(parentPostId);
+    const fetchingSet = fetchingParentPostsRef.current;
+
+    if (parentPostId && !parentPost && !fetchingSet.has(parentPostId)) {
+      fetchingSet.add(parentPostId);
 
       // Parent post ID exists but post details are missing
       // Fetch via Controller (fire-and-forget, useLiveQuery will react to DB updates)
       Core.PostController.getOrFetchPost({ postId: parentPostId }).finally(() => {
         // Remove from cache after fetch completes (success or failure)
-        fetchingParentPosts.delete(parentPostId);
+        fetchingSet.delete(parentPostId);
       });
     }
   }, [parentPostId, parentPost]);

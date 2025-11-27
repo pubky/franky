@@ -268,7 +268,12 @@ describe('TimelineRepliesWithParent', () => {
         refresh: vi.fn(),
       });
 
-      mockUseLiveQuery.mockReturnValue({ parentPostId: null, parentPost: null });
+      // Mock useLiveQuery to handle multiple calls:
+      // 1st call: parentPostId (null - no parent)
+      // 2nd call: parentPost (null)
+      mockUseLiveQuery
+        .mockReturnValueOnce(null) // 1st: parentPostId
+        .mockReturnValueOnce(null); // 2nd: parentPost
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
@@ -322,7 +327,12 @@ describe('TimelineRepliesWithParent', () => {
         refresh: vi.fn(),
       });
 
-      mockUseLiveQuery.mockReturnValue({ parentPostId: null, parentPost: null });
+      // Mock useLiveQuery to handle multiple calls:
+      // 1st call: parentPostId (null - no parent)
+      // 2nd call: parentPost (null)
+      mockUseLiveQuery
+        .mockReturnValueOnce(null) // 1st: parentPostId
+        .mockReturnValueOnce(null); // 2nd: parentPost
 
       render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
@@ -409,7 +419,7 @@ describe('TimelineRepliesWithParent', () => {
       expect(container).toMatchSnapshot();
     });
 
-    it('should match snapshot with replies', () => {
+    it('should match snapshot with replies (no parents)', () => {
       mockUseStreamPagination.mockReturnValue({
         postIds: ['author1:reply1', 'author2:reply2'],
         loading: false,
@@ -420,7 +430,42 @@ describe('TimelineRepliesWithParent', () => {
         refresh: vi.fn(),
       });
 
-      mockUseLiveQuery.mockReturnValue({ parentPostId: null, parentPost: null });
+      // Mock useLiveQuery to handle multiple calls (2 replies × 2 queries each = 4 calls):
+      // For reply1: 1st call = parentPostId, 2nd call = parentPost
+      // For reply2: 3rd call = parentPostId, 4th call = parentPost
+      mockUseLiveQuery
+        .mockReturnValueOnce(null) // reply1: parentPostId
+        .mockReturnValueOnce(null) // reply1: parentPost
+        .mockReturnValueOnce(null) // reply2: parentPostId
+        .mockReturnValueOnce(null); // reply2: parentPost
+
+      const { container } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('should match snapshot with replies and parents', () => {
+      const mockParentId1 = 'author3:parent1';
+      const mockParentId2 = 'author4:parent2';
+
+      mockUseStreamPagination.mockReturnValue({
+        postIds: ['author1:reply1', 'author2:reply2'],
+        loading: false,
+        loadingMore: false,
+        error: null,
+        hasMore: true,
+        loadMore: vi.fn(),
+        refresh: vi.fn(),
+      });
+
+      // Mock useLiveQuery to handle multiple calls (2 replies × 2 queries each = 4 calls):
+      // For reply1: 1st call = parentPostId (string), 2nd call = parentPost (object)
+      // For reply2: 3rd call = parentPostId (string), 4th call = parentPost (object)
+      mockUseLiveQuery
+        .mockReturnValueOnce(mockParentId1) // reply1: parentPostId
+        .mockReturnValueOnce({ id: mockParentId1 }) // reply1: parentPost
+        .mockReturnValueOnce(mockParentId2) // reply2: parentPostId
+        .mockReturnValueOnce({ id: mockParentId2 }); // reply2: parentPost
 
       const { container } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 

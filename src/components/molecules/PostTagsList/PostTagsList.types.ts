@@ -1,13 +1,10 @@
-export interface PostTagsListTag {
-  /** Tag label */
-  label: string;
-  /** Number of posts with this tag (optional) */
-  count?: number;
-  /** Custom color for the tag */
-  color?: string;
-  /** Whether the tag is selected */
-  selected?: boolean;
-}
+import * as Core from '@/core';
+
+/**
+ * PostTagsListTag represents the tag data structure used in callbacks.
+ * This matches Core.NexusTag which is the actual data returned from the database.
+ */
+export type PostTagsListTag = Core.NexusTag;
 
 export interface PostTagsListProps {
   /** Array of tags to display */
@@ -23,9 +20,9 @@ export interface PostTagsListProps {
   /** Show close button on tags */
   showTagClose?: boolean;
   /** Callback when a tag is clicked */
-  onTagClick?: (tag: PostTagsListTag, index: number) => void;
+  onTagClick?: (tag: PostTagsListTag, index: number, event: React.MouseEvent) => void;
   /** Callback when a tag close button is clicked */
-  onTagClose?: (tag: PostTagsListTag, index: number) => void;
+  onTagClose?: (tag: PostTagsListTag, index: number, event: React.MouseEvent) => void;
   /** Callback when a new tag is added */
   onTagAdd?: (label: string) => void;
   /** Callback when add button is clicked */

@@ -49,11 +49,11 @@ export function PostTagsList({
               color={Libs.generateRandomColor(tag.label)}
               selected={false}
               showClose={showTagClose}
-              onClick={() => {
-                onTagClick?.(tag, index);
+              onClick={(e) => {
+                onTagClick?.(tag, index, e);
               }}
-              onClose={() => {
-                onTagClose?.(tag, index);
+              onClose={(e) => {
+                onTagClose?.(tag, index, e);
               }}
             />
           )),

@@ -31,7 +31,53 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot for loadi
 </div>
 `;
 
-exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with replies 1`] = `
+exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with replies (no parents) 1`] = `
+<div>
+  <div
+    data-testid="container"
+  >
+    <div
+      class="space-y-4"
+      data-testid="container"
+    >
+      <div
+        class="flex flex-col"
+        data-testid="container"
+      >
+        <div
+          class=""
+          data-testid="container"
+        >
+          <div
+            data-is-reply="true"
+            data-testid="post-author1:reply1"
+          />
+        </div>
+      </div>
+      <div
+        class="flex flex-col"
+        data-testid="container"
+      >
+        <div
+          class=""
+          data-testid="container"
+        >
+          <div
+            data-is-reply="true"
+            data-testid="post-author2:reply2"
+          />
+        </div>
+      </div>
+      <div
+        class="h-[20px]"
+        data-testid="container"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with replies and parents 1`] = `
 <div>
   <div
     data-testid="container"
@@ -46,7 +92,7 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with repl
       >
         <div
           data-is-reply="false"
-          data-testid="post-[object Object]"
+          data-testid="post-author3:parent1"
         />
         <div
           class="pl-3"
@@ -72,7 +118,7 @@ exports[`TimelineRepliesWithParent > Snapshots > should match snapshot with repl
       >
         <div
           data-is-reply="false"
-          data-testid="post-[object Object]"
+          data-testid="post-author4:parent2"
         />
         <div
           class="pl-3"

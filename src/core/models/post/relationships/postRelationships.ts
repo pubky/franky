@@ -36,7 +36,6 @@ export class PostRelationshipsModel
    * @returns The parent post ID
    */
   static async getParentPostId(postId: string) {
-    const relationships = await this.table.where('replied').equals(postId).first();
-    return relationships?.replied;
+    return (await this.table.where('replied').equals(postId).first())?.replied;
   }
 }
