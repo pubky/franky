@@ -7,12 +7,20 @@ import * as Libs from '@/libs';
 export interface AvatarWithFallbackProps {
   avatarUrl?: string;
   name: string;
+  size?: Atoms.AvatarSize;
   className?: string;
   fallbackClassName?: string;
   alt?: string;
 }
 
-export function AvatarWithFallback({ avatarUrl, name, className, fallbackClassName, alt }: AvatarWithFallbackProps) {
+export function AvatarWithFallback({
+  avatarUrl,
+  name,
+  size = 'default',
+  className,
+  fallbackClassName,
+  alt,
+}: AvatarWithFallbackProps) {
   const [imageError, setImageError] = useState(false);
 
   // Reset error state when avatarUrl changes
@@ -21,7 +29,7 @@ export function AvatarWithFallback({ avatarUrl, name, className, fallbackClassNa
   }, [avatarUrl]);
 
   return (
-    <Atoms.Avatar className={className}>
+    <Atoms.Avatar size={size} className={className}>
       {avatarUrl && !imageError ? (
         <Atoms.AvatarImage src={avatarUrl} alt={alt || name} onError={() => setImageError(true)} />
       ) : (

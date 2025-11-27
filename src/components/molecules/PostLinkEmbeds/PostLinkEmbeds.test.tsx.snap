@@ -2,6 +2,7 @@
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -22,6 +23,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Twitter embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -46,6 +48,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for Vimeo embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div
@@ -66,6 +69,7 @@ exports[`PostLinkEmbeds - Snapshots > matches snapshot for X.com embed 1`] = `
 
 exports[`PostLinkEmbeds - Snapshots > matches snapshot for YouTube embed 1`] = `
 <div
+  class="w-full overflow-hidden"
   data-testid="container"
 >
   <div

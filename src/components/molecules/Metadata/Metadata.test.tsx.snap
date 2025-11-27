@@ -18,6 +18,7 @@ exports[`Metadata - Snapshots > matches snapshot for default metadata configurat
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Test Description",
     "images": [
@@ -70,6 +71,7 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with custom parame
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "custom, keywords",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Custom Description",
     "images": [
@@ -122,6 +124,7 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with image 1`] = `
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Testing custom image",
     "images": [
@@ -174,6 +177,7 @@ exports[`Metadata - Snapshots > matches snapshot for metadata with minimal confi
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "Minimal description",
     "images": [
@@ -226,6 +230,7 @@ exports[`Metadata - Snapshots > matches snapshot with empty strings 1`] = `
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "",
     "images": [
@@ -278,6 +283,7 @@ exports[`Metadata - Snapshots > matches snapshot with long title and description
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
     "images": [
@@ -330,6 +336,7 @@ exports[`Metadata - Snapshots > matches snapshot with special characters 1`] = `
     "shortcut": "/pubky-favicon.svg",
   },
   "keywords": "pubky, social media, decentralized, key, pkarr, pubky core",
+  "metadataBase": "https://pubky.app/",
   "openGraph": {
     "description": "More special: ©®™€£¥",
     "images": [

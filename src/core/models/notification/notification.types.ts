@@ -31,6 +31,7 @@ export type NotificationVariantMap = {
   [NotificationType.Repost]: RepostNotification;
   [NotificationType.Mention]: MentionNotification;
   [NotificationType.PostDeleted]: PostDeletedNotification;
+  [NotificationType.PostEdited]: PostEditedNotification;
 };
 
 export type CommonFields = {

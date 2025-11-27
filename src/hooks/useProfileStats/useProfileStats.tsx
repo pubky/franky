@@ -33,8 +33,9 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     return await Core.UserController.getCounts({ userId });
   }, [userId]);
 
-  // Get unread notifications count from store
-  const unreadNotifications = Core.useNotificationStore((state) => state.selectUnread());
+  // Get unread notifications count from useNotifications hook (UI only - using mock data)
+  // TODO: Replace with real notification store when backend is integrated
+  const { unreadCount: unreadNotificationsCount } = Hooks.useNotifications();
 
   // Get tagged count from useTagged hook (for mocked data support)
   // TODO: Remove this when real data is implemented - tags should come from database
@@ -52,7 +53,7 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   const uniqueTagsCount = databaseTagCount > 0 ? databaseTagCount : taggedCount;
 
   const stats: ProfileStats = {
-    notifications: unreadNotifications,
+    notifications: unreadNotificationsCount,
     posts: actualPostsCount,
     replies: repliesCount,
     followers: userCounts?.followers ?? 0,
