@@ -1,7 +1,7 @@
 import { db } from '@/core/database';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { createDefaultPostStream } from './postStream.helper';
-import { PostStreamModel } from './postStream';
+import { PostStreamModel } from './tables';
 import { PostStreamTypes, PostStreamId } from './postStream.types';
 
 describe('PostStreamModel', () => {

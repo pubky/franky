@@ -6,7 +6,7 @@
  */
 
 import type { PostStreamId } from '@/core/models/stream/post/postStream.types';
-import { type PollingServiceState, type PollingServiceConfig } from '../coordinators.types';
+import { type PollingServiceState, type PollingServiceConfig } from '@/core/coordinators/base';
 
 /**
  * Stream coordinator internal state
@@ -21,7 +21,7 @@ export interface StreamCoordinatorState extends PollingServiceState {
   /**
    * The head of the cached stream
    */
-  streamHead: number;
+  streamHead: number | null;
 }
 
 /**

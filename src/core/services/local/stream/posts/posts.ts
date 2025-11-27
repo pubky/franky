@@ -35,6 +35,17 @@ export class LocalStreamPostsService {
   }
 
   /**
+   * Get the head composite post ID of a stream
+   */
+  static async getStreamHead(streamId: Core.PostStreamId): Promise<number | null> {
+    const streamHeadPostId = await Core.PostStreamModel.getStreamHead(streamId);
+    if (!streamHeadPostId) return null;
+    const postDetails = await Core.PostDetailsModel.findById(streamHeadPostId);
+    if (!postDetails) return null;
+    return postDetails.indexed_at;
+  }
+
+  /**
    * Prepend a post ID to a stream
    * Only adds if not already present
    *

@@ -1,7 +1,6 @@
 import * as Core from '@/core';
 import { Env, Logger } from '@/libs';
 import { APP_ROUTES, POST_ROUTES } from '@/app/routes';
-import type { PostStreamId } from '@/core/models';
 import {
   Coordinator,
   routeToRegex,
@@ -9,20 +8,6 @@ import {
   type StreamCoordinatorConfig,
   type StreamCoordinatorState,
 } from '@/core/coordinators';
-
-/**
- * Map home content filter values to stream kind values
- * Note: Home uses plural forms, streams use singular
- */
-const CONTENT_TO_KIND_MAP: Record<string, string> = {
-  all: 'all',
-  short: 'short',
-  long: 'long',
-  images: 'image',
-  videos: 'video',
-  links: 'link',
-  files: 'file',
-};
 
 /**
  * StreamCoordinator
@@ -48,7 +33,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   // Extended state
   private streamState: Required<Pick<StreamCoordinatorState, 'currentStreamId' | 'streamHead'>> = {
     currentStreamId: null,
-    streamHead: 0,
+    streamHead: null,
   };
 
   // Store unsubscribers
@@ -116,7 +101,82 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   }
 
   // ============================================================================
-  // Protected API (override base class methods)
+  // Private API
+  // ============================================================================
+
+  /**
+   * Resolve the stream ID based on current route
+   * Returns null if stream ID cannot be determined
+   */
+  private resolveStreamId() {
+    // Home route: build from home store state
+    if (this.state.currentRoute === APP_ROUTES.HOME) {
+      const { sort, reach, content } = Core.useHomeStore.getState();
+      this.streamState.currentStreamId = Core.getStreamId(sort, reach, content);
+      Logger.debug('Built home streamId', { streamId: this.streamState.currentStreamId });
+    }
+    // Post route: extract from URL and build reply stream ID
+    else if (this.state.currentRoute.startsWith(POST_ROUTES.POST)) {
+      this.buildPostReplyStreamId();
+    } else {
+      this.streamState.currentStreamId = null;
+    }
+  }
+
+  /**
+   * Resolve the stream head based on current stream ID
+   */
+  private async resolveStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
+    const streamHead = await Core.StreamPostsController.getStreamHead(currentStreamId);
+    if (!streamHead) {
+      Logger.warn('Failed to resolve stream head', { streamId: currentStreamId });
+      return false;
+    }
+    this.streamState.streamHead = streamHead;
+    Logger.debug('Resolved stream head', { streamId: currentStreamId, streamHead });
+    return true;
+  }
+
+  /**
+   * Build post reply stream ID from current route
+   * Pattern: postReplies:${userId}:${postId}
+   */
+  private buildPostReplyStreamId() {
+    try {
+      const params = this.extractPostParams(this.state.currentRoute);
+      if (!params) {
+        Logger.warn('Failed to extract post params from route', { route: this.state.currentRoute });
+        this.streamState.currentStreamId = null;
+        return;
+      }
+
+      const compositePostId = Core.buildCompositeId({ pubky: params.userId, id: params.postId });
+      this.streamState.currentStreamId = Core.buildPostReplyStreamId(compositePostId);
+
+      Logger.debug('Built post reply stream ID', { replyStreamId: this.streamState.currentStreamId });
+    } catch (error) {
+      Logger.error('Failed to build post reply stream ID', { error });
+      this.streamState.currentStreamId = null;
+    }
+  }
+
+  /**
+   * Extract userId and postId from post route
+   * Route pattern: /post/[userId]/[postId]
+   */
+  private extractPostParams(route: string): { userId: string; postId: string } | null {
+    const match = route.match(/^\/post\/([^\/]+)\/([^\/]+)/);
+    if (!match) {
+      return null;
+    }
+    return {
+      userId: match[1],
+      postId: match[2],
+    };
+  }
+
+  // ============================================================================
+  // Protected API
   // ============================================================================
 
   /**
@@ -126,7 +186,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     // Call parent to setup base listeners (auth, visibility)
     super.setupListeners();
     // Listen to home store changes (sort, reach, content affect streamId)
-    this.homeStoreUnsubscribe = Core.useHomeStore.subscribe((state, prevState) => {
+    this.homeStoreUnsubscribe = Core.useHomeStore.subscribe(async(state, prevState) => {
       // Only re-evaluate if we're on /home and relevant fields changed
       const currentState = this.getState();
       if (currentState.currentRoute === APP_ROUTES.HOME) {
@@ -140,7 +200,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
             content: state.content,
           });
 
-          this.evaluateAndStartPolling();
+          await this.evaluateAndStartPolling();
         }
       }
     });
@@ -158,6 +218,22 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
       this.homeStoreUnsubscribe();
       this.homeStoreUnsubscribe = null;
     }
+  }
+
+  /**
+   * Additional checks specific to stream coordinator
+   * Must be able to determine stream ID
+   */
+  protected async shouldPollAdditionalChecks(): Promise<boolean> {
+    // Ensure we try to resolve the stream ID before deciding
+    this.resolveStreamId();
+
+    // Must be able to determine stream ID
+    if (!this.streamState.currentStreamId) {
+      return false;
+    }
+    // Must be able to determine stream head
+    return await this.resolveStreamHead(this.streamState.currentStreamId);
   }
 
   /**
@@ -185,25 +261,6 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
 
     // Clear stream-specific state
     this.streamState.currentStreamId = null;
-  }
-
-  // ============================================================================
-  // Protected API (abstract method implementations)
-  // ============================================================================
-
-  /**
-   * Additional checks specific to stream coordinator
-   * Must be able to determine stream ID
-   */
-  protected shouldPollAdditionalChecks(): boolean {
-    // Ensure we try to resolve the stream ID before deciding
-    this.resolveStreamId();
-
-    // Must be able to determine stream ID
-    if (!this.streamState.currentStreamId) {
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -282,67 +339,13 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   }
 
   /**
-   * Resolve the stream ID based on current route
-   * Returns null if stream ID cannot be determined
-   */
-  private resolveStreamId() {
-    // Home route: build from home store state
-    if (this.state.currentRoute === APP_ROUTES.HOME) {
-      const { sort, reach, content } = Core.useHomeStore.getState();
-      this.streamState.currentStreamId = Core.getStreamId(sort, reach, content);
-      Logger.debug('Built home stream ID', { homeStreamId: this.streamState.currentStreamId });
-    }
-    // Post route: extract from URL and build reply stream ID
-    else if (this.state.currentRoute.startsWith(POST_ROUTES.POST)) {
-      this.buildPostReplyStreamId();
-    } else {
-      this.streamState.currentStreamId = null;
-    }
-  }
-
-  /**
-   * Build post reply stream ID from current route
-   * Pattern: postReplies:${userId}:${postId}
-   */
-  private buildPostReplyStreamId() {
-    try {
-      const params = this.extractPostParams(this.state.currentRoute);
-      if (!params) {
-        Logger.warn('Failed to extract post params from route', { route: this.state.currentRoute });
-        this.streamState.currentStreamId = null;
-        return;
-      }
-
-      const compositePostId = Core.buildCompositeId({ pubky: params.userId, id: params.postId });
-      this.streamState.currentStreamId = Core.buildPostReplyStreamId(compositePostId);
-
-      Logger.debug('Built post reply stream ID', { replyStreamId: this.streamState.currentStreamId });
-    } catch (error) {
-      Logger.error('Failed to build post reply stream ID', { error });
-      this.streamState.currentStreamId = null;
-    }
-  }
-
-  /**
-   * Extract userId and postId from post route
-   * Route pattern: /post/[userId]/[postId]
-   */
-  private extractPostParams(route: string): { userId: string; postId: string } | null {
-    const match = route.match(/^\/post\/([^\/]+)\/([^\/]+)/);
-    if (!match) {
-      return null;
-    }
-    return {
-      userId: match[1],
-      postId: match[2],
-    };
-  }
-
-  /**
    * Additional checks specific to stream coordinator for inactive reasons
    * Must be able to determine stream ID
    */
   protected getInactiveReasonAdditionalChecks(): PollingInactiveReason | null {
+    // Ensure we try to resolve the stream ID before checking
+    this.resolveStreamId();
+    
     if (!this.streamState.currentStreamId) {
       return PollingInactiveReason.INVALID_IDENTIFIER;
     }

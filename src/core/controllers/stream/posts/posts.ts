@@ -75,4 +75,8 @@ export class StreamPostsController {
   static async getCachedLastPostTimestamp(streamId: Core.PostStreamId): Promise<number> {
     return await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
   }
+
+  static async getStreamHead(streamId: Core.PostStreamId): Promise<number | null> {
+    return await Core.PostStreamApplication.getStreamHead(streamId);
+  }
 }

@@ -36,6 +36,10 @@ export class PostStreamApplication {
     }
   }
 
+  static async getStreamHead(streamId: Core.PostStreamId): Promise<number | null> {
+    return await Core.LocalStreamPostsService.getStreamHead(streamId);
+  }
+
   static async getOrFetchStreamSlice({
     streamId,
     streamTail,
