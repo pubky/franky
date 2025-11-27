@@ -891,4 +891,41 @@ describe('LocalPostService', () => {
       });
     });
   });
+
+  describe('getPostRelationships', () => {
+    it('should return post relationships when they exist', async () => {
+      const postId = testData.fullPostId1;
+      const parentUri = 'pubky://parent/pub/pubky.app/posts/parent123';
+      await setupExistingPost(postId, 'Test post', parentUri);
+
+      const relationships = await Core.LocalPostService.getPostRelationships(postId);
+
+      expect(relationships).not.toBeNull();
+      expect(relationships?.id).toBe(postId);
+      expect(relationships?.replied).toBe(parentUri);
+      expect(relationships?.reposted).toBeNull();
+      expect(relationships?.mentioned).toEqual([]);
+    });
+
+    it('should return null when post relationships do not exist', async () => {
+      const nonExistentPostId = 'nonexistent:post123';
+
+      const relationships = await Core.LocalPostService.getPostRelationships(nonExistentPostId);
+
+      expect(relationships).toBeNull();
+    });
+
+    it('should handle database errors gracefully', async () => {
+      const postId = testData.fullPostId1;
+
+      // Mock findById to throw an error
+      const findByIdSpy = vi.spyOn(Core.PostRelationshipsModel, 'findById').mockRejectedValue(new Error('DB error'));
+
+      await expect(Core.LocalPostService.getPostRelationships(postId)).rejects.toThrow(
+        'Failed to get post relationships',
+      );
+
+      findByIdSpy.mockRestore();
+    });
+  });
 });

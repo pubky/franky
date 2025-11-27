@@ -67,8 +67,9 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   const fetchingParentPostsRef = useRef(new Set<string>());
 
   // First: Get parent post ID from relationships
+  // UI → Controller → Service → Model
   const parentPostId = useLiveQuery(async () => {
-    const relationships = await Core.PostRelationshipsModel.findById(replyPostId);
+    const relationships = await Core.PostController.getPostRelationships({ postId: replyPostId });
 
     if (!relationships?.replied) {
       return null;
@@ -83,12 +84,11 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   }, [replyPostId]);
 
   // Second: Observe parent post details reactively
-  // Query the table to ensure reactivity to updates
+  // UI → Controller → Service → Model
   const parentPost = useLiveQuery(async () => {
     if (!parentPostId) return null;
 
-    // Query via table.get() to ensure Dexie observes the table
-    const post = await Core.PostDetailsModel.table.get(parentPostId);
+    const post = await Core.PostController.getPostDetails({ postId: parentPostId });
 
     return post;
   }, [parentPostId]);

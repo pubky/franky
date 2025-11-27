@@ -46,6 +46,16 @@ export class PostController {
   }
 
   /**
+   * Get post relationships for a specific post
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get relationships for
+   * @returns Post relationships or null if not found
+   */
+  static async getPostRelationships({ postId }: { postId: string }): Promise<Core.PostRelationshipsModelSchema | null> {
+    return await Core.LocalPostService.getPostRelationships(postId);
+  }
+
+  /**
    * Create a post (including replies and reposts)
    * @param params - Parameters object
    * @param params.authorId - ID of the user creating the post

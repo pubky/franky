@@ -413,4 +413,69 @@ describe('PostController', () => {
       }
     });
   });
+
+  describe('getPostRelationships', () => {
+    it('should return post relationships when they exist', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      const relationships = await PostController.getPostRelationships({ postId: testData.fullPostId });
+
+      expect(relationships).not.toBeNull();
+      expect(relationships?.id).toBe(testData.fullPostId);
+      expect(relationships?.replied).toBeNull();
+      expect(relationships?.reposted).toBeNull();
+      expect(relationships?.mentioned).toEqual([]);
+    });
+
+    it('should return null when post relationships do not exist', async () => {
+      const { PostController } = await import('./post');
+
+      const relationships = await PostController.getPostRelationships({ postId: 'nonexistent:post' });
+
+      expect(relationships).toBeNull();
+    });
+
+    it('should return relationships with parent URI when post is a reply', async () => {
+      const parentUri = 'pubky://parent/pub/pubky.app/posts/parent123';
+      const postDetails: Core.PostDetailsModelSchema = {
+        id: testData.fullPostId,
+        content: 'Reply post content',
+        indexed_at: Date.now(),
+        kind: 'short',
+        uri: `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId}`,
+        attachments: null,
+      };
+
+      await Core.PostDetailsModel.table.add(postDetails);
+      await Core.PostRelationshipsModel.table.add({
+        id: testData.fullPostId,
+        replied: parentUri,
+        reposted: null,
+        mentioned: [],
+      });
+
+      const { PostController } = await import('./post');
+      const relationships = await PostController.getPostRelationships({ postId: testData.fullPostId });
+
+      expect(relationships).not.toBeNull();
+      expect(relationships?.replied).toBe(parentUri);
+    });
+
+    it('should call LocalPostService.getPostRelationships with correct postId', async () => {
+      const { PostController } = await import('./post');
+      const ServiceModule = await import('@/core/services');
+
+      const getRelationshipsSpy = vi
+        .spyOn(ServiceModule.LocalPostService, 'getPostRelationships')
+        .mockResolvedValue(null);
+
+      try {
+        await PostController.getPostRelationships({ postId: 'author:post123' });
+        expect(getRelationshipsSpy).toHaveBeenCalledWith('author:post123');
+      } finally {
+        getRelationshipsSpy.mockRestore();
+      }
+    });
+  });
 });

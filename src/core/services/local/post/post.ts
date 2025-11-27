@@ -308,6 +308,27 @@ export class LocalPostService {
   }
 
   /**
+   * Get post relationships for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post relationships or null if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async getPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
+    try {
+      const relationships = await Core.PostRelationshipsModel.findById(postId);
+      return relationships ?? null;
+    } catch (error) {
+      Libs.Logger.error('Failed to get post relationships', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post relationships', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
    * Persists complete post data from Nexus to local database
    *
    * @param params.postId - Composite post ID (author:postId)
