@@ -2,6 +2,8 @@
 
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import * as Core from '@/core';
+import { POST_ROUTES } from '@/app/routes';
 import * as Types from './usePostNavigation.types';
 
 /**
@@ -15,8 +17,8 @@ export function usePostNavigation(): Types.UsePostNavigationResult {
 
   const navigateToPost = useCallback(
     (postId: string) => {
-      const [userId, pId] = postId.split(':');
-      router.push(`/post/${userId}/${pId}`);
+      const { pubky: userId, id: pId } = Core.parseCompositeId(postId);
+      router.push(`${POST_ROUTES.POST}/${userId}/${pId}`);
     },
     [router],
   );

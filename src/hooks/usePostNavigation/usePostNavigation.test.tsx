@@ -119,25 +119,24 @@ describe('usePostNavigation', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty string post ID', () => {
+    it('should throw error for empty string post ID', () => {
       const { result } = renderHook(() => usePostNavigation());
 
-      act(() => {
-        result.current.navigateToPost('');
-      });
-
-      // Empty string split returns [''] which becomes ['', undefined]
-      expect(mockPush).toHaveBeenCalledWith('/post//undefined');
+      expect(() => {
+        act(() => {
+          result.current.navigateToPost('');
+        });
+      }).toThrow('Invalid composite id');
     });
 
-    it('should handle post ID with only colon', () => {
+    it('should throw error for post ID with only colon', () => {
       const { result } = renderHook(() => usePostNavigation());
 
-      act(() => {
-        result.current.navigateToPost(':');
-      });
-
-      expect(mockPush).toHaveBeenCalledWith('/post//');
+      expect(() => {
+        act(() => {
+          result.current.navigateToPost(':');
+        });
+      }).toThrow('Invalid composite id');
     });
 
     it('should handle post ID with multiple colons', () => {
