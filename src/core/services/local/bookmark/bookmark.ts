@@ -114,7 +114,9 @@ export class LocalBookmarkService {
       streams.push(kindStream);
     }
 
-    await Promise.all(streams.map((streamId) => Core.LocalStreamPostsService.prependToStream(streamId, postId)));
+    await Promise.all(
+      streams.map((streamId) => Core.LocalStreamPostsService.prependToStream({ streamId, compositePostId: postId })),
+    );
   }
 
   /**
@@ -134,6 +136,8 @@ export class LocalBookmarkService {
       streams.push(kindStream);
     }
 
-    await Promise.all(streams.map((streamId) => Core.LocalStreamPostsService.removeFromStream(streamId, postId)));
+    await Promise.all(
+      streams.map((streamId) => Core.LocalStreamPostsService.removeFromStream({ streamId, compositePostId: postId })),
+    );
   }
 }

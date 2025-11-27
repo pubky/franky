@@ -21,8 +21,8 @@ export class StreamPostsController {
    *
    * @param params - Parameters for the stream slice request
    * @param params.streamId - Unique identifier for the stream (e.g., 'timeline:all:all', 'engagement:all:images')
+   * @param params.streamHead - Identifier of the  newest post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
    * @param params.streamTail - Identifier of the last post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
-   * @param params.streamHead - Identifier of the last newest post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
    * @param params.lastPostId - Post ID of the last post in the current page. We use to get the chunk of the stream from the cache.
    * @param params.limit - Limit of posts to fetch. Default is Config.NEXUS_POSTS_PER_PAGE.
    *
@@ -45,8 +45,8 @@ export class StreamPostsController {
    */
   static async getOrFetchStreamSlice({
     streamId,
-    streamTail = 0,
     streamHead = 0,
+    streamTail = 0,
     lastPostId,
     limit = Config.NEXUS_POSTS_PER_PAGE,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
@@ -75,11 +75,20 @@ export class StreamPostsController {
    * @param streamId - The ID of the post stream to query
    * @returns Promise resolving to the timestamp (number) or 0 if not found
    */
-  static async getCachedLastPostTimestamp(streamId: Core.PostStreamId): Promise<number> {
-    return await Core.PostStreamApplication.getCachedLastPostTimestamp(streamId);
+  static async getCachedLastPostTimestamp(params: Core.TStreamIdParams): Promise<number> {
+    return await Core.PostStreamApplication.getCachedLastPostTimestamp(params);
   }
 
-  static async getStreamHead(streamId: Core.PostStreamId): Promise<number> {
-    return await Core.PostStreamApplication.getStreamHead(streamId);
+  /**
+   *
+   * The "head" refers to the first post in the stream array, which represents
+   * the most recently indexed post. For reply streams without a cached head,
+   * returns 1 if replies exist, otherwise 0.
+   *
+   * @param streamId - The stream ID to get the head timestamp for
+   * @returns The indexed_at timestamp of the head post, or 0 if the stream is empty or head post not found
+   */
+  static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
+    return await Core.PostStreamApplication.getStreamHead(params);
   }
 }

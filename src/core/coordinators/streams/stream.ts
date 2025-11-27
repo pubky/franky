@@ -127,7 +127,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
    * Resolve the stream head based on current stream ID
    */
   private async resolvedStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
-    const streamHead = await Core.StreamPostsController.getStreamHead(currentStreamId);
+    const streamHead = await Core.StreamPostsController.getStreamHead({ streamId: currentStreamId });
     if (streamHead === 0) {
       Logger.warn('Failed to resolve stream head', { streamId: currentStreamId });
       return false;
@@ -186,7 +186,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     // Call parent to setup base listeners (auth, visibility)
     super.setupListeners();
     // Listen to home store changes (sort, reach, content affect streamId)
-    this.homeStoreUnsubscribe = Core.useHomeStore.subscribe(async(state, prevState) => {
+    this.homeStoreUnsubscribe = Core.useHomeStore.subscribe(async (state, prevState) => {
       // Only re-evaluate if we're on /home and relevant fields changed
       const currentState = this.getState();
       if (currentState.currentRoute === APP_ROUTES.HOME) {
@@ -274,7 +274,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
         return;
       }
 
-      if (!await this.resolvedStreamHead(this.streamState.currentStreamId)) return;
+      if (!(await this.resolvedStreamHead(this.streamState.currentStreamId))) return;
 
       // Do not poll engagement streams
       if (this.streamState.currentStreamId.split(':')[0] === Core.StreamSorting.ENGAGEMENT) {
@@ -307,7 +307,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   protected getInactiveReasonAdditionalChecks(): PollingInactiveReason | null {
     // Ensure we try to resolve the stream ID before checking
     this.resolveStreamId();
-    
+
     if (!this.streamState.currentStreamId) {
       return PollingInactiveReason.INVALID_IDENTIFIER;
     }

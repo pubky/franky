@@ -8,7 +8,7 @@ export class PostStreamApplication {
   // Public API
   // ============================================================================
 
-  static async getCachedLastPostTimestamp(streamId: Core.PostStreamId): Promise<number> {
+  static async getCachedLastPostTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
     try {
       const postStream = await Core.PostStreamModel.findById(streamId);
       if (!postStream || postStream.stream.length === 0) {
@@ -36,13 +36,13 @@ export class PostStreamApplication {
     }
   }
 
-  static async getStreamHead(streamId: Core.PostStreamId): Promise<number> {
-    return await Core.LocalStreamPostsService.getStreamHead(streamId);
+  static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
+    return await Core.LocalStreamPostsService.getStreamHead(params);
   }
 
   static async getOrFetchStreamSlice({
     streamId,
-    streamHead, 
+    streamHead,
     streamTail,
     lastPostId,
     limit,
@@ -50,7 +50,7 @@ export class PostStreamApplication {
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
     // Avoid the indexdb query for engagement streams even we do not persist
     if (streamId.split(':')[0] !== Core.StreamSorting.ENGAGEMENT && !streamHead) {
-      const cachedStream = await Core.LocalStreamPostsService.findById(streamId);
+      const cachedStream = await Core.LocalStreamPostsService.findById({ streamId });
 
       if (cachedStream) {
         const cachedStreamChunk = await this.getStreamFromCache({ lastPostId, limit, cachedStream });
@@ -76,12 +76,15 @@ export class PostStreamApplication {
     return await this.fetchStreamFromNexus({ streamId, limit, streamTail, streamHead, viewerId });
   }
 
+  /**
+   * Fetch missing posts from nexus and persist them to cache
+   */
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
     try {
       const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
       if (postBatch) {
-        const { postAttachments } = await Core.LocalStreamPostsService.persistPosts(postBatch);
+        const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
         // Persist the post attachments metadata
         await Core.persistFilesFromUris(postAttachments);
         // Persist the missing authors of the posts
@@ -167,8 +170,13 @@ export class PostStreamApplication {
     streamTail = 0,
     viewerId,
   }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
-    console.log('StreamHead: fetchStreamFromNexus', streamHead);
-    const { params, invokeEndpoint, extraParams } = Core.createPostStreamParams(streamId, streamTail, limit, streamHead, viewerId);
+    const { params, invokeEndpoint, extraParams } = Core.createPostStreamParams({
+      streamId,
+      streamTail,
+      limit,
+      streamHead,
+      viewerId,
+    });
     const postStreamChunk = await Core.NexusPostStreamService.fetch({ invokeEndpoint, params, extraParams });
 
     if (!postStreamChunk) {
@@ -182,7 +190,7 @@ export class PostStreamApplication {
       await Core.LocalStreamPostsService.persistNewStreamChunk({ stream: compositePostIds, streamId });
     }
 
-    // If the streamHead is not zero, it means that it is a streamCoordinator calling this method. 
+    // If the streamHead is not zero, it means that it is a streamCoordinator calling this method.
     // User still did not discover that new posts. It will get a notification
     if (streamHead > 0) {
       await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({ stream: compositePostIds, streamId });

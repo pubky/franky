@@ -349,7 +349,7 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
       Logger.debug('Page visibility changed', { isVisible });
       this.evaluateAndStartPolling();
     }
-  };
+  }
 
   /**
    * Restart polling (used when config changes)

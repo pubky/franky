@@ -12,11 +12,10 @@ describe('PostStreamModel', () => {
   describe('constructor', () => {
     it('should create a post stream with all properties', () => {
       const streamData = createDefaultPostStream(PostStreamTypes.TIMELINE_ALL_ALL, ['post1', 'post2'], 'Test Stream');
-      const { id, stream } = new PostStreamModel(streamData);
+      const streamModel = new PostStreamModel(streamData);
 
-      expect(id).toBe(PostStreamTypes.TIMELINE_ALL_ALL);
-      expect(name).toBe('Test Stream');
-      expect(stream).toEqual(['post1', 'post2']);
+      expect(streamModel.id).toBe(PostStreamTypes.TIMELINE_ALL_ALL);
+      expect(streamModel.stream).toEqual(['post1', 'post2']);
     });
   });
 

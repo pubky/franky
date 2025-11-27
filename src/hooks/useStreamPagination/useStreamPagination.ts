@@ -51,7 +51,7 @@ export function useStreamPagination({
         let result: Core.TReadPostStreamChunkResponse;
 
         if (isInitialLoad) {
-          const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp(streamId);
+          const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp({ streamId });
           setStreamTail(cachedLastPostTimestamp);
 
           result = await Core.StreamPostsController.getOrFetchStreamSlice({

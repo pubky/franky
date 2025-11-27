@@ -9,6 +9,10 @@ export type TReadPostStreamChunkParams = {
   limit?: number;
 };
 
+export type TStreamIdParams = {
+  streamId: Core.PostStreamId;
+};
+
 export type TReadPostStreamChunkResponse = {
   nextPageIds: string[];
   timestamp: number | undefined;

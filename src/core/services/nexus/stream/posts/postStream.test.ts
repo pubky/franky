@@ -322,7 +322,13 @@ describe('createPostStreamParams', () => {
       { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK, kind: Core.StreamKind.LINK, name: 'link' },
       { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_FILE, kind: Core.StreamKind.FILE, name: 'file' },
     ])('should handle timeline:bookmarks:$name stream', ({ streamType, kind }) => {
-      const result = createPostStreamParams(streamType, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamType,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
       expect(result.params.kind).toBe(kind);
@@ -335,12 +341,13 @@ describe('createPostStreamParams', () => {
   describe('Pagination behavior - streamTail handling (CRITICAL BUSINESS LOGIC)', () => {
     describe('Timeline sorting - Uses timestamp-based pagination', () => {
       it('should NOT set start parameter when streamTail is 0 (initial load - fetch most recent)', () => {
-        const result = createPostStreamParams(
-          Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
-          0, // streamTail = 0 means initial load
-          20,
-          mockViewerId,
-        );
+        const result = createPostStreamParams({
+          streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+          streamTail: 0, // streamTail = 0 means initial load
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
 
         expect(result.params.start).toBeUndefined();
         expect(result.params.skip).toBeUndefined();
@@ -349,12 +356,13 @@ describe('createPostStreamParams', () => {
 
       it('should DECREMENT streamTail by 1 when streamTail > 0 to prevent duplicate boundary post', () => {
         const streamTail = 1234567890; // Last post timestamp from previous fetch
-        const result = createPostStreamParams(
-          Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+        const result = createPostStreamParams({
+          streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
           streamTail,
-          20,
-          mockViewerId,
-        );
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
 
         expect(result.params.start).toBe(streamTail - 1);
         // CRITICAL: streamTail - 1 prevents fetching the same last post again
@@ -362,7 +370,13 @@ describe('createPostStreamParams', () => {
       });
 
       it('should handle streamTail = 1 (edge case: very first post)', () => {
-        const result = createPostStreamParams(Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL, 1, 20, mockViewerId);
+        const result = createPostStreamParams({
+          streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+          streamTail: 1,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
 
         expect(result.params.start).toBe(0); // 1 - 1 = 0
         // Posts with timestamp < 1 will be fetched (if any exist)
@@ -374,7 +388,13 @@ describe('createPostStreamParams', () => {
 
       it('should use skip (NOT start) when sorting by engagement', () => {
         const streamTail = 20; // Number of posts already loaded
-        const result = createPostStreamParams(engagementStreamId, streamTail, 20, mockViewerId);
+        const result = createPostStreamParams({
+          streamId: engagementStreamId,
+          streamTail,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
 
         expect(result.params.skip).toBe(streamTail);
         expect(result.params.start).toBeUndefined();
@@ -382,7 +402,13 @@ describe('createPostStreamParams', () => {
       });
 
       it('should set skip=0 for initial load when streamTail is 0', () => {
-        const result = createPostStreamParams(engagementStreamId, 0, 20, mockViewerId);
+        const result = createPostStreamParams({
+          streamId: engagementStreamId,
+          streamTail: 0,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
 
         expect(result.params.skip).toBe(0);
         expect(result.params.start).toBeUndefined();
@@ -390,7 +416,13 @@ describe('createPostStreamParams', () => {
 
       it('should NOT decrement streamTail for engagement sorting (no duplicate prevention needed)', () => {
         const streamTail = 40; // 40 posts already loaded
-        const result = createPostStreamParams(engagementStreamId, streamTail, 20, mockViewerId);
+        const result = createPostStreamParams({
+          streamId: engagementStreamId,
+          streamTail,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
 
         expect(result.params.skip).toBe(40); // NOT decremented
         // Rationale: Offset-based pagination naturally avoids duplicates
@@ -402,7 +434,13 @@ describe('createPostStreamParams', () => {
     it('should parse tags from stream ID', () => {
       // Stream ID format: sorting:endpoint:kind:tags
       const streamIdWithTags = 'timeline:bookmarks:all:tech,ai,web3' as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithTags, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithTags,
+        streamHead: 0,
+        streamTail: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.tags).toBe('tech,ai,web3');
       expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
@@ -411,7 +449,13 @@ describe('createPostStreamParams', () => {
 
     it('should limit tags to maximum 5 (NEXT_MAX_STREAM_TAGS)', () => {
       const streamIdWithManyTags = 'timeline:bookmarks:all:tag1,tag2,tag3,tag4,tag5,tag6,tag7' as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithManyTags, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithManyTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.tags).toBe('tag1,tag2,tag3,tag4,tag5');
       expect(result.params.tags).not.toContain('tag6');
@@ -419,7 +463,13 @@ describe('createPostStreamParams', () => {
 
     it('should handle stream ID without tags', () => {
       const streamIdWithoutTags = 'timeline:bookmarks:video' as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithoutTags, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithoutTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.tags).toBeUndefined();
       expect(result.params.kind).toBe(Core.StreamKind.VIDEO);
@@ -427,14 +477,26 @@ describe('createPostStreamParams', () => {
 
     it('should handle tags with special characters', () => {
       const streamIdWithSpecialTags = 'timeline:bookmarks:all:machine-learning,ai/ml,web3.0' as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithSpecialTags, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithSpecialTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.tags).toBe('machine-learning,ai/ml,web3.0');
     });
 
     it('should preserve tag order from stream ID', () => {
       const streamIdWithOrderedTags = 'timeline:bookmarks:all:first,second,third' as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithOrderedTags, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithOrderedTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.tags).toBe('first,second,third');
     });
@@ -442,7 +504,13 @@ describe('createPostStreamParams', () => {
     it('should handle empty tag in stream ID', () => {
       // Stream ID with empty string after last colon
       const streamIdWithEmptyTag = 'timeline:bookmarks:all:' as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithEmptyTag, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithEmptyTag,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       // Empty string after split should result in undefined after processing
       expect(result.params.tags).toBeUndefined();
@@ -459,7 +527,13 @@ describe('createPostStreamParams', () => {
       { kind: 'file', tags: 'docs,pdfs', expectedKind: Core.StreamKind.FILE },
     ])('should handle tags in $kind content stream', ({ kind, tags, expectedKind }) => {
       const streamIdWithTags = `timeline:bookmarks:${kind}:${tags}` as Core.PostStreamId;
-      const result = createPostStreamParams(streamIdWithTags, 0, 20, mockViewerId);
+      const result = createPostStreamParams({
+        streamId: streamIdWithTags,
+        streamHead: 0,
+        streamTail: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
 
       expect(result.params.tags).toBe(tags);
       expect(result.params.kind).toBe(expectedKind);

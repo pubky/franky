@@ -16,28 +16,32 @@ export class LocalStreamPostsService {
     await Core.PostStreamModel.upsert(streamId, stream);
   }
 
-  static async bulkSave(postStreams: Core.TPostStreamUpsertParams[]): Promise<void> {
+  /**
+   *
+   * @param postStreams - Array of post streams to upsert
+   */
+  static async bulkSave({ postStreams }: Core.TPostStreamBulkParams): Promise<void> {
     await Promise.all(postStreams.map(({ streamId, stream }) => this.upsert({ streamId, stream })));
   }
 
   /**
    * Get a stream of post IDs by stream ID
    */
-  static async findById(streamId: Core.PostStreamId): Promise<{ stream: string[] } | null> {
+  static async findById({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
     return await Core.PostStreamModel.findById(streamId);
   }
 
   /**
    * Delete a stream from cache
    */
-  static async deleteById(streamId: Core.PostStreamId): Promise<void> {
+  static async deleteById({ streamId }: Core.TStreamIdParams): Promise<void> {
     await Core.PostStreamModel.deleteById(streamId);
   }
 
   /**
-   * Get the head composite post ID of a stream
+   * Gets the timestamp of the head (first/most recent) post in a stream
    */
-  static async getStreamHead(streamId: Core.PostStreamId): Promise<number> {
+  static async getStreamHead({ streamId }: Core.TStreamIdParams): Promise<number> {
     const streamHeadPostId = await Core.PostStreamModel.getStreamHead(streamId);
     if (!streamHeadPostId) {
       const [sorting, invokeEndpoint, content] = Core.breakDownStreamId(streamId);
@@ -48,7 +52,7 @@ export class LocalStreamPostsService {
         if (postCounts && postCounts.replies > 0) return 1;
         return 0;
       }
-    };
+    }
     const postDetails = await Core.PostDetailsModel.findById(streamHeadPostId);
     if (!postDetails) return 0;
     return postDetails.indexed_at;
@@ -59,15 +63,15 @@ export class LocalStreamPostsService {
    * Only adds if not already present
    *
    * @param streamId - The stream to prepend to
-   * @param postId - The post ID to prepend
+   * @param compositePostId - The composite post ID to prepend
    */
-  static async prependToStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
-    const existing = await this.findById(streamId);
+  static async prependToStream({ streamId, compositePostId }: Core.TPrependToStreamParams): Promise<void> {
+    const existing = await this.findById({ streamId });
     const currentStream = existing?.stream || [];
 
-    if (currentStream.includes(postId)) return;
+    if (currentStream.includes(compositePostId)) return;
 
-    const updatedStream = [postId, ...currentStream];
+    const updatedStream = [compositePostId, ...currentStream];
     await this.upsert({ streamId, stream: updatedStream });
   }
 
@@ -75,13 +79,13 @@ export class LocalStreamPostsService {
    * Remove a post ID from a stream
    *
    * @param streamId - The stream to remove from
-   * @param postId - The post ID to remove
+   * @param compositePostId - The composite post ID to remove
    */
-  static async removeFromStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
-    const existing = await this.findById(streamId);
+  static async removeFromStream({ streamId, compositePostId }: Core.TPrependToStreamParams): Promise<void> {
+    const existing = await this.findById({ streamId });
     if (!existing) return;
 
-    const updatedStream = existing.stream.filter((id) => id !== postId);
+    const updatedStream = existing.stream.filter((id) => id !== compositePostId);
     await this.upsert({ streamId, stream: updatedStream });
   }
 
@@ -92,11 +96,7 @@ export class LocalStreamPostsService {
    * @param replyPostId - The composite post ID of the reply post
    * @param postReplies - The map of reply stream IDs to arrays of reply post IDs
    */
-  private static addReplyToStream(
-    repliedUri: string | null | undefined,
-    replyPostId: string,
-    postReplies: Record<Core.ReplyStreamCompositeId, string[]>,
-  ): void {
+  private static addReplyToStream({ repliedUri, replyPostId, postReplies }: Core.TAddReplyToStreamParams): void {
     if (!repliedUri) return;
 
     const parentCompositePostId = Core.buildCompositeIdFromPubkyUri({
@@ -109,7 +109,24 @@ export class LocalStreamPostsService {
     postReplies[replyStreamId] = [...(postReplies[replyStreamId] || []), replyPostId];
   }
 
-  static async persistPosts(posts: Core.NexusPost[]): Promise<Core.TPostStreamPersistResult> {
+  /**
+   * Persist posts from Nexus API to local IndexedDB
+   *
+   * Processes an array of Nexus posts and saves them to the local database.
+   * For each post, it extracts and persists:
+   * - Post details (with composite ID: author:postId)
+   * - Post counts (likes, replies, etc.)
+   * - Post relationships (replies, reposts, etc.)
+   * - Post tags
+   * - Post attachments
+   *
+   * Additionally, creates reply streams for posts that are replies to other posts,
+   * mapping parent posts to their reply post IDs.
+   *
+   * @param posts - Array of posts from Nexus API to persist
+   * @returns Object containing an array of all post attachment URIs collected from the posts
+   */
+  static async persistPosts({ posts }: Core.TPersistPostsParams): Promise<Core.TPostStreamPersistResult> {
     const postCounts: Core.NexusModelTuple<Core.NexusPostCounts>[] = [];
     const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
@@ -146,7 +163,7 @@ export class LocalStreamPostsService {
       postDetails.push({ ...detailsWithoutAuthor, id: postId });
 
       // Add reply to the post replies map if this post is a reply
-      this.addReplyToStream(post.relationships.replied, postId, postReplies);
+      this.addReplyToStream({ repliedUri: post.relationships.replied, replyPostId: postId, postReplies });
     }
 
     await Promise.all([
@@ -212,6 +229,12 @@ export class LocalStreamPostsService {
     await Core.PostStreamModel.upsert(streamId, sortedStream);
   }
 
+  /**
+   * Persist a new chunk of posts to the unread post stream
+   * @param stream - Array of post IDs to persist
+   * @param streamId - The stream ID to persist the new chunk to
+   * @returns
+   */
   static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
     const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
     if (!unreadPostStream) {

@@ -34,6 +34,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -68,6 +69,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -103,6 +105,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         lastPostId,
         streamTail,
         viewerId,
@@ -127,6 +130,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -222,6 +226,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -283,6 +288,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         lastPostId,
         streamTail,
         viewerId,
@@ -311,6 +317,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -336,6 +343,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId: engagementStreamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,

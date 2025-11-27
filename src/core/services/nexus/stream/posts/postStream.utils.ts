@@ -8,13 +8,13 @@ import { Env } from '@/libs/env/env';
  * @param limit - The maximum number of posts to fetch
  * @param viewerId - Optional viewer identifier for personalized content
  */
-export function createPostStreamParams(
-  streamId: Core.PostStreamId,
-  streamTail: number,
-  limit: number,
-  streamHead?: number,
-  viewerId?: Core.Pubky,
-): Core.TPostStreamFetchParams {
+export function createPostStreamParams({
+  streamId,
+  streamTail,
+  limit,
+  streamHead,
+  viewerId,
+}: Core.TFetchStreamParams): Core.TPostStreamFetchParams {
   const [sorting, invokeEndpoint, content, tags] = breakDownStreamId(streamId);
 
   const params: Core.TStreamBase = {};
@@ -25,9 +25,8 @@ export function createPostStreamParams(
     params.kind = parseContent(content);
   }
   params.limit = limit;
-  let extraParams = handleNotCommonStreamParams(sorting, content);
-  console.log('StreamHead: createPostStreamParams', params, streamTail, streamHead);
-  setStreamPagination(params, streamTail, streamHead);
+  let extraParams = handleNotCommonStreamParams({ authorId: sorting, postId: content });
+  setStreamPagination({ params, streamTail, streamHead });
   return { params, invokeEndpoint, extraParams };
 }
 
@@ -36,7 +35,10 @@ export function createPostStreamParams(
  * @param authorId - The author identifier for the stream
  * @param postId - Optional post identifier for post-specific streams
  */
-function handleNotCommonStreamParams(authorId: string, postId: string | undefined): Core.TStreamExtraParams {
+function handleNotCommonStreamParams({
+  authorId,
+  postId,
+}: Core.THandleNotCommonStreamParamsParams): Core.TStreamExtraParams {
   const extraParams: Core.TStreamExtraParams = {
     author_id: authorId,
   };
@@ -52,7 +54,7 @@ function handleNotCommonStreamParams(authorId: string, postId: string | undefine
  * @param params - The base stream parameters object to modify
  * @param streamTail - The pagination tail value
  */
-function setStreamPagination(params: Core.TStreamBase, streamTail: number, streamHead?: number) {
+function setStreamPagination({ params, streamTail, streamHead }: Core.TSetStreamPaginationParams) {
   if (params.sorting === Core.StreamSorting.ENGAGEMENT) {
     params.skip = streamTail; // post amount of the stream, page number * limit
   } else {
@@ -76,7 +78,7 @@ function setStreamPagination(params: Core.TStreamBase, streamTail: number, strea
  * Validates and converts a string to StreamSource enum.
  * @param value - The string value to validate and convert
  */
-function toStreamSource(value: string): Core.StreamSource {
+function toStreamSource({ value }: Core.TStreamSource): Core.StreamSource {
   // Check if the value is a valid StreamSource
   if (Object.values(Core.StreamSource).includes(value as Core.StreamSource)) {
     return value as Core.StreamSource;
@@ -97,14 +99,14 @@ export function breakDownStreamId(streamId: Core.PostStreamId): Core.TStreamIdBr
   if (kind) {
     if (sorting === Core.StreamSource.REPLIES) {
       // [pubky, post_replies, postId]
-      return [invokeEndpoint, toStreamSource(sorting), kind, limitTags];
+      return [invokeEndpoint, toStreamSource({ value: sorting }), kind, limitTags];
     }
     // Applies to timeline pattern
-    return [sorting, toStreamSource(invokeEndpoint), kind, limitTags];
+    return [sorting, toStreamSource({ value: invokeEndpoint }), kind, limitTags];
   }
   // That case covers Core.StreamSource.AUTHOR_REPLIES and Core.StreamSource.AUTHOR
   // i.e. [pubky, author_replies | author, undefined]
-  return [invokeEndpoint, toStreamSource(sorting), undefined, limitTags];
+  return [invokeEndpoint, toStreamSource({ value: sorting }), undefined, limitTags];
 }
 
 /**
