@@ -34,7 +34,7 @@ export function TimelineRepliesWithParent({ streamId }: Types.TimelineRepliesWit
     <Organisms.TimelineStateWrapper loading={loading} error={error} hasItems={postIds.length > 0}>
       <Atoms.Container>
         <Atoms.Container overrideDefaults className="space-y-4">
-          {postIds.map((postId) => (
+          {postIds.map((postId: string) => (
             <ReplyWithParent key={`reply_${postId}`} replyPostId={postId} onPostClick={navigateToPost} />
           ))}
 

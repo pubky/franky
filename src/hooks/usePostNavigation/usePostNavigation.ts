@@ -2,13 +2,7 @@
 
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-
-export interface UsePostNavigationResult {
-  /**
-   * Navigate to a post detail page using composite ID
-   */
-  navigateToPost: (postId: string) => void;
-}
+import * as Types from './usePostNavigation.types';
 
 /**
  * usePostNavigation
@@ -16,7 +10,7 @@ export interface UsePostNavigationResult {
  * Shared hook for post navigation logic.
  * Handles routing to post detail pages.
  */
-export function usePostNavigation(): UsePostNavigationResult {
+export function usePostNavigation(): Types.UsePostNavigationResult {
   const router = useRouter();
 
   const navigateToPost = useCallback(
