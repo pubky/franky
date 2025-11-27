@@ -146,9 +146,7 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
         <Atoms.Button
           overrideDefaults={true}
           onClick={() => setShowEmojiPicker(true)}
-          className={Libs.cn(
-            'inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark',
-          )}
+          className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark"
           aria-label="Open emoji picker"
         >
           <Icons.Smile className="size-4" strokeWidth={2} />
