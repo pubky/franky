@@ -20,3 +20,4 @@ export * from './useBodyScrollLock';
 export * from './useCurrentUserProfile';
 export * from './useOgMetadata';
 export * from './useNotifications';
+export * from './useUserTags';
