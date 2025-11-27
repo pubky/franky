@@ -13,9 +13,6 @@ interface TagInputProps {
   existingTags?: Array<{ label: string }>;
 }
 
-// Extract text without emoji for comparison, to ensure we don't add duplicate tags with different emoji
-const getTextWithoutEmoji = (tagLabel: string) => tagLabel.replace(/^\p{Emoji}+/u, '').trim();
-
 export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] }: TagInputProps) {
   const [tagText, setTagText] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -23,14 +20,14 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Filter existing tags based on input
+  // Filter existing tags based on input (match full text+emoji combination)
   const filteredSuggestions = useMemo(() => {
     if (!tagText.trim()) return [];
-    const inputText = getTextWithoutEmoji(tagText).toLowerCase();
+    const inputText = tagText.toLowerCase();
     return existingTags
       .filter((tag) => {
-        const tagTextWithoutEmoji = getTextWithoutEmoji(tag.label).toLowerCase();
-        return tagTextWithoutEmoji.includes(inputText) && tagTextWithoutEmoji !== inputText;
+        const tagLabel = tag.label.toLowerCase();
+        return tagLabel.includes(inputText) && tagLabel !== inputText;
       })
       .slice(0, 5);
   }, [tagText, existingTags]);
@@ -44,17 +41,9 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
     const trimmedTag = tagText.trim();
     if (!trimmedTag) return;
 
-    // Validate: check for duplicates (compare by text without emoji)
-    const tagTextWithoutEmoji = getTextWithoutEmoji(trimmedTag);
-    if (!tagTextWithoutEmoji) {
-      // Tag has no text after emoji removal
-      clearInput();
-      return;
-    }
-
+    // Validate: check for duplicates (compare full text+emoji combination exactly)
     const tagExists = existingTags.some((tag) => {
-      const existingText = getTextWithoutEmoji(tag.label).toLowerCase();
-      return existingText === tagTextWithoutEmoji.toLowerCase();
+      return tag.label.toLowerCase() === trimmedTag.toLowerCase();
     });
 
     if (tagExists) {
