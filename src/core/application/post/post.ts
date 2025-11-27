@@ -55,7 +55,7 @@ export class PostApplication {
     const { pubky: authorId, id: pId } = Core.parseCompositeId(postId);
 
     // Fetch complete post data from Nexus
-    const postData = await Core.NexusPostStreamService.getPost({
+    const postData = await Core.NexusPostService.getPost({
       authorId,
       postId: pId,
     });
