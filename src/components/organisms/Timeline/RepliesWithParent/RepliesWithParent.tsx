@@ -101,10 +101,11 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
 
     if (parentPostId && !parentPost && !fetchingSet.has(parentPostId)) {
       fetchingSet.add(parentPostId);
-
+      const viewerId = Core.useAuthStore.getState().selectCurrentUserPubky();
+      if (!viewerId) return;
       // Parent post ID exists but post details are missing
       // Fetch via Controller (fire-and-forget, useLiveQuery will react to DB updates)
-      Core.PostController.getOrFetchPost({ compositeId: parentPostId }).finally(() => {
+      Core.PostController.getOrFetchPost({ compositeId: parentPostId, viewerId }).finally(() => {
         // Only clean up if this effect hasn't been cancelled (component still mounted and parentPostId unchanged)
         if (!cancelled) {
           fetchingSet.delete(parentPostId);

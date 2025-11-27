@@ -40,19 +40,21 @@ export class PostApplication {
    * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getOrFetchPost({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
+  static async getOrFetchPost({
+    compositeId,
+    viewerId,
+  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
     const localPost = await Core.LocalPostService.readPostDetails({ postId: compositeId });
     if (localPost) return localPost;
 
-    const postData = await Core.NexusPostService.getPost({ compositeId });
-    if (!postData) return null;
+    // Reuse stream posts logic to fetch and persist single post
+    await Core.PostStreamApplication.fetchMissingPostsFromNexus({
+      cacheMissPostIds: [compositeId],
+      viewerId,
+    });
 
-    const postAttachments = await Core.LocalPostService.persistPostData({ postId: compositeId, postData });
-
-    await Core.persistFilesFromUris(postAttachments);
-    await Core.UserApplication.details({ userId: postData.details.author });
-
-    return postData.details;
+    // Return the persisted post details
+    return await Core.LocalPostService.readPostDetails({ postId: compositeId });
   }
 
   /**

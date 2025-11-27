@@ -68,9 +68,15 @@ const mockUseInfiniteScroll = vi.mocked(Hooks.useInfiniteScroll);
 describe('TimelineRepliesWithParent', () => {
   const mockStreamId = 'author_replies:test-user-id' as Core.PostStreamId;
   const mockNavigateToPost = vi.fn();
+  const mockViewerId = 'test-viewer-id' as Core.Pubky;
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock auth store to provide viewerId
+    vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+      selectCurrentUserPubky: () => mockViewerId,
+    } as ReturnType<typeof Core.useAuthStore.getState>);
 
     // Mock useStreamPagination
     mockUseStreamPagination.mockReturnValue({
@@ -397,7 +403,7 @@ describe('TimelineRepliesWithParent', () => {
       const { unmount } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
       // Verify fetch was initiated
-      expect(mockGetOrFetchPost).toHaveBeenCalledWith({ compositeId: mockParentId });
+      expect(mockGetOrFetchPost).toHaveBeenCalledWith({ compositeId: mockParentId, viewerId: mockViewerId });
 
       // Unmount component while fetch is pending
       unmount();

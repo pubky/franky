@@ -30,8 +30,11 @@ export class PostController {
    * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getOrFetchPost({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
-    return await Core.PostApplication.getOrFetchPost({ compositeId });
+  static async getOrFetchPost({
+    compositeId,
+    viewerId,
+  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
+    return await Core.PostApplication.getOrFetchPost({ compositeId, viewerId });
   }
 
   /**

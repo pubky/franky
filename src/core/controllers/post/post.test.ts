@@ -358,11 +358,13 @@ describe('PostController', () => {
   });
 
   describe('getOrFetchPost', () => {
+    const mockViewerId = 'test-viewer-id' as Core.Pubky;
+
     it('should return post from local database if exists', async () => {
       await setupExistingPost();
       const { PostController } = await import('./post');
 
-      const post = await PostController.getOrFetchPost({ compositeId: testData.fullPostId });
+      const post = await PostController.getOrFetchPost({ compositeId: testData.fullPostId, viewerId: mockViewerId });
 
       expect(post).toBeTruthy();
       expect(post?.id).toBe(testData.fullPostId);
@@ -376,7 +378,7 @@ describe('PostController', () => {
       const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
 
       try {
-        const post = await PostController.getOrFetchPost({ compositeId: 'nonexistent:post' });
+        const post = await PostController.getOrFetchPost({ compositeId: 'nonexistent:post', viewerId: mockViewerId });
         expect(post).toBeNull();
       } finally {
         getOrFetchSpy.mockRestore();
@@ -392,7 +394,9 @@ describe('PostController', () => {
         .mockRejectedValueOnce(new Error('Nexus error'));
 
       try {
-        await expect(PostController.getOrFetchPost({ compositeId: 'error:post' })).rejects.toThrow('Nexus error');
+        await expect(
+          PostController.getOrFetchPost({ compositeId: 'error:post', viewerId: mockViewerId }),
+        ).rejects.toThrow('Nexus error');
       } finally {
         getOrFetchSpy.mockRestore();
       }
@@ -405,8 +409,8 @@ describe('PostController', () => {
       const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
 
       try {
-        await PostController.getOrFetchPost({ compositeId: 'author:post123' });
-        expect(getOrFetchSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
+        await PostController.getOrFetchPost({ compositeId: 'author:post123', viewerId: mockViewerId });
+        expect(getOrFetchSpy).toHaveBeenCalledWith({ compositeId: 'author:post123', viewerId: mockViewerId });
       } finally {
         getOrFetchSpy.mockRestore();
       }

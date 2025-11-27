@@ -770,141 +770,61 @@ describe('Post Application', () => {
       attachments: null,
     };
 
-    const mockNexusPost: Core.NexusPost = {
-      details: {
-        ...mockPostDetails,
-        author: 'author' as Core.Pubky,
-      },
-      bookmark: null,
-      counts: {
-        tags: 0,
-        unique_tags: 0,
-        replies: 5,
-        reposts: 2,
-      },
-      relationships: {
-        replied: null,
-        reposted: null,
-        mentioned: [],
-      },
-      tags: [],
-    };
-
-    const mockUserDetails: Core.NexusUserDetails = {
-      id: 'author' as Core.Pubky,
-      name: 'Test Author',
-      bio: '',
-      image: null,
-      links: null,
-      status: null,
-      indexed_at: Date.now(),
-    };
-
     it('should return post from local database if exists', async () => {
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPostDetails);
 
-      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
+      const result = await Core.PostApplication.getOrFetchPost({
+        compositeId: 'author:post123',
+        viewerId: mockViewerId,
+      });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toEqual(mockPostDetails);
     });
 
-    it('should throw error for invalid postId format', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
+    it('should fetch post from Nexus using stream posts logic', async () => {
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
+      const readSpyFirst = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+      const fetchMissingSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+        .mockResolvedValue(undefined);
+      const readSpySecond = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(mockPostDetails);
 
-      await expect(Core.PostApplication.getOrFetchPost({ compositeId: 'invalid-format' })).rejects.toThrow(
-        'Invalid composite id',
-      );
-
-      expect(readSpy).toHaveBeenCalledWith({ postId: 'invalid-format' });
-    });
-
-    it('should fetch post from Nexus if not in local database', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
-      const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
-      const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
-
-      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
-
-      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(getPostSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
-      expect(persistSpy).toHaveBeenCalledWith({
-        postId: 'author:post123',
-        postData: mockNexusPost,
+      const result = await Core.PostApplication.getOrFetchPost({
+        compositeId: 'author:post123',
+        viewerId: mockViewerId,
       });
-      expect(findAuthorSpy).toHaveBeenCalledWith('author');
-      expect(result).toEqual(mockNexusPost.details);
-    });
 
-    it('should fetch and persist author if not in local database', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
-      const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
-      const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null); // Author not found
-      const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
-      const upsertAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'upsert').mockResolvedValue(undefined);
-
-      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
-
-      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(getPostSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
-      expect(persistSpy).toHaveBeenCalledWith({
-        postId: 'author:post123',
-        postData: mockNexusPost,
+      expect(readSpyFirst).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(fetchMissingSpy).toHaveBeenCalledWith({
+        cacheMissPostIds: ['author:post123'],
+        viewerId: mockViewerId,
       });
-      expect(findAuthorSpy).toHaveBeenCalledWith('author');
-      expect(getAuthorSpy).toHaveBeenCalledWith({ user_id: 'author' });
-      expect(upsertAuthorSpy).toHaveBeenCalledWith(mockUserDetails);
-      expect(result).toEqual(mockNexusPost.details);
+      expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(result).toEqual(mockPostDetails);
     });
 
     it('should return null when post not found in Nexus', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
-      const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(null);
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
+      const readSpyFirst = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+      const fetchMissingSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+        .mockResolvedValue(undefined);
+      const readSpySecond = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
 
-      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
+      const result = await Core.PostApplication.getOrFetchPost({
+        compositeId: 'author:post123',
+        viewerId: mockViewerId,
+      });
 
-      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(getPostSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
+      expect(readSpyFirst).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(fetchMissingSpy).toHaveBeenCalledWith({
+        cacheMissPostIds: ['author:post123'],
+        viewerId: mockViewerId,
+      });
+      expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toBeNull();
-    });
-
-    it('should continue if author fetch fails (not critical)', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
-      const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
-      const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
-      const getAuthorSpy = vi
-        .spyOn(Core.NexusUserService, 'details')
-        .mockRejectedValue(new Error('Author service down'));
-
-      await expect(Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' })).rejects.toThrow(
-        'Author service down',
-      );
-
-      expect(readSpy).toHaveBeenCalled();
-      expect(getPostSpy).toHaveBeenCalled();
-      expect(persistSpy).toHaveBeenCalled();
-      expect(findAuthorSpy).toHaveBeenCalled();
-      expect(getAuthorSpy).toHaveBeenCalled();
-    });
-
-    it('should not fetch author if already exists locally', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
-      const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
-      const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
-      const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details');
-
-      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
-
-      expect(readSpy).toHaveBeenCalled();
-      expect(getPostSpy).toHaveBeenCalled();
-      expect(persistSpy).toHaveBeenCalled();
-      expect(findAuthorSpy).toHaveBeenCalledWith('author');
-      expect(getAuthorSpy).not.toHaveBeenCalled();
-      expect(result).toEqual(mockNexusPost.details);
     });
   });
 
@@ -932,7 +852,7 @@ describe('Post Application', () => {
       const mockTags: Core.TagCollectionModelSchema<string>[] = [
         {
           id: 'author:post123',
-          tags: ['tag1', 'tag2'],
+          tags: [{ label: 'tag1', taggers: ['test-viewer-id'] as Core.Pubky[], taggers_count: 0, relationship: false }],
         },
       ];
 
