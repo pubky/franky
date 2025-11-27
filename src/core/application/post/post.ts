@@ -87,6 +87,42 @@ export class PostApplication {
   }
 
   /**
+   * Get post counts for a specific post
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post counts (with default values if not found)
+   */
+  static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+    return await Core.LocalPostService.getPostCounts(postId);
+  }
+
+  /**
+   * Get post tags for a specific post
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post tags
+   */
+  static async getPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
+    return await Core.LocalPostService.getPostTags(postId);
+  }
+
+  /**
+   * Get post relationships for a specific post
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post relationships or null if not found
+   */
+  static async getPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
+    return await Core.LocalPostService.getPostRelationships(postId);
+  }
+
+  /**
+   * Get post details from local database
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post details or null if not found
+   */
+  static async getPostDetails(postId: string): Promise<Core.PostDetailsModelSchema | null> {
+    return await Core.LocalPostService.read({ postId });
+  }
+
+  /**
    * Ensures author exists in local DB, fetches from Nexus if not found
    * @param authorId - Author pubky
    */

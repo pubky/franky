@@ -383,7 +383,7 @@ describe('PostController', () => {
       }
     });
 
-    it('should return null when PostApplication throws an error', async () => {
+    it('should propagate error when PostApplication throws an error', async () => {
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
@@ -392,8 +392,7 @@ describe('PostController', () => {
         .mockRejectedValueOnce(new Error('Nexus error'));
 
       try {
-        const post = await PostController.getOrFetchPost({ postId: 'error:post' });
-        expect(post).toBeNull();
+        await expect(PostController.getOrFetchPost({ postId: 'error:post' })).rejects.toThrow('Nexus error');
       } finally {
         getOrFetchSpy.mockRestore();
       }
@@ -462,12 +461,12 @@ describe('PostController', () => {
       expect(relationships?.replied).toBe(parentUri);
     });
 
-    it('should call LocalPostService.getPostRelationships with correct postId', async () => {
+    it('should call PostApplication.getPostRelationships with correct postId', async () => {
       const { PostController } = await import('./post');
-      const ServiceModule = await import('@/core/services');
+      const ApplicationModule = await import('@/core/application');
 
       const getRelationshipsSpy = vi
-        .spyOn(ServiceModule.LocalPostService, 'getPostRelationships')
+        .spyOn(ApplicationModule.PostApplication, 'getPostRelationships')
         .mockResolvedValue(null);
 
       try {

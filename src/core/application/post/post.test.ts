@@ -912,4 +912,99 @@ describe('Post Application', () => {
       expect(result).toEqual(mockNexusPost.details);
     });
   });
+
+  describe('getPostCounts', () => {
+    it('should call LocalPostService.getPostCounts', async () => {
+      const mockCounts: Core.PostCountsModelSchema = {
+        id: 'author:post123',
+        tags: 5,
+        unique_tags: 3,
+        replies: 10,
+        reposts: 2,
+      };
+
+      const getCountsSpy = vi.spyOn(Core.LocalPostService, 'getPostCounts').mockResolvedValue(mockCounts);
+
+      const result = await Core.PostApplication.getPostCounts('author:post123');
+
+      expect(getCountsSpy).toHaveBeenCalledWith('author:post123');
+      expect(result).toEqual(mockCounts);
+    });
+  });
+
+  describe('getPostTags', () => {
+    it('should call LocalPostService.getPostTags', async () => {
+      const mockTags: Core.TagCollectionModelSchema<string>[] = [
+        {
+          id: 'author:post123',
+          tags: ['tag1', 'tag2'],
+        },
+      ];
+
+      const getTagsSpy = vi.spyOn(Core.LocalPostService, 'getPostTags').mockResolvedValue(mockTags);
+
+      const result = await Core.PostApplication.getPostTags('author:post123');
+
+      expect(getTagsSpy).toHaveBeenCalledWith('author:post123');
+      expect(result).toEqual(mockTags);
+    });
+  });
+
+  describe('getPostRelationships', () => {
+    it('should call LocalPostService.getPostRelationships', async () => {
+      const mockRelationships: Core.PostRelationshipsModelSchema = {
+        id: 'author:post123',
+        replied: 'pubky://parent/pub/pubky.app/posts/parent123',
+        reposted: null,
+        mentioned: [],
+      };
+
+      const getRelationshipsSpy = vi
+        .spyOn(Core.LocalPostService, 'getPostRelationships')
+        .mockResolvedValue(mockRelationships);
+
+      const result = await Core.PostApplication.getPostRelationships('author:post123');
+
+      expect(getRelationshipsSpy).toHaveBeenCalledWith('author:post123');
+      expect(result).toEqual(mockRelationships);
+    });
+
+    it('should return null when relationships do not exist', async () => {
+      const getRelationshipsSpy = vi.spyOn(Core.LocalPostService, 'getPostRelationships').mockResolvedValue(null);
+
+      const result = await Core.PostApplication.getPostRelationships('nonexistent:post');
+
+      expect(getRelationshipsSpy).toHaveBeenCalledWith('nonexistent:post');
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getPostDetails', () => {
+    it('should call LocalPostService.read', async () => {
+      const mockPost: Core.PostDetailsModelSchema = {
+        id: 'author:post123',
+        content: 'Test post',
+        indexed_at: Date.now(),
+        kind: 'short',
+        uri: 'pubky://author/pub/pubky.app/posts/post123',
+        attachments: null,
+      };
+
+      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(mockPost);
+
+      const result = await Core.PostApplication.getPostDetails('author:post123');
+
+      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(result).toEqual(mockPost);
+    });
+
+    it('should return null when post does not exist', async () => {
+      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+
+      const result = await Core.PostApplication.getPostDetails('nonexistent:post');
+
+      expect(readSpy).toHaveBeenCalledWith({ postId: 'nonexistent:post' });
+      expect(result).toBeNull();
+    });
+  });
 });

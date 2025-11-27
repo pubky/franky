@@ -4,8 +4,14 @@ import * as Libs from '@/libs';
 export class PostController {
   private constructor() {} // Prevent instantiation
 
+  /**
+   * Get post details from local database
+   * @param params - Parameters object
+   * @param params.postId - ID of the post to get details for
+   * @returns Post details or null if not found
+   */
   static async getPostDetails({ postId }: { postId: string }) {
-    return await Core.PostDetailsModel.findById(postId);
+    return await Core.PostApplication.getPostDetails(postId);
   }
 
   /**
@@ -15,9 +21,7 @@ export class PostController {
    * @returns Post counts (with default values if not found)
    */
   static async getPostCounts({ postId }: { postId: string }) {
-    // Calling local service directly to avoid unnecessary network calls
-    // since we are not using the application layer for this operation
-    return await Core.LocalPostService.getPostCounts(postId);
+    return await Core.PostApplication.getPostCounts(postId);
   }
 
   /**
@@ -27,12 +31,7 @@ export class PostController {
    * @returns Post details or null if not found
    */
   static async getOrFetchPost({ postId }: { postId: string }): Promise<Core.PostDetailsModelSchema | null> {
-    try {
-      return await Core.PostApplication.getOrFetchPost(postId);
-    } catch (error) {
-      Libs.Logger.error('Failed to get or fetch post', { postId, error });
-      return null;
-    }
+    return await Core.PostApplication.getOrFetchPost(postId);
   }
 
   /**
@@ -42,7 +41,7 @@ export class PostController {
    * @returns Post tags
    */
   static async getPostTags({ postId }: { postId: string }): Promise<Core.TagCollectionModelSchema<string>[]> {
-    return await Core.LocalPostService.getPostTags(postId);
+    return await Core.PostApplication.getPostTags(postId);
   }
 
   /**
@@ -52,7 +51,7 @@ export class PostController {
    * @returns Post relationships or null if not found
    */
   static async getPostRelationships({ postId }: { postId: string }): Promise<Core.PostRelationshipsModelSchema | null> {
-    return await Core.LocalPostService.getPostRelationships(postId);
+    return await Core.PostApplication.getPostRelationships(postId);
   }
 
   /**
