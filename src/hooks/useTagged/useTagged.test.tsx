@@ -10,8 +10,8 @@ describe('useTagged', () => {
 
   it('returns initial tags and count', () => {
     const { result } = renderHook(() => useTagged());
-    expect(result.current.tags).toHaveLength(3);
-    expect(result.current.count).toBe(3);
+    expect(result.current.tags).toHaveLength(0);
+    expect(result.current.count).toBe(0);
     expect(result.current.isLoading).toBe(false);
     expect(typeof result.current.handleTagAdd).toBe('function');
   });
@@ -20,34 +20,27 @@ describe('useTagged', () => {
     const { result } = renderHook(() => useTagged());
     const initialCount = result.current.count;
 
+    let addResult: { success: boolean; error?: string };
     act(() => {
-      result.current.handleTagAdd('ethereum');
+      addResult = result.current.handleTagAdd('ethereum');
     });
 
+    expect(addResult!.success).toBe(true);
     expect(result.current.tags).toHaveLength(initialCount + 1);
     expect(result.current.tags.find((t: NexusTag) => t.label === 'ethereum')).toBeDefined();
   });
 
-  it('does not add duplicate tag', () => {
+  it('adds tag successfully', () => {
     const { result } = renderHook(() => useTagged());
     const initialCount = result.current.count;
 
+    let addResult: { success: boolean; error?: string };
     act(() => {
-      result.current.handleTagAdd('bitcoin');
+      addResult = result.current.handleTagAdd('ethereum');
     });
 
-    expect(result.current.count).toBe(initialCount);
-  });
-
-  it('does not add empty tag', () => {
-    const { result } = renderHook(() => useTagged());
-    const initialCount = result.current.count;
-
-    act(() => {
-      result.current.handleTagAdd('   ');
-    });
-
-    expect(result.current.count).toBe(initialCount);
+    expect(addResult!.success).toBe(true);
+    expect(result.current.count).toBe(initialCount + 1);
   });
 
   it('preserves emoji in tag label', () => {

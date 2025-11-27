@@ -21,10 +21,11 @@ vi.mock('@/molecules', async (importOriginal) => {
 });
 
 describe('TagInput', () => {
-  const mockOnTagAdd = vi.fn();
+  const mockOnTagAdd = vi.fn(() => ({ success: true }));
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockOnTagAdd.mockReturnValue({ success: true });
   });
 
   it('renders input with placeholder', () => {

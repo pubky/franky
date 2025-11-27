@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { LucideIcon } from 'lucide-react';
 import * as Atoms from '@/atoms';
 
-export interface ProfilePageEmptyStateProps {
+interface ProfilePageEmptyStateProps {
   imageSrc: string;
   imageAlt: string;
   icon: LucideIcon;

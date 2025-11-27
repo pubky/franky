@@ -37,20 +37,11 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
   // TODO: Replace with real notification store when backend is integrated
   const { unreadCount: unreadNotificationsCount } = Hooks.useNotifications();
 
-  // Get tagged count from useTagged hook (for mocked data support)
-  // TODO: Remove this when real data is implemented - tags should come from database
-  const { count: taggedCount } = Hooks.useTagged();
-
   // Build stats object from user counts
   // IMPORTANT: Backend counts.posts includes replies, so we subtract to get actual posts
   const totalPosts = userCounts?.posts ?? 0;
   const repliesCount = userCounts?.replies ?? 0;
   const actualPostsCount = Math.max(0, totalPosts - repliesCount);
-
-  // Use tagged count from useTagged if database count is 0 (mocked data scenario)
-  // Otherwise use database count
-  const databaseTagCount = userCounts?.unique_tags ?? 0;
-  const uniqueTagsCount = databaseTagCount > 0 ? databaseTagCount : taggedCount;
 
   const stats: ProfileStats = {
     notifications: unreadNotificationsCount,
@@ -59,7 +50,7 @@ export function useProfileStats(userId: string): UseProfileStatsResult {
     followers: userCounts?.followers ?? 0,
     following: userCounts?.following ?? 0,
     friends: userCounts?.friends ?? 0,
-    uniqueTags: uniqueTagsCount,
+    uniqueTags: userCounts?.unique_tags ?? 0,
   };
 
   return {

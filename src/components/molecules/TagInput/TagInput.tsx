@@ -8,7 +8,7 @@ import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
 interface TagInputProps {
-  onTagAdd: (tag: string) => void;
+  onTagAdd: (tag: string) => { success: boolean; error?: string };
   placeholder?: string;
   existingTags?: Array<{ label: string }>;
 }
@@ -44,19 +44,34 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
     const trimmedTag = tagText.trim();
     if (!trimmedTag) return;
 
+    // Validate: check for duplicates (compare by text without emoji)
     const tagTextWithoutEmoji = getTextWithoutEmoji(trimmedTag);
+    if (!tagTextWithoutEmoji) {
+      // Tag has no text after emoji removal
+      clearInput();
+      return;
+    }
+
     const tagExists = existingTags.some((tag) => {
       const existingText = getTextWithoutEmoji(tag.label).toLowerCase();
       return existingText === tagTextWithoutEmoji.toLowerCase();
     });
 
     if (tagExists) {
+      // Tag already exists, clear input
       clearInput();
       return;
     }
 
-    onTagAdd(trimmedTag);
-    clearInput();
+    // Validation passed, add the tag
+    const result = onTagAdd(trimmedTag);
+    if (result.success) {
+      clearInput();
+    } else {
+      // Handle error if needed (e.g., show toast)
+      // For now, just clear input
+      clearInput();
+    }
   }, [tagText, existingTags, onTagAdd, clearInput]);
 
   const handleSuggestionClick = useCallback((tagLabel: string) => {
