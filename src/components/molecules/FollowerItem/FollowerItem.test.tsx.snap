@@ -1,0 +1,409 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
+<div
+  class="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0"
+  data-testid="container"
+>
+  <div
+    class="flex flex-wrap items-center justify-between gap-2 lg:flex-nowrap"
+    data-testid="container"
+  >
+    <a
+      class="flex min-w-0 flex-1 items-center gap-2"
+      data-testid="link"
+      href="/profile/test-user-1"
+    >
+      <div
+        data-name="John Doe"
+        data-size="md"
+        data-testid="avatar-with-fallback"
+      >
+        <span>
+          J
+        </span>
+      </div>
+      <div
+        data-testid="container"
+      >
+        <p
+          class="truncate font-bold"
+          data-testid="typography"
+        >
+          John Doe
+        </p>
+        <p
+          class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          test-user-
+        </p>
+      </div>
+    </a>
+    <div
+      class="hidden flex-wrap items-center gap-2 lg:flex"
+      data-testid="container"
+    >
+      <span
+        data-testid="post-tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="post-tag"
+      >
+        candid
+      </span>
+    </div>
+    <div
+      class="flex shrink-0 items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Tags
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          100
+        </p>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Posts
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          50
+        </p>
+      </div>
+    </div>
+    <button
+      aria-label="Unfollow"
+      class="group hidden h-8 w-8 shrink-0 p-1 transition-colors lg:flex hover:text-destructive-foreground bg-secondary text-secondary-foreground hover:bg-destructive/60"
+      data-testid="button"
+    >
+      <svg
+        class="size-5 group-hover:hidden"
+        data-testid="check-icon"
+      />
+      <svg
+        class="hidden size-5 group-hover:block"
+        data-testid="user-minus-icon"
+      />
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 lg:hidden"
+    data-testid="container"
+  >
+    <div
+      class="flex flex-1 flex-wrap items-center gap-2"
+      data-testid="container"
+    >
+      <span
+        data-testid="post-tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="post-tag"
+      >
+        candid
+      </span>
+    </div>
+    <button
+      aria-label="Unfollow"
+      class="group h-8 w-8 shrink-0 p-1 transition-colors hover:text-destructive-foreground bg-secondary text-secondary-foreground hover:bg-destructive/60"
+      data-testid="button"
+    >
+      <svg
+        class="size-5 group-hover:hidden"
+        data-testid="check-icon"
+      />
+      <svg
+        class="hidden size-5 group-hover:block"
+        data-testid="user-minus-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
+<div
+  class="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0"
+  data-testid="container"
+>
+  <div
+    class="flex flex-wrap items-center justify-between gap-2 lg:flex-nowrap"
+    data-testid="container"
+  >
+    <a
+      class="flex min-w-0 flex-1 items-center gap-2"
+      data-testid="link"
+      href="/profile/test-user-1"
+    >
+      <div
+        data-name="John Doe"
+        data-size="md"
+        data-testid="avatar-with-fallback"
+      >
+        <span>
+          J
+        </span>
+      </div>
+      <div
+        data-testid="container"
+      >
+        <p
+          class="truncate font-bold"
+          data-testid="typography"
+        >
+          John Doe
+        </p>
+        <p
+          class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          test-user-
+        </p>
+      </div>
+    </a>
+    <div
+      class="hidden flex-wrap items-center gap-2 lg:flex"
+      data-testid="container"
+    >
+      <span
+        data-testid="post-tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="post-tag"
+      >
+        candid
+      </span>
+    </div>
+    <div
+      class="flex shrink-0 items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Tags
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          100
+        </p>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Posts
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          50
+        </p>
+      </div>
+    </div>
+    <button
+      aria-label="Follow"
+      class="group hidden h-8 w-8 shrink-0 p-1 transition-colors lg:flex bg-secondary text-secondary-foreground hover:bg-green-600/60 hover:text-white"
+      data-testid="button"
+    >
+      <svg
+        class="size-5 group-hover:hidden"
+        data-testid="user-round-plus-icon"
+      />
+      <svg
+        class="hidden size-5 group-hover:block"
+        data-testid="check-icon"
+      />
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 lg:hidden"
+    data-testid="container"
+  >
+    <div
+      class="flex flex-1 flex-wrap items-center gap-2"
+      data-testid="container"
+    >
+      <span
+        data-testid="post-tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="post-tag"
+      >
+        candid
+      </span>
+    </div>
+    <button
+      aria-label="Follow"
+      class="group h-8 w-8 shrink-0 p-1 transition-colors bg-secondary text-secondary-foreground hover:bg-green-600/60 hover:text-white"
+      data-testid="button"
+    >
+      <svg
+        class="size-5 group-hover:hidden"
+        data-testid="user-round-plus-icon"
+      />
+      <svg
+        class="hidden size-5 group-hover:block"
+        data-testid="check-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
+<div
+  class="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0"
+  data-testid="container"
+>
+  <div
+    class="flex flex-wrap items-center justify-between gap-2 lg:flex-nowrap"
+    data-testid="container"
+  >
+    <a
+      class="flex min-w-0 flex-1 items-center gap-2"
+      data-testid="link"
+      href="/profile/test-user-1"
+    >
+      <div
+        data-name="John Doe"
+        data-size="md"
+        data-testid="avatar-with-fallback"
+      >
+        <span>
+          J
+        </span>
+      </div>
+      <div
+        data-testid="container"
+      >
+        <p
+          class="truncate font-bold"
+          data-testid="typography"
+        >
+          John Doe
+        </p>
+        <p
+          class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          test-user-
+        </p>
+      </div>
+    </a>
+    <div
+      class="flex shrink-0 items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Tags
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          100
+        </p>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Posts
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          50
+        </p>
+      </div>
+    </div>
+    <button
+      aria-label="Unfollow"
+      class="group hidden h-8 w-8 shrink-0 p-1 transition-colors lg:flex hover:text-destructive-foreground bg-secondary text-secondary-foreground hover:bg-destructive/60"
+      data-testid="button"
+    >
+      <svg
+        class="size-5 group-hover:hidden"
+        data-testid="check-icon"
+      />
+      <svg
+        class="hidden size-5 group-hover:block"
+        data-testid="user-minus-icon"
+      />
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 lg:hidden"
+    data-testid="container"
+  >
+    <button
+      aria-label="Unfollow"
+      class="group h-8 w-8 shrink-0 p-1 transition-colors hover:text-destructive-foreground bg-secondary text-secondary-foreground hover:bg-destructive/60"
+      data-testid="button"
+    >
+      <svg
+        class="size-5 group-hover:hidden"
+        data-testid="check-icon"
+      />
+      <svg
+        class="hidden size-5 group-hover:block"
+        data-testid="user-minus-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
