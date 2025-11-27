@@ -8,3 +8,4 @@ export * from './notification';
 export * from './hot';
 export * from './file';
 export * from './bookmark';
+export * from './active-users';
