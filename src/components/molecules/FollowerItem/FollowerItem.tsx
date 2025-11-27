@@ -6,10 +6,10 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Core from '@/core';
 import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
-import type { FollowerData } from '@/hooks/useFollowers';
+import type { UserConnectionData } from '@/hooks/useProfileConnections';
 
 interface FollowerItemProps {
-  follower: FollowerData;
+  follower: UserConnectionData;
   isFollowing?: boolean;
   onFollow?: (followerId: Core.Pubky) => void;
 }

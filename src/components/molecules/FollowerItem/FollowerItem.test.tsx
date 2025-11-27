@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { FollowerItem } from './FollowerItem';
-import type { FollowerData } from '@/hooks/useFollowers';
+import type { UserConnectionData } from '@/hooks/useProfileConnections';
 import * as Core from '@/core';
 
 // Mock atoms
@@ -92,7 +92,7 @@ vi.mock('lucide-react', () => ({
 }));
 
 describe('FollowerItem', () => {
-  const mockFollower: FollowerData = {
+  const mockFollower: UserConnectionData = {
     id: 'test-user-1' as Core.Pubky,
     name: 'John Doe',
     bio: 'Test bio',
@@ -214,7 +214,7 @@ describe('FollowerItem', () => {
 });
 
 describe('FollowerItem - Snapshots', () => {
-  const mockFollower: FollowerData = {
+  const mockFollower: UserConnectionData = {
     id: 'test-user-1' as Core.Pubky,
     name: 'John Doe',
     bio: 'Test bio',

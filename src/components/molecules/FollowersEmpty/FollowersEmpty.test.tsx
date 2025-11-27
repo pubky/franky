@@ -80,6 +80,7 @@ describe('FollowersEmpty', () => {
   });
 
   it('renders background image', () => {
+    render(<FollowersEmpty />);
     const image = screen.getByTestId('background-image');
     expect(image).toBeInTheDocument();
     expect(image).toHaveAttribute('alt', 'Followers - Empty state');
