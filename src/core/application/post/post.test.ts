@@ -812,7 +812,7 @@ describe('Post Application', () => {
     it('should throw error for invalid postId format', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
 
-      await expect(Core.PostApplication.getOrFetchPost('invalid-format')).rejects.toThrow('Invalid postId format');
+      await expect(Core.PostApplication.getOrFetchPost('invalid-format')).rejects.toThrow('Invalid composite id');
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'invalid-format' });
     });

@@ -52,17 +52,11 @@ export class PostApplication {
     Libs.Logger.debug(`[PostApplication] Post NOT found locally, fetching from Nexus: ${postId}`);
 
     // If not found locally, fetch from Nexus
-    const [authorId, pId] = postId.split(':');
-
-    if (!authorId || !pId) {
-      throw Libs.createCommonError(Libs.CommonErrorType.INVALID_INPUT, `Invalid postId format: ${postId}`, 400, {
-        postId,
-      });
-    }
+    const { pubky: authorId, id: pId } = Core.parseCompositeId(postId);
 
     // Fetch complete post data from Nexus
     const postData = await Core.NexusPostStreamService.getPost({
-      authorId: authorId as Core.Pubky,
+      authorId,
       postId: pId,
     });
 
