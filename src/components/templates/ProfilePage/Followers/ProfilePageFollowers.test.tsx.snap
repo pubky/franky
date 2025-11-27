@@ -14,10 +14,10 @@ exports[`ProfilePageFollowers > matches snapshot 1`] = `
       (1)
     </h5>
     <div
-      data-testid="followers-list"
+      data-testid="connections-list"
     >
       1
-       followers
+       connections
     </div>
   </div>
 </div>

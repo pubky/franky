@@ -28,6 +28,8 @@ export * from './NotificationsEmpty';
 export * from './NotificationsList';
 export * from './FollowersEmpty';
 export * from './FollowersList';
+export * from './UserConnectionsEmpty';
+export * from './UserConnectionsList';
 export * from './FollowerItem';
 export * from './MobileHeader';
 export * from './Page';
