@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ProfilePageReplies } from './ProfilePageReplies';
 import * as Hooks from '@/hooks';
+import * as Core from '@/core';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -46,6 +47,11 @@ describe('ProfilePageReplies', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock NexusUserService to prevent database errors
+    vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
+    vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(undefined);
+    vi.spyOn(Core.NexusUserService, 'tags').mockResolvedValue([]);
 
     // Default mock return value
     mockUseStreamPagination.mockReturnValue({
