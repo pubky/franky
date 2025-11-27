@@ -60,6 +60,7 @@ export * from './SettingsSwitchGroup';
 export * from './SideDrawer';
 export * from './EmojiPicker';
 export * from './EmojiPickerDialog';
+export * from './ProfilePageEmptyState';
 export * from './SignIn';
 export * from './StatusPicker';
 export * from './TagInput';

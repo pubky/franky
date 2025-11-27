@@ -2,21 +2,53 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TaggedEmpty } from './TaggedEmpty';
 
-// Mock Next.js Image
-vi.mock('next/image', () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <div data-testid="image" data-src={src} data-alt={alt}>
-      Image
-    </div>
-  ),
-}));
+// Mock useTagged hook
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useTagged: vi.fn(() => ({
+      tags: [],
+      count: 0,
+      isLoading: false,
+      handleTagAdd: vi.fn(),
+    })),
+  };
+});
 
-// Mock TagInput
+// Mock ProfilePageEmptyState and TagInput
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
   return {
     ...actual,
-    TagInput: () => <div data-testid="tag-input">TagInput</div>,
+    ProfilePageEmptyState: ({
+      imageSrc,
+      imageAlt,
+      icon: Icon,
+      title,
+      subtitle,
+      children,
+    }: {
+      imageSrc: string;
+      imageAlt: string;
+      icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+      title: string;
+      subtitle: React.ReactNode;
+      children?: React.ReactNode;
+    }) => (
+      <div data-testid="empty-state">
+        <div data-testid="image" data-src={imageSrc} data-alt={imageAlt} />
+        <Icon data-testid="tag-icon" />
+        <h3>{title}</h3>
+        <div>{subtitle}</div>
+        {children}
+      </div>
+    ),
+    TagInput: ({ onTagAdd }: { onTagAdd: (tag: string) => void }) => (
+      <div data-testid="tag-input" onClick={() => onTagAdd('test-tag')}>
+        TagInput
+      </div>
+    ),
   };
 });
 
@@ -35,6 +67,11 @@ describe('TaggedEmpty', () => {
   it('renders TagInput', () => {
     render(<TaggedEmpty />);
     expect(screen.getByTestId('tag-input')).toBeInTheDocument();
+  });
+
+  it('renders Tag icon', () => {
+    render(<TaggedEmpty />);
+    expect(screen.getByTestId('tag-icon')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {

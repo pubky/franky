@@ -5,10 +5,8 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import type { NexusTag } from '@/core/services/nexus/nexus.types';
 
-export interface TaggedItemProps {
-  /** Tag data */
+interface TaggedItemProps {
   tag: NexusTag;
-  /** Callback when search button is clicked */
   onSearchClick?: () => void;
 }
 

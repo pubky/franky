@@ -2,14 +2,14 @@
 
 exports[`TaggedList > matches snapshot with empty tags 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="mx-auto w-full flex-col flex gap-2"
   data-testid="container"
 />
 `;
 
 exports[`TaggedList > matches snapshot with tags 1`] = `
 <div
-  class="flex flex-col gap-2"
+  class="mx-auto w-full flex-col flex gap-2"
   data-testid="container"
 >
   <div

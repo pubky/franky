@@ -1,20 +1,20 @@
 'use client';
 
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 
-export interface TagInputProps {
-  /** Callback when tag is added */
+interface TagInputProps {
   onTagAdd: (tag: string) => void;
-  /** Placeholder text */
   placeholder?: string;
-  /** Existing tags for autocomplete and duplicate checking */
   existingTags?: Array<{ label: string }>;
 }
+
+// Extract text without emoji for comparison, to ensure we don't add duplicate tags with different emoji
+const getTextWithoutEmoji = (tagLabel: string) => tagLabel.replace(/^\p{Emoji}+/u, '').trim();
 
 export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] }: TagInputProps) {
   const [tagText, setTagText] = useState('');
@@ -23,111 +23,94 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Extract text without emoji for comparison
-  const getTextWithoutEmoji = (tagLabel: string) => {
-    return tagLabel.replace(/^\p{Emoji}+/u, '').trim();
-  };
-
   // Filter existing tags based on input
   const filteredSuggestions = useMemo(() => {
     if (!tagText.trim()) return [];
-    const inputText = tagText.toLowerCase();
+    const inputText = getTextWithoutEmoji(tagText).toLowerCase();
     return existingTags
       .filter((tag) => {
-        const tagText = getTextWithoutEmoji(tag.label).toLowerCase();
-        return tagText.includes(inputText) && tagText !== inputText;
+        const tagTextWithoutEmoji = getTextWithoutEmoji(tag.label).toLowerCase();
+        return tagTextWithoutEmoji.includes(inputText) && tagTextWithoutEmoji !== inputText;
       })
-      .slice(0, 5); // Limit to 5 suggestions
+      .slice(0, 5);
   }, [tagText, existingTags]);
 
-  const isValidTag = () => {
-    // Tag is valid if there's text (with or without emoji)
-    return Boolean(tagText.trim());
-  };
+  const clearInput = useCallback(() => {
+    setTagText('');
+    setShowSuggestions(false);
+  }, []);
 
-  const handleTagAdd = () => {
-    if (isValidTag()) {
-      const trimmedTag = tagText.trim();
-      const tagTextWithoutEmoji = getTextWithoutEmoji(trimmedTag);
+  const handleTagAdd = useCallback(() => {
+    const trimmedTag = tagText.trim();
+    if (!trimmedTag) return;
 
-      // Check if tag already exists (compare by text without emoji)
-      const tagExists = existingTags.some((tag) => {
-        const existingText = getTextWithoutEmoji(tag.label);
-        return existingText.toLowerCase() === tagTextWithoutEmoji.toLowerCase();
-      });
+    const tagTextWithoutEmoji = getTextWithoutEmoji(trimmedTag);
+    const tagExists = existingTags.some((tag) => {
+      const existingText = getTextWithoutEmoji(tag.label).toLowerCase();
+      return existingText === tagTextWithoutEmoji.toLowerCase();
+    });
 
-      if (tagExists) {
-        // Clear tag text if duplicate
-        setTagText('');
-        setShowSuggestions(false);
-        return;
-      }
-
-      onTagAdd(trimmedTag);
-      setTagText('');
-      setShowSuggestions(false);
+    if (tagExists) {
+      clearInput();
+      return;
     }
-  };
 
-  const handleSuggestionClick = (tagLabel: string) => {
+    onTagAdd(trimmedTag);
+    clearInput();
+  }, [tagText, existingTags, onTagAdd, clearInput]);
+
+  const handleSuggestionClick = useCallback((tagLabel: string) => {
     setTagText(tagLabel);
     setShowSuggestions(false);
     inputRef.current?.focus();
-  };
+  }, []);
 
-  const handleEmojiSelect = (emoji: { native: string }) => {
-    const emojiString = emoji.native;
-    const input = inputRef.current;
+  const handleEmojiSelect = useCallback(
+    (emoji: { native: string }) => {
+      const input = inputRef.current;
+      if (!input) return;
 
-    if (input) {
       const start = input.selectionStart ?? 0;
       const end = input.selectionEnd ?? 0;
-      const currentValue = tagText;
+      const newValue = tagText.slice(0, start) + emoji.native + tagText.slice(end);
 
-      // Insert emoji at cursor position (like WhatsApp)
-      const newValue = currentValue.slice(0, start) + emojiString + currentValue.slice(end);
       setTagText(newValue);
 
-      // Keep picker open so user can add more emojis
-      // Don't close the picker - let user close it manually or it closes on blur
-
-      // Refocus and set cursor position after emoji
       setTimeout(() => {
         input.focus();
-        const newCursorPos = start + emojiString.length;
+        const newCursorPos = start + emoji.native.length;
         input.setSelectionRange(newCursorPos, newCursorPos);
       }, 0);
-    }
-  };
+    },
+    [tagText],
+  );
 
-  const handleKeyDown = Hooks.useEnterSubmit(isValidTag, handleTagAdd);
+  const handleKeyDown = Hooks.useEnterSubmit(() => Boolean(tagText.trim()), handleTagAdd);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTagText(e.target.value);
-    setShowSuggestions(e.target.value.trim().length > 0);
-  };
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTagText(value);
+    setShowSuggestions(value.trim().length > 0);
+  }, []);
 
-  const handleInputFocus = () => {
-    if (tagText.trim()) {
-      setShowSuggestions(true);
-    }
-  };
+  const handleInputFocus = useCallback(() => {
+    if (tagText.trim()) setShowSuggestions(true);
+  }, [tagText]);
 
-  const handleInputBlur = () => {
-    // Delay hiding suggestions to allow clicking on them
+  const handleInputBlur = useCallback(() => {
     setTimeout(() => {
       if (!containerRef.current?.contains(document.activeElement)) {
         setShowSuggestions(false);
       }
     }, 200);
-  };
+  }, []);
 
   return (
     <>
       <Atoms.Container
         ref={containerRef}
         overrideDefaults={true}
-        className="relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input bg-background/10 px-3 shadow-sm focus-within:border-white/80"
+        className="relative flex w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
       >
         <Atoms.Input
           ref={inputRef}
@@ -139,7 +122,7 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           className={Libs.cn(
-            'min-h-0 flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white',
+            'flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white',
             'border-none shadow-none ring-0 outline-none hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
             'placeholder:font-bold placeholder:text-input',
             tagText ? 'text-foreground' : 'text-input',
@@ -149,7 +132,7 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
           overrideDefaults={true}
           onClick={() => setShowEmojiPicker(true)}
           className={Libs.cn(
-            'inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark',
+            'inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark',
           )}
           aria-label="Open emoji picker"
         >
@@ -160,13 +143,13 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
         {showSuggestions && filteredSuggestions.length > 0 && (
           <Atoms.Container
             overrideDefaults={true}
-            className="absolute top-full left-0 z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-border bg-popover shadow-lg"
+            className="absolute top-full left-0 z-50 mt-1 w-full rounded-md border border-border bg-popover"
           >
             {filteredSuggestions.map((tag, index) => (
               <Atoms.Container
                 key={`${tag.label}-${index}`}
                 overrideDefaults={true}
-                className="cursor-pointer px-3 py-2 hover:bg-accent"
+                className="cursor-pointer px-3 py-2 hover:rounded-md hover:bg-accent"
                 onClick={() => handleSuggestionClick(tag.label)}
               >
                 <Atoms.Typography as="span" className="text-sm font-medium text-popover-foreground">
