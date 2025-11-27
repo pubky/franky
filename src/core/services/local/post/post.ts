@@ -330,67 +330,20 @@ export class LocalPostService {
 
   /**
    * Persists complete post data from Nexus to local database
+   * Uses LocalStreamPostsService.persistPosts for consistency
    *
-   * @param params.postId - Composite post ID (author:postId)
+   * @param params.postId - Composite post ID (author:postId) - not used, kept for API compatibility
    * @param params.postData - Complete post data from Nexus
    *
    * @throws {DatabaseError} When database operations fail
+   * @returns Post attachments that need to be downloaded
    */
-  static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<void> {
+  static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<string[]> {
     try {
-      Libs.Logger.debug(`[LocalPostService] Starting persist for post ${postId}`);
-      Libs.Logger.debug(`[LocalPostService] postData.details:`, postData.details);
-      Libs.Logger.debug(`[LocalPostService] postData.counts:`, postData.counts);
-      Libs.Logger.debug(`[LocalPostService] postData.details.id: ${postData.details.id}`);
-      Libs.Logger.debug(`[LocalPostService] Match: ${postData.details.id === postId}`);
-
-      await Core.db.transaction(
-        'rw',
-        [
-          Core.PostDetailsModel.table,
-          Core.PostCountsModel.table,
-          Core.PostRelationshipsModel.table,
-          Core.PostTagsModel.table,
-        ],
-        async () => {
-          // Persist post details (remove 'author' field and ensure correct composite ID)
-          Libs.Logger.debug(`[LocalPostService] Upserting post details for ${postId}`);
-          Libs.Logger.debug(`[LocalPostService] Post details from Nexus:`, postData.details);
-
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { author, ...postDetailsWithoutAuthor } = postData.details;
-          const postDetailsToUpsert = {
-            ...postDetailsWithoutAuthor,
-            id: postId, // Use the composite ID (author:postId)
-          };
-
-          Libs.Logger.debug(`[LocalPostService] Post details to upsert:`, postDetailsToUpsert);
-          await Core.PostDetailsModel.upsert(postDetailsToUpsert);
-          Libs.Logger.debug(`[LocalPostService] Post details upserted successfully with id:`, postId);
-
-          // Persist post counts
-          await Core.PostCountsModel.upsert({
-            id: postId,
-            ...postData.counts,
-          });
-
-          // Persist post relationships
-          await Core.PostRelationshipsModel.upsert({
-            id: postId,
-            ...postData.relationships,
-          });
-
-          // Persist post tags if any
-          if (postData.tags && postData.tags.length > 0) {
-            await Core.PostTagsModel.upsert({
-              id: postId,
-              tags: postData.tags,
-            });
-          }
-        },
-      );
-
-      Libs.Logger.debug(`[LocalPostService] Post ${postId} with complete data persisted locally`);
+      Libs.Logger.debug(`[LocalPostService] Persisting post ${postId}`);
+      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts([postData]);
+      Libs.Logger.debug(`[LocalPostService] Post ${postId} persisted with ${postAttachments.length} attachments`);
+      return postAttachments;
     } catch (error) {
       Libs.Logger.error('Failed to persist post data', { postId, error });
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to persist post data', 500, {

@@ -67,8 +67,11 @@ export class PostApplication {
 
     Libs.Logger.debug(`[PostApplication] Post fetched from Nexus, persisting locally: ${postId}`);
 
-    // Persist all post data locally
-    await Core.LocalPostService.persistPostData({ postId, postData });
+    // Persist all post data locally (details, counts, relationships, tags)
+    const postAttachments = await Core.LocalPostService.persistPostData({ postId, postData });
+
+    // Persist the post attachments metadata
+    await Core.persistFilesFromUris(postAttachments);
 
     Libs.Logger.debug(`[PostApplication] Post persisted, ensuring author exists: ${authorId}`);
 

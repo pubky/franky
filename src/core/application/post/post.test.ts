@@ -820,7 +820,7 @@ describe('Post Application', () => {
     it('should fetch post from Nexus if not in local database', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
+      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
 
       const result = await Core.PostApplication.getOrFetchPost('author:post123');
@@ -841,7 +841,7 @@ describe('Post Application', () => {
     it('should fetch and persist author if not in local database', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
+      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null); // Author not found
       const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
       const upsertAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'upsert').mockResolvedValue(undefined);
@@ -880,7 +880,7 @@ describe('Post Application', () => {
     it('should continue if author fetch fails (not critical)', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
+      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
       const getAuthorSpy = vi
         .spyOn(Core.NexusUserService, 'details')
@@ -898,7 +898,7 @@ describe('Post Application', () => {
     it('should not fetch author if already exists locally', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(mockNexusPost);
-      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
+      const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
       const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details');
 
