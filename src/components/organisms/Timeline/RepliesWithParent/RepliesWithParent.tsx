@@ -69,7 +69,7 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   // First: Get parent post ID from relationships
   // UI → Controller → Service → Model
   const parentPostId = useLiveQuery(async () => {
-    const relationships = await Core.PostController.getPostRelationships({ postId: replyPostId });
+    const relationships = await Core.PostController.getPostRelationships({ compositeId: replyPostId });
 
     if (!relationships?.replied) {
       return null;
@@ -88,7 +88,7 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   const parentPost = useLiveQuery(async () => {
     if (!parentPostId) return null;
 
-    const post = await Core.PostController.getPostDetails({ postId: parentPostId });
+    const post = await Core.PostController.getPostDetails({ compositeId: parentPostId });
 
     return post;
   }, [parentPostId]);
@@ -104,7 +104,7 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
 
       // Parent post ID exists but post details are missing
       // Fetch via Controller (fire-and-forget, useLiveQuery will react to DB updates)
-      Core.PostController.getOrFetchPost({ postId: parentPostId }).finally(() => {
+      Core.PostController.getOrFetchPost({ compositeId: parentPostId }).finally(() => {
         // Only clean up if this effect hasn't been cancelled (component still mounted and parentPostId unchanged)
         if (!cancelled) {
           fetchingSet.delete(parentPostId);

@@ -37,117 +37,59 @@ export class PostApplication {
   /**
    * Get or fetch a post - reads from local DB first, fetches from Nexus if not found
    * Also fetches and persists related data: counts, relationships, tags, and author
-   * @param postId - ID of the post to get (format: "authorId:postId")
+   * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getOrFetchPost(postId: string): Promise<Core.PostDetailsModelSchema | null> {
-    // Try to read from local database first
-    const localPost = await Core.LocalPostService.readPostDetails({ postId });
+  static async getOrFetchPost({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
+    const localPost = await Core.LocalPostService.readPostDetails({ postId: compositeId });
+    if (localPost) return localPost;
 
-    if (localPost) {
-      Libs.Logger.debug(`[PostApplication] Post found in local DB: ${postId}`);
-      return localPost;
-    }
+    const postData = await Core.NexusPostService.getPost({ compositeId });
+    if (!postData) return null;
 
-    Libs.Logger.debug(`[PostApplication] Post NOT found locally, fetching from Nexus: ${postId}`);
+    const postAttachments = await Core.LocalPostService.persistPostData({ postId: compositeId, postData });
 
-    // If not found locally, fetch from Nexus
-    const { pubky: authorId, id: pId } = Core.parseCompositeId(postId);
-
-    // Fetch complete post data from Nexus
-    const postData = await Core.NexusPostService.getPost({
-      authorId,
-      postId: pId,
-    });
-
-    if (!postData) {
-      Libs.Logger.warn(`[PostApplication] Post not found in Nexus: ${postId}`);
-      return null;
-    }
-
-    Libs.Logger.debug(`[PostApplication] Post fetched from Nexus, persisting locally: ${postId}`);
-
-    // Persist all post data locally (details, counts, relationships, tags)
-    const postAttachments = await Core.LocalPostService.persistPostData({ postId, postData });
-
-    // Persist the post attachments metadata
     await Core.persistFilesFromUris(postAttachments);
-
-    Libs.Logger.debug(`[PostApplication] Post persisted, ensuring author exists: ${authorId}`);
-
-    // Fetch and persist author if not in local DB
-    await this.ensureAuthorExists(authorId as Core.Pubky);
-
-    Libs.Logger.debug(`[PostApplication] getOrFetchPost completed successfully: ${postId}`);
+    await Core.UserApplication.details({ userId: postData.details.author });
 
     return postData.details;
   }
 
   /**
    * Get post counts for a specific post
-   * @param postId - Composite post ID (author:postId)
+   * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post counts (with default values if not found)
    */
-  static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
-    return await Core.LocalPostService.readPostCounts(postId);
+  static async getPostCounts({ compositeId }: Core.TCompositeId): Promise<Core.PostCountsModelSchema> {
+    return await Core.LocalPostService.readPostCounts(compositeId);
   }
 
   /**
    * Get post tags for a specific post
-   * @param postId - Composite post ID (author:postId)
+   * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post tags
    */
-  static async getPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
-    return await Core.LocalPostService.readPostTags(postId);
+  static async getPostTags({ compositeId }: Core.TCompositeId): Promise<Core.TagCollectionModelSchema<string>[]> {
+    return await Core.LocalPostService.readPostTags(compositeId);
   }
 
   /**
    * Get post relationships for a specific post
-   * @param postId - Composite post ID (author:postId)
+   * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post relationships or null if not found
    */
-  static async getPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
-    return await Core.LocalPostService.readPostRelationships(postId);
+  static async getPostRelationships({
+    compositeId,
+  }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
+    return await Core.LocalPostService.readPostRelationships(compositeId);
   }
 
   /**
    * Get post details from local database
-   * @param postId - Composite post ID (author:postId)
+   * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
-  static async getPostDetails(postId: string): Promise<Core.PostDetailsModelSchema | null> {
-    return await Core.LocalPostService.readPostDetails({ postId });
-  }
-
-  /**
-   * Ensures author exists in local DB, fetches from Nexus if not found
-   * @param authorId - Author pubky
-   */
-  private static async ensureAuthorExists(authorId: Core.Pubky): Promise<void> {
-    const localAuthor = await Core.UserDetailsModel.findById(authorId);
-
-    if (localAuthor) {
-      Libs.Logger.debug(`[PostApplication] Author already exists in DB: ${authorId}`);
-      return;
-    }
-
-    Libs.Logger.debug(`[PostApplication] Author NOT found, fetching from Nexus: ${authorId}`);
-
-    try {
-      const authorDetails = await Core.NexusUserService.details({ user_id: authorId });
-
-      if (authorDetails) {
-        Libs.Logger.debug(`[PostApplication] Author fetched, upserting:`, authorDetails);
-        await Core.UserDetailsModel.upsert(authorDetails);
-        Libs.Logger.debug(`[PostApplication] Author upserted successfully: ${authorId}`);
-      } else {
-        Libs.Logger.warn(`[PostApplication] Author details not found in Nexus: ${authorId}`);
-      }
-    } catch (error) {
-      // Author fetch is not critical for post display, just log
-      Libs.Logger.error(`[PostApplication] Failed to fetch author: ${authorId}`, error);
-      // The UI will show a placeholder for missing author data
-      throw error; // Re-throw to let caller decide how to handle
-    }
+  static async getPostDetails({ compositeId }: Core.TCompositeId): Promise<Core.PostDetailsModelSchema | null> {
+    return await Core.LocalPostService.readPostDetails({ postId: compositeId });
   }
 }

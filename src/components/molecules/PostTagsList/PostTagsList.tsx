@@ -31,7 +31,7 @@ export function PostTagsList({
   };
 
   const tagCollection = useLiveQuery(
-    () => Core.PostController.getPostTags({ postId }),
+    () => Core.PostController.getPostTags({ compositeId: postId }),
     [postId],
     [] as Core.TagCollectionModelSchema<string>[],
   );

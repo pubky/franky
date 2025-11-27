@@ -397,7 +397,7 @@ describe('TimelineRepliesWithParent', () => {
       const { unmount } = render(<TimelineRepliesWithParent streamId={mockStreamId} />);
 
       // Verify fetch was initiated
-      expect(mockGetOrFetchPost).toHaveBeenCalledWith({ postId: mockParentId });
+      expect(mockGetOrFetchPost).toHaveBeenCalledWith({ compositeId: mockParentId });
 
       // Unmount component while fetch is pending
       unmount();

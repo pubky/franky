@@ -803,7 +803,7 @@ describe('Post Application', () => {
     it('should return post from local database if exists', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPostDetails);
 
-      const result = await Core.PostApplication.getOrFetchPost('author:post123');
+      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toEqual(mockPostDetails);
@@ -812,7 +812,9 @@ describe('Post Application', () => {
     it('should throw error for invalid postId format', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
 
-      await expect(Core.PostApplication.getOrFetchPost('invalid-format')).rejects.toThrow('Invalid composite id');
+      await expect(Core.PostApplication.getOrFetchPost({ compositeId: 'invalid-format' })).rejects.toThrow(
+        'Invalid composite id',
+      );
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'invalid-format' });
     });
@@ -823,13 +825,10 @@ describe('Post Application', () => {
       const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue([]);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
 
-      const result = await Core.PostApplication.getOrFetchPost('author:post123');
+      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(getPostSpy).toHaveBeenCalledWith({
-        authorId: 'author',
-        postId: 'post123',
-      });
+      expect(getPostSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
       expect(persistSpy).toHaveBeenCalledWith({
         postId: 'author:post123',
         postData: mockNexusPost,
@@ -846,13 +845,10 @@ describe('Post Application', () => {
       const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(mockUserDetails);
       const upsertAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'upsert').mockResolvedValue(undefined);
 
-      const result = await Core.PostApplication.getOrFetchPost('author:post123');
+      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(getPostSpy).toHaveBeenCalledWith({
-        authorId: 'author',
-        postId: 'post123',
-      });
+      expect(getPostSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
       expect(persistSpy).toHaveBeenCalledWith({
         postId: 'author:post123',
         postData: mockNexusPost,
@@ -867,13 +863,10 @@ describe('Post Application', () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostService, 'getPost').mockResolvedValue(null);
 
-      const result = await Core.PostApplication.getOrFetchPost('author:post123');
+      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
-      expect(getPostSpy).toHaveBeenCalledWith({
-        authorId: 'author',
-        postId: 'post123',
-      });
+      expect(getPostSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
       expect(result).toBeNull();
     });
 
@@ -886,7 +879,9 @@ describe('Post Application', () => {
         .spyOn(Core.NexusUserService, 'details')
         .mockRejectedValue(new Error('Author service down'));
 
-      await expect(Core.PostApplication.getOrFetchPost('author:post123')).rejects.toThrow('Author service down');
+      await expect(Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' })).rejects.toThrow(
+        'Author service down',
+      );
 
       expect(readSpy).toHaveBeenCalled();
       expect(getPostSpy).toHaveBeenCalled();
@@ -902,7 +897,7 @@ describe('Post Application', () => {
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
       const getAuthorSpy = vi.spyOn(Core.NexusUserService, 'details');
 
-      const result = await Core.PostApplication.getOrFetchPost('author:post123');
+      const result = await Core.PostApplication.getOrFetchPost({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalled();
       expect(getPostSpy).toHaveBeenCalled();
@@ -925,7 +920,7 @@ describe('Post Application', () => {
 
       const getCountsSpy = vi.spyOn(Core.LocalPostService, 'readPostCounts').mockResolvedValue(mockCounts);
 
-      const result = await Core.PostApplication.getPostCounts('author:post123');
+      const result = await Core.PostApplication.getPostCounts({ compositeId: 'author:post123' });
 
       expect(getCountsSpy).toHaveBeenCalledWith('author:post123');
       expect(result).toEqual(mockCounts);
@@ -943,7 +938,7 @@ describe('Post Application', () => {
 
       const getTagsSpy = vi.spyOn(Core.LocalPostService, 'readPostTags').mockResolvedValue(mockTags);
 
-      const result = await Core.PostApplication.getPostTags('author:post123');
+      const result = await Core.PostApplication.getPostTags({ compositeId: 'author:post123' });
 
       expect(getTagsSpy).toHaveBeenCalledWith('author:post123');
       expect(result).toEqual(mockTags);
@@ -963,7 +958,7 @@ describe('Post Application', () => {
         .spyOn(Core.LocalPostService, 'readPostRelationships')
         .mockResolvedValue(mockRelationships);
 
-      const result = await Core.PostApplication.getPostRelationships('author:post123');
+      const result = await Core.PostApplication.getPostRelationships({ compositeId: 'author:post123' });
 
       expect(getRelationshipsSpy).toHaveBeenCalledWith('author:post123');
       expect(result).toEqual(mockRelationships);
@@ -972,7 +967,7 @@ describe('Post Application', () => {
     it('should return null when relationships do not exist', async () => {
       const getRelationshipsSpy = vi.spyOn(Core.LocalPostService, 'readPostRelationships').mockResolvedValue(null);
 
-      const result = await Core.PostApplication.getPostRelationships('nonexistent:post');
+      const result = await Core.PostApplication.getPostRelationships({ compositeId: 'nonexistent:post' });
 
       expect(getRelationshipsSpy).toHaveBeenCalledWith('nonexistent:post');
       expect(result).toBeNull();
@@ -992,7 +987,7 @@ describe('Post Application', () => {
 
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPost);
 
-      const result = await Core.PostApplication.getPostDetails('author:post123');
+      const result = await Core.PostApplication.getPostDetails({ compositeId: 'author:post123' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toEqual(mockPost);
@@ -1001,7 +996,7 @@ describe('Post Application', () => {
     it('should return null when post does not exist', async () => {
       const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
 
-      const result = await Core.PostApplication.getPostDetails('nonexistent:post');
+      const result = await Core.PostApplication.getPostDetails({ compositeId: 'nonexistent:post' });
 
       expect(readSpy).toHaveBeenCalledWith({ postId: 'nonexistent:post' });
       expect(result).toBeNull();
