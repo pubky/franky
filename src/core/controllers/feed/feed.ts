@@ -17,7 +17,7 @@ export class FeedController {
   }
 
   static async update(params: Core.TFeedUpdateParams): Promise<Core.FeedModelSchema> {
-    const existing = await Core.FeedModel.findById(params.feedId);
+    const existing = await Core.LocalFeedService.findById(params.feedId);
     if (!existing) {
       throw new Error('Feed not found');
     }
@@ -51,11 +51,11 @@ export class FeedController {
   }
 
   static async list(): Promise<Core.FeedModelSchema[]> {
-    return Core.FeedModel.findAllSorted();
+    return Core.LocalFeedService.findAll();
   }
 
   static async get(feedId: string): Promise<Core.FeedModelSchema | undefined> {
-    return Core.FeedModel.table.get(feedId);
+    return Core.LocalFeedService.findById(feedId);
   }
 
   static getStreamId(feed: Core.FeedModelSchema): Core.PostStreamId {

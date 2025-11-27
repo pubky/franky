@@ -45,9 +45,9 @@ describe('FeedController', () => {
     // Mock FeedApplication
     vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(createMockFeedSchema());
 
-    // Mock FeedModel
-    vi.spyOn(Core.FeedModel, 'findById').mockResolvedValue(createMockFeedSchema());
-    vi.spyOn(Core.FeedModel, 'findAllSorted').mockResolvedValue([createMockFeedSchema()]);
+    // Mock LocalFeedService
+    vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(createMockFeedSchema());
+    vi.spyOn(Core.LocalFeedService, 'findAll').mockResolvedValue([createMockFeedSchema()]);
 
     // Import FeedController
     const feedModule = await import('./feed');
@@ -85,7 +85,7 @@ describe('FeedController', () => {
   describe('update', () => {
     it('should merge changes with existing feed and persist', async () => {
       const existingFeed = createMockFeedSchema();
-      vi.spyOn(Core.FeedModel, 'findById').mockResolvedValue(existingFeed);
+      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(existingFeed);
       const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
 
       const updateParams: TFeedUpdateParams = {
@@ -109,7 +109,7 @@ describe('FeedController', () => {
     });
 
     it('should throw when feed not found', async () => {
-      vi.spyOn(Core.FeedModel, 'findById').mockResolvedValue(null);
+      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(undefined);
 
       const updateParams: TFeedUpdateParams = {
         feedId: 'nonexistent',
@@ -169,19 +169,19 @@ describe('FeedController', () => {
         createMockFeedSchema({ id: 'feed1', name: 'Feed 1' }),
         createMockFeedSchema({ id: 'feed2', name: 'Feed 2' }),
       ];
-      vi.spyOn(Core.FeedModel, 'findAllSorted').mockResolvedValue(feeds);
+      vi.spyOn(Core.LocalFeedService, 'findAll').mockResolvedValue(feeds);
 
       const result = await FeedController.list();
 
       expect(result).toHaveLength(2);
-      expect(Core.FeedModel.findAllSorted).toHaveBeenCalled();
+      expect(Core.LocalFeedService.findAll).toHaveBeenCalled();
     });
   });
 
   describe('get', () => {
     it('should return feed by ID', async () => {
       const feed = createMockFeedSchema();
-      vi.spyOn(Core.FeedModel.table, 'get').mockResolvedValue(feed);
+      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(feed);
 
       const result = await FeedController.get('feed123');
 
@@ -190,7 +190,7 @@ describe('FeedController', () => {
     });
 
     it('should return undefined when not found', async () => {
-      vi.spyOn(Core.FeedModel.table, 'get').mockResolvedValue(undefined);
+      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(undefined);
 
       const result = await FeedController.get('nonexistent');
 
