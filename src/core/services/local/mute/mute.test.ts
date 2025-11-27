@@ -5,16 +5,19 @@ import { Logger } from '@/libs';
 const muter = 'pubky_muter' as Core.Pubky;
 const mutee = 'pubky_mutee' as Core.Pubky;
 
-async function clearUserRelationshipsTable() {
-  await Core.db.transaction('rw', [Core.UserRelationshipsModel.table], async () => {
+async function clearTables() {
+  await Core.db.transaction('rw', [Core.UserRelationshipsModel.table, Core.UserStreamModel.table], async () => {
     await Core.UserRelationshipsModel.table.clear();
+    await Core.UserStreamModel.table.clear();
   });
 }
+
+const getMutedStreamId = (userId: Core.Pubky) => `${userId}:${Core.UserStreamSource.MUTED}`;
 
 describe('LocalMuteService', () => {
   beforeEach(async () => {
     await Core.db.initialize();
-    await clearUserRelationshipsTable();
+    await clearTables();
   });
 
   describe.each([
@@ -169,6 +172,89 @@ describe('LocalMuteService', () => {
       }
 
       spy.mockRestore();
+    });
+  });
+
+  describe('Stream Updates', () => {
+    it('should add mutee to muted stream on mute', async () => {
+      await Core.LocalMuteService.create({ muter, mutee });
+
+      const mutedStream = await Core.UserStreamModel.findById(getMutedStreamId(muter));
+      expect(mutedStream?.stream).toContain(mutee);
+    });
+
+    it('should remove mutee from muted stream on unmute', async () => {
+      // First mute
+      await Core.LocalMuteService.create({ muter, mutee });
+      expect((await Core.UserStreamModel.findById(getMutedStreamId(muter)))?.stream).toContain(mutee);
+
+      // Then unmute
+      await Core.LocalMuteService.delete({ muter, mutee });
+
+      const mutedStream = await Core.UserStreamModel.findById(getMutedStreamId(muter));
+      expect(mutedStream?.stream).not.toContain(mutee);
+    });
+
+    it('should prepend new muted user to beginning of stream', async () => {
+      const mutee2 = 'pubky_mutee_2' as Core.Pubky;
+
+      await Core.LocalMuteService.create({ muter, mutee });
+      await Core.LocalMuteService.create({ muter, mutee: mutee2 });
+
+      const mutedStream = await Core.UserStreamModel.findById(getMutedStreamId(muter));
+      expect(mutedStream?.stream).toEqual([mutee2, mutee]);
+    });
+
+    it('should not add duplicate users to muted stream', async () => {
+      await Core.LocalMuteService.create({ muter, mutee });
+      await Core.LocalMuteService.create({ muter, mutee });
+
+      const mutedStream = await Core.UserStreamModel.findById(getMutedStreamId(muter));
+      expect(mutedStream?.stream.filter((id) => id === mutee)).toHaveLength(1);
+    });
+
+    it('should not update streams when mute status does not change', async () => {
+      // Already muted
+      await Core.UserRelationshipsModel.create({
+        id: mutee,
+        following: false,
+        followed_by: false,
+        muted: true,
+      });
+
+      const prependSpy = vi.spyOn(Core.LocalStreamUsersService, 'prependToStream');
+
+      await Core.LocalMuteService.create({ muter, mutee });
+
+      expect(prependSpy).not.toHaveBeenCalled();
+      prependSpy.mockRestore();
+    });
+
+    it('should handle unmute when stream does not exist', async () => {
+      // Create relationship without stream
+      await Core.UserRelationshipsModel.create({
+        id: mutee,
+        following: false,
+        followed_by: false,
+        muted: true,
+      });
+
+      // Unmute should not throw even if stream doesn't exist
+      await expect(Core.LocalMuteService.delete({ muter, mutee })).resolves.not.toThrow();
+    });
+
+    it('should maintain separate muted streams for different users', async () => {
+      const muter2 = 'pubky_muter_2' as Core.Pubky;
+      const mutee2 = 'pubky_mutee_2' as Core.Pubky;
+
+      await Core.LocalMuteService.create({ muter, mutee });
+      await Core.LocalMuteService.create({ muter: muter2, mutee: mutee2 });
+
+      const muter1Stream = await Core.UserStreamModel.findById(getMutedStreamId(muter));
+      const muter2Stream = await Core.UserStreamModel.findById(getMutedStreamId(muter2));
+
+      expect(muter1Stream?.stream).toEqual([mutee]);
+      expect(muter2Stream?.stream).toEqual([mutee2]);
     });
   });
 });
