@@ -26,11 +26,11 @@ export type TUserStreamBase = Core.TPaginationParams & {
 
 export type TUserStreamWithUserIdParams = Core.TUserId & TUserStreamBase;
 
-export type TUserStreamInfluencersParams = TUserStreamBase &
-  Core.TUserId & {
-    reach?: Core.UserStreamReach;
-    timeframe?: Core.UserStreamTimeframe;
-  };
+export type TUserStreamInfluencersParams = TUserStreamBase & {
+  user_id?: Core.Pubky;
+  reach?: Core.UserStreamReach;
+  timeframe?: Core.UserStreamTimeframe;
+};
 
 export type TUserStreamPostRepliesParams = TUserStreamBase & {
   author_id: Core.Pubky;

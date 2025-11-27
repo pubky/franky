@@ -8,3 +8,4 @@ export * from './nexus.types';
 export * from './stream';
 export * from './search';
 export * from './hot';
+export * from './active-users';

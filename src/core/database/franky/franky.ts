@@ -20,6 +20,7 @@ import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream
 import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.schema';
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
 import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
+import { ActiveUsersModelSchema, activeUsersTableSchema } from '@/core/models/active-users/active-users.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -48,6 +49,8 @@ export class AppDatabase extends Dexie {
   bookmarks!: Dexie.Table<Core.BookmarkModelSchema>;
   // Hot tags
   hot_tags!: Dexie.Table<HotTagsModelSchema>;
+  // Active users
+  active_users!: Dexie.Table<ActiveUsersModelSchema>;
   constructor(databaseName: string = Config.DB_NAME) {
     super(databaseName);
 
@@ -77,6 +80,8 @@ export class AppDatabase extends Dexie {
         bookmarks: bookmarkTableSchema,
         // Hot tags
         hot_tags: hotTagsTableSchema,
+        // Active users
+        active_users: activeUsersTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(
