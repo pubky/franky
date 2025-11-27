@@ -52,6 +52,7 @@ vi.mock('@/hooks', () => ({
     userDetails: null,
     currentUserPubky: 'test-pubky-123',
   })),
+  useUserTags: vi.fn(() => []),
 }));
 
 describe('ProfilePageSidebar', () => {
