@@ -748,9 +748,7 @@ describe('API Route: /api/og-metadata', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.url?.length).toBeLessThanOrEqual(40);
-      expect(data.url).toContain('...');
-      expect(data.url).toMatch(/^https:\/\/example\.com.*\.\.\..*display$/); // Starts with beginning, has "...", ends with end
+      expect(data.url).toBe('https://example.com...o/long/for/display');
     });
 
     it('should not truncate short titles', async () => {
