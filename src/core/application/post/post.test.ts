@@ -801,7 +801,7 @@ describe('Post Application', () => {
     };
 
     it('should return post from local database if exists', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(mockPostDetails);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPostDetails);
 
       const result = await Core.PostApplication.getOrFetchPost('author:post123');
 
@@ -810,7 +810,7 @@ describe('Post Application', () => {
     });
 
     it('should throw error for invalid postId format', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
 
       await expect(Core.PostApplication.getOrFetchPost('invalid-format')).rejects.toThrow('Invalid postId format');
 
@@ -818,7 +818,7 @@ describe('Post Application', () => {
     });
 
     it('should fetch post from Nexus if not in local database', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostStreamService, 'getPost').mockResolvedValue(mockNexusPost);
       const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
@@ -839,7 +839,7 @@ describe('Post Application', () => {
     });
 
     it('should fetch and persist author if not in local database', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostStreamService, 'getPost').mockResolvedValue(mockNexusPost);
       const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null); // Author not found
@@ -864,7 +864,7 @@ describe('Post Application', () => {
     });
 
     it('should return null when post not found in Nexus', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostStreamService, 'getPost').mockResolvedValue(null);
 
       const result = await Core.PostApplication.getOrFetchPost('author:post123');
@@ -878,7 +878,7 @@ describe('Post Application', () => {
     });
 
     it('should continue if author fetch fails (not critical)', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostStreamService, 'getPost').mockResolvedValue(mockNexusPost);
       const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(null);
@@ -896,7 +896,7 @@ describe('Post Application', () => {
     });
 
     it('should not fetch author if already exists locally', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
       const getPostSpy = vi.spyOn(Core.NexusPostStreamService, 'getPost').mockResolvedValue(mockNexusPost);
       const persistSpy = vi.spyOn(Core.LocalPostService, 'persistPostData').mockResolvedValue(undefined);
       const findAuthorSpy = vi.spyOn(Core.UserDetailsModel, 'findById').mockResolvedValue(mockUserDetails);
@@ -914,7 +914,7 @@ describe('Post Application', () => {
   });
 
   describe('getPostCounts', () => {
-    it('should call LocalPostService.getPostCounts', async () => {
+    it('should call LocalPostService.readPostCounts', async () => {
       const mockCounts: Core.PostCountsModelSchema = {
         id: 'author:post123',
         tags: 5,
@@ -923,7 +923,7 @@ describe('Post Application', () => {
         reposts: 2,
       };
 
-      const getCountsSpy = vi.spyOn(Core.LocalPostService, 'getPostCounts').mockResolvedValue(mockCounts);
+      const getCountsSpy = vi.spyOn(Core.LocalPostService, 'readPostCounts').mockResolvedValue(mockCounts);
 
       const result = await Core.PostApplication.getPostCounts('author:post123');
 
@@ -933,7 +933,7 @@ describe('Post Application', () => {
   });
 
   describe('getPostTags', () => {
-    it('should call LocalPostService.getPostTags', async () => {
+    it('should call LocalPostService.readPostTags', async () => {
       const mockTags: Core.TagCollectionModelSchema<string>[] = [
         {
           id: 'author:post123',
@@ -941,7 +941,7 @@ describe('Post Application', () => {
         },
       ];
 
-      const getTagsSpy = vi.spyOn(Core.LocalPostService, 'getPostTags').mockResolvedValue(mockTags);
+      const getTagsSpy = vi.spyOn(Core.LocalPostService, 'readPostTags').mockResolvedValue(mockTags);
 
       const result = await Core.PostApplication.getPostTags('author:post123');
 
@@ -951,7 +951,7 @@ describe('Post Application', () => {
   });
 
   describe('getPostRelationships', () => {
-    it('should call LocalPostService.getPostRelationships', async () => {
+    it('should call LocalPostService.readPostRelationships', async () => {
       const mockRelationships: Core.PostRelationshipsModelSchema = {
         id: 'author:post123',
         replied: 'pubky://parent/pub/pubky.app/posts/parent123',
@@ -960,7 +960,7 @@ describe('Post Application', () => {
       };
 
       const getRelationshipsSpy = vi
-        .spyOn(Core.LocalPostService, 'getPostRelationships')
+        .spyOn(Core.LocalPostService, 'readPostRelationships')
         .mockResolvedValue(mockRelationships);
 
       const result = await Core.PostApplication.getPostRelationships('author:post123');
@@ -970,7 +970,7 @@ describe('Post Application', () => {
     });
 
     it('should return null when relationships do not exist', async () => {
-      const getRelationshipsSpy = vi.spyOn(Core.LocalPostService, 'getPostRelationships').mockResolvedValue(null);
+      const getRelationshipsSpy = vi.spyOn(Core.LocalPostService, 'readPostRelationships').mockResolvedValue(null);
 
       const result = await Core.PostApplication.getPostRelationships('nonexistent:post');
 
@@ -980,7 +980,7 @@ describe('Post Application', () => {
   });
 
   describe('getPostDetails', () => {
-    it('should call LocalPostService.read', async () => {
+    it('should call LocalPostService.readPostDetails', async () => {
       const mockPost: Core.PostDetailsModelSchema = {
         id: 'author:post123',
         content: 'Test post',
@@ -990,7 +990,7 @@ describe('Post Application', () => {
         attachments: null,
       };
 
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(mockPost);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPost);
 
       const result = await Core.PostApplication.getPostDetails('author:post123');
 
@@ -999,7 +999,7 @@ describe('Post Application', () => {
     });
 
     it('should return null when post does not exist', async () => {
-      const readSpy = vi.spyOn(Core.LocalPostService, 'read').mockResolvedValue(null);
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
 
       const result = await Core.PostApplication.getPostDetails('nonexistent:post');
 

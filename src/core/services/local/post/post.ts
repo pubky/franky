@@ -10,7 +10,7 @@ export class LocalPostService {
    * @param postId - ID of the post to read
    * @returns Post details
    */
-  static async read({ postId }: { postId: string }) {
+  static async readPostDetails({ postId }: { postId: string }) {
     try {
       return await Core.PostDetailsModel.findById(postId);
     } catch (error) {
@@ -259,7 +259,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+  static async readPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
     try {
       const counts = await Core.PostCountsModel.findById(postId);
       return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
@@ -292,7 +292,7 @@ export class LocalPostService {
     await Core.PostCountsModel.update(postId, { [countField]: newCount });
   }
 
-  static async getPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
+  static async readPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
     try {
       const tags = await Core.PostTagsModel.findById(postId);
       if (!tags) return [];
@@ -315,7 +315,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async getPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
+  static async readPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
     try {
       const relationships = await Core.PostRelationshipsModel.findById(postId);
       return relationships ?? null;

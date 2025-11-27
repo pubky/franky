@@ -42,7 +42,7 @@ export class PostApplication {
    */
   static async getOrFetchPost(postId: string): Promise<Core.PostDetailsModelSchema | null> {
     // Try to read from local database first
-    const localPost = await Core.LocalPostService.read({ postId });
+    const localPost = await Core.LocalPostService.readPostDetails({ postId });
 
     if (localPost) {
       Libs.Logger.debug(`[PostApplication] Post found in local DB: ${postId}`);
@@ -92,7 +92,7 @@ export class PostApplication {
    * @returns Post counts (with default values if not found)
    */
   static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
-    return await Core.LocalPostService.getPostCounts(postId);
+    return await Core.LocalPostService.readPostCounts(postId);
   }
 
   /**
@@ -101,7 +101,7 @@ export class PostApplication {
    * @returns Post tags
    */
   static async getPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
-    return await Core.LocalPostService.getPostTags(postId);
+    return await Core.LocalPostService.readPostTags(postId);
   }
 
   /**
@@ -110,7 +110,7 @@ export class PostApplication {
    * @returns Post relationships or null if not found
    */
   static async getPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
-    return await Core.LocalPostService.getPostRelationships(postId);
+    return await Core.LocalPostService.readPostRelationships(postId);
   }
 
   /**
@@ -119,7 +119,7 @@ export class PostApplication {
    * @returns Post details or null if not found
    */
   static async getPostDetails(postId: string): Promise<Core.PostDetailsModelSchema | null> {
-    return await Core.LocalPostService.read({ postId });
+    return await Core.LocalPostService.readPostDetails({ postId });
   }
 
   /**
