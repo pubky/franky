@@ -99,10 +99,25 @@ describe('PostTagsList', () => {
       0,
       expect.objectContaining({ type: 'click' }),
     );
+  });
 
-    // Verify event propagation was stopped
-    const event = mockOnTagClick.mock.calls[0][2];
-    expect(event.isPropagationStopped()).toBe(true);
+  it('stops event propagation when tag is clicked', () => {
+    const mockOnTagClick = vi.fn();
+    const mockParentClick = vi.fn();
+
+    render(
+      <div onClick={mockParentClick} data-testid="parent-container">
+        <PostTagsList postId="post-123" onTagClick={mockOnTagClick} />
+      </div>,
+    );
+
+    const bitcoinTag = screen.getByText('bitcoin').closest('button');
+    fireEvent.click(bitcoinTag!);
+
+    // Tag click handler should be called
+    expect(mockOnTagClick).toHaveBeenCalledTimes(1);
+    // Parent click handler should NOT be called (propagation stopped)
+    expect(mockParentClick).not.toHaveBeenCalled();
   });
 
   it('calls onTagClose when tag close button is clicked', () => {
@@ -120,10 +135,25 @@ describe('PostTagsList', () => {
       0,
       expect.objectContaining({ type: 'click' }),
     );
+  });
 
-    // Verify event propagation was stopped by PostTag component
-    const event = mockOnTagClose.mock.calls[0][2];
-    expect(event.isPropagationStopped()).toBe(true);
+  it('stops event propagation when close button is clicked', () => {
+    const mockOnTagClose = vi.fn();
+    const mockParentClick = vi.fn();
+
+    render(
+      <div onClick={mockParentClick} data-testid="parent-container">
+        <PostTagsList postId="post-123" showTagClose onTagClose={mockOnTagClose} />
+      </div>,
+    );
+
+    const closeButtons = screen.getAllByLabelText(/remove.*tag/i);
+    fireEvent.click(closeButtons[0]);
+
+    // Close handler should be called
+    expect(mockOnTagClose).toHaveBeenCalledTimes(1);
+    // Parent click handler should NOT be called (propagation stopped)
+    expect(mockParentClick).not.toHaveBeenCalled();
   });
 
   it('calls onTagAdd when a new tag is submitted', () => {

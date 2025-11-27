@@ -96,6 +96,7 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
   // Fetch parent post if missing (user-initiated action)
   // UI → Controller → Application → Services (Local + Nexus)
   useEffect(() => {
+    let cancelled = false;
     const fetchingSet = fetchingParentPostsRef.current;
 
     if (parentPostId && !parentPost && !fetchingSet.has(parentPostId)) {
@@ -104,10 +105,17 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
       // Parent post ID exists but post details are missing
       // Fetch via Controller (fire-and-forget, useLiveQuery will react to DB updates)
       Core.PostController.getOrFetchPost({ postId: parentPostId }).finally(() => {
-        // Remove from cache after fetch completes (success or failure)
-        fetchingSet.delete(parentPostId);
+        // Only clean up if this effect hasn't been cancelled (component still mounted and parentPostId unchanged)
+        if (!cancelled) {
+          fetchingSet.delete(parentPostId);
+        }
       });
     }
+
+    // Cleanup: Mark as cancelled when effect re-runs or component unmounts
+    return () => {
+      cancelled = true;
+    };
   }, [parentPostId, parentPost]);
 
   // Always show parent if it exists
@@ -115,7 +123,7 @@ function ReplyWithParent({ replyPostId, onPostClick }: Types.ReplyWithParentProp
 
   return (
     <Atoms.Container overrideDefaults className="flex flex-col">
-      {/* Show parent post only if it's different from previous reply's parent */}
+      {/* Show parent post if it exists */}
       {shouldShowParent && (
         <>
           <Organisms.PostMain postId={parentPostId} onClick={() => onPostClick(parentPostId)} isReply={false} />

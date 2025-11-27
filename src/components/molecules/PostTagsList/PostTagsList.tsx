@@ -39,25 +39,24 @@ export function PostTagsList({
   return (
     <div className={Libs.cn('flex flex-wrap items-center gap-2', className)}>
       {/* Render existing tags */}
-      {tagCollection &&
-        tagCollection.map((tagCollection) =>
-          tagCollection.tags.map((tag, index) => (
-            <Molecules.PostTag
-              key={`${tagCollection.id}-${tag.label}`}
-              label={tag.label}
-              count={tag.taggers_count}
-              color={Libs.generateRandomColor(tag.label)}
-              selected={false}
-              showClose={showTagClose}
-              onClick={(e) => {
-                onTagClick?.(tag, index, e);
-              }}
-              onClose={(e) => {
-                onTagClose?.(tag, index, e);
-              }}
-            />
-          )),
-        )}
+      {tagCollection?.flatMap((collection) =>
+        collection.tags.map((tag, index) => (
+          <Molecules.PostTag
+            key={`${collection.id}-${tag.label}`}
+            label={tag.label}
+            count={tag.taggers_count}
+            color={Libs.generateRandomColor(tag.label)}
+            selected={false}
+            showClose={showTagClose}
+            onClick={(e) => {
+              onTagClick?.(tag, index, e);
+            }}
+            onClose={(e) => {
+              onTagClose?.(tag, index, e);
+            }}
+          />
+        )),
+      )}
 
       {/* Add tag input */}
       {(showInput || isAdding) && (
