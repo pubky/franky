@@ -1,0 +1,65 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TaggedItem > matches snapshot 1`] = `
+<div
+  class="flex items-center gap-2"
+  data-testid="container"
+>
+  <div
+    data-testid="tag"
+  >
+    bitcoin
+     
+    (3)
+  </div>
+  <button
+    data-testid="search-button"
+  >
+    <svg
+      aria-hidden="true"
+      class="lucide lucide-search text-secondary-foreground"
+      fill="none"
+      height="16"
+      stroke="currentColor"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      width="16"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="m21 21-4.34-4.34"
+      />
+      <circle
+        cx="11"
+        cy="11"
+        r="8"
+      />
+    </svg>
+  </button>
+  <div
+    class="flex items-center pr-2 pl-0"
+    data-testid="container"
+  >
+    <div
+      data-name="user1"
+      data-testid="avatar"
+    >
+      Avatar
+    </div>
+    <div
+      data-name="user2"
+      data-testid="avatar"
+    >
+      Avatar
+    </div>
+    <div
+      data-name="user3"
+      data-testid="avatar"
+    >
+      Avatar
+    </div>
+  </div>
+</div>
+`;
