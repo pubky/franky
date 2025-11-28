@@ -43,6 +43,9 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
   // Store unsubscribers
   protected authStoreUnsubscribe: (() => void) | null = null;
 
+  // Store bound visibility change handler for cleanup
+  private visibilityChangeHandler: (() => void) | null = null;
+
   protected constructor(options: CoordinatorInitOptions<Config, State> = {}) {
     if (options.initialConfig) {
       this.config = { ...this.config, ...options.initialConfig };
@@ -165,7 +168,8 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
 
     // Listen to page visibility changes (browser tab active/inactive)
     if (this.config.respectPageVisibility && typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', this.handleVisibilityChange);
+      this.visibilityChangeHandler = this.handleVisibilityChange.bind(this);
+      document.addEventListener('visibilitychange', this.visibilityChangeHandler);
     }
   }
 
@@ -180,7 +184,11 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
     }
 
     if (typeof document !== 'undefined') {
-      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+      // Note: We need to remove the same bound function, so we store it
+      if (this.visibilityChangeHandler) {
+        document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
+        this.visibilityChangeHandler = null;
+      }
     }
   }
 
@@ -357,7 +365,8 @@ export abstract class Coordinator<Config extends PollingServiceConfig, State ext
   private restartPolling(): void {
     if (this.state.intervalId) {
       this.stopPolling(PollingInactiveReason.NOT_STARTED);
-      this.startPolling();
+      // Re-evaluate conditions before restarting to ensure polling should still be active
+      this.evaluateAndStartPolling();
     }
   }
 }

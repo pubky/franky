@@ -33,8 +33,6 @@ export interface TPartialCacheHitParams {
 export interface TMissingPostsParams {
   cacheMissPostIds: string[];
   viewerId: Core.Pubky;
-  streamHead: number;
-  streamId?: Core.PostStreamId;
 }
 
 export interface TCacheStreamParams {

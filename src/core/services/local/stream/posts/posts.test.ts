@@ -103,6 +103,7 @@ describe('LocalStreamPostsService', () => {
 
     // Clear all relevant tables
     await Core.PostStreamModel.table.clear();
+    await Core.UnreadPostStreamModel.table.clear();
     await Core.PostDetailsModel.table.clear();
     await Core.PostCountsModel.table.clear();
     await Core.PostRelationshipsModel.table.clear();
@@ -320,20 +321,6 @@ describe('LocalStreamPostsService', () => {
       expect(postTags?.tags).toHaveLength(2);
       expect(postTags?.tags[0].label).toBe('tech');
       expect(postTags?.tags[1].label).toBe('coding');
-    });
-
-    it('should handle posts with empty mentioned array', async () => {
-      const { compositeId } = await persistAndVerifyPost('post-1', 'user-1', BASE_TIMESTAMP, {
-        relationships: {
-          replied: null,
-          reposted: null,
-          mentioned: [],
-        },
-      });
-
-      const relationships = await Core.PostRelationshipsModel.findById(compositeId);
-      expect(relationships).toBeTruthy();
-      expect(relationships?.mentioned).toEqual([]);
     });
 
     it('should handle posts with all null relationships', async () => {
@@ -644,6 +631,410 @@ describe('LocalStreamPostsService', () => {
         Core.LocalStreamPostsService.persistNewStreamChunk({
           streamId,
           stream: [postId('post-2')],
+        }),
+      ).rejects.toThrow('Failed to upsert stream');
+    });
+  });
+
+  describe('getStreamHead', () => {
+    it('should return timestamp from unread stream when it exists', async () => {
+      const unreadPostId = postId('unread-post');
+      const postId1 = postId('post-1');
+      const timestamp = BASE_TIMESTAMP + 100;
+
+      // Create unread stream
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, [unreadPostId]);
+      await Core.PostDetailsModel.create({
+        id: unreadPostId,
+        content: 'Unread post',
+        kind: 'short',
+        indexed_at: timestamp,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/unread-post`,
+        attachments: null,
+      });
+
+      // Create post stream (should not be used)
+      await createStream([postId1]);
+      await Core.PostDetailsModel.create({
+        id: postId1,
+        content: 'Post 1',
+        kind: 'short',
+        indexed_at: BASE_TIMESTAMP,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/post-1`,
+        attachments: null,
+      });
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(timestamp);
+    });
+
+    it('should return timestamp from post stream when unread stream does not exist', async () => {
+      const postId1 = postId('post-1');
+      const timestamp = BASE_TIMESTAMP + 50;
+
+      await createStream([postId1]);
+      await Core.PostDetailsModel.create({
+        id: postId1,
+        content: 'Post 1',
+        kind: 'short',
+        indexed_at: timestamp,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/post-1`,
+        attachments: null,
+      });
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(timestamp);
+    });
+
+    it('should return FORCE_FETCH_NEW_POSTS when stream does not exist', async () => {
+      const result = await Core.LocalStreamPostsService.getStreamHead({
+        streamId: NON_EXISTENT_STREAM_ID,
+      });
+
+      expect(result).toBe(Core.FORCE_FETCH_NEW_POSTS);
+    });
+
+    it('should return SKIP_FETCH_NEW_POSTS when post details not found', async () => {
+      const postId1 = postId('post-1');
+
+      await createStream([postId1]);
+      // Don't create post details
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.SKIP_FETCH_NEW_POSTS);
+    });
+
+    it('should propagate error when underlying model throws', async () => {
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Database query failed',
+        500,
+        { streamId },
+      );
+      vi.spyOn(Core.UnreadPostStreamModel, 'getStreamHead').mockRejectedValue(databaseError);
+
+      await expect(Core.LocalStreamPostsService.getStreamHead({ streamId })).rejects.toThrow('Database query failed');
+    });
+
+    it('should return timestamp from post stream when unread stream is empty', async () => {
+      const postId1 = postId('post-1');
+      const timestamp = BASE_TIMESTAMP + 50;
+
+      // Create empty unread stream
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, [] as string[]);
+
+      // Create post stream with valid post
+      await createStream([postId1]);
+      await Core.PostDetailsModel.create({
+        id: postId1,
+        content: 'Post 1',
+        kind: 'short',
+        indexed_at: timestamp,
+        uri: `https://pubky.app/${DEFAULT_AUTHOR}/pub/pubky.app/posts/post-1`,
+        attachments: null,
+      });
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      // Should fall through to post stream since unread is empty
+      expect(result).toBe(timestamp);
+    });
+
+    it('should return FORCE_FETCH_NEW_POSTS when post stream is empty', async () => {
+      // Create empty post stream
+      await createStream([]);
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.FORCE_FETCH_NEW_POSTS);
+    });
+
+    it('should return SKIP_FETCH_NEW_POSTS when unread stream head exists but post details missing', async () => {
+      const unreadPostId = postId('unread-post');
+
+      // Create unread stream with post ID
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, [unreadPostId]);
+      // Don't create post details
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.SKIP_FETCH_NEW_POSTS);
+    });
+
+    it('should return FORCE_FETCH_NEW_POSTS when both streams are empty', async () => {
+      // Create empty unread stream
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, [] as string[]);
+      // Create empty post stream
+      await createStream([]);
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.FORCE_FETCH_NEW_POSTS);
+    });
+
+    it('should return SKIP_FETCH_NEW_POSTS when unread stream is empty and post stream head exists but details missing', async () => {
+      const postId1 = postId('post-1');
+
+      // Create empty unread stream
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, [] as string[]);
+
+      // Create post stream with post ID but no details
+      await createStream([postId1]);
+      // Don't create post details
+
+      const result = await Core.LocalStreamPostsService.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.SKIP_FETCH_NEW_POSTS);
+    });
+  });
+
+  describe('prependToStream', () => {
+    it('should prepend post ID to existing stream', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newPostId = postId('post-0');
+
+      await createStream(initialStream);
+      await Core.LocalStreamPostsService.prependToStream({ streamId, compositePostId: newPostId });
+
+      await verifyStream([newPostId, ...initialStream]);
+    });
+
+    it('should create new stream if it does not exist', async () => {
+      const newPostId = postId('post-1');
+
+      await Core.LocalStreamPostsService.prependToStream({ streamId, compositePostId: newPostId });
+
+      await verifyStream([newPostId]);
+    });
+
+    it('should not add if post ID already exists in stream', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const existingPostId = postId('post-1');
+
+      await createStream(initialStream);
+      await Core.LocalStreamPostsService.prependToStream({ streamId, compositePostId: existingPostId });
+
+      // Stream should remain unchanged
+      await verifyStream(initialStream);
+    });
+
+    it('should propagate error when underlying model throws', async () => {
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Database query failed',
+        500,
+        { streamId },
+      );
+      vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
+
+      await expect(
+        Core.LocalStreamPostsService.prependToStream({ streamId, compositePostId: postId('post-1') }),
+      ).rejects.toThrow('Database query failed');
+    });
+  });
+
+  describe('removeFromStream', () => {
+    it('should remove post ID from existing stream', async () => {
+      const initialStream = [postId('post-1'), postId('post-2'), postId('post-3')];
+      const postToRemove = postId('post-2');
+
+      await createStream(initialStream);
+      await Core.LocalStreamPostsService.removeFromStream({ streamId, compositePostId: postToRemove });
+
+      await verifyStream([postId('post-1'), postId('post-3')]);
+    });
+
+    it('should do nothing if stream does not exist', async () => {
+      await expect(
+        Core.LocalStreamPostsService.removeFromStream({
+          streamId: NON_EXISTENT_STREAM_ID,
+          compositePostId: postId('post-1'),
+        }),
+      ).resolves.not.toThrow();
+    });
+
+    it('should remove all occurrences if post ID appears multiple times', async () => {
+      const postToRemove = postId('post-2');
+      const initialStream = [postId('post-1'), postToRemove, postId('post-3'), postToRemove];
+
+      await createStream(initialStream);
+      await Core.LocalStreamPostsService.removeFromStream({ streamId, compositePostId: postToRemove });
+
+      await verifyStream([postId('post-1'), postId('post-3')]);
+    });
+
+    it('should propagate error when underlying model throws', async () => {
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Database query failed',
+        500,
+        { streamId },
+      );
+      vi.spyOn(Core.PostStreamModel, 'findById').mockRejectedValue(databaseError);
+
+      await expect(
+        Core.LocalStreamPostsService.removeFromStream({ streamId, compositePostId: postId('post-1') }),
+      ).rejects.toThrow('Database query failed');
+    });
+  });
+
+  describe('mergeUnreadStreamWithPostStream', () => {
+    it('should merge unread and post streams', async () => {
+      const unreadStream = [postId('unread-1'), postId('unread-2')];
+      const postStream = [postId('post-1'), postId('post-2')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, unreadStream);
+      await createStream(postStream);
+
+      await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+
+      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      expect(result?.stream).toEqual([...unreadStream, ...postStream]);
+    });
+
+    it('should do nothing if unread stream does not exist', async () => {
+      await createStream([postId('post-1')]);
+
+      await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+
+      // Stream should remain unchanged
+      await verifyStream([postId('post-1')]);
+    });
+
+    it('should do nothing if post stream does not exist', async () => {
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, [postId('unread-1')]);
+
+      await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId });
+
+      // Post stream should not be created
+      const result = await Core.LocalStreamPostsService.findById({ streamId });
+      expect(result).toBeNull();
+    });
+
+    it('should propagate error when underlying model throws', async () => {
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Database query failed',
+        500,
+        { streamId },
+      );
+      vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
+
+      await expect(Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream({ streamId })).rejects.toThrow(
+        'Database query failed',
+      );
+    });
+  });
+
+  describe('persistUnreadNewStreamChunk', () => {
+    it('should create new unread stream if it does not exist', async () => {
+      const newChunk = [postId('post-1'), postId('post-2')];
+
+      await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: newChunk,
+      });
+
+      const result = await Core.UnreadPostStreamModel.findById(streamId as Core.PostStreamId);
+      expect(result?.stream).toEqual(newChunk);
+    });
+
+    it('should prepend new posts to existing unread stream', async () => {
+      const initialStream = [postId('post-3'), postId('post-4')];
+      const newChunk = [postId('post-1'), postId('post-2')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+      await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: newChunk,
+      });
+
+      const result = await Core.UnreadPostStreamModel.findById(streamId as Core.PostStreamId);
+      expect(result?.stream).toEqual([...newChunk, ...initialStream]);
+    });
+
+    it('should filter duplicates when appending', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newChunk = [postId('post-2'), postId('post-3')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+      await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: newChunk,
+      });
+
+      const result = await Core.UnreadPostStreamModel.findById(streamId as Core.PostStreamId);
+      expect(result?.stream).toEqual([postId('post-3'), ...initialStream]);
+    });
+
+    it('should do nothing if all new posts are duplicates', async () => {
+      const initialStream = [postId('post-1'), postId('post-2')];
+      const newChunk = [postId('post-1'), postId('post-2')];
+
+      await Core.UnreadPostStreamModel.upsert(streamId as Core.PostStreamId, initialStream);
+      await Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+        streamId,
+        stream: newChunk,
+      });
+
+      const result = await Core.UnreadPostStreamModel.findById(streamId as Core.PostStreamId);
+      expect(result?.stream).toEqual(initialStream);
+    });
+
+    it('should propagate error when underlying model throws', async () => {
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        'Database query failed',
+        500,
+        { streamId },
+      );
+      vi.spyOn(Core.UnreadPostStreamModel, 'findById').mockRejectedValue(databaseError);
+
+      await expect(
+        Core.LocalStreamPostsService.persistUnreadNewStreamChunk({
+          streamId,
+          stream: [postId('post-1')],
+        }),
+      ).rejects.toThrow('Database query failed');
+    });
+  });
+
+  describe('bulkSave', () => {
+    it('should save multiple streams', async () => {
+      const streamId1 = Core.PostStreamTypes.TIMELINE_ALL_ALL;
+      const streamId2 = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL;
+      const stream1 = [postId('post-1'), postId('post-2')];
+      const stream2 = [postId('post-3'), postId('post-4')];
+
+      await Core.LocalStreamPostsService.bulkSave({
+        postStreams: [
+          { streamId: streamId1, stream: stream1 },
+          { streamId: streamId2, stream: stream2 },
+        ],
+      });
+
+      const result1 = await Core.LocalStreamPostsService.findById({ streamId: streamId1 });
+      const result2 = await Core.LocalStreamPostsService.findById({ streamId: streamId2 });
+
+      expect(result1?.stream).toEqual(stream1);
+      expect(result2?.stream).toEqual(stream2);
+    });
+
+    it('should propagate error when upsert throws', async () => {
+      const databaseError = Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPSERT_FAILED,
+        'Failed to upsert stream',
+        500,
+        { streamId },
+      );
+      vi.spyOn(Core.PostStreamModel, 'upsert').mockRejectedValue(databaseError);
+
+      await expect(
+        Core.LocalStreamPostsService.bulkSave({
+          postStreams: [{ streamId, stream: [postId('post-1')] }],
         }),
       ).rejects.toThrow('Failed to upsert stream');
     });

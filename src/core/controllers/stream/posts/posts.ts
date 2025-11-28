@@ -61,7 +61,7 @@ export class StreamPostsController {
     });
     // Query nexus to get the cacheMissPostIds
     if (cacheMissPostIds.length > 0) {
-      void Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId, streamId, streamHead }); //might be 2s to persist
+      void Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }); //might be 2s to persist
     }
     return { nextPageIds, timestamp };
   }

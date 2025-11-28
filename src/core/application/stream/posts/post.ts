@@ -87,20 +87,10 @@ export class PostStreamApplication {
    * @param streamHead - Detects if the call is coming from the streamCoordinator.
    * @param streamId - ID of the stream. If not provided, it means that it is a single post operation.
    */
-  static async fetchMissingPostsFromNexus({
-    cacheMissPostIds,
-    viewerId,
-    streamId,
-    streamHead,
-  }: Core.TMissingPostsParams) {
+  static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
     try {
       const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
       const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
-      // When streamHead is greater than 0, it means that it is a streamCoordinator calling this method.
-      // In the future, we might need to add some enum param to describe that type of call.
-      // For now, that kind of queries comes from the streamCoordinator.
-      if (streamHead > 0 && streamId) {
-      }
       if (postBatch) {
         const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
         // Persist the post attachments metadata

@@ -36,8 +36,24 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     streamHead: Core.SKIP_FETCH_NEW_POSTS,
   };
 
-  // Store unsubscribers
-  private homeStoreUnsubscribe: (() => void) | null = null;
+  /**
+   * Unsubscribe function for home store subscription.
+   *
+   * IMPORTANT: Do NOT use a field initializer (e.g., `= null`) here.
+   *
+   * JavaScript class initialization order:
+   * 1. Parent field initializers run
+   * 2. Parent constructor runs → calls this.setupListeners()
+   * 3. setupListeners() assigns this.homeStoreUnsubscribe = subscribe(...)
+   * 4. Parent constructor finishes
+   * 5. Child field initializers run → would overwrite with `null`!
+   *
+   * The `!` (definite assignment assertion) tells TypeScript this field
+   * will be assigned via setupListeners() called from super().
+   *
+   * @see https://github.com/microsoft/TypeScript/issues/21132
+   */
+  private homeStoreUnsubscribe!: (() => void) | null;
 
   private constructor() {
     super({
@@ -77,18 +93,38 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
    * Configure the polling coordinator at runtime.
    *
    * Updates polling settings (interval, enabled routes, etc.) without recreating the instance.
-   * If the polling interval changes while polling is active, it will restart with the new interval.
+   *
+   * **Automatic re-evaluation behavior:**
+   * - If `intervalMs` changes while polling is active → restarts with new interval (handled by parent)
+   * - If `enabledRoutes` changes → immediately re-evaluates whether to start/stop polling
+   * - If `respectPageVisibility` changes → immediately re-evaluates (e.g., start polling on hidden page)
+   *
+   * This allows dynamic configuration changes to take effect immediately without
+   * requiring manual stop/start calls.
    *
    * @param config - Partial configuration to merge with existing settings
    *
    * @example
    * ```typescript
-   * coordinator.configure({ intervalMs: 15000 }); // Change to 15 second polling
-   * coordinator.configure({ fetchLimit: 20 }); // Fetch 20 posts per poll
+   * // Change polling interval (restarts if active)
+   * coordinator.configure({ intervalMs: 15000 });
+   *
+   * // Change fetch limit (takes effect on next poll)
+   * coordinator.configure({ fetchLimit: 20 });
+   *
+   * // Enable polling on hidden pages (immediately starts if conditions met)
+   * coordinator.configure({ respectPageVisibility: false });
+   *
+   * // Change enabled routes (immediately re-evaluates)
+   * coordinator.configure({ enabledRoutes: [/^\/home$/, /^\/profile$/] });
    * ```
    */
   public configure(config: Partial<StreamCoordinatorConfig>): void {
-    // Update base config
+    // Capture old values to detect changes that require re-evaluation
+    const oldEnabledRoutes = this.streamConfig.enabledRoutes;
+    const oldRespectPageVisibility = this.config.respectPageVisibility;
+
+    // Update base config (handles intervalMs restart logic)
     super.configure(config);
 
     // Update stream-specific config
@@ -97,6 +133,16 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
     }
     if (config.fetchLimit !== undefined) {
       this.streamConfig.fetchLimit = config.fetchLimit;
+    }
+
+    // Re-evaluate polling state if config changes affect polling conditions
+    // This ensures changes take effect immediately without manual stop/start
+    const enabledRoutesChanged = config.enabledRoutes && oldEnabledRoutes !== this.streamConfig.enabledRoutes;
+    const visibilityConfigChanged =
+      config.respectPageVisibility !== undefined && oldRespectPageVisibility !== this.config.respectPageVisibility;
+
+    if (enabledRoutesChanged || visibilityConfigChanged) {
+      void this.evaluateAndStartPolling();
     }
   }
 

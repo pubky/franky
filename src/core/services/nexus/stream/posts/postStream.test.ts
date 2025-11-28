@@ -2,7 +2,7 @@ import { describe, it, expect, test, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 import { postStreamApi } from './postStream.api';
 import { StreamKind, StreamOrder } from './postStream.types';
-import { createPostStreamParams } from './postStream.utils';
+import { createPostStreamParams, breakDownStreamId } from './postStream.utils';
 import { NexusPostStreamService } from './postStream';
 
 //TODO: Split the suite by module (postStream.api.test.ts, postStream.utils.test.ts, postStream.service.test.ts) so each file targets the key behaviours of that module under @posts.
@@ -538,6 +538,56 @@ describe('createPostStreamParams', () => {
       expect(result.params.tags).toBe(tags);
       expect(result.params.kind).toBe(expectedKind);
       expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+    });
+  });
+});
+
+describe('breakDownStreamId', () => {
+  describe('Timeline pattern', () => {
+    it('should parse timeline:endpoint:kind:tags', () => {
+      const result = breakDownStreamId('timeline:bookmarks:all:tech,ai' as Core.PostStreamId);
+      expect(result).toEqual(['timeline', Core.StreamSource.BOOKMARKS, 'all', 'tech,ai']);
+    });
+
+    it('should parse without tags', () => {
+      const result = breakDownStreamId('timeline:following:short' as Core.PostStreamId);
+      expect(result).toEqual(['timeline', Core.StreamSource.FOLLOWING, 'short', undefined]);
+    });
+  });
+
+  describe('Replies pattern', () => {
+    it('should parse post_replies:pubky:postId', () => {
+      const result = breakDownStreamId('post_replies:pubky:post123' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.REPLIES, 'post123', undefined]);
+    });
+
+    it('should parse with tags', () => {
+      const result = breakDownStreamId('post_replies:pubky:post123:tag1,tag2' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.REPLIES, 'post123', 'tag1,tag2']);
+    });
+  });
+
+  describe('Author patterns', () => {
+    it('should parse author:pubky', () => {
+      const result = breakDownStreamId('author:pubky' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.AUTHOR, undefined, undefined]);
+    });
+
+    it('should parse author_replies:pubky', () => {
+      const result = breakDownStreamId('author_replies:pubky' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.AUTHOR_REPLIES, undefined, undefined]);
+    });
+  });
+
+  describe('Tag limiting', () => {
+    it('should limit to 5 tags', () => {
+      const result = breakDownStreamId('timeline:all:all:tag1,tag2,tag3,tag4,tag5,tag6,tag7' as Core.PostStreamId);
+      expect(result[3]).toBe('tag1,tag2,tag3,tag4,tag5');
+    });
+
+    it('should handle empty tags string', () => {
+      const result = breakDownStreamId('timeline:all:all:' as Core.PostStreamId);
+      expect(result[3]).toBeUndefined();
     });
   });
 });

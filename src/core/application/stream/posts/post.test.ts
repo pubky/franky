@@ -150,6 +150,7 @@ describe('PostStreamApplication', () => {
     vi.clearAllMocks();
 
     await Core.PostStreamModel.table.clear();
+    await Core.UnreadPostStreamModel.table.clear();
     await Core.PostDetailsModel.table.clear();
     await Core.UserDetailsModel.table.clear();
     await Core.UserCountsModel.table.clear();
@@ -1080,6 +1081,149 @@ describe('PostStreamApplication', () => {
       });
 
       expect(Core.UserDetailsModel.findByIdsPreserveOrder).toHaveBeenCalled();
+    });
+  });
+
+  describe('getStreamHead', () => {
+    it('should return stream head timestamp when stream exists with posts', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+      await createPostDetails(postIds);
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      // Should return the timestamp of the first post (head of stream)
+      expect(result).toBe(BASE_TIMESTAMP);
+    });
+
+    it('should return stream head timestamp from unread stream when it exists', async () => {
+      const unreadPostIds = Array.from({ length: 2 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+
+      // Create unread stream (should take precedence)
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+      await createPostDetails(unreadPostIds);
+
+      // Create post stream
+      await createStreamWithPosts(postIds);
+      await createPostDetails(postIds);
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      // Should return timestamp from unread stream head (first unread post)
+      expect(result).toBe(BASE_TIMESTAMP);
+    });
+
+    it('should return FORCE_FETCH_NEW_POSTS when stream does not exist', async () => {
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.FORCE_FETCH_NEW_POSTS);
+    });
+
+    it('should return SKIP_FETCH_NEW_POSTS when stream exists but head post has no details', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+      // Don't create post details
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId });
+
+      expect(result).toBe(Core.SKIP_FETCH_NEW_POSTS);
+    });
+
+    it('should handle errors from underlying service gracefully', async () => {
+      const getStreamHeadSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'getStreamHead')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.getStreamHead({ streamId })).rejects.toThrow('Database error');
+
+      expect(getStreamHeadSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+      const expectedTimestamp = BASE_TIMESTAMP + 50;
+
+      const getStreamHeadSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'getStreamHead')
+        .mockResolvedValue(expectedTimestamp);
+
+      const result = await Core.PostStreamApplication.getStreamHead({ streamId: customStreamId });
+
+      expect(getStreamHeadSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+      expect(result).toBe(expectedTimestamp);
+    });
+  });
+
+  describe('mergeUnreadStreamWithPostStream', () => {
+    it('should merge unread stream with post stream when both exist', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+
+      // Create unread stream
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+      // Create post stream
+      await createStreamWithPosts(postIds);
+
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      // Verify the streams were merged: unread posts first, then post stream
+      const mergedStream = await Core.PostStreamModel.findById(streamId);
+      expect(mergedStream).toBeTruthy();
+      expect(mergedStream!.stream).toEqual([...unreadPostIds, ...postIds]);
+    });
+
+    it('should handle when unread stream does not exist (no-op)', async () => {
+      const postIds = Array.from({ length: 5 }, (_, i) => `${DEFAULT_AUTHOR}:post-${i + 1}`);
+      await createStreamWithPosts(postIds);
+
+      // Should not throw and should not modify post stream
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      expect(postStream).toBeTruthy();
+      expect(postStream!.stream).toEqual(postIds);
+    });
+
+    it('should handle when post stream does not exist (no-op)', async () => {
+      const unreadPostIds = Array.from({ length: 3 }, (_, i) => `${DEFAULT_AUTHOR}:unread-${i + 1}`);
+      await Core.UnreadPostStreamModel.create(streamId, unreadPostIds);
+
+      // Should not throw and should not create post stream
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      expect(postStream).toBeNull();
+    });
+
+    it('should handle when both streams do not exist (no-op)', async () => {
+      // Should not throw
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId });
+
+      const postStream = await Core.PostStreamModel.findById(streamId);
+      expect(postStream).toBeNull();
+    });
+
+    it('should handle errors from underlying service', async () => {
+      const mergeSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'mergeUnreadStreamWithPostStream')
+        .mockRejectedValue(new Error('Database error'));
+
+      await expect(Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId })).rejects.toThrow(
+        'Database error',
+      );
+
+      expect(mergeSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should pass streamId parameter correctly to underlying service', async () => {
+      const customStreamId = Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL as Core.PostStreamId;
+
+      const mergeSpy = vi.spyOn(Core.LocalStreamPostsService, 'mergeUnreadStreamWithPostStream').mockResolvedValue();
+
+      await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId: customStreamId });
+
+      expect(mergeSpy).toHaveBeenCalledWith({ streamId: customStreamId });
     });
   });
 });
