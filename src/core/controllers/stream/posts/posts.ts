@@ -21,7 +21,7 @@ export class StreamPostsController {
    *
    * @param params - Parameters for the stream slice request
    * @param params.streamId - Unique identifier for the stream (e.g., 'timeline:all:all', 'engagement:all:images')
-   * @param params.streamHead - Identifier of the  newest post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
+   * @param params.streamHead - Identifier of the newest post in the current page for pagination.
    * @param params.streamTail - Identifier of the last post in the current page for pagination. timestamp (timeline mode) or skip (engagement mode)
    * @param params.lastPostId - Post ID of the last post in the current page. We use to get the chunk of the stream from the cache.
    * @param params.limit - Limit of posts to fetch. Default is Config.NEXUS_POSTS_PER_PAGE.
@@ -45,8 +45,8 @@ export class StreamPostsController {
    */
   static async getOrFetchStreamSlice({
     streamId,
-    streamHead = 0,
-    streamTail = 0,
+    streamHead = Core.SKIP_FETCH_NEW_POSTS,
+    streamTail = Core.NOT_FOUND_CACHED_STREAM,
     lastPostId,
     limit = Config.NEXUS_POSTS_PER_PAGE,
   }: Core.TReadPostStreamChunkParams): Promise<Core.TReadPostStreamChunkResponse> {
@@ -61,7 +61,7 @@ export class StreamPostsController {
     });
     // Query nexus to get the cacheMissPostIds
     if (cacheMissPostIds.length > 0) {
-      void Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }); //might be 2s to persist
+      void Core.PostStreamApplication.fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId, streamId, streamHead }); //might be 2s to persist
     }
     return { nextPageIds, timestamp };
   }

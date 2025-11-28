@@ -51,6 +51,7 @@ export class PostApplication {
     await Core.PostStreamApplication.fetchMissingPostsFromNexus({
       cacheMissPostIds: [compositeId],
       viewerId,
+      streamHead: Core.SKIP_FETCH_NEW_POSTS,
     });
 
     // Return the persisted post details

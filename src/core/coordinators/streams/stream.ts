@@ -33,7 +33,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   // Extended state
   private streamState: Required<Pick<StreamCoordinatorState, 'currentStreamId' | 'streamHead'>> = {
     currentStreamId: null,
-    streamHead: 0,
+    streamHead: Core.SKIP_FETCH_NEW_POSTS,
   };
 
   // Store unsubscribers
@@ -42,7 +42,7 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   private constructor() {
     super({
       initialConfig: {
-        intervalMs: 5000, //Env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
+        intervalMs: Env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
         pollOnStart: Env.NEXT_PUBLIC_STREAM_POLL_ON_START,
         respectPageVisibility: Env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
       },
@@ -107,31 +107,53 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
   /**
    * Resolve the stream ID based on current route
    * Returns null if stream ID cannot be determined
+   * Resets streamHead when stream ID changes to avoid using stale head values
    */
   private resolveStreamId() {
+    const previousStreamId = this.streamState.currentStreamId;
+
     // Home route: build from home store state
     if (this.state.currentRoute === APP_ROUTES.HOME) {
       const { sort, reach, content } = Core.useHomeStore.getState();
       this.streamState.currentStreamId = Core.getStreamId(sort, reach, content);
-      Logger.debug('Built home streamId', { streamId: this.streamState.currentStreamId });
+      Logger.debug(`Built ${APP_ROUTES.HOME} streamId`, { streamId: this.streamState.currentStreamId });
     }
     // Post route: extract from URL and build reply stream ID
     else if (this.state.currentRoute.startsWith(POST_ROUTES.POST)) {
       this.buildPostReplyStreamId();
+      Logger.debug(`Built ${POST_ROUTES.POST} streamId`, { streamId: this.streamState.currentStreamId });
     } else {
       this.streamState.currentStreamId = null;
+    }
+
+    // Reset streamHead if stream ID changed
+    if (previousStreamId !== this.streamState.currentStreamId) {
+      this.streamState.streamHead = Core.SKIP_FETCH_NEW_POSTS;
+      if (previousStreamId !== null || this.streamState.currentStreamId !== null) {
+        Logger.debug('Stream ID changed, reset stream head', {
+          previousStreamId,
+          newStreamId: this.streamState.currentStreamId,
+        });
+      }
     }
   }
 
   /**
    * Resolve the stream head based on current stream ID
    */
-  private async resolvedStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
+  private async resolveStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
     const streamHead = await Core.StreamPostsController.getStreamHead({ streamId: currentStreamId });
-    if (streamHead === 0) {
-      Logger.warn('Failed to resolve stream head', { streamId: currentStreamId });
+    if (streamHead === Core.SKIP_FETCH_NEW_POSTS) {
+      Logger.warn('Failed to resolve stream head or the newest cached postId not found', { streamId: currentStreamId });
       return false;
     }
+    
+    // Validate that we have a valid stream head
+    if (streamHead < Core.FORCE_FETCH_NEW_POSTS) {
+      Logger.warn('Invalid stream head value', { streamId: currentStreamId, streamHead });
+      return false;
+    }
+    
     this.streamState.streamHead = streamHead;
     Logger.debug('Resolved stream head', { streamId: currentStreamId, streamHead });
     return true;
@@ -173,6 +195,19 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
       userId: match[1],
       postId: match[2],
     };
+  }
+
+  /**
+   * Check if a stream ID represents an engagement stream
+   */
+  private isEngagementStream(streamId: Core.PostStreamId): boolean {
+    try {
+      const [sorting] = Core.breakDownStreamId(streamId);
+      return sorting === Core.StreamSorting.ENGAGEMENT;
+    } catch (error) {
+      Logger.warn('Failed to parse stream ID for engagement check', { streamId, error });
+      return false;
+    }
   }
 
   // ============================================================================
@@ -230,25 +265,10 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
 
     // Must be able to determine stream ID
     if (!this.streamState.currentStreamId) {
+      Logger.warn('Cannot poll: invalid stream ID');
       return false;
     }
     return true;
-  }
-
-  /**
-   * Start the polling interval
-   */
-  protected startPolling(): void {
-    // Resolve and cache current stream ID before starting
-    this.resolveStreamId();
-
-    Logger.debug('Starting stream polling', {
-      intervalMs: this.getConfig().intervalMs,
-      streamId: this.streamState.currentStreamId,
-    });
-
-    // Call parent to start polling
-    super.startPolling();
   }
 
   /**
@@ -267,23 +287,23 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
    */
   protected async poll() {
     try {
-      this.resolveStreamId();
-
-      if (!this.streamState.currentStreamId) {
+      // Capture stream ID in local variable for type safety
+      const streamId = this.streamState.currentStreamId;
+      if (!streamId) {
         Logger.warn('Cannot poll: invalid stream ID');
         return;
       }
 
-      if (!(await this.resolvedStreamHead(this.streamState.currentStreamId))) return;
-
       // Do not poll engagement streams
-      if (this.streamState.currentStreamId.split(':')[0] === Core.StreamSorting.ENGAGEMENT) {
-        Logger.debug('Skipping poll: engagement stream', { streamId: this.streamState.currentStreamId });
+      if (this.isEngagementStream(streamId)) {
+        Logger.debug('Skipping poll: engagement stream', { streamId });
         return;
       }
 
+      if (!(await this.resolveStreamHead(streamId))) return;
+
       await Core.StreamPostsController.getOrFetchStreamSlice({
-        streamId: this.streamState.currentStreamId,
+        streamId,
         streamHead: this.streamState.streamHead,
         limit: this.streamConfig.fetchLimit,
       });

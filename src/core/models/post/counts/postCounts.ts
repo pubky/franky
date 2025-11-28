@@ -26,4 +26,28 @@ export class PostCountsModel
   static toSchema(data: Core.NexusModelTuple<Core.NexusPostCounts>): Core.PostCountsModelSchema {
     return { id: data[0], ...data[1] };
   }
+
+  static async updateCounts( { postCompositeId, countChanges }: Core.TPostCountsParams): Promise<void> {
+    const postCounts = await Core.PostCountsModel.findById(postCompositeId);
+    if (!postCounts) return;
+
+    const updates: Partial<Core.PostCountsModelSchema> = {};
+
+    if (countChanges.replies !== undefined) {
+      updates.replies = Math.max(0, postCounts.replies + countChanges.replies);
+    }
+    if (countChanges.reposts !== undefined) {
+      updates.reposts = Math.max(0, postCounts.reposts + countChanges.reposts);
+    }
+    if (countChanges.tags !== undefined) {
+      updates.tags = Math.max(0, postCounts.tags + countChanges.tags);
+    }
+    if (countChanges.unique_tags !== undefined) {
+      updates.unique_tags = Math.max(0, postCounts.unique_tags + countChanges.unique_tags);
+    }
+
+    if (Object.keys(updates).length > 0) {
+      await Core.PostCountsModel.update(postCompositeId, updates);
+    }
+  }
 }

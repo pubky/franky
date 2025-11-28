@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { Logger } from '@/libs/logger';
 
 /**
  * Local Stream Posts Service
@@ -41,33 +42,38 @@ export class LocalStreamPostsService {
   /**
    * Gets the timestamp of the head (first/most recent) post in a stream
    * First tries from the unread post stream, if not found, tries from the post stream
+   * @param streamId - The stream ID to get the head timestamp for
+   * @returns The indexed_at timestamp of the head post, or 1 if the stream is empty or head post not found
+   * 1 means that there is no posts in the cache but force to fetch from Nexus new posts
+   * 0 means that there is no posts in the cache and no need to fetch from Nexus new posts
    */
   static async getStreamHead({ streamId }: Core.TStreamIdParams): Promise<number> {
     const unreadCompositePostId = await Core.UnreadPostStreamModel.getStreamHead(streamId);
     if (unreadCompositePostId) {
       return await this.getPostDetailsTimestamp({ postCompositeId: unreadCompositePostId as string });
     }
-    const compositePostId = await Core.PostStreamModel.getStreamHead(streamId);
-    if (!compositePostId) {
-      const [sorting, invokeEndpoint, content] = Core.breakDownStreamId(streamId);
-      if (invokeEndpoint === Core.StreamSource.REPLIES) {
-        const postCompositeId = Core.buildCompositeId({ pubky: sorting, id: content as string });
-        const postCounts = await Core.PostCountsModel.findById(postCompositeId);
-        // Return the smallest timestamp for replies
-        if (postCounts && postCounts.replies > 0) return 1;
-        return 0;
-      }
-      return 0;
+    const postCompositeId = await Core.PostStreamModel.getStreamHead(streamId);
+    if (!postCompositeId) {
+      // It might be a case that the stream that we want to update still does not have any posts in the cache
+      // so we return 1 to indicate that there is no posts in the cache but force to fetch from Nexus new posts
+      return Core.FORCE_FETCH_NEW_POSTS;
     }
-    return await this.getPostDetailsTimestamp({ postCompositeId: compositePostId as string });
+    return await this.getPostDetailsTimestamp({ postCompositeId: postCompositeId as string });
   }
 
+  /**
+   * Get the timestamp of the post
+   * @param postCompositeId - The composite post ID to get the timestamp for
+   * @returns The indexed_at timestamp of the post, or 0 if the post is not found in the cache
+   */
   private static async getPostDetailsTimestamp({ postCompositeId }: Core.TPostDetailsTimestampParams): Promise<number> {
     const postDetails = await Core.PostDetailsModel.findById(postCompositeId);
     if (postDetails) {
       return postDetails.indexed_at;
     }
-    return 0;
+    // Avoid fetching till we have persited the missing post in the cache
+    Logger.debug('Post not found in cache, avoiding fetch', { postCompositeId });
+    return Core.SKIP_FETCH_NEW_POSTS;
   }
 
   /**

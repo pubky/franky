@@ -21,6 +21,10 @@ export class LocalPostService {
     }
   }
 
+  static async updatePostCounts({ postCompositeId, countChanges }: Core.TPostCountsParams) {
+    await Core.PostCountsModel.updateCounts({ postCompositeId, countChanges });
+  }
+
   /**
    * Save a new post to the local database.
    *
@@ -100,7 +104,7 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
+          ops.push(Core.UserCountsModel.updateCounts({ userId: authorId, countChanges: { posts: 1, replies: parentUri ? 1 : 0 } }));
 
           this.updatePostStream({
             compositePostId,
@@ -195,7 +199,7 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: -1, replies: parentUri ? -1 : 0 }));
+          ops.push(Core.UserCountsModel.updateCounts({ userId: authorId, countChanges: { posts: -1, replies: parentUri ? -1 : 0 } }));
 
           // Remove post from streams
           this.updatePostStream({ compositePostId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });
@@ -345,7 +349,7 @@ export class LocalPostService {
   static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<string[]> {
     try {
       Libs.Logger.debug(`[LocalPostService] Persisting post ${postId}`);
-      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts([postData]);
+      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: [postData] });
       Libs.Logger.debug(`[LocalPostService] Post ${postId} persisted with ${postAttachments.length} attachments`);
       return postAttachments;
     } catch (error) {

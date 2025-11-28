@@ -38,7 +38,7 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: z
     .string()
-    .default('88000') // 88 seconds in milliseconds
+    .default('8888') // 8888 milliseconds
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
@@ -56,7 +56,7 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: z
     .string()
-    .default('60000') // 30 seconds in milliseconds
+    .default('8888') // 8888 milliseconds
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
