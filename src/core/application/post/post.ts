@@ -50,7 +50,7 @@ export class PostApplication {
     // Reuse stream posts logic to fetch and persist single post
     await Core.PostStreamApplication.fetchMissingPostsFromNexus({
       cacheMissPostIds: [compositeId],
-      viewerId
+      viewerId,
     });
 
     // Return the persisted post details

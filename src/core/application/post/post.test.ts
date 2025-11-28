@@ -800,7 +800,6 @@ describe('Post Application', () => {
       expect(fetchMissingSpy).toHaveBeenCalledWith({
         cacheMissPostIds: ['author:post123'],
         viewerId: mockViewerId,
-        streamHead: Core.SKIP_FETCH_NEW_POSTS,
       });
       expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toEqual(mockPostDetails);
@@ -823,7 +822,6 @@ describe('Post Application', () => {
       expect(fetchMissingSpy).toHaveBeenCalledWith({
         cacheMissPostIds: ['author:post123'],
         viewerId: mockViewerId,
-        streamHead: Core.SKIP_FETCH_NEW_POSTS,
       });
       expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toBeNull();
