@@ -2,9 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PostText } from './PostText';
 
-// Use real implementations from @/libs (cn is a pure utility function)
-// No mocking needed for @/libs as it contains only pure functions used by this component
-
 // Mock @/atoms
 vi.mock('@/atoms', () => ({
   Container: ({
