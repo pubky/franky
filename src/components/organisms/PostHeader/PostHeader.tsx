@@ -14,19 +14,10 @@ export function PostHeader({ postId, className }: PostHeaderProps) {
   const [userId] = postId.split(':');
 
   // Fetch post details to get indexed_at
-  const postDetails = useLiveQuery(async () => {
-    return await Core.PostController.getPostDetails({ postId });
-  }, [postId]);
+  const postDetails = useLiveQuery(() => Core.PostController.getPostDetails({ compositeId: postId }), [postId]);
 
   // Fetch user details for avatar and name
-  const userDetails = useLiveQuery(async () => {
-    try {
-      return await Core.ProfileController.read({ userId: userId as Core.Pubky });
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      return null;
-    }
-  }, [userId]);
+  const userDetails = useLiveQuery(() => Core.UserController.getDetails({ userId }), [userId]);
 
   if (!postDetails || !userDetails) {
     // TODO: Add skeleton loading component for PostHeader

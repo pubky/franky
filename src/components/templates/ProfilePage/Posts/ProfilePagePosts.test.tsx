@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ProfilePagePosts } from './ProfilePagePosts';
-import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 // Mock Next.js router
 const mockPush = vi.fn();
@@ -23,10 +23,6 @@ vi.mock('@/core', async () => {
     useAuthStore: vi.fn(() => ({
       currentUserPubky: 'test-user-id',
     })),
-    StreamPostsController: {
-      getOrFetchStreamSlice: vi.fn(),
-      getCachedLastPostTimestamp: vi.fn().mockResolvedValue(0),
-    },
   };
 });
 
@@ -38,18 +34,41 @@ vi.mock('@/hooks', async () => {
     useInfiniteScroll: () => ({
       sentinelRef: { current: null },
     }),
+    useStreamPagination: vi.fn(),
+    usePostNavigation: () => ({
+      navigateToPost: mockPush,
+    }),
   };
 });
 
 describe('ProfilePagePosts', () => {
+  const mockUseStreamPagination = vi.mocked(Hooks.useStreamPagination);
+
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Default mock return value
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
   });
 
   it('renders loading state initially', () => {
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockImplementation(
-      () => new Promise(() => {}), // Never resolves
-    );
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: true,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
 
     render(<ProfilePagePosts />);
 
@@ -59,26 +78,34 @@ describe('ProfilePagePosts', () => {
   it('renders posts after loading', async () => {
     const mockPostIds = ['test-user-id:post1', 'test-user-id:post2'];
 
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValueOnce({
-      nextPageIds: mockPostIds,
-      timestamp: 123456789,
+    mockUseStreamPagination.mockReturnValue({
+      postIds: mockPostIds,
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
     });
 
     render(<ProfilePagePosts />);
 
     await waitFor(() => {
-      expect(Core.StreamPostsController.getOrFetchStreamSlice).toHaveBeenCalledWith({
+      expect(mockUseStreamPagination).toHaveBeenCalledWith({
         streamId: 'author:test-user-id',
-        lastPostId: undefined,
-        streamTail: 0,
       });
     });
   });
 
   it('renders empty state when no posts', async () => {
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValueOnce({
-      nextPageIds: [],
-      timestamp: undefined,
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: false,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
     });
 
     render(<ProfilePagePosts />);
@@ -89,9 +116,15 @@ describe('ProfilePagePosts', () => {
   });
 
   it('renders error state on fetch failure', async () => {
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockRejectedValueOnce(
-      new Error('Failed to fetch posts'),
-    );
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: false,
+      loadingMore: false,
+      error: 'Failed to fetch posts',
+      hasMore: false,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
 
     render(<ProfilePagePosts />);
 
