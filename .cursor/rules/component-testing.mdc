@@ -267,6 +267,66 @@ This document outlines the essential rules and patterns for creating unit tests 
    }));
    ```
 
+   ### Icon Components: Always Use Real Implementations
+   Icon components from `@/libs/icons` should **always** be used as real implementations in component tests. This ensures:
+   - Snapshots capture actual SVG rendering
+   - Visual regression tests detect icon changes
+   - Tests validate real icon behaviour and attributes
+   
+   ✅ **Good: Use real icon components**
+   ```typescript
+   import * as Icons from '@/libs/icons';
+   import { NotificationIcon } from './NotificationIcon';
+   
+   it('renders the correct icon', () => {
+     const { container } = render(<NotificationIcon type={NotificationType.Follow} />);
+     const svg = container.querySelector('svg');
+     expect(svg).toBeInTheDocument();
+     expect(svg).toHaveAttribute('width', '24');
+     expect(svg).toHaveAttribute('height', '24');
+   });
+   
+   it('matches snapshot with real icon', () => {
+     const { container } = render(<NotificationIcon type={NotificationType.Follow} />);
+     expect(container.firstChild).toMatchSnapshot();
+   });
+   ```
+   
+   ❌ **Bad: Mocking icon components**
+   ```typescript
+   // Don't do this - use real icons
+   vi.mock('@/libs/icons', () => ({
+     Follow: () => <span>Mock Icon</span>,
+   }));
+   ```
+   
+   ### When to Mock Icon-Related Functions
+   Only mock icon-related utility functions (like `getIconFromUrl`) when:
+   - Testing error conditions or edge cases
+   - The function performs complex logic that needs isolation
+   - Testing fallback behaviour when icon lookup fails
+   
+   ✅ **Good: Mock only utility functions, not components**
+   ```typescript
+   // Mock the utility function, but keep real icon components
+   vi.mock('@/libs/icons', async (importOriginal) => {
+     const actual = await importOriginal<typeof import('@/libs/icons')>();
+     return {
+       ...actual,  // Keep all real icon components
+       getIconFromUrl: vi.fn().mockReturnValue(actual.XTwitter),  // Mock only the utility
+     };
+   });
+   ```
+   
+   ❌ **Bad: Mocking icon components unnecessarily**
+   ```typescript
+   // Don't mock icon components - use real ones
+   vi.mock('@/libs/icons', () => ({
+     Follow: () => <span data-testid="mock-icon">Icon</span>,
+     Reply: () => <span data-testid="mock-icon">Icon</span>,
+   }));
+   ```
+
 ## Testing Workflow
 
 10. **Always run new or edited tests in sandbox to generate snapshot files and check they pass, and fix if failing**
