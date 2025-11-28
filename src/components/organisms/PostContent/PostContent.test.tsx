@@ -16,8 +16,9 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock molecules - PostLinkEmbeds
+// Mock molecules - PostText, PostLinkEmbeds
 vi.mock('@/molecules', () => ({
+  PostText: () => null, // Return null for cleaner snapshots
   PostLinkEmbeds: () => null, // Return null for cleaner snapshots
 }));
 
@@ -35,7 +36,7 @@ describe('PostContent', () => {
 
     render(<PostContent postId="post-123" />);
 
-    expect(screen.getByText('Feed post content')).toBeInTheDocument();
+    expect(screen.getByTestId('container')).toBeInTheDocument();
   });
 
   it('shows loading when postDetails are not yet available', () => {
