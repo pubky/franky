@@ -9,7 +9,7 @@ exports[`FollowersEmpty - Snapshots > matches snapshot with default props 1`] = 
     alt="Followers - Empty state"
     class="pointer-events-none object-contain object-center"
     data-testid="background-image"
-    src="/images/followers-empty-state.png"
+    src="/images/connections-empty-state.png"
   />
   <div
     class="flex items-center rounded-full bg-brand/16 p-6"

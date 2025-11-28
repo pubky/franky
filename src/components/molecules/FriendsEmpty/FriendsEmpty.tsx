@@ -9,7 +9,7 @@ export function FriendsEmpty() {
     <Atoms.Container className="relative items-center gap-6 px-0 py-6">
       {/* Background image */}
       <Image
-        src="/images/followers-empty-state.png"
+        src="/images/connections-empty-state.png"
         alt="Friends - Empty state"
         fill
         className="pointer-events-none object-contain object-center"
