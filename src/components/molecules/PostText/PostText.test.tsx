@@ -77,6 +77,13 @@ describe('PostText', () => {
       expect(emElement.tagName).toBe('EM');
     });
 
+    it('renders italic text with _', () => {
+      render(<PostText content="This is _italic_ text" />);
+
+      const emElement = screen.getByText('italic');
+      expect(emElement.tagName).toBe('EM');
+    });
+
     it('renders strikethrough text with ~~', () => {
       render(<PostText content="This is ~~deleted~~ text" />);
 
@@ -97,6 +104,52 @@ describe('PostText', () => {
 
       const codeBlock = screen.getByTestId('post-code-block');
       expect(codeBlock).toBeInTheDocument();
+    });
+
+    it('renders italic and strikethrough on same text', () => {
+      render(<PostText content="This is *~~italic and strikethrough~~* text" />);
+
+      const textElement = screen.getByText('italic and strikethrough');
+      expect(textElement.tagName).toBe('DEL');
+      const parent = textElement.parentElement;
+      expect(parent?.tagName).toBe('EM');
+    });
+
+    it('renders strikethrough and italic on same text', () => {
+      render(<PostText content="This is ~~*strikethrough and italic*~~ text" />);
+
+      const textElement = screen.getByText('strikethrough and italic');
+      expect(textElement.tagName).toBe('EM');
+      const parent = textElement.parentElement;
+      expect(parent?.tagName).toBe('DEL');
+    });
+
+    it('renders italic and bold on same text', () => {
+      render(<PostText content="This is ***italic and bold*** text" />);
+
+      const textElement = screen.getByText('italic and bold');
+      expect(textElement.tagName).toBe('STRONG');
+      const parent = textElement.parentElement;
+      expect(parent?.tagName).toBe('EM');
+    });
+
+    it('renders bold and italic on same text', () => {
+      render(<PostText content="This is **_bold and italic_** text" />);
+
+      const textElement = screen.getByText('bold and italic');
+      expect(textElement.tagName).toBe('EM');
+      const parent = textElement.parentElement;
+      expect(parent?.tagName).toBe('STRONG');
+    });
+
+    it('renders strikethrough and inline code on same text', () => {
+      render(<PostText content="This is ~~`strikethrough and code`~~ text" />);
+
+      const codeBlock = screen.getByTestId('post-code-block');
+      expect(codeBlock).toBeInTheDocument();
+      expect(codeBlock).toHaveTextContent('strikethrough and code');
+      const parent = codeBlock.parentElement;
+      expect(parent?.tagName).toBe('DEL');
     });
   });
 
@@ -344,6 +397,31 @@ Third line`}
 
   it('matches snapshot for autolinked URL', () => {
     const { container } = render(<PostText content="Check out https://example.com/path?query=value" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for italic and strikethrough combination', () => {
+    const { container } = render(<PostText content="This is *~~italic and strikethrough~~* text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for strikethrough and italic combination', () => {
+    const { container } = render(<PostText content="This is ~~*strikethrough and italic*~~ text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for italic and bold combination', () => {
+    const { container } = render(<PostText content="This is ***italic and bold*** text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for bold and italic combination', () => {
+    const { container } = render(<PostText content="This is **_bold and italic_** text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for strikethrough and inline code combination', () => {
+    const { container } = render(<PostText content="This is ~~`strikethrough and code`~~ text" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

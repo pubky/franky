@@ -40,6 +40,24 @@ exports[`PostText - Snapshots > matches snapshot for blockquote 1`] = `
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for bold and italic combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <strong>
+      <em>
+        bold and italic
+      </em>
+    </strong>
+     text
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for bold and italic text 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -240,6 +258,42 @@ exports[`PostText - Snapshots > matches snapshot for inline code 1`] = `
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for italic and bold combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <em>
+      <strong>
+        italic and bold
+      </strong>
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for italic and strikethrough combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <em>
+      <del>
+        italic and strikethrough
+      </del>
+    </em>
+     text
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for links 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -346,6 +400,44 @@ exports[`PostText - Snapshots > matches snapshot for plain text 1`] = `
 >
   <p>
     Simple plain text content
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for strikethrough and inline code combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <del>
+      <code
+        data-testid="post-code-block"
+      >
+        strikethrough and code
+      </code>
+    </del>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for strikethrough and italic combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <del>
+      <em>
+        strikethrough and italic
+      </em>
+    </del>
+     text
   </p>
 </div>
 `;
