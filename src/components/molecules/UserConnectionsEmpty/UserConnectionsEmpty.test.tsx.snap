@@ -84,11 +84,11 @@ exports[`UserConnectionsEmpty - Snapshots > matches snapshot with action buttons
     </p>
   </div>
   <div
-    class="relative z-10 flex flex-col gap-3 items-center justify-center lg:flex-row"
+    class="relative z-10 flex flex-col items-center justify-center gap-3 lg:flex-row"
     data-testid="container"
   >
     <button
-      class="gap-2 h-10 px-4"
+      class="h-10 gap-2 px-4"
       data-size="sm"
       data-testid="button"
       data-variant="secondary"
@@ -104,7 +104,7 @@ exports[`UserConnectionsEmpty - Snapshots > matches snapshot with action buttons
       </span>
     </button>
     <button
-      class="gap-2 h-10 px-4"
+      class="h-10 gap-2 px-4"
       data-size="sm"
       data-testid="button"
       data-variant="secondary"
