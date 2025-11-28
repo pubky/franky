@@ -19,7 +19,7 @@ export function useStreamPagination({
 }: Types.UseStreamPaginationOptions): Types.UseStreamPaginationResult {
   const [postIds, setPostIds] = useState<string[]>([]);
   const [lastPostId, setLastPostId] = useState<string | undefined>(undefined);
-  const [streamTail, setStreamTail] = useState<number>(0);
+  const [streamTail, setStreamTail] = useState<number>(Core.NOT_FOUND_CACHED_STREAM);
 
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -51,7 +51,7 @@ export function useStreamPagination({
         let result: Core.TReadPostStreamChunkResponse;
 
         if (isInitialLoad) {
-          const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp(streamId);
+          const cachedLastPostTimestamp = await Core.StreamPostsController.getCachedLastPostTimestamp({ streamId });
           setStreamTail(cachedLastPostTimestamp);
 
           result = await Core.StreamPostsController.getOrFetchStreamSlice({

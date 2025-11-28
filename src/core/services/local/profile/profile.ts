@@ -37,8 +37,8 @@ export class LocalProfileService {
    * @param userCounts - The user counts to upsert
    * @returns Promise resolving to void
    */
-  static async upsertCounts(params: Core.TReadProfileParams, userCounts: Core.NexusUserCounts): Promise<void> {
-    await Core.UserCountsModel.updateCounts(params.userId, userCounts);
+  static async upsertCounts(params: Core.TReadProfileParams, countChanges: Core.NexusUserCounts): Promise<void> {
+    await Core.UserCountsModel.updateCounts({ userId: params.userId, countChanges });
   }
 
   /**

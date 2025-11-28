@@ -102,7 +102,7 @@ describe('useStreamPagination', () => {
         expect(result.current.loading).toBe(false);
       });
 
-      expect(Core.StreamPostsController.getCachedLastPostTimestamp).toHaveBeenCalledWith(mockStreamId);
+      expect(Core.StreamPostsController.getCachedLastPostTimestamp).toHaveBeenCalledWith({ streamId: mockStreamId });
       expect(Core.StreamPostsController.getOrFetchStreamSlice).toHaveBeenCalled();
       expect(result.current.postIds).toEqual(mockPostIds);
       expect(result.current.error).toBeNull();

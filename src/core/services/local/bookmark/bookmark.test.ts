@@ -209,10 +209,10 @@ describe('LocalBookmarkService', () => {
     beforeEach(async () => {
       await setupExistingBookmark();
       await setupPostDetails('short');
-      await Core.LocalStreamPostsService.prependToStream(
-        Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
-        testData.compositePostId,
-      );
+      await Core.LocalStreamPostsService.prependToStream({
+        streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+        compositePostId: testData.compositePostId,
+      });
     });
 
     it('should delete bookmark from database', async () => {
@@ -239,10 +239,10 @@ describe('LocalBookmarkService', () => {
     });
 
     it('should remove post from all and kind-specific bookmark streams', async () => {
-      await Core.LocalStreamPostsService.prependToStream(
-        Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT,
-        testData.compositePostId,
-      );
+      await Core.LocalStreamPostsService.prependToStream({
+        streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT,
+        compositePostId: testData.compositePostId,
+      });
 
       await Core.LocalBookmarkService.persist(Core.HomeserverAction.DELETE, createBookmarkParams());
 

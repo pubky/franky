@@ -35,6 +35,10 @@ export type TStreamAuthorId = {
   author_id: Core.Pubky;
 };
 
+export type TStreamSource = {
+  value: string;
+};
+
 // Base parameters that are always optional
 export type TStreamBase = Core.TPaginationParams &
   Core.TPaginationRangeParams & {

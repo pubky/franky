@@ -8,6 +8,9 @@ import * as Core from '@/core';
 // Dynamic Post Reply Stream ID Pattern: postReplies:compositePostId
 // - compositePostId format: author:postId (e.g., "did:key:abc123:post456")
 // - Example: "postReplies:did:key:abc123:post456"
+
+// Note: In some cases that we reference PostStreamTypes enum, we need to cast to PostStreamId to avoid type errors.
+// TypeScript's generic inference narrows PostStreamTypes enum to the enum type instead of widening to PostStreamId union.
 export enum PostStreamTypes {
   // ============================================
   // TIMELINE (Recent) - ALL Sources

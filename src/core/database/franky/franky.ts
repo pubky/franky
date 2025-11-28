@@ -42,6 +42,7 @@ export class AppDatabase extends Dexie {
   file_details!: Dexie.Table<Core.FileDetailsModelSchema>;
   // Streams
   post_streams!: Dexie.Table<PostStreamModelSchema>;
+  unread_post_streams!: Dexie.Table<PostStreamModelSchema>;
   user_streams!: Dexie.Table<UserStreamModelSchema>;
   tag_streams!: Dexie.Table<TagStreamModelSchema>;
   // Bookmarks
@@ -71,6 +72,7 @@ export class AppDatabase extends Dexie {
         file_details: fileDetailsTableSchema,
         // Streams
         post_streams: postStreamTableSchema,
+        unread_post_streams: postStreamTableSchema,
         user_streams: userStreamTableSchema,
         tag_streams: tagStreamTableSchema,
         // Bookmarks
