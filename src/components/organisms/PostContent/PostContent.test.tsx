@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostContent } from './PostContent';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
+import * as Molecules from '@/molecules';
 
 // Mock dexie-react-hooks
 vi.mock('dexie-react-hooks', () => ({
@@ -16,14 +17,26 @@ vi.mock('@/core', () => ({
   },
 }));
 
+// Mock atoms
+vi.mock('@/atoms', () => ({
+  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="container" className={className}>
+      {children}
+    </div>
+  ),
+}));
+
 // Mock molecules - PostText, PostLinkEmbeds
 vi.mock('@/molecules', () => ({
-  PostText: () => null, // Return null for cleaner snapshots
-  PostLinkEmbeds: () => null, // Return null for cleaner snapshots
+  // Return null for easier call assertions
+  PostText: vi.fn(() => null),
+  PostLinkEmbeds: vi.fn(() => null),
 }));
 
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockFindById = vi.mocked(Core.PostDetailsModel.findById);
+const mockPostText = vi.mocked(Molecules.PostText);
+const mockPostLinkEmbeds = vi.mocked(Molecules.PostLinkEmbeds);
 
 describe('PostContent', () => {
   beforeEach(() => {
@@ -59,9 +72,50 @@ describe('PostContent', () => {
 
     expect(mockFindById).toHaveBeenCalledWith('post-abc');
   });
+
+  it('calls PostText with correct content prop', () => {
+    const mockPostDetails = { content: 'Test post content' };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    render(<PostContent postId="post-123" />);
+
+    expect(mockPostText).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
+  });
+
+  it('calls PostLinkEmbeds with correct content prop', () => {
+    const mockPostDetails = { content: 'Test post content' };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    render(<PostContent postId="post-123" />);
+
+    expect(mockPostLinkEmbeds).toHaveBeenCalledWith({ content: 'Test post content' }, undefined);
+  });
+
+  it('updates query when postId changes', () => {
+    const mockPostDetails1 = { content: 'First post' };
+    const mockPostDetails2 = { content: 'Second post' };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails1);
+
+    const { rerender } = render(<PostContent postId="post-1" />);
+
+    expect(mockUseLiveQuery).toHaveBeenCalledWith(expect.any(Function), expect.arrayContaining(['post-1']));
+
+    mockUseLiveQuery.mockReturnValue(mockPostDetails2);
+    rerender(<PostContent postId="post-2" />);
+
+    expect(mockUseLiveQuery).toHaveBeenCalledWith(expect.any(Function), expect.arrayContaining(['post-2']));
+  });
 });
 
 describe('PostContent - Snapshots', () => {
+  // Use real PostText and PostLinkEmbeds for snapshot tests
+  beforeEach(async () => {
+    const actual = await vi.importActual<typeof import('@/molecules')>('@/molecules');
+    // Replace the mock implementations with real ones for snapshots
+    (Molecules.PostText as unknown as ReturnType<typeof vi.fn>).mockImplementation(actual.PostText);
+    (Molecules.PostLinkEmbeds as unknown as ReturnType<typeof vi.fn>).mockImplementation(actual.PostLinkEmbeds);
+  });
+
   it('matches snapshot with single-line content', () => {
     const mockPostDetails = { content: 'One liner' };
     mockUseLiveQuery.mockReturnValue(mockPostDetails);
@@ -83,6 +137,30 @@ describe('PostContent - Snapshots', () => {
     mockUseLiveQuery.mockReturnValue(mockPostDetails);
 
     const { container } = render(<PostContent postId="post-3" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with loading state', () => {
+    mockUseLiveQuery.mockReturnValue(null);
+
+    const { container } = render(<PostContent postId="post-loading" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with very long content', () => {
+    const longContent = 'A'.repeat(1000) + ' ' + 'B'.repeat(1000);
+    const mockPostDetails = { content: longContent };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    const { container } = render(<PostContent postId="post-5" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with special characters in content', () => {
+    const mockPostDetails = { content: 'Content with <tags> & "quotes" & \'apostrophes\'' };
+    mockUseLiveQuery.mockReturnValue(mockPostDetails);
+
+    const { container } = render(<PostContent postId="post-6" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
