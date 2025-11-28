@@ -32,7 +32,7 @@ export function FollowerItem({ follower, isFollowing: initialIsFollowing = true,
     <Atoms.Container className="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0">
       <Atoms.Container
         overrideDefaults={true}
-        className="flex flex-wrap items-center justify-between gap-2 lg:flex-nowrap"
+        className="flex flex-wrap items-center justify-between gap-6 lg:flex-nowrap"
       >
         <Atoms.Link href={`/profile/${follower.id}`} className="flex min-w-0 flex-1 items-center gap-2">
           <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={follower.name} size="md" />
@@ -51,7 +51,7 @@ export function FollowerItem({ follower, isFollowing: initialIsFollowing = true,
         {tags.length > 0 && (
           <Atoms.Container overrideDefaults={true} className="hidden flex-wrap items-center gap-2 lg:flex">
             {tags.slice(0, 3).map((tag, index) => (
-              <Molecules.PostTag key={index} label={tag} showClose={false} />
+              <Atoms.Tag key={index} name={tag} />
             ))}
           </Atoms.Container>
         )}
@@ -80,12 +80,7 @@ export function FollowerItem({ follower, isFollowing: initialIsFollowing = true,
         <Atoms.Button
           variant="secondary"
           size="sm"
-          className={Libs.cn(
-            'group hidden h-8 w-8 shrink-0 p-1 transition-colors lg:flex',
-            isFollowing
-              ? 'hover:text-destructive-foreground bg-secondary text-secondary-foreground hover:bg-destructive/60'
-              : 'bg-secondary text-secondary-foreground hover:bg-green-600/60 hover:text-white',
-          )}
+          className="group hidden w-8 lg:flex"
           onClick={handleFollowClick}
           aria-label={isFollowing ? 'Unfollow' : 'Follow'}
         >
@@ -109,7 +104,7 @@ export function FollowerItem({ follower, isFollowing: initialIsFollowing = true,
         {tags.length > 0 && (
           <Atoms.Container overrideDefaults={true} className="flex flex-1 flex-wrap items-center gap-2">
             {tags.slice(0, 3).map((tag, index) => (
-              <Molecules.PostTag key={index} label={tag} showClose={false} />
+              <Atoms.Tag key={index} name={tag} />
             ))}
           </Atoms.Container>
         )}
@@ -117,12 +112,7 @@ export function FollowerItem({ follower, isFollowing: initialIsFollowing = true,
         <Atoms.Button
           variant="secondary"
           size="sm"
-          className={Libs.cn(
-            'group h-8 w-8 shrink-0 p-1 transition-colors',
-            isFollowing
-              ? 'hover:text-destructive-foreground bg-secondary text-secondary-foreground hover:bg-destructive/60'
-              : 'bg-secondary text-secondary-foreground hover:bg-green-600/60 hover:text-white',
-          )}
+          className="group w-8"
           onClick={handleFollowClick}
           aria-label={isFollowing ? 'Unfollow' : 'Follow'}
         >
