@@ -30,22 +30,6 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock @/libs/icons
-vi.mock('@/libs/icons', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs/icons')>();
-  return {
-    ...actual,
-    getIconFromUrl: () => {
-      const MockIcon = ({ size, className }: { size: number; className: string }) => (
-        <span data-testid="mock-icon" data-size={size} className={className}>
-          Icon
-        </span>
-      );
-      return MockIcon;
-    },
-  };
-});
-
 // Mock @/hooks
 vi.mock('@/hooks', () => ({
   useCurrentUserProfile: vi.fn(() => ({
