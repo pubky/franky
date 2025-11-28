@@ -34,7 +34,7 @@ interface LinkProps extends ComponentProps<typeof NextLink> {
  * <a href="mailto:...">Email</a>
  * <a href="tel:...">Phone</a>
  */
-export function Link({ variant = 'default', size = 'default', ...props }: LinkProps) {
+export function Link({ variant = 'default', size = 'default', className, ...props }: LinkProps) {
   const linkVariants = cva('cursor-pointer text-brand hover:text-brand/80 transition-colors', {
     variants: {
       variant: {
@@ -49,7 +49,7 @@ export function Link({ variant = 'default', size = 'default', ...props }: LinkPr
     },
   });
 
-  const linkClassName = Libs.cn(linkVariants({ variant, size }), props.className);
+  const linkClassName = Libs.cn(linkVariants({ variant, size }), className);
 
   // Check if href is an external URL
   const href = props.href?.toString() || '';
