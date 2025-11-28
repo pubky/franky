@@ -8,26 +8,7 @@ export function ProfilePageFollowing() {
   if (connections.length === 0) {
     return (
       <Atoms.Container className="mt-6 lg:mt-0">
-        <Molecules.UserConnectionsEmpty
-          title="You are the algorithm"
-          description={
-            <>
-              <Atoms.Typography
-                as="p"
-                className="mb-0 text-center text-base leading-6 font-medium text-secondary-foreground"
-              >
-                Following account is a simple way to curate your timeline.
-              </Atoms.Typography>
-              <Atoms.Typography
-                as="p"
-                className="text-center text-base leading-6 font-medium text-secondary-foreground"
-              >
-                Stay updated on the topics and people that interest you.
-              </Atoms.Typography>
-            </>
-          }
-          showActionButtons={true}
-        />
+        <Molecules.FollowingEmpty />
       </Atoms.Container>
     );
   }

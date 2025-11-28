@@ -8,26 +8,7 @@ export function ProfilePageFriends() {
   if (connections.length === 0) {
     return (
       <Atoms.Container className="mt-6 lg:mt-0">
-        <Molecules.UserConnectionsEmpty
-          title="No friends yet"
-          description={
-            <>
-              <Atoms.Typography
-                as="p"
-                className="mb-0 text-center text-base leading-6 font-medium text-secondary-foreground"
-              >
-                Follow someone, and if they follow you back, you&apos;ll become friends!
-              </Atoms.Typography>
-              <Atoms.Typography
-                as="p"
-                className="text-center text-base leading-6 font-medium text-secondary-foreground"
-              >
-                Start following Pubky users, you never know who might follow you back!
-              </Atoms.Typography>
-            </>
-          }
-          showActionButtons={true}
-        />
+        <Molecules.FriendsEmpty />
       </Atoms.Container>
     );
   }

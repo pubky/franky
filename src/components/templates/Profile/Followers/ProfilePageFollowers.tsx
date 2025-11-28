@@ -8,25 +8,7 @@ export function ProfilePageFollowers() {
   if (connections.length === 0) {
     return (
       <Atoms.Container className="mt-6 lg:mt-0">
-        <Molecules.UserConnectionsEmpty
-          title="Looking for followers?"
-          description={
-            <>
-              <Atoms.Typography
-                as="p"
-                className="mb-0 text-center text-base leading-6 font-medium text-secondary-foreground"
-              >
-                When someone follows this account, their profile will appear here.
-              </Atoms.Typography>
-              <Atoms.Typography
-                as="p"
-                className="text-center text-base leading-6 font-medium text-secondary-foreground"
-              >
-                Start posting and engaging with others to grow your followers!
-              </Atoms.Typography>
-            </>
-          }
-        />
+        <Molecules.FollowersEmpty />
       </Atoms.Container>
     );
   }
