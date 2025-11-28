@@ -144,10 +144,10 @@ describe('PostCodeBlock', () => {
       expect(codeElement?.textContent).toContain('number');
     });
 
-    it('displays language name in header', () => {
+    it('displays "code" label in header', () => {
       render(<PostCodeBlock className="language-python">{'print("hello")'}</PostCodeBlock>);
 
-      expect(screen.getByText('python')).toBeInTheDocument();
+      expect(screen.getByText('code')).toBeInTheDocument();
     });
 
     it('displays copy button with clipboard icon', () => {
