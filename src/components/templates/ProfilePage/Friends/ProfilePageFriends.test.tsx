@@ -62,19 +62,10 @@ vi.mock('@/molecules', () => ({
   UserConnectionsList: ({ connections }: { connections: unknown[] }) => (
     <div data-testid="connections-list">{connections.length} connections</div>
   ),
-  UserConnectionsEmpty: ({
-    title,
-    description,
-    showActionButtons,
-  }: {
-    title: string;
-    description: React.ReactNode;
-    showActionButtons?: boolean;
-  }) => (
+  FriendsEmpty: () => (
     <div data-testid="connections-empty">
-      <div>{title}</div>
-      {description}
-      {showActionButtons && <div data-testid="action-buttons">Action buttons</div>}
+      <div>No friends yet</div>
+      <div data-testid="action-buttons">Action buttons</div>
     </div>
   ),
 }));
