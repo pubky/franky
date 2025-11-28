@@ -1,0 +1,28 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UserConnectionsList - Snapshots > matches snapshot with connections 1`] = `
+<div
+  class="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6"
+  data-testid="container"
+>
+  <div
+    data-id="test-user-1"
+    data-testid="connection-item"
+  >
+    John Doe
+  </div>
+  <div
+    data-id="test-user-2"
+    data-testid="connection-item"
+  >
+    Jane Smith
+  </div>
+</div>
+`;
+
+exports[`UserConnectionsList - Snapshots > matches snapshot with empty list 1`] = `
+<div
+  class="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6"
+  data-testid="container"
+/>
+`;

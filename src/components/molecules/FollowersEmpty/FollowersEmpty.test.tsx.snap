@@ -1,0 +1,62 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FollowersEmpty - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="relative items-center gap-6 px-0 py-6"
+  data-testid="container"
+>
+  <img
+    alt="Followers - Empty state"
+    class="pointer-events-none object-contain object-center"
+    data-testid="background-image"
+    src="/images/connections-empty-state.png"
+  />
+  <div
+    class="flex items-center rounded-full bg-brand/16 p-6"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="users-round-icon"
+    >
+      UsersRound
+    </svg>
+  </div>
+  <div
+    class="items-center gap-6"
+    data-testid="container"
+  >
+    <h3
+      data-testid="typography"
+    >
+      Looking for followers?
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      When someone follows this account, their profile will appear here.
+      <br />
+      Start posting and engaging with others to grow your followers!
+    </p>
+  </div>
+  <button
+    class="gap-2"
+    data-testid="button"
+    data-variant="default"
+  >
+    <svg
+      class="size-4"
+      data-testid="plus-icon"
+    >
+      Plus
+    </svg>
+    <span
+      data-testid="typography"
+    >
+      Create a Post
+    </span>
+  </button>
+</div>
+`;

@@ -1,0 +1,84 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FollowingEmpty - Snapshots > matches snapshot with default props 1`] = `
+<div
+  class="relative items-center gap-6 px-0 py-6"
+  data-testid="container"
+>
+  <img
+    alt="Following - Empty state"
+    class="pointer-events-none object-contain object-center"
+    data-testid="background-image"
+    src="/images/connections-empty-state.png"
+  />
+  <div
+    class="flex items-center rounded-full bg-brand/16 p-6"
+    data-testid="container"
+  >
+    <svg
+      class="size-12 text-brand"
+      data-stroke-width="1.5"
+      data-testid="user-round-plus-icon"
+    >
+      UserRoundPlus
+    </svg>
+  </div>
+  <div
+    class="items-center gap-6"
+    data-testid="container"
+  >
+    <h3
+      data-testid="typography"
+    >
+      You are the algorithm
+    </h3>
+    <p
+      class="text-center text-base leading-6 font-medium text-secondary-foreground"
+      data-testid="typography"
+    >
+      Following account is a simple way to curate your timeline.
+      <br />
+      Stay updated on the topics and people that interest you.
+    </p>
+  </div>
+  <div
+    class="items-center justify-center gap-3 lg:flex-row"
+    data-testid="container"
+  >
+    <button
+      class="gap-2"
+      data-testid="button"
+      data-variant="secondary"
+    >
+      <svg
+        class="size-4"
+        data-testid="user-round-plus-icon"
+      >
+        UserRoundPlus
+      </svg>
+      <span
+        data-testid="typography"
+      >
+        Who to Follow
+      </span>
+    </button>
+    <button
+      class="gap-2"
+      data-testid="button"
+      data-variant="secondary"
+    >
+      <svg
+        class="size-4"
+        data-testid="user-round-plus-icon"
+      >
+        UserRoundPlus
+      </svg>
+      <span
+        data-testid="typography"
+      >
+        Popular Users
+      </span>
+    </button>
+  </div>
+</div>
+`;
