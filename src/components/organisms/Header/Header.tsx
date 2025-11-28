@@ -11,6 +11,7 @@ import * as App from '@/app';
 import * as Hooks from '@/hooks';
 // Map paths to step numbers and titles
 const pathToStepConfig: Record<string, { step: number; title: string }> = {
+  '/onboarding/human': { step: 1, title: 'Verify Humanity' },
   '/onboarding/install': { step: 1, title: 'Identity keys' },
   '/onboarding/scan': { step: 2, title: 'Use Pubky Ring' },
   '/onboarding/pubky': { step: 2, title: 'Your pubky' },

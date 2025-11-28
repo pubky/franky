@@ -53,3 +53,5 @@ cypress/download
 cypress/screenshots
 cypress/videos
 cypress/cypress.log
+
+certificates
