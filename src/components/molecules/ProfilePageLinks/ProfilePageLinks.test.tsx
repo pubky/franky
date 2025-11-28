@@ -5,16 +5,20 @@ import { ProfilePageLinks } from './ProfilePageLinks';
 import * as Core from '@/core';
 
 // Mock Icons
-vi.mock('@/libs/icons', () => ({
-  getIconFromUrl: () => {
-    const MockIcon = ({ size, className }: { size: number; className: string }) => (
-      <span data-testid="mock-icon" data-size={size} className={className}>
-        Icon
-      </span>
-    );
-    return MockIcon;
-  },
-}));
+vi.mock('@/libs/icons', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs/icons')>();
+  return {
+    ...actual,
+    getIconFromUrl: () => {
+      const MockIcon = ({ size, className }: { size: number; className: string }) => (
+        <span data-testid="mock-icon" data-size={size} className={className}>
+          Icon
+        </span>
+      );
+      return MockIcon;
+    },
+  };
+});
 
 const defaultLinks: Core.NexusUserDetails['links'] = [
   { title: 'bitcoin.org', url: 'https://bitcoin.org' },

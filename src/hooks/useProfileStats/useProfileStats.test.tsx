@@ -4,12 +4,17 @@ import { useProfileStats } from './useProfileStats';
 import * as Core from '@/core';
 
 // Hoist mock data using vi.hoisted
-const { mockUserCounts, setMockUserCounts } = vi.hoisted(() => {
+const { mockUserCounts, setMockUserCounts, mockNotificationsCount, setMockNotificationsCount } = vi.hoisted(() => {
   const data = { current: null as Core.UserCountsModelSchema | null };
+  const notificationsCount = { current: 0 };
   return {
     mockUserCounts: data,
     setMockUserCounts: (value: Core.UserCountsModelSchema | null) => {
       data.current = value;
+    },
+    mockNotificationsCount: notificationsCount,
+    setMockNotificationsCount: (value: number) => {
+      notificationsCount.current = value;
     },
   };
 });
@@ -24,6 +29,22 @@ vi.mock('dexie-react-hooks', () => ({
     return mockUserCounts.current;
   }),
 }));
+
+// Mock hooks
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useNotifications: vi.fn(() => ({
+      notifications: [],
+      unreadNotifications: [],
+      count: 0,
+      unreadCount: mockNotificationsCount.current,
+      isLoading: false,
+      markAllAsRead: vi.fn(),
+    })),
+  };
+});
 
 // Mock Core controllers
 vi.mock('@/core', async (importOriginal) => {
@@ -40,6 +61,7 @@ describe('useProfileStats', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setMockUserCounts(null);
+    setMockNotificationsCount(0);
   });
 
   describe('Stats fetching', () => {
@@ -133,7 +155,8 @@ describe('useProfileStats', () => {
   });
 
   describe('Notifications stat', () => {
-    it('always returns 0 for notifications (not implemented yet)', () => {
+    it('returns notifications count from useNotifications hook', () => {
+      setMockNotificationsCount(15);
       setMockUserCounts({
         id: 'test-user-id',
         posts: 10,
@@ -148,9 +171,11 @@ describe('useProfileStats', () => {
         bookmarks: 0,
       } as Core.UserCountsModelSchema);
 
+      setMockNotificationsCount(15);
+
       const { result } = renderHook(() => useProfileStats('test-user-id'));
 
-      expect(result.current.stats.notifications).toBe(0);
+      expect(result.current.stats.notifications).toBe(15);
     });
   });
 
