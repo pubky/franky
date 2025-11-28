@@ -29,7 +29,6 @@ export * from './NotificationsList';
 export * from './FollowersEmpty';
 export * from './FollowingEmpty';
 export * from './FriendsEmpty';
-export * from './FollowersList';
 export * from './UserConnectionsList';
 export * from './FollowerItem';
 export * from './MobileHeader';
