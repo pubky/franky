@@ -50,7 +50,7 @@ export class LocalBookmarkService {
               id: postId,
               created_at: Date.now(),
             }),
-            Core.UserCountsModel.updateCounts(userId, { bookmarks: 1 }),
+            Core.UserCountsModel.updateCounts({ userId, countChanges: { bookmarks: 1 } }),
             this.addToBookmarkStreams(postId, kind),
           ]);
 
@@ -58,7 +58,7 @@ export class LocalBookmarkService {
         } else {
           await Promise.all([
             Core.BookmarkModel.deleteById(postId),
-            Core.UserCountsModel.updateCounts(userId, { bookmarks: -1 }),
+            Core.UserCountsModel.updateCounts({ userId, countChanges: { bookmarks: -1 } }),
             this.removeFromBookmarkStreams(postId, kind),
           ]);
 

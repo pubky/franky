@@ -37,7 +37,7 @@ export class UserCountsModel
     return { id: data[0], ...data[1] };
   }
 
-  static async updateCounts( { userId, countChanges }: Core.TUserCountsParams): Promise<void> {
+  static async updateCounts({ userId, countChanges }: Core.TUserCountsParams): Promise<void> {
     const userCounts = await Core.UserCountsModel.findById(userId);
     if (!userCounts) return;
 

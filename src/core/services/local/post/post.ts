@@ -104,7 +104,12 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts({ userId: authorId, countChanges: { posts: 1, replies: parentUri ? 1 : 0 } }));
+          ops.push(
+            Core.UserCountsModel.updateCounts({
+              userId: authorId,
+              countChanges: { posts: 1, replies: parentUri ? 1 : 0 },
+            }),
+          );
 
           this.updatePostStream({
             compositePostId,
@@ -199,7 +204,12 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts({ userId: authorId, countChanges: { posts: -1, replies: parentUri ? -1 : 0 } }));
+          ops.push(
+            Core.UserCountsModel.updateCounts({
+              userId: authorId,
+              countChanges: { posts: -1, replies: parentUri ? -1 : 0 },
+            }),
+          );
 
           // Remove post from streams
           this.updatePostStream({ compositePostId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });

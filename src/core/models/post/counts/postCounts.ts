@@ -27,7 +27,7 @@ export class PostCountsModel
     return { id: data[0], ...data[1] };
   }
 
-  static async updateCounts( { postCompositeId, countChanges }: Core.TPostCountsParams): Promise<void> {
+  static async updateCounts({ postCompositeId, countChanges }: Core.TPostCountsParams): Promise<void> {
     const postCounts = await Core.PostCountsModel.findById(postCompositeId);
     if (!postCounts) return;
 

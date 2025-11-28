@@ -91,4 +91,12 @@ export class StreamPostsController {
   static async getStreamHead(params: Core.TStreamIdParams): Promise<number> {
     return await Core.PostStreamApplication.getStreamHead(params);
   }
+
+  /**
+   * Merge the unread stream with the post stream
+   * @param params - The stream ID to merge the unread stream with the post stream
+   */
+  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams) {
+    return await Core.PostStreamApplication.mergeUnreadStreamWithPostStream(params);
+  }
 }

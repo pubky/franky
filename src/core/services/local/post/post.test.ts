@@ -143,7 +143,10 @@ describe('LocalPostService', () => {
       expect(relationships!.reposted).toBeNull();
 
       // Verify user count increment for root post (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 1, replies: 0 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: 1, replies: 0 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -169,7 +172,10 @@ describe('LocalPostService', () => {
       expect(parentCounts!.replies).toBe(1);
 
       // Verify user count increments for reply (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 1, replies: 1 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: 1, replies: 1 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -359,7 +365,10 @@ describe('LocalPostService', () => {
       expect(tags).toBeUndefined();
 
       // Verify user count decrement for root post (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: -1, replies: 0 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: -1, replies: 0 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -405,7 +414,10 @@ describe('LocalPostService', () => {
       expect(parentCounts!.replies).toBe(0);
 
       // Verify user count decrements for reply (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: -1, replies: -1 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: -1, replies: -1 },
+      });
 
       userCountsSpy.mockRestore();
     });

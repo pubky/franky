@@ -5,7 +5,7 @@
  * Extends common coordinator types with notification-specific configuration.
  */
 
-import { type PollingServiceConfig, type PollingServiceState } from '../coordinators.types';
+import { type PollingServiceConfig, type PollingServiceState } from '@/core/coordinators/base';
 
 /**
  * Notification coordinator internal state

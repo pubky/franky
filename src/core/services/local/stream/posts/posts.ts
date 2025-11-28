@@ -128,6 +128,20 @@ export class LocalStreamPostsService {
   }
 
   /**
+   * Merge the unread stream with the post stream
+   * @param streamId - The stream ID to merge the unread stream with the post stream
+   * @returns void
+   */
+  static async mergeUnreadStreamWithPostStream({ streamId }: Core.TStreamIdParams): Promise<void> {
+    const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadPostStream) return;
+    const postStream = await Core.PostStreamModel.findById(streamId);
+    if (!postStream) return;
+    const combinedStream = [...unreadPostStream.stream, ...postStream.stream];
+    await Core.PostStreamModel.upsert(streamId, combinedStream);
+  }
+
+  /**
    * Persist posts from Nexus API to local IndexedDB
    *
    * Processes an array of Nexus posts and saves them to the local database.
@@ -262,7 +276,7 @@ export class LocalStreamPostsService {
     const existingIds = new Set(unreadPostStream.stream);
     const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
     if (newPostsToAdd.length === 0) return;
-    const combinedStream = [ ...newPostsToAdd, ...unreadPostStream.stream];
+    const combinedStream = [...newPostsToAdd, ...unreadPostStream.stream];
     await Core.UnreadPostStreamModel.upsert(streamId, combinedStream);
   }
 }

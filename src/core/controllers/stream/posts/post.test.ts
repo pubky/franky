@@ -78,6 +78,8 @@ describe('StreamPostsController', () => {
       expect(fetchMissingPostsSpy).toHaveBeenCalledWith({
         cacheMissPostIds,
         viewerId,
+        streamId,
+        streamHead: Core.SKIP_FETCH_NEW_POSTS,
       });
       expect(result).toEqual({
         nextPageIds,
@@ -265,6 +267,8 @@ describe('StreamPostsController', () => {
       expect(Core.PostStreamApplication.fetchMissingPostsFromNexus).toHaveBeenCalledWith({
         cacheMissPostIds,
         viewerId,
+        streamId,
+        streamHead: Core.SKIP_FETCH_NEW_POSTS,
       });
     });
 

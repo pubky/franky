@@ -40,6 +40,10 @@ export class PostStreamApplication {
     return await Core.LocalStreamPostsService.getStreamHead(params);
   }
 
+  static async mergeUnreadStreamWithPostStream(params: Core.TStreamIdParams): Promise<void> {
+    return await Core.LocalStreamPostsService.mergeUnreadStreamWithPostStream(params);
+  }
+
   static async getOrFetchStreamSlice({
     streamId,
     streamHead,
@@ -260,7 +264,7 @@ export class PostStreamApplication {
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
           countChanges.replies = 1;
         }
-        await Core.LocalProfileService.upsertCounts({ userId: authorId}, countChanges as Core.NexusUserCounts );
+        await Core.LocalProfileService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
       }
     }
   }
