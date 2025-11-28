@@ -292,40 +292,16 @@ This document outlines the essential rules and patterns for creating unit tests 
    });
    ```
    
-   ❌ **Bad: Mocking icon components**
+   ❌ **Bad: Mocking icon components or utility functions**
    ```typescript
-   // Don't do this - use real icons
+   // Don't do this - use real icons and icon utilities
    vi.mock('@/libs/icons', () => ({
      Follow: () => <span>Mock Icon</span>,
+     getIconFromUrl: vi.fn().mockReturnValue(() => <span>Mock</span>),
    }));
    ```
    
-   ### When to Mock Icon-Related Functions
-   Only mock icon-related utility functions (like `getIconFromUrl`) when:
-   - Testing error conditions or edge cases
-   - The function performs complex logic that needs isolation
-   - Testing fallback behaviour when icon lookup fails
-   
-   ✅ **Good: Mock only utility functions, not components**
-   ```typescript
-   // Mock the utility function, but keep real icon components
-   vi.mock('@/libs/icons', async (importOriginal) => {
-     const actual = await importOriginal<typeof import('@/libs/icons')>();
-     return {
-       ...actual,  // Keep all real icon components
-       getIconFromUrl: vi.fn().mockReturnValue(actual.XTwitter),  // Mock only the utility
-     };
-   });
-   ```
-   
-   ❌ **Bad: Mocking icon components unnecessarily**
-   ```typescript
-   // Don't mock icon components - use real ones
-   vi.mock('@/libs/icons', () => ({
-     Follow: () => <span data-testid="mock-icon">Icon</span>,
-     Reply: () => <span data-testid="mock-icon">Icon</span>,
-   }));
-   ```
+   **Note**: Icon utility functions like `getIconFromUrl` return actual icon components. Always use real implementations to ensure snapshots capture the correct icons.
 
 ## Testing Workflow
 
