@@ -41,7 +41,7 @@ export const PostCodeBlock = (props: PostCodeBlockProps) => {
       className="max-w-69.5 xsm:max-w-72 sm:max-w-120 md:max-w-168 lg:max-w-130 xl:max-w-175"
     >
       <Atoms.Container className="flex-row items-center justify-between gap-x-2 rounded-t-md bg-gray-600 px-4">
-        <Atoms.Typography size="sm">code</Atoms.Typography>
+        <Atoms.Typography size="sm">{lang}</Atoms.Typography>
 
         <Atoms.Button
           onClick={(e) => {
