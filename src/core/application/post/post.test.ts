@@ -759,4 +759,167 @@ describe('Post Application', () => {
       });
     });
   });
+
+  describe('getOrFetchPost', () => {
+    const mockPostDetails: Core.PostDetailsModelSchema = {
+      id: 'author:post123',
+      content: 'Test post',
+      kind: 'short',
+      uri: 'pubky://author/pub/pubky.app/posts/post123',
+      indexed_at: Date.now(),
+      attachments: null,
+    };
+
+    it('should return post from local database if exists', async () => {
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPostDetails);
+
+      const result = await Core.PostApplication.getOrFetchPost({
+        compositeId: 'author:post123',
+        viewerId: mockViewerId,
+      });
+
+      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(result).toEqual(mockPostDetails);
+    });
+
+    it('should fetch post from Nexus using stream posts logic', async () => {
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
+      const readSpyFirst = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+      const fetchMissingSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+        .mockResolvedValue(undefined);
+      const readSpySecond = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(mockPostDetails);
+
+      const result = await Core.PostApplication.getOrFetchPost({
+        compositeId: 'author:post123',
+        viewerId: mockViewerId,
+      });
+
+      expect(readSpyFirst).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(fetchMissingSpy).toHaveBeenCalledWith({
+        cacheMissPostIds: ['author:post123'],
+        viewerId: mockViewerId,
+      });
+      expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(result).toEqual(mockPostDetails);
+    });
+
+    it('should return null when post not found in Nexus', async () => {
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
+      const readSpyFirst = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+      const fetchMissingSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+        .mockResolvedValue(undefined);
+      const readSpySecond = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+
+      const result = await Core.PostApplication.getOrFetchPost({
+        compositeId: 'author:post123',
+        viewerId: mockViewerId,
+      });
+
+      expect(readSpyFirst).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(fetchMissingSpy).toHaveBeenCalledWith({
+        cacheMissPostIds: ['author:post123'],
+        viewerId: mockViewerId,
+      });
+      expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getPostCounts', () => {
+    it('should call LocalPostService.readPostCounts', async () => {
+      const mockCounts: Core.PostCountsModelSchema = {
+        id: 'author:post123',
+        tags: 5,
+        unique_tags: 3,
+        replies: 10,
+        reposts: 2,
+      };
+
+      const getCountsSpy = vi.spyOn(Core.LocalPostService, 'readPostCounts').mockResolvedValue(mockCounts);
+
+      const result = await Core.PostApplication.getPostCounts({ compositeId: 'author:post123' });
+
+      expect(getCountsSpy).toHaveBeenCalledWith('author:post123');
+      expect(result).toEqual(mockCounts);
+    });
+  });
+
+  describe('getPostTags', () => {
+    it('should call LocalPostService.readPostTags', async () => {
+      const mockTags: Core.TagCollectionModelSchema<string>[] = [
+        {
+          id: 'author:post123',
+          tags: [{ label: 'tag1', taggers: ['test-viewer-id'] as Core.Pubky[], taggers_count: 0, relationship: false }],
+        },
+      ];
+
+      const getTagsSpy = vi.spyOn(Core.LocalPostService, 'readPostTags').mockResolvedValue(mockTags);
+
+      const result = await Core.PostApplication.getPostTags({ compositeId: 'author:post123' });
+
+      expect(getTagsSpy).toHaveBeenCalledWith('author:post123');
+      expect(result).toEqual(mockTags);
+    });
+  });
+
+  describe('getPostRelationships', () => {
+    it('should call LocalPostService.readPostRelationships', async () => {
+      const mockRelationships: Core.PostRelationshipsModelSchema = {
+        id: 'author:post123',
+        replied: 'pubky://parent/pub/pubky.app/posts/parent123',
+        reposted: null,
+        mentioned: [],
+      };
+
+      const getRelationshipsSpy = vi
+        .spyOn(Core.LocalPostService, 'readPostRelationships')
+        .mockResolvedValue(mockRelationships);
+
+      const result = await Core.PostApplication.getPostRelationships({ compositeId: 'author:post123' });
+
+      expect(getRelationshipsSpy).toHaveBeenCalledWith('author:post123');
+      expect(result).toEqual(mockRelationships);
+    });
+
+    it('should return null when relationships do not exist', async () => {
+      const getRelationshipsSpy = vi.spyOn(Core.LocalPostService, 'readPostRelationships').mockResolvedValue(null);
+
+      const result = await Core.PostApplication.getPostRelationships({ compositeId: 'nonexistent:post' });
+
+      expect(getRelationshipsSpy).toHaveBeenCalledWith('nonexistent:post');
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getPostDetails', () => {
+    it('should call LocalPostService.readPostDetails', async () => {
+      const mockPost: Core.PostDetailsModelSchema = {
+        id: 'author:post123',
+        content: 'Test post',
+        indexed_at: Date.now(),
+        kind: 'short',
+        uri: 'pubky://author/pub/pubky.app/posts/post123',
+        attachments: null,
+      };
+
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(mockPost);
+
+      const result = await Core.PostApplication.getPostDetails({ compositeId: 'author:post123' });
+
+      expect(readSpy).toHaveBeenCalledWith({ postId: 'author:post123' });
+      expect(result).toEqual(mockPost);
+    });
+
+    it('should return null when post does not exist', async () => {
+      const readSpy = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
+
+      const result = await Core.PostApplication.getPostDetails({ compositeId: 'nonexistent:post' });
+
+      expect(readSpy).toHaveBeenCalledWith({ postId: 'nonexistent:post' });
+      expect(result).toBeNull();
+    });
+  });
 });

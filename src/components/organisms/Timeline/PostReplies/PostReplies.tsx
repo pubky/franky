@@ -6,22 +6,21 @@ import * as Core from '@/core';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as Types from './PostReplies.types';
 
 /**
  * TimelinePostReplies
  *
  * Renders replies for a specific post in the timeline with thread connectors (flat structure, 1 level).
+ * This component shows a preview of up to 3 replies inline with the parent post.
+ * It does NOT use pagination - for full replies view, see TimelineRepliesWithParent.
  */
-interface TimelinePostRepliesProps {
-  postId: string;
-  onPostClick: (postId: string) => void;
-}
 
-export function TimelinePostReplies({ postId, onPostClick }: TimelinePostRepliesProps) {
+export function TimelinePostReplies({ postId, onPostClick }: Types.TimelinePostRepliesProps) {
   const [replyIds, setReplyIds] = useState<string[]>([]);
 
   // Watch for changes in post_counts to trigger refetch when replies count changes
-  const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ postId }), [postId]);
+  const postCounts = useLiveQuery(() => Core.PostController.getPostCounts({ compositeId: postId }), [postId]);
 
   const fetchReplies = useCallback(
     async (repliesCount: number) => {
