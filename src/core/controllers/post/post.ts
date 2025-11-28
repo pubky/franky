@@ -4,18 +4,59 @@ import * as Libs from '@/libs';
 export class PostController {
   private constructor() {} // Prevent instantiation
 
-  static async getPostDetails({ postId }: { postId: string }) {
-    return await Core.PostDetailsModel.findById(postId);
+  /**
+   * Get post details from local database
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @returns Post details or null if not found
+   */
+  static async getPostDetails({ compositeId }: Core.TCompositeId) {
+    return await Core.PostApplication.getPostDetails({ compositeId });
   }
 
   /**
    * Get post counts for a specific post
    * @param params - Parameters object
-   * @param params.postId - ID of the post to get counts for
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
    * @returns Post counts (with default values if not found)
    */
-  static async getPostCounts({ postId }: { postId: string }): Promise<Core.PostCountsModelSchema> {
-    return await Core.LocalPostService.getPostCounts(postId);
+  static async getPostCounts({ compositeId }: Core.TCompositeId) {
+    return await Core.PostApplication.getPostCounts({ compositeId });
+  }
+
+  /**
+   * Get or fetch a post - reads from local DB first, fetches from Nexus if not found
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @returns Post details or null if not found
+   */
+  static async getOrFetchPost({
+    compositeId,
+    viewerId,
+  }: Core.TCompositeId & { viewerId: Core.Pubky }): Promise<Core.PostDetailsModelSchema | null> {
+    return await Core.PostApplication.getOrFetchPost({ compositeId, viewerId });
+  }
+
+  /**
+   * Get post tags for a specific post
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @returns Post tags
+   */
+  static async getPostTags({ compositeId }: Core.TCompositeId): Promise<Core.TagCollectionModelSchema<string>[]> {
+    return await Core.PostApplication.getPostTags({ compositeId });
+  }
+
+  /**
+   * Get post relationships for a specific post
+   * @param params - Parameters object
+   * @param params.compositeId - Composite post ID in format "authorId:postId"
+   * @returns Post relationships or null if not found
+   */
+  static async getPostRelationships({
+    compositeId,
+  }: Core.TCompositeId): Promise<Core.PostRelationshipsModelSchema | null> {
+    return await Core.PostApplication.getPostRelationships({ compositeId });
   }
 
   /**

@@ -3,6 +3,24 @@ import * as Libs from '@/libs';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
+  private constructor() {}
+
+  /**
+   * Read a post from the local database.
+   * @param postId - ID of the post to read
+   * @returns Post details
+   */
+  static async readPostDetails({ postId }: { postId: string }) {
+    try {
+      return await Core.PostDetailsModel.findById(postId);
+    } catch (error) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
   /**
    * Save a new post to the local database.
    *
@@ -241,7 +259,7 @@ export class LocalPostService {
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async getPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+  static async readPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
     try {
       const counts = await Core.PostCountsModel.findById(postId);
       return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
@@ -272,5 +290,66 @@ export class LocalPostService {
     const newCount = Math.max(0, currentCount + countChange);
 
     await Core.PostCountsModel.update(postId, { [countField]: newCount });
+  }
+
+  static async readPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
+    try {
+      const tags = await Core.PostTagsModel.findById(postId);
+      if (!tags) return [];
+
+      return [tags] as unknown as Core.TagCollectionModelSchema<string>[];
+    } catch (error) {
+      Libs.Logger.error('Failed to get post tags', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post tags', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Get post relationships for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post relationships or null if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
+    try {
+      const relationships = await Core.PostRelationshipsModel.findById(postId);
+      return relationships ?? null;
+    } catch (error) {
+      Libs.Logger.error('Failed to get post relationships', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post relationships', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Persists complete post data from Nexus to local database
+   * Uses LocalStreamPostsService.persistPosts for consistency
+   *
+   * @param params.postId - Composite post ID (author:postId) - not used, kept for API compatibility
+   * @param params.postData - Complete post data from Nexus
+   *
+   * @throws {DatabaseError} When database operations fail
+   * @returns Post attachments that need to be downloaded
+   */
+  static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<string[]> {
+    try {
+      Libs.Logger.debug(`[LocalPostService] Persisting post ${postId}`);
+      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts([postData]);
+      Libs.Logger.debug(`[LocalPostService] Post ${postId} persisted with ${postAttachments.length} attachments`);
+      return postAttachments;
+    } catch (error) {
+      Libs.Logger.error('Failed to persist post data', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to persist post data', 500, {
+        error,
+        postId,
+      });
+    }
   }
 }

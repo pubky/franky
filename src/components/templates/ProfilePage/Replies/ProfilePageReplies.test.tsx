@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ProfilePageReplies } from './ProfilePageReplies';
+import * as Hooks from '@/hooks';
 import * as Core from '@/core';
 
 // Mock Next.js router
@@ -23,10 +24,6 @@ vi.mock('@/core', async () => {
     useAuthStore: vi.fn(() => ({
       currentUserPubky: 'test-user-id',
     })),
-    StreamPostsController: {
-      getOrFetchStreamSlice: vi.fn(),
-      getCachedLastPostTimestamp: vi.fn().mockResolvedValue(0),
-    },
   };
 });
 
@@ -38,18 +35,46 @@ vi.mock('@/hooks', async () => {
     useInfiniteScroll: () => ({
       sentinelRef: { current: null },
     }),
+    useStreamPagination: vi.fn(),
+    usePostNavigation: () => ({
+      navigateToPost: mockPush,
+    }),
   };
 });
 
 describe('ProfilePageReplies', () => {
+  const mockUseStreamPagination = vi.mocked(Hooks.useStreamPagination);
+
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Mock NexusUserService to prevent database errors
+    vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
+    vi.spyOn(Core.NexusUserService, 'counts').mockResolvedValue(undefined);
+    vi.spyOn(Core.NexusUserService, 'tags').mockResolvedValue([]);
+
+    // Default mock return value
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
   });
 
   it('renders loading state initially', () => {
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockImplementation(
-      () => new Promise(() => {}), // Never resolves
-    );
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: true,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
 
     render(<ProfilePageReplies />);
 
@@ -59,26 +84,34 @@ describe('ProfilePageReplies', () => {
   it('renders replies after loading', async () => {
     const mockPostIds = ['test-user-id:reply1', 'test-user-id:reply2'];
 
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValueOnce({
-      nextPageIds: mockPostIds,
-      timestamp: 123456789,
+    mockUseStreamPagination.mockReturnValue({
+      postIds: mockPostIds,
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: true,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
     });
 
     render(<ProfilePageReplies />);
 
     await waitFor(() => {
-      expect(Core.StreamPostsController.getOrFetchStreamSlice).toHaveBeenCalledWith({
+      expect(mockUseStreamPagination).toHaveBeenCalledWith({
         streamId: 'author_replies:test-user-id',
-        lastPostId: undefined,
-        streamTail: 0,
       });
     });
   });
 
   it('renders empty state when no replies', async () => {
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockResolvedValueOnce({
-      nextPageIds: [],
-      timestamp: undefined,
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: false,
+      loadingMore: false,
+      error: null,
+      hasMore: false,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
     });
 
     render(<ProfilePageReplies />);
@@ -89,14 +122,20 @@ describe('ProfilePageReplies', () => {
   });
 
   it('renders error state on fetch failure', async () => {
-    vi.mocked(Core.StreamPostsController.getOrFetchStreamSlice).mockRejectedValueOnce(
-      new Error('Failed to fetch replies'),
-    );
+    mockUseStreamPagination.mockReturnValue({
+      postIds: [],
+      loading: false,
+      loadingMore: false,
+      error: 'An unknown error occurred.',
+      hasMore: false,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+    });
 
     render(<ProfilePageReplies />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Failed to fetch replies/)).toBeInTheDocument();
+      expect(screen.getByText(/An unknown error occurred/)).toBeInTheDocument();
     });
   });
 });

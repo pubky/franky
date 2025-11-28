@@ -58,13 +58,7 @@ vi.mock('@/organisms', () => ({
 
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
-  PostTagsList: ({ tags }: { tags: Array<{ id: string; label: string }> }) => (
-    <ul data-testid="post-tags-list">
-      {tags.map((t) => (
-        <li key={t.id}>{t.label}</li>
-      ))}
-    </ul>
-  ),
+  PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
 }));
 
 // Keep Core shape only for potential spying if needed
@@ -96,9 +90,7 @@ describe('PostMain', () => {
 
     expect(screen.getByTestId('post-header')).toHaveTextContent('PostHeader post-123');
     expect(screen.getByTestId('post-content')).toHaveTextContent('PostContent post-123');
-    expect(screen.getByTestId('post-tags-list')).toBeInTheDocument();
-    expect(screen.getByText('alpha')).toBeInTheDocument();
-    expect(screen.getByText('beta')).toBeInTheDocument();
+    expect(screen.getByTestId('post-tags-list')).toHaveTextContent('PostTagsList post-123');
     expect(screen.getByTestId('post-actions')).toBeInTheDocument();
   });
 

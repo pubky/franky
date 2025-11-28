@@ -29,13 +29,12 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
         data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
-        <ul
+        <div
           data-testid="post-tags-list"
         >
-          <li>
-            alpha
-          </li>
-        </ul>
+          PostTagsList 
+          post-no-reply-456
+        </div>
         <div
           data-testid="post-actions"
         >
@@ -54,7 +53,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="w-3 flex-shrink-0"
+    data-class-name="w-3 shrink-0"
     data-testid="container"
   >
     <div
@@ -89,13 +88,12 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
-        <ul
+        <div
           data-testid="post-tags-list"
         >
-          <li>
-            alpha
-          </li>
-        </ul>
+          PostTagsList 
+          post-reply-123
+        </div>
         <div
           data-testid="post-actions"
         >
@@ -114,7 +112,7 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="w-3 flex-shrink-0"
+    data-class-name="w-3 shrink-0"
     data-testid="container"
   >
     <div
@@ -149,19 +147,12 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
         data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
-        <ul
+        <div
           data-testid="post-tags-list"
         >
-          <li>
-            alpha
-          </li>
-          <li>
-            beta
-          </li>
-          <li>
-            gamma
-          </li>
-        </ul>
+          PostTagsList 
+          post-123
+        </div>
         <div
           data-testid="post-actions"
         >
@@ -180,7 +171,7 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
   data-testid="container"
 >
   <div
-    data-class-name="w-3 flex-shrink-0"
+    data-class-name="w-3 shrink-0"
     data-testid="container"
   >
     <div
@@ -215,9 +206,12 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
         data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
-        <ul
+        <div
           data-testid="post-tags-list"
-        />
+        >
+          PostTagsList 
+          post-789
+        </div>
         <div
           data-testid="post-actions"
         >

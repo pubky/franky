@@ -71,11 +71,6 @@ exports[`TimelinePosts > Snapshots > should match snapshot with posts 1`] = `
         />
       </div>
       <div
-        data-testid="timeline-end-message"
-      >
-        End of timeline
-      </div>
-      <div
         class="h-[20px]"
         data-testid="container"
       />

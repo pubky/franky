@@ -18,6 +18,11 @@ export function ProfilePageReplies() {
     ? (`${Core.StreamSource.AUTHOR_REPLIES}:${currentUserPubky}` as Core.AuthorRepliesStreamCompositeId)
     : undefined;
 
-  // Delegate to TimelinePosts with the specific streamId
-  return <Organisms.TimelinePosts streamId={streamId} />;
+  // If no streamId, render empty state
+  if (!streamId) {
+    return null;
+  }
+
+  // Use TimelineRepliesWithParent to show parent post + reply with line
+  return <Organisms.TimelineRepliesWithParent streamId={streamId} />;
 }

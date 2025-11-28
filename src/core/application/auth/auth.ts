@@ -66,4 +66,12 @@ export class AuthApplication {
     const homeserverService = Core.HomeserverService.getInstance(secretKey);
     await homeserverService.logout(pubky);
   }
+
+  /**
+   * Generates a signup token for user registration.
+   * @returns Promise resolving to the generated signup token
+   */
+  static async generateSignupToken() {
+    return await Core.HomeserverService.generateSignupToken();
+  }
 }

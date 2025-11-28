@@ -561,7 +561,7 @@ describe('AuthController', () => {
   describe('generateSignupToken', () => {
     it('should generate signup token successfully', async () => {
       const generateSignupTokenSpy = vi
-        .spyOn(Core.HomeserverService, 'generateSignupToken')
+        .spyOn(Core.AuthApplication, 'generateSignupToken')
         .mockResolvedValue('test-token');
       const result = await AuthController.generateSignupToken();
       expect(result).toBe('test-token');

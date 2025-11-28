@@ -110,3 +110,12 @@ export function createSanitizationError(
 ): AppError {
   return new AppError(type, message, statusCode, details);
 }
+
+/**
+ * Type guard to check if an error is an AppError
+ * @param error - The error to check
+ * @returns True if the error is an AppError instance
+ */
+export function isAppError(error: unknown): error is AppError {
+  return error instanceof AppError;
+}
