@@ -9,13 +9,14 @@ vi.mock('dns/promises', () => ({
   },
 }));
 
-// Mock net module - must return a default export
+// Mock net module - use a simple mock that can be configured
 vi.mock('net', () => {
+  const mockFn = vi.fn(() => 0);
   return {
     default: {
-      isIP: vi.fn(),
+      isIP: mockFn,
     },
-    isIP: vi.fn(),
+    isIP: mockFn,
   };
 });
 
@@ -25,6 +26,8 @@ import { isIP } from 'net';
 describe('API Route: /api/og-metadata', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset isIP mock to default (returns 0 for non-IPs)
+    vi.mocked(isIP).mockReturnValue(0);
   });
 
   afterEach(() => {
@@ -98,11 +101,195 @@ describe('API Route: /api/og-metadata', () => {
       expect(response.status).toBe(400);
       expect(data.error).toContain('Invalid protocol');
     });
+
+    it('should reject URL with just www. (no TLD)', async () => {
+      const request = createRequest('https://www.');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('top-level domain');
+    });
+
+    it('should reject URL with hostname ending in dot', async () => {
+      const request = createRequest('https://example.com.');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('top-level domain');
+    });
+
+    it('should reject URL with single-part hostname (no dots)', async () => {
+      // localhost is allowed, so we need a different single-part hostname
+      // Actually, let me test with a real single-part that's not localhost
+      const request = createRequest('https://invalid');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('top-level domain');
+    });
+
+    it('should reject URL with TLD less than 2 characters', async () => {
+      const request = createRequest('https://example.c');
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('Top-level domain (TLD) must be at least 2 characters');
+    });
+
+    it('should allow localhost (special exception)', async () => {
+      vi.mocked(dns.resolve4).mockResolvedValue(['127.0.0.1']);
+
+      const request = createRequest('http://localhost');
+      const response = await GET(request);
+      const data = await response.json();
+
+      // Should pass hostname validation but fail on IP check (which is expected)
+      expect(response.status).toBe(403);
+      expect(data.error).toContain('Blocked IP range');
+    });
+
+    it('should allow IP addresses through hostname validation', async () => {
+      // Mock isIP to recognize IP addresses using the shared mock
+      vi.mocked(isIP).mockImplementation((hostname: string) => {
+        // Check if it looks like an IPv4 address
+        if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
+          return 4;
+        }
+        return 0;
+      });
+
+      // Verify the mock is working
+      expect(isIP('1.1.1.1')).toBe(4);
+      expect(isIP('127.0.0.1')).toBe(4);
+      expect(isIP('0.0.0.0')).toBe(4);
+      expect(isIP('example.com')).toBe(0);
+
+      // 1.1.1.1 is a public IP (Cloudflare DNS), so isIpSafe should allow it
+      // We need to mock fetch since it will pass all validations
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Test" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('http://1.1.1.1');
+      const response = await GET(request);
+
+      // Should pass hostname validation (IP addresses are allowed)
+      // and pass IP safety check (1.1.1.1 is public)
+      expect(response.status).toBe(200);
+    });
+
+    it('should allow valid domain with TLD', async () => {
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Test" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('https://www.example.com');
+      const response = await GET(request);
+
+      expect(response.status).toBe(200);
+    });
+
+    it('should allow subdomain with valid TLD', async () => {
+      vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
+
+      const mockHtml = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta property="og:title" content="Test" />
+          </head>
+          <body></body>
+        </html>
+      `;
+
+      global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/html' }),
+        body: {
+          getReader: () => ({
+            read: vi
+              .fn()
+              .mockResolvedValueOnce({
+                done: false,
+                value: new TextEncoder().encode(mockHtml),
+              })
+              .mockResolvedValueOnce({
+                done: true,
+                value: undefined,
+              }),
+            cancel: vi.fn(),
+          }),
+        },
+      });
+
+      const request = createRequest('https://subdomain.example.co.uk');
+      const response = await GET(request);
+
+      expect(response.status).toBe(200);
+    });
   });
 
   describe('SSRF Protection - DNS Rebinding Prevention', () => {
     it('should block localhost by hostname', async () => {
-      vi.mocked(isIP).mockReturnValue(0); // Not an IP
       vi.mocked(dns.resolve4).mockResolvedValue(['127.0.0.1']);
 
       const request = createRequest('http://localhost/admin');
@@ -115,7 +302,8 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should block 127.0.0.1 direct IP', async () => {
-      vi.mocked(isIP).mockReturnValue(4); // IPv4
+      // Mock isIP to recognize IP addresses using the shared mock
+      vi.mocked(isIP).mockReturnValue(4);
 
       const request = createRequest('http://127.0.0.1/admin');
       const response = await GET(request);
@@ -123,12 +311,9 @@ describe('API Route: /api/og-metadata', () => {
 
       expect(response.status).toBe(403);
       expect(data.error).toContain('Blocked IP range');
-      // Note: isIP returns truthy but our implementation still calls resolve4 for safety
-      // This is acceptable as it provides defense in depth
     });
 
     it('should block private network 10.0.0.0/8', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['10.0.0.1']);
 
       const request = createRequest('http://internal.company.com/secrets');
@@ -140,7 +325,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should block private network 172.16.0.0/12', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['172.16.0.1']);
 
       const request = createRequest('http://evil.com');
@@ -152,7 +336,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should block private network 192.168.0.0/16', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['192.168.1.1']);
 
       const request = createRequest('http://router.local');
@@ -164,7 +347,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should block link-local addresses 169.254.0.0/16', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['169.254.169.254']);
 
       const request = createRequest('http://metadata.aws');
@@ -176,7 +358,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should block carrier-grade NAT 100.64.0.0/10', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['100.64.0.1']);
 
       const request = createRequest('http://cgnat.example.com');
@@ -199,7 +380,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should handle DNS resolution failures', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockRejectedValue(new Error('ENOTFOUND'));
 
       const request = createRequest('http://nonexistent.example.com');
@@ -211,7 +391,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should handle empty DNS resolution', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue([]);
 
       const request = createRequest('http://example.com');
@@ -232,7 +411,6 @@ describe('API Route: /api/og-metadata', () => {
       // 4. evil.com now resolves to private IP (192.168.1.1)
       // 5. Our implementation MUST block this
 
-      vi.mocked(isIP).mockReturnValue(0);
       // Simulate the attack: DNS now points to private IP
       vi.mocked(dns.resolve4).mockResolvedValue(['192.168.1.1']);
 
@@ -249,7 +427,6 @@ describe('API Route: /api/og-metadata', () => {
 
   describe('Valid Requests', () => {
     it('should allow public IPs', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']); // Cloudflare DNS
 
       // Mock fetch to simulate successful response
@@ -300,7 +477,6 @@ describe('API Route: /api/og-metadata', () => {
 
   describe('Response Size Limits', () => {
     it('should block responses larger than 5MB', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       // Create a chunk that will exceed 5MB when accumulated
@@ -331,7 +507,6 @@ describe('API Route: /api/og-metadata', () => {
 
   describe('Content Type Validation', () => {
     it('should reject non-HTML content', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       global.fetch = vi.fn().mockResolvedValue({
@@ -355,7 +530,6 @@ describe('API Route: /api/og-metadata', () => {
 
   describe('Image URL Validation', () => {
     it('should validate image URLs for SSRF', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       // Main URL resolves to public IP
       vi.mocked(dns.resolve4).mockResolvedValueOnce(['1.1.1.1']);
 
@@ -403,7 +577,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should normalize relative image URLs', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValueOnce(['1.1.1.1']).mockResolvedValueOnce(['1.1.1.1']);
 
       const mockHtml = `
@@ -446,7 +619,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should block file:// protocol in image URLs', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const mockHtml = `
@@ -491,7 +663,6 @@ describe('API Route: /api/og-metadata', () => {
 
   describe('Title and URL Truncation', () => {
     it('should truncate long titles with "..." at the end', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       // Create a title longer than 50 chars (176 chars total)
@@ -537,7 +708,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should truncate long URLs with "..." in the middle', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const longUrl =
@@ -578,13 +748,10 @@ describe('API Route: /api/og-metadata', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.url?.length).toBeLessThanOrEqual(40);
-      expect(data.url).toContain('...');
-      expect(data.url).toMatch(/^https:\/\/example\.com.*\.\.\..*display$/); // Starts with beginning, has "...", ends with end
+      expect(data.url).toBe('https://example.com...o/long/for/display');
     });
 
     it('should not truncate short titles', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const shortTitle = 'Short Title';
@@ -627,7 +794,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should not truncate short URLs', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const shortUrl = 'https://example.com/short';
@@ -673,7 +839,6 @@ describe('API Route: /api/og-metadata', () => {
 
   describe('HTML Entity Decoding', () => {
     it('should decode HTML entities in title (apostrophe &#039;)', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const mockHtml = `
@@ -718,7 +883,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should decode multiple HTML entities in title', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const mockHtml = `
@@ -760,7 +924,6 @@ describe('API Route: /api/og-metadata', () => {
     });
 
     it('should decode hexadecimal HTML entities', async () => {
-      vi.mocked(isIP).mockReturnValue(0);
       vi.mocked(dns.resolve4).mockResolvedValue(['1.1.1.1']);
 
       const mockHtml = `
