@@ -2,7 +2,7 @@
 
 exports[`FollowersEmpty - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  class="relative items-center gap-6 px-0 py-6"
   data-testid="container"
 >
   <img
@@ -12,7 +12,7 @@ exports[`FollowersEmpty - Snapshots > matches snapshot with default props 1`] = 
     src="/images/followers-empty-state.png"
   />
   <div
-    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    class="flex items-center rounded-full bg-brand/16 p-6"
     data-testid="container"
   >
     <svg
@@ -24,47 +24,39 @@ exports[`FollowersEmpty - Snapshots > matches snapshot with default props 1`] = 
     </svg>
   </div>
   <div
-    class="relative z-10 flex w-full flex-col items-center justify-center"
+    class="items-center gap-6"
     data-testid="container"
   >
     <h3
-      class="pb-6 text-center leading-8 font-bold"
       data-testid="typography"
     >
       Looking for followers?
     </h3>
     <p
-      class="mb-0 text-center text-base leading-6 font-medium text-secondary-foreground"
-      data-testid="typography"
-    >
-      When someone follows this account, their profile will appear here.
-    </p>
-    <p
       class="text-center text-base leading-6 font-medium text-secondary-foreground"
       data-testid="typography"
     >
+      When someone follows this account, their profile will appear here.
+      <br />
       Start posting and engaging with others to grow your followers!
     </p>
   </div>
-  <div
-    class="relative z-10 flex flex-col items-center justify-center"
-    data-testid="container"
+  <button
+    class="gap-2"
+    data-testid="button"
+    data-variant="default"
   >
-    <button
-      class="gap-2 border-brand bg-brand/16 text-brand"
-      data-testid="button"
-      data-variant="default"
+    <svg
+      class="size-4"
+      data-testid="plus-icon"
     >
-      <svg
-        class="size-4"
-        data-testid="plus-icon"
-      >
-        Plus
-      </svg>
-      <span>
-        Create a Post
-      </span>
-    </button>
-  </div>
+      Plus
+    </svg>
+    <span
+      data-testid="typography"
+    >
+      Create a Post
+    </span>
+  </button>
 </div>
 `;

@@ -2,7 +2,7 @@
 
 exports[`NotificationsEmpty - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="relative flex flex-col items-center justify-center gap-6 p-6"
+  class="relative items-center gap-6 px-0 py-6"
   data-testid="container"
 >
   <img
@@ -18,7 +18,7 @@ exports[`NotificationsEmpty - Snapshots > matches snapshot with default props 1`
     style="position: absolute; height: 100%; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; color: transparent;"
   />
   <div
-    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
+    class="flex items-center rounded-full bg-brand/16 p-6"
     data-testid="container"
   >
     <svg
@@ -30,11 +30,10 @@ exports[`NotificationsEmpty - Snapshots > matches snapshot with default props 1`
     </svg>
   </div>
   <div
-    class="relative z-10 flex w-full flex-col items-center justify-center"
+    class="items-center gap-6"
     data-testid="container"
   >
     <h3
-      class="pb-6 text-center leading-8"
       data-testid="typography"
     >
       Nothing to see here yet

@@ -39,6 +39,7 @@ vi.mock('@/atoms', () => ({
       {children}
     </a>
   ),
+  Tag: ({ name }: { name: string }) => <span data-testid="tag">{name}</span>,
 }));
 
 // Mock molecules
@@ -64,7 +65,6 @@ vi.mock('@/molecules', () => ({
       {avatarUrl ? <img src={avatarUrl} alt={name} /> : <span>{name[0]}</span>}
     </div>
   ),
-  PostTag: ({ label }: { label: string }) => <span data-testid="post-tag">{label}</span>,
 }));
 
 // Mock libs
@@ -139,7 +139,7 @@ describe('FollowerItem', () => {
   it('renders tags', () => {
     render(<FollowerItem follower={mockFollower} />);
     // Tags are hidden on mobile (lg:flex), so we check for the tags in the mobile section
-    const tags = screen.getAllByTestId('post-tag');
+    const tags = screen.getAllByTestId('tag');
     // Tags appear twice - once in desktop section (hidden) and once in mobile section
     expect(tags.length).toBeGreaterThanOrEqual(2);
     const bitcoinTags = screen.getAllByText('bitcoin');
@@ -186,7 +186,7 @@ describe('FollowerItem', () => {
   it('handles follower without tags', () => {
     const followerWithoutTags = { ...mockFollower, tags: [] };
     render(<FollowerItem follower={followerWithoutTags} />);
-    const tags = screen.queryAllByTestId('post-tag');
+    const tags = screen.queryAllByTestId('tag');
     expect(tags).toHaveLength(0);
   });
 
@@ -204,7 +204,7 @@ describe('FollowerItem', () => {
       tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5'],
     };
     render(<FollowerItem follower={followerWithManyTags} />);
-    const tags = screen.getAllByTestId('post-tag');
+    const tags = screen.getAllByTestId('tag');
     // Tags appear twice (desktop and mobile), so we check that we have at most 6 (3 * 2)
     expect(tags.length).toBeLessThanOrEqual(6);
     // But each section should only show 3 tags
