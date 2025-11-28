@@ -40,10 +40,15 @@ export class LocalStreamPostsService {
 
   /**
    * Gets the timestamp of the head (first/most recent) post in a stream
+   * First tries from the unread post stream, if not found, tries from the post stream
    */
   static async getStreamHead({ streamId }: Core.TStreamIdParams): Promise<number> {
-    const streamHeadPostId = await Core.PostStreamModel.getStreamHead(streamId);
-    if (!streamHeadPostId) {
+    const unreadCompositePostId = await Core.UnreadPostStreamModel.getStreamHead(streamId);
+    if (unreadCompositePostId) {
+      return await this.getPostDetailsTimestamp({ postCompositeId: unreadCompositePostId as string });
+    }
+    const compositePostId = await Core.PostStreamModel.getStreamHead(streamId);
+    if (!compositePostId) {
       const [sorting, invokeEndpoint, content] = Core.breakDownStreamId(streamId);
       if (invokeEndpoint === Core.StreamSource.REPLIES) {
         const postCompositeId = Core.buildCompositeId({ pubky: sorting, id: content as string });
@@ -52,10 +57,17 @@ export class LocalStreamPostsService {
         if (postCounts && postCounts.replies > 0) return 1;
         return 0;
       }
+      return 0;
     }
-    const postDetails = await Core.PostDetailsModel.findById(streamHeadPostId);
-    if (!postDetails) return 0;
-    return postDetails.indexed_at;
+    return await this.getPostDetailsTimestamp({ postCompositeId: compositePostId as string });
+  }
+
+  private static async getPostDetailsTimestamp({ postCompositeId }: Core.TPostDetailsTimestampParams): Promise<number> {
+    const postDetails = await Core.PostDetailsModel.findById(postCompositeId);
+    if (postDetails) {
+      return postDetails.indexed_at;
+    }
+    return 0;
   }
 
   /**
@@ -244,7 +256,7 @@ export class LocalStreamPostsService {
     const existingIds = new Set(unreadPostStream.stream);
     const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
     if (newPostsToAdd.length === 0) return;
-    const combinedStream = [...unreadPostStream.stream, ...newPostsToAdd];
+    const combinedStream = [ ...newPostsToAdd, ...unreadPostStream.stream];
     await Core.UnreadPostStreamModel.upsert(streamId, combinedStream);
   }
 }

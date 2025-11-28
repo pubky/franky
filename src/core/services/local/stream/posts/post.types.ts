@@ -1,40 +1,44 @@
 import * as Core from '@/core';
 
-export type TPostStreamUpsertParams = {
+export interface TPostStreamUpsertParams {
   streamId: Core.PostStreamId;
   stream: string[];
-};
+}
 
-export type TPostStreamBulkParams = {
+export interface TPostStreamBulkParams {
   postStreams: TPostStreamUpsertParams[];
-};
+}
 
-export type TPrependToStreamParams = {
+export interface TPostDetailsTimestampParams {
+  postCompositeId: string;
+}
+
+export interface TPrependToStreamParams {
   streamId: Core.PostStreamId;
   compositePostId: string;
-};
+}
 
-export type TAddReplyToStreamParams = {
+export interface TAddReplyToStreamParams {
   repliedUri: string | null | undefined;
   replyPostId: string;
   postReplies: Record<Core.ReplyStreamCompositeId, string[]>;
-};
+}
 
-export type THandleNotCommonStreamParamsParams = {
+export interface THandleNotCommonStreamParamsParams {
   authorId: Core.Pubky;
   postId: string | undefined;
-};
+}
 
-export type TPersistPostsParams = {
+export interface TPersistPostsParams {
   posts: Core.NexusPost[];
-};
+}
 
-export type TPostStreamPersistResult = {
+export interface TPostStreamPersistResult {
   postAttachments: string[];
-};
+}
 
-export type TSetStreamPaginationParams = {
+export interface TSetStreamPaginationParams {
   params: Core.TStreamBase;
   streamTail: number;
   streamHead?: number;
-};
+}
