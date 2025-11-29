@@ -41,18 +41,6 @@ export class UserController {
     });
   }
 
-  /**
-   * Refreshes unread notifications for the current user.
-   * @param userId - The user ID to fetch notifications for
-   * @returns Promise resolving to the number of unread notifications
-   */
-  static async notifications({ userId }: Core.TReadProfileParams) {
-    const notificationStore = Core.useNotificationStore.getState();
-    const lastRead = notificationStore.selectLastRead();
-    const unread = await Core.UserApplication.notifications({ userId, lastRead });
-    notificationStore.setUnread(unread);
-  }
-
   static async tags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {
     return await Core.UserApplication.tags(params);
   }

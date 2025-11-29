@@ -15,10 +15,7 @@ export class LocalNotificationService {
     let unreadCount = 0;
 
     const flatNotifications: Core.FlatNotification[] = notificationList.map((notification) => {
-      const flatNotification = {
-        timestamp: notification.timestamp,
-        ...notification.body,
-      } as Core.FlatNotification;
+      const flatNotification = Core.NotificationNormalizer.toFlatNotification(notification);
 
       if (flatNotification.timestamp > lastRead) {
         unreadCount++;
@@ -29,5 +26,9 @@ export class LocalNotificationService {
 
     await Core.NotificationModel.bulkSave(flatNotifications);
     return unreadCount;
+  }
+
+  static async getOlderThan(olderThan: number, limit: number): Promise<Core.FlatNotification[]> {
+    return await Core.NotificationModel.getOlderThan(olderThan, limit);
   }
 }

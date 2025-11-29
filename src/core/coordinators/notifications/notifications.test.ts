@@ -19,7 +19,7 @@ type CoordinatorConfigWithBase = Core.NotificationCoordinatorConfig & PollingSer
  * Reduces boilerplate for most tests
  */
 function setupAuthenticatedTest(userId = 'user123') {
-  const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+  const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
   Core.useAuthStore.getState().setAuthenticated(true);
   Core.useAuthStore.getState().setCurrentUserPubky(userId as unknown as Core.Pubky);
   const coordinator = Core.NotificationCoordinator.getInstance();
@@ -60,7 +60,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('shares state across all getInstance() references', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -96,7 +96,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('new instance after reset has fresh state', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -176,7 +176,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('handles multiple rapid configure() calls gracefully', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -201,7 +201,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('handles configure() during active polling without creating duplicate timers', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -230,7 +230,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('handles start/configure/stop in rapid succession', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -256,7 +256,7 @@ describe('NotificationCoordinator', () => {
 
   describe('Memory Leaks & Cleanup', () => {
     it('stops polling after destroy() is called', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -298,7 +298,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('does not respond to auth changes after destroy()', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -322,7 +322,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('does not respond to visibility changes after destroy()', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -372,7 +372,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('resetInstance() properly cleans up before creating new instance', () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -399,7 +399,7 @@ describe('NotificationCoordinator', () => {
 
   describe('UserId Edge Cases', () => {
     it('does not poll when userId is null', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       // Don't set userId (will be null)
@@ -422,7 +422,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('does not poll when userId is undefined', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky(undefined as unknown as Core.Pubky);
@@ -441,7 +441,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('does not poll when userId is empty string', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('' as unknown as Core.Pubky);
@@ -460,7 +460,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('stops polling when userId becomes null mid-session', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -482,7 +482,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('resumes polling when userId is set after being null', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       // Start with null userId
@@ -507,7 +507,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('handles userId changing between polls', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user1' as unknown as Core.Pubky);
@@ -781,7 +781,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('resumes polling when moving from disabled to enabled route', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -804,7 +804,7 @@ describe('NotificationCoordinator', () => {
     });
 
     it('stops polling when moving from enabled to disabled route', async () => {
-      const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+      const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
       Core.useAuthStore.getState().setAuthenticated(true);
       Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -828,7 +828,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('polls on interval when started (no pollOnStart)', () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -847,7 +847,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('restarts polling when interval changes via configure()', () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -866,7 +866,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('respects page visibility: pauses when hidden, resumes when visible', async () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -914,7 +914,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('ignores page visibility when respectPageVisibility is false', async () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -940,7 +940,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('stops when de-authenticated and resumes when authenticated again', async () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -965,7 +965,7 @@ describe('NotificationCoordinator', () => {
   });
 
   it('pauses on disabled route then resumes on allowed route', async () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
@@ -987,8 +987,8 @@ describe('NotificationCoordinator', () => {
     expect(spy).toHaveBeenCalledTimes(3);
   });
 
-  it('forwards the correct userId to UserController.notifications', async () => {
-    const spy = vi.spyOn(Core.UserController, 'notifications').mockResolvedValue(undefined as unknown as never);
+  it('forwards the correct userId to NotificationController.notifications', async () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
 
     Core.useAuthStore.getState().setAuthenticated(true);
     Core.useAuthStore.getState().setCurrentUserPubky('userABC' as unknown as Core.Pubky);
@@ -1006,7 +1006,7 @@ describe('NotificationCoordinator', () => {
 
   it('continues polling even if a poll attempt throws', async () => {
     const spy = vi
-      .spyOn(Core.UserController, 'notifications')
+      .spyOn(Core.NotificationController, 'notifications')
       .mockRejectedValueOnce(new Error('network'))
       .mockResolvedValue(undefined as unknown as never);
 

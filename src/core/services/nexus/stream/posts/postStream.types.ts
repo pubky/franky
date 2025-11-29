@@ -14,7 +14,7 @@ export enum StreamSource {
   BOOKMARKS = 'bookmarks',
   REPLIES = 'post_replies',
   AUTHOR = 'author',
-  AUTHOR_REPLIES = 'author_replies',
+  AUTHOR_REPLIES = 'author_replies'
 }
 
 export enum StreamKind {
