@@ -246,16 +246,18 @@ export class PostStreamApplication {
     }
 
     // Update the related user counts of the authors of the posts
+    // Batch count updates to avoid race conditions and improve performance
     if (invokeEndpoint === Core.StreamSource.REPLIES || invokeEndpoint === Core.StreamSource.ALL) {
-      for (const postId of compositePostIds) {
+      const countUpdates = compositePostIds.map(async (postId) => {
         const { pubky: authorId } = Core.parseCompositeId(postId);
         // TODO: Comming refactor to use the correct type. New PR
         const countChanges: Partial<Core.NexusUserCounts> = { posts: 1 };
         if (invokeEndpoint === Core.StreamSource.REPLIES) {
           countChanges.replies = 1;
         }
-        await Core.LocalProfileService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
-      }
+        return Core.LocalProfileService.upsertCounts({ userId: authorId }, countChanges as Core.NexusUserCounts);
+      });
+      await Promise.all(countUpdates);
     }
   }
 
