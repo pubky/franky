@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
+import { APP_ROUTES, AUTH_ROUTES, ONBOARDING_ROUTES, PROFILE_ROUTES } from '@/app';
 
 // =============================================================================
 // Test Helpers
@@ -393,7 +394,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       // Allow microtasks to flush
@@ -416,7 +417,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       // Allow microtasks to flush
@@ -435,7 +436,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       // Allow microtasks to flush
@@ -454,7 +455,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       vi.advanceTimersByTime(1_000);
@@ -477,7 +478,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       // Should not poll
@@ -486,7 +487,7 @@ describe('NotificationCoordinator', () => {
 
       // Set valid userId and trigger re-evaluation via route change
       Core.useAuthStore.getState().setCurrentUserPubky('user456' as unknown as Core.Pubky);
-      coordinator.setRoute('/feed'); // Trigger route change to re-evaluate
+      coordinator.setRoute(PROFILE_ROUTES.PROFILE); // Trigger route change to re-evaluate
 
       vi.advanceTimersByTime(1_000);
       expect(spy).toHaveBeenCalledTimes(1);
@@ -501,7 +502,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       vi.advanceTimersByTime(1_000);
@@ -544,7 +545,7 @@ describe('NotificationCoordinator', () => {
       expect(spy).toHaveBeenCalledTimes(1); // No additional calls
 
       // Change to different route
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
 
       // Should resume polling (home not disabled)
       vi.advanceTimersByTime(1_000);
@@ -558,7 +559,7 @@ describe('NotificationCoordinator', () => {
         intervalMs: 1_000,
         disabledRoutes: [], // Clear all disabled routes
       });
-      coordinator.setRoute('/sign-in');
+      coordinator.setRoute(AUTH_ROUTES.SIGN_IN);
       coordinator.start();
 
       // Should poll on /sign-in now (disabled routes cleared)
@@ -663,7 +664,7 @@ describe('NotificationCoordinator', () => {
     it('handles route with query parameters', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      coordinator.setRoute('/profile?tab=posts&sort=recent');
+      coordinator.setRoute(PROFILE_ROUTES.PROFILE + '?tab=posts&sort=recent');
       coordinator.start();
 
       // Should poll normally
@@ -706,7 +707,7 @@ describe('NotificationCoordinator', () => {
     it('does not poll on /sign-in route', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
       coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
-      coordinator.setRoute('/sign-in');
+      coordinator.setRoute(AUTH_ROUTES.SIGN_IN);
       coordinator.start();
 
       await flushPromises();
@@ -719,7 +720,7 @@ describe('NotificationCoordinator', () => {
     it('does not poll on /logout route', async () => {
       const { spy, coordinator } = setupAuthenticatedTest();
       coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
-      coordinator.setRoute('/logout');
+      coordinator.setRoute(AUTH_ROUTES.LOGOUT);
       coordinator.start();
 
       await flushPromises();
@@ -743,14 +744,7 @@ describe('NotificationCoordinator', () => {
       const { spy, coordinator } = setupAuthenticatedTest();
       coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
 
-      const onboardingRoutes = [
-        '/onboarding/backup',
-        '/onboarding/homeserver',
-        '/onboarding/install',
-        '/onboarding/profile',
-        '/onboarding/pubky',
-        '/onboarding/scan',
-      ];
+      const onboardingRoutes = Object.values(ONBOARDING_ROUTES);
 
       for (const route of onboardingRoutes) {
         coordinator.setRoute(route);
@@ -771,7 +765,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      coordinator.setRoute('/sign-in');
+      coordinator.setRoute(AUTH_ROUTES.SIGN_IN);
       coordinator.start();
 
       // Should not poll on disabled route
@@ -779,7 +773,7 @@ describe('NotificationCoordinator', () => {
       expect(spy).not.toHaveBeenCalled();
 
       // Move to enabled route
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
 
       // Should resume polling
       vi.advanceTimersByTime(1_000);
@@ -794,7 +788,7 @@ describe('NotificationCoordinator', () => {
 
       const coordinator = Core.NotificationCoordinator.getInstance();
       coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-      coordinator.setRoute('/home');
+      coordinator.setRoute(APP_ROUTES.HOME);
       coordinator.start();
 
       // Should poll on enabled route
@@ -802,7 +796,7 @@ describe('NotificationCoordinator', () => {
       expect(spy).toHaveBeenCalledTimes(2);
 
       // Move to disabled route
-      coordinator.setRoute('/onboarding/profile');
+      coordinator.setRoute(ONBOARDING_ROUTES.PROFILE);
 
       // Should stop polling
       vi.advanceTimersByTime(5_000);
@@ -937,17 +931,17 @@ describe('NotificationCoordinator', () => {
 
     const coordinator = Core.NotificationCoordinator.getInstance();
     coordinator.configure({ pollOnStart: false, intervalMs: 1_000 });
-    coordinator.setRoute('/home');
+    coordinator.setRoute(APP_ROUTES.HOME);
     coordinator.start();
 
     vi.advanceTimersByTime(2_000);
     expect(spy).toHaveBeenCalledTimes(2);
 
-    coordinator.setRoute('/logout'); // disabled by default
+    coordinator.setRoute(AUTH_ROUTES.LOGOUT); // disabled by default
     vi.advanceTimersByTime(2_000);
     expect(spy).toHaveBeenCalledTimes(2);
 
-    coordinator.setRoute('/home');
+    coordinator.setRoute(APP_ROUTES.HOME);
     vi.advanceTimersByTime(1_000);
     expect(spy).toHaveBeenCalledTimes(3);
   });
@@ -960,7 +954,7 @@ describe('NotificationCoordinator', () => {
 
     const coordinator = Core.NotificationCoordinator.getInstance();
     coordinator.configure({ pollOnStart: true, intervalMs: 1_000 });
-    coordinator.setRoute('/home');
+    coordinator.setRoute(APP_ROUTES.HOME);
     coordinator.start();
 
     await Promise.resolve();
