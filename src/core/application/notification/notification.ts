@@ -126,4 +126,3 @@ export class NotificationApplication {
     }
   }
 }
-

@@ -30,4 +30,3 @@ export type TGetOrFetchNotificationsResponse = {
   notifications: Core.FlatNotification[];
   olderThan: number | undefined;
 };
-

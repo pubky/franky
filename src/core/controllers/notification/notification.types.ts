@@ -11,4 +11,3 @@ export type TGetNotificationsParams = {
   olderThan?: number;
   limit?: number;
 };
-

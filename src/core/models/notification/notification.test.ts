@@ -2,125 +2,130 @@ import { describe, it, expect } from 'vitest';
 import { NotificationModel } from './notification';
 import { NotificationType, FlatNotification } from './notification.types';
 
+// Factory for creating test notifications
+const createNotification = (timestamp: number, type = NotificationType.Follow): FlatNotification =>
+  ({ type, timestamp, followed_by: `user-${timestamp}` }) as FlatNotification;
+
+const createReply = (timestamp: number): FlatNotification =>
+  ({
+    type: NotificationType.Reply,
+    timestamp,
+    replied_by: `user-${timestamp}`,
+    parent_post_uri: 'post123',
+    reply_uri: 'reply456',
+  }) as FlatNotification;
+
 describe('NotificationModel', () => {
-  it('should save an array of notifications to IndexedDB', async () => {
-    const notifications: FlatNotification[] = [
-      { type: NotificationType.Follow, timestamp: Date.now(), followed_by: 'user1' } as FlatNotification,
-      {
-        type: NotificationType.Reply,
-        timestamp: Date.now() + 1000,
-        replied_by: 'user2',
-        parent_post_uri: 'post123',
-        reply_uri: 'reply456',
-      } as FlatNotification,
-      {
-        type: NotificationType.TagPost,
-        timestamp: Date.now() + 2000,
-        tagged_by: 'user3',
-        tag_label: 'awesome',
-        post_uri: 'post789',
-      } as FlatNotification,
-    ];
+  describe('bulkSave', () => {
+    it('should save notifications to IndexedDB', async () => {
+      const notifications = [createNotification(1000), createReply(2000)];
 
-    await NotificationModel.bulkSave(notifications);
+      await NotificationModel.bulkSave(notifications);
 
-    const saved = await NotificationModel.table.toArray();
-    expect(saved).toHaveLength(3);
-    expect(saved.map((n) => n.type)).toEqual([
-      NotificationType.Follow,
-      NotificationType.Reply,
-      NotificationType.TagPost,
-    ]);
+      const saved = await NotificationModel.table.toArray();
+      expect(saved).toHaveLength(2);
+      expect(saved.map((n) => n.type)).toEqual([NotificationType.Follow, NotificationType.Reply]);
+    });
   });
 
-  it('should create individual notification instances', async () => {
-    const data: FlatNotification = {
-      type: NotificationType.Mention,
-      timestamp: Date.now(),
-      mentioned_by: 'user4',
-      post_uri: 'post999',
-    } as FlatNotification;
+  describe('constructor', () => {
+    it('should create notification instance with all properties', () => {
+      const data = createNotification(1000);
+      const notification = new NotificationModel(data);
 
-    const notification = new NotificationModel(data);
-
-    expect(notification.type).toBe(NotificationType.Mention);
-    expect(notification.mentioned_by).toBe('user4');
-    expect(notification.post_uri).toBe('post999');
+      expect(notification.type).toBe(NotificationType.Follow);
+      expect(notification.timestamp).toBe(1000);
+    });
   });
 
-  it('should get recent notifications ordered by timestamp', async () => {
-    const baseTime = Date.now();
-    const notifications: FlatNotification[] = [
-      { type: NotificationType.Follow, timestamp: baseTime - 2000, followed_by: 'user1' } as FlatNotification,
-      {
-        type: NotificationType.Reply,
-        timestamp: baseTime - 1000,
-        replied_by: 'user2',
-        parent_post_uri: 'post123',
-        reply_uri: 'reply456',
-      } as FlatNotification,
-      {
-        type: NotificationType.TagPost,
-        timestamp: baseTime,
-        tagged_by: 'user3',
-        tag_label: 'awesome',
-        post_uri: 'post789',
-      } as FlatNotification,
-    ];
+  describe('getRecent', () => {
+    it('should return notifications in descending timestamp order', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createNotification(3000), createNotification(2000)]);
 
-    await NotificationModel.bulkSave(notifications);
+      const recent = await NotificationModel.getRecent(2);
 
-    const recent = await NotificationModel.getRecent(2);
-    expect(recent).toHaveLength(2);
-    expect(recent[0].type).toBe(NotificationType.TagPost);
-    expect(recent[1].type).toBe(NotificationType.Reply);
+      expect(recent).toHaveLength(2);
+      expect(recent[0].timestamp).toBe(3000);
+      expect(recent[1].timestamp).toBe(2000);
+    });
   });
 
-  it('should get notifications by type', async () => {
-    const notifications: FlatNotification[] = [
-      { type: NotificationType.Follow, timestamp: Date.now(), followed_by: 'user1' } as FlatNotification,
-      {
-        type: NotificationType.Reply,
-        timestamp: Date.now(),
-        replied_by: 'user2',
-        parent_post_uri: 'post123',
-        reply_uri: 'reply456',
-      } as FlatNotification,
-      { type: NotificationType.Follow, timestamp: Date.now(), followed_by: 'user3' } as FlatNotification,
-    ];
+  describe('getByType', () => {
+    it('should filter notifications by type', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createReply(2000), createNotification(3000)]);
 
-    await NotificationModel.bulkSave(notifications);
+      const follows = await NotificationModel.getByType(NotificationType.Follow);
+      const replies = await NotificationModel.getByType(NotificationType.Reply);
 
-    const follows = await NotificationModel.getByType(NotificationType.Follow);
-    expect(follows).toHaveLength(2);
-    expect(follows.every((n) => n.type === NotificationType.Follow)).toBe(true);
-
-    const replies = await NotificationModel.getByType(NotificationType.Reply);
-    expect(replies).toHaveLength(1);
-    expect(replies[0].type).toBe(NotificationType.Reply);
+      expect(follows).toHaveLength(2);
+      expect(replies).toHaveLength(1);
+    });
   });
 
-  it('should get recent notifications by type', async () => {
-    const baseTime = Date.now();
-    const notifications: FlatNotification[] = [
-      { type: NotificationType.Follow, timestamp: baseTime - 3000, followed_by: 'user1' } as FlatNotification,
-      { type: NotificationType.Follow, timestamp: baseTime - 1000, followed_by: 'user2' } as FlatNotification,
-      { type: NotificationType.Follow, timestamp: baseTime, followed_by: 'user3' } as FlatNotification,
-      {
-        type: NotificationType.Reply,
-        timestamp: baseTime - 2000,
-        replied_by: 'user4',
-        parent_post_uri: 'post123',
-        reply_uri: 'reply456',
-      } as FlatNotification,
-    ];
+  describe('getRecentByType', () => {
+    it('should return recent notifications of specific type in descending order', async () => {
+      await NotificationModel.bulkSave([
+        createNotification(1000),
+        createNotification(3000),
+        createNotification(2000),
+        createReply(2500),
+      ]);
 
-    await NotificationModel.bulkSave(notifications);
+      const recentFollows = await NotificationModel.getRecentByType(NotificationType.Follow, 2);
 
-    const recentFollows = await NotificationModel.getRecentByType(NotificationType.Follow, 2);
-    expect(recentFollows).toHaveLength(2);
-    expect((recentFollows[0] as FlatNotification & { followed_by: string }).followed_by).toBe('user3');
-    expect((recentFollows[1] as FlatNotification & { followed_by: string }).followed_by).toBe('user2');
-    expect(recentFollows.every((n) => n.type === NotificationType.Follow)).toBe(true);
+      expect(recentFollows).toHaveLength(2);
+      expect(recentFollows[0].timestamp).toBe(3000);
+      expect(recentFollows[1].timestamp).toBe(2000);
+    });
+  });
+
+  describe('getOlderThan', () => {
+    it('should return notifications older than timestamp in descending order', async () => {
+      await NotificationModel.bulkSave([1000, 2000, 3000, 4000, 5000].map((t) => createNotification(t)));
+
+      const result = await NotificationModel.getOlderThan(4000, 10);
+
+      expect(result.map((n) => n.timestamp)).toEqual([3000, 2000, 1000]);
+    });
+
+    it('should respect limit parameter', async () => {
+      await NotificationModel.bulkSave([1000, 2000, 3000, 4000].map((t) => createNotification(t)));
+
+      const result = await NotificationModel.getOlderThan(5000, 2);
+
+      expect(result.map((n) => n.timestamp)).toEqual([4000, 3000]);
+    });
+
+    it.each([
+      { olderThan: 3000, timestamps: [5000, 6000], expected: 0 },
+      { olderThan: Infinity, timestamps: [1000, 2000, 3000], expected: 3 },
+      { olderThan: 2000, timestamps: [1000, 2000, 3000], expected: 1 }, // Excludes equal timestamp
+    ])('olderThan=$olderThan returns $expected notifications', async ({ olderThan, timestamps, expected }) => {
+      await NotificationModel.bulkSave(timestamps.map((t) => createNotification(t)));
+
+      const result = await NotificationModel.getOlderThan(olderThan, 10);
+
+      expect(result).toHaveLength(expected);
+    });
+
+    it('should return empty array when table is empty', async () => {
+      const result = await NotificationModel.getOlderThan(Infinity, 10);
+      expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('clear', () => {
+    it('should remove all notifications', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createNotification(2000)]);
+      expect(await NotificationModel.table.count()).toBe(2);
+
+      await NotificationModel.clear();
+
+      expect(await NotificationModel.table.count()).toBe(0);
+    });
+
+    it('should not throw when table is already empty', async () => {
+      await expect(NotificationModel.clear()).resolves.not.toThrow();
+    });
   });
 });
