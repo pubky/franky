@@ -188,21 +188,28 @@ export class StreamCoordinator extends Coordinator<StreamCoordinatorConfig, Stre
    * Resolve the stream head based on current stream ID
    */
   private async resolveStreamHead(currentStreamId: Core.PostStreamId): Promise<boolean> {
-    const streamHead = await Core.StreamPostsController.getStreamHead({ streamId: currentStreamId });
-    if (streamHead === Core.SKIP_FETCH_NEW_POSTS) {
-      Logger.warn('Failed to resolve stream head or the newest cached postId not found', { streamId: currentStreamId });
+    try {
+      const streamHead = await Core.StreamPostsController.getStreamHead({ streamId: currentStreamId });
+      if (streamHead === Core.SKIP_FETCH_NEW_POSTS) {
+        Logger.warn('Failed to resolve stream head or the newest cached postId not found', {
+          streamId: currentStreamId,
+        });
+        return false;
+      }
+
+      // Validate that we have a valid stream head
+      if (streamHead < Core.FORCE_FETCH_NEW_POSTS) {
+        Logger.warn('Invalid stream head value', { streamId: currentStreamId, streamHead });
+        return false;
+      }
+
+      this.streamState.streamHead = streamHead;
+      Logger.debug('Resolved stream head', { streamId: currentStreamId, streamHead });
+      return true;
+    } catch (error) {
+      Logger.error('Failed to resolve stream head', { streamId: currentStreamId, error });
       return false;
     }
-
-    // Validate that we have a valid stream head
-    if (streamHead < Core.FORCE_FETCH_NEW_POSTS) {
-      Logger.warn('Invalid stream head value', { streamId: currentStreamId, streamHead });
-      return false;
-    }
-
-    this.streamState.streamHead = streamHead;
-    Logger.debug('Resolved stream head', { streamId: currentStreamId, streamHead });
-    return true;
   }
 
   /**
