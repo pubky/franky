@@ -56,6 +56,13 @@ const eslintConfig = [
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'react-hooks/set-state-in-effect': 'off', // Allow setState in effects
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
     },
     settings: {
       react: {

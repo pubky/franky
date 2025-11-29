@@ -267,6 +267,42 @@ This document outlines the essential rules and patterns for creating unit tests 
    }));
    ```
 
+   ### Icon Components: Always Use Real Implementations
+   Icon components from `@/libs/icons` should **always** be used as real implementations in component tests. This ensures:
+   - Snapshots capture actual SVG rendering
+   - Visual regression tests detect icon changes
+   - Tests validate real icon behaviour and attributes
+   
+   ✅ **Good: Use real icon components**
+   ```typescript
+   import * as Icons from '@/libs/icons';
+   import { NotificationIcon } from './NotificationIcon';
+   
+   it('renders the correct icon', () => {
+     const { container } = render(<NotificationIcon type={NotificationType.Follow} />);
+     const svg = container.querySelector('svg');
+     expect(svg).toBeInTheDocument();
+     expect(svg).toHaveAttribute('width', '24');
+     expect(svg).toHaveAttribute('height', '24');
+   });
+   
+   it('matches snapshot with real icon', () => {
+     const { container } = render(<NotificationIcon type={NotificationType.Follow} />);
+     expect(container.firstChild).toMatchSnapshot();
+   });
+   ```
+   
+   ❌ **Bad: Mocking icon components or utility functions**
+   ```typescript
+   // Don't do this - use real icons and icon utilities
+   vi.mock('@/libs/icons', () => ({
+     Follow: () => <span>Mock Icon</span>,
+     getIconFromUrl: vi.fn().mockReturnValue(() => <span>Mock</span>),
+   }));
+   ```
+   
+   **Note**: Icon utility functions like `getIconFromUrl` return actual icon components. Always use real implementations to ensure snapshots capture the correct icons.
+
 ## Testing Workflow
 
 10. **Always run new or edited tests in sandbox to generate snapshot files and check they pass, and fix if failing**
