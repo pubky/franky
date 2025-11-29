@@ -2,21 +2,13 @@
 
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { Root } from 'mdast';
-import { visit } from 'unist-util-visit';
+import { remarkHashtags, remarkPlaintextCodeblock } from './PostText.utils';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 
 type PostTextProps = {
   content: string;
-};
-
-// We assign full code blocks without a language specified as plaintext (ex. ```...```)
-const remarkPlaintextCodeblock = () => (tree: Root) => {
-  visit(tree, 'code', (node) => {
-    node.lang = node.lang ?? 'plaintext';
-  });
 };
 
 export const PostText = ({ content }: PostTextProps) => {
@@ -28,10 +20,19 @@ export const PostText = ({ content }: PostTextProps) => {
       <Markdown
         allowedElements={['em', 'strong', 'code', 'pre', 'a', 'p', 'br', 'ul', 'ol', 'li', 'del', 'blockquote', 'hr']}
         unwrapDisallowed
-        remarkPlugins={[remarkGfm, remarkPlaintextCodeblock]}
+        remarkPlugins={[remarkGfm, remarkPlaintextCodeblock, remarkHashtags]}
         components={{
           a(props) {
-            const { children, className, node: _node, ref: _ref, ...rest } = props;
+            const {
+              children,
+              className,
+              'data-type': dataType,
+              node: _node,
+              ref: _ref,
+              ...rest
+            } = props as typeof props & { 'data-type'?: string };
+
+            if (dataType === 'hashtag') return <Molecules.PostHashtags {...props} />;
 
             return (
               <a
@@ -39,7 +40,7 @@ export const PostText = ({ content }: PostTextProps) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className={Libs.cn(className, 'text-brand')}
+                className={Libs.cn(className, 'cursor-pointer text-brand transition-colors hover:text-brand/80')}
               >
                 {children}
               </a>

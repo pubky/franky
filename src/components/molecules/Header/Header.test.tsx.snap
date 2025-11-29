@@ -312,7 +312,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="relative"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm relative"
     href="/profile"
     id="header-nav-profile-btn"
   >
@@ -463,7 +463,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderNavigationBu
     </button>
   </a>
   <a
-    class="relative"
+    class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm relative"
     href="/profile"
     id="header-nav-profile-btn"
   >
@@ -680,7 +680,7 @@ exports[`Header Components - Snapshots > matches snapshot for HeaderSignIn 1`] =
       </button>
     </a>
     <a
-      class="relative"
+      class="cursor-pointer text-brand hover:text-brand/80 transition-colors text-brand text-sm relative"
       href="/profile"
       id="header-nav-profile-btn"
     >
