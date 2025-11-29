@@ -24,7 +24,7 @@ export class BootstrapApplication {
     }
     const results = await Promise.all([
       Core.LocalStreamUsersService.persistUsers(data.users),
-      Core.LocalStreamPostsService.persistPosts(data.posts),
+      Core.LocalStreamPostsService.persistPosts({ posts: data.posts }),
       Core.LocalStreamPostsService.upsert({
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: data.list.stream,

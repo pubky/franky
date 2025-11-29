@@ -2,6 +2,7 @@ import * as Core from '@/core';
 
 export interface TFetchStreamParams {
   streamId: Core.PostStreamId;
+  streamHead: number;
   streamTail: number;
   limit: number;
   viewerId: Core.Pubky;
@@ -43,4 +44,9 @@ export interface TCacheStreamParams {
 export interface TFetchMissingUsersParams {
   posts: Core.NexusPost[];
   viewerId: Core.Pubky;
+}
+
+export interface TPersistUnreadNewStreamChunkParams {
+  streamId: Core.PostStreamId;
+  compositePostIds: string[];
 }
