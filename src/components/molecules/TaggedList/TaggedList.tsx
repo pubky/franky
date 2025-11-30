@@ -2,19 +2,32 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import type { NexusTag } from '@/core/services/nexus/nexus.types';
+import * as Hooks from '@/hooks';
+import type { TaggedListProps } from './TaggedList.types';
 
-interface TaggedListProps {
-  /** Array of tags to display */
-  tags: NexusTag[];
-}
+export function TaggedList({ tags, hasMore = false, isLoadingMore = false, onLoadMore, onTagToggle }: TaggedListProps) {
+  const { sentinelRef } = Hooks.useInfiniteScroll({
+    onLoadMore: onLoadMore || (() => {}),
+    hasMore,
+    isLoading: isLoadingMore,
+    threshold: 200,
+    debounceMs: 300,
+  });
 
-export function TaggedList({ tags }: TaggedListProps) {
   return (
     <Atoms.Container className="gap-2">
       {tags.map((tag) => (
-        <Molecules.TaggedItem key={tag.label} tag={tag} />
+        <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagToggle} />
       ))}
+      {hasMore && (
+        <div ref={sentinelRef} className="h-4 w-full">
+          {isLoadingMore && (
+            <Atoms.Typography as="p" className="text-center text-sm text-muted-foreground">
+              Loading more tags...
+            </Atoms.Typography>
+          )}
+        </div>
+      )}
     </Atoms.Container>
   );
 }

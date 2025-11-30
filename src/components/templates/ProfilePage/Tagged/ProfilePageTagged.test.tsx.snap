@@ -6,9 +6,9 @@ exports[`ProfilePageTagged > matches snapshot 1`] = `
   data-testid="container"
 >
   <div
-    data-testid="tagged-empty"
+    data-testid="profile-tagged"
   >
-    TaggedEmpty
+    ProfileTagged Organism
   </div>
 </div>
 `;

@@ -2,35 +2,12 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageTagged } from './ProfilePageTagged';
 
-// Mock hooks
-vi.mock('@/hooks', () => ({
-  useCurrentUserProfile: () => ({
-    currentUserPubky: 'test-pubky',
-  }),
-  useTagged: () => ({
-    tags: [],
-    isLoading: false,
-  }),
-  useProfileStats: () => ({
-    stats: {
-      uniqueTags: 3,
-      notifications: 0,
-      posts: 0,
-      replies: 0,
-      followers: 0,
-      following: 0,
-      friends: 0,
-    },
-  }),
-}));
-
-// Mock TaggedEmpty and TaggedSection
-vi.mock('@/molecules', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/molecules')>();
+// Mock ProfileTagged organism
+vi.mock('@/organisms', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/organisms')>();
   return {
     ...actual,
-    TaggedEmpty: () => <div data-testid="tagged-empty">TaggedEmpty</div>,
-    TaggedSection: () => <div data-testid="tagged-section">TaggedSection</div>,
+    ProfileTagged: () => <div data-testid="profile-tagged">ProfileTagged Organism</div>,
   };
 });
 
@@ -40,9 +17,9 @@ describe('ProfilePageTagged', () => {
     expect(container.firstChild).toBeInTheDocument();
   });
 
-  it('renders TaggedEmpty when no tags', () => {
+  it('renders ProfileTagged organism', () => {
     render(<ProfilePageTagged />);
-    expect(screen.getByTestId('tagged-empty')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-tagged')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {

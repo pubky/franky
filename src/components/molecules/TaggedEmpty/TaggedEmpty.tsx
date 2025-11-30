@@ -2,11 +2,9 @@
 
 import { Tag } from 'lucide-react';
 import * as Molecules from '@/molecules';
-import * as Hooks from '@/hooks';
+import type { TaggedEmptyProps } from './TaggedEmpty.types';
 
-export function TaggedEmpty() {
-  const { handleTagAdd } = Hooks.useTagged();
-
+export function TaggedEmpty({ onTagAdd }: TaggedEmptyProps) {
   return (
     <Molecules.ProfilePageEmptyState
       imageSrc="/images/tagged-empty-state.png"
@@ -21,7 +19,7 @@ export function TaggedEmpty() {
         </>
       }
     >
-      <Molecules.TagInput onTagAdd={handleTagAdd} />
+      {onTagAdd && <Molecules.TagInput onTagAdd={onTagAdd} />}
     </Molecules.ProfilePageEmptyState>
   );
 }

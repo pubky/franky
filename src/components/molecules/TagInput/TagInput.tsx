@@ -6,12 +6,7 @@ import * as Molecules from '@/molecules';
 import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
-
-interface TagInputProps {
-  onTagAdd: (tag: string) => { success: boolean; error?: string };
-  placeholder?: string;
-  existingTags?: Array<{ label: string }>;
-}
+import type { TagInputProps } from './TagInput.types';
 
 export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] }: TagInputProps) {
   const [tagText, setTagText] = useState('');
@@ -52,14 +47,19 @@ export function TagInput({ onTagAdd, placeholder = 'add tag', existingTags = [] 
       return;
     }
 
-    // Validation passed, add the tag
+    // Clear input immediately for instant feedback
+    clearInput();
+
+    // Fire and forget - don't await the promise
+    // The hook will handle optimistic updates
     const result = onTagAdd(trimmedTag);
-    if (result.success) {
-      clearInput();
-    } else {
-      // Handle error if needed (e.g., show toast)
-      // For now, just clear input
-      clearInput();
+
+    // Handle promise if it's returned (for async handlers)
+    if (result instanceof Promise) {
+      result.catch((error: unknown) => {
+        // Log errors silently, could show toast here if needed
+        Libs.Logger.error('Failed to add tag:', error);
+      });
     }
   }, [tagText, existingTags, onTagAdd, clearInput]);
 

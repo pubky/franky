@@ -1,0 +1,151 @@
+import * as Core from '@/core';
+
+/**
+ * Adds a user as tagger to a tag (optimistically)
+ */
+export function addTaggerToTag(tag: Core.NexusTag, userId: string): Core.NexusTag {
+  // Avoid duplicates
+  if (tag.taggers.includes(userId)) {
+    return { ...tag, relationship: true };
+  }
+  return {
+    ...tag,
+    taggers: [...tag.taggers, userId],
+    taggers_count: tag.taggers_count + 1,
+    relationship: true,
+  };
+}
+
+/**
+ * Removes a user as tagger from a tag (optimistically)
+ */
+export function removeTaggerFromTag(tag: Core.NexusTag, userId: string): Core.NexusTag {
+  const newTaggers = tag.taggers.filter((id) => id !== userId);
+  return {
+    ...tag,
+    taggers: newTaggers,
+    taggers_count: Math.max(0, tag.taggers_count - 1),
+    relationship: false,
+  };
+}
+
+/**
+ * Updates a specific tag in a list
+ */
+export function updateTagInList(
+  tags: Core.NexusTag[],
+  targetLabel: string,
+  updater: (tag: Core.NexusTag) => Core.NexusTag,
+): Core.NexusTag[] {
+  return tags.map((tag) => (tag.label === targetLabel ? updater(tag) : tag));
+}
+
+/**
+ * Checks if a user is a tagger of a specific tag
+ */
+export function isUserTagger(tags: Core.NexusTag[], label: string, userId: string): boolean {
+  const tag = tags.find((t) => t.label === label);
+  return tag?.taggers.includes(userId) ?? false;
+}
+
+/**
+ * Finds a tag by label (case-insensitive)
+ */
+export function findTagByLabel(tags: Core.NexusTag[], label: string): Core.NexusTag | undefined {
+  return tags.find((t) => t.label.toLowerCase() === label.toLowerCase());
+}
+
+/**
+ * Creates an optimistic new tag
+ */
+export function createOptimisticTag(label: string, userId: string): Core.NexusTag {
+  return {
+    label,
+    taggers: [userId],
+    taggers_count: 1,
+    relationship: true,
+  };
+}
+
+/**
+ * Creates tag in backend
+ */
+export async function createTagInBackend(taggedId: string, label: string, taggerId: string): Promise<void> {
+  await Core.TagController.create({
+    taggedId: taggedId as Core.Pubky,
+    label,
+    taggerId,
+    taggedKind: Core.TagKind.USER,
+  });
+}
+
+/**
+ * Deletes tag from backend
+ */
+export async function deleteTagFromBackend(taggedId: string, label: string, taggerId: string): Promise<void> {
+  await Core.TagController.delete({
+    taggedId: taggedId as Core.Pubky,
+    label,
+    taggerId,
+    taggedKind: Core.TagKind.USER,
+  });
+}
+
+/**
+ * Merges server tags with zero-tagger tags, preserving the order of existing tags.
+ * Updates existing tags with server data, keeps zero-tagger tags in their position.
+ */
+export function mergeTagsPreservingOrder(
+  serverTags: Core.NexusTag[],
+  currentTags: Core.NexusTag[],
+  zeroTaggerTags: Core.NexusTag[],
+): Core.NexusTag[] {
+  // If no current tags, just return server tags
+  if (currentTags.length === 0) {
+    return serverTags;
+  }
+
+  // Create a map of server tags for quick lookup
+  const serverTagsMap = new Map<string, Core.NexusTag>();
+  for (const tag of serverTags) {
+    serverTagsMap.set(tag.label.toLowerCase(), tag);
+  }
+
+  // Create a map of zero-tagger tags
+  const zeroTaggerMap = new Map<string, Core.NexusTag>();
+  for (const tag of zeroTaggerTags) {
+    zeroTaggerMap.set(tag.label.toLowerCase(), tag);
+  }
+
+  // Update current tags in place, preserving order
+  const result: Core.NexusTag[] = [];
+  const seenLabels = new Set<string>();
+
+  // First, go through current tags and update them with server data
+  for (const currentTag of currentTags) {
+    const key = currentTag.label.toLowerCase();
+    seenLabels.add(key);
+
+    const serverTag = serverTagsMap.get(key);
+    const zeroTag = zeroTaggerMap.get(key);
+
+    if (serverTag) {
+      // Tag exists on server, use server data
+      result.push(serverTag);
+    } else if (zeroTag) {
+      // Tag has 0 taggers, preserve it
+      result.push(zeroTag);
+    }
+    // If neither, the tag was removed completely - don't include it
+  }
+
+  // Add any new server tags that weren't in current tags (at the end)
+  for (const serverTag of serverTags) {
+    const key = serverTag.label.toLowerCase();
+    if (!seenLabels.has(key)) {
+      result.push(serverTag);
+    }
+  }
+
+  return result;
+}

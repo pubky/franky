@@ -2,19 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TaggedEmpty } from './TaggedEmpty';
 
-// Mock useTagged hook
-vi.mock('@/hooks', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/hooks')>();
-  return {
-    ...actual,
-    useTagged: vi.fn(() => ({
-      tags: [],
-      count: 0,
-      isLoading: false,
-      handleTagAdd: vi.fn(),
-    })),
-  };
-});
+const mockHandleTagAdd = vi.fn().mockResolvedValue({ success: true });
 
 // Mock ProfilePageEmptyState and TagInput
 vi.mock('@/molecules', async (importOriginal) => {
@@ -54,28 +42,33 @@ vi.mock('@/molecules', async (importOriginal) => {
 
 describe('TaggedEmpty', () => {
   it('renders without errors', () => {
-    const { container } = render(<TaggedEmpty />);
+    const { container } = render(<TaggedEmpty onTagAdd={mockHandleTagAdd} />);
     expect(container.firstChild).toBeInTheDocument();
   });
 
   it('displays title and subtitle', () => {
-    render(<TaggedEmpty />);
+    render(<TaggedEmpty onTagAdd={mockHandleTagAdd} />);
     expect(screen.getByText('Discover who tagged you')).toBeInTheDocument();
     expect(screen.getByText(/No one has tagged you yet/)).toBeInTheDocument();
   });
 
-  it('renders TagInput', () => {
-    render(<TaggedEmpty />);
+  it('renders TagInput when onTagAdd is provided', () => {
+    render(<TaggedEmpty onTagAdd={mockHandleTagAdd} />);
     expect(screen.getByTestId('tag-input')).toBeInTheDocument();
   });
 
-  it('renders Tag icon', () => {
+  it('does not render TagInput when onTagAdd is not provided', () => {
     render(<TaggedEmpty />);
+    expect(screen.queryByTestId('tag-input')).not.toBeInTheDocument();
+  });
+
+  it('renders Tag icon', () => {
+    render(<TaggedEmpty onTagAdd={mockHandleTagAdd} />);
     expect(screen.getByTestId('tag-icon')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<TaggedEmpty />);
+    const { container } = render(<TaggedEmpty onTagAdd={mockHandleTagAdd} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

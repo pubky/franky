@@ -1,17 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { TaggedSection } from './TaggedSection';
-
-// Mock hooks
-vi.mock('@/hooks', () => ({
-  useCurrentUserProfile: () => ({
-    userDetails: { name: 'Satoshi' },
-  }),
-  useTagged: () => ({
-    tags: [{ label: 'bitcoin', taggers: [], taggers_count: 0, relationship: false }],
-    handleTagAdd: vi.fn(),
-  }),
-}));
+import type { TaggedSectionProps } from './TaggedSection.types';
 
 // Mock TagInput and TaggedList
 vi.mock('@/molecules', async (importOriginal) => {
@@ -23,24 +13,41 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
+const defaultProps: TaggedSectionProps = {
+  tags: [
+    {
+      label: 'bitcoin',
+      taggers: [{ id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1' }],
+      taggers_count: 1,
+      relationship: false,
+    },
+  ],
+  userName: 'Satoshi',
+  handleTagAdd: vi.fn().mockResolvedValue({ success: true }),
+  handleTagToggle: vi.fn(),
+  hasMore: false,
+  isLoadingMore: false,
+  loadMore: vi.fn(),
+};
+
 describe('TaggedSection', () => {
   it('renders user name in header', () => {
-    render(<TaggedSection />);
+    render(<TaggedSection {...defaultProps} />);
     expect(screen.getByText('Satoshi was tagged as:')).toBeInTheDocument();
   });
 
   it('renders TagInput', () => {
-    render(<TaggedSection />);
+    render(<TaggedSection {...defaultProps} />);
     expect(screen.getByTestId('tag-input')).toBeInTheDocument();
   });
 
   it('renders TaggedList', () => {
-    render(<TaggedSection />);
+    render(<TaggedSection {...defaultProps} />);
     expect(screen.getByTestId('tagged-list')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<TaggedSection />);
+    const { container } = render(<TaggedSection {...defaultProps} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });
