@@ -40,8 +40,48 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid protocol. Only HTTP and HTTPS are allowed.' }, { status: 400 });
     }
 
-    // 3. Resolve DNS and validate IP BEFORE fetch (prevents DNS rebinding)
+    // 3. Validate hostname structure (must have domain and TLD)
     const hostname = parsed.hostname.toLowerCase();
+    if (!hostname || hostname.trim() === '') {
+      return NextResponse.json({ error: 'Invalid hostname. URL must include a domain name.' }, { status: 400 });
+    }
+
+    // 4. Allow IP addresses and localhost, but validate domain structure for others
+    if (!isIP(hostname) && hostname !== 'localhost') {
+      // Check if hostname ends with a dot (invalid)
+      if (hostname.endsWith('.')) {
+        return NextResponse.json(
+          { error: 'Invalid hostname. Domain must include a top-level domain (TLD).' },
+          { status: 400 },
+        );
+      }
+
+      // Check if hostname has at least one dot (required for TLD)
+      const parts = hostname.split('.');
+      if (parts.length < 2) {
+        return NextResponse.json(
+          { error: 'Invalid hostname. Domain must include a top-level domain (TLD).' },
+          { status: 400 },
+        );
+      }
+
+      // Check if TLD is at least 2 characters (e.g., .com, .uk, .io)
+      const tld = parts[parts.length - 1];
+      if (!tld || tld.length < 2) {
+        return NextResponse.json(
+          { error: 'Invalid hostname. Top-level domain (TLD) must be at least 2 characters.' },
+          { status: 400 },
+        );
+      }
+
+      // Check if domain part (before TLD) is not empty
+      const domain = parts.slice(0, -1).join('.');
+      if (!domain || domain.trim() === '') {
+        return NextResponse.json({ error: 'Invalid hostname. Domain name cannot be empty.' }, { status: 400 });
+      }
+    }
+
+    // 5. Resolve DNS and validate IP BEFORE fetch (prevents DNS rebinding)
     let resolvedIp: string;
 
     try {
@@ -61,12 +101,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'DNS resolution failed' }, { status: 400 });
     }
 
-    // 4. Validate the resolved IP address
+    // 6. Validate the resolved IP address
     if (!isIpSafe(resolvedIp)) {
       return NextResponse.json({ error: 'Blocked IP range. Cannot fetch from private networks.' }, { status: 403 });
     }
 
-    // 5. Fetch with timeout
+    // 7. Fetch with timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
@@ -91,18 +131,18 @@ export async function GET(request: NextRequest) {
 
     clearTimeout(timeoutId);
 
-    // 6. Validate response status
+    // 8. Validate response status
     if (!response.ok) {
       return NextResponse.json({ error: 'Fetch failed' }, { status: response.status });
     }
 
-    // 7. Validate content-type
+    // 9. Validate content-type
     const contentType = response.headers.get('content-type');
     if (!contentType?.includes('text/html')) {
       return NextResponse.json({ error: 'Not HTML content' }, { status: 400 });
     }
 
-    // 8. Limit response size using stream reader (enforces REAL size limit)
+    // 10. Limit response size using stream reader (enforces REAL size limit)
     // Note: content-length header can be spoofed, so we read the stream manually
     const reader = response.body?.getReader();
     if (!reader) {
@@ -131,10 +171,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to read response body' }, { status: 500 });
     }
 
-    // 9. Decode HTML
+    // 11. Decode HTML
     const html = new TextDecoder().decode(Buffer.concat(chunks));
 
-    // 10. Parse metadata using regex (lighter than cheerio)
+    // 12. Parse metadata using regex (lighter than cheerio)
     const ogTitle = extractFromHtml(html, OG_PATTERNS.TITLE);
     const titleTag = html.match(OG_PATTERNS.TITLE_TAG)?.[1] || null;
     const rawTitle = ogTitle || titleTag;
@@ -143,7 +183,7 @@ export async function GET(request: NextRequest) {
     // Extract og:image
     const image = extractFromHtml(html, OG_PATTERNS.IMAGE);
 
-    // 11. Normalize and validate image URL (must also be safe)
+    // 13. Normalize and validate image URL (must also be safe)
     let normalizedImage: string | null = null;
     if (image) {
       try {
@@ -180,7 +220,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 12. Return normalized metadata with truncation and cache headers
+    // 14. Return normalized metadata with truncation and cache headers
     return NextResponse.json(
       {
         url: truncateMiddle(url, 40), // Truncate URL with "..." in the middle (max 40 chars)
