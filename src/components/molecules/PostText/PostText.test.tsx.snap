@@ -9,7 +9,7 @@ exports[`PostText - Snapshots > matches snapshot for autolinked URL 1`] = `
   <p>
     Check out 
     <a
-      class="text-brand"
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
       href="https://example.com/path?query=value"
       rel="noopener noreferrer"
       target="_blank"
@@ -135,7 +135,7 @@ exports[`PostText - Snapshots > matches snapshot for combined markdown elements 
     </em>
      text with a 
     <a
-      class="text-brand"
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
       href="https://example.com"
       rel="noopener noreferrer"
       target="_blank"
@@ -218,6 +218,86 @@ exports[`PostText - Snapshots > matches snapshot for empty content 1`] = `
   data-override-defaults="true"
   data-testid="container"
 />
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag alongside link 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Visit 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Example
+    </a>
+     and follow 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=trending"
+    >
+      #trending
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag with markdown formatting 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <strong>
+      bold
+    </strong>
+     with 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=hashtag"
+    >
+      #hashtag
+    </a>
+     and 
+    <em>
+      italic
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This post is about 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=crypto"
+    >
+      #crypto
+    </a>
+     and 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=blockchain"
+    >
+      #blockchain
+    </a>
+     technology
+  </p>
+</div>
 `;
 
 exports[`PostText - Snapshots > matches snapshot for horizontal rule 1`] = `
@@ -303,7 +383,7 @@ exports[`PostText - Snapshots > matches snapshot for links 1`] = `
   <p>
     Visit 
     <a
-      class="text-brand"
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
       href="https://example.com"
       rel="noopener noreferrer"
       target="_blank"
@@ -325,6 +405,37 @@ exports[`PostText - Snapshots > matches snapshot for multiline content with line
     First line
 Second line
 Third line
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for multiple hashtags 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=one"
+    >
+      #one
+    </a>
+     
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=two"
+    >
+      #two
+    </a>
+     
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=three"
+    >
+      #three
+    </a>
   </p>
 </div>
 `;
@@ -400,6 +511,24 @@ exports[`PostText - Snapshots > matches snapshot for plain text 1`] = `
 >
   <p>
     Simple plain text content
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for single hashtag 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=bitcoin"
+    >
+      #bitcoin
+    </a>
   </p>
 </div>
 `;

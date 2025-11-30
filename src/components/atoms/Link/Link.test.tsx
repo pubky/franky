@@ -96,6 +96,54 @@ describe('Link', () => {
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     });
   });
+
+  describe('className Merging', () => {
+    it('merges custom className with default variant classes', () => {
+      render(
+        <Link href="https://example.com" className="custom-class">
+          Merged Classes Link
+        </Link>,
+      );
+      const link = screen.getByText('Merged Classes Link');
+      expect(link).toHaveClass('custom-class');
+      expect(link).toHaveClass('text-brand');
+      expect(link).toHaveClass('cursor-pointer');
+    });
+
+    it('allows custom className to override default classes via Tailwind merge', () => {
+      render(
+        <Link href="https://example.com" className="text-red-500">
+          Override Classes Link
+        </Link>,
+      );
+      const link = screen.getByText('Override Classes Link');
+      expect(link).toHaveClass('text-red-500');
+      expect(link).not.toHaveClass('text-brand');
+    });
+
+    it('merges className with variant and size classes', () => {
+      render(
+        <Link href="https://example.com" variant="muted" size="lg" className="font-bold">
+          Combined Classes Link
+        </Link>,
+      );
+      const link = screen.getByText('Combined Classes Link');
+      expect(link).toHaveClass('font-bold');
+      expect(link).toHaveClass('text-muted-foreground');
+      expect(link).toHaveClass('text-lg');
+    });
+
+    it('merges className for internal links', () => {
+      render(
+        <Link href="/about" className="underline">
+          Internal Merged Link
+        </Link>,
+      );
+      const link = screen.getByText('Internal Merged Link');
+      expect(link).toHaveClass('underline');
+      expect(link).toHaveClass('cursor-pointer');
+    });
+  });
 });
 
 describe('Link - Snapshots', () => {

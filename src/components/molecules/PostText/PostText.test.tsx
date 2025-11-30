@@ -26,6 +26,11 @@ vi.mock('@/molecules', () => ({
       {children}
     </code>
   ),
+  PostHashtags: ({ children, href }: { children?: React.ReactNode; href?: string }) => (
+    <a data-testid="post-hashtag" href={href}>
+      {children}
+    </a>
+  ),
 }));
 
 describe('PostText', () => {
@@ -160,11 +165,13 @@ describe('PostText', () => {
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
-    it('renders links with brand color class', () => {
+    it('renders links with brand color and hover classes', () => {
       render(<PostText content="Visit [site](https://site.com)" />);
 
       const link = screen.getByRole('link', { name: 'site' });
       expect(link).toHaveClass('text-brand');
+      expect(link).toHaveClass('cursor-pointer');
+      expect(link).toHaveClass('transition-colors');
     });
 
     it('stops event propagation on link click', () => {
@@ -254,6 +261,74 @@ describe('PostText', () => {
 
       // Table should be unwrapped but content preserved
       expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Hashtags', () => {
+    it('renders hashtag as PostHashtags component', () => {
+      render(<PostText content="Check out #bitcoin" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#bitcoin');
+      expect(hashtag).toHaveAttribute('href', '/search?tags=bitcoin');
+    });
+
+    it('renders hashtag at start of content', () => {
+      render(<PostText content="#trending is popular" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#trending');
+    });
+
+    it('renders hashtag at end of content', () => {
+      render(<PostText content="This is about #crypto" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#crypto');
+    });
+
+    it('renders multiple hashtags', () => {
+      render(<PostText content="#one #two #three" />);
+
+      const hashtags = screen.getAllByTestId('post-hashtag');
+      expect(hashtags).toHaveLength(3);
+      expect(hashtags[0]).toHaveTextContent('#one');
+      expect(hashtags[1]).toHaveTextContent('#two');
+      expect(hashtags[2]).toHaveTextContent('#three');
+    });
+
+    it('renders hashtags alongside regular links', () => {
+      render(<PostText content="Visit [site](https://example.com) and check #topic" />);
+
+      expect(screen.getByRole('link', { name: 'site' })).toBeInTheDocument();
+      expect(screen.getByTestId('post-hashtag')).toHaveTextContent('#topic');
+    });
+
+    it('renders hashtags with underscores', () => {
+      render(<PostText content="Check #hello_world tag" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#hello_world');
+    });
+
+    it('renders hashtags with numbers', () => {
+      render(<PostText content="Check #web3 tag" />);
+
+      const hashtag = screen.getByTestId('post-hashtag');
+      expect(hashtag).toHaveTextContent('#web3');
+    });
+
+    it('does not parse hashtag starting with number', () => {
+      render(<PostText content="This is #123invalid" />);
+
+      expect(screen.queryByTestId('post-hashtag')).not.toBeInTheDocument();
+    });
+
+    it('renders hashtags mixed with markdown formatting', () => {
+      render(<PostText content="This is **bold** and #hashtag text" />);
+
+      expect(screen.getByText('bold').tagName).toBe('STRONG');
+      expect(screen.getByTestId('post-hashtag')).toHaveTextContent('#hashtag');
     });
   });
 
@@ -419,6 +494,31 @@ Third line`}
 
   it('matches snapshot for strikethrough and inline code combination', () => {
     const { container } = render(<PostText content="This is ~~`strikethrough and code`~~ text" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for single hashtag', () => {
+    const { container } = render(<PostText content="Check out #bitcoin" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for multiple hashtags', () => {
+    const { container } = render(<PostText content="#one #two #three" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with text', () => {
+    const { container } = render(<PostText content="This post is about #crypto and #blockchain technology" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag alongside link', () => {
+    const { container } = render(<PostText content="Visit [Example](https://example.com) and follow #trending" />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for hashtag with markdown formatting', () => {
+    const { container } = render(<PostText content="This is **bold** with #hashtag and *italic* text" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

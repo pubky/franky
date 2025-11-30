@@ -4,9 +4,17 @@ import { useProfileStats } from './useProfileStats';
 import * as Core from '@/core';
 
 // Hoist mock data using vi.hoisted
-const { mockUserCounts, setMockUserCounts, mockNotificationsCount, setMockNotificationsCount } = vi.hoisted(() => {
+const {
+  mockUserCounts,
+  setMockUserCounts,
+  mockNotificationsCount,
+  setMockNotificationsCount,
+  mockTaggedCount,
+  setMockTaggedCount,
+} = vi.hoisted(() => {
   const data = { current: null as Core.UserCountsModelSchema | null };
   const notificationsCount = { current: 0 };
+  const taggedCount = { current: 0 };
   return {
     mockUserCounts: data,
     setMockUserCounts: (value: Core.UserCountsModelSchema | null) => {
@@ -15,6 +23,10 @@ const { mockUserCounts, setMockUserCounts, mockNotificationsCount, setMockNotifi
     mockNotificationsCount: notificationsCount,
     setMockNotificationsCount: (value: number) => {
       notificationsCount.current = value;
+    },
+    mockTaggedCount: taggedCount,
+    setMockTaggedCount: (value: number) => {
+      taggedCount.current = value;
     },
   };
 });
@@ -43,6 +55,12 @@ vi.mock('@/hooks', async (importOriginal) => {
       isLoading: false,
       markAllAsRead: vi.fn(),
     })),
+    useTagged: vi.fn(() => ({
+      tags: [],
+      count: mockTaggedCount.current,
+      isLoading: false,
+      handleTagAdd: vi.fn(),
+    })),
   };
 });
 
@@ -62,6 +80,7 @@ describe('useProfileStats', () => {
     vi.clearAllMocks();
     setMockUserCounts(null);
     setMockNotificationsCount(0);
+    setMockTaggedCount(0);
   });
 
   describe('Stats fetching', () => {

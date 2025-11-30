@@ -2,49 +2,53 @@
 
 exports[`NotificationsEmpty - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="relative flex flex-col items-center justify-center gap-6 p-6"
-  data-testid="container"
+  data-testid="empty-state"
 >
-  <img
-    alt="Notifications - Empty state"
-    aria-hidden="true"
-    class="pointer-events-none object-contain object-center"
-    data-nimg="fill"
-    decoding="async"
-    loading="lazy"
-    sizes="100vw"
-    src="/_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=3840&q=75"
-    srcset="/_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=640&q=75 640w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=750&q=75 750w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=828&q=75 828w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=1080&q=75 1080w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=1200&q=75 1200w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=1920&q=75 1920w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=2048&q=75 2048w, /_next/image?url=%2Fimages%2Fnotifications-empty-state.png&w=3840&q=75 3840w"
-    style="position: absolute; height: 100%; width: 100%; left: 0px; top: 0px; right: 0px; bottom: 0px; color: transparent;"
+  <div
+    data-alt="Notifications - Empty state"
+    data-src="/images/notifications-empty-state.png"
+    data-testid="image"
   />
-  <div
-    class="relative z-10 flex shrink-0 items-center justify-center rounded-full bg-brand/16 p-6"
-    data-testid="container"
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-frown"
+    data-testid="frown-icon"
+    fill="none"
+    height="24"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
   >
-    <svg
-      class="size-12 text-brand"
-      data-stroke-width="1.5"
-      data-testid="frown-icon"
-    >
-      Frown
-    </svg>
-  </div>
-  <div
-    class="relative z-10 flex w-full flex-col items-center justify-center"
-    data-testid="container"
-  >
-    <h3
-      class="pb-6 text-center leading-8"
-      data-testid="typography"
-    >
-      Nothing to see here yet
-    </h3>
-    <p
-      class="text-center text-base leading-6 font-medium text-secondary-foreground"
-      data-testid="typography"
-    >
-      Tags, follows, reposts and account information will be displayed here.
-    </p>
-  </div>
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+    />
+    <path
+      d="M16 16s-1.5-2-4-2-4 2-4 2"
+    />
+    <line
+      x1="9"
+      x2="9.01"
+      y1="9"
+      y2="9"
+    />
+    <line
+      x1="15"
+      x2="15.01"
+      y1="9"
+      y2="9"
+    />
+  </svg>
+  <h3>
+    Nothing to see here yet
+  </h3>
+  <p>
+    Tags, follows, reposts and account information will be displayed here.
+  </p>
 </div>
 `;
