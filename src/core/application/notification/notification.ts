@@ -114,7 +114,9 @@ export class NotificationApplication {
       const flatNotifications = nexusNotifications.map((notification) =>
         Core.NotificationNormalizer.toFlatNotification(notification),
       );
-      void Core.NotificationModel.bulkSave(flatNotifications);
+      Core.NotificationModel.bulkSave(flatNotifications).catch((error) =>
+        Libs.Logger.warn('Failed to persist notifications to cache', { error }),
+      );
 
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;

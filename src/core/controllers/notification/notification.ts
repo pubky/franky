@@ -7,7 +7,7 @@ export class NotificationController {
   /**
    * Refreshes unread notifications for the current user.
    * @param userId - The user ID to fetch notifications for
-   * @returns Promise resolving to the number of unread notifications
+   * @returns Promise resolving when notifications are updated
    */
   static async notifications({ userId }: Core.TReadProfileParams) {
     const notificationStore = Core.useNotificationStore.getState();
