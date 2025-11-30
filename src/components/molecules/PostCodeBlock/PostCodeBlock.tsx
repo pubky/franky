@@ -24,7 +24,9 @@ export const PostCodeBlock = (props: PostCodeBlockProps) => {
     try {
       await Libs.copyToClipboard({ text: codeSyntaxHighlight });
       setCopied(true);
-    } catch {}
+    } catch {
+      // TODO: add error handling
+    }
   };
 
   useEffect(() => {

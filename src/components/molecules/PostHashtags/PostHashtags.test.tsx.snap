@@ -1,0 +1,159 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostHashtags - Snapshots > matches snapshot for #bitcoin with icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=bitcoin"
+>
+  #bitcoin
+   
+  <svg
+    data-size="24"
+    data-testid="icon-bitcoin"
+  >
+    Bitcoin
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot for #bitkit with icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=bitkit"
+>
+  #bitkit
+   
+  <svg
+    data-size="24"
+    data-testid="icon-bitkit"
+  >
+    Bitkit
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot for #blocktank with icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=blocktank"
+>
+  #blocktank
+   
+  <svg
+    data-size="24"
+    data-testid="icon-blocktank"
+  >
+    Blocktank
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot for #pubky with icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=pubky"
+>
+  #pubky
+   
+  <svg
+    data-size="22"
+    data-testid="icon-pubky"
+  >
+    Pubky
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot for #synonym with icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=synonym"
+>
+  #synonym
+   
+  <svg
+    data-size="24"
+    data-testid="icon-synonym"
+  >
+    Synonym
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot for #tether with icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=tether"
+>
+  #tether
+   
+  <svg
+    data-size="24"
+    data-testid="icon-tether"
+  >
+    Tether
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot for basic hashtag without icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=javascript"
+>
+  #javascript
+   
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot with custom className 1`] = `
+<a
+  class="custom-styling inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=test"
+>
+  #test
+   
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot with mixed case hashtag having icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=pubky"
+>
+  #PuBkY
+   
+  <svg
+    data-size="22"
+    data-testid="icon-pubky"
+  >
+    Pubky
+  </svg>
+</a>
+`;
+
+exports[`PostHashtags - Snapshots > matches snapshot with uppercase hashtag having icon 1`] = `
+<a
+  class="inline-flex items-center gap-x-1 text-base"
+  data-testid="link"
+  href="/search?tags=bitcoin"
+>
+  #BITCOIN
+   
+  <svg
+    data-size="24"
+    data-testid="icon-bitcoin"
+  >
+    Bitcoin
+  </svg>
+</a>
+`;
