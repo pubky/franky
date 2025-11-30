@@ -12,7 +12,7 @@ export class NotificationApplication {
    */
   static async notifications({ userId, lastRead }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
     const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
-    return await Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead);
+    return await Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead);
   }
 
   /**

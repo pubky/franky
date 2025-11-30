@@ -22,7 +22,7 @@ describe('NotificationApplication.notifications', () => {
   it('should fetch, persist, and return unread count', async () => {
     const notifications = [createNexus(2000), createNexus(1000)];
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(notifications);
-    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(1);
+    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount').mockResolvedValue(1);
 
     const unread = await NotificationApplication.notifications({ userId, lastRead: 1234 });
 
@@ -33,7 +33,7 @@ describe('NotificationApplication.notifications', () => {
 
   it('should bubble Nexus errors without persisting', async () => {
     vi.spyOn(Core.NexusUserService, 'notifications').mockRejectedValue(new Error('nexus-fail'));
-    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount');
+    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount');
 
     await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('nexus-fail');
     expect(persistSpy).not.toHaveBeenCalled();
@@ -41,7 +41,7 @@ describe('NotificationApplication.notifications', () => {
 
   it('should bubble persist errors', async () => {
     vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
-    vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockRejectedValue(new Error('persist-fail'));
+    vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount').mockRejectedValue(new Error('persist-fail'));
 
     await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('persist-fail');
   });

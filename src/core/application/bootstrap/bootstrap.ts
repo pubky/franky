@@ -40,7 +40,7 @@ export class BootstrapApplication {
       // Both features: hot tags and tag streams
       Core.LocalHotService.upsert(Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'), data.list.hot_tags),
       Core.LocalStreamTagsService.upsert(Core.TagStreamTypes.TODAY_ALL, data.list.hot_tags),
-      Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead),
+      Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead),
     ]);
 
     const filesUris = results[1].postAttachments;
