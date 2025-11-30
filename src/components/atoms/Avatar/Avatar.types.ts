@@ -4,7 +4,8 @@ import { type VariantProps } from 'class-variance-authority';
 import { avatarVariants } from './Avatar.variants';
 
 export interface AvatarProps
-  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>, VariantProps<typeof avatarVariants> {
+  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
+    VariantProps<typeof avatarVariants> {
   className?: React.HTMLAttributes<HTMLDivElement>['className'];
 }
 
