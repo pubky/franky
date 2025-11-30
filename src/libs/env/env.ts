@@ -38,7 +38,7 @@ const envSchema = z.object({
 
   NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: z
     .string()
-    .default('88000') // 88 seconds in milliseconds
+    .default('8888') // 8888 milliseconds
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().int().positive()),
 
@@ -53,6 +53,30 @@ const envSchema = z.object({
     .default('true')
     .transform((val) => val === 'true')
     .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: z
+    .string()
+    .default('8888') // 8888 milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_STREAM_POLL_ON_START: z
+    .string()
+    .default('false')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: z
+    .string()
+    .default('true')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_FETCH_LIMIT: z
+    .string()
+    .default('10')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_TESTNET: z
     .string()
@@ -118,6 +142,10 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
       NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
       NEXT_MAX_STREAM_TAGS: process.env.NEXT_MAX_STREAM_TAGS,
+      NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
+      NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
+      NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
+      NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
