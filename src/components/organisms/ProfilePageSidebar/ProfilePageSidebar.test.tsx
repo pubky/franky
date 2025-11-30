@@ -8,6 +8,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
+  usePathname: () => '/profile/posts',
 }));
 
 // Mock dexie-react-hooks
@@ -18,7 +19,7 @@ vi.mock('dexie-react-hooks', () => ({
 // Mock @/core
 vi.mock('@/core', () => ({
   useAuthStore: vi.fn(() => ({
-    currentUserPubky: 'test-pubky-123',
+    selectCurrentUserPubky: () => 'test-pubky-123',
   })),
   ProfileController: {
     read: vi.fn().mockResolvedValue({
@@ -36,7 +37,11 @@ vi.mock('@/hooks', () => ({
     userDetails: null,
     currentUserPubky: 'test-pubky-123',
   })),
-  useUserTags: vi.fn(() => []),
+  useTagged: vi.fn(() => ({
+    tags: [],
+    isLoading: false,
+    handleTagToggle: vi.fn(),
+  })),
 }));
 
 describe('ProfilePageSidebar', () => {

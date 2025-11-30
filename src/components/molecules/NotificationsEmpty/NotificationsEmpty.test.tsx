@@ -2,31 +2,33 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { NotificationsEmpty } from './NotificationsEmpty';
 
-// Mock atoms
-vi.mock('@/atoms', () => ({
-  Container: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="container" className={className}>
-      {children}
-    </div>
-  ),
-  Typography: ({ children, as, className }: { children: React.ReactNode; as?: string; className?: string }) => {
-    const Tag = as || 'p';
-    return (
-      <Tag data-testid="typography" className={className}>
-        {children}
-      </Tag>
-    );
-  },
-}));
-
-// Mock lucide-react
-vi.mock('lucide-react', () => ({
-  Frown: ({ className, strokeWidth }: { className?: string; strokeWidth?: number }) => (
-    <svg data-testid="frown-icon" className={className} data-stroke-width={strokeWidth}>
-      Frown
-    </svg>
-  ),
-}));
+// Mock ProfilePageEmptyState
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    ProfilePageEmptyState: ({
+      imageSrc,
+      imageAlt,
+      icon: Icon,
+      title,
+      subtitle,
+    }: {
+      imageSrc: string;
+      imageAlt: string;
+      icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+      title: string;
+      subtitle: string;
+    }) => (
+      <div data-testid="empty-state">
+        <div data-testid="image" data-src={imageSrc} data-alt={imageAlt} />
+        <Icon data-testid="frown-icon" />
+        <h3>{title}</h3>
+        <p>{subtitle}</p>
+      </div>
+    ),
+  };
+});
 
 describe('NotificationsEmpty', () => {
   it('renders title', () => {
@@ -47,10 +49,11 @@ describe('NotificationsEmpty', () => {
   });
 
   it('renders background image', () => {
-    const { container } = render(<NotificationsEmpty />);
-    const images = container.querySelectorAll('img');
-    expect(images.length).toBe(1);
-    expect(images[0]).toHaveAttribute('src', expect.stringContaining('notifications-empty-state.png'));
+    render(<NotificationsEmpty />);
+    const image = screen.getByTestId('image');
+    expect(image).toBeInTheDocument();
+    expect(image).toHaveAttribute('data-src', '/images/notifications-empty-state.png');
+    expect(image).toHaveAttribute('data-alt', 'Notifications - Empty state');
   });
 });
 
