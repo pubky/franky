@@ -3,23 +3,29 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import type { NexusTag } from '@/core/services/nexus/nexus.types';
+import type { TaggedItemProps } from './TaggedItem.types';
+import { MAX_VISIBLE_AVATARS } from './TaggedItem.constants';
 
-interface TaggedItemProps {
-  tag: NexusTag;
-  onSearchClick?: () => void;
-}
-
-export function TaggedItem({ tag, onSearchClick }: TaggedItemProps) {
-  // Show first 3-4 avatars, then overflow indicator
-  const MAX_VISIBLE_AVATARS = 4;
+export function TaggedItem({ tag, onTagClick, onSearchClick }: TaggedItemProps) {
   const visibleTaggers = tag.taggers.slice(0, MAX_VISIBLE_AVATARS);
   const overflowCount = tag.taggers.length - MAX_VISIBLE_AVATARS;
 
+  const handleTagClick = () => {
+    onTagClick(tag);
+  };
+
   return (
     <Atoms.Container overrideDefaults={true} className="flex items-center gap-2">
-      {/* Tag badge */}
-      <Atoms.Tag name={tag.label} count={tag.taggers_count} />
+      {/* Tag badge - clickable to toggle */}
+      <Atoms.Tag
+        name={tag.label}
+        count={tag.taggers_count}
+        onClick={handleTagClick}
+        className={Libs.cn(
+          'cursor-pointer transition-opacity hover:opacity-80',
+          tag.relationship && 'ring-2 ring-brand',
+        )}
+      />
 
       {/* Search button */}
       <Atoms.Button variant="secondary" size="icon" onClick={onSearchClick}>
@@ -28,10 +34,11 @@ export function TaggedItem({ tag, onSearchClick }: TaggedItemProps) {
 
       {/* Avatar group */}
       <Atoms.Container overrideDefaults={true} className="flex items-center pr-2 pl-0">
-        {visibleTaggers.map((taggerId, index) => (
+        {visibleTaggers.map((tagger, index) => (
           <Molecules.AvatarWithFallback
-            key={taggerId}
-            name={taggerId}
+            key={tagger.id}
+            name={tagger.id}
+            avatarUrl={tagger.avatarUrl}
             className={Libs.cn('h-8 w-8 shrink-0', index > 0 && '-ml-2')}
           />
         ))}

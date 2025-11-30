@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TaggedItem } from './TaggedItem';
-import type { NexusTag } from '@/core/services/nexus/nexus.types';
+import type { TagWithAvatars } from './TaggedItem.types';
 
 // Mock Atoms.Tag
 vi.mock('@/atoms', async (importOriginal) => {
@@ -35,33 +35,43 @@ vi.mock('@/molecules', async (importOriginal) => {
 });
 
 describe('TaggedItem', () => {
-  const mockTag: NexusTag = {
+  const mockTag: TagWithAvatars = {
     label: 'bitcoin',
-    taggers: ['user1', 'user2', 'user3'],
+    taggers: [
+      { id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1' },
+      { id: 'user2', avatarUrl: 'https://cdn.example.com/avatar/user2' },
+      { id: 'user3', avatarUrl: 'https://cdn.example.com/avatar/user3' },
+    ],
     taggers_count: 3,
     relationship: false,
   };
 
+  const mockOnTagClick = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('renders tag label and count', () => {
-    render(<TaggedItem tag={mockTag} />);
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
     expect(screen.getByText('bitcoin (3)')).toBeInTheDocument();
   });
 
   it('calls onSearchClick when search button is clicked', () => {
     const mockOnSearchClick = vi.fn();
-    render(<TaggedItem tag={mockTag} onSearchClick={mockOnSearchClick} />);
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} onSearchClick={mockOnSearchClick} />);
     fireEvent.click(screen.getByTestId('search-button'));
     expect(mockOnSearchClick).toHaveBeenCalledTimes(1);
   });
 
   it('renders avatars for taggers', () => {
-    render(<TaggedItem tag={mockTag} />);
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
     const avatars = screen.getAllByTestId('avatar');
     expect(avatars.length).toBeGreaterThan(0);
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<TaggedItem tag={mockTag} />);
+    const { container } = render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

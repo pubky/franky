@@ -42,3 +42,4 @@ export * from './SignInNavigation';
 export * from './Timeline';
 export * from './ProfilePageContainer';
 export * from './ProfilePageHeader';
+export * from './ProfileTagged';

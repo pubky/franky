@@ -2,14 +2,17 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Hooks from '@/hooks';
+import type { TaggedSectionProps } from './TaggedSection.types';
 
-export function TaggedSection() {
-  const { userDetails } = Hooks.useCurrentUserProfile();
-  const { tags, handleTagAdd } = Hooks.useTagged();
-
-  const userName = userDetails?.name || '';
-
+export function TaggedSection({
+  tags,
+  userName,
+  handleTagAdd,
+  handleTagToggle,
+  hasMore,
+  isLoadingMore,
+  loadMore,
+}: TaggedSectionProps) {
   return (
     <Atoms.Container className="gap-2 rounded-md bg-card p-6">
       <Atoms.Typography as="p" className="text-base font-medium text-secondary-foreground">
@@ -18,7 +21,13 @@ export function TaggedSection() {
 
       <Molecules.TagInput onTagAdd={handleTagAdd} existingTags={tags} />
 
-      <Molecules.TaggedList tags={tags} />
+      <Molecules.TaggedList
+        tags={tags}
+        hasMore={hasMore}
+        isLoadingMore={isLoadingMore}
+        onLoadMore={loadMore}
+        onTagToggle={handleTagToggle}
+      />
     </Atoms.Container>
   );
 }
