@@ -24,7 +24,15 @@ const tagIcons: TagIcons = {
 export const PostHashtags = (props: PostHashtagsProps) => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
 
-  const Icon = tagIcons[String(children).toLowerCase()] || null;
+  // Extract text safely - children from remark is typically a text node
+  const hashtagText =
+    typeof children === 'string'
+      ? children
+      : Array.isArray(children) && typeof children[0] === 'string'
+        ? children[0]
+        : '';
+
+  const Icon = tagIcons[hashtagText.toLowerCase()] || null;
 
   return (
     <Atoms.Link
