@@ -7,4 +7,6 @@ export interface FollowerItemProps {
   isFollowing?: boolean;
   /** Callback when follow/unfollow button is clicked */
   onFollow?: (userId: Pubky, isCurrentlyFollowing: boolean) => void;
+  /** Whether this follower is the current logged-in user (hide follow button) */
+  isCurrentUser?: boolean;
 }

@@ -16,6 +16,8 @@ import * as Providers from '@/providers';
 export function ProfileFollowers() {
   // Get the profile pubky from context
   const { pubky } = Providers.useProfileContext();
+  // Get the current logged-in user's pubky
+  const currentUserPubky = Core.useAuthStore((state) => state.currentUserPubky);
 
   const { connections, count, isLoading, isLoadingMore, hasMore, loadMore } = Hooks.useProfileConnections(
     Hooks.CONNECTION_TYPE.FOLLOWERS,
@@ -56,7 +58,11 @@ export function ProfileFollowers() {
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Followers {count > 0 && `(${count})`}
       </Atoms.Heading>
-      <Molecules.UserConnectionsList connections={connections} onFollow={handleFollow} />
+      <Molecules.UserConnectionsList
+        connections={connections}
+        onFollow={handleFollow}
+        currentUserPubky={currentUserPubky}
+      />
 
       {/* Infinite scroll trigger */}
       <div ref={sentinelRef} className="h-1" />

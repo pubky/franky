@@ -98,17 +98,33 @@ exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
     </div>
     <button
       aria-label="Unfollow"
-      class="group hidden w-8 lg:flex"
+      class="group hidden w-[110px] justify-center lg:flex"
       data-testid="button"
     >
-      <svg
-        class="size-5 group-hover:hidden"
-        data-testid="check-icon"
-      />
-      <svg
-        class="hidden size-5 group-hover:block"
-        data-testid="user-minus-icon"
-      />
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Following
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-minus-icon"
+        />
+        <span>
+          Unfollow
+        </span>
+      </div>
     </button>
   </div>
   <div
@@ -132,17 +148,33 @@ exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
     </div>
     <button
       aria-label="Unfollow"
-      class="group w-8"
+      class="group w-[110px] justify-center"
       data-testid="button"
     >
-      <svg
-        class="size-5 group-hover:hidden"
-        data-testid="check-icon"
-      />
-      <svg
-        class="hidden size-5 group-hover:block"
-        data-testid="user-minus-icon"
-      />
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Following
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-minus-icon"
+        />
+        <span>
+          Unfollow
+        </span>
+      </div>
     </button>
   </div>
 </div>
@@ -246,17 +278,33 @@ exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
     </div>
     <button
       aria-label="Follow"
-      class="group hidden w-8 lg:flex"
+      class="group hidden w-[110px] justify-center lg:flex"
       data-testid="button"
     >
-      <svg
-        class="size-5 group-hover:hidden"
-        data-testid="user-round-plus-icon"
-      />
-      <svg
-        class="hidden size-5 group-hover:block"
-        data-testid="check-icon"
-      />
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
     </button>
   </div>
   <div
@@ -280,17 +328,33 @@ exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
     </div>
     <button
       aria-label="Follow"
-      class="group w-8"
+      class="group w-[110px] justify-center"
       data-testid="button"
     >
-      <svg
-        class="size-5 group-hover:hidden"
-        data-testid="user-round-plus-icon"
-      />
-      <svg
-        class="hidden size-5 group-hover:block"
-        data-testid="check-icon"
-      />
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
     </button>
   </div>
 </div>
@@ -379,17 +443,33 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
     </div>
     <button
       aria-label="Follow"
-      class="group hidden w-8 lg:flex"
+      class="group hidden w-[110px] justify-center lg:flex"
       data-testid="button"
     >
-      <svg
-        class="size-5 group-hover:hidden"
-        data-testid="user-round-plus-icon"
-      />
-      <svg
-        class="hidden size-5 group-hover:block"
-        data-testid="check-icon"
-      />
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
     </button>
   </div>
   <div
@@ -398,17 +478,33 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
   >
     <button
       aria-label="Follow"
-      class="group w-8"
+      class="group w-[110px] justify-center"
       data-testid="button"
     >
-      <svg
-        class="size-5 group-hover:hidden"
-        data-testid="user-round-plus-icon"
-      />
-      <svg
-        class="hidden size-5 group-hover:block"
-        data-testid="check-icon"
-      />
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
     </button>
   </div>
 </div>

@@ -88,43 +88,43 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
 
   // Combine user IDs with their details and computed avatar URLs
   const connections = useMemo((): UserConnectionData[] => {
-    return userIds
-      .map((id) => {
-        const details = userDetailsMap.get(id);
-        const counts = userCountsMap.get(id);
-        const relationship = userRelationshipsMap.get(id);
-        // Generate avatar URL from user ID using FileController
-        const avatarUrl = Core.FileController.getAvatarUrl(id);
+    return userIds.map((id) => {
+      const details = userDetailsMap.get(id);
+      const counts = userCountsMap.get(id);
+      const relationship = userRelationshipsMap.get(id);
+      // Generate avatar URL from user ID using FileController
+      const avatarUrl = Core.FileController.getAvatarUrl(id);
 
-        if (!details) {
-          // Return minimal data if details not yet loaded
-          return {
-            id,
-            name: '',
-            bio: '',
-            image: null,
-            status: null,
-            links: null,
-            indexed_at: 0,
-            avatarUrl,
-            tags: [],
-            stats: { tags: 0, posts: 0 },
-            isFollowing: relationship?.following ?? false,
-          } as UserConnectionData;
-        }
-
+      if (!details) {
+        // Return minimal data if details not yet loaded
         return {
-          ...details,
+          id,
+          name: '',
+          bio: '',
+          image: null,
+          status: null,
+          links: null,
+          indexed_at: 0,
           avatarUrl,
-          tags: [], // TODO: Fetch tags when available
-          stats: {
-            tags: counts?.unique_tags ?? 0,
-            posts: counts?.posts ?? 0,
-          },
+          tags: [],
+          stats: { tags: 0, posts: 0 },
           isFollowing: relationship?.following ?? false,
         } as UserConnectionData;
-      })
-      .filter((conn) => conn.name !== ''); // Filter out users without loaded details
+      }
+
+      return {
+        ...details,
+        avatarUrl,
+        tags: [], // TODO: Fetch tags when available
+        stats: {
+          tags: counts?.unique_tags ?? 0,
+          posts: counts?.posts ?? 0,
+        },
+        isFollowing: relationship?.following ?? false,
+      } as UserConnectionData;
+    });
+    // Note: We no longer filter out users with empty names - they will appear
+    // with placeholder data while their details are being fetched in background
   }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap]);
 
   /**

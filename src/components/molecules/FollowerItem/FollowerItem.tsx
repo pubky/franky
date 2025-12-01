@@ -6,11 +6,13 @@ import * as Libs from '@/libs';
 import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
 import type { FollowerItemProps } from './FollowerItem.types';
 
-export function FollowerItem({ follower, isFollowing = false, onFollow }: FollowerItemProps) {
+export function FollowerItem({ follower, isFollowing = false, onFollow, isCurrentUser = false }: FollowerItemProps) {
   const avatarUrl = follower.avatarUrl || follower.image || undefined;
   const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: 10 });
   const tags = follower.tags || [];
   const stats = follower.stats || { tags: 0, posts: 0 };
+  // Use formatted public key as fallback when name is loading
+  const displayName = follower.name || formattedPublicKey;
 
   const handleFollowClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -25,11 +27,11 @@ export function FollowerItem({ follower, isFollowing = false, onFollow }: Follow
         className="flex flex-wrap items-center justify-between gap-6 lg:flex-nowrap"
       >
         <Atoms.Link href={`/profile/${follower.id}`} className="flex min-w-0 flex-1 items-center gap-2">
-          <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={follower.name} size="md" />
+          <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={displayName} size="md" />
 
           <Atoms.Container overrideDefaults={true}>
             <Atoms.Typography size="sm" className="truncate font-bold">
-              {follower.name}
+              {displayName}
             </Atoms.Typography>
             <Atoms.Typography className="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase">
               {formattedPublicKey}
@@ -67,25 +69,49 @@ export function FollowerItem({ follower, isFollowing = false, onFollow }: Follow
         </Atoms.Container>
 
         {/* Desktop: Follow Button */}
-        <Atoms.Button
-          variant="secondary"
-          size="sm"
-          className="group hidden w-8 lg:flex"
-          onClick={handleFollowClick}
-          aria-label={isFollowing ? 'Unfollow' : 'Follow'}
-        >
-          {isFollowing ? (
-            <>
-              <Check className="size-5 group-hover:hidden" />
-              <UserMinus className="hidden size-5 group-hover:block" />
-            </>
-          ) : (
-            <>
-              <UserRoundPlus className="size-5 group-hover:hidden" />
-              <Check className="hidden size-5 group-hover:block" />
-            </>
-          )}
-        </Atoms.Button>
+        {isCurrentUser ? (
+          <Atoms.Button
+            variant="secondary"
+            size="sm"
+            className="hidden w-[110px] justify-center lg:flex"
+            disabled
+            aria-label="This is you"
+          >
+            <span>Me</span>
+          </Atoms.Button>
+        ) : (
+          <Atoms.Button
+            variant="secondary"
+            size="sm"
+            className="group hidden w-[110px] justify-center lg:flex"
+            onClick={handleFollowClick}
+            aria-label={isFollowing ? 'Unfollow' : 'Follow'}
+          >
+            {isFollowing ? (
+              <>
+                <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
+                  <Check className="size-4" />
+                  <span>Following</span>
+                </Atoms.Container>
+                <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
+                  <UserMinus className="size-4" />
+                  <span>Unfollow</span>
+                </Atoms.Container>
+              </>
+            ) : (
+              <>
+                <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
+                  <UserRoundPlus className="size-4" />
+                  <span>Follow</span>
+                </Atoms.Container>
+                <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
+                  <Check className="size-4" />
+                  <span>Follow</span>
+                </Atoms.Container>
+              </>
+            )}
+          </Atoms.Button>
+        )}
       </Atoms.Container>
 
       {/* Mobile: Bottom row - Tags and Follow Button */}
@@ -99,25 +125,49 @@ export function FollowerItem({ follower, isFollowing = false, onFollow }: Follow
           </Atoms.Container>
         )}
         {/* Right: Follow Button */}
-        <Atoms.Button
-          variant="secondary"
-          size="sm"
-          className="group w-8"
-          onClick={handleFollowClick}
-          aria-label={isFollowing ? 'Unfollow' : 'Follow'}
-        >
-          {isFollowing ? (
-            <>
-              <Check className="size-5 group-hover:hidden" />
-              <UserMinus className="hidden size-5 group-hover:block" />
-            </>
-          ) : (
-            <>
-              <UserRoundPlus className="size-5 group-hover:hidden" />
-              <Check className="hidden size-5 group-hover:block" />
-            </>
-          )}
-        </Atoms.Button>
+        {isCurrentUser ? (
+          <Atoms.Button
+            variant="secondary"
+            size="sm"
+            className="w-[110px] justify-center"
+            disabled
+            aria-label="This is you"
+          >
+            <span>Me</span>
+          </Atoms.Button>
+        ) : (
+          <Atoms.Button
+            variant="secondary"
+            size="sm"
+            className="group w-[110px] justify-center"
+            onClick={handleFollowClick}
+            aria-label={isFollowing ? 'Unfollow' : 'Follow'}
+          >
+            {isFollowing ? (
+              <>
+                <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
+                  <Check className="size-4" />
+                  <span>Following</span>
+                </Atoms.Container>
+                <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
+                  <UserMinus className="size-4" />
+                  <span>Unfollow</span>
+                </Atoms.Container>
+              </>
+            ) : (
+              <>
+                <Atoms.Container overrideDefaults className="flex items-center gap-1.5 group-hover:hidden">
+                  <UserRoundPlus className="size-4" />
+                  <span>Follow</span>
+                </Atoms.Container>
+                <Atoms.Container overrideDefaults className="hidden items-center gap-1.5 group-hover:flex">
+                  <Check className="size-4" />
+                  <span>Follow</span>
+                </Atoms.Container>
+              </>
+            )}
+          </Atoms.Button>
+        )}
       </Atoms.Container>
     </Atoms.Container>
   );
