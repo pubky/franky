@@ -168,7 +168,7 @@ export class LocalFollowService {
       streams.push(...FRIENDS_TIMELINE_STREAMS);
     }
 
-    await Promise.all(streams.map((streamId) => Core.LocalStreamPostsService.deleteById(streamId)));
+    await Promise.all(streams.map((streamId) => Core.LocalStreamPostsService.deleteById({ streamId })));
   }
 
   /**
