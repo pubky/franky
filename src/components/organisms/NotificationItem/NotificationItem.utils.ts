@@ -1,7 +1,9 @@
 import type { FlatNotification } from '@/core';
 import { NotificationType } from '@/core/models/notification/notification.types';
-import { POST_ROUTES, PROFILE_ROUTES } from '@/app';
-import { USER_CENTRIC_NOTIFICATION_TYPES, NOTIFICATION_PREVIEW_CONFIG } from './NotificationItem.constants';
+import { buildCompositeIdFromPubkyUri, parseCompositeId, CompositeIdDomain } from '@/core';
+import { APP_ROUTES, POST_ROUTES, PROFILE_ROUTES } from '@/app';
+import { truncateString, Logger } from '@/libs';
+import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
 
 // ============================================================================
 // NOTIFICATION TEXT UTILITIES
@@ -68,34 +70,70 @@ export function getUserIdFromNotification(notification: FlatNotification): strin
 // ============================================================================
 
 /**
+ * Convert a pubky URI or composite ID to a URL path format (userId/postId).
+ * Uses Core's buildCompositeIdFromPubkyUri and parseCompositeId utilities.
+ * Supports:
+ * - pubky:// URI format: pubky://userId/pub/pubky.app/posts/postId
+ * - Composite ID format: userId:postId
+ * Returns: userId/postId
+ */
+function uriToUrlPath(uri: string | undefined): string | null {
+  if (!uri) return null;
+
+  let compositeId: string | null = null;
+
+  // Handle pubky:// URI format
+  if (uri.startsWith('pubky://')) {
+    compositeId = buildCompositeIdFromPubkyUri({ uri, domain: CompositeIdDomain.POSTS });
+  }
+  // Handle composite ID format (userId:postId)
+  else if (uri.includes(':')) {
+    compositeId = uri;
+  }
+
+  if (!compositeId) return null;
+
+  try {
+    // Parse the composite ID to get userId and postId
+    const { pubky, id } = parseCompositeId(compositeId);
+    return `${pubky}/${id}`;
+  } catch (error) {
+    Logger.debug('Failed to parse composite ID', { compositeId, error });
+    return null;
+  }
+}
+
+/**
  * Get the appropriate post link for a notification based on its type
  * Uses TypeScript's discriminated union type narrowing for type safety
  */
 function getPostLink(notification: FlatNotification): string | null {
+  let uri: string | undefined;
+
   switch (notification.type) {
     case NotificationType.Reply:
-      // TypeScript knows notification.reply_uri exists for Reply type
-      return notification.reply_uri ? `${POST_ROUTES.POST}/${notification.reply_uri}` : null;
+      uri = notification.reply_uri;
+      break;
 
     case NotificationType.Mention:
-      // TypeScript knows notification.post_uri exists for Mention type
-      return notification.post_uri ? `${POST_ROUTES.POST}/${notification.post_uri}` : null;
+      uri = notification.post_uri;
+      break;
 
     case NotificationType.TagPost:
-      // TypeScript knows notification.post_uri exists for TagPost type
-      return notification.post_uri ? `${POST_ROUTES.POST}/${notification.post_uri}` : null;
+      uri = notification.post_uri;
+      break;
 
     case NotificationType.Repost:
-      // TypeScript knows notification.repost_uri exists for Repost type
-      return notification.repost_uri ? `${POST_ROUTES.POST}/${notification.repost_uri}` : null;
+      uri = notification.repost_uri;
+      break;
 
     case NotificationType.PostDeleted:
-      // TypeScript knows notification.linked_uri exists for PostDeleted type
-      return notification.linked_uri ? `${POST_ROUTES.POST}/${notification.linked_uri}` : null;
+      uri = notification.linked_uri;
+      break;
 
     case NotificationType.PostEdited:
-      // TypeScript knows notification.edited_uri exists for PostEdited type
-      return notification.edited_uri ? `${POST_ROUTES.POST}/${notification.edited_uri}` : null;
+      uri = notification.edited_uri;
+      break;
 
     case NotificationType.Follow:
     case NotificationType.NewFriend:
@@ -108,18 +146,19 @@ function getPostLink(notification: FlatNotification): string | null {
       return PROFILE_ROUTES.UNIQUE_TAGS;
 
     default:
-      // Exhaustiveness check - TypeScript will error if we miss a case
       return null;
   }
+
+  // Convert URI to URL path format
+  const urlPath = uriToUrlPath(uri);
+  return urlPath ? `${POST_ROUTES.POST}/${urlPath}` : null;
 }
 
 /**
  * Get the user profile link for the notification actor
  */
 function getUserProfileLink(userId: string): string {
-  // TODO: Update when we have proper user profile routes with userId
-  // For now, using a placeholder that we'll implement later
-  return `/profile/${userId}`;
+  return `${APP_ROUTES.PROFILE}/${userId}`;
 }
 
 /**
@@ -159,24 +198,64 @@ export function getNotificationLink(notification: FlatNotification) {
 // ============================================================================
 
 /**
- * Get preview text for notification
- *
- * MOCK IMPLEMENTATION - Returns placeholder text
- * TODO: Replace with actual post content from database
- *
- * Real implementation should:
- * - Accept the full notification object
- * - Extract post_uri/reply_uri/repost_uri
- * - Fetch post content from PostModel or PostController
- * - Truncate and format the content
+ * Extract the post URI from a notification that has an associated post.
+ * Returns the URI in composite format (author:postId) that can be used to fetch post content.
  */
-export function getNotificationPreviewText(notificationType: NotificationType): string | null {
-  return NOTIFICATION_PREVIEW_CONFIG[notificationType as keyof typeof NOTIFICATION_PREVIEW_CONFIG]?.preview ?? null;
+export function getPostUriFromNotification(notification: FlatNotification): string | null {
+  switch (notification.type) {
+    case NotificationType.Reply:
+      // For replies, show the content of the reply itself
+      return notification.reply_uri ?? null;
+    case NotificationType.Mention:
+      // For mentions, show the content of the post that mentions the user
+      return notification.post_uri ?? null;
+    case NotificationType.Repost:
+      // For reposts, show the content of the original post that was reposted
+      return notification.embed_uri ?? null;
+    case NotificationType.TagPost:
+      // For tagged posts, show the content of the tagged post
+      return notification.post_uri ?? null;
+    case NotificationType.PostDeleted:
+      // For deleted posts, we could show the linked post content
+      return notification.linked_uri ?? null;
+    case NotificationType.PostEdited:
+      // For edited posts, show the edited post content
+      return notification.edited_uri ?? null;
+    default:
+      return null;
+  }
 }
 
 /**
- * Check if notification type has preview text configured
+ * Convert a pubky URI to a composite ID format.
+ * Uses Core's buildCompositeIdFromPubkyUri utility.
+ * URI format: pubky://userId/pub/pubky.app/posts/postId
+ * Composite format: userId:postId
  */
-export function hasPreviewText(notificationType: NotificationType): boolean {
-  return notificationType in NOTIFICATION_PREVIEW_CONFIG;
+export function pubkyUriToCompositeId(uri: string): string | null {
+  // If already in composite format (userId:postId), return as is
+  if (uri.includes(':') && !uri.startsWith('pubky://')) {
+    return uri;
+  }
+
+  // Use Core function to convert URI to composite ID
+  return buildCompositeIdFromPubkyUri({ uri, domain: CompositeIdDomain.POSTS });
+}
+
+/**
+ * Format post content as preview text with quotes
+ */
+export function formatPreviewText(content: string | null | undefined): string | null {
+  if (!content) return null;
+  const truncated = truncateString(content, 20);
+  return `'${truncated}'`;
+}
+
+/**
+ * Check if notification type has post preview
+ */
+export function hasPostPreview(notificationType: NotificationType): boolean {
+  return [NotificationType.Reply, NotificationType.Mention, NotificationType.Repost, NotificationType.TagPost].includes(
+    notificationType,
+  );
 }

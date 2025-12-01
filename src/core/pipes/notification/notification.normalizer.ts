@@ -11,4 +11,11 @@ export class NotificationNormalizer {
     Libs.Logger.debug('LastRead validated', { result });
     return result;
   }
+
+  static toFlatNotification(nexusNotification: Core.NexusNotification): Core.FlatNotification {
+    return {
+      timestamp: nexusNotification.timestamp,
+      ...nexusNotification.body,
+    } as Core.FlatNotification;
+  }
 }

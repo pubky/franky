@@ -95,7 +95,7 @@ export class NotificationCoordinator extends Coordinator<NotificationCoordinator
       Logger.debug('Polling notifications', { userId });
 
       // Coordinator calls controller to fetch notifications
-      await Core.UserController.notifications({ userId });
+      await Core.NotificationController.notifications({ userId });
     } catch (error) {
       Logger.error('Error polling notifications', { error });
       // Don't stop polling on error - just log and continue
@@ -109,6 +109,4 @@ export class NotificationCoordinator extends Coordinator<NotificationCoordinator
     const state = this.getState();
     return !this.notificationConfig.disabledRoutes.some((pattern) => pattern.test(state.currentRoute));
   }
-
-  // getInactiveReason() is inherited from base class - no additional checks needed
 }

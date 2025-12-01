@@ -1,29 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageNotifications } from './ProfilePageNotifications';
-import * as Hooks from '@/hooks';
-
-// Mock useNotifications hook
-vi.mock('@/hooks', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/hooks')>();
-  return {
-    ...actual,
-    useNotifications: vi.fn(() => ({
-      notifications: [
-        {
-          type: 'follow' as const,
-          timestamp: Date.now() - 1000 * 60 * 30,
-          followed_by: 'user1',
-        },
-      ],
-      unreadNotifications: [],
-      count: 27,
-      unreadCount: 0,
-      isLoading: false,
-      markAllAsRead: vi.fn(),
-    })),
-  };
-});
 
 // Mock atoms
 vi.mock('@/atoms', () => ({
@@ -32,69 +9,22 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Heading: ({ children, level, className }: { children: React.ReactNode; level?: number; className?: string }) => {
-    const Tag = `h${level || 1}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-    return (
-      <Tag data-testid={`heading-${level || 1}`} className={className}>
-        {children}
-      </Tag>
-    );
-  },
-  Spinner: ({ size }: { size?: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
-// Mock molecules
-vi.mock('@/molecules', () => ({
-  NotificationsList: ({ notifications }: { notifications: unknown[] }) => (
-    <div data-testid="notifications-list">{notifications.length} notifications</div>
-  ),
-  NotificationsEmpty: () => <div data-testid="notifications-empty">Nothing to see here yet</div>,
+// Mock organisms
+vi.mock('@/organisms', () => ({
+  NotificationsContainer: () => <div data-testid="notifications-container">Notifications Content</div>,
 }));
 
 describe('ProfilePageNotifications', () => {
-  it('renders without errors', () => {
+  it('renders container with correct layout', () => {
     render(<ProfilePageNotifications />);
-    expect(screen.getByTestId('heading-5')).toBeInTheDocument();
+    expect(screen.getByTestId('container')).toBeInTheDocument();
   });
 
-  it('displays the correct heading with count', () => {
+  it('renders NotificationsContainer organism', () => {
     render(<ProfilePageNotifications />);
-    const heading = screen.getByTestId('heading-5');
-    expect(heading).toBeInTheDocument();
-    expect(heading).toHaveTextContent(/Notifications/);
-  });
-
-  it('displays notifications list when notifications exist', () => {
-    render(<ProfilePageNotifications />);
-    // The component should render NotificationsList
-    expect(screen.getByTestId('heading-5')).toBeInTheDocument();
-  });
-
-  it('shows loading state', () => {
-    vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
-      notifications: [],
-      unreadNotifications: [],
-      count: 0,
-      unreadCount: 0,
-      isLoading: true,
-      markAllAsRead: vi.fn(),
-    });
-    render(<ProfilePageNotifications />);
-    // Should show empty state when loading is true but notifications are empty
-    expect(screen.getByText(/Nothing to see here yet/i)).toBeInTheDocument();
-  });
-
-  it('shows empty state when no notifications', () => {
-    vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
-      notifications: [],
-      unreadNotifications: [],
-      count: 0,
-      unreadCount: 0,
-      isLoading: false,
-      markAllAsRead: vi.fn(),
-    });
-    render(<ProfilePageNotifications />);
-    expect(screen.getByText(/Nothing to see here yet/i)).toBeInTheDocument();
+    expect(screen.getByTestId('notifications-container')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {

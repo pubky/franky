@@ -4,7 +4,7 @@ import { NotificationsList } from './NotificationsList';
 import { FlatNotification, NotificationType } from '@/core/models/notification/notification.types';
 
 // Mock NotificationItem
-vi.mock('@/molecules/NotificationItem', () => ({
+vi.mock('@/organisms/NotificationItem', () => ({
   NotificationItem: ({ notification }: { notification: FlatNotification }) => (
     <div data-testid="notification-item" data-type={notification.type}>
       {notification.type}

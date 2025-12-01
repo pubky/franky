@@ -51,6 +51,23 @@ export class NotificationModel {
     }
   }
 
+  /**
+   * Retrieves all notifications ordered by timestamp descending.
+   * @returns Promise resolving to array of all notifications
+   */
+  static async getAll(): Promise<FlatNotification[]> {
+    try {
+      return await this.table.orderBy('timestamp').reverse().toArray();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to read all notifications from ${this.table.name}`,
+        500,
+        { error },
+      );
+    }
+  }
+
   // Query methods. TODO: Error handling when we will use it
   static async getRecent(limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT): Promise<FlatNotification[]> {
     return await this.table.orderBy('timestamp').reverse().limit(limit).toArray();
@@ -70,6 +87,34 @@ export class NotificationModel {
       .reverse()
       .sortBy('timestamp')
       .then((notifications) => notifications.slice(0, limit));
+  }
+
+  /**
+   * Retrieves notifications older than a given timestamp, ordered by timestamp descending.
+   * Used for timestamp-based pagination.
+   *
+   * @param olderThan - Unix timestamp to get notifications older than. Use Infinity for initial load.
+   * @param limit - Maximum number of notifications to return
+   * @returns Promise resolving to array of notifications ordered by timestamp descending
+   */
+  static async getOlderThan(
+    olderThan: number,
+    limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT,
+  ): Promise<FlatNotification[]> {
+    try {
+      return await this.table.where('timestamp').below(olderThan).reverse().limit(limit).toArray();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to read notifications older than ${olderThan} from ${this.table.name}`,
+        500,
+        {
+          error,
+          olderThan,
+          limit,
+        },
+      );
+    }
   }
 
   /**
