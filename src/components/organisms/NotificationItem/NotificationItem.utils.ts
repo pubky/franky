@@ -2,7 +2,7 @@ import type { FlatNotification } from '@/core';
 import { NotificationType } from '@/core/models/notification/notification.types';
 import { buildCompositeIdFromPubkyUri, parseCompositeId, CompositeIdDomain } from '@/core';
 import { APP_ROUTES, POST_ROUTES, PROFILE_ROUTES } from '@/app';
-import { truncateString } from '@/libs';
+import { truncateString, Logger } from '@/libs';
 import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
 
 // ============================================================================
@@ -97,7 +97,8 @@ function uriToUrlPath(uri: string | undefined): string | null {
     // Parse the composite ID to get userId and postId
     const { pubky, id } = parseCompositeId(compositeId);
     return `${pubky}/${id}`;
-  } catch {
+  } catch (error) {
+    Logger.debug('Failed to parse composite ID', { compositeId, error });
     return null;
   }
 }

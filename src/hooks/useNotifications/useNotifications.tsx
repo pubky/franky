@@ -39,6 +39,7 @@ export function useNotifications(): UseNotificationsResult {
   // Use refs for values that need to be accessed in callbacks without causing re-renders
   const hasMoreRef = useRef(true);
   const isLoadingMoreRef = useRef(false);
+  const notificationsRef = useRef<FlatNotification[]>([]);
 
   // Get lastRead from notification store
   const lastRead = Core.useNotificationStore((state) => state.lastRead);
@@ -50,6 +51,13 @@ export function useNotifications(): UseNotificationsResult {
   if (capturedLastReadRef.current === null && lastRead > 0) {
     capturedLastReadRef.current = lastRead;
   }
+
+  // Reset captured value on unmount so next mount captures fresh value
+  useEffect(() => {
+    return () => {
+      capturedLastReadRef.current = null;
+    };
+  }, []);
 
   // Read notifications from local database using useLiveQuery
   // This provides persistence across page navigation
@@ -63,6 +71,9 @@ export function useNotifications(): UseNotificationsResult {
     if (!dbNotifications) return [];
     return deduplicateNotifications(dbNotifications);
   }, [dbNotifications]);
+
+  // Keep ref in sync with current notifications for stable callbacks
+  notificationsRef.current = notifications;
 
   // Calculate if still loading initial data
   const isLoading = dbNotifications === undefined;
@@ -81,7 +92,10 @@ export function useNotifications(): UseNotificationsResult {
 
     try {
       // Get the oldest notification timestamp for pagination
-      const oldestTimestamp = notifications.length > 0 ? Math.min(...notifications.map((n) => n.timestamp)) : Infinity;
+      // Use ref to avoid recreating callback on every notification change
+      const currentNotifications = notificationsRef.current;
+      const oldestTimestamp =
+        currentNotifications.length > 0 ? Math.min(...currentNotifications.map((n) => n.timestamp)) : Infinity;
 
       const result = await Core.NotificationController.getOrFetchNotifications({
         olderThan: oldestTimestamp,
@@ -106,7 +120,7 @@ export function useNotifications(): UseNotificationsResult {
       isLoadingMoreRef.current = false;
       setIsLoadingMore(false);
     }
-  }, [notifications]);
+  }, []);
 
   /**
    * Load more notifications (pagination)

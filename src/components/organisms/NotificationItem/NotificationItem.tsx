@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
@@ -23,9 +23,11 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   // Extract the user ID from the notification (the actor who triggered it)
   const actorUserId = getUserIdFromNotification(notification);
 
-  // Extract post URI for notifications with post content
-  const postUri = getPostUriFromNotification(notification);
-  const postCompositeId = postUri ? pubkyUriToCompositeId(postUri) : null;
+  // Extract post composite ID for notifications with post content (memoized to avoid recalculation)
+  const postCompositeId = useMemo(() => {
+    const postUri = getPostUriFromNotification(notification);
+    return postUri ? pubkyUriToCompositeId(postUri) : null;
+  }, [notification]);
 
   // State for post content (fetched via controller)
   const [postContent, setPostContent] = useState<string | null>(null);
@@ -40,19 +42,27 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
     const viewerId = Core.useAuthStore.getState().currentUserPubky;
     if (!viewerId) return;
 
+    let isCancelled = false;
+
     // PostController.getOrFetchPost handles the caching strategy:
     // 1. Check local DB first
     // 2. If missing, fetch from Nexus
     // 3. Write to local DB
     Core.PostController.getOrFetchPost({ compositeId: postCompositeId, viewerId })
       .then((post) => {
-        if (post?.content) {
+        if (!isCancelled && post?.content) {
           setPostContent(post.content);
         }
       })
       .catch((error) => {
-        Libs.Logger.warn('Failed to fetch notification post:', { postCompositeId, error });
+        if (!isCancelled) {
+          Libs.Logger.warn('Failed to fetch notification post:', { postCompositeId, error });
+        }
       });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [postCompositeId]);
 
   // Get user name and avatar from profile hook
