@@ -134,25 +134,42 @@ export class LocalFollowService {
    * Invalidate timeline streams by clearing them from cache
    * Forces fresh fetch from Nexus on next load
    *
-   * Skips invalidation if currently on /home route to avoid clearing
-   * the cache that's currently being rendered.
+   * When on /home route, preserves the currently active stream to avoid
+   * clearing the cache being rendered. All other timeline streams are invalidated.
    *
    * @param includeFriends - Whether to also invalidate friends timelines
    */
   private static async invalidateTimelineStreams(includeFriends: boolean): Promise<void> {
-    // Skip invalidation if we're on the home route to avoid clearing the cache being rendered
-    if (typeof window !== 'undefined' && window.location.pathname === App.APP_ROUTES.HOME) {
-      Libs.Logger.debug('Skipping timeline stream invalidation: currently on /home route');
-      return;
-    }
-
     const streams: Core.PostStreamTypes[] = [...FOLLOWING_TIMELINE_STREAMS];
 
     if (includeFriends) {
       streams.push(...FRIENDS_TIMELINE_STREAMS);
     }
 
-    await Promise.all(streams.map((streamId) => Core.LocalStreamPostsService.deleteById({ streamId })));
+    // If on /home route, preserve the currently active stream
+    let activeStreamId: Core.PostStreamTypes | null = null;
+    if (typeof window !== 'undefined' && window.location.pathname === App.APP_ROUTES.HOME) {
+      try {
+        const homeState = Core.useHomeStore.getState();
+        activeStreamId = Core.getStreamId(homeState.sort, homeState.reach, homeState.content);
+        Libs.Logger.debug('Preserving active stream on /home', { activeStreamId });
+      } catch (error) {
+        Libs.Logger.warn('Failed to get active stream ID', { error });
+      }
+    }
+
+    // Invalidate all streams except the currently active one
+    const streamsToInvalidate = streams.filter((streamId) => streamId !== activeStreamId);
+
+    if (streamsToInvalidate.length > 0) {
+      await Promise.all(streamsToInvalidate.map((streamId) => Core.LocalStreamPostsService.deleteById({ streamId })));
+      Libs.Logger.debug('Invalidated timeline streams', {
+        invalidated: streamsToInvalidate.length,
+        preserved: activeStreamId,
+      });
+    } else {
+      Libs.Logger.debug('No timeline streams to invalidate (all preserved)', { activeStreamId });
+    }
   }
 
   /**
