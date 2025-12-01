@@ -1,16 +1,11 @@
-import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 
+/**
+ * ProfilePageFriends Template
+ *
+ * Template for displaying the friends list.
+ * Delegates all logic to the ProfileFriends organism.
+ */
 export function ProfilePageFriends() {
-  return (
-    <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0">
-      <Atoms.Heading level={1} size="lg" className="text-foreground">
-        Friends
-      </Atoms.Heading>
-      <Atoms.Typography as="p" className="text-base font-normal text-muted-foreground">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore
-        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat.
-      </Atoms.Typography>
-    </Atoms.Container>
-  );
+  return <Organisms.ProfileFriends />;
 }

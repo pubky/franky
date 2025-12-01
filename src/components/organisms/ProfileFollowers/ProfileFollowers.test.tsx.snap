@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ProfileFollowers > matches snapshot 1`] = `
+<div>
+  <div
+    class="mt-6 lg:mt-0"
+    data-testid="container"
+  >
+    <div
+      data-testid="followers-empty"
+    >
+      No followers
+    </div>
+  </div>
+</div>
+`;
