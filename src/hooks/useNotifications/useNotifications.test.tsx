@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { useNotifications, getNotificationUserData, getNotificationDisplayData } from './useNotifications';
+import { useNotifications } from './useNotifications';
 import { NotificationType } from '@/core';
 import * as Core from '@/core';
 
@@ -244,72 +244,5 @@ describe('useNotifications', () => {
     });
 
     expect(Core.NotificationController.getOrFetchNotifications).toHaveBeenCalled();
-  });
-});
-
-describe('getNotificationUserData', () => {
-  it('should return null for any userId', () => {
-    expect(getNotificationUserData('user1')).toBeNull();
-    expect(getNotificationUserData('user2')).toBeNull();
-    expect(getNotificationUserData('')).toBeNull();
-  });
-});
-
-describe('getNotificationDisplayData', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should return display data with default userName when userData is null', () => {
-    const notification = {
-      type: NotificationType.Follow,
-      timestamp: Date.now() - 1000 * 60 * 30,
-      followed_by: 'user1',
-    };
-
-    const result = getNotificationDisplayData(notification);
-
-    expect(result.userName).toBe('User');
-    expect(result.avatarUrl).toBeUndefined();
-    expect(result.notificationText).toBe('User did something');
-  });
-
-  it('should handle different notification types', () => {
-    const followNotification = {
-      type: NotificationType.Follow,
-      timestamp: Date.now(),
-      followed_by: 'user1',
-    };
-
-    const replyNotification = {
-      type: NotificationType.Reply,
-      timestamp: Date.now(),
-      replied_by: 'user2',
-      parent_post_uri: 'user1:post123',
-      reply_uri: 'user2:reply456',
-    };
-
-    const followResult = getNotificationDisplayData(followNotification);
-    const replyResult = getNotificationDisplayData(replyNotification);
-
-    expect(followResult).toHaveProperty('userName');
-    expect(followResult).toHaveProperty('notificationText');
-
-    expect(replyResult).toHaveProperty('userName');
-    expect(replyResult).toHaveProperty('notificationText');
-  });
-
-  it('should return all required properties', () => {
-    const notification = {
-      type: NotificationType.Follow,
-      timestamp: Date.now(),
-      followed_by: 'user1',
-    };
-
-    const result = getNotificationDisplayData(notification);
-
-    expect(result).toHaveProperty('userName');
-    expect(result).toHaveProperty('avatarUrl');
-    expect(result).toHaveProperty('notificationText');
   });
 });

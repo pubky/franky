@@ -6,7 +6,7 @@ import * as Core from '@/core';
 import * as Config from '@/config';
 import * as Libs from '@/libs';
 import type { FlatNotification } from '@/core';
-import { getNotificationText, getUserIdFromNotification } from '@/components/molecules/NotificationItem';
+import type { UseNotificationsResult } from './useNotifications.types';
 
 /**
  * Deduplicate notifications using unique keys
@@ -20,24 +20,6 @@ function deduplicateNotifications(notifications: FlatNotification[]): FlatNotifi
     }
   }
   return Array.from(uniqueMap.values());
-}
-
-interface UseNotificationsResult {
-  notifications: FlatNotification[];
-  /** Notifications that were unread when the user entered the page (for visual styling) */
-  unreadNotifications: FlatNotification[];
-  count: number;
-  /** Count of notifications that were unread when the user entered the page */
-  unreadCount: number;
-  isLoading: boolean;
-  isLoadingMore: boolean;
-  hasMore: boolean;
-  error: string | null;
-  loadMore: () => Promise<void>;
-  refresh: () => Promise<void>;
-  markAllAsRead: () => void;
-  /** Check if a specific notification was unread when the user entered the page */
-  isNotificationUnread: (notification: FlatNotification) => boolean;
 }
 
 /**
@@ -217,41 +199,5 @@ export function useNotifications(): UseNotificationsResult {
     refresh,
     markAllAsRead,
     isNotificationUnread,
-  };
-}
-
-/**
- * Get user data for a notification user ID.
- *
- * TODO: Implement real user data fetching using UserController or UserDetailsModel.
- * This should fetch user details from the local database or Nexus API.
- */
-export function getNotificationUserData(_userId: string): { name: string; avatar?: string } | null {
-  // TODO: Implement real user data fetching
-  // - Fetch from UserDetailsModel.findById(userId)
-  // - Or fetch from Nexus API if not in local DB
-  return null;
-}
-
-/**
- * Get all display data needed for a notification item
- */
-export interface NotificationDisplayData {
-  userName: string;
-  avatarUrl?: string;
-  notificationText: string;
-}
-
-export function getNotificationDisplayData(notification: FlatNotification): NotificationDisplayData {
-  const userId = getUserIdFromNotification(notification);
-  const userData = userId ? getNotificationUserData(userId) : null;
-  const userName = userData?.name || 'User';
-  const avatarUrl = userData?.avatar;
-  const notificationText = getNotificationText(notification, userName);
-
-  return {
-    userName,
-    avatarUrl,
-    notificationText,
   };
 }

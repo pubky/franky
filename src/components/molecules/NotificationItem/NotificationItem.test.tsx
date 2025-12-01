@@ -9,14 +9,10 @@ vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
     ...actual,
-    getNotificationUserData: vi.fn((userId: string) => {
-      const mockUsers: Record<string, { name: string; avatar?: string }> = {
-        user1: { name: 'Anna', avatar: 'https://example.com/anna.jpg' },
-        user2: { name: 'John', avatar: 'https://example.com/john.jpg' },
-        user3: { name: 'Adam' },
-      };
-      return mockUsers[userId] || null;
-    }),
+    useUserProfile: vi.fn(() => ({
+      profile: { name: 'User', avatarUrl: undefined },
+      isLoading: false,
+    })),
   };
 });
 
