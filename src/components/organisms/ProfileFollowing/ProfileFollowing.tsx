@@ -4,16 +4,22 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
+import * as Providers from '@/providers';
 
 /**
  * ProfileFollowing
  *
  * Organism that displays a user's following list with infinite scroll pagination.
  * Handles data fetching, loading states, and follow/unfollow actions.
+ * Uses ProfileContext to get the target user's pubky.
  */
 export function ProfileFollowing() {
+  // Get the profile pubky from context
+  const { pubky } = Providers.useProfileContext();
+
   const { connections, count, isLoading, isLoadingMore, hasMore, loadMore } = Hooks.useProfileConnections(
     Hooks.CONNECTION_TYPE.FOLLOWING,
+    pubky ?? undefined,
   );
   const { toggleFollow } = Hooks.useFollowUser();
 

@@ -6,19 +6,24 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
-import * as Core from '@/core';
+import * as Providers from '@/providers';
 
 const MAX_SIDEBAR_TAGS = 5;
 
 export function ProfilePageSidebar() {
   const pathname = usePathname();
-  const currentUserPubky = Core.useAuthStore().selectCurrentUserPubky();
-  const { userDetails } = Hooks.useCurrentUserProfile();
+
+  // Get the profile pubky from context
+  const { pubky } = Providers.useProfileContext();
+
+  // Get user profile data for the target user
+  const { profile } = Hooks.useUserProfile(pubky ?? '');
+
   const {
     tags,
     isLoading: isLoadingTags,
     handleTagToggle,
-  } = Hooks.useTagged(currentUserPubky, {
+  } = Hooks.useTagged(pubky, {
     enablePagination: false,
     enableStats: false,
   });
@@ -38,7 +43,7 @@ export function ProfilePageSidebar() {
       {!isTaggedPage && (
         <Molecules.ProfilePageTaggedAs tags={topTags} isLoading={isLoadingTags} onTagClick={handleTagToggle} />
       )}
-      <Molecules.ProfilePageLinks links={userDetails?.links} />
+      <Molecules.ProfilePageLinks links={profile?.links} />
       <Organisms.FeedbackCard />
     </Atoms.Container>
   );

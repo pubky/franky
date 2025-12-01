@@ -1,24 +1,51 @@
 'use client';
 
+import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
-import * as Core from '@/core';
 import * as Hooks from '@/hooks';
+import * as Providers from '@/providers';
 
 /**
  * ProfileProfile
  *
- * Displays the current user's profile header for mobile view.
- * Handles fetching profile data and actions for the authenticated user.
+ * Displays the user's profile header for mobile view.
+ * Handles fetching profile data and actions.
+ * Uses ProfileContext to get the target user's pubky.
  */
 export function ProfileProfile() {
-  const { currentUserPubky } = Core.useAuthStore();
+  // Get the profile pubky and isOwnProfile from context
+  const { pubky, isOwnProfile } = Providers.useProfileContext();
+
   // Note: useProfileHeader guarantees a non-null profile with default values during loading
-  const { profile, actions, isLoading } = Hooks.useProfileHeader(currentUserPubky ?? '');
+  const { profile, actions, isLoading } = Hooks.useProfileHeader(pubky ?? '');
+
+  // Handle follow/unfollow for other users' profiles
+  const { toggleFollow, isLoading: isFollowLoading } = Hooks.useFollowUser();
+  const { isFollowing } = Hooks.useIsFollowing(pubky ?? '');
+
+  // Create follow toggle handler
+  const handleFollowToggle = React.useCallback(async () => {
+    if (!pubky) return;
+    await toggleFollow(pubky, isFollowing);
+  }, [pubky, isFollowing, toggleFollow]);
+
+  // Merge actions with follow-related actions
+  const mergedActions = React.useMemo(
+    () => ({
+      ...actions,
+      onFollowToggle: handleFollowToggle,
+      isFollowLoading,
+      isFollowing,
+    }),
+    [actions, handleFollowToggle, isFollowLoading, isFollowing],
+  );
 
   return (
     <Atoms.Container overrideDefaults={true} className="mt-6 flex flex-col gap-4 lg:mt-0 lg:hidden">
-      {!isLoading && <Organisms.ProfilePageHeader profile={profile} actions={actions} />}
+      {!isLoading && (
+        <Organisms.ProfilePageHeader profile={profile} actions={mergedActions} isOwnProfile={isOwnProfile} />
+      )}
       <Atoms.Container overrideDefaults={true} className="flex flex-col gap-4 text-base text-muted-foreground">
         <Atoms.Typography as="p" className="text-base font-normal">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore

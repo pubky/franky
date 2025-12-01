@@ -4,16 +4,22 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import * as Core from '@/core';
+import * as Providers from '@/providers';
 
 /**
  * ProfileFriends
  *
  * Organism that displays a user's friends list with infinite scroll pagination.
  * Handles data fetching, loading states, and follow/unfollow actions.
+ * Uses ProfileContext to get the target user's pubky.
  */
 export function ProfileFriends() {
+  // Get the profile pubky from context
+  const { pubky } = Providers.useProfileContext();
+
   const { connections, count, isLoading, isLoadingMore, hasMore, loadMore } = Hooks.useProfileConnections(
     Hooks.CONNECTION_TYPE.FRIENDS,
+    pubky ?? undefined,
   );
   const { toggleFollow } = Hooks.useFollowUser();
 

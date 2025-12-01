@@ -11,6 +11,15 @@ vi.mock('@/core', () => ({
   })),
 }));
 
+// Mock Providers
+vi.mock('@/providers', () => ({
+  useProfileContext: vi.fn(() => ({
+    pubky: mockCurrentUserPubky,
+    isOwnProfile: true,
+    isLoading: false,
+  })),
+}));
+
 // Mock Hooks
 const mockProfile = {
   name: 'Test User',
@@ -53,6 +62,15 @@ vi.mock('@/hooks', () => ({
     activePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
     filterBarActivePage: PROFILE_PAGE_TYPES.NOTIFICATIONS,
     navigateToPage: mockNavigateToPage,
+  })),
+  useFollowUser: vi.fn(() => ({
+    toggleFollow: vi.fn(),
+    isLoading: false,
+    error: null,
+  })),
+  useIsFollowing: vi.fn(() => ({
+    isFollowing: false,
+    isLoading: false,
   })),
 }));
 
@@ -143,7 +161,8 @@ describe('ProfilePageContainer', () => {
     );
     const layout = screen.getByTestId('profile-page-layout');
     const actionsCount = parseInt(layout.getAttribute('data-actions-count') || '0');
-    expect(actionsCount).toBe(5);
+    // 5 from useProfileHeader + 3 from useFollowUser/useIsFollowing (onFollowToggle, isFollowLoading, isFollowing)
+    expect(actionsCount).toBe(8);
   });
 
   it('passes activePage from useProfileNavigation to layout', () => {

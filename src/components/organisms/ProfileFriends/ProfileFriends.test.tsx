@@ -2,6 +2,15 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfileFriends } from './ProfileFriends';
 
+// Mock Providers
+vi.mock('@/providers', () => ({
+  useProfileContext: vi.fn(() => ({
+    pubky: 'user123',
+    isOwnProfile: true,
+    isLoading: false,
+  })),
+}));
+
 // Mock Hooks
 vi.mock('@/hooks', () => ({
   useProfileConnections: vi.fn(() => ({

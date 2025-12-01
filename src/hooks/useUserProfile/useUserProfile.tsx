@@ -13,6 +13,8 @@ export interface UserProfile {
   status: string;
   avatarUrl?: string;
   link: string;
+  /** User's external links (social media, websites, etc.) */
+  links?: Core.NexusUserLink[] | null;
 }
 
 export interface UseUserProfileResult {
@@ -81,6 +83,7 @@ export function useUserProfile(userId: string): UseUserProfileResult {
     status: userDetails.status ?? '',
     avatarUrl,
     link,
+    links: userDetails.links,
   };
 
   return {
