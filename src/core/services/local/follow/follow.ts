@@ -1,10 +1,13 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import * as App from '@/app';
 import { FOLLOWING_TIMELINE_STREAMS, FRIENDS_TIMELINE_STREAMS } from './follow.constants';
 
 export class LocalFollowService {
-  static async create({ follower, followee }: Core.TFollowParams) {
+  static async create({
+    follower,
+    followee,
+    activeStreamId,
+  }: Core.TFollowParams & { activeStreamId?: Core.PostStreamTypes | null }) {
     try {
       let becomingFriends = false;
 
@@ -54,7 +57,13 @@ export class LocalFollowService {
       );
 
       // Update user streams and invalidate timeline streams (outside transaction)
-      await this.updateUserStreams({ isFollowing: true, follower, followee, friendshipChanged: becomingFriends });
+      await this.updateUserStreams({
+        isFollowing: true,
+        follower,
+        followee,
+        friendshipChanged: becomingFriends,
+        activeStreamId,
+      });
 
       Libs.Logger.debug('Follow created successfully', { follower, followee });
     } catch (error) {
@@ -65,7 +74,11 @@ export class LocalFollowService {
     }
   }
 
-  static async delete({ follower, followee }: Core.TFollowParams) {
+  static async delete({
+    follower,
+    followee,
+    activeStreamId,
+  }: Core.TFollowParams & { activeStreamId?: Core.PostStreamTypes | null }) {
     try {
       let breakingFriendship = false;
 
@@ -114,7 +127,13 @@ export class LocalFollowService {
       );
 
       // Update user streams and invalidate timeline streams (outside transaction)
-      await this.updateUserStreams({ isFollowing: false, follower, followee, friendshipChanged: breakingFriendship });
+      await this.updateUserStreams({
+        isFollowing: false,
+        follower,
+        followee,
+        friendshipChanged: breakingFriendship,
+        activeStreamId,
+      });
 
       Libs.Logger.debug('Unfollow completed successfully', { follower, followee });
     } catch (error) {
@@ -134,28 +153,20 @@ export class LocalFollowService {
    * Invalidate timeline streams by clearing them from cache
    * Forces fresh fetch from Nexus on next load
    *
-   * When on /home route, preserves the currently active stream to avoid
-   * clearing the cache being rendered. All other timeline streams are invalidated.
+   * Preserves the currently active stream (if provided) to avoid clearing
+   * the cache being rendered. All other timeline streams are invalidated.
    *
    * @param includeFriends - Whether to also invalidate friends timelines
+   * @param activeStreamId - Optional active stream ID to preserve (passed from controller layer)
    */
-  private static async invalidateTimelineStreams(includeFriends: boolean): Promise<void> {
+  private static async invalidateTimelineStreams(
+    includeFriends: boolean,
+    activeStreamId?: Core.PostStreamTypes | null,
+  ): Promise<void> {
     const streams: Core.PostStreamTypes[] = [...FOLLOWING_TIMELINE_STREAMS];
 
     if (includeFriends) {
       streams.push(...FRIENDS_TIMELINE_STREAMS);
-    }
-
-    // If on /home route, preserve the currently active stream
-    let activeStreamId: Core.PostStreamTypes | null = null;
-    if (typeof window !== 'undefined' && window.location.pathname === App.APP_ROUTES.HOME) {
-      try {
-        const homeState = Core.useHomeStore.getState();
-        activeStreamId = Core.getStreamId(homeState.sort, homeState.reach, homeState.content);
-        Libs.Logger.debug('Preserving active stream on /home', { activeStreamId });
-      } catch (error) {
-        Libs.Logger.warn('Failed to get active stream ID', { error });
-      }
     }
 
     // Invalidate all streams except the currently active one
@@ -179,17 +190,20 @@ export class LocalFollowService {
    * @param follower - User performing the follow action
    * @param followee - User being followed/unfollowed
    * @param friendshipChanged - Whether this action changes friendship status
+   * @param activeStreamId - Optional active stream ID to preserve (passed from controller layer)
    */
   private static async updateUserStreams({
     isFollowing,
     follower,
     followee,
     friendshipChanged,
+    activeStreamId,
   }: {
     isFollowing: boolean;
     follower: Core.Pubky;
     followee: Core.Pubky;
     friendshipChanged: boolean;
+    activeStreamId?: Core.PostStreamTypes | null;
   }): Promise<void> {
     const ops: Promise<unknown>[] = [];
 
@@ -213,7 +227,7 @@ export class LocalFollowService {
     }
 
     // Invalidate timeline caches
-    ops.push(this.invalidateTimelineStreams(friendshipChanged));
+    ops.push(this.invalidateTimelineStreams(friendshipChanged, activeStreamId));
 
     await Promise.all(ops);
   }
