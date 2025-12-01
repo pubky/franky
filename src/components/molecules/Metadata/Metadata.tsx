@@ -31,6 +31,7 @@ export function Metadata({
   favicon = '/pubky-favicon.svg',
 }: MetadataProps) {
   return {
+    metadataBase: new URL(Config.DEFAULT_URL),
     title,
     description,
     keywords,

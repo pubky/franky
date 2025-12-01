@@ -4,6 +4,8 @@ exports[`Link - Snapshots > matches snapshot for HTTP link 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     HTTP Link
@@ -15,6 +17,8 @@ exports[`Link - Snapshots > matches snapshot for default size 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Default Size
@@ -26,6 +30,8 @@ exports[`Link - Snapshots > matches snapshot for default variant 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Default Variant
@@ -48,6 +54,8 @@ exports[`Link - Snapshots > matches snapshot for extra large size 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-xl"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Extra Large Size
@@ -59,6 +67,8 @@ exports[`Link - Snapshots > matches snapshot for large size 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-lg"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Large Size
@@ -70,6 +80,8 @@ exports[`Link - Snapshots > matches snapshot for muted variant 1`] = `
 <a
   class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Muted Variant
@@ -92,6 +104,8 @@ exports[`Link - Snapshots > matches snapshot with SVG children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <svg
     data-testid="svg-icon"
@@ -107,8 +121,10 @@ exports[`Link - Snapshots > matches snapshot with SVG children 1`] = `
 
 exports[`Link - Snapshots > matches snapshot with combined props 1`] = `
 <a
-  class="custom-class"
+  class="cursor-pointer transition-colors text-muted-foreground hover:text-brand text-lg custom-class"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Combined Props Link
@@ -120,6 +136,8 @@ exports[`Link - Snapshots > matches snapshot with default props 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Default Link
@@ -131,6 +149,8 @@ exports[`Link - Snapshots > matches snapshot with image children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <img
     alt="Icon"
@@ -143,6 +163,8 @@ exports[`Link - Snapshots > matches snapshot with text children 1`] = `
 <a
   class="cursor-pointer hover:text-brand/80 transition-colors text-brand text-sm"
   href="https://example.com"
+  rel="noopener noreferrer"
+  target="_blank"
 >
   <span>
     Text Link

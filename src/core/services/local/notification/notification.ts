@@ -11,14 +11,11 @@ export class LocalNotificationService {
    * @param lastRead - Timestamp of the last read notification
    * @returns Promise resolving to the number of unread notifications
    */
-  static async persitAndGetUnreadCount(notificationList: Core.NexusNotification[], lastRead: number): Promise<number> {
+  static async persistAndGetUnreadCount(notificationList: Core.NexusNotification[], lastRead: number): Promise<number> {
     let unreadCount = 0;
 
     const flatNotifications: Core.FlatNotification[] = notificationList.map((notification) => {
-      const flatNotification = {
-        timestamp: notification.timestamp,
-        ...notification.body,
-      } as Core.FlatNotification;
+      const flatNotification = Core.NotificationNormalizer.toFlatNotification(notification);
 
       if (flatNotification.timestamp > lastRead) {
         unreadCount++;
@@ -29,5 +26,17 @@ export class LocalNotificationService {
 
     await Core.NotificationModel.bulkSave(flatNotifications);
     return unreadCount;
+  }
+
+  static async getOlderThan(olderThan: number, limit: number): Promise<Core.FlatNotification[]> {
+    return await Core.NotificationModel.getOlderThan(olderThan, limit);
+  }
+
+  /**
+   * Retrieves all notifications from the local database ordered by timestamp descending.
+   * @returns Promise resolving to array of all notifications
+   */
+  static async getAll(): Promise<Core.FlatNotification[]> {
+    return await Core.NotificationModel.getAll();
   }
 }

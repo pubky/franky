@@ -1,0 +1,618 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostText - Snapshots > matches snapshot for autolinked URL 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com/path?query=value"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      https://example.com/path?query=value
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for blockquote 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <blockquote
+    class="border-l-4 border-foreground pl-4 whitespace-normal"
+  >
+    
+
+    <p>
+      This is a quoted message
+    </p>
+    
+
+  </blockquote>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for bold and italic combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <strong>
+      <em>
+        bold and italic
+      </em>
+    </strong>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for bold and italic text 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <strong>
+      bold
+    </strong>
+     and 
+    <em>
+      italic
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for code block 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <pre>
+    <code
+      class="language-javascript"
+      data-testid="post-code-block"
+    >
+      const greeting = "Hello";
+console.log(greeting);
+
+    </code>
+  </pre>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for code block without language 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <pre>
+    <code
+      class="language-plaintext"
+      data-testid="post-code-block"
+    >
+      plain code block
+
+    </code>
+  </pre>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for combined markdown elements 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  Welcome
+  
+
+  <p>
+    This is 
+    <strong>
+      bold
+    </strong>
+     and 
+    <em>
+      italic
+    </em>
+     text with a 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      link
+    </a>
+    .
+  </p>
+  
+
+  <blockquote
+    class="border-l-4 border-foreground pl-4 whitespace-normal"
+  >
+    
+
+    <p>
+      A meaningful quote
+    </p>
+    
+
+  </blockquote>
+  
+
+  <ul
+    class="list-inside list-disc whitespace-normal"
+  >
+    
+
+    <li>
+      Item one
+    </li>
+    
+
+    <li>
+      Item two
+    </li>
+    
+
+  </ul>
+  
+
+  <pre>
+    <code
+      class="language-js"
+      data-testid="post-code-block"
+    >
+      const x = 42;
+
+    </code>
+  </pre>
+  
+
+  <p>
+    Use 
+    <code
+      data-testid="post-code-block"
+    >
+      inline code
+    </code>
+     for variables.
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for content with special characters 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Special chars: &lt;&gt;&"' and emoji: 🎉🚀
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for empty content 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+/>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag alongside link 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Visit 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Example
+    </a>
+     and follow 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=trending"
+    >
+      #trending
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag with markdown formatting 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <strong>
+      bold
+    </strong>
+     with 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=hashtag"
+    >
+      #hashtag
+    </a>
+     and 
+    <em>
+      italic
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for hashtag with text 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This post is about 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=crypto"
+    >
+      #crypto
+    </a>
+     and 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=blockchain"
+    >
+      #blockchain
+    </a>
+     technology
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for horizontal rule 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Above the line
+  </p>
+  
+
+  <hr />
+  
+
+  <p>
+    Below the line
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for inline code 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Use 
+    <code
+      data-testid="post-code-block"
+    >
+      console.log()
+    </code>
+     for debugging
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for italic and bold combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <em>
+      <strong>
+        italic and bold
+      </strong>
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for italic and strikethrough combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <em>
+      <del>
+        italic and strikethrough
+      </del>
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for links 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Visit 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Example Site
+    </a>
+     for more
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for multiline content with line breaks 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    First line
+Second line
+Third line
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for multiple hashtags 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=one"
+    >
+      #one
+    </a>
+     
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=two"
+    >
+      #two
+    </a>
+     
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=three"
+    >
+      #three
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for nested blockquote 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <blockquote
+    class="border-l-4 border-foreground pl-4 whitespace-normal"
+  >
+    
+
+    <p>
+      Level 1
+    </p>
+    
+
+    <blockquote
+      class="border-l-4 border-foreground pl-4 whitespace-normal"
+    >
+      
+
+      <p>
+        Level 2
+      </p>
+      
+
+    </blockquote>
+    
+
+  </blockquote>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for ordered list 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <ol
+    class="list-inside list-decimal whitespace-normal"
+  >
+    
+
+    <li>
+      First item
+    </li>
+    
+
+    <li>
+      Second item
+    </li>
+    
+
+    <li>
+      Third item
+    </li>
+    
+
+  </ol>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for plain text 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Simple plain text content
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for single hashtag 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=bitcoin"
+    >
+      #bitcoin
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for strikethrough and inline code combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <del>
+      <code
+        data-testid="post-code-block"
+      >
+        strikethrough and code
+      </code>
+    </del>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for strikethrough and italic combination 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <del>
+      <em>
+        strikethrough and italic
+      </em>
+    </del>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for strikethrough text 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <del>
+      strikethrough
+    </del>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for unordered list 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <ul
+    class="list-inside list-disc whitespace-normal"
+  >
+    
+
+    <li>
+      Apple
+    </li>
+    
+
+    <li>
+      Banana
+    </li>
+    
+
+    <li>
+      Cherry
+    </li>
+    
+
+  </ul>
+</div>
+`;

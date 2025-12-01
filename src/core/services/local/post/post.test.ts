@@ -143,7 +143,10 @@ describe('LocalPostService', () => {
       expect(relationships!.reposted).toBeNull();
 
       // Verify user count increment for root post (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 1, replies: 0 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: 1, replies: 0 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -169,7 +172,10 @@ describe('LocalPostService', () => {
       expect(parentCounts!.replies).toBe(1);
 
       // Verify user count increments for reply (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: 1, replies: 1 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: 1, replies: 1 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -359,7 +365,10 @@ describe('LocalPostService', () => {
       expect(tags).toBeUndefined();
 
       // Verify user count decrement for root post (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: -1, replies: 0 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: -1, replies: 0 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -405,7 +414,10 @@ describe('LocalPostService', () => {
       expect(parentCounts!.replies).toBe(0);
 
       // Verify user count decrements for reply (single update call)
-      expect(userCountsSpy).toHaveBeenCalledWith(testData.authorPubky, { posts: -1, replies: -1 });
+      expect(userCountsSpy).toHaveBeenCalledWith({
+        userId: testData.authorPubky,
+        countChanges: { posts: -1, replies: -1 },
+      });
 
       userCountsSpy.mockRestore();
     });
@@ -621,7 +633,7 @@ describe('LocalPostService', () => {
         reposts: 2,
       });
 
-      const counts = await Core.LocalPostService.getPostCounts(postId);
+      const counts = await Core.LocalPostService.readPostCounts(postId);
 
       expect(counts).toBeTruthy();
       expect(counts.id).toBe(postId);
@@ -634,7 +646,7 @@ describe('LocalPostService', () => {
     it('should return default counts when post does not exist', async () => {
       const nonExistentPostId = 'nonexistent:post123';
 
-      const counts = await Core.LocalPostService.getPostCounts(nonExistentPostId);
+      const counts = await Core.LocalPostService.readPostCounts(nonExistentPostId);
 
       expect(counts).toBeTruthy();
       expect(counts.id).toBe(nonExistentPostId);
@@ -652,7 +664,7 @@ describe('LocalPostService', () => {
         .spyOn(Core.PostCountsModel, 'findById')
         .mockRejectedValueOnce(new Error('Database connection lost'));
 
-      await expect(Core.LocalPostService.getPostCounts(postId)).rejects.toMatchObject({
+      await expect(Core.LocalPostService.readPostCounts(postId)).rejects.toMatchObject({
         type: 'QUERY_FAILED',
         message: 'Failed to get post counts',
         statusCode: 500,
@@ -667,7 +679,7 @@ describe('LocalPostService', () => {
 
       const spy = vi.spyOn(Core.PostCountsModel, 'findById').mockRejectedValueOnce(new Error('DB error'));
 
-      await expect(Core.LocalPostService.getPostCounts(postId)).rejects.toThrow();
+      await expect(Core.LocalPostService.readPostCounts(postId)).rejects.toThrow();
 
       expect(loggerSpy).toHaveBeenCalledWith(
         'Failed to get post counts',
@@ -792,9 +804,9 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add post to streams first
-        await Core.PostStreamModel.prependPosts(Core.PostStreamTypes.TIMELINE_ALL_ALL, [postId]);
-        await Core.PostStreamModel.prependPosts(Core.PostStreamTypes.TIMELINE_ALL_SHORT, [postId]);
-        await Core.PostStreamModel.prependPosts(`author:${testData.authorPubky}` as Core.PostStreamId, [postId]);
+        await Core.PostStreamModel.prependItems(Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId, [postId]);
+        await Core.PostStreamModel.prependItems(Core.PostStreamTypes.TIMELINE_ALL_SHORT as Core.PostStreamId, [postId]);
+        await Core.PostStreamModel.prependItems(`author:${testData.authorPubky}` as Core.PostStreamId, [postId]);
 
         // Delete the post
         await Core.LocalPostService.delete({ compositePostId: postId });
@@ -821,10 +833,10 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add reply to streams first
-        await Core.PostStreamModel.prependPosts(`author_replies:${testData.authorPubky}` as Core.PostStreamId, [
+        await Core.PostStreamModel.prependItems(`author_replies:${testData.authorPubky}` as Core.PostStreamId, [
           replyId,
         ]);
-        await Core.PostStreamModel.prependPosts(`post_replies:${parentPostId}` as Core.PostStreamId, [replyId]);
+        await Core.PostStreamModel.prependItems(`post_replies:${parentPostId}` as Core.PostStreamId, [replyId]);
 
         // Delete the reply
         await Core.LocalPostService.delete({ compositePostId: replyId });
@@ -856,7 +868,10 @@ describe('LocalPostService', () => {
         await setupUserCounts(testData.authorPubky);
 
         // Manually add post multiple times (edge case / data integrity issue)
-        await Core.PostStreamModel.prependPosts(Core.PostStreamTypes.TIMELINE_ALL_ALL, [postId, postId]);
+        await Core.PostStreamModel.prependItems(Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId, [
+          postId,
+          postId,
+        ]);
 
         // Delete the post
         await Core.LocalPostService.delete({ compositePostId: postId });
@@ -889,6 +904,43 @@ describe('LocalPostService', () => {
         expect(finalCount).toBe(initialCount - 1);
         expect(timelineAllAll?.stream || []).not.toContain(postId);
       });
+    });
+  });
+
+  describe('getPostRelationships', () => {
+    it('should return post relationships when they exist', async () => {
+      const postId = testData.fullPostId1;
+      const parentUri = 'pubky://parent/pub/pubky.app/posts/parent123';
+      await setupExistingPost(postId, 'Test post', parentUri);
+
+      const relationships = await Core.LocalPostService.readPostRelationships(postId);
+
+      expect(relationships).not.toBeNull();
+      expect(relationships?.id).toBe(postId);
+      expect(relationships?.replied).toBe(parentUri);
+      expect(relationships?.reposted).toBeNull();
+      expect(relationships?.mentioned).toEqual([]);
+    });
+
+    it('should return null when post relationships do not exist', async () => {
+      const nonExistentPostId = 'nonexistent:post123';
+
+      const relationships = await Core.LocalPostService.readPostRelationships(nonExistentPostId);
+
+      expect(relationships).toBeNull();
+    });
+
+    it('should handle database errors gracefully', async () => {
+      const postId = testData.fullPostId1;
+
+      // Mock findById to throw an error
+      const findByIdSpy = vi.spyOn(Core.PostRelationshipsModel, 'findById').mockRejectedValue(new Error('DB error'));
+
+      await expect(Core.LocalPostService.readPostRelationships(postId)).rejects.toThrow(
+        'Failed to get post relationships',
+      );
+
+      findByIdSpy.mockRestore();
     });
   });
 });

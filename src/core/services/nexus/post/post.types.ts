@@ -1,5 +1,9 @@
 import * as Core from '@/core';
 
+export type TCompositeId = {
+  compositeId: string;
+};
+
 export type TPostBasePathParams = {
   author_id: Core.Pubky;
   post_id: string;

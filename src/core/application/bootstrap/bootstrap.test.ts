@@ -176,7 +176,7 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       .spyOn(Core.LocalStreamTagsService, 'upsert')
       .mockImplementation(upsertTagsError ? () => Promise.reject(upsertTagsError) : () => Promise.resolve(undefined)),
     persistNotifications: vi
-      .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+      .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
       .mockImplementation(
         persistNotificationsError
           ? () => Promise.reject(persistNotificationsError)
@@ -194,7 +194,7 @@ const assertCommonCalls = (
   expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
   expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
   expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
-  expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+  expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
   expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
     streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
     stream: bootstrapData.list.stream,
@@ -337,7 +337,7 @@ describe('BootstrapApplication', () => {
 
       // Verify bootstrap data was still processed
       expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
-      expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
 
       // Verify result has empty notification list and normalized timestamp
       expect(result).toEqual({
@@ -448,7 +448,7 @@ describe('BootstrapApplication', () => {
         'Posts persistence error',
       );
 
-      expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
     });
 
     it('should throw error when upsert operations fail', async () => {
@@ -580,7 +580,7 @@ describe('BootstrapApplication', () => {
       const upsertHotTagsSpy = vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const persistNotificationsSpy = vi
-        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
         .mockResolvedValue(unreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});

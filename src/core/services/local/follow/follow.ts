@@ -50,16 +50,16 @@ export class LocalFollowService {
           // Gate counts by actual mutations; do not upsert counts
           const ops: Promise<unknown>[] = [];
           if (addedFollowing) {
-            ops.push(Core.UserCountsModel.updateCounts(follower, { following: 1 }));
+            ops.push(Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { following: 1 } }));
           }
           if (addedFollower) {
-            ops.push(Core.UserCountsModel.updateCounts(followee, { followers: 1 }));
+            ops.push(Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { followers: 1 } }));
           }
           if (isFollowedBy && addedFollowing) {
             becomingFriends = true;
             ops.push(
-              Core.UserCountsModel.updateCounts(follower, { friends: 1 }),
-              Core.UserCountsModel.updateCounts(followee, { friends: 1 }),
+              Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { friends: 1 } }),
+              Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { friends: 1 } }),
             );
           }
 
@@ -110,16 +110,16 @@ export class LocalFollowService {
           // Gate counts by actual mutations; do not upsert counts
           const ops: Promise<unknown>[] = [];
           if (removedFollowing) {
-            ops.push(Core.UserCountsModel.updateCounts(follower, { following: -1 }));
+            ops.push(Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { following: -1 } }));
           }
           if (removedFollower) {
-            ops.push(Core.UserCountsModel.updateCounts(followee, { followers: -1 }));
+            ops.push(Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { followers: -1 } }));
           }
           if (wasFriends && removedFollowing) {
             breakingFriendship = true;
             ops.push(
-              Core.UserCountsModel.updateCounts(follower, { friends: -1 }),
-              Core.UserCountsModel.updateCounts(followee, { friends: -1 }),
+              Core.UserCountsModel.updateCounts({ userId: follower, countChanges: { friends: -1 } }),
+              Core.UserCountsModel.updateCounts({ userId: followee, countChanges: { friends: -1 } }),
             );
           }
 

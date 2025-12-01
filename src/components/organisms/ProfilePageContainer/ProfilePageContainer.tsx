@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as Core from '@/core';
 import * as Hooks from '@/hooks';
-import * as Templates from '@/templates';
+import * as Organisms from '@/organisms';
 
 export interface ProfilePageContainerProps {
   /** Child pages to render in the main content area */
@@ -49,9 +49,9 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
   // Business logic: Handle navigation state
   const { activePage, filterBarActivePage, navigateToPage } = Hooks.useProfileNavigation();
 
-  // Delegate presentation to dumb layout component
+  // Delegate presentation to layout organism
   return (
-    <Templates.ProfilePageLayout
+    <Organisms.ProfilePageLayout
       profile={profile}
       stats={stats}
       actions={actions}
@@ -61,6 +61,6 @@ export function ProfilePageContainer({ children }: ProfilePageContainerProps) {
       isLoading={isLoading}
     >
       {children}
-    </Templates.ProfilePageLayout>
+    </Organisms.ProfilePageLayout>
   );
 }

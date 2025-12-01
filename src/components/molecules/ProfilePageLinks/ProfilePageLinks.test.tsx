@@ -1,20 +1,8 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfilePageLinks } from './ProfilePageLinks';
 import * as Core from '@/core';
-
-// Mock Icons
-vi.mock('@/libs/icons', () => ({
-  getIconFromUrl: () => {
-    const MockIcon = ({ size, className }: { size: number; className: string }) => (
-      <span data-testid="mock-icon" data-size={size} className={className}>
-        Icon
-      </span>
-    );
-    return MockIcon;
-  },
-}));
 
 const defaultLinks: Core.NexusUserDetails['links'] = [
   { title: 'bitcoin.org', url: 'https://bitcoin.org' },

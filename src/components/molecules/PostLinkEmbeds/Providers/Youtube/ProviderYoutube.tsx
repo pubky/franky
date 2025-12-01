@@ -1,7 +1,7 @@
 import * as Atoms from '@/atoms';
 import * as ProviderTypes from '../Provider.types';
 import * as ProviderConstants from '../Provider.constants';
-import * as ProviderUtils from '../Provider.utils';
+import * as Libs from '@/libs';
 
 /**
  * Extract YouTube video ID from URL
@@ -14,28 +14,41 @@ import * as ProviderUtils from '../Provider.utils';
  * extractYouTubeId('youtu.be/dQw4w9WgXcQ')                    // → 'dQw4w9WgXcQ'
  */
 const extractYouTubeId = (url: string): string | null => {
+  // Normalize URL to lowercase for case-insensitive domain matching
+  // But preserve original for video ID extraction (video IDs are case-sensitive)
+  const normalizedUrl = url.toLowerCase();
+
   // Protocol-agnostic patterns - matches with or without http(s)://
   // Use word boundaries or specific delimiters to ensure exactly 11 characters
+  // Support hash fragments (#) as valid boundaries
   const patterns = [
     // Standard watch: youtube.com/watch?v=VIDEO_ID
-    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})(?:[&\s]|$)/,
+    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})(?:[&#\s]|$)/,
     // Short URL: youtu.be/VIDEO_ID
-    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
+    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&#\s]|$)/,
     // Embed: youtube.com/embed/* or youtube-nocookie.com/embed/*
-    /(?:youtube(?:-nocookie)?\.com\/embed\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
+    /(?:youtube(?:-nocookie)?\.com\/embed\/)([a-zA-Z0-9_-]{11})(?:[?&#\s]|$)/,
     // Shorts: youtube.com/shorts/VIDEO_ID
-    /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
+    /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})(?:[?&#\s]|$)/,
     // Live streams: youtube.com/live/VIDEO_ID
-    /(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
+    /(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})(?:[?&#\s]|$)/,
     // Music subdomain: music.youtube.com/watch?v=VIDEO_ID
-    /(?:music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})(?:[&\s]|$)/,
+    /(?:music\.youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})(?:[&#\s]|$)/,
     // Old embed: youtube.com/v/VIDEO_ID (legacy)
-    /(?:youtube\.com\/v\/)([a-zA-Z0-9_-]{11})(?:[?&\s]|$)/,
+    /(?:youtube\.com\/v\/)([a-zA-Z0-9_-]{11})(?:[?&#\s]|$)/,
   ];
 
+  // Match against normalized URL for case-insensitive domain matching
   for (const pattern of patterns) {
-    const id = url.match(pattern)?.[1];
-    if (id && /^[a-zA-Z0-9_-]{11}$/.test(id)) return id;
+    const match = normalizedUrl.match(pattern);
+    if (match) {
+      // Extract video ID from the SAME position in original URL to preserve case
+      const idStartIndex = match.index! + match[0].indexOf(match[1]);
+      const id = url.substring(idStartIndex, idStartIndex + 11);
+
+      // Validate video ID format
+      if (/^[a-zA-Z0-9_-]{11}$/.test(id)) return id;
+    }
   }
 
   return null;
@@ -52,9 +65,9 @@ const extractYouTubeTimestamp = (url: string): number | null => {
     if (!timeParam) return null;
 
     // Require at least one component using shared regex pattern
-    const hmsMatch = timeParam.match(ProviderUtils.HMS_TIMESTAMP_REGEX);
+    const hmsMatch = timeParam.match(Libs.HMS_TIMESTAMP_REGEX);
     if (hmsMatch && (hmsMatch[1] || hmsMatch[2] || hmsMatch[3])) {
-      const timestamp = ProviderUtils.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
+      const timestamp = Libs.convertHmsToSeconds(hmsMatch[1], hmsMatch[2], hmsMatch[3]);
       // convertHmsToSeconds returns null if any value is NaN (defense in depth)
       if (timestamp !== null) return timestamp;
     }
@@ -115,9 +128,12 @@ export const Youtube: ProviderTypes.EmbedProvider = {
     if (!id) return null;
 
     const timestamp = extractYouTubeTimestamp(url);
-    const embedUrl = timestamp
-      ? `https://www.youtube-nocookie.com/embed/${id}?start=${timestamp}`
-      : `https://www.youtube-nocookie.com/embed/${id}`;
+    // Only add start parameter if timestamp exists and is greater than 0
+    // (starting at 0 is semantically identical to no start parameter)
+    const embedUrl =
+      timestamp && timestamp > 0
+        ? `https://www.youtube-nocookie.com/embed/${id}?start=${timestamp}`
+        : `https://www.youtube-nocookie.com/embed/${id}`;
 
     return { type: 'url', value: embedUrl };
   },

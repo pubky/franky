@@ -12,7 +12,7 @@ export interface PostTagProps {
   /** Selected state */
   selected?: boolean;
   /** Callback when tag is clicked */
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
   /** Callback when close button is clicked */
   onClose?: (e: React.MouseEvent) => void;
   /** Custom color (hex) for the tag - if not provided, generates from label */
@@ -42,7 +42,10 @@ export function PostTag({
   return (
     <Atoms.Toggle
       pressed={selected}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick?.(e);
+      }}
       className={Libs.cn(
         'group relative h-8 gap-1 rounded-md px-3 backdrop-blur-lg',
         'border-0 text-sm leading-5 font-bold text-white',
