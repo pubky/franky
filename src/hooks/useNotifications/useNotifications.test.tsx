@@ -57,15 +57,7 @@ vi.mock('@/core', async (importOriginal) => {
         }),
       ),
       markAllAsRead: vi.fn(),
-    },
-    NotificationModel: {
-      table: {
-        orderBy: vi.fn(() => ({
-          reverse: vi.fn(() => ({
-            toArray: vi.fn(() => Promise.resolve(mockDbNotifications)),
-          })),
-        })),
-      },
+      getAllFromCache: vi.fn(() => Promise.resolve(mockDbNotifications)),
     },
     useNotificationStore: vi.fn((selector) => {
       const state = { lastRead: 0, setLastRead: vi.fn() };

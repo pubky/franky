@@ -88,4 +88,30 @@ describe('LocalNotificationService', () => {
       await expect(LocalNotificationService.getOlderThan(1000, 10)).rejects.toThrow('query-failed');
     });
   });
+
+  describe('getAll', () => {
+    it('should delegate to NotificationModel.getAll', async () => {
+      const expected = [createFlat(3000), createFlat(2000), createFlat(1000)];
+      const modelSpy = vi.spyOn(Core.NotificationModel, 'getAll').mockResolvedValue(expected);
+
+      const result = await LocalNotificationService.getAll();
+
+      expect(modelSpy).toHaveBeenCalled();
+      expect(result).toEqual(expected);
+    });
+
+    it('should return empty array when no notifications exist', async () => {
+      vi.spyOn(Core.NotificationModel, 'getAll').mockResolvedValue([]);
+
+      const result = await LocalNotificationService.getAll();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should bubble model errors', async () => {
+      vi.spyOn(Core.NotificationModel, 'getAll').mockRejectedValue(new Error('query-failed'));
+
+      await expect(LocalNotificationService.getAll()).rejects.toThrow('query-failed');
+    });
+  });
 });

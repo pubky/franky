@@ -62,4 +62,14 @@ export class NotificationController {
       limit,
     });
   }
+
+  /**
+   * Retrieves all notifications from the local database.
+   * Used for reactive queries in UI components.
+   *
+   * @returns Promise resolving to all notifications ordered by timestamp descending
+   */
+  static async getAllFromCache(): Promise<Core.FlatNotification[]> {
+    return await Core.NotificationApplication.getAllFromCache();
+  }
 }

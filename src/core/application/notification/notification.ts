@@ -36,6 +36,14 @@ export class NotificationApplication {
   }
 
   /**
+   * Retrieves all notifications from the local cache.
+   * @returns Promise resolving to all notifications ordered by timestamp descending
+   */
+  static async getAllFromCache(): Promise<Core.FlatNotification[]> {
+    return await Core.LocalNotificationService.getAll();
+  }
+
+  /**
    * Retrieves notifications from cache if available, otherwise fetches from Nexus.
    * Follows a cache-first pattern similar to stream posts.
    *

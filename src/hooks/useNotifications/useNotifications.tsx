@@ -54,9 +54,8 @@ export function useNotifications(): UseNotificationsResult {
   // Read notifications from local database using useLiveQuery
   // This provides persistence across page navigation
   const dbNotifications = useLiveQuery(async () => {
-    // Get all notifications from database, ordered by timestamp descending
-    const notifications = await Core.NotificationModel.table.orderBy('timestamp').reverse().toArray();
-    return notifications;
+    // Get all notifications from database via controller
+    return await Core.NotificationController.getAllFromCache();
   }, []);
 
   // Deduplicate notifications (database may have duplicates due to ++id schema)
