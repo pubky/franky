@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ProfilePageLayout, ProfilePageLayoutProps } from '../Layout/ProfilePageLayout';
+import { ProfilePageLayout, ProfilePageLayoutProps } from './ProfilePageLayout';
 import { PROFILE_PAGE_TYPES } from '@/app/profile/types';
 
 // Mock molecules and organisms
