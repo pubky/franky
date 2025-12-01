@@ -41,8 +41,9 @@ export class NotificationController {
 
   /**
    * Retrieves notifications from cache if available, otherwise fetches from Nexus.
-   * Uses timestamp-based pagination.
+   * Uses timestamp-based pagination with optional type filtering.
    *
+   * @param params.types - Optional array of notification types to filter by. If null/undefined, returns all types.
    * @param params.olderThan - Unix timestamp to get notifications older than.
    *                           Defaults to Infinity for initial load (most recent notifications).
    *                           Use the timestamp of the last notification for pagination.
@@ -51,6 +52,7 @@ export class NotificationController {
    * @returns Promise resolving to notifications and next timestamp for pagination
    */
   static async getOrFetchNotifications({
+    types,
     olderThan = Infinity,
     limit = Config.NEXUS_NOTIFICATIONS_LIMIT,
   }: Core.TGetNotificationsParams): Promise<Core.TGetOrFetchNotificationsResponse> {
@@ -58,6 +60,7 @@ export class NotificationController {
 
     return await Core.NotificationApplication.getOrFetchNotifications({
       userId,
+      types,
       olderThan,
       limit,
     });

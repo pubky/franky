@@ -48,22 +48,31 @@ export class NotificationApplication {
    * Follows a cache-first pattern similar to stream posts.
    *
    * Flow:
-   * 1. Query cache for notifications older than the given timestamp
+   * 1. Query cache for notifications older than the given timestamp (with optional type filter)
    * 2. If cache has enough items, return immediately (full cache hit)
    * 3. If cache has partial items, fetch remaining from Nexus (partial cache hit)
    * 4. If cache is empty, fetch all from Nexus (cache miss)
    * 5. Persist fetched notifications and return combined result
    *
-   * @param params - Parameters containing userId, olderThan timestamp, and limit
+   * Note: When types are specified, Nexus API doesn't support type filtering,
+   * so we fetch more and filter client-side.
+   *
+   * @param params - Parameters containing userId, optional types filter, olderThan timestamp, and limit
    * @returns Promise resolving to notifications and next olderThan for pagination
    */
   static async getOrFetchNotifications({
     userId,
+    types,
     olderThan,
     limit,
   }: Core.TGetOrFetchNotificationsParams): Promise<Core.TGetOrFetchNotificationsResponse> {
-    // Try to get notifications from cache
-    const cachedNotifications = await Core.LocalNotificationService.getOlderThan(olderThan, limit);
+    // Determine if we're filtering by type
+    const hasTypeFilter = types && types.length > 0;
+
+    // Try to get notifications from cache (with or without type filter)
+    const cachedNotifications = hasTypeFilter
+      ? await Core.LocalNotificationService.getOlderThanByTypes(types, olderThan, limit)
+      : await Core.LocalNotificationService.getOlderThan(olderThan, limit);
 
     // Full cache hit - return cached results
     if (cachedNotifications.length === limit) {
@@ -71,48 +80,40 @@ export class NotificationApplication {
       return { notifications: cachedNotifications, olderThan: nextOlderThan };
     }
 
-    // Partial cache hit - fetch remaining from Nexus
-    if (cachedNotifications.length > 0 && cachedNotifications.length < limit) {
-      return await this.partialCacheHit({ userId, limit, cachedNotifications });
-    }
+    // Partial cache hit or cache miss - fetch from Nexus
+    const lastCachedTimestamp =
+      cachedNotifications.length > 0 ? cachedNotifications[cachedNotifications.length - 1]?.timestamp : olderThan;
+    const remainingLimit = limit - cachedNotifications.length;
 
-    // Cache miss - fetch all from Nexus
-    return await this.fetchFromNexus({ userId, olderThan, limit });
+    // When filtering by type, fetch more since Nexus doesn't support type filtering
+    const fetchLimit = hasTypeFilter ? remainingLimit * 3 : remainingLimit;
+
+    const { notifications: nexusNotifications, olderThan: nexusOlderThan } = await this.fetchFromNexus({
+      userId,
+      olderThan: lastCachedTimestamp,
+      limit: fetchLimit,
+    });
+
+    // Filter by type if needed
+    const filteredNexus = hasTypeFilter ? nexusNotifications.filter((n) => types.includes(n.type)) : nexusNotifications;
+
+    // Combine cached and fetched, ensuring no duplicates
+    const seenKeys = new Set(cachedNotifications.map((n) => Core.getNotificationKey(n)));
+    const uniqueNexus = filteredNexus.filter((n) => !seenKeys.has(Core.getNotificationKey(n)));
+    const combinedNotifications = [...cachedNotifications, ...uniqueNexus].slice(0, limit);
+
+    // Determine next olderThan from the last notification
+    const nextOlderThan =
+      combinedNotifications.length > 0
+        ? combinedNotifications[combinedNotifications.length - 1]?.timestamp
+        : nexusOlderThan;
+
+    return { notifications: combinedNotifications, olderThan: nextOlderThan };
   }
 
   // ============================================================================
   // Internal Helpers
   // ============================================================================
-
-  /**
-   * Handles partial cache hits by fetching remaining notifications from Nexus.
-   */
-  private static async partialCacheHit({
-    userId,
-    limit,
-    cachedNotifications,
-  }: {
-    userId: Core.Pubky;
-    limit: number;
-    cachedNotifications: Core.FlatNotification[];
-  }): Promise<Core.TGetOrFetchNotificationsResponse> {
-    const lastCachedTimestamp = cachedNotifications[cachedNotifications.length - 1]?.timestamp;
-    const remainingLimit = limit - cachedNotifications.length;
-
-    // Fetch remaining from Nexus
-    const { notifications: nexusNotifications, olderThan: nextOlderThan } = await this.fetchFromNexus({
-      userId,
-      olderThan: lastCachedTimestamp,
-      limit: remainingLimit,
-    });
-
-    // Combine cached and fetched, ensuring no duplicates by unique key
-    const seenKeys = new Set(cachedNotifications.map((n) => Core.getNotificationKey(n)));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenKeys.has(Core.getNotificationKey(n)));
-    const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
-
-    return { notifications: combinedNotifications, olderThan: nextOlderThan };
-  }
 
   /**
    * Fetches notifications from Nexus and persists them to cache.

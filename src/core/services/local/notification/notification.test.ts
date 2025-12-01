@@ -114,4 +114,43 @@ describe('LocalNotificationService', () => {
       await expect(LocalNotificationService.getAll()).rejects.toThrow('query-failed');
     });
   });
+
+  describe('getOlderThanByTypes', () => {
+    it('should delegate to NotificationModel.getOlderThanByTypes with types', async () => {
+      const expected = [createFlat(4000), createFlat(3000)];
+      const modelSpy = vi.spyOn(Core.NotificationModel, 'getOlderThanByTypes').mockResolvedValue(expected);
+      const types = [Core.NotificationType.Follow, Core.NotificationType.Reply];
+
+      const result = await LocalNotificationService.getOlderThanByTypes(types, 5000, 10);
+
+      expect(modelSpy).toHaveBeenCalledWith(types, 5000, 10);
+      expect(result).toEqual(expected);
+    });
+
+    it('should delegate with null types for all notifications', async () => {
+      const expected = [createFlat(4000), createFlat(3000)];
+      const modelSpy = vi.spyOn(Core.NotificationModel, 'getOlderThanByTypes').mockResolvedValue(expected);
+
+      const result = await LocalNotificationService.getOlderThanByTypes(null, 5000, 10);
+
+      expect(modelSpy).toHaveBeenCalledWith(null, 5000, 10);
+      expect(result).toEqual(expected);
+    });
+
+    it('should return empty array when no notifications found', async () => {
+      vi.spyOn(Core.NotificationModel, 'getOlderThanByTypes').mockResolvedValue([]);
+
+      const result = await LocalNotificationService.getOlderThanByTypes([Core.NotificationType.Reply], 1000, 10);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should bubble model errors', async () => {
+      vi.spyOn(Core.NotificationModel, 'getOlderThanByTypes').mockRejectedValue(new Error('query-failed'));
+
+      await expect(
+        LocalNotificationService.getOlderThanByTypes([Core.NotificationType.Reply], 1000, 10),
+      ).rejects.toThrow('query-failed');
+    });
+  });
 });

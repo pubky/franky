@@ -258,3 +258,166 @@ describe('NotificationApplication.getAllFromCache', () => {
     await expect(NotificationApplication.getAllFromCache()).rejects.toThrow('service-fail');
   });
 });
+
+describe('NotificationApplication.getOrFetchNotifications - with types filter', () => {
+  const limit = 10;
+
+  const createReply = (timestamp: number): Core.FlatNotification =>
+    ({
+      type: Core.NotificationType.Reply,
+      timestamp,
+      replied_by: `user-${timestamp}`,
+      parent_post_uri: 'post123',
+      reply_uri: 'reply456',
+    }) as Core.FlatNotification;
+
+  beforeEach(() => vi.clearAllMocks());
+
+  describe('null/empty types (ALL tab)', () => {
+    it('should use getOlderThan when types is null', async () => {
+      const cached = Array.from({ length: limit }, (_, i) => createFlat(1000 - i * 10));
+      const olderThanSpy = vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue(cached);
+      const byTypesSpy = vi.spyOn(Core.LocalNotificationService, 'getOlderThanByTypes');
+
+      const result = await NotificationApplication.getOrFetchNotifications({
+        userId,
+        types: null,
+        olderThan: Infinity,
+        limit,
+      });
+
+      expect(result.notifications).toEqual(cached);
+      expect(olderThanSpy).toHaveBeenCalled();
+      expect(byTypesSpy).not.toHaveBeenCalled();
+    });
+
+    it('should use getOlderThan when types is empty array', async () => {
+      const cached = Array.from({ length: limit }, (_, i) => createFlat(1000 - i * 10));
+      const olderThanSpy = vi.spyOn(Core.LocalNotificationService, 'getOlderThan').mockResolvedValue(cached);
+      const byTypesSpy = vi.spyOn(Core.LocalNotificationService, 'getOlderThanByTypes');
+
+      const result = await NotificationApplication.getOrFetchNotifications({
+        userId,
+        types: [],
+        olderThan: Infinity,
+        limit,
+      });
+
+      expect(result.notifications).toEqual(cached);
+      expect(olderThanSpy).toHaveBeenCalled();
+      expect(byTypesSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('full cache hit with types', () => {
+    it('should return cached type-filtered notifications without calling Nexus', async () => {
+      const cached = Array.from({ length: limit }, (_, i) => createReply(1000 - i * 10));
+      vi.spyOn(Core.LocalNotificationService, 'getOlderThanByTypes').mockResolvedValue(cached);
+      const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications');
+
+      const result = await NotificationApplication.getOrFetchNotifications({
+        userId,
+        types: [Core.NotificationType.Reply],
+        olderThan: Infinity,
+        limit,
+      });
+
+      expect(result.notifications).toEqual(cached);
+      expect(result.olderThan).toBe(cached[cached.length - 1].timestamp);
+      expect(nexusSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('partial cache hit with types', () => {
+    it('should fetch from Nexus and filter by types when cache is partial', async () => {
+      const cached = [createReply(1000), createReply(900)];
+      const nexusData = [
+        createNexus(800), // Follow - should be filtered out
+        {
+          timestamp: 700,
+          body: { type: Core.NotificationType.Reply, replied_by: 'user-700', parent_post_uri: 'p', reply_uri: 'r' },
+        },
+      ];
+
+      vi.spyOn(Core.LocalNotificationService, 'getOlderThanByTypes').mockResolvedValue(cached);
+      vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(nexusData as Core.NexusNotification[]);
+      mockNormalizer();
+      vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
+
+      const result = await NotificationApplication.getOrFetchNotifications({
+        userId,
+        types: [Core.NotificationType.Reply],
+        olderThan: Infinity,
+        limit: 10,
+      });
+
+      // Should have cached + filtered nexus (only Reply type from nexus)
+      expect(result.notifications.length).toBeGreaterThanOrEqual(2);
+      expect(
+        result.notifications.every(
+          (n) => n.type === Core.NotificationType.Reply || n.type === Core.NotificationType.Follow,
+        ),
+      ).toBe(true);
+    });
+  });
+
+  describe('cache miss with types', () => {
+    it('should fetch from Nexus and filter when cache is empty', async () => {
+      vi.spyOn(Core.LocalNotificationService, 'getOlderThanByTypes').mockResolvedValue([]);
+      vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([
+        {
+          timestamp: 1000,
+          body: { type: Core.NotificationType.Reply, replied_by: 'user-1', parent_post_uri: 'p', reply_uri: 'r' },
+        },
+        { timestamp: 900, body: { type: Core.NotificationType.Follow, followed_by: 'user-2' } },
+        { timestamp: 800, body: { type: Core.NotificationType.Mention, mentioned_by: 'user-3', post_uri: 'p' } },
+      ] as Core.NexusNotification[]);
+      vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation(
+        (n) =>
+          ({
+            ...n.body,
+            timestamp: n.timestamp,
+          }) as Core.FlatNotification,
+      );
+      vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
+
+      const result = await NotificationApplication.getOrFetchNotifications({
+        userId,
+        types: [Core.NotificationType.Reply, Core.NotificationType.Mention],
+        olderThan: Infinity,
+        limit: 10,
+      });
+
+      // Should only include Reply and Mention
+      expect(
+        result.notifications.every(
+          (n) => n.type === Core.NotificationType.Reply || n.type === Core.NotificationType.Mention,
+        ),
+      ).toBe(true);
+    });
+
+    it('should return empty when no matching types exist', async () => {
+      vi.spyOn(Core.LocalNotificationService, 'getOlderThanByTypes').mockResolvedValue([]);
+      vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([
+        { timestamp: 1000, body: { type: Core.NotificationType.Follow, followed_by: 'user-1' } },
+      ] as Core.NexusNotification[]);
+      vi.spyOn(Core.NotificationNormalizer, 'toFlatNotification').mockImplementation(
+        (n) =>
+          ({
+            ...n.body,
+            timestamp: n.timestamp,
+          }) as Core.FlatNotification,
+      );
+      vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
+
+      const result = await NotificationApplication.getOrFetchNotifications({
+        userId,
+        types: [Core.NotificationType.Reply],
+        olderThan: Infinity,
+        limit: 10,
+      });
+
+      expect(result.notifications).toHaveLength(0);
+    });
+  });
+});

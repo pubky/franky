@@ -58,21 +58,59 @@ describe('NotificationController', () => {
     beforeEach(() => mockAuthStore());
 
     it.each([
-      { params: {}, expectedOlderThan: Infinity, expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT },
-      { params: { olderThan: 5000 }, expectedOlderThan: 5000, expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT },
-      { params: { limit: 50 }, expectedOlderThan: Infinity, expectedLimit: 50 },
-      { params: { olderThan: 8000, limit: 20 }, expectedOlderThan: 8000, expectedLimit: 20 },
-    ])('should call application with params: $params', async ({ params, expectedOlderThan, expectedLimit }) => {
-      const spy = vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue(mockResponse);
+      {
+        params: {},
+        expectedTypes: undefined,
+        expectedOlderThan: Infinity,
+        expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT,
+      },
+      {
+        params: { olderThan: 5000 },
+        expectedTypes: undefined,
+        expectedOlderThan: 5000,
+        expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT,
+      },
+      { params: { limit: 50 }, expectedTypes: undefined, expectedOlderThan: Infinity, expectedLimit: 50 },
+      { params: { olderThan: 8000, limit: 20 }, expectedTypes: undefined, expectedOlderThan: 8000, expectedLimit: 20 },
+      {
+        params: { types: [Core.NotificationType.Follow] },
+        expectedTypes: [Core.NotificationType.Follow],
+        expectedOlderThan: Infinity,
+        expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT,
+      },
+      {
+        params: { types: [Core.NotificationType.Follow, Core.NotificationType.Reply], olderThan: 5000 },
+        expectedTypes: [Core.NotificationType.Follow, Core.NotificationType.Reply],
+        expectedOlderThan: 5000,
+        expectedLimit: Config.NEXUS_NOTIFICATIONS_LIMIT,
+      },
+      {
+        params: { types: null, limit: 50 },
+        expectedTypes: null,
+        expectedOlderThan: Infinity,
+        expectedLimit: 50,
+      },
+      {
+        params: { types: [Core.NotificationType.Mention], olderThan: 8000, limit: 20 },
+        expectedTypes: [Core.NotificationType.Mention],
+        expectedOlderThan: 8000,
+        expectedLimit: 20,
+      },
+    ])(
+      'should call application with params: $params',
+      async ({ params, expectedTypes, expectedOlderThan, expectedLimit }) => {
+        const spy = vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue(mockResponse);
 
-      await NotificationController.getOrFetchNotifications(params);
+        await NotificationController.getOrFetchNotifications(params);
 
-      expect(spy).toHaveBeenCalledWith({
-        userId: mockUserId,
-        olderThan: expectedOlderThan,
-        limit: expectedLimit,
-      });
-    });
+        expect(spy).toHaveBeenCalledWith({
+          userId: mockUserId,
+          types: expectedTypes,
+          olderThan: expectedOlderThan,
+          limit: expectedLimit,
+        });
+      },
+    );
 
     it('should return response from application', async () => {
       vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue(mockResponse);
@@ -98,6 +136,30 @@ describe('NotificationController', () => {
       vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockRejectedValue(new Error('fetch-fail'));
 
       await expect(NotificationController.getOrFetchNotifications({})).rejects.toThrow('fetch-fail');
+    });
+
+    it('should return filtered response when types provided', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue(mockResponse);
+
+      const result = await NotificationController.getOrFetchNotifications({
+        types: [Core.NotificationType.Follow],
+      });
+
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should return empty response when no matching types', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockResolvedValue({
+        notifications: [],
+        olderThan: undefined,
+      });
+
+      const result = await NotificationController.getOrFetchNotifications({
+        types: [Core.NotificationType.Reply],
+      });
+
+      expect(result.notifications).toHaveLength(0);
+      expect(result.olderThan).toBeUndefined();
     });
   });
 

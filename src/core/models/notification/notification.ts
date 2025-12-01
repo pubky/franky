@@ -118,6 +118,51 @@ export class NotificationModel {
   }
 
   /**
+   * Retrieves notifications of specific types older than a given timestamp.
+   * Used for tab-filtered pagination.
+   *
+   * @param types - Array of notification types to filter by. If null/empty, returns all types.
+   * @param olderThan - Unix timestamp to get notifications older than. Use Infinity for initial load.
+   * @param limit - Maximum number of notifications to return
+   * @returns Promise resolving to array of filtered notifications ordered by timestamp descending
+   */
+  static async getOlderThanByTypes(
+    types: NotificationType[] | null,
+    olderThan: number,
+    limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT,
+  ): Promise<FlatNotification[]> {
+    try {
+      // If no types filter, delegate to getOlderThan
+      if (!types || types.length === 0) {
+        return await this.getOlderThan(olderThan, limit);
+      }
+
+      // Filter by types and timestamp, then sort and limit
+      const notifications = await this.table
+        .where('timestamp')
+        .below(olderThan)
+        .and((n) => types.includes(n.type))
+        .reverse()
+        .limit(limit)
+        .toArray();
+
+      return notifications;
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to read notifications by types older than ${olderThan} from ${this.table.name}`,
+        500,
+        {
+          error,
+          types,
+          olderThan,
+          limit,
+        },
+      );
+    }
+  }
+
+  /**
    * Clear all notifications from the table.
    */
   static async clear(): Promise<void> {

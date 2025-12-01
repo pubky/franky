@@ -132,6 +132,106 @@ describe('NotificationModel', () => {
     });
   });
 
+  describe('getOlderThanByTypes', () => {
+    const createMention = (timestamp: number): FlatNotification =>
+      ({
+        type: NotificationType.Mention,
+        timestamp,
+        mentioned_by: `user-${timestamp}`,
+        post_uri: 'post123',
+      }) as FlatNotification;
+
+    const createRepost = (timestamp: number): FlatNotification =>
+      ({
+        type: NotificationType.Repost,
+        timestamp,
+        reposted_by: `user-${timestamp}`,
+        embed_uri: 'embed123',
+        repost_uri: 'repost123',
+      }) as FlatNotification;
+
+    it('should filter by single type and return in descending order', async () => {
+      await NotificationModel.bulkSave([
+        createNotification(1000),
+        createReply(2000),
+        createNotification(3000),
+        createReply(4000),
+      ]);
+
+      const result = await NotificationModel.getOlderThanByTypes([NotificationType.Reply], Infinity, 10);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].timestamp).toBe(4000);
+      expect(result[1].timestamp).toBe(2000);
+      expect(result.every((n) => n.type === NotificationType.Reply)).toBe(true);
+    });
+
+    it('should filter by multiple types', async () => {
+      await NotificationModel.bulkSave([
+        createNotification(1000),
+        createReply(2000),
+        createMention(3000),
+        createRepost(4000),
+      ]);
+
+      const result = await NotificationModel.getOlderThanByTypes(
+        [NotificationType.Reply, NotificationType.Mention],
+        Infinity,
+        10,
+      );
+
+      expect(result).toHaveLength(2);
+      expect(result.map((n) => n.type)).toEqual([NotificationType.Mention, NotificationType.Reply]);
+    });
+
+    it('should respect olderThan parameter', async () => {
+      await NotificationModel.bulkSave([createReply(1000), createReply(2000), createReply(3000), createReply(4000)]);
+
+      const result = await NotificationModel.getOlderThanByTypes([NotificationType.Reply], 3000, 10);
+
+      expect(result.map((n) => n.timestamp)).toEqual([2000, 1000]);
+    });
+
+    it('should respect limit parameter', async () => {
+      await NotificationModel.bulkSave([createReply(1000), createReply(2000), createReply(3000), createReply(4000)]);
+
+      const result = await NotificationModel.getOlderThanByTypes([NotificationType.Reply], Infinity, 2);
+
+      expect(result).toHaveLength(2);
+      expect(result.map((n) => n.timestamp)).toEqual([4000, 3000]);
+    });
+
+    it('should delegate to getOlderThan when types is null', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createReply(2000), createMention(3000)]);
+
+      const result = await NotificationModel.getOlderThanByTypes(null, Infinity, 10);
+
+      expect(result).toHaveLength(3);
+    });
+
+    it('should delegate to getOlderThan when types is empty array', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createReply(2000), createMention(3000)]);
+
+      const result = await NotificationModel.getOlderThanByTypes([], Infinity, 10);
+
+      expect(result).toHaveLength(3);
+    });
+
+    it('should return empty array when no matching types exist', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createNotification(2000)]);
+
+      const result = await NotificationModel.getOlderThanByTypes([NotificationType.Reply], Infinity, 10);
+
+      expect(result).toHaveLength(0);
+    });
+
+    it('should return empty array when table is empty', async () => {
+      const result = await NotificationModel.getOlderThanByTypes([NotificationType.Reply], Infinity, 10);
+
+      expect(result).toHaveLength(0);
+    });
+  });
+
   describe('clear', () => {
     it('should remove all notifications', async () => {
       await NotificationModel.bulkSave([createNotification(1000), createNotification(2000)]);

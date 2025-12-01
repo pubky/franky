@@ -33,6 +33,23 @@ export class LocalNotificationService {
   }
 
   /**
+   * Retrieves notifications of specific types older than a given timestamp.
+   * Used for tab-filtered pagination.
+   *
+   * @param types - Array of notification types to filter by. If null, returns all types.
+   * @param olderThan - Unix timestamp to get notifications older than
+   * @param limit - Maximum number of notifications to return
+   * @returns Promise resolving to array of filtered notifications
+   */
+  static async getOlderThanByTypes(
+    types: Core.NotificationType[] | null,
+    olderThan: number,
+    limit: number,
+  ): Promise<Core.FlatNotification[]> {
+    return await Core.NotificationModel.getOlderThanByTypes(types, olderThan, limit);
+  }
+
+  /**
    * Retrieves all notifications from the local database ordered by timestamp descending.
    * @returns Promise resolving to array of all notifications
    */
