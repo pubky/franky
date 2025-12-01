@@ -22,7 +22,7 @@ describe('NotificationApplication.notifications', () => {
   it('should fetch, persist, and return unread count', async () => {
     const notifications = [createNexus(2000), createNexus(1000)];
     const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(notifications);
-    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockResolvedValue(1);
+    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount').mockResolvedValue(1);
 
     const unread = await NotificationApplication.notifications({ userId, lastRead: 1234 });
 
@@ -33,7 +33,7 @@ describe('NotificationApplication.notifications', () => {
 
   it('should bubble Nexus errors without persisting', async () => {
     vi.spyOn(Core.NexusUserService, 'notifications').mockRejectedValue(new Error('nexus-fail'));
-    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount');
+    const persistSpy = vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount');
 
     await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('nexus-fail');
     expect(persistSpy).not.toHaveBeenCalled();
@@ -41,7 +41,7 @@ describe('NotificationApplication.notifications', () => {
 
   it('should bubble persist errors', async () => {
     vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
-    vi.spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount').mockRejectedValue(new Error('persist-fail'));
+    vi.spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount').mockRejectedValue(new Error('persist-fail'));
 
     await expect(NotificationApplication.notifications({ userId, lastRead: 1234 })).rejects.toThrow('persist-fail');
   });
@@ -169,5 +169,92 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
 
       expect(result.notifications).toHaveLength(1);
     });
+  });
+});
+
+describe('NotificationApplication.markAllAsRead', () => {
+  const mockTimestamp = 1234567890;
+  const mockLastReadUrl = 'pubky://test-user/pub/pubky.app/last-read';
+
+  beforeEach(() => vi.clearAllMocks());
+
+  it('should create lastRead and send to homeserver', () => {
+    const mockLastReadResult = {
+      last_read: {
+        timestamp: BigInt(mockTimestamp),
+        toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+      },
+      meta: { url: mockLastReadUrl },
+    };
+
+    vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+      mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+    );
+    const homeserverSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+    const result = NotificationApplication.markAllAsRead(userId);
+
+    expect(Core.LastReadNormalizer.to).toHaveBeenCalledWith(userId);
+    expect(homeserverSpy).toHaveBeenCalledWith(
+      Core.HomeserverAction.PUT,
+      mockLastReadUrl,
+      mockLastReadResult.last_read.toJson(),
+    );
+    expect(result).toBe(mockTimestamp);
+  });
+
+  it('should return timestamp even if homeserver fails (fire and forget)', async () => {
+    const mockLastReadResult = {
+      last_read: {
+        timestamp: BigInt(mockTimestamp),
+        toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+      },
+      meta: { url: mockLastReadUrl },
+    };
+
+    vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+      mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+    );
+    vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
+    const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+
+    const result = NotificationApplication.markAllAsRead(userId);
+
+    expect(result).toBe(mockTimestamp);
+
+    // Wait for the catch to execute
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(loggerWarnSpy).toHaveBeenCalledWith('Failed to update lastRead on homeserver', { error: expect.any(Error) });
+  });
+});
+
+describe('NotificationApplication.getAllFromCache', () => {
+  const createFlat = (timestamp: number): Core.FlatNotification =>
+    ({ type: Core.NotificationType.Follow, timestamp, followed_by: `user-${timestamp}` }) as Core.FlatNotification;
+
+  beforeEach(() => vi.clearAllMocks());
+
+  it('should delegate to LocalNotificationService.getAll', async () => {
+    const expected = [createFlat(3000), createFlat(2000), createFlat(1000)];
+    const serviceSpy = vi.spyOn(Core.LocalNotificationService, 'getAll').mockResolvedValue(expected);
+
+    const result = await NotificationApplication.getAllFromCache();
+
+    expect(serviceSpy).toHaveBeenCalled();
+    expect(result).toEqual(expected);
+  });
+
+  it('should return empty array when no notifications exist', async () => {
+    vi.spyOn(Core.LocalNotificationService, 'getAll').mockResolvedValue([]);
+
+    const result = await NotificationApplication.getAllFromCache();
+
+    expect(result).toEqual([]);
+  });
+
+  it('should bubble service errors', async () => {
+    vi.spyOn(Core.LocalNotificationService, 'getAll').mockRejectedValue(new Error('service-fail'));
+
+    await expect(NotificationApplication.getAllFromCache()).rejects.toThrow('service-fail');
   });
 });

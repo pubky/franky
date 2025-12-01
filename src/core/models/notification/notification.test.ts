@@ -38,6 +38,24 @@ describe('NotificationModel', () => {
     });
   });
 
+  describe('getAll', () => {
+    it('should return all notifications in descending timestamp order', async () => {
+      await NotificationModel.bulkSave([createNotification(1000), createNotification(3000), createNotification(2000)]);
+
+      const all = await NotificationModel.getAll();
+
+      expect(all).toHaveLength(3);
+      expect(all[0].timestamp).toBe(3000);
+      expect(all[1].timestamp).toBe(2000);
+      expect(all[2].timestamp).toBe(1000);
+    });
+
+    it('should return empty array when no notifications exist', async () => {
+      const all = await NotificationModel.getAll();
+      expect(all).toHaveLength(0);
+    });
+  });
+
   describe('getRecent', () => {
     it('should return notifications in descending timestamp order', async () => {
       await NotificationModel.bulkSave([createNotification(1000), createNotification(3000), createNotification(2000)]);

@@ -51,6 +51,23 @@ export class NotificationModel {
     }
   }
 
+  /**
+   * Retrieves all notifications ordered by timestamp descending.
+   * @returns Promise resolving to array of all notifications
+   */
+  static async getAll(): Promise<FlatNotification[]> {
+    try {
+      return await this.table.orderBy('timestamp').reverse().toArray();
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.QUERY_FAILED,
+        `Failed to read all notifications from ${this.table.name}`,
+        500,
+        { error },
+      );
+    }
+  }
+
   // Query methods. TODO: Error handling when we will use it
   static async getRecent(limit: number = Config.NEXUS_NOTIFICATIONS_LIMIT): Promise<FlatNotification[]> {
     return await this.table.orderBy('timestamp').reverse().limit(limit).toArray();

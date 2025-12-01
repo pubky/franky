@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
+import * as Libs from '@/libs';
 
 export class NotificationController {
   private constructor() {} // Prevent instantiation
@@ -7,13 +8,35 @@ export class NotificationController {
   /**
    * Refreshes unread notifications for the current user.
    * @param userId - The user ID to fetch notifications for
-   * @returns Promise resolving to the number of unread notifications
+   * @returns Promise resolving when notifications are updated
    */
   static async notifications({ userId }: Core.TReadProfileParams) {
     const notificationStore = Core.useNotificationStore.getState();
     const lastRead = notificationStore.selectLastRead();
     const unread = await Core.NotificationApplication.notifications({ userId, lastRead });
     notificationStore.setUnread(unread);
+  }
+
+  /**
+   * Marks all notifications as read by updating the lastRead timestamp on the homeserver.
+   * This resets the unread count to 0 and updates the local store.
+   * Should be called when the user enters the notifications page.
+   */
+  static markAllAsRead() {
+    const pubky = Core.useAuthStore.getState().selectCurrentUserPubky();
+
+    if (!pubky) {
+      Libs.Logger.warn('Cannot mark notifications as read: no authenticated user');
+      return;
+    }
+
+    // Delegate to application layer (handles homeserver sync)
+    const timestamp = Core.NotificationApplication.markAllAsRead(pubky);
+
+    // Update local store
+    const notificationStore = Core.useNotificationStore.getState();
+    notificationStore.setLastRead(timestamp);
+    notificationStore.setUnread(0);
   }
 
   /**
@@ -38,5 +61,15 @@ export class NotificationController {
       olderThan,
       limit,
     });
+  }
+
+  /**
+   * Retrieves all notifications from the local database.
+   * Used for reactive queries in UI components.
+   *
+   * @returns Promise resolving to all notifications ordered by timestamp descending
+   */
+  static async getAllFromCache(): Promise<Core.FlatNotification[]> {
+    return await Core.NotificationApplication.getAllFromCache();
   }
 }

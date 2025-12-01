@@ -16,7 +16,7 @@ const mockNormalizer = () =>
 describe('LocalNotificationService', () => {
   beforeEach(() => vi.clearAllMocks());
 
-  describe('persitAndGetUnreadCount', () => {
+  describe('persistAndGetUnreadCount', () => {
     const lastRead = 1000;
 
     it('should transform, persist, and return unread count', async () => {
@@ -24,7 +24,7 @@ describe('LocalNotificationService', () => {
       mockNormalizer();
       const bulkSaveSpy = vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
 
-      const unreadCount = await LocalNotificationService.persitAndGetUnreadCount(notifications, lastRead);
+      const unreadCount = await LocalNotificationService.persistAndGetUnreadCount(notifications, lastRead);
 
       expect(unreadCount).toBe(2); // 2000 and 1500 are newer than 1000
       expect(bulkSaveSpy).toHaveBeenCalledWith(
@@ -45,7 +45,10 @@ describe('LocalNotificationService', () => {
       mockNormalizer();
       vi.spyOn(Core.NotificationModel, 'bulkSave').mockResolvedValue(undefined);
 
-      const unreadCount = await LocalNotificationService.persitAndGetUnreadCount(timestamps.map(createNexus), lastRead);
+      const unreadCount = await LocalNotificationService.persistAndGetUnreadCount(
+        timestamps.map(createNexus),
+        lastRead,
+      );
 
       expect(unreadCount).toBe(expected);
     });
@@ -54,7 +57,7 @@ describe('LocalNotificationService', () => {
       mockNormalizer();
       vi.spyOn(Core.NotificationModel, 'bulkSave').mockRejectedValue(new Error('db-error'));
 
-      await expect(LocalNotificationService.persitAndGetUnreadCount([createNexus(2000)], lastRead)).rejects.toThrow(
+      await expect(LocalNotificationService.persistAndGetUnreadCount([createNexus(2000)], lastRead)).rejects.toThrow(
         'db-error',
       );
     });
@@ -83,6 +86,32 @@ describe('LocalNotificationService', () => {
       vi.spyOn(Core.NotificationModel, 'getOlderThan').mockRejectedValue(new Error('query-failed'));
 
       await expect(LocalNotificationService.getOlderThan(1000, 10)).rejects.toThrow('query-failed');
+    });
+  });
+
+  describe('getAll', () => {
+    it('should delegate to NotificationModel.getAll', async () => {
+      const expected = [createFlat(3000), createFlat(2000), createFlat(1000)];
+      const modelSpy = vi.spyOn(Core.NotificationModel, 'getAll').mockResolvedValue(expected);
+
+      const result = await LocalNotificationService.getAll();
+
+      expect(modelSpy).toHaveBeenCalled();
+      expect(result).toEqual(expected);
+    });
+
+    it('should return empty array when no notifications exist', async () => {
+      vi.spyOn(Core.NotificationModel, 'getAll').mockResolvedValue([]);
+
+      const result = await LocalNotificationService.getAll();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should bubble model errors', async () => {
+      vi.spyOn(Core.NotificationModel, 'getAll').mockRejectedValue(new Error('query-failed'));
+
+      await expect(LocalNotificationService.getAll()).rejects.toThrow('query-failed');
     });
   });
 });

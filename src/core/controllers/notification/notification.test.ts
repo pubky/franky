@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { NotificationController } from './notification';
 import * as Core from '@/core';
 import * as Config from '@/config';
+import * as Libs from '@/libs';
 
 const mockUserId = 'pubky-user-123' as Core.Pubky;
 
@@ -97,6 +98,79 @@ describe('NotificationController', () => {
       vi.spyOn(Core.NotificationApplication, 'getOrFetchNotifications').mockRejectedValue(new Error('fetch-fail'));
 
       await expect(NotificationController.getOrFetchNotifications({})).rejects.toThrow('fetch-fail');
+    });
+  });
+
+  describe('markAllAsRead', () => {
+    const mockTimestamp = 1234567890;
+
+    const setupStores = (pubky: Core.Pubky | null) => {
+      const setLastRead = vi.fn();
+      const setUnread = vi.fn();
+
+      vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
+        selectCurrentUserPubky: () => pubky,
+      } as unknown as ReturnType<typeof Core.useAuthStore.getState>);
+
+      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
+        setLastRead,
+        setUnread,
+      } as unknown as Core.NotificationStore);
+
+      return { setLastRead, setUnread };
+    };
+
+    it('should call application and update local store', () => {
+      const { setLastRead, setUnread } = setupStores(mockUserId);
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead').mockReturnValue(mockTimestamp);
+
+      NotificationController.markAllAsRead();
+
+      expect(applicationSpy).toHaveBeenCalledWith(mockUserId);
+      expect(setLastRead).toHaveBeenCalledWith(mockTimestamp);
+      expect(setUnread).toHaveBeenCalledWith(0);
+    });
+
+    it('should not call application when no user is authenticated', () => {
+      const { setLastRead, setUnread } = setupStores(null);
+      const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'markAllAsRead');
+
+      NotificationController.markAllAsRead();
+
+      expect(loggerWarnSpy).toHaveBeenCalledWith('Cannot mark notifications as read: no authenticated user');
+      expect(applicationSpy).not.toHaveBeenCalled();
+      expect(setLastRead).not.toHaveBeenCalled();
+      expect(setUnread).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getAllFromCache', () => {
+    it('should delegate to NotificationApplication.getAllFromCache', async () => {
+      const expected = [
+        { type: Core.NotificationType.Follow, timestamp: 3000, followed_by: 'user-1' },
+        { type: Core.NotificationType.Follow, timestamp: 2000, followed_by: 'user-2' },
+      ] as Core.FlatNotification[];
+      const applicationSpy = vi.spyOn(Core.NotificationApplication, 'getAllFromCache').mockResolvedValue(expected);
+
+      const result = await NotificationController.getAllFromCache();
+
+      expect(applicationSpy).toHaveBeenCalled();
+      expect(result).toEqual(expected);
+    });
+
+    it('should return empty array when no notifications exist', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getAllFromCache').mockResolvedValue([]);
+
+      const result = await NotificationController.getAllFromCache();
+
+      expect(result).toEqual([]);
+    });
+
+    it('should bubble application errors', async () => {
+      vi.spyOn(Core.NotificationApplication, 'getAllFromCache').mockRejectedValue(new Error('app-fail'));
+
+      await expect(NotificationController.getAllFromCache()).rejects.toThrow('app-fail');
     });
   });
 });

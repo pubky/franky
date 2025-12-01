@@ -1,17 +1,69 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import * as Hooks from '@/hooks';
+import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import { NotificationType } from '@/core';
-import { getNotificationLink, hasPreviewText, getNotificationPreviewText } from './NotificationItem.utils';
+import {
+  getNotificationLink,
+  getUserIdFromNotification,
+  getNotificationText,
+  getPostUriFromNotification,
+  pubkyUriToCompositeId,
+  formatPreviewText,
+  hasPostPreview,
+} from './NotificationItem.utils';
 import type { NotificationItemProps } from './NotificationItem.types';
 
 export function NotificationItem({ notification, isUnread }: NotificationItemProps) {
-  // Get notification display data
-  const { userName, avatarUrl, notificationText } = Hooks.getNotificationDisplayData(notification);
+  // Extract the user ID from the notification (the actor who triggered it)
+  const actorUserId = getUserIdFromNotification(notification);
+
+  // Extract post URI for notifications with post content
+  const postUri = getPostUriFromNotification(notification);
+  const postCompositeId = postUri ? pubkyUriToCompositeId(postUri) : null;
+
+  // State for post content (fetched via controller)
+  const [postContent, setPostContent] = useState<string | null>(null);
+
+  // Use existing hook for user profile data
+  const { profile } = Hooks.useUserProfile(actorUserId || '');
+
+  // Fetch post content via controller (handles caching internally)
+  useEffect(() => {
+    if (!postCompositeId) return;
+
+    const viewerId = Core.useAuthStore.getState().currentUserPubky;
+    if (!viewerId) return;
+
+    // PostController.getOrFetchPost handles the caching strategy:
+    // 1. Check local DB first
+    // 2. If missing, fetch from Nexus
+    // 3. Write to local DB
+    Core.PostController.getOrFetchPost({ compositeId: postCompositeId, viewerId })
+      .then((post) => {
+        if (post?.content) {
+          setPostContent(post.content);
+        }
+      })
+      .catch((error) => {
+        Libs.Logger.warn('Failed to fetch notification post:', { postCompositeId, error });
+      });
+  }, [postCompositeId]);
+
+  // Get user name and avatar from profile hook
+  const userName = profile?.name || 'User';
+  const avatarUrl = profile?.avatarUrl;
+
+  // Get notification text with the actual user name
+  const notificationText = getNotificationText(notification, userName);
+
+  // Get post preview text
+  const previewText = hasPostPreview(notification.type) ? formatPreviewText(postContent) : null;
 
   // Format timestamps (short for mobile, long for desktop)
   const timestampShort = Libs.formatNotificationTime(notification.timestamp, false);
@@ -34,10 +86,10 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
             {notificationText}
           </Atoms.Typography>
 
-          {/* Post preview text for desktop - MOCK DATA - should fetch from database */}
-          {hasPreviewText(notification.type) && (
+          {/* Post preview text for desktop - dynamically fetched from database */}
+          {previewText && (
             <Atoms.Typography as="p" className="hidden text-base font-medium text-muted-foreground xl:inline">
-              {getNotificationPreviewText(notification.type)}
+              {previewText}
             </Atoms.Typography>
           )}
 

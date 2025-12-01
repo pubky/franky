@@ -176,7 +176,7 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       .spyOn(Core.LocalStreamTagsService, 'upsert')
       .mockImplementation(upsertTagsError ? () => Promise.reject(upsertTagsError) : () => Promise.resolve(undefined)),
     persistNotifications: vi
-      .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+      .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
       .mockImplementation(
         persistNotificationsError
           ? () => Promise.reject(persistNotificationsError)
@@ -580,7 +580,7 @@ describe('BootstrapApplication', () => {
       const upsertHotTagsSpy = vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const persistNotificationsSpy = vi
-        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
         .mockResolvedValue(unreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});

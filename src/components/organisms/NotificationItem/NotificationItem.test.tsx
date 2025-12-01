@@ -9,14 +9,10 @@ vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
     ...actual,
-    getNotificationUserData: vi.fn((userId: string) => {
-      const mockUsers: Record<string, { name: string; avatar?: string }> = {
-        user1: { name: 'Anna', avatar: 'https://example.com/anna.jpg' },
-        user2: { name: 'John', avatar: 'https://example.com/john.jpg' },
-        user3: { name: 'Adam' },
-      };
-      return mockUsers[userId] || null;
-    }),
+    useUserProfile: vi.fn(() => ({
+      profile: { name: 'User', avatarUrl: undefined },
+      isLoading: false,
+    })),
   };
 });
 
@@ -31,6 +27,44 @@ vi.mock('@/libs', async (importOriginal) => {
       if (diffMins < 1) return 'now';
       if (diffMins < 60) return `${diffMins}m`;
       return '1h';
+    }),
+    Logger: {
+      warn: vi.fn(),
+      error: vi.fn(),
+      info: vi.fn(),
+      debug: vi.fn(),
+    },
+  };
+});
+
+// Mock Core module
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    ProfileController: {
+      read: vi.fn(() => Promise.resolve(null)),
+    },
+    UserController: {
+      getDetails: vi.fn(() => Promise.resolve(null)),
+    },
+    LocalPostService: {
+      readPostDetails: vi.fn(() => Promise.resolve(null)),
+    },
+    PostController: {
+      getOrFetchPost: vi.fn(() => Promise.resolve(null)),
+    },
+    FileController: {
+      getAvatarUrl: vi.fn((id: string) => `https://cdn.example.com/avatar/${id}`),
+    },
+    useAuthStore: {
+      getState: vi.fn(() => ({
+        currentUserPubky: 'test-user-pubky',
+      })),
+    },
+    useNotificationStore: vi.fn((selector) => {
+      const state = { lastRead: 0, setLastRead: vi.fn() };
+      return selector ? selector(state) : state;
     }),
   };
 });
@@ -135,7 +169,8 @@ describe('NotificationItem', () => {
     expect(screen.getByText('bitcoin')).toBeInTheDocument();
   });
 
-  it('renders post preview for Mention notifications on desktop', () => {
+  it('renders Mention notification without preview when post not loaded', () => {
+    // Post preview is dynamically loaded - without post data, no preview is shown
     const mentionNotification = {
       type: NotificationType.Mention,
       timestamp: Date.now() - 1000 * 60 * 30,
@@ -143,7 +178,9 @@ describe('NotificationItem', () => {
       post_uri: 'user1:post123',
     };
     render(<NotificationItem notification={mentionNotification} isUnread={false} />);
-    expect(screen.getByText(/The reason why.../i)).toBeInTheDocument();
+    // Should render the notification text
+    expect(screen.getByText(/User mentioned you in post/i)).toBeInTheDocument();
+    // Preview text is not rendered since post data is not loaded in this test
   });
 
   it('handles missing user data gracefully', () => {

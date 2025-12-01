@@ -12,7 +12,35 @@ export class NotificationApplication {
    */
   static async notifications({ userId, lastRead }: Core.TNotificationApplicationNotificationsParams): Promise<number> {
     const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
-    return await Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead);
+    return await Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead);
+  }
+
+  /**
+   * Updates the lastRead timestamp on the homeserver to mark all notifications as read.
+   * This is a fire-and-forget operation - homeserver errors are logged but don't block.
+   *
+   * @param pubky - The user's public key
+   * @returns The new lastRead timestamp
+   */
+  static markAllAsRead(pubky: Core.Pubky): number {
+    // Create new lastRead with current timestamp using normalizer
+    const lastRead = Core.LastReadNormalizer.to(pubky);
+    const timestamp = Number(lastRead.last_read.timestamp);
+
+    // Update homeserver (fire-and-forget)
+    Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson()).catch(
+      (error) => Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
+    );
+
+    return timestamp;
+  }
+
+  /**
+   * Retrieves all notifications from the local cache.
+   * @returns Promise resolving to all notifications ordered by timestamp descending
+   */
+  static async getAllFromCache(): Promise<Core.FlatNotification[]> {
+    return await Core.LocalNotificationService.getAll();
   }
 
   /**
@@ -78,9 +106,9 @@ export class NotificationApplication {
       limit: remainingLimit,
     });
 
-    // Combine cached and fetched, ensuring no duplicates by timestamp
-    const seenTimestamps = new Set(cachedNotifications.map((n) => n.timestamp));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenTimestamps.has(n.timestamp));
+    // Combine cached and fetched, ensuring no duplicates by unique key
+    const seenKeys = new Set(cachedNotifications.map((n) => Core.getNotificationKey(n)));
+    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenKeys.has(Core.getNotificationKey(n)));
     const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
 
     return { notifications: combinedNotifications, olderThan: nextOlderThan };
@@ -114,7 +142,9 @@ export class NotificationApplication {
       const flatNotifications = nexusNotifications.map((notification) =>
         Core.NotificationNormalizer.toFlatNotification(notification),
       );
-      void Core.NotificationModel.bulkSave(flatNotifications);
+      Core.NotificationModel.bulkSave(flatNotifications).catch((error) =>
+        Libs.Logger.warn('Failed to persist notifications to cache', { error }),
+      );
 
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;
