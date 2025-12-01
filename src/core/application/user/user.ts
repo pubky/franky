@@ -86,4 +86,12 @@ export class UserApplication {
     }
     return null;
   }
+
+  /**
+   * Bulk read multiple user counts from local database.
+   * Returns a Map for efficient lookup by user ID.
+   */
+  static async bulkCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.LocalProfileService.bulkCounts(userIds);
+  }
 }

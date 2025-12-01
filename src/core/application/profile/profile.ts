@@ -36,6 +36,14 @@ export class ProfileApplication {
     }
   }
 
+  /**
+   * Bulk read multiple user details from local database.
+   * Returns a Map for efficient lookup by user ID.
+   */
+  static async bulkRead(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    return await Core.LocalProfileService.bulkDetails(userIds);
+  }
+
   static async create({ profile, url, pubky }: Core.TCreateProfileInput) {
     try {
       await Core.HomeserverService.request(Core.HomeserverAction.PUT, url, profile.toJson());
