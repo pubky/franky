@@ -20,7 +20,15 @@ vi.mock('@/hooks', async (importOriginal) => {
       count: 27,
       unreadCount: 0,
       isLoading: false,
+      isLoadingMore: false,
+      hasMore: false,
+      error: null,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
       markAllAsRead: vi.fn(),
+    })),
+    useInfiniteScroll: vi.fn(() => ({
+      sentinelRef: { current: null },
     })),
   };
 });
@@ -77,11 +85,16 @@ describe('ProfilePageNotifications', () => {
       count: 0,
       unreadCount: 0,
       isLoading: true,
+      isLoadingMore: false,
+      hasMore: false,
+      error: null,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
       markAllAsRead: vi.fn(),
     });
     render(<ProfilePageNotifications />);
-    // Should show empty state when loading is true but notifications are empty
-    expect(screen.getByText(/Nothing to see here yet/i)).toBeInTheDocument();
+    // Should show spinner when loading
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('shows empty state when no notifications', () => {
@@ -91,10 +104,33 @@ describe('ProfilePageNotifications', () => {
       count: 0,
       unreadCount: 0,
       isLoading: false,
+      isLoadingMore: false,
+      hasMore: false,
+      error: null,
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
       markAllAsRead: vi.fn(),
     });
     render(<ProfilePageNotifications />);
     expect(screen.getByText(/Nothing to see here yet/i)).toBeInTheDocument();
+  });
+
+  it('shows error state', () => {
+    vi.mocked(Hooks.useNotifications).mockReturnValueOnce({
+      notifications: [],
+      unreadNotifications: [],
+      count: 0,
+      unreadCount: 0,
+      isLoading: false,
+      isLoadingMore: false,
+      hasMore: false,
+      error: 'Failed to load notifications',
+      loadMore: vi.fn(),
+      refresh: vi.fn(),
+      markAllAsRead: vi.fn(),
+    });
+    render(<ProfilePageNotifications />);
+    expect(screen.getByText(/Failed to load notifications/i)).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {

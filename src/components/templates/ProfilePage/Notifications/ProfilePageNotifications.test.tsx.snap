@@ -18,6 +18,9 @@ exports[`ProfilePageNotifications > matches snapshot 1`] = `
       1
        notifications
     </div>
+    <div
+      class="h-1"
+    />
   </div>
 </div>
 `;

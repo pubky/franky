@@ -16,6 +16,26 @@ export class NotificationApplication {
   }
 
   /**
+   * Updates the lastRead timestamp on the homeserver to mark all notifications as read.
+   * This is a fire-and-forget operation - homeserver errors are logged but don't block.
+   *
+   * @param pubky - The user's public key
+   * @returns The new lastRead timestamp
+   */
+  static markAllAsRead(pubky: Core.Pubky): number {
+    // Create new lastRead with current timestamp using normalizer
+    const lastRead = Core.LastReadNormalizer.to(pubky);
+    const timestamp = Number(lastRead.last_read.timestamp);
+
+    // Update homeserver (fire-and-forget)
+    Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson()).catch(
+      (error) => Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
+    );
+
+    return timestamp;
+  }
+
+  /**
    * Retrieves notifications from cache if available, otherwise fetches from Nexus.
    * Follows a cache-first pattern similar to stream posts.
    *
@@ -57,6 +77,38 @@ export class NotificationApplication {
   // ============================================================================
 
   /**
+   * Creates a unique key for a notification based on its type and relevant fields.
+   * This is necessary because timestamp alone is not unique.
+   */
+  private static getNotificationKey(notification: Core.FlatNotification): string {
+    const base = `${notification.type}:${notification.timestamp}`;
+
+    switch (notification.type) {
+      case Core.NotificationType.Follow:
+      case Core.NotificationType.NewFriend:
+        return `${base}:${notification.followed_by}`;
+      case Core.NotificationType.LostFriend:
+        return `${base}:${notification.unfollowed_by}`;
+      case Core.NotificationType.TagPost:
+        return `${base}:${notification.tagged_by}:${notification.post_uri}`;
+      case Core.NotificationType.TagProfile:
+        return `${base}:${notification.tagged_by}:${notification.tag_label}`;
+      case Core.NotificationType.Reply:
+        return `${base}:${notification.replied_by}:${notification.reply_uri}`;
+      case Core.NotificationType.Repost:
+        return `${base}:${notification.reposted_by}:${notification.repost_uri}`;
+      case Core.NotificationType.Mention:
+        return `${base}:${notification.mentioned_by}:${notification.post_uri}`;
+      case Core.NotificationType.PostDeleted:
+        return `${base}:${notification.deleted_by}:${notification.deleted_uri}`;
+      case Core.NotificationType.PostEdited:
+        return `${base}:${notification.edited_by}:${notification.edited_uri}`;
+      default:
+        return base;
+    }
+  }
+
+  /**
    * Handles partial cache hits by fetching remaining notifications from Nexus.
    */
   private static async partialCacheHit({
@@ -78,9 +130,9 @@ export class NotificationApplication {
       limit: remainingLimit,
     });
 
-    // Combine cached and fetched, ensuring no duplicates by timestamp
-    const seenTimestamps = new Set(cachedNotifications.map((n) => n.timestamp));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenTimestamps.has(n.timestamp));
+    // Combine cached and fetched, ensuring no duplicates by unique key
+    const seenKeys = new Set(cachedNotifications.map((n) => this.getNotificationKey(n)));
+    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenKeys.has(this.getNotificationKey(n)));
     const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
 
     return { notifications: combinedNotifications, olderThan: nextOlderThan };

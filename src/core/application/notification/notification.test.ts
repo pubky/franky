@@ -171,3 +171,59 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
     });
   });
 });
+
+describe('NotificationApplication.markAllAsRead', () => {
+  const mockTimestamp = 1234567890;
+  const mockLastReadUrl = 'pubky://test-user/pub/pubky.app/last-read';
+
+  beforeEach(() => vi.clearAllMocks());
+
+  it('should create lastRead and send to homeserver', () => {
+    const mockLastReadResult = {
+      last_read: {
+        timestamp: BigInt(mockTimestamp),
+        toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+      },
+      meta: { url: mockLastReadUrl },
+    };
+
+    vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+      mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+    );
+    const homeserverSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
+
+    const result = NotificationApplication.markAllAsRead(userId);
+
+    expect(Core.LastReadNormalizer.to).toHaveBeenCalledWith(userId);
+    expect(homeserverSpy).toHaveBeenCalledWith(
+      Core.HomeserverAction.PUT,
+      mockLastReadUrl,
+      mockLastReadResult.last_read.toJson(),
+    );
+    expect(result).toBe(mockTimestamp);
+  });
+
+  it('should return timestamp even if homeserver fails (fire and forget)', async () => {
+    const mockLastReadResult = {
+      last_read: {
+        timestamp: BigInt(mockTimestamp),
+        toJson: vi.fn().mockReturnValue({ timestamp: mockTimestamp }),
+      },
+      meta: { url: mockLastReadUrl },
+    };
+
+    vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue(
+      mockLastReadResult as unknown as ReturnType<typeof Core.LastReadNormalizer.to>,
+    );
+    vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('homeserver-fail'));
+    const loggerWarnSpy = vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+
+    const result = NotificationApplication.markAllAsRead(userId);
+
+    expect(result).toBe(mockTimestamp);
+
+    // Wait for the catch to execute
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(loggerWarnSpy).toHaveBeenCalledWith('Failed to update lastRead on homeserver', { error: expect.any(Error) });
+  });
+});

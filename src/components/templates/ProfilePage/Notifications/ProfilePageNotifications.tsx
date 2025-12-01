@@ -1,176 +1,55 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { usePathname } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
-import { PROFILE_ROUTES } from '@/app';
-import { FlatNotification, NotificationType } from '@/core';
 
 export function ProfilePageNotifications() {
-  const { unreadCount, markAllAsRead, notifications: hookNotifications } = Hooks.useNotifications();
+  const { notifications, unreadNotifications, isLoading, isLoadingMore, hasMore, error, loadMore, markAllAsRead } =
+    Hooks.useNotifications();
 
-  const pathname = usePathname();
-  const prevPathnameRef = useRef<string | null>(null);
+  const hasMarkedAsReadRef = useRef(false);
 
-  // TODO: Remove mock data when backend is implemented
-  // For now, only use mock data when explicitly enabled for development
-  // In tests, hookNotifications will be provided by the mock
-  const USE_MOCK_DATA = false; // Set to true for UI development, false for tests
+  // Infinite scroll sentinel
+  const { sentinelRef } = Hooks.useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasMore,
+    isLoading: isLoadingMore,
+  });
 
-  // mock notifications with 10-minute intervals
-  const now = new Date().getTime();
-  const TEN_MINUTES = 10 * 60 * 1000; // 10 minutes in milliseconds
-
-  // Mock unread notifications (first 5 notifications are unread)
-  const mockUnreadNotifications = [
-    {
-      type: NotificationType.Follow,
-      timestamp: now,
-      followed_by: 'user1',
-    },
-    {
-      type: NotificationType.Reply,
-      timestamp: now - TEN_MINUTES,
-      replied_by: 'user2',
-      parent_post_uri: 'user1:post123',
-      reply_uri: 'user2:reply456',
-    },
-    {
-      type: NotificationType.TagPost,
-      timestamp: now - TEN_MINUTES * 2,
-      tagged_by: 'user3',
-      tag_label: 'bitcoin',
-      post_uri: 'user3:post789',
-    },
-    {
-      type: NotificationType.Mention,
-      timestamp: now - TEN_MINUTES * 3,
-      mentioned_by: 'user20',
-      post_uri: 'user20:post999',
-    },
-    {
-      type: NotificationType.NewFriend,
-      timestamp: now - TEN_MINUTES * 4,
-      new_friend: 'user21',
-    },
-  ] as unknown as FlatNotification[];
-
-  const notifications = [
-    {
-      type: NotificationType.Follow,
-      timestamp: now,
-      followed_by: 'user1',
-    },
-    {
-      type: NotificationType.Reply,
-      timestamp: now - TEN_MINUTES,
-      replied_by: 'user2',
-      parent_post_uri: 'user1:post123',
-      reply_uri: 'user2:reply456',
-    },
-    {
-      type: NotificationType.TagPost,
-      timestamp: now - TEN_MINUTES * 2,
-      tagged_by: 'user3',
-      tag_label: 'bitcoin',
-      post_uri: 'user3:post789',
-    },
-    {
-      type: NotificationType.Mention,
-      timestamp: now - TEN_MINUTES * 3,
-      mentioned_by: 'user20',
-      post_uri: 'user20:post999',
-    },
-    {
-      type: NotificationType.NewFriend,
-      timestamp: now - TEN_MINUTES * 4,
-      new_friend: 'user21',
-    },
-    {
-      type: NotificationType.TagProfile,
-      timestamp: now - TEN_MINUTES * 5,
-      tagged_by: 'user4',
-      tag_label: 'bitcoin',
-      post_uri: 'user4:post789',
-    },
-    {
-      type: NotificationType.Repost,
-      timestamp: now - TEN_MINUTES * 6,
-      reposted_by: 'user5',
-      post_uri: 'user5:post789',
-      repost_uri: 'user5:repost123',
-    },
-    {
-      type: NotificationType.Mention,
-      timestamp: now - TEN_MINUTES * 7,
-      mentioned_by: 'user6',
-      post_uri: 'user6:post789',
-    },
-    {
-      type: NotificationType.PostDeleted,
-      timestamp: now - TEN_MINUTES * 8,
-      deleted_by: 'user7',
-      deleted_uri: 'user7:post789',
-      linked_uri: 'user7:linked123',
-    },
-    {
-      type: NotificationType.PostEdited,
-      timestamp: now - TEN_MINUTES * 9,
-      edited_by: 'user8',
-      edited_uri: 'user8:post789',
-    },
-    {
-      type: NotificationType.LostFriend,
-      timestamp: now - TEN_MINUTES * 10,
-      unfollowed_by: 'user10',
-    },
-    {
-      type: NotificationType.TagPost,
-      timestamp: now - TEN_MINUTES * 11,
-      tagged_by: 'user11',
-      tag_label: 'bitcoin',
-      post_uri: 'user11:post789',
-    },
-    {
-      type: NotificationType.TagProfile,
-      timestamp: now - TEN_MINUTES * 12,
-      tagged_by: 'user12',
-      tag_label: 'bitcoin',
-    },
-    {
-      type: NotificationType.Reply,
-      timestamp: now - TEN_MINUTES * 13,
-      replied_by: 'user13',
-      parent_post_uri: 'user13:post789',
-      reply_uri: 'user13:reply789',
-    },
-    {
-      type: NotificationType.Repost,
-      timestamp: now - TEN_MINUTES * 14,
-      reposted_by: 'user14',
-      post_uri: 'user14:post789',
-      repost_uri: 'user14:repost456',
-    },
-  ] as unknown as FlatNotification[];
-
-  // Determine which data to use
-  const displayNotifications = USE_MOCK_DATA ? notifications : hookNotifications;
-  const displayUnreadNotifications = USE_MOCK_DATA ? mockUnreadNotifications : [];
-
-  // Mark all notifications as read when leaving the notifications page
+  // Mark all notifications as read when entering the notifications page
   useEffect(() => {
-    const isLeavingPage = prevPathnameRef.current === PROFILE_ROUTES.PROFILE && pathname !== PROFILE_ROUTES.PROFILE;
-
-    if (isLeavingPage && unreadCount > 0) {
+    if (!hasMarkedAsReadRef.current) {
+      hasMarkedAsReadRef.current = true;
       markAllAsRead();
     }
+  }, [markAllAsRead]);
 
-    prevPathnameRef.current = pathname;
-  }, [pathname, unreadCount, markAllAsRead]);
+  // Loading state
+  if (isLoading) {
+    return (
+      <Atoms.Container className="mt-6 lg:mt-0">
+        <div className="flex items-center justify-center py-12">
+          <Atoms.Spinner size="lg" />
+        </div>
+      </Atoms.Container>
+    );
+  }
 
-  if (displayNotifications.length === 0) {
+  // Error state
+  if (error) {
+    return (
+      <Atoms.Container className="mt-6 lg:mt-0">
+        <div className="flex flex-col items-center justify-center gap-4 py-12">
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </Atoms.Container>
+    );
+  }
+
+  // Empty state
+  if (notifications.length === 0) {
     return (
       <Atoms.Container className="mt-6 lg:mt-0">
         <Molecules.NotificationsEmpty />
@@ -181,12 +60,19 @@ export function ProfilePageNotifications() {
   return (
     <Atoms.Container className="mt-6 gap-4 lg:mt-0">
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
-        Notifications {displayUnreadNotifications.length > 0 && `(${displayUnreadNotifications.length})`}
+        Notifications {unreadNotifications.length > 0 && `(${unreadNotifications.length})`}
       </Atoms.Heading>
-      <Molecules.NotificationsList
-        notifications={displayNotifications}
-        unreadNotifications={displayUnreadNotifications}
-      />
+      <Molecules.NotificationsList notifications={notifications} unreadNotifications={unreadNotifications} />
+
+      {/* Infinite scroll sentinel */}
+      <div ref={sentinelRef} className="h-1" />
+
+      {/* Loading more indicator */}
+      {isLoadingMore && (
+        <div className="flex items-center justify-center py-4">
+          <Atoms.Spinner size="md" />
+        </div>
+      )}
     </Atoms.Container>
   );
 }

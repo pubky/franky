@@ -69,7 +69,7 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
 >
   <a
     class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
-    href="/post/user1:post123"
+    href="/post/user1/post123"
   >
     <div
       class="flex items-center gap-2"
@@ -93,12 +93,6 @@ exports[`NotificationItem - Snapshots > matches snapshot for Mention notificatio
           data-testid="typography"
         >
           User mentioned you in post
-        </p>
-        <p
-          class="hidden text-base font-medium text-muted-foreground xl:inline"
-          data-testid="typography"
-        >
-          'The reason why...'
         </p>
       </div>
     </div>
@@ -137,7 +131,7 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
 >
   <a
     class="flex w-full items-center justify-between gap-2 transition-opacity hover:opacity-80"
-    href="/post/user1:post123"
+    href="/post/user1/post123"
   >
     <div
       class="flex items-center gap-2"
@@ -161,12 +155,6 @@ exports[`NotificationItem - Snapshots > matches snapshot for TagPost notificatio
           data-testid="typography"
         >
           User tagged your post
-        </p>
-        <p
-          class="hidden text-base font-medium text-muted-foreground xl:inline"
-          data-testid="typography"
-        >
-          'I have said it...'
         </p>
         <span
           data-testid="post-tag"
