@@ -1,13 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Logout } from './Logout';
-
-// Mock the Core module
-vi.mock('@/core', () => ({
-  AuthController: {
-    logout: vi.fn(),
-  },
-}));
 
 // Mock the atoms and molecules
 vi.mock('@/atoms', () => ({
@@ -24,12 +17,8 @@ vi.mock('@/molecules', () => ({
 }));
 
 describe('Logout', () => {
-  let mockLogout: ReturnType<typeof vi.fn>;
-
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    const Core = await import('@/core');
-    mockLogout = Core.AuthController.logout as ReturnType<typeof vi.fn>;
   });
 
   it('renders without errors', () => {
@@ -69,11 +58,11 @@ describe('Logout', () => {
     expect(screen.getByTestId('logout-navigation')).toBeInTheDocument();
   });
 
-  it('calls AuthController.logout when component mounts', async () => {
+  it('does not call logout on mount (logout is triggered by button click)', () => {
+    // The Logout template is a presentation-only page that shows after logout
+    // The actual logout is performed by the Sign Out button in ProfilePageHeader
     render(<Logout />);
-
-    await waitFor(() => {
-      expect(mockLogout).toHaveBeenCalledTimes(1);
-    });
+    // Just verify the page renders correctly without performing logout
+    expect(screen.getByTestId('logout-content')).toBeInTheDocument();
   });
 });

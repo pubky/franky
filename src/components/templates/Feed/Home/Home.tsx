@@ -1,6 +1,5 @@
 'use client';
 
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Sidebars from './Home.sidebars';
 
@@ -17,7 +16,6 @@ export function Home() {
         rightDrawerContentMobile={<Sidebars.HomeRightDrawerMobile />}
       >
         <Organisms.AlertBackup />
-        <Molecules.HomeHeader />
         <Organisms.TimelinePosts />
       </Organisms.ContentLayout>
     </>

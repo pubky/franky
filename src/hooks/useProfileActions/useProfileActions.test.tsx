@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import * as Core from '@/core';
 import { useProfileActions } from './useProfileActions';
 
@@ -10,6 +10,19 @@ vi.mock('next/navigation', () => ({
     push: mockPush,
   }),
 }));
+
+// Mock AuthController.logout
+const mockLogout = vi.fn();
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    AuthController: {
+      ...actual.AuthController,
+      logout: () => mockLogout(),
+    },
+  };
+});
 
 // Mock useCopyToClipboard hook
 const mockCopyToClipboard = vi.fn();
@@ -126,13 +139,47 @@ describe('useProfileActions', () => {
   });
 
   describe('onSignOut', () => {
-    it('navigates to logout route', () => {
+    it('calls logout and navigates to logout route', async () => {
+      mockLogout.mockResolvedValue(undefined);
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
-      result.current.onSignOut();
+      await act(async () => {
+        await result.current.onSignOut();
+      });
 
+      expect(mockLogout).toHaveBeenCalledTimes(1);
       expect(mockPush).toHaveBeenCalledWith('/logout');
       expect(mockPush).toHaveBeenCalledTimes(1);
+    });
+
+    it('sets isLoggingOut to true during logout', async () => {
+      mockLogout.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+      const { result } = renderHook(() => useProfileActions(defaultProps));
+
+      expect(result.current.isLoggingOut).toBe(false);
+
+      act(() => {
+        result.current.onSignOut();
+      });
+
+      await waitFor(() => {
+        expect(result.current.isLoggingOut).toBe(true);
+      });
+    });
+
+    it('handles logout error gracefully', async () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      mockLogout.mockRejectedValue(new Error('Logout failed'));
+      const { result } = renderHook(() => useProfileActions(defaultProps));
+
+      await act(async () => {
+        await result.current.onSignOut();
+      });
+
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to logout:', expect.any(Error));
+      expect(mockPush).not.toHaveBeenCalled();
+
+      consoleSpy.mockRestore();
     });
   });
 
@@ -269,12 +316,16 @@ describe('useProfileActions', () => {
       expect(mockCopyToClipboard).toHaveBeenCalledWith('https://example.com/profile/test-user-id');
     });
 
-    it('handles multiple onSignOut calls', () => {
+    it('handles multiple onSignOut calls', async () => {
+      mockLogout.mockResolvedValue(undefined);
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
-      result.current.onSignOut();
-      result.current.onSignOut();
+      await act(async () => {
+        await result.current.onSignOut();
+        await result.current.onSignOut();
+      });
 
+      expect(mockLogout).toHaveBeenCalledTimes(2);
       expect(mockPush).toHaveBeenCalledTimes(2);
       expect(mockPush).toHaveBeenCalledWith('/logout');
     });

@@ -1,14 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Hot } from './Hot';
-import * as App from '@/app';
-
-// Mock next/navigation
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({
-    push: vi.fn(),
-  })),
-}));
 
 // Mock the atoms
 vi.mock('@/atoms', () => ({
@@ -86,27 +78,6 @@ describe('Hot', () => {
     expect(
       screen.getByText('Discover trending posts and popular content from across the network.'),
     ).toBeInTheDocument();
-  });
-
-  it('renders logout button with correct props', () => {
-    render(<Hot />);
-    const logoutButton = screen.getByText('Logout');
-    expect(logoutButton).toBeInTheDocument();
-    expect(logoutButton).toHaveAttribute('data-variant', 'secondary');
-    expect(logoutButton).toHaveAttribute('data-size', 'default');
-    expect(logoutButton).toHaveAttribute('id', 'hot-logout-btn');
-  });
-
-  it('navigates to logout page when logout button is clicked', async () => {
-    const { useRouter } = await import('next/navigation');
-    const mockPush = vi.fn();
-    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
-
-    render(<Hot />);
-    const logoutButton = screen.getByText('Logout');
-    fireEvent.click(logoutButton);
-
-    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
   });
 
   it('renders container structure correctly', () => {

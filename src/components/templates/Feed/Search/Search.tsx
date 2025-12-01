@@ -1,23 +1,16 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
-import * as App from '@/app';
 import * as Hooks from '@/hooks';
 
 export function Search() {
-  const router = useRouter();
   const { layout, setLayout, reach, setReach, sort, setSort, content, setContent } = Core.useHomeStore();
 
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
-
-  const handleLogout = () => {
-    router.push(App.AUTH_ROUTES.LOGOUT);
-  };
 
   return (
     <>
@@ -62,14 +55,9 @@ export function Search() {
         }
         rightDrawerContent={undefined}
       >
-        <div className="flex items-center justify-between gap-4">
-          <Atoms.Heading level={1} size="xl" className="text-2xl">
-            Search
-          </Atoms.Heading>
-          <Atoms.Button id="search-logout-btn" variant="secondary" size="default" onClick={handleLogout}>
-            Logout
-          </Atoms.Button>
-        </div>
+        <Atoms.Heading level={1} size="xl" className="text-2xl">
+          Search
+        </Atoms.Heading>
 
         <Atoms.Typography size="md" className="text-muted-foreground">
           Welcome to the Search page. Search for posts, users, and tags.

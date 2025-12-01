@@ -1,19 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Search } from './Search';
-import * as App from '@/app';
-
-// Mock next/navigation - REQUIRED: external dependency
-vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    prefetch: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn(),
-    refresh: vi.fn(),
-  })),
-}));
 
 // Mock organisms - REQUIRED: complex components with their own dependencies
 vi.mock('@/organisms', () => ({
@@ -84,25 +71,6 @@ describe('Search', () => {
   it('displays welcome message', () => {
     render(<Search />);
     expect(screen.getByText('Welcome to the Search page. Search for posts, users, and tags.')).toBeInTheDocument();
-  });
-
-  it('renders logout button', () => {
-    render(<Search />);
-    const logoutButton = screen.getByText('Logout');
-    expect(logoutButton).toBeInTheDocument();
-    expect(logoutButton).toHaveAttribute('id', 'search-logout-btn');
-  });
-
-  it('navigates to logout page when logout button is clicked', async () => {
-    const { useRouter } = await import('next/navigation');
-    const mockPush = vi.fn();
-    (useRouter as ReturnType<typeof vi.fn>).mockReturnValue({ push: mockPush });
-
-    render(<Search />);
-    const logoutButton = screen.getByText('Logout');
-    fireEvent.click(logoutButton);
-
-    expect(mockPush).toHaveBeenCalledWith(App.AUTH_ROUTES.LOGOUT);
   });
 
   it('renders container structure correctly', () => {

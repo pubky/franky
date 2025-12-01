@@ -1,10 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import * as React from 'react';
-
-import { AUTH_ROUTES } from '@/app';
 
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
@@ -13,16 +10,11 @@ import * as Hooks from '@/hooks';
 import { HotLeftSidebar, HotRightSidebar, HotLeftDrawer, HotRightDrawer } from './Hot.sidebars';
 
 export function Hot() {
-  const router = useRouter();
   const { reach, setReach } = Core.useHomeStore();
   const [timeframe, setTimeframe] = useState<'today' | 'thisMonth' | 'allTime'>('today');
 
   // Reset to column layout on mount (this page doesn't support wide)
   Hooks.useLayoutReset();
-
-  const handleLogout = () => {
-    router.push(AUTH_ROUTES.LOGOUT);
-  };
 
   return (
     <Organisms.ContentLayout
@@ -36,14 +28,9 @@ export function Hot() {
       }
       rightDrawerContent={<HotRightDrawer />}
     >
-      <div className="flex items-center justify-between gap-4">
-        <Atoms.Heading level={1} size="xl" className="text-2xl">
-          Hot
-        </Atoms.Heading>
-        <Atoms.Button id="hot-logout-btn" variant="secondary" size="default" onClick={handleLogout}>
-          Logout
-        </Atoms.Button>
-      </div>
+      <Atoms.Heading level={1} size="xl" className="text-2xl">
+        Hot
+      </Atoms.Heading>
 
       <Atoms.Typography size="md" className="text-muted-foreground">
         Discover trending posts and popular content from across the network.

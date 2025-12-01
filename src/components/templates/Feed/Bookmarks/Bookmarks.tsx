@@ -1,9 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
-import { AUTH_ROUTES } from '@/app';
-
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import {
@@ -16,12 +12,6 @@ import {
 } from './Bookmarks.sidebars';
 
 export function Bookmarks() {
-  const router = useRouter();
-
-  const handleLogout = () => {
-    router.push(AUTH_ROUTES.LOGOUT);
-  };
-
   return (
     <Organisms.ContentLayout
       leftSidebarContent={<BookmarksLeftSidebar />}
@@ -31,14 +21,9 @@ export function Bookmarks() {
       leftDrawerContentMobile={<BookmarksLeftDrawerMobile />}
       rightDrawerContentMobile={<BookmarksRightDrawerMobile />}
     >
-      <div className="flex items-center justify-between gap-4">
-        <Atoms.Heading level={1} size="xl" className="text-2xl">
-          Bookmarks
-        </Atoms.Heading>
-        <Atoms.Button id="bookmarks-logout-btn" variant="secondary" size="default" onClick={handleLogout}>
-          Logout
-        </Atoms.Button>
-      </div>
+      <Atoms.Heading level={1} size="xl" className="text-2xl">
+        Bookmarks
+      </Atoms.Heading>
 
       <Atoms.Typography size="md" className="text-muted-foreground">
         Access your saved posts and bookmarked content.
