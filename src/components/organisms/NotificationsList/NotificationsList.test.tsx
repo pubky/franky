@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { NotificationsList } from './NotificationsList';
 import { FlatNotification, NotificationType } from '@/core/models/notification/notification.types';
 
-// Mock NotificationItem (now in organisms)
+// Mock NotificationItem
 vi.mock('@/organisms/NotificationItem', () => ({
   NotificationItem: ({ notification }: { notification: FlatNotification }) => (
     <div data-testid="notification-item" data-type={notification.type}>

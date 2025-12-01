@@ -45,3 +45,4 @@ export * from './ProfilePageHeader';
 export * from './ProfileTagged';
 export * from './NotificationItem';
 export * from './NotificationsContainer';
+export * from './NotificationsList';

@@ -49,10 +49,14 @@ vi.mock('@/atoms', () => ({
 
 // Mock molecules
 vi.mock('@/molecules', () => ({
+  NotificationsEmpty: () => <div data-testid="notifications-empty">Nothing to see here yet</div>,
+}));
+
+// Mock organisms (NotificationsList is now in organisms)
+vi.mock('@/organisms/NotificationsList', () => ({
   NotificationsList: ({ notifications }: { notifications: unknown[] }) => (
     <div data-testid="notifications-list">{notifications.length} notifications</div>
   ),
-  NotificationsEmpty: () => <div data-testid="notifications-empty">Nothing to see here yet</div>,
 }));
 
 describe('NotificationsContainer', () => {

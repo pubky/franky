@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
+import * as Organisms from '@/organisms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 
@@ -61,7 +62,7 @@ export function NotificationsContainer() {
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Notifications {unreadNotifications.length > 0 && `(${unreadNotifications.length})`}
       </Atoms.Heading>
-      <Molecules.NotificationsList notifications={notifications} unreadNotifications={unreadNotifications} />
+      <Organisms.NotificationsList notifications={notifications} unreadNotifications={unreadNotifications} />
 
       {/* Infinite scroll sentinel */}
       <div ref={sentinelRef} className="h-1" />
