@@ -3,17 +3,19 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import * as Core from '@/core';
 
 /**
  * ProfileFollowing
  *
  * Organism that displays a user's following list with infinite scroll pagination.
- * Handles data fetching and loading states.
+ * Handles data fetching, loading states, and follow/unfollow actions.
  */
 export function ProfileFollowing() {
   const { connections, count, isLoading, isLoadingMore, hasMore, loadMore } = Hooks.useProfileConnections(
     Hooks.CONNECTION_TYPE.FOLLOWING,
   );
+  const { toggleFollow } = Hooks.useFollowUser();
 
   // Handle infinite scroll
   const { sentinelRef } = Hooks.useInfiniteScroll({
@@ -21,6 +23,11 @@ export function ProfileFollowing() {
     hasMore,
     isLoading: isLoadingMore,
   });
+
+  // Handle follow/unfollow action
+  const handleFollow = async (userId: Core.Pubky, isCurrentlyFollowing: boolean) => {
+    await toggleFollow(userId, isCurrentlyFollowing);
+  };
 
   if (isLoading) {
     return (
@@ -43,7 +50,7 @@ export function ProfileFollowing() {
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Following {count > 0 && `(${count})`}
       </Atoms.Heading>
-      <Molecules.UserConnectionsList connections={connections} />
+      <Molecules.UserConnectionsList connections={connections} onFollow={handleFollow} />
 
       {/* Infinite scroll trigger */}
       <div ref={sentinelRef} className="h-1" />

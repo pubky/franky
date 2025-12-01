@@ -16,6 +16,11 @@ vi.mock('@/hooks', () => ({
   useInfiniteScroll: vi.fn(() => ({
     sentinelRef: { current: null },
   })),
+  useFollowUser: vi.fn(() => ({
+    toggleFollow: vi.fn(),
+    isLoading: false,
+    error: null,
+  })),
   CONNECTION_TYPE: {
     FOLLOWERS: 'followers',
     FOLLOWING: 'following',

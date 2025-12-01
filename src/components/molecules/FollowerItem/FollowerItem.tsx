@@ -1,14 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
 import type { FollowerItemProps } from './FollowerItem.types';
 
-export function FollowerItem({ follower, isFollowing: initialIsFollowing = true, onFollow }: FollowerItemProps) {
-  const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
+export function FollowerItem({ follower, isFollowing = false, onFollow }: FollowerItemProps) {
   const avatarUrl = follower.avatarUrl || follower.image || undefined;
   const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: 10 });
   const tags = follower.tags || [];
@@ -17,8 +15,7 @@ export function FollowerItem({ follower, isFollowing: initialIsFollowing = true,
   const handleFollowClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsFollowing(!isFollowing);
-    onFollow?.(follower.id);
+    onFollow?.(follower.id, isFollowing);
   };
 
   return (

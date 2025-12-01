@@ -15,13 +15,15 @@ exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
       href="/profile/test-user-1"
     >
       <div
+        data-avatar="https://example.com/avatar.png"
         data-name="John Doe"
         data-size="md"
         data-testid="avatar-with-fallback"
       >
-        <span>
-          J
-        </span>
+        <img
+          alt="John Doe"
+          src="https://example.com/avatar.png"
+        />
       </div>
       <div
         data-testid="container"
@@ -161,13 +163,15 @@ exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
       href="/profile/test-user-1"
     >
       <div
+        data-avatar="https://example.com/avatar.png"
         data-name="John Doe"
         data-size="md"
         data-testid="avatar-with-fallback"
       >
-        <span>
-          J
-        </span>
+        <img
+          alt="John Doe"
+          src="https://example.com/avatar.png"
+        />
       </div>
       <div
         data-testid="container"
@@ -307,13 +311,15 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
       href="/profile/test-user-1"
     >
       <div
+        data-avatar="https://example.com/avatar.png"
         data-name="John Doe"
         data-size="md"
         data-testid="avatar-with-fallback"
       >
-        <span>
-          J
-        </span>
+        <img
+          alt="John Doe"
+          src="https://example.com/avatar.png"
+        />
       </div>
       <div
         data-testid="container"
@@ -372,17 +378,17 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
       </div>
     </div>
     <button
-      aria-label="Unfollow"
+      aria-label="Follow"
       class="group hidden w-8 lg:flex"
       data-testid="button"
     >
       <svg
         class="size-5 group-hover:hidden"
-        data-testid="check-icon"
+        data-testid="user-round-plus-icon"
       />
       <svg
         class="hidden size-5 group-hover:block"
-        data-testid="user-minus-icon"
+        data-testid="check-icon"
       />
     </button>
   </div>
@@ -391,17 +397,17 @@ exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
     data-testid="container"
   >
     <button
-      aria-label="Unfollow"
+      aria-label="Follow"
       class="group w-8"
       data-testid="button"
     >
       <svg
         class="size-5 group-hover:hidden"
-        data-testid="check-icon"
+        data-testid="user-round-plus-icon"
       />
       <svg
         class="hidden size-5 group-hover:block"
-        data-testid="user-minus-icon"
+        data-testid="check-icon"
       />
     </button>
   </div>
