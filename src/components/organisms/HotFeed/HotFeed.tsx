@@ -1,29 +1,50 @@
+'use client';
+
+import { useState } from 'react';
+
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
-export function Bookmarks() {
+/**
+ * HotFeed
+ *
+ * Organism that manages the Hot feed page state and layout.
+ * Handles reach filter (from global store) and timeframe filter (local state).
+ */
+export function HotFeed() {
+  const { reach, setReach } = Core.useHomeStore();
+  const [timeframe, setTimeframe] = useState<Organisms.TimeframeTab>('today');
+
+  // Reset to column layout on mount (this page doesn't support wide)
+  Hooks.useLayoutReset();
+
   return (
     <Organisms.ContentLayout
-      leftSidebarContent={<Organisms.HomeFeedSidebar />}
-      rightSidebarContent={<Organisms.HomeFeedRightSidebar />}
-      leftDrawerContent={<Organisms.HomeFeedDrawer />}
-      rightDrawerContent={<Organisms.HomeFeedRightDrawer />}
-      leftDrawerContentMobile={<Organisms.HomeFeedDrawerMobile />}
-      rightDrawerContentMobile={<Organisms.HomeFeedRightDrawerMobile />}
+      showRightMobileButton={false}
+      leftSidebarContent={
+        <Organisms.HotFeedSidebar reach={reach} setReach={setReach} timeframe={timeframe} setTimeframe={setTimeframe} />
+      }
+      rightSidebarContent={<Organisms.HotFeedRightSidebar />}
+      leftDrawerContent={
+        <Organisms.HotFeedDrawer reach={reach} setReach={setReach} timeframe={timeframe} setTimeframe={setTimeframe} />
+      }
+      rightDrawerContent={<Organisms.HotFeedRightDrawer />}
     >
       <Atoms.Heading level={1} size="xl" className="text-2xl">
-        Bookmarks
+        Hot
       </Atoms.Heading>
 
       <Atoms.Typography size="md" className="text-muted-foreground">
-        Access your saved posts and bookmarked content.
+        Discover trending posts and popular content from across the network.
       </Atoms.Typography>
 
       {/* Lorem ipsum content */}
       <div className="mt-4 flex flex-col gap-4">
         <Atoms.Card className="p-6">
           <Atoms.Heading level={3} size="lg" className="mb-4">
-            Saved Posts
+            What&apos;s Hot
           </Atoms.Heading>
           <Atoms.Typography size="md" className="text-muted-foreground">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
@@ -34,7 +55,7 @@ export function Bookmarks() {
 
         <Atoms.Card className="p-6">
           <Atoms.Heading level={3} size="lg" className="mb-4">
-            Collections
+            Trending Topics
           </Atoms.Heading>
           <Atoms.Typography size="md" className="text-muted-foreground">
             Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
@@ -45,7 +66,7 @@ export function Bookmarks() {
 
         <Atoms.Card className="p-6">
           <Atoms.Heading level={3} size="lg" className="mb-4">
-            Reading List
+            Popular Posts
           </Atoms.Heading>
           <Atoms.Typography size="md" className="text-muted-foreground">
             Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem

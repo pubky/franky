@@ -1,5 +1,3 @@
-'use client';
-
 import * as Atoms from '@/atoms';
 
 export function ProfilePageFriends() {

@@ -56,8 +56,8 @@ vi.mock('@/hooks', () => ({
   })),
 }));
 
-// Mock Templates - ProfilePageLayout
-vi.mock('@/templates', () => ({
+// Mock Organisms - ProfilePageLayout
+vi.mock('@/organisms', () => ({
   ProfilePageLayout: ({
     children,
     profile,

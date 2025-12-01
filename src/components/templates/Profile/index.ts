@@ -1,4 +1,3 @@
-export * from './Layout';
 export * from './Notifications';
 export * from './Posts';
 export * from './Replies';

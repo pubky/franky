@@ -1,28 +1,11 @@
-'use client';
-
 import * as Organisms from '@/organisms';
-import * as Core from '@/core';
 
 /**
- * ProfilePageReplies
+ * ProfilePageReplies Template
  *
- * Displays replies from the current user's profile with infinite scroll pagination.
- * Uses the author_replies stream (author_replies:{userId}) to fetch replies.
+ * Template for displaying the current user's replies.
+ * Delegates all logic to the ProfileReplies organism.
  */
 export function ProfilePageReplies() {
-  // Get current authenticated user
-  const { currentUserPubky } = Core.useAuthStore();
-
-  // Build stream ID for user's replies: author_replies:{userId}
-  const streamId = currentUserPubky
-    ? (`${Core.StreamSource.AUTHOR_REPLIES}:${currentUserPubky}` as Core.AuthorRepliesStreamCompositeId)
-    : undefined;
-
-  // If no streamId, render empty state
-  if (!streamId) {
-    return null;
-  }
-
-  // Use TimelineRepliesWithParent to show parent post + reply with line
-  return <Organisms.TimelineRepliesWithParent streamId={streamId} />;
+  return <Organisms.ProfileReplies />;
 }

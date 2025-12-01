@@ -1,5 +1,3 @@
-'use client';
-
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 

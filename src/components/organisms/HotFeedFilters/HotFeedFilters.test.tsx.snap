@@ -1,0 +1,226 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FilterTimeframe > matches snapshot 1`] = `
+<div>
+  <div
+    data-testid="filter-root"
+  >
+    <div
+      data-testid="filter-header"
+    >
+      Timeframe
+    </div>
+    <ul
+      data-testid="filter-list"
+    >
+      <li
+        data-selected="true"
+        data-testid="filter-item"
+      >
+        <span
+          data-testid="filter-icon"
+        >
+          <span>
+            Star
+          </span>
+        </span>
+        <span
+          data-testid="filter-label"
+        >
+          Today
+        </span>
+      </li>
+      <li
+        data-selected="false"
+        data-testid="filter-item"
+      >
+        <span
+          data-testid="filter-icon"
+        >
+          <span>
+            Calendar
+          </span>
+        </span>
+        <span
+          data-testid="filter-label"
+        >
+          This Month
+        </span>
+      </li>
+      <li
+        data-selected="false"
+        data-testid="filter-item"
+      >
+        <span
+          data-testid="filter-icon"
+        >
+          <span>
+            Clock
+          </span>
+        </span>
+        <span
+          data-testid="filter-label"
+        >
+          All Time
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
+`;
+
+exports[`HotFeedDrawer > matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6"
+  >
+    <div
+      data-testid="filter-reach"
+    >
+      FilterReach
+    </div>
+    <div
+      data-testid="filter-root"
+    >
+      <div
+        data-testid="filter-header"
+      >
+        Timeframe
+      </div>
+      <ul
+        data-testid="filter-list"
+      >
+        <li
+          data-selected="true"
+          data-testid="filter-item"
+        >
+          <span
+            data-testid="filter-icon"
+          >
+            <span>
+              Star
+            </span>
+          </span>
+          <span
+            data-testid="filter-label"
+          >
+            Today
+          </span>
+        </li>
+        <li
+          data-selected="false"
+          data-testid="filter-item"
+        >
+          <span
+            data-testid="filter-icon"
+          >
+            <span>
+              Calendar
+            </span>
+          </span>
+          <span
+            data-testid="filter-label"
+          >
+            This Month
+          </span>
+        </li>
+        <li
+          data-selected="false"
+          data-testid="filter-item"
+        >
+          <span
+            data-testid="filter-icon"
+          >
+            <span>
+              Clock
+            </span>
+          </span>
+          <span
+            data-testid="filter-label"
+          >
+            All Time
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`HotFeedSidebar > matches snapshot 1`] = `
+<div>
+  <div
+    data-testid="filter-reach"
+  >
+    FilterReach
+  </div>
+  <div
+    class="sticky top-[100px] w-full self-start"
+  >
+    <div
+      data-testid="filter-root"
+    >
+      <div
+        data-testid="filter-header"
+      >
+        Timeframe
+      </div>
+      <ul
+        data-testid="filter-list"
+      >
+        <li
+          data-selected="true"
+          data-testid="filter-item"
+        >
+          <span
+            data-testid="filter-icon"
+          >
+            <span>
+              Star
+            </span>
+          </span>
+          <span
+            data-testid="filter-label"
+          >
+            Today
+          </span>
+        </li>
+        <li
+          data-selected="false"
+          data-testid="filter-item"
+        >
+          <span
+            data-testid="filter-icon"
+          >
+            <span>
+              Calendar
+            </span>
+          </span>
+          <span
+            data-testid="filter-label"
+          >
+            This Month
+          </span>
+        </li>
+        <li
+          data-selected="false"
+          data-testid="filter-item"
+        >
+          <span
+            data-testid="filter-icon"
+          >
+            <span>
+              Clock
+            </span>
+          </span>
+          <span
+            data-testid="filter-label"
+          >
+            All Time
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

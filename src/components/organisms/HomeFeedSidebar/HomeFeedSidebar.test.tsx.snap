@@ -1,0 +1,83 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HomeFeedDrawer > matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6"
+  >
+    <div
+      data-testid="filter-reach"
+    >
+      FilterReach
+    </div>
+    <div
+      data-testid="filter-sort"
+    >
+      FilterSort
+    </div>
+    <div
+      data-testid="filter-content"
+    >
+      FilterContent
+    </div>
+    <div
+      data-testid="filter-layout"
+    >
+      FilterLayout
+    </div>
+  </div>
+</div>
+`;
+
+exports[`HomeFeedDrawerMobile > matches snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6"
+  >
+    <div
+      data-testid="filter-reach"
+    >
+      FilterReach
+    </div>
+    <div
+      data-testid="filter-sort"
+    >
+      FilterSort
+    </div>
+    <div
+      data-testid="filter-content"
+    >
+      FilterContent
+    </div>
+  </div>
+</div>
+`;
+
+exports[`HomeFeedSidebar > matches snapshot 1`] = `
+<div>
+  <div
+    data-testid="filter-reach"
+  >
+    FilterReach
+  </div>
+  <div
+    data-testid="filter-sort"
+  >
+    FilterSort
+  </div>
+  <div
+    class="sticky top-[100px] flex w-full flex-col gap-6 self-start"
+  >
+    <div
+      data-testid="filter-content"
+    >
+      FilterContent
+    </div>
+    <div
+      data-testid="filter-layout"
+    >
+      FilterLayout
+    </div>
+  </div>
+</div>
+`;

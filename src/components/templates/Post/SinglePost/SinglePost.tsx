@@ -6,20 +6,14 @@ import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 
-interface PostWideProps {
-  clickable?: boolean;
-  isReply?: boolean;
-  onClick?: () => void;
-}
-
-export function SinglePost({ clickable = false, isReply = false, onClick }: PostWideProps) {
+export function SinglePost() {
   const { postId, userId } = useParams() as { postId: string; userId: string };
   const pId = Core.buildCompositeId({ pubky: userId, id: postId });
 
   return (
     <Atoms.Container className="flex flex-col">
       <Atoms.Container size="container" className="gap-4 px-6">
-        <Organisms.SinglePost postId={pId} clickable={clickable} isReply={isReply} onClick={onClick} />
+        <Organisms.SinglePost postId={pId} />
       </Atoms.Container>
       <Atoms.Container size="container" className="mt-4 px-6 pb-8">
         <Atoms.Container className="flex flex-col gap-4">

@@ -153,17 +153,29 @@ describe('useProfileActions', () => {
     });
 
     it('sets isLoggingOut to true during logout', async () => {
-      mockLogout.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
+      let resolveLogout: (value?: unknown) => void;
+      mockLogout.mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveLogout = resolve;
+          }),
+      );
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
       expect(result.current.isLoggingOut).toBe(false);
 
-      act(() => {
-        result.current.onSignOut();
-      });
+      // Start the logout process (don't await, we want to check loading state)
+      const signOutPromise = result.current.onSignOut();
 
+      // Verify isLoggingOut is true during the process
       await waitFor(() => {
         expect(result.current.isLoggingOut).toBe(true);
+      });
+
+      // Complete the logout and wait for the promise to finish
+      await act(async () => {
+        resolveLogout();
+        await signOutPromise;
       });
     });
 
