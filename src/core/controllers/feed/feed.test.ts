@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
+import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort } from 'pubky-app-specs';
 import * as Core from '@/core';
 import type { TFeedCreateParams, TFeedUpdateParams, TFeedDeleteParams } from './feed.types';
 import type { AuthStore } from '@/core/stores/auth/auth.types';
@@ -19,7 +19,7 @@ const createFeedParams = (overrides: Partial<TFeedCreateParams> = {}): TFeedCrea
 });
 
 const createMockFeedSchema = (overrides: Partial<Core.FeedModelSchema> = {}): Core.FeedModelSchema => ({
-  id: 'feed123',
+  id: 123,
   name: 'Bitcoin News',
   tags: ['bitcoin', 'lightning'],
   reach: PubkyAppFeedReach.All,
@@ -44,10 +44,8 @@ describe('FeedController', () => {
 
     // Mock FeedApplication
     vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(createMockFeedSchema());
-
-    // Mock LocalFeedService
-    vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(createMockFeedSchema());
-    vi.spyOn(Core.LocalFeedService, 'findAll').mockResolvedValue([createMockFeedSchema()]);
+    vi.spyOn(Core.FeedApplication, 'list').mockResolvedValue([createMockFeedSchema()]);
+    vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(createMockFeedSchema());
 
     // Import FeedController
     const feedModule = await import('./feed');
@@ -61,12 +59,15 @@ describe('FeedController', () => {
 
       const result = await FeedController.create(params);
 
-      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, {
-        params,
-        layout: params.layout,
+      expect(persistSpy).toHaveBeenCalledWith({
+        action: Core.HomeserverAction.PUT,
+        userId: testData.userPubky,
+        params: {
+          feed: expect.any(Object),
+        },
       });
       expect(result).toBeTruthy();
-      expect(result.id).toBe('feed123');
+      expect(result.id).toBe(123);
     });
 
     it('should throw when user is not authenticated (via application layer)', async () => {
@@ -75,44 +76,46 @@ describe('FeedController', () => {
       await expect(FeedController.create(createFeedParams())).rejects.toThrow('User not authenticated');
     });
 
-    it('should throw when persist returns undefined', async () => {
-      vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(undefined);
+    it('should validate tags before normalizing', async () => {
+      const params = createFeedParams({ tags: [] });
 
-      await expect(FeedController.create(createFeedParams())).rejects.toThrow('Failed to create feed');
+      await expect(FeedController.create(params)).rejects.toThrow('At least one tag is required');
+    });
+
+    it('should validate tags count before normalizing', async () => {
+      const params = createFeedParams({ tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6'] });
+
+      await expect(FeedController.create(params)).rejects.toThrow('Maximum 5 tags allowed');
     });
   });
 
   describe('update', () => {
-    it('should merge changes with existing feed and persist', async () => {
-      const existingFeed = createMockFeedSchema();
-      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(existingFeed);
+    it('should pass changes to application layer for persistence', async () => {
       const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
 
       const updateParams: TFeedUpdateParams = {
-        feedId: 'feed123',
+        feedId: 123,
         changes: { tags: ['bitcoin', 'mining'] },
       };
 
       const result = await FeedController.update(updateParams);
 
-      expect(persistSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.objectContaining({
-          params: expect.objectContaining({
-            name: existingFeed.name, // Name preserved
-            tags: ['bitcoin', 'mining'], // Changed
-            reach: existingFeed.reach, // Preserved
-          }),
-        }),
-      );
+      expect(persistSpy).toHaveBeenCalledWith({
+        action: Core.HomeserverAction.PUT,
+        userId: testData.userPubky,
+        params: {
+          feedId: 123,
+          changes: { tags: ['bitcoin', 'mining'] },
+        },
+      });
       expect(result).toBeTruthy();
     });
 
     it('should throw when feed not found', async () => {
-      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(undefined);
+      vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('Feed not found'));
 
       const updateParams: TFeedUpdateParams = {
-        feedId: 'nonexistent',
+        feedId: 999,
         changes: { tags: ['new'] },
       };
 
@@ -122,24 +125,8 @@ describe('FeedController', () => {
     it('should throw when user is not authenticated (via application layer)', async () => {
       vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('User not authenticated'));
 
-      await expect(FeedController.update({ feedId: 'feed123', changes: { tags: ['new'] } })).rejects.toThrow(
+      await expect(FeedController.update({ feedId: 123, changes: { tags: ['new'] } })).rejects.toThrow(
         'User not authenticated',
-      );
-    });
-
-    it('should preserve existingId when updating', async () => {
-      const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
-
-      await FeedController.update({
-        feedId: 'feed123',
-        changes: { sort: PubkyAppFeedSort.Popularity },
-      });
-
-      expect(persistSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        expect.objectContaining({
-          existingId: 'feed123',
-        }),
       );
     });
   });
@@ -147,95 +134,55 @@ describe('FeedController', () => {
   describe('delete', () => {
     it('should call persist with DELETE action', async () => {
       const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
-      const deleteParams: TFeedDeleteParams = { feedId: 'feed123' };
+      const deleteParams: TFeedDeleteParams = { feedId: 123 };
 
       await FeedController.delete(deleteParams);
 
-      expect(persistSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, {
-        feedId: 'feed123',
+      expect(persistSpy).toHaveBeenCalledWith({
+        action: Core.HomeserverAction.DELETE,
+        userId: testData.userPubky,
+        params: {
+          feedId: 123,
+        },
       });
     });
 
     it('should throw when user is not authenticated (via application layer)', async () => {
       vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('User not authenticated'));
 
-      await expect(FeedController.delete({ feedId: 'feed123' })).rejects.toThrow('User not authenticated');
+      await expect(FeedController.delete({ feedId: 123 })).rejects.toThrow('User not authenticated');
     });
   });
 
   describe('list', () => {
     it('should return all feeds sorted', async () => {
-      const feeds = [
-        createMockFeedSchema({ id: 'feed1', name: 'Feed 1' }),
-        createMockFeedSchema({ id: 'feed2', name: 'Feed 2' }),
-      ];
-      vi.spyOn(Core.LocalFeedService, 'findAll').mockResolvedValue(feeds);
+      const feeds = [createMockFeedSchema({ id: 1, name: 'Feed 1' }), createMockFeedSchema({ id: 2, name: 'Feed 2' })];
+      vi.spyOn(Core.FeedApplication, 'list').mockResolvedValue(feeds);
 
       const result = await FeedController.list();
 
       expect(result).toHaveLength(2);
-      expect(Core.LocalFeedService.findAll).toHaveBeenCalled();
+      expect(Core.FeedApplication.list).toHaveBeenCalled();
     });
   });
 
   describe('get', () => {
     it('should return feed by ID', async () => {
       const feed = createMockFeedSchema();
-      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(feed);
+      vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(feed);
 
-      const result = await FeedController.get('feed123');
+      const result = await FeedController.get(123);
 
       expect(result).toBeTruthy();
-      expect(result!.id).toBe('feed123');
+      expect(result!.id).toBe(123);
     });
 
     it('should return undefined when not found', async () => {
-      vi.spyOn(Core.LocalFeedService, 'findById').mockResolvedValue(undefined);
+      vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(undefined);
 
-      const result = await FeedController.get('nonexistent');
+      const result = await FeedController.get(999);
 
       expect(result).toBeUndefined();
-    });
-  });
-
-  describe('getStreamId', () => {
-    it('should generate stream ID for all/recent/all feed', () => {
-      const feed = createMockFeedSchema({
-        reach: PubkyAppFeedReach.All,
-        sort: PubkyAppFeedSort.Recent,
-        content: null,
-        tags: ['bitcoin', 'lightning'],
-      });
-
-      const streamId = FeedController.getStreamId(feed);
-
-      expect(streamId).toBe('timeline:all:all:bitcoin,lightning');
-    });
-
-    it('should generate stream ID for following/popularity/image feed', () => {
-      const feed = createMockFeedSchema({
-        reach: PubkyAppFeedReach.Following,
-        sort: PubkyAppFeedSort.Popularity,
-        content: PubkyAppPostKind.Image,
-        tags: ['photography'],
-      });
-
-      const streamId = FeedController.getStreamId(feed);
-
-      expect(streamId).toBe('total_engagement:following:image:photography');
-    });
-
-    it('should generate stream ID for friends feed', () => {
-      const feed = createMockFeedSchema({
-        reach: PubkyAppFeedReach.Friends,
-        sort: PubkyAppFeedSort.Recent,
-        content: PubkyAppPostKind.Video,
-        tags: ['videos', 'tech'],
-      });
-
-      const streamId = FeedController.getStreamId(feed);
-
-      expect(streamId).toBe('timeline:friends:video:videos,tech');
     });
   });
 });

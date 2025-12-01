@@ -3,7 +3,7 @@ import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKi
 import * as Core from '@/core';
 import { RecordModelBase } from '@/core/models/shared/base/record/baseRecord';
 
-export class FeedModel extends RecordModelBase<string, Core.FeedModelSchema> implements Core.FeedModelSchema {
+export class FeedModel extends RecordModelBase<number, Core.FeedModelSchema> implements Core.FeedModelSchema {
   static table: Table<Core.FeedModelSchema> = Core.db.table('feeds');
 
   name: string;

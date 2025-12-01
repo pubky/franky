@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PubkyAppFeedReach, PubkyAppFeedSort, FeedResult, PubkyAppFeedLayout } from 'pubky-app-specs';
 import { FeedApplication } from './feed';
 import * as Core from '@/core';
-import type { AuthStore } from '@/core/stores/auth/auth.types';
 
 // Mock the LocalFeedService
 vi.mock('@/core/services/local/feed', () => ({
@@ -57,33 +56,20 @@ describe('FeedApplication', () => {
     }) as unknown as FeedResult;
 
   const createMockCreateParams = (): Core.TFeedPersistCreateParams => ({
-    params: {
-      name: 'Bitcoin News',
-      tags: ['bitcoin', 'lightning'],
-      reach: PubkyAppFeedReach.All,
-      sort: PubkyAppFeedSort.Recent,
-      content: null,
-      layout: PubkyAppFeedLayout.Columns,
-    },
-    layout: PubkyAppFeedLayout.Columns,
+    feed: createMockFeedResult(),
   });
 
   const createMockDeleteParams = (): Core.TFeedPersistDeleteParams => ({
-    feedId: 'feed123',
+    feedId: 123,
   });
 
   // Helper functions
   const setupMocks = () => {
-    // Mock FeedNormalizer
-    vi.spyOn(Core.FeedNormalizer, 'to').mockReturnValue(createMockFeedResult());
-
     return {
       persistSpy: vi.spyOn(Core.LocalFeedService, 'persist'),
       deleteSpy: vi.spyOn(Core.LocalFeedService, 'delete'),
       findByIdSpy: vi.spyOn(Core.LocalFeedService, 'findById'),
       requestSpy: vi.spyOn(Core.HomeserverService, 'request'),
-      authSpy: vi.spyOn(Core.useAuthStore, 'getState'),
-      normalizerSpy: vi.spyOn(Core.FeedNormalizer, 'to'),
     };
   };
 
@@ -92,20 +78,33 @@ describe('FeedApplication', () => {
   });
 
   describe('persist with PUT action (create)', () => {
-    it('should normalize, save locally and sync to homeserver successfully', async () => {
+    it('should save locally and sync to homeserver successfully', async () => {
       const mockParams = createMockCreateParams();
-      const { persistSpy, requestSpy, authSpy, normalizerSpy } = setupMocks();
+      const { persistSpy, requestSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
-      persistSpy.mockResolvedValue(undefined);
+      const mockPersistedFeed: Core.FeedModelSchema = {
+        id: 1,
+        name: 'Bitcoin News',
+        tags: ['bitcoin', 'lightning'],
+        reach: PubkyAppFeedReach.All,
+        sort: PubkyAppFeedSort.Recent,
+        content: null,
+        layout: PubkyAppFeedLayout.Columns,
+        created_at: Date.now(),
+        updated_at: Date.now(),
+      };
+      persistSpy.mockResolvedValue(mockPersistedFeed);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.persist(Core.HomeserverAction.PUT, mockParams);
+      const result = await FeedApplication.persist({
+        action: Core.HomeserverAction.PUT,
+        userId: testUserId,
+        params: mockParams,
+      });
 
-      expect(normalizerSpy).toHaveBeenCalledWith(mockParams.params, testUserId);
       expect(persistSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          id: 'feed123',
+          id: 0,
           name: 'Bitcoin News',
           tags: ['bitcoin', 'lightning'],
         }),
@@ -116,113 +115,132 @@ describe('FeedApplication', () => {
         expect.any(Object),
       );
       expect(result).toBeTruthy();
-      expect(result!.id).toBe('feed123');
+      expect(result!.id).toBe(1);
     });
 
     it('should preserve existing ID when updating', async () => {
       const mockParams: Core.TFeedPersistCreateParams = {
-        ...createMockCreateParams(),
-        existingId: 'existing-feed-id',
+        feed: createMockFeedResult(),
+        existingId: 42,
       };
-      const { persistSpy, findByIdSpy, requestSpy, authSpy } = setupMocks();
+      const { persistSpy, findByIdSpy, requestSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
-      findByIdSpy.mockResolvedValue({
-        id: 'existing-feed-id',
+      const existingFeed: Core.FeedModelSchema = {
+        id: 42,
+        name: 'Existing Feed',
+        tags: ['bitcoin'],
+        reach: PubkyAppFeedReach.All,
+        sort: PubkyAppFeedSort.Recent,
+        content: null,
+        layout: PubkyAppFeedLayout.Columns,
         created_at: 1000000,
-      } as Core.FeedModelSchema);
-      persistSpy.mockResolvedValue(undefined);
+        updated_at: 1000000,
+      };
+      findByIdSpy.mockResolvedValue(existingFeed);
+      persistSpy.mockResolvedValue(existingFeed);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.persist(Core.HomeserverAction.PUT, mockParams);
+      const result = await FeedApplication.persist({
+        action: Core.HomeserverAction.PUT,
+        userId: testUserId,
+        params: mockParams,
+      });
 
-      expect(result!.id).toBe('existing-feed-id');
+      expect(result!.id).toBe(42);
       expect(result!.created_at).toBe(1000000);
-    });
-
-    it('should throw error when user is not authenticated', async () => {
-      const mockParams = createMockCreateParams();
-      const { authSpy } = setupMocks();
-
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => null } as unknown as Partial<AuthStore>);
-
-      await expect(FeedApplication.persist(Core.HomeserverAction.PUT, mockParams)).rejects.toThrow(
-        'User not authenticated',
-      );
     });
 
     it('should throw when local save fails', async () => {
       const mockParams = createMockCreateParams();
-      const { persistSpy, authSpy } = setupMocks();
+      const { persistSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
       persistSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(FeedApplication.persist(Core.HomeserverAction.PUT, mockParams)).rejects.toThrow('Database error');
+      await expect(
+        FeedApplication.persist({
+          action: Core.HomeserverAction.PUT,
+          userId: testUserId,
+          params: mockParams,
+        }),
+      ).rejects.toThrow('Database error');
     });
 
     it('should throw when homeserver sync fails', async () => {
       const mockParams = createMockCreateParams();
-      const { persistSpy, requestSpy, authSpy } = setupMocks();
+      const { persistSpy, requestSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
-      persistSpy.mockResolvedValue(undefined);
+      const mockPersistedFeed: Core.FeedModelSchema = {
+        id: 1,
+        name: 'Bitcoin News',
+        tags: ['bitcoin', 'lightning'],
+        reach: PubkyAppFeedReach.All,
+        sort: PubkyAppFeedSort.Recent,
+        content: null,
+        layout: PubkyAppFeedLayout.Columns,
+        created_at: Date.now(),
+        updated_at: Date.now(),
+      };
+      persistSpy.mockResolvedValue(mockPersistedFeed);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(FeedApplication.persist(Core.HomeserverAction.PUT, mockParams)).rejects.toThrow(
-        'Failed to PUT to homeserver: 500',
-      );
+      await expect(
+        FeedApplication.persist({
+          action: Core.HomeserverAction.PUT,
+          userId: testUserId,
+          params: mockParams,
+        }),
+      ).rejects.toThrow('Failed to PUT to homeserver: 500');
     });
   });
 
   describe('persist with DELETE action', () => {
     it('should delete locally and sync to homeserver successfully', async () => {
       const mockParams = createMockDeleteParams();
-      const { deleteSpy, requestSpy, authSpy } = setupMocks();
+      const { deleteSpy, requestSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
       deleteSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.persist(Core.HomeserverAction.DELETE, mockParams);
+      const result = await FeedApplication.persist({
+        action: Core.HomeserverAction.DELETE,
+        userId: testUserId,
+        params: mockParams,
+      });
 
-      expect(deleteSpy).toHaveBeenCalledWith('feed123');
+      expect(deleteSpy).toHaveBeenCalledWith(123);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, expect.stringContaining('pubky://'));
       expect(result).toBeUndefined();
     });
 
-    it('should throw error when user is not authenticated', async () => {
-      const mockParams = createMockDeleteParams();
-      const { authSpy } = setupMocks();
-
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => null } as unknown as Partial<AuthStore>);
-
-      await expect(FeedApplication.persist(Core.HomeserverAction.DELETE, mockParams)).rejects.toThrow(
-        'User not authenticated',
-      );
-    });
-
     it('should throw when local delete fails', async () => {
       const mockParams = createMockDeleteParams();
-      const { deleteSpy, authSpy } = setupMocks();
+      const { deleteSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
       deleteSpy.mockRejectedValue(new Error('Feed not found'));
 
-      await expect(FeedApplication.persist(Core.HomeserverAction.DELETE, mockParams)).rejects.toThrow('Feed not found');
+      await expect(
+        FeedApplication.persist({
+          action: Core.HomeserverAction.DELETE,
+          userId: testUserId,
+          params: mockParams,
+        }),
+      ).rejects.toThrow('Feed not found');
     });
 
     it('should throw when homeserver sync fails', async () => {
       const mockParams = createMockDeleteParams();
-      const { deleteSpy, requestSpy, authSpy } = setupMocks();
+      const { deleteSpy, requestSpy } = setupMocks();
 
-      authSpy.mockReturnValue({ selectCurrentUserPubky: () => testUserId } as Partial<AuthStore>);
       deleteSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(FeedApplication.persist(Core.HomeserverAction.DELETE, mockParams)).rejects.toThrow(
-        'Failed to DELETE from homeserver: 404',
-      );
+      await expect(
+        FeedApplication.persist({
+          action: Core.HomeserverAction.DELETE,
+          userId: testUserId,
+          params: mockParams,
+        }),
+      ).rejects.toThrow('Failed to DELETE from homeserver: 404');
     });
   });
 });

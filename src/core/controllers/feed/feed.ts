@@ -4,61 +4,53 @@ export class FeedController {
   private constructor() {}
 
   static async create(params: Core.TFeedCreateParams): Promise<Core.FeedModelSchema> {
-    const feed = await Core.FeedApplication.persist(Core.HomeserverAction.PUT, {
-      params,
-      layout: params.layout,
+    const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
+
+    // Validate tags early to fail fast before normalization and persistence
+    Core.FeedValidators.validateTags(params.tags);
+
+    const normalizedFeed = Core.FeedNormalizer.to({ params, userId });
+    const feed = await Core.FeedApplication.persist({
+      action: Core.HomeserverAction.PUT,
+      userId,
+      params: {
+        feed: normalizedFeed,
+      },
     });
 
-    if (!feed) {
-      throw new Error('Failed to create feed');
-    }
-
-    return feed;
+    return feed!;
   }
 
   static async update(params: Core.TFeedUpdateParams): Promise<Core.FeedModelSchema> {
-    const existing = await Core.LocalFeedService.findById(params.feedId);
-    if (!existing) {
-      throw new Error('Feed not found');
-    }
-
-    const merged: Core.TFeedCreateParams = {
-      name: existing.name,
-      tags: params.changes.tags ?? existing.tags,
-      reach: params.changes.reach ?? existing.reach,
-      sort: params.changes.sort ?? existing.sort,
-      content: params.changes.content !== undefined ? params.changes.content : existing.content,
-      layout: params.changes.layout ?? existing.layout,
-    };
-
-    const feed = await Core.FeedApplication.persist(Core.HomeserverAction.PUT, {
-      params: merged,
-      layout: merged.layout,
-      existingId: params.feedId,
+    const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
+    const feed = await Core.FeedApplication.persist({
+      action: Core.HomeserverAction.PUT,
+      userId,
+      params: {
+        feedId: params.feedId,
+        changes: params.changes,
+      },
     });
 
-    if (!feed) {
-      throw new Error('Failed to update feed');
-    }
-
-    return feed;
+    return feed!;
   }
 
   static async delete(params: Core.TFeedDeleteParams): Promise<void> {
-    await Core.FeedApplication.persist(Core.HomeserverAction.DELETE, {
-      feedId: params.feedId,
+    const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
+    await Core.FeedApplication.persist({
+      action: Core.HomeserverAction.DELETE,
+      userId,
+      params: {
+        feedId: params.feedId,
+      },
     });
   }
 
   static async list(): Promise<Core.FeedModelSchema[]> {
-    return Core.LocalFeedService.findAll();
+    return Core.FeedApplication.list();
   }
 
-  static async get(feedId: string): Promise<Core.FeedModelSchema | undefined> {
-    return Core.LocalFeedService.findById(feedId);
-  }
-
-  static getStreamId(feed: Core.FeedModelSchema): Core.PostStreamId {
-    return Core.buildFeedStreamId(feed);
+  static async get(feedId: number): Promise<Core.FeedModelSchema | undefined> {
+    return Core.FeedApplication.get(feedId);
   }
 }

@@ -1,7 +1,7 @@
 import { PubkyAppFeedLayout, PubkyAppFeedReach, PubkyAppFeedSort, PubkyAppPostKind } from 'pubky-app-specs';
 
 export interface FeedModelSchema {
-  id: string;
+  id: number;
   name: string;
   tags: string[];
   reach: PubkyAppFeedReach;
@@ -12,4 +12,8 @@ export interface FeedModelSchema {
   updated_at: number;
 }
 
-export const feedTableSchema = '&id, name, created_at, updated_at';
+// Schema design rationale:
+// - ++id: Auto-incrementing primary key (like notifications)
+// - created_at: For sorting feeds by creation time
+// - updated_at: For tracking when feed was last modified
+export const feedTableSchema = '++id, name, created_at, updated_at';
