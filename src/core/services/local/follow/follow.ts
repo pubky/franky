@@ -1,32 +1,7 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-
-/**
- * Timeline stream groups for invalidation
- * Grouped by reach type (following/friends) for efficient cache clearing
- *
- * Note: Only TIMELINE (recent) streams are cached locally.
- * POPULARITY (engagement) streams are not cached, so no need to invalidate them.
- */
-const FOLLOWING_TIMELINE_STREAMS = [
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL,
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_SHORT,
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_LONG,
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_IMAGE,
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_VIDEO,
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_LINK,
-  Core.PostStreamTypes.TIMELINE_FOLLOWING_FILE,
-] as const;
-
-const FRIENDS_TIMELINE_STREAMS = [
-  Core.PostStreamTypes.TIMELINE_FRIENDS_ALL,
-  Core.PostStreamTypes.TIMELINE_FRIENDS_SHORT,
-  Core.PostStreamTypes.TIMELINE_FRIENDS_LONG,
-  Core.PostStreamTypes.TIMELINE_FRIENDS_IMAGE,
-  Core.PostStreamTypes.TIMELINE_FRIENDS_VIDEO,
-  Core.PostStreamTypes.TIMELINE_FRIENDS_LINK,
-  Core.PostStreamTypes.TIMELINE_FRIENDS_FILE,
-] as const;
+import * as App from '@/app';
+import { FOLLOWING_TIMELINE_STREAMS, FRIENDS_TIMELINE_STREAMS } from './follow.constants';
 
 export class LocalFollowService {
   static async create({ follower, followee }: Core.TFollowParams) {
@@ -159,9 +134,18 @@ export class LocalFollowService {
    * Invalidate timeline streams by clearing them from cache
    * Forces fresh fetch from Nexus on next load
    *
+   * Skips invalidation if currently on /home route to avoid clearing
+   * the cache that's currently being rendered.
+   *
    * @param includeFriends - Whether to also invalidate friends timelines
    */
   private static async invalidateTimelineStreams(includeFriends: boolean): Promise<void> {
+    // Skip invalidation if we're on the home route to avoid clearing the cache being rendered
+    if (typeof window !== 'undefined' && window.location.pathname === App.APP_ROUTES.HOME) {
+      Libs.Logger.debug('Skipping timeline stream invalidation: currently on /home route');
+      return;
+    }
+
     const streams: Core.PostStreamTypes[] = [...FOLLOWING_TIMELINE_STREAMS];
 
     if (includeFriends) {

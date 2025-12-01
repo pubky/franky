@@ -42,17 +42,7 @@ export class LocalStreamUsersService {
    * @param userIds - The user ID(s) to prepend
    */
   static async prependToStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
-    const existing = await this.findById(streamId);
-    const currentStream = existing?.stream || [];
-
-    // Filter out userIds that are already in the stream
-    const userIdSet = new Set(currentStream);
-    const newUserIds = userIds.filter((userId) => !userIdSet.has(userId));
-
-    if (newUserIds.length === 0) return;
-
-    const updatedStream = [...newUserIds, ...currentStream];
-    await this.upsert({ streamId, stream: updatedStream });
+    await Core.UserStreamModel.prependItems(streamId, userIds);
   }
 
   /**
@@ -62,13 +52,7 @@ export class LocalStreamUsersService {
    * @param userIds - The user ID(s) to remove
    */
   static async removeFromStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
-    const existing = await this.findById(streamId);
-    if (!existing) return;
-
-    const userIdSet = new Set(userIds);
-    const updatedStream = existing.stream.filter((id) => !userIdSet.has(id));
-
-    await this.upsert({ streamId, stream: updatedStream });
+    await Core.UserStreamModel.removeItems(streamId, userIds);
   }
 
   /**
