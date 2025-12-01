@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Hooks from '@/hooks';
+// Import directly to avoid circular dependency with @/hooks barrel
+import { useProfileStats } from '@/hooks/useProfileStats';
 import { toast } from '@/molecules/Toaster/use-toast';
 import type { UseTaggedResult, UseTaggedOptions } from './useTagged.types';
 import { transformTagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.utils';
@@ -29,7 +30,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
   const [tagOrder, setTagOrder] = useState<Map<string, number>>(new Map());
 
   // Only fetch stats if enabled
-  const { stats, isLoading: isLoadingStats } = Hooks.useProfileStats(enableStats ? (userId ?? '') : '');
+  const { stats, isLoading: isLoadingStats } = useProfileStats(enableStats ? (userId ?? '') : '');
 
   // Fetch tags directly from IndexedDB - this will react to any changes made by TagController
   const localTags = useLiveQuery(async () => {

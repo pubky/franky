@@ -57,11 +57,22 @@ export function useUserProfile(userId: string): UseUserProfileResult {
     return await Core.UserController.getDetails({ userId });
   }, [userId]);
 
-  // If no user details yet, return null profile
-  if (!userDetails) {
+  // Distinguish between:
+  // - undefined: query hasn't run yet → loading
+  // - null: query ran but user not found → loaded, no data
+  // - object: query ran and found user → loaded with data
+  if (userDetails === undefined) {
     return {
       profile: null,
       isLoading: true,
+    };
+  }
+
+  // User not found (null) or empty - return default profile but mark as loaded
+  if (!userDetails) {
+    return {
+      profile: null,
+      isLoading: false,
     };
   }
 
