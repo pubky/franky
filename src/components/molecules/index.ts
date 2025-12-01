@@ -15,7 +15,6 @@ export * from './Content';
 export * from './FAQAccordion';
 export * from './Header';
 export * from './Home';
-export * from './HomeHeader';
 export * from './InputField';
 export * from './Install';
 export * from './Logo';
