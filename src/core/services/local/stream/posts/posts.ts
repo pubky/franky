@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { Logger } from '@/libs/logger';
 
 /**
  * Local Stream Posts Service
@@ -16,22 +17,63 @@ export class LocalStreamPostsService {
     await Core.PostStreamModel.upsert(streamId, stream);
   }
 
-  static async bulkSave(postStreams: Core.TPostStreamUpsertParams[]): Promise<void> {
+  /**
+   *
+   * @param postStreams - Array of post streams to upsert
+   */
+  static async bulkSave({ postStreams }: Core.TPostStreamBulkParams): Promise<void> {
     await Promise.all(postStreams.map(({ streamId, stream }) => this.upsert({ streamId, stream })));
   }
 
   /**
    * Get a stream of post IDs by stream ID
    */
-  static async findById(streamId: Core.PostStreamId): Promise<{ stream: string[] } | null> {
+  static async findById({ streamId }: Core.TStreamIdParams): Promise<{ stream: string[] } | null> {
     return await Core.PostStreamModel.findById(streamId);
   }
 
   /**
    * Delete a stream from cache
    */
-  static async deleteById(streamId: Core.PostStreamId): Promise<void> {
+  static async deleteById({ streamId }: Core.TStreamIdParams): Promise<void> {
     await Core.PostStreamModel.deleteById(streamId);
+  }
+
+  /**
+   * Gets the timestamp of the head (first/most recent) post in a stream
+   * First tries from the unread post stream, if not found, tries from the post stream
+   * @param streamId - The stream ID to get the head timestamp for
+   * @returns The indexed_at timestamp of the head post, or 1 if the stream is empty or head post not found
+   * 1 means that there is no posts in the cache but force to fetch from Nexus new posts
+   * 0 means that there is no posts in the cache and no need to fetch from Nexus new posts
+   */
+  static async getStreamHead({ streamId }: Core.TStreamIdParams): Promise<number> {
+    const unreadCompositePostId = await Core.UnreadPostStreamModel.getStreamHead(streamId);
+    if (unreadCompositePostId) {
+      return await this.getPostDetailsTimestamp({ postCompositeId: unreadCompositePostId as string });
+    }
+    const postCompositeId = await Core.PostStreamModel.getStreamHead(streamId);
+    if (!postCompositeId) {
+      // It might be a case that the stream that we want to update still does not have any posts in the cache
+      // so we return 1 to indicate that there is no posts in the cache but force to fetch from Nexus new posts
+      return Core.FORCE_FETCH_NEW_POSTS;
+    }
+    return await this.getPostDetailsTimestamp({ postCompositeId: postCompositeId as string });
+  }
+
+  /**
+   * Get the timestamp of the post
+   * @param postCompositeId - The composite post ID to get the timestamp for
+   * @returns The indexed_at timestamp of the post, or 0 if the post is not found in the cache
+   */
+  private static async getPostDetailsTimestamp({ postCompositeId }: Core.TPostDetailsTimestampParams): Promise<number> {
+    const postDetails = await Core.PostDetailsModel.findById(postCompositeId);
+    if (postDetails) {
+      return postDetails.indexed_at;
+    }
+    // Avoid fetching till we have persited the missing post in the cache
+    Logger.debug('Post not found in cache, avoiding fetch', { postCompositeId });
+    return Core.SKIP_FETCH_NEW_POSTS;
   }
 
   /**
@@ -39,15 +81,15 @@ export class LocalStreamPostsService {
    * Only adds if not already present
    *
    * @param streamId - The stream to prepend to
-   * @param postId - The post ID to prepend
+   * @param compositePostId - The composite post ID to prepend
    */
-  static async prependToStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
-    const existing = await this.findById(streamId);
+  static async prependToStream({ streamId, compositePostId }: Core.TPrependToStreamParams): Promise<void> {
+    const existing = await this.findById({ streamId });
     const currentStream = existing?.stream || [];
 
-    if (currentStream.includes(postId)) return;
+    if (currentStream.includes(compositePostId)) return;
 
-    const updatedStream = [postId, ...currentStream];
+    const updatedStream = [compositePostId, ...currentStream];
     await this.upsert({ streamId, stream: updatedStream });
   }
 
@@ -55,13 +97,13 @@ export class LocalStreamPostsService {
    * Remove a post ID from a stream
    *
    * @param streamId - The stream to remove from
-   * @param postId - The post ID to remove
+   * @param compositePostId - The composite post ID to remove
    */
-  static async removeFromStream(streamId: Core.PostStreamTypes, postId: string): Promise<void> {
-    const existing = await this.findById(streamId);
+  static async removeFromStream({ streamId, compositePostId }: Core.TPrependToStreamParams): Promise<void> {
+    const existing = await this.findById({ streamId });
     if (!existing) return;
 
-    const updatedStream = existing.stream.filter((id) => id !== postId);
+    const updatedStream = existing.stream.filter((id) => id !== compositePostId);
     await this.upsert({ streamId, stream: updatedStream });
   }
 
@@ -72,11 +114,7 @@ export class LocalStreamPostsService {
    * @param replyPostId - The composite post ID of the reply post
    * @param postReplies - The map of reply stream IDs to arrays of reply post IDs
    */
-  private static addReplyToStream(
-    repliedUri: string | null | undefined,
-    replyPostId: string,
-    postReplies: Record<Core.ReplyStreamCompositeId, string[]>,
-  ): void {
+  private static addReplyToStream({ repliedUri, replyPostId, postReplies }: Core.TAddReplyToStreamParams): void {
     if (!repliedUri) return;
 
     const parentCompositePostId = Core.buildCompositeIdFromPubkyUri({
@@ -89,7 +127,38 @@ export class LocalStreamPostsService {
     postReplies[replyStreamId] = [...(postReplies[replyStreamId] || []), replyPostId];
   }
 
-  static async persistPosts(posts: Core.NexusPost[]): Promise<Core.TPostStreamPersistResult> {
+  /**
+   * Merge the unread stream with the post stream
+   * @param streamId - The stream ID to merge the unread stream with the post stream
+   * @returns void
+   */
+  static async mergeUnreadStreamWithPostStream({ streamId }: Core.TStreamIdParams): Promise<void> {
+    const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadPostStream) return;
+    const postStream = await Core.PostStreamModel.findById(streamId);
+    if (!postStream) return;
+    const combinedStream = [...unreadPostStream.stream, ...postStream.stream];
+    await Core.PostStreamModel.upsert(streamId, combinedStream);
+  }
+
+  /**
+   * Persist posts from Nexus API to local IndexedDB
+   *
+   * Processes an array of Nexus posts and saves them to the local database.
+   * For each post, it extracts and persists:
+   * - Post details (with composite ID: author:postId)
+   * - Post counts (likes, replies, etc.)
+   * - Post relationships (replies, reposts, etc.)
+   * - Post tags
+   * - Post attachments
+   *
+   * Additionally, creates reply streams for posts that are replies to other posts,
+   * mapping parent posts to their reply post IDs.
+   *
+   * @param posts - Array of posts from Nexus API to persist
+   * @returns Object containing an array of all post attachment URIs collected from the posts
+   */
+  static async persistPosts({ posts }: Core.TPersistPostsParams): Promise<Core.TPostStreamPersistResult> {
     const postCounts: Core.NexusModelTuple<Core.NexusPostCounts>[] = [];
     const postRelationships: Core.NexusModelTuple<Core.NexusPostRelationships>[] = [];
     const postTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
@@ -126,7 +195,7 @@ export class LocalStreamPostsService {
       postDetails.push({ ...detailsWithoutAuthor, id: postId });
 
       // Add reply to the post replies map if this post is a reply
-      this.addReplyToStream(post.relationships.replied, postId, postReplies);
+      this.addReplyToStream({ repliedUri: post.relationships.replied, replyPostId: postId, postReplies });
     }
 
     await Promise.all([
@@ -172,6 +241,9 @@ export class LocalStreamPostsService {
     // Combine existing and new posts
     const combinedStream = [...postStream.stream, ...newPostsToAdd];
 
+    // TODO: Not sure if we need line 189-202. From nexus we bring from a SORTED SET being the score the timestamp
+    // and if they are new posts, it does not exist in the cache
+
     // Sort by timestamp (indexed_at) in descending order (most recent first)
     // Use bulk fetch to get all post details at once
     const posts = await Core.PostDetailsModel.findByIdsPreserveOrder(combinedStream);
@@ -187,5 +259,24 @@ export class LocalStreamPostsService {
       .map((item) => item.postId);
 
     await Core.PostStreamModel.upsert(streamId, sortedStream);
+  }
+
+  /**
+   * Persist a new chunk of posts to the unread post stream
+   * @param stream - Array of post IDs to persist
+   * @param streamId - The stream ID to persist the new chunk to
+   * @returns
+   */
+  static async persistUnreadNewStreamChunk({ stream, streamId }: Core.TPostStreamUpsertParams) {
+    const unreadPostStream = await Core.UnreadPostStreamModel.findById(streamId);
+    if (!unreadPostStream) {
+      await Core.UnreadPostStreamModel.upsert(streamId, stream);
+      return;
+    }
+    const existingIds = new Set(unreadPostStream.stream);
+    const newPostsToAdd = stream.filter((id) => !existingIds.has(id));
+    if (newPostsToAdd.length === 0) return;
+    const combinedStream = [...newPostsToAdd, ...unreadPostStream.stream];
+    await Core.UnreadPostStreamModel.upsert(streamId, combinedStream);
   }
 }

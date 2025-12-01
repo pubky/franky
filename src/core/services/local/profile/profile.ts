@@ -14,12 +14,52 @@ export class LocalProfileService {
   }
 
   /**
+   * Bulk retrieves multiple user details from local database.
+   * @param userIds - Array of user IDs to fetch details for
+   * @returns Promise resolving to Map of user ID to user details
+   */
+  static async bulkDetails(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    if (userIds.length === 0) return new Map();
+
+    const results = await Core.UserDetailsModel.findByIdsPreserveOrder(userIds);
+    const map = new Map<Core.Pubky, Core.NexusUserDetails>();
+
+    for (const details of results) {
+      if (details) {
+        map.set(details.id, details);
+      }
+    }
+
+    return map;
+  }
+
+  /**
    * Retrieves user counts from local database.
    * @param userId - The user ID to fetch counts for
    * @returns Promise resolving to user counts or null if not found
    */
   static async counts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     return await Core.UserCountsModel.findById(userId);
+  }
+
+  /**
+   * Bulk retrieves multiple user counts from local database.
+   * @param userIds - Array of user IDs to fetch counts for
+   * @returns Promise resolving to Map of user ID to user counts
+   */
+  static async bulkCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    if (userIds.length === 0) return new Map();
+
+    const results = await Core.UserCountsModel.findByIdsPreserveOrder(userIds);
+    const map = new Map<Core.Pubky, Core.NexusUserCounts>();
+
+    for (const counts of results) {
+      if (counts) {
+        map.set(counts.id, counts);
+      }
+    }
+
+    return map;
   }
 
   /**
@@ -37,8 +77,8 @@ export class LocalProfileService {
    * @param userCounts - The user counts to upsert
    * @returns Promise resolving to void
    */
-  static async upsertCounts(params: Core.TReadProfileParams, userCounts: Core.NexusUserCounts): Promise<void> {
-    await Core.UserCountsModel.updateCounts(params.userId, userCounts);
+  static async upsertCounts(params: Core.TReadProfileParams, countChanges: Core.NexusUserCounts): Promise<void> {
+    await Core.UserCountsModel.updateCounts({ userId: params.userId, countChanges });
   }
 
   /**

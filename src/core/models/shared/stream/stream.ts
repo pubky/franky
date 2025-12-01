@@ -1,4 +1,4 @@
-import { Table } from 'dexie';
+import { Table, IndexableType } from 'dexie';
 import * as Libs from '@/libs';
 import { BaseStreamModelSchema } from './stream.type';
 
@@ -193,6 +193,142 @@ export abstract class BaseStreamModel<TId, TItem, TSchema extends BaseStreamMode
         `Failed to clear table ${this.table.name}`,
         500,
         { error },
+      );
+    }
+  }
+
+  static async getStreamHead<TId, TItem, TSchema extends BaseStreamModelSchema<TId, TItem>>(
+    this: { table: Table<TSchema> },
+    id: TId,
+  ): Promise<TItem | null> {
+    try {
+      const stream = await this.table.get(id);
+
+      // If no stream exists for this ID, there is no head
+      if (!stream || !stream.stream || stream.stream.length === 0) {
+        return null;
+      }
+
+      // Return the first element of the stream array (head)
+      return stream.stream[0] ?? null;
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.FIND_FAILED,
+        `Failed to get stream head in ${this.table.name} with ID: ${String(id)}`,
+        500,
+        { error, streamId: id },
+      );
+    }
+  }
+
+  /**
+   * Adds items to the head of the stream array in the database (atomic operation)
+   * Creates the stream if it doesn't exist, filters out duplicates before adding
+   *
+   * @param this - Context containing the table reference and static methods
+   * @param id - The stream ID to update
+   * @param items - Array of items to add to the head of the stream
+   * @returns Promise that resolves when the operation completes
+   * @throws {DatabaseError} When the update fails
+   *
+   * @example
+   * ```typescript
+   * await PostStreamModel.prependItems('home-feed', ['item1', 'item2']);
+   * ```
+   */
+  static async prependItems<TId, TItem, TSchema extends BaseStreamModelSchema<TId, TItem>>(
+    this: { table: Table<TSchema>; upsert: (id: TId, stream: TItem[]) => Promise<TSchema> },
+    id: TId,
+    items: TItem[],
+  ): Promise<void> {
+    try {
+      // Check if stream exists
+      const existingStream = await this.table.get(id);
+
+      if (existingStream) {
+        // Update existing stream
+        await this.table
+          .where('id')
+          .equals(id as IndexableType)
+          .modify((stream) => {
+            // Filter out items that already exist in the stream
+            const newItems = items.filter((item) => !stream.stream.includes(item));
+
+            if (newItems.length > 0) {
+              // Add new items to the beginning of the stream
+              stream.stream.unshift(...newItems);
+            }
+          });
+      } else {
+        // Create new stream with the items
+        await this.upsert(id, items);
+      }
+
+      Libs.Logger.debug(`${this.table.name} items prepended to stream successfully`, {
+        streamId: id,
+        itemsAdded: items.length,
+      });
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPDATE_FAILED,
+        `Failed to prepend items to stream in ${this.table.name} with ID: ${String(id)}`,
+        500,
+        { error, streamId: id, itemsCount: items.length },
+      );
+    }
+  }
+
+  /**
+   * Removes items from the stream array in the database (atomic operation)
+   * Silently succeeds if stream doesn't exist
+   *
+   * @param this - Context containing the table reference
+   * @param id - The stream ID to update
+   * @param items - Array of items to remove from the stream
+   * @returns Promise that resolves when the operation completes
+   * @throws {DatabaseError} When the update fails
+   *
+   * @example
+   * ```typescript
+   * await PostStreamModel.removeItems('home-feed', ['item1', 'item2']);
+   * ```
+   */
+  static async removeItems<TId, TItem, TSchema extends BaseStreamModelSchema<TId, TItem>>(
+    this: { table: Table<TSchema> },
+    id: TId,
+    items: TItem[],
+  ): Promise<void> {
+    try {
+      // Check if stream exists
+      const existingStream = await this.table.get(id);
+
+      if (existingStream) {
+        // Only modify if stream exists
+        await this.table
+          .where('id')
+          .equals(id as IndexableType)
+          .modify((stream) => {
+            // Filter out the items that need to be removed
+            stream.stream = stream.stream.filter((item) => !items.includes(item));
+          });
+
+        Libs.Logger.debug(`${this.table.name} items removed from stream successfully`, {
+          streamId: id,
+          itemsRemoved: items.length,
+        });
+      } else {
+        // Stream doesn't exist, nothing to remove - silently succeed
+        Libs.Logger.debug(`${this.table.name} stream does not exist, skipping removal`, {
+          streamId: id,
+          itemsToRemove: items.length,
+        });
+      }
+    } catch (error) {
+      throw Libs.createDatabaseError(
+        Libs.DatabaseErrorType.UPDATE_FAILED,
+        `Failed to remove items from stream in ${this.table.name} with ID: ${String(id)}`,
+        500,
+        { error, streamId: id, itemsCount: items.length },
       );
     }
   }

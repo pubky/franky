@@ -1,6 +1,45 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { PostTagsList } from './PostTagsList';
+
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(() => [
+    {
+      id: 'post-123',
+      tags: [
+        { label: 'bitcoin', taggers_count: 21 },
+        { label: 'based', taggers_count: 7 },
+        { label: 'test', taggers_count: 3 },
+      ],
+    },
+  ]),
+}));
+
+// Mock @/core
+vi.mock('@/core', async () => {
+  const actual = await vi.importActual('@/core');
+  return {
+    ...actual,
+    useAuthStore: vi.fn((selector) =>
+      selector
+        ? selector({ currentUserPubky: 'test-pubky-123', selectCurrentUserPubky: () => 'test-pubky-123' })
+        : { currentUserPubky: 'test-pubky-123', selectCurrentUserPubky: () => 'test-pubky-123' },
+    ),
+    PostController: {
+      getPostTags: vi.fn().mockResolvedValue([
+        {
+          id: 'post-123',
+          tags: [
+            { label: 'bitcoin', taggers_count: 21 },
+            { label: 'based', taggers_count: 7 },
+            { label: 'test', taggers_count: 3 },
+          ],
+        },
+      ]),
+    },
+  };
+});
 
 // Mock @/libs with partial mock
 vi.mock('@/libs', async (importOriginal) => {
@@ -33,14 +72,12 @@ vi.mock('@/libs', async (importOriginal) => {
 });
 
 describe('PostTagsList', () => {
-  const mockTags = [
-    { label: 'bitcoin', count: 21 },
-    { label: 'based', count: 7 },
-    { label: 'test', count: 3 },
-  ];
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('renders all tags', () => {
-    render(<PostTagsList tags={mockTags} />);
+    render(<PostTagsList postId="post-123" />);
 
     expect(screen.getByText('bitcoin')).toBeInTheDocument();
     expect(screen.getByText('based')).toBeInTheDocument();
@@ -49,27 +86,79 @@ describe('PostTagsList', () => {
 
   it('calls onTagClick when a tag is clicked', () => {
     const mockOnTagClick = vi.fn();
-    render(<PostTagsList tags={mockTags} onTagClick={mockOnTagClick} />);
+    render(<PostTagsList postId="post-123" onTagClick={mockOnTagClick} />);
 
     const bitcoinTag = screen.getByText('bitcoin').closest('button');
     fireEvent.click(bitcoinTag!);
 
-    expect(mockOnTagClick).toHaveBeenCalledWith(mockTags[0], 0);
+    expect(mockOnTagClick).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: 'bitcoin',
+        taggers_count: 21, // Verify Core.NexusTag structure (not 'count')
+      }),
+      0,
+      expect.objectContaining({ type: 'click' }),
+    );
+  });
+
+  it('stops event propagation when tag is clicked', () => {
+    const mockOnTagClick = vi.fn();
+    const mockParentClick = vi.fn();
+
+    render(
+      <div onClick={mockParentClick} data-testid="parent-container">
+        <PostTagsList postId="post-123" onTagClick={mockOnTagClick} />
+      </div>,
+    );
+
+    const bitcoinTag = screen.getByText('bitcoin').closest('button');
+    fireEvent.click(bitcoinTag!);
+
+    // Tag click handler should be called
+    expect(mockOnTagClick).toHaveBeenCalledTimes(1);
+    // Parent click handler should NOT be called (propagation stopped)
+    expect(mockParentClick).not.toHaveBeenCalled();
   });
 
   it('calls onTagClose when tag close button is clicked', () => {
     const mockOnTagClose = vi.fn();
-    render(<PostTagsList tags={mockTags} showTagClose onTagClose={mockOnTagClose} />);
+    render(<PostTagsList postId="post-123" showTagClose onTagClose={mockOnTagClose} />);
 
     const closeButtons = screen.getAllByLabelText(/remove.*tag/i);
     fireEvent.click(closeButtons[0]);
 
-    expect(mockOnTagClose).toHaveBeenCalledWith(mockTags[0], 0);
+    expect(mockOnTagClose).toHaveBeenCalledWith(
+      expect.objectContaining({
+        label: 'bitcoin',
+        taggers_count: 21, // Verify Core.NexusTag structure (not 'count')
+      }),
+      0,
+      expect.objectContaining({ type: 'click' }),
+    );
+  });
+
+  it('stops event propagation when close button is clicked', () => {
+    const mockOnTagClose = vi.fn();
+    const mockParentClick = vi.fn();
+
+    render(
+      <div onClick={mockParentClick} data-testid="parent-container">
+        <PostTagsList postId="post-123" showTagClose onTagClose={mockOnTagClose} />
+      </div>,
+    );
+
+    const closeButtons = screen.getAllByLabelText(/remove.*tag/i);
+    fireEvent.click(closeButtons[0]);
+
+    // Close handler should be called
+    expect(mockOnTagClose).toHaveBeenCalledTimes(1);
+    // Parent click handler should NOT be called (propagation stopped)
+    expect(mockParentClick).not.toHaveBeenCalled();
   });
 
   it('calls onTagAdd when a new tag is submitted', () => {
     const mockOnTagAdd = vi.fn();
-    render(<PostTagsList tags={mockTags} onTagAdd={mockOnTagAdd} />);
+    render(<PostTagsList postId="post-123" onTagAdd={mockOnTagAdd} />);
 
     const input = screen.getByRole('textbox');
     fireEvent.change(input, { target: { value: 'newtag' } });
@@ -80,7 +169,7 @@ describe('PostTagsList', () => {
 
   it('clears input after submitting a tag', () => {
     const mockOnTagAdd = vi.fn();
-    render(<PostTagsList tags={mockTags} onTagAdd={mockOnTagAdd} />);
+    render(<PostTagsList postId="post-123" onTagAdd={mockOnTagAdd} />);
 
     const input = screen.getByRole('textbox') as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'newtag' } });
@@ -90,14 +179,14 @@ describe('PostTagsList', () => {
   });
 
   it('does not render input when showInput is false', () => {
-    render(<PostTagsList tags={mockTags} showInput={false} />);
+    render(<PostTagsList postId="post-123" showInput={false} />);
 
     const input = screen.queryByRole('textbox');
     expect(input).not.toBeInTheDocument();
   });
 
   it('renders emoji picker when showEmojiPicker is true', () => {
-    render(<PostTagsList tags={mockTags} showEmojiPicker />);
+    render(<PostTagsList postId="post-123" showEmojiPicker />);
 
     const emojiButton = screen.getByLabelText(/open emoji picker/i);
     expect(emojiButton).toBeInTheDocument();
@@ -105,7 +194,7 @@ describe('PostTagsList', () => {
 
   it('calls onEmojiClick when emoji button is clicked', () => {
     const mockOnEmojiClick = vi.fn();
-    render(<PostTagsList tags={mockTags} showEmojiPicker onEmojiClick={mockOnEmojiClick} />);
+    render(<PostTagsList postId="post-123" showEmojiPicker onEmojiClick={mockOnEmojiClick} />);
 
     const emojiButton = screen.getByLabelText(/open emoji picker/i);
     fireEvent.click(emojiButton);
@@ -114,7 +203,7 @@ describe('PostTagsList', () => {
   });
 
   it('toggles from add button to input with addMode', () => {
-    render(<PostTagsList tags={mockTags} showInput={false} showAddButton addMode onAddButtonClick={() => {}} />);
+    render(<PostTagsList postId="post-123" showInput={false} showAddButton addMode onAddButtonClick={() => {}} />);
 
     // button visible initially
     const addButton = screen.getByLabelText('Add new tag');
@@ -141,34 +230,30 @@ describe('PostTagsList', () => {
 });
 
 describe('PostTagsList - Snapshots', () => {
-  const mockTags = [
-    { label: 'bitcoin', count: 21, selected: true },
-    { label: 'based', count: 7 },
-    { label: 'test', count: 3 },
-  ];
-
   it('matches snapshot with tags and input', () => {
-    const { container } = render(<PostTagsList tags={mockTags} />);
+    const { container } = render(<PostTagsList postId="post-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with emoji picker', () => {
-    const { container } = render(<PostTagsList tags={mockTags} showEmojiPicker />);
+    const { container } = render(<PostTagsList postId="post-123" showEmojiPicker />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with close buttons', () => {
-    const { container } = render(<PostTagsList tags={mockTags} showTagClose />);
+    const { container } = render(<PostTagsList postId="post-123" showTagClose />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot without input', () => {
-    const { container } = render(<PostTagsList tags={mockTags} showInput={false} />);
+    const { container } = render(<PostTagsList postId="post-123" showInput={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with empty tags', () => {
-    const { container } = render(<PostTagsList tags={[]} />);
+  it('matches snapshot with empty tags', async () => {
+    const dexie = await import('dexie-react-hooks');
+    vi.mocked(dexie.useLiveQuery).mockReturnValueOnce([]);
+    const { container } = render(<PostTagsList postId="post-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

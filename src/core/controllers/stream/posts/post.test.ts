@@ -34,6 +34,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -68,6 +69,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -103,6 +105,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         lastPostId,
         streamTail,
         viewerId,
@@ -127,6 +130,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -222,6 +226,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -283,6 +288,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         lastPostId,
         streamTail,
         viewerId,
@@ -311,6 +317,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -336,6 +343,7 @@ describe('StreamPostsController', () => {
       expect(getOrFetchStreamSliceSpy).toHaveBeenCalledWith({
         streamId: engagementStreamId,
         limit: Config.NEXUS_POSTS_PER_PAGE,
+        streamHead: 0,
         streamTail: 0,
         lastPostId: undefined,
         viewerId,
@@ -365,6 +373,69 @@ describe('StreamPostsController', () => {
 
       // Should be called exactly once to get viewerId
       expect(selectCurrentUserPubkySpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getCachedLastPostTimestamp', () => {
+    it('should delegate to PostStreamApplication.getCachedLastPostTimestamp with correct params', async () => {
+      const expectedTimestamp = 1000000;
+      const getCachedLastPostTimestampSpy = vi
+        .spyOn(Core.PostStreamApplication, 'getCachedLastPostTimestamp')
+        .mockResolvedValue(expectedTimestamp);
+
+      const result = await StreamPostsController.getCachedLastPostTimestamp({ streamId });
+
+      expect(getCachedLastPostTimestampSpy).toHaveBeenCalledWith({ streamId });
+      expect(result).toBe(expectedTimestamp);
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const applicationError = new Error('Database error');
+      vi.spyOn(Core.PostStreamApplication, 'getCachedLastPostTimestamp').mockRejectedValue(applicationError);
+
+      await expect(StreamPostsController.getCachedLastPostTimestamp({ streamId })).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('getStreamHead', () => {
+    it('should delegate to PostStreamApplication.getStreamHead with correct params', async () => {
+      const expectedStreamHead = 1000000;
+      const getStreamHeadSpy = vi
+        .spyOn(Core.PostStreamApplication, 'getStreamHead')
+        .mockResolvedValue(expectedStreamHead);
+
+      const result = await StreamPostsController.getStreamHead({ streamId });
+
+      expect(getStreamHeadSpy).toHaveBeenCalledWith({ streamId });
+      expect(result).toBe(expectedStreamHead);
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const applicationError = new Error('Database error');
+      vi.spyOn(Core.PostStreamApplication, 'getStreamHead').mockRejectedValue(applicationError);
+
+      await expect(StreamPostsController.getStreamHead({ streamId })).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('mergeUnreadStreamWithPostStream', () => {
+    it('should delegate to PostStreamApplication.mergeUnreadStreamWithPostStream with correct params', async () => {
+      const mergeUnreadStreamWithPostStreamSpy = vi
+        .spyOn(Core.PostStreamApplication, 'mergeUnreadStreamWithPostStream')
+        .mockResolvedValue();
+
+      await StreamPostsController.mergeUnreadStreamWithPostStream({ streamId });
+
+      expect(mergeUnreadStreamWithPostStreamSpy).toHaveBeenCalledWith({ streamId });
+    });
+
+    it('should propagate errors from application layer', async () => {
+      const applicationError = new Error('Database error');
+      vi.spyOn(Core.PostStreamApplication, 'mergeUnreadStreamWithPostStream').mockRejectedValue(applicationError);
+
+      await expect(StreamPostsController.mergeUnreadStreamWithPostStream({ streamId })).rejects.toThrow(
+        'Database error',
+      );
     });
   });
 });

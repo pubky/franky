@@ -35,17 +35,6 @@ export class UserApplication {
   }
 
   /**
-   * Retrieves notifications from the nexus service and persists them locally,
-   * then returns the count of unread notifications.
-   * @param params - Parameters containing user ID and last read timestamp
-   * @returns Promise resolving to the number of unread notifications
-   */
-  static async notifications({ userId, lastRead }: Core.TUserApplicationNotificationsParams): Promise<number> {
-    const notificationList = await Core.NexusUserService.notifications({ user_id: userId, end: lastRead });
-    return await Core.LocalNotificationService.persitAndGetUnreadCount(notificationList, lastRead);
-  }
-
-  /**
    * Retrieves tags for a user from the nexus service.
    * @param params - Parameters containing user ID and pagination options
    * @returns Promise resolving to an array of tags
@@ -96,5 +85,13 @@ export class UserApplication {
       return await Core.LocalProfileService.counts({ userId });
     }
     return null;
+  }
+
+  /**
+   * Bulk read multiple user counts from local database.
+   * Returns a Map for efficient lookup by user ID.
+   */
+  static async bulkCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.LocalProfileService.bulkCounts(userIds);
   }
 }

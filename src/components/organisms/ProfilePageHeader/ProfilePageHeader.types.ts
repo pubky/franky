@@ -21,6 +21,7 @@ export interface ProfileHeaderActions {
   onSignOut?: () => void;
   onStatusChange?: (status: string) => void;
   onAvatarClick?: () => void;
+  isLoggingOut?: boolean;
 }
 
 /**

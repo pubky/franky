@@ -12,11 +12,27 @@ export class UserController {
   }
 
   /**
+   * Get multiple user details from local database (bulk operation)
+   * This is a read-only operation that queries the local cache
+   */
+  static async bulkGetDetails(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserDetails>> {
+    return await Core.ProfileApplication.bulkRead(userIds);
+  }
+
+  /**
    * Get user counts from local database
    * This is a read-only operation that queries the local cache
    */
   static async getCounts({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserCounts | null> {
     return await Core.UserApplication.counts({ userId });
+  }
+
+  /**
+   * Get multiple user counts from local database (bulk operation)
+   * This is a read-only operation that queries the local cache
+   */
+  static async bulkGetCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
+    return await Core.UserApplication.bulkCounts(userIds);
   }
 
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
@@ -39,18 +55,6 @@ export class UserController {
       muter,
       mutee,
     });
-  }
-
-  /**
-   * Refreshes unread notifications for the current user.
-   * @param userId - The user ID to fetch notifications for
-   * @returns Promise resolving to the number of unread notifications
-   */
-  static async notifications({ userId }: Core.TReadProfileParams) {
-    const notificationStore = Core.useNotificationStore.getState();
-    const lastRead = notificationStore.selectLastRead();
-    const unread = await Core.UserApplication.notifications({ userId, lastRead });
-    notificationStore.setUnread(unread);
   }
 
   static async tags(params: Core.TUserTagsParams): Promise<Core.NexusTag[]> {

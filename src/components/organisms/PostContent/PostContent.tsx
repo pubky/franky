@@ -24,9 +24,7 @@ export function PostContent({ postId, className }: PostContentOrganismProps) {
 
   return (
     <Atoms.Container className={Libs.cn('gap-3', className)}>
-      <p className="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground">
-        {postDetails.content}
-      </p>
+      <Molecules.PostText content={postDetails.content} />
 
       <Molecules.PostLinkEmbeds content={postDetails.content} />
     </Atoms.Container>

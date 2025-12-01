@@ -51,6 +51,32 @@ describe('UserController', () => {
     });
   });
 
+  describe('bulkGetDetails', () => {
+    it('should delegate to ProfileApplication.bulkRead', async () => {
+      const userIds = ['user1', 'user2'] as Core.Pubky[];
+      const mockMap = new Map<Core.Pubky, Core.NexusUserDetails>([
+        ['user1' as Core.Pubky, { id: 'user1', name: 'User 1' } as Core.NexusUserDetails],
+        ['user2' as Core.Pubky, { id: 'user2', name: 'User 2' } as Core.NexusUserDetails],
+      ]);
+
+      const bulkReadSpy = vi.spyOn(Core.ProfileApplication, 'bulkRead').mockResolvedValue(mockMap);
+
+      const result = await UserController.bulkGetDetails(userIds);
+
+      expect(result).toEqual(mockMap);
+      expect(bulkReadSpy).toHaveBeenCalledWith(userIds);
+    });
+
+    it('should return empty map for empty array', async () => {
+      const bulkReadSpy = vi.spyOn(Core.ProfileApplication, 'bulkRead').mockResolvedValue(new Map());
+
+      const result = await UserController.bulkGetDetails([]);
+
+      expect(result.size).toBe(0);
+      expect(bulkReadSpy).toHaveBeenCalledWith([]);
+    });
+  });
+
   describe('getCounts', () => {
     it('should delegate to UserApplication.counts', async () => {
       const userId = 'test-user-id';
@@ -91,6 +117,32 @@ describe('UserController', () => {
       vi.spyOn(Core.UserApplication, 'counts').mockRejectedValue(new Error('Database error'));
 
       await expect(UserController.getCounts({ userId })).rejects.toThrow('Database error');
+    });
+  });
+
+  describe('bulkGetCounts', () => {
+    it('should delegate to UserApplication.bulkCounts', async () => {
+      const userIds = ['user1', 'user2'] as Core.Pubky[];
+      const mockMap = new Map<Core.Pubky, Core.NexusUserCounts>([
+        ['user1' as Core.Pubky, { id: 'user1', posts: 10, followers: 5 } as Core.NexusUserCounts],
+        ['user2' as Core.Pubky, { id: 'user2', posts: 20, followers: 15 } as Core.NexusUserCounts],
+      ]);
+
+      const bulkCountsSpy = vi.spyOn(Core.UserApplication, 'bulkCounts').mockResolvedValue(mockMap);
+
+      const result = await UserController.bulkGetCounts(userIds);
+
+      expect(result).toEqual(mockMap);
+      expect(bulkCountsSpy).toHaveBeenCalledWith(userIds);
+    });
+
+    it('should return empty map for empty array', async () => {
+      const bulkCountsSpy = vi.spyOn(Core.UserApplication, 'bulkCounts').mockResolvedValue(new Map());
+
+      const result = await UserController.bulkGetCounts([]);
+
+      expect(result.size).toBe(0);
+      expect(bulkCountsSpy).toHaveBeenCalledWith([]);
     });
   });
 
@@ -179,49 +231,6 @@ describe('UserController', () => {
       await expect(UserController.follow(Core.HomeserverAction.PUT, { follower, followee })).rejects.toThrow(
         'delegate-fail',
       );
-    });
-  });
-
-  describe('notifications', () => {
-    it('should poll notifications using lastRead and update unread count in store', async () => {
-      const userId = 'pubky-user' as unknown as Core.Pubky;
-      const lastRead = 1234;
-      const unread = 5;
-
-      // Configure mocked selectors/actions for this test run via spying on the store
-      const selectLastRead = vi.fn(() => lastRead);
-      const setUnread = vi.fn();
-      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
-        selectLastRead,
-        setUnread,
-      } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
-
-      const notificationsSpy = vi.spyOn(Core.UserApplication, 'notifications').mockResolvedValue(unread);
-
-      await UserController.notifications({ userId });
-
-      expect(selectLastRead).toHaveBeenCalled();
-      expect(notificationsSpy).toHaveBeenCalledWith({ userId, lastRead });
-      expect(setUnread).toHaveBeenCalledWith(unread);
-    });
-
-    it('should bubble when notifications fails and not set unread', async () => {
-      const userId = 'pubky-user' as unknown as Core.Pubky;
-      const lastRead = 1234;
-
-      const selectLastRead = vi.fn(() => lastRead);
-      const setUnread = vi.fn();
-      vi.spyOn(Core.useNotificationStore, 'getState').mockReturnValue({
-        selectLastRead,
-        setUnread,
-      } as unknown as import('@/core/stores/notification/notification.types').NotificationStore);
-
-      vi.spyOn(Core.UserApplication, 'notifications').mockRejectedValue(new Error('poll-fail'));
-
-      await expect(UserController.notifications({ userId })).rejects.toThrow('poll-fail');
-
-      expect(selectLastRead).toHaveBeenCalled();
-      expect(setUnread).not.toHaveBeenCalled();
     });
   });
 

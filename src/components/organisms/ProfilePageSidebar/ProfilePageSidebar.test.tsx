@@ -8,6 +8,7 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
+  usePathname: () => '/profile/posts',
 }));
 
 // Mock dexie-react-hooks
@@ -18,7 +19,7 @@ vi.mock('dexie-react-hooks', () => ({
 // Mock @/core
 vi.mock('@/core', () => ({
   useAuthStore: vi.fn(() => ({
-    currentUserPubky: 'test-pubky-123',
+    selectCurrentUserPubky: () => 'test-pubky-123',
   })),
   ProfileController: {
     read: vi.fn().mockResolvedValue({
@@ -30,29 +31,17 @@ vi.mock('@/core', () => ({
   },
 }));
 
-// Mock @/libs/icons
-vi.mock('@/libs/icons', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/libs/icons')>();
-  return {
-    ...actual,
-    getIconFromUrl: () => {
-      const MockIcon = ({ size, className }: { size: number; className: string }) => (
-        <span data-testid="mock-icon" data-size={size} className={className}>
-          Icon
-        </span>
-      );
-      return MockIcon;
-    },
-  };
-});
-
 // Mock @/hooks
 vi.mock('@/hooks', () => ({
   useCurrentUserProfile: vi.fn(() => ({
     userDetails: null,
     currentUserPubky: 'test-pubky-123',
   })),
-  useUserTags: vi.fn(() => []),
+  useTagged: vi.fn(() => ({
+    tags: [],
+    isLoading: false,
+    handleTagToggle: vi.fn(),
+  })),
 }));
 
 describe('ProfilePageSidebar', () => {

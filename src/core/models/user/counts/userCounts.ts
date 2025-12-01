@@ -37,20 +37,7 @@ export class UserCountsModel
     return { id: data[0], ...data[1] };
   }
 
-  static async updateCounts(
-    userId: Core.Pubky,
-    countChanges: {
-      tagged?: number;
-      tags?: number;
-      unique_tags?: number;
-      posts?: number;
-      replies?: number;
-      following?: number;
-      followers?: number;
-      friends?: number;
-      bookmarks?: number;
-    },
-  ): Promise<void> {
+  static async updateCounts({ userId, countChanges }: Core.TUserCountsParams): Promise<void> {
     const userCounts = await Core.UserCountsModel.findById(userId);
     if (!userCounts) return;
 

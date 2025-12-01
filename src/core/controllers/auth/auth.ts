@@ -159,6 +159,6 @@ export class AuthController {
    * @returns Promise resolving to the generated signup token
    */
   static async generateSignupToken() {
-    return await Core.HomeserverService.generateSignupToken();
+    return await Core.AuthApplication.generateSignupToken();
   }
 }
