@@ -16,7 +16,7 @@ interface FollowerItemProps {
 
 export function FollowerItem({ follower, isFollowing: initialIsFollowing = true, onFollow }: FollowerItemProps) {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
-  const avatarUrl = follower.image || undefined;
+  const avatarUrl = follower.avatarUrl || follower.image || undefined;
   const formattedPublicKey = Libs.formatPublicKey({ key: follower.id, length: 10 });
   const tags = follower.tags || [];
   const stats = follower.stats || { tags: 0, posts: 0 };

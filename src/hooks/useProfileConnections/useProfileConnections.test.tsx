@@ -1,62 +1,121 @@
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useProfileConnections, CONNECTION_TYPE } from './useProfileConnections';
-import type { Pubky } from '@/core';
+
+// Mock Core
+const mockCurrentUserPubky = 'user123';
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(() => ({
+      currentUserPubky: mockCurrentUserPubky,
+    })),
+    StreamUserController: {
+      getOrFetchStreamSlice: vi.fn().mockResolvedValue({
+        nextPageIds: [],
+        skip: 0,
+      }),
+    },
+    UserDetailsModel: {
+      table: {
+        where: vi.fn(() => ({
+          anyOf: vi.fn(() => ({
+            toArray: vi.fn().mockResolvedValue([]),
+          })),
+        })),
+      },
+    },
+    UserCountsModel: {
+      table: {
+        where: vi.fn(() => ({
+          anyOf: vi.fn(() => ({
+            toArray: vi.fn().mockResolvedValue([]),
+          })),
+        })),
+      },
+    },
+  };
+});
+
+// Mock Config
+vi.mock('@/config', () => ({
+  NEXUS_USERS_PER_PAGE: 20,
+}));
+
+// Mock dexie-react-hooks
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn((queryFn, deps, defaultValue) => defaultValue),
+}));
 
 describe('useProfileConnections', () => {
-  it('returns empty connections array when type is FOLLOWERS', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns empty connections array initially for FOLLOWERS', async () => {
     const { result } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWERS));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.connections).toHaveLength(0);
     expect(result.current.count).toBe(0);
-    expect(result.current.isLoading).toBe(false);
-    expect(typeof result.current.onFollow).toBe('function');
   });
 
-  it('returns empty connections array when type is FOLLOWING', () => {
+  it('returns empty connections array initially for FOLLOWING', async () => {
     const { result } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWING));
 
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
     expect(result.current.connections).toHaveLength(0);
     expect(result.current.count).toBe(0);
-    expect(result.current.isLoading).toBe(false);
-    expect(typeof result.current.onFollow).toBe('function');
   });
 
-  it('returns empty connections array when type is FRIENDS', () => {
+  it('returns empty connections array initially for FRIENDS', async () => {
     const { result } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FRIENDS));
 
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
     expect(result.current.connections).toHaveLength(0);
     expect(result.current.count).toBe(0);
-    expect(result.current.isLoading).toBe(false);
-    expect(typeof result.current.onFollow).toBe('function');
   });
 
-  it('returns correct count matching connections length', () => {
-    const { result: followersResult } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWERS));
-    const { result: followingResult } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWING));
-    const { result: friendsResult } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FRIENDS));
-
-    expect(followersResult.current.count).toBe(followersResult.current.connections.length);
-    expect(followingResult.current.count).toBe(followingResult.current.connections.length);
-    expect(friendsResult.current.count).toBe(friendsResult.current.connections.length);
-  });
-
-  it('returns empty array regardless of connection type', () => {
-    const { result: followersResult } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWERS));
-    const { result: followingResult } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWING));
-    const { result: friendsResult } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FRIENDS));
-
-    expect(followersResult.current.connections).toEqual([]);
-    expect(followingResult.current.connections).toEqual([]);
-    expect(friendsResult.current.connections).toEqual([]);
-  });
-
-  it('calls onFollow callback with userId', () => {
+  it('provides loadMore and refresh functions', async () => {
     const { result } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWERS));
-    const testUserId = 'test-user-id' as Pubky;
-    const consoleSpy = vi.spyOn(console, 'log');
-    result.current.onFollow(testUserId);
-    expect(consoleSpy).toHaveBeenCalledWith(`Follow/Unfollow user: ${testUserId}`);
-    consoleSpy.mockRestore();
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(typeof result.current.loadMore).toBe('function');
+    expect(typeof result.current.refresh).toBe('function');
+  });
+
+  it('has correct initial state', async () => {
+    const { result } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWERS));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.isLoadingMore).toBe(false);
+    expect(result.current.error).toBe(null);
+    expect(result.current.hasMore).toBe(false); // No results means no more
+  });
+
+  it('returns count matching connections length', async () => {
+    const { result } = renderHook(() => useProfileConnections(CONNECTION_TYPE.FOLLOWERS));
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.count).toBe(result.current.connections.length);
   });
 });

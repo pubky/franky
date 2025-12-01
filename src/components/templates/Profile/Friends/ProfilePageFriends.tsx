@@ -1,26 +1,11 @@
-'use client';
+import * as Organisms from '@/organisms';
 
-import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
-import * as Hooks from '@/hooks';
-
+/**
+ * ProfilePageFriends Template
+ *
+ * Template for displaying the friends list.
+ * Delegates all logic to the ProfileFriends organism.
+ */
 export function ProfilePageFriends() {
-  const { connections, count } = Hooks.useProfileConnections(Hooks.CONNECTION_TYPE.FRIENDS);
-
-  if (connections.length === 0) {
-    return (
-      <Atoms.Container className="mt-6 lg:mt-0">
-        <Molecules.FriendsEmpty />
-      </Atoms.Container>
-    );
-  }
-
-  return (
-    <Atoms.Container className="mt-6 gap-4 lg:mt-0">
-      <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
-        Friends {count > 0 && `(${count})`}
-      </Atoms.Heading>
-      <Molecules.UserConnectionsList connections={connections} />
-    </Atoms.Container>
-  );
+  return <Organisms.ProfileFriends />;
 }

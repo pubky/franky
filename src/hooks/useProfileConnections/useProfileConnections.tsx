@@ -1,77 +1,220 @@
 'use client';
 
-import type { Pubky, NexusUserDetails } from '@/core';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import * as Core from '@/core';
+import * as Config from '@/config';
+import * as Libs from '@/libs';
+import type { ConnectionType, UserConnectionData, UseProfileConnectionsResult } from './useProfileConnections.types';
 
-export const CONNECTION_TYPE = {
-  FOLLOWERS: 'followers',
-  FOLLOWING: 'following',
-  FRIENDS: 'friends',
-} as const;
+export type { ConnectionType, UserConnectionData, UseProfileConnectionsResult };
+export { CONNECTION_TYPE } from './useProfileConnections.types';
 
-export type ConnectionType = (typeof CONNECTION_TYPE)[keyof typeof CONNECTION_TYPE];
-
-export interface UserConnectionData extends NexusUserDetails {
-  tags?: string[];
-  stats?: {
-    tags: number;
-    posts: number;
-  };
-}
-
-interface UseProfileConnectionsResult {
-  connections: UserConnectionData[];
-  count: number;
-  isLoading: boolean;
-  onFollow: (userId: Pubky) => void;
-}
+// ============================================================================
+// Hook Implementation
+// ============================================================================
 
 /**
- * Unified hook for fetching and managing profile connections (followers, following, friends).
+ * useProfileConnections
  *
- * TODO: Implement real data fetching using models from @/core/models:
- *
- * Data fetching flow:
- * 1. Get current user ID from auth context or route params
- * 2. Fetch UserConnectionsModel.findById(userId) to get connections
- *    - Returns: { id: Pubky, following: Pubky[], followers: Pubky[] }
- * 3. Based on type parameter:
- *    - FOLLOWERS: use userConnections.followers (array of Pubky IDs)
- *    - FOLLOWING: use userConnections.following (array of Pubky IDs)
- *    - FRIENDS: compute intersection of followers and following arrays
- * 4. For each connection ID in the selected array:
- *    a. Fetch UserDetailsModel.findById(connectionId) for user details
- *       - Returns: NexusUserDetails { id, name, bio, image, status, links, indexed_at }
- *    b. Fetch UserCountsModel.findById(connectionId) for stats
- *       - Extract: { tags: number, posts: number } from UserCountsModelSchema
- *    c. Fetch UserTagsModel.findById(connectionId) for tags
- *       - Extract tags array from TagCollection
- * 5. Combine all data into UserConnectionData[] format
- * 6. Handle loading states (set isLoading: true during fetching)
- * 7. Handle errors appropriately
+ * Hook for fetching and managing profile connections (followers, following, friends).
+ * Uses Core StreamUserController for pagination and Dexie for reactive user details.
  *
  * @param type - Type of connections to fetch: 'followers', 'following', or 'friends'
- *               Currently ignored - will be used when data fetching is implemented
- * @returns Connections array, count, loading state, and follow handler
+ * @param userId - Optional user ID (defaults to current authenticated user)
+ * @returns Connections array with full user details, pagination state, and handlers
+ *
+ * @example
+ * ```tsx
+ * const { connections, isLoading, loadMore, hasMore } = useProfileConnections(
+ *   CONNECTION_TYPE.FOLLOWERS
+ * );
+ * ```
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useProfileConnections(type: ConnectionType): UseProfileConnectionsResult {
-  // TODO: Implement real data fetching here
-  // See JSDoc above for detailed implementation plan
+export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky): UseProfileConnectionsResult {
+  // Get current user from auth store if userId not provided
+  const { currentUserPubky } = Core.useAuthStore();
+  const targetUserId = userId ?? currentUserPubky;
 
-  // Return an empty array until data fetching is implemented
-  const connections: UserConnectionData[] = [];
+  // State for user IDs (pagination)
+  const [userIds, setUserIds] = useState<Core.Pubky[]>([]);
+  const [skip, setSkip] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
 
-  const onFollow = (userId: Pubky) => {
-    // TODO: Implement real follow/unfollow logic
-    // Should call UserConnectionsModel.createConnection() or deleteConnection()
-    // and update UserCountsModel accordingly
-    console.log(`Follow/Unfollow user: ${userId}`);
-  };
+  // Refs for stable callbacks
+  const userIdsRef = useRef<Core.Pubky[]>([]);
+
+  // Build stream ID: userId:connectionType (e.g., 'user123:followers')
+  const streamId = targetUserId ? (`${targetUserId}:${type}` as Core.UserStreamCompositeId) : null;
+
+  // Subscribe to user details from local database (reactive via Controller)
+  const userDetailsMap = useLiveQuery(
+    async () => {
+      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserDetails>();
+      return await Core.UserController.bulkGetDetails(userIds);
+    },
+    [userIds],
+    new Map<Core.Pubky, Core.NexusUserDetails>(),
+  );
+
+  // Subscribe to user counts from local database (reactive via Controller)
+  const userCountsMap = useLiveQuery(
+    async () => {
+      if (userIds.length === 0) return new Map<Core.Pubky, Core.NexusUserCounts>();
+      return await Core.UserController.bulkGetCounts(userIds);
+    },
+    [userIds],
+    new Map<Core.Pubky, Core.NexusUserCounts>(),
+  );
+
+  // Combine user IDs with their details and computed avatar URLs
+  const connections = useMemo((): UserConnectionData[] => {
+    return userIds
+      .map((id) => {
+        const details = userDetailsMap.get(id);
+        const counts = userCountsMap.get(id);
+        // Generate avatar URL from user ID using FileController
+        const avatarUrl = Core.FileController.getAvatarUrl(id);
+
+        if (!details) {
+          // Return minimal data if details not yet loaded
+          return {
+            id,
+            name: '',
+            bio: '',
+            image: null,
+            status: null,
+            links: null,
+            indexed_at: 0,
+            avatarUrl,
+            tags: [],
+            stats: { tags: 0, posts: 0 },
+          } as UserConnectionData;
+        }
+
+        return {
+          ...details,
+          avatarUrl,
+          tags: [], // TODO: Fetch tags when available
+          stats: {
+            tags: counts?.tagged ?? 0,
+            posts: counts?.posts ?? 0,
+          },
+        } as UserConnectionData;
+      })
+      .filter((conn) => conn.name !== ''); // Filter out users without loaded details
+  }, [userIds, userDetailsMap, userCountsMap]);
+
+  /**
+   * Fetches a slice from the user stream
+   */
+  const fetchStreamSlice = useCallback(
+    async (isInitialLoad: boolean) => {
+      if (!streamId) {
+        setIsLoading(false);
+        return;
+      }
+
+      if (isInitialLoad) {
+        setIsLoading(true);
+      } else {
+        setIsLoadingMore(true);
+      }
+      setError(null);
+
+      try {
+        const currentSkip = isInitialLoad ? 0 : skip;
+
+        const result = await Core.StreamUserController.getOrFetchStreamSlice({
+          streamId,
+          skip: currentSkip,
+          limit: Config.NEXUS_USERS_PER_PAGE,
+        });
+
+        // Handle empty results
+        if (result.nextPageIds.length === 0) {
+          Libs.Logger.debug('[useProfileConnections] Empty result, no more connections');
+          setHasMore(false);
+          return;
+        }
+
+        // Deduplicate user IDs
+        const existingIds = new Set(userIdsRef.current);
+        const newUniqueIds = result.nextPageIds.filter((id) => !existingIds.has(id));
+
+        // Update skip cursor for next pagination
+        const nextSkip = result.skip ?? currentSkip + result.nextPageIds.length;
+        setSkip(nextSkip);
+
+        // Check hasMore based on response length
+        const hasMoreConnections = result.nextPageIds.length >= Config.NEXUS_USERS_PER_PAGE;
+        setHasMore(hasMoreConnections);
+
+        // Update state with all IDs (including duplicates for cursor tracking)
+        const updatedIds = isInitialLoad ? result.nextPageIds : [...userIdsRef.current, ...newUniqueIds];
+        userIdsRef.current = updatedIds;
+        setUserIds(updatedIds);
+      } catch (err) {
+        const errorMessage = Libs.isAppError(err) ? err.message : 'Failed to fetch connections';
+        setError(errorMessage);
+        setHasMore(false);
+        Libs.Logger.error('[useProfileConnections] Failed to fetch stream slice:', err);
+      } finally {
+        if (isInitialLoad) {
+          setIsLoading(false);
+        } else {
+          setIsLoadingMore(false);
+        }
+      }
+    },
+    [streamId, skip],
+  );
+
+  /**
+   * Clears all state
+   */
+  const clearState = useCallback(() => {
+    userIdsRef.current = [];
+    setUserIds([]);
+    setSkip(0);
+    setHasMore(true);
+    setError(null);
+  }, []);
+
+  /**
+   * Refresh function - clears state and fetches from beginning
+   */
+  const refresh = useCallback(async () => {
+    clearState();
+    await fetchStreamSlice(true);
+  }, [clearState, fetchStreamSlice]);
+
+  /**
+   * Load more function - fetches next page
+   */
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore || !hasMore) return;
+    await fetchStreamSlice(false);
+  }, [isLoadingMore, hasMore, fetchStreamSlice]);
+
+  // Initial load and reset when streamId changes
+  useEffect(() => {
+    clearState();
+    fetchStreamSlice(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [streamId]);
 
   return {
     connections,
     count: connections.length,
-    isLoading: false,
-    onFollow,
+    isLoading,
+    isLoadingMore,
+    error,
+    hasMore,
+    loadMore,
+    refresh,
   };
 }
