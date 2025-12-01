@@ -6,21 +6,11 @@ exports[`ProfilePageNotifications > matches snapshot 1`] = `
     class="mt-6 gap-4 lg:mt-0"
     data-testid="container"
   >
-    <h5
-      class="leading-normal font-light text-muted-foreground lg:hidden"
-      data-testid="heading-5"
-    >
-      Notifications 
-    </h5>
     <div
-      data-testid="notifications-list"
+      data-testid="notifications-container"
     >
-      1
-       notifications
+      Notifications Content
     </div>
-    <div
-      class="h-1"
-    />
   </div>
 </div>
 `;

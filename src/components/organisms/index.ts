@@ -43,3 +43,5 @@ export * from './Timeline';
 export * from './ProfilePageContainer';
 export * from './ProfilePageHeader';
 export * from './ProfileTagged';
+export * from './NotificationItem';
+export * from './NotificationsContainer';

@@ -34,8 +34,8 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-// Mock NotificationItem utils
-vi.mock('@/components/molecules/NotificationItem/NotificationItem.utils', () => ({
+// Mock NotificationItem utils (now in organisms)
+vi.mock('@/components/organisms/NotificationItem/NotificationItem.utils', () => ({
   getNotificationText: vi.fn((notification, userName) => `${userName} did something`),
   getUserIdFromNotification: vi.fn((notification) => {
     if ('followed_by' in notification) return notification.followed_by;

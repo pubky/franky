@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 import * as Core from '@/core';
 import type { NotificationsListProps } from './NotificationsList.types';
 
@@ -15,7 +15,7 @@ export function NotificationsList({ notifications, unreadNotifications }: Notifi
       {notifications.map((notification) => {
         const key = Core.getNotificationKey(notification);
         const isUnread = unreadKeys.has(key);
-        return <Molecules.NotificationItem key={key} notification={notification} isUnread={isUnread} />;
+        return <Organisms.NotificationItem key={key} notification={notification} isUnread={isUnread} />;
       })}
     </Atoms.Container>
   );
