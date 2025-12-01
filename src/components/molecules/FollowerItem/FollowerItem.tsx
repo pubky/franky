@@ -4,15 +4,8 @@ import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
-import type { Pubky } from '@/core';
 import { Check, UserMinus, UserRoundPlus } from 'lucide-react';
-import type { UserConnectionData } from '@/hooks/useProfileConnections';
-
-interface FollowerItemProps {
-  follower: UserConnectionData;
-  isFollowing?: boolean;
-  onFollow?: (followerId: Pubky) => void;
-}
+import type { FollowerItemProps } from './FollowerItem.types';
 
 export function FollowerItem({ follower, isFollowing: initialIsFollowing = true, onFollow }: FollowerItemProps) {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);

@@ -2,11 +2,7 @@
 
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
-import type { UserConnectionData } from '@/hooks/useProfileConnections';
-
-interface UserConnectionsListProps {
-  connections: UserConnectionData[];
-}
+import type { UserConnectionsListProps } from './UserConnectionsList.types';
 
 export function UserConnectionsList({ connections }: UserConnectionsListProps) {
   return (
