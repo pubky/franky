@@ -118,7 +118,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
           avatarUrl,
           tags: [], // TODO: Fetch tags when available
           stats: {
-            tags: counts?.tagged ?? 0,
+            tags: counts?.unique_tags ?? 0,
             posts: counts?.posts ?? 0,
           },
           isFollowing: relationship?.following ?? false,
