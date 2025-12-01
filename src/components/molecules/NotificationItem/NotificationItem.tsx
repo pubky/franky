@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import { NotificationType } from '@/core';
 import {
   getNotificationLink,
@@ -27,58 +27,43 @@ export function NotificationItem({ notification, isUnread }: NotificationItemPro
   const postUri = getPostUriFromNotification(notification);
   const postCompositeId = postUri ? pubkyUriToCompositeId(postUri) : null;
 
-  // Trigger fetching user data if not in local database
-  useEffect(() => {
-    if (!actorUserId) return;
+  // State for post content (fetched via controller)
+  const [postContent, setPostContent] = useState<string | null>(null);
 
-    // ProfileController.read handles the caching strategy:
-    // 1. Check local DB first
-    // 2. If missing, fetch from Nexus
-    // 3. Write to local DB
-    Core.ProfileController.read({ userId: actorUserId }).catch((error) => {
-      Libs.Logger.warn('Failed to fetch notification actor profile:', { actorUserId, error });
-    });
-  }, [actorUserId]);
+  // Use existing hook for user profile data
+  const { profile } = Hooks.useUserProfile(actorUserId || '');
 
-  // Trigger fetching post data if not in local database
+  // Fetch post content via controller (handles caching internally)
   useEffect(() => {
     if (!postCompositeId) return;
 
-    // Try to fetch post content if not in local DB
-    Core.LocalPostService.readPostDetails({ postId: postCompositeId }).then((post) => {
-      if (!post) {
-        // Post not in local DB, fetch from Nexus
-        const viewerId = Core.useAuthStore.getState().currentUserPubky;
-        if (viewerId) {
-          Core.PostController.getOrFetchPost({ compositeId: postCompositeId, viewerId }).catch((error) => {
-            Libs.Logger.warn('Failed to fetch notification post:', { postCompositeId, error });
-          });
+    const viewerId = Core.useAuthStore.getState().currentUserPubky;
+    if (!viewerId) return;
+
+    // PostController.getOrFetchPost handles the caching strategy:
+    // 1. Check local DB first
+    // 2. If missing, fetch from Nexus
+    // 3. Write to local DB
+    Core.PostController.getOrFetchPost({ compositeId: postCompositeId, viewerId })
+      .then((post) => {
+        if (post?.content) {
+          setPostContent(post.content);
         }
-      }
-    });
+      })
+      .catch((error) => {
+        Libs.Logger.warn('Failed to fetch notification post:', { postCompositeId, error });
+      });
   }, [postCompositeId]);
 
-  // Reactively get user data from local database
-  const userDetails = useLiveQuery(async () => {
-    if (!actorUserId) return null;
-    return await Core.UserController.getDetails({ userId: actorUserId });
-  }, [actorUserId]);
-
-  // Reactively get post data from local database
-  const postDetails = useLiveQuery(async () => {
-    if (!postCompositeId) return null;
-    return await Core.LocalPostService.readPostDetails({ postId: postCompositeId });
-  }, [postCompositeId]);
-
-  // Get user name and avatar
-  const userName = userDetails?.name || 'User';
-  const avatarUrl = userDetails?.image ? Core.FileController.getAvatarUrl(userDetails.id) : undefined;
+  // Get user name and avatar from profile hook
+  const userName = profile?.name || 'User';
+  const avatarUrl = profile?.avatarUrl;
 
   // Get notification text with the actual user name
   const notificationText = getNotificationText(notification, userName);
 
   // Get post preview text
-  const previewText = hasPostPreview(notification.type) ? formatPreviewText(postDetails?.content) : null;
+  const previewText = hasPostPreview(notification.type) ? formatPreviewText(postContent) : null;
 
   // Format timestamps (short for mobile, long for desktop)
   const timestampShort = Libs.formatNotificationTime(notification.timestamp, false);

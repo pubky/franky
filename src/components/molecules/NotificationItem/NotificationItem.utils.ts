@@ -1,7 +1,8 @@
 import type { FlatNotification } from '@/core';
 import { NotificationType } from '@/core/models/notification/notification.types';
 import { buildCompositeIdFromPubkyUri, parseCompositeId, CompositeIdDomain } from '@/core';
-import { POST_ROUTES, PROFILE_ROUTES } from '@/app';
+import { APP_ROUTES, POST_ROUTES, PROFILE_ROUTES } from '@/app';
+import { truncateString } from '@/libs';
 import { USER_CENTRIC_NOTIFICATION_TYPES } from './NotificationItem.constants';
 
 // ============================================================================
@@ -156,9 +157,7 @@ function getPostLink(notification: FlatNotification): string | null {
  * Get the user profile link for the notification actor
  */
 function getUserProfileLink(userId: string): string {
-  // TODO: Update when we have proper user profile routes with userId
-  // For now, using a placeholder that we'll implement later
-  return `/profile/${userId}`;
+  return `${APP_ROUTES.PROFILE}/${userId}`;
 }
 
 /**
@@ -243,19 +242,11 @@ export function pubkyUriToCompositeId(uri: string): string | null {
 }
 
 /**
- * Truncate text and add ellipsis
- */
-export function truncateText(text: string, maxLength: number = 20): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trim() + '...';
-}
-
-/**
  * Format post content as preview text with quotes
  */
 export function formatPreviewText(content: string | null | undefined): string | null {
   if (!content) return null;
-  const truncated = truncateText(content, 20);
+  const truncated = truncateString(content, 20);
   return `'${truncated}'`;
 }
 
