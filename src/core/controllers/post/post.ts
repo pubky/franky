@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { PubkyAppPostKind } from 'pubky-app-specs';
 
 export class PostController {
   private constructor() {} // Prevent instantiation
@@ -73,7 +74,7 @@ export class PostController {
   static async create({
     authorId,
     content,
-    kind = Core.PubkyAppPostKind.Short,
+    kind = PubkyAppPostKind.Short,
     tags,
     attachments,
     parentPostId,

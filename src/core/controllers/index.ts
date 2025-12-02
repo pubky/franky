@@ -7,5 +7,6 @@ export * from './user';
 export * from './hot';
 export * from './file';
 export * from './bookmark';
+export * from './feed';
 export * from './notification';
 export * from './controllers.types';
