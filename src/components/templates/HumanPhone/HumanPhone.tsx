@@ -1,11 +1,10 @@
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 
-export function Human() {
+export function HumanPhone() {
   return (
-    <Molecules.OnboardingLayout testId="human-content">
-      <Molecules.HumanHeader />
-      <Organisms.HumanVerificationCards />
+    <Molecules.OnboardingLayout testId="human-phone-content">
+      <Organisms.HumanPhoneVerification1 />
       <Molecules.HumanFooter />
     </Molecules.OnboardingLayout>
   );

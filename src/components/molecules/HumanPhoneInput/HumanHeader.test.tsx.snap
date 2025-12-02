@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HumanHeader > matches snapshot 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-3 pt-2 pb-6 gap-2 lg:gap-3"
+  data-testid="human-header"
+>
+  <h1
+    class="font-bold text-foreground text-5xl lg:text-6xl font-semibold leading-none tracking-tight"
+    data-testid="heading-1"
+  >
+    Proof of 
+    <span
+      class="text-brand"
+    >
+      Human.
+    </span>
+  </h1>
+  <h2
+    class="text-xl leading-normal font-light text-muted-foreground lg:text-2xl max-w-3xl text-muted-foreground"
+  >
+    Prove your humanity. This keeps the arena real and fair for everyone.
+  </h2>
+</div>
+`;
+

@@ -23,6 +23,7 @@ export * from './FeedbackCard';
 export * from './Header';
 export * from './HomeserverCard';
 export * from './HumanVerificationCards';
+export * from './HumanPhoneVerification1';
 export * from './LeftSidebar';
 export * from './PostActionsBar';
 export * from './PostContent';

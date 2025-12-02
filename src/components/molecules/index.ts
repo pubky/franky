@@ -20,6 +20,8 @@ export * from './HomeHeader';
 export * from './InputField';
 export * from './Install';
 export * from './HumanHeader';
+export * from './HumanPhoneHeader';
+export * from './HumanPhoneInput';
 export * from './HumanFooter';
 export * from './Logo';
 export * from './Metadata';

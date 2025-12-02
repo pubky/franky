@@ -1,5 +1,12 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
 
 import { HumanSmsCard } from './HumanSmsCard';
 
@@ -17,6 +24,15 @@ describe('SmsVerificationCard', () => {
     expect(screen.getByText(/SMS Verification/i)).toBeInTheDocument();
     expect(screen.getByText(/Free/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Receive SMS/i })).toBeInTheDocument();
+  });
+
+  it('navigates to human phone onboarding on button click', () => {
+    render(<HumanSmsCard />);
+
+    const button = screen.getByRole('button', { name: /Receive SMS/i });
+    fireEvent.click(button);
+
+    expect(mockPush).toHaveBeenCalledWith('/onboarding/human/phone');
   });
 
   it('matches snapshot', () => {

@@ -1,0 +1,84 @@
+import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
+import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
+
+export interface HumanPhoneInputProps {
+  /**
+   * Current phone number value (including country code).
+   * Example: "+316XXXXXXXX"
+   */
+  value: string;
+  /**
+   * Callback fired when the phone number input changes.
+   */
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  /**
+   * Optional placeholder text for the input field.
+   */
+  placeholder?: string;
+
+  /**
+   * Whether to show the validation checkmark.
+   */
+  isValid?: boolean;
+}
+
+
+export const HumanPhoneInput = ({ value, onChange, placeholder = '+316XXXXXXXX', isValid = false }: HumanPhoneInputProps) => {
+
+  return (
+    <Atoms.Card
+      data-testid="human-phone-input-card"
+      className="gap-0 rounded-3xl border border-border/60 bg-card/95 p-6 text-card-foreground shadow-sm md:p-10 lg:p-12"
+    >
+      <Atoms.Container className="flex-col gap-8 lg:flex-row lg:items-center">
+        <Atoms.Container className="flex h-full w-full flex-1 items-center lg:w-auto">
+          <Atoms.Image
+            priority={true}
+            src="/images/sms-verification-phone.png"
+            alt="Pubky phone representing phone number verification"
+            className="h-auto w-[192px] max-w-full"
+          />
+        </Atoms.Container>
+
+        <Atoms.Container className="w-full flex-3 gap-6 mr-6">
+          <Atoms.Container className="gap-3">
+            <Atoms.Typography
+              as="h3"
+              className="text-2xl leading-[32px] font-semibold text-foreground sm:text-[28px]"
+            >
+              Phone number
+            </Atoms.Typography>
+
+            <Atoms.Typography
+              as="p"
+              className="text-base leading-6 font-medium text-muted-foreground/80"
+            >
+              Enter your phone number, including country code (e.g. +1 for US).
+            </Atoms.Typography>
+          </Atoms.Container>
+
+          <Atoms.Container className="gap-2">
+            <Atoms.Container
+              data-testid="human-phone-input-wrapper"
+              className="ml-0 flex flex-row items-center rounded-md border border-dashed border-brand bg-[rgba(5,5,10,0.1)] px-5 py-2 shadow-xs-dark max-w-128"
+            >
+              <Atoms.Input
+                data-testid="human-phone-input"
+                type="tel"
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className="border-none bg-transparent text-base font-medium text-brand placeholder:text-brand/50 focus:outline-none focus:ring-0"
+              />
+
+              {isValid && (
+                <Libs.CheckCircle2 className="h-6 w-6 shrink-0 text-brand" aria-hidden="true" />
+              )}
+            </Atoms.Container>
+          </Atoms.Container>
+        </Atoms.Container>
+      </Atoms.Container>
+    </Atoms.Card>
+  );
+};

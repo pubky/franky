@@ -6,6 +6,6 @@ export const metadata = Molecules.Metadata({
   description: 'Onboarding verify humanity page on pubky app.',
 });
 
-export default function HumanPage() {
-  return <Templates.Human />;
+export default function HumanPhonePage() {
+  return <Templates.HumanPhone />;
 }

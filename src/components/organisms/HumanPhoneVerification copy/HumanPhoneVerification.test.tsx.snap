@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`HumanVerificationCards > matches snapshot 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-6 lg:flex-row lg:items-stretch lg:gap-8"
+  data-testid="human-verification-cards"
+>
+  <div
+    data-testid="mock-sms-card"
+  >
+    SMS Verification Card
+  </div>
+  <div
+    data-testid="mock-bitcoin-card"
+  >
+    Bitcoin Payment Card
+  </div>
+</div>
+`;

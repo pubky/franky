@@ -1,6 +1,7 @@
 export * from './Backup';
 export * from './Bookmarks';
 export * from './Human';
+export * from './HumanPhone';
 export * from './Home';
 export * from './Hot';
 export * from './Install';
