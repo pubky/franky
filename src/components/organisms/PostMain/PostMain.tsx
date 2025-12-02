@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import * as Libs from '@/libs';
 import * as Hooks from '@/hooks';
 import * as Atoms from '@/atoms';
@@ -28,6 +28,10 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
     setReplyDialogOpen(true);
   };
 
+  const handleFooterClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <>
       <Atoms.Container overrideDefaults onClick={onClick} className="relative flex cursor-pointer">
@@ -37,21 +41,16 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
           </Atoms.Container>
         )}
         <Atoms.Card ref={cardRef} className={Libs.cn('flex-1 rounded-md py-0', className)}>
-          <Atoms.CardContent className="flex flex-col gap-4 p-6">
+          <Atoms.CardContent className="gap-4 p-6">
             <Organisms.PostHeader postId={postId} />
             <Organisms.PostContent postId={postId} />
-            <Atoms.Container overrideDefaults className="flex flex-col justify-between gap-2 md:flex-row md:gap-0">
-              <Atoms.ClickStop>
-                <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
-              </Atoms.ClickStop>
-
-              <Atoms.ClickStop>
-                <Organisms.PostActionsBar
-                  postId={postId}
-                  onReplyClick={handleReplyClick}
-                  className="w-full flex-1 justify-start md:justify-end"
-                />
-              </Atoms.ClickStop>
+            <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">
+              <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
+              <Organisms.PostActionsBar
+                postId={postId}
+                onReplyClick={handleReplyClick}
+                className="w-full flex-1 justify-start md:justify-end"
+              />
             </Atoms.Container>
           </Atoms.CardContent>
         </Atoms.Card>

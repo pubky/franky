@@ -11,7 +11,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -27,33 +27,24 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
         post-no-reply-456
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
-        data-override-defaults="true"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="click-stop"
+          data-testid="post-tags-list"
         >
-          <div
-            data-testid="post-tags-list"
-          >
-            PostTagsList 
-            post-no-reply-456
-          </div>
+          PostTagsList 
+          post-no-reply-456
         </div>
         <div
-          data-testid="click-stop"
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
         >
-          <div
-            data-class-name="w-full flex-1 justify-start md:justify-end"
-            data-testid="post-actions"
-          >
-            Actions 
-            post-no-reply-456
-            <button>
-              Reply
-            </button>
-          </div>
+          Actions 
+          post-no-reply-456
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>
@@ -85,7 +76,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -101,33 +92,24 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
         post-reply-123
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
-        data-override-defaults="true"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="click-stop"
+          data-testid="post-tags-list"
         >
-          <div
-            data-testid="post-tags-list"
-          >
-            PostTagsList 
-            post-reply-123
-          </div>
+          PostTagsList 
+          post-reply-123
         </div>
         <div
-          data-testid="click-stop"
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
         >
-          <div
-            data-class-name="w-full flex-1 justify-start md:justify-end"
-            data-testid="post-actions"
-          >
-            Actions 
-            post-reply-123
-            <button>
-              Reply
-            </button>
-          </div>
+          Actions 
+          post-reply-123
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>
@@ -146,7 +128,7 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -162,33 +144,24 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
         post-123
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
-        data-override-defaults="true"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="click-stop"
+          data-testid="post-tags-list"
         >
-          <div
-            data-testid="post-tags-list"
-          >
-            PostTagsList 
-            post-123
-          </div>
+          PostTagsList 
+          post-123
         </div>
         <div
-          data-testid="click-stop"
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
         >
-          <div
-            data-class-name="w-full flex-1 justify-start md:justify-end"
-            data-testid="post-actions"
-          >
-            Actions 
-            post-123
-            <button>
-              Reply
-            </button>
-          </div>
+          Actions 
+          post-123
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>
@@ -207,7 +180,7 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="flex flex-col gap-4 p-6"
+      data-class-name="gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -223,33 +196,24 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
         post-789
       </div>
       <div
-        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
-        data-override-defaults="true"
+        data-class-name="justify-between gap-2 md:flex-row md:gap-0"
         data-testid="container"
       >
         <div
-          data-testid="click-stop"
+          data-testid="post-tags-list"
         >
-          <div
-            data-testid="post-tags-list"
-          >
-            PostTagsList 
-            post-789
-          </div>
+          PostTagsList 
+          post-789
         </div>
         <div
-          data-testid="click-stop"
+          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-actions"
         >
-          <div
-            data-class-name="w-full flex-1 justify-start md:justify-end"
-            data-testid="post-actions"
-          >
-            Actions 
-            post-789
-            <button>
-              Reply
-            </button>
-          </div>
+          Actions 
+          post-789
+          <button>
+            Reply
+          </button>
         </div>
       </div>
     </div>

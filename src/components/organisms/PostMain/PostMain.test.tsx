@@ -45,7 +45,6 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  ClickStop: ({ children }: { children: React.ReactNode }) => <div data-testid="click-stop">{children}</div>,
   PostThreadConnector: ({ height, variant }: { height: number; variant?: string }) => (
     <div data-testid="thread-connector" data-height={height} data-variant={variant}>
       ThreadConnector

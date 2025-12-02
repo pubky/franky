@@ -3,7 +3,6 @@ export * from './AvatarEmojiBadge';
 export * from './Badge';
 export * from './Button';
 export * from './Card';
-export * from './ClickStop';
 export * from './Container';
 export * from './Dialog';
 export * from './Filter';
