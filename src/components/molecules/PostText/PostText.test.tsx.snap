@@ -414,6 +414,103 @@ exports[`PostText - Snapshots > matches snapshot for long hashtag 1`] = `
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for mention alongside hashtag 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
+    </a>
+     loves 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=bitcoin"
+    >
+      #bitcoin
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for mention alongside link 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Visit 
+    <a
+      class="cursor-pointer text-brand transition-colors hover:text-brand/80"
+      href="https://example.com"
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      Example
+    </a>
+     and follow 
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for mention with markdown formatting 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This is 
+    <strong>
+      bold
+    </strong>
+     with 
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
+    </a>
+     and 
+    <em>
+      italic
+    </em>
+     text
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for mention with text 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    This post mentions 
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
+    </a>
+     in the middle
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for multiline content with line breaks 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
@@ -454,6 +551,30 @@ exports[`PostText - Snapshots > matches snapshot for multiple hashtags 1`] = `
       href="/search?tags=three"
     >
       #three
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for multiple mentions 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
+    </a>
+     and 
+    <a
+      data-testid="post-mention"
+      href="/profile/7qinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:7qinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
     </a>
   </p>
 </div>
@@ -547,6 +668,42 @@ exports[`PostText - Snapshots > matches snapshot for single hashtag 1`] = `
       href="/search?tags=bitcoin"
     >
       #bitcoin
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for single mention with pk: prefix 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
+    </a>
+  </p>
+</div>
+`;
+
+exports[`PostText - Snapshots > matches snapshot for single mention with pubky prefix 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out 
+    <a
+      data-testid="post-mention"
+      href="/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo"
+    >
+      pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo
     </a>
   </p>
 </div>

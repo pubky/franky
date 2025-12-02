@@ -2,10 +2,12 @@
 
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { remarkHashtags, remarkPlaintextCodeblock } from './PostText.utils';
+import { remarkHashtags, remarkMentions, remarkPlaintextCodeblock } from './PostText.utils';
+import { RemarkAnchorProps } from './PostText.types';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
+import * as Organisms from '@/organisms';
 
 type PostTextProps = {
   content: string;
@@ -20,19 +22,13 @@ export const PostText = ({ content }: PostTextProps) => {
       <Markdown
         allowedElements={['em', 'strong', 'code', 'pre', 'a', 'p', 'br', 'ul', 'ol', 'li', 'del', 'blockquote', 'hr']}
         unwrapDisallowed
-        remarkPlugins={[remarkGfm, remarkPlaintextCodeblock, remarkHashtags]}
+        remarkPlugins={[remarkGfm, remarkPlaintextCodeblock, remarkHashtags, remarkMentions]}
         components={{
-          a(props) {
-            const {
-              children,
-              className,
-              'data-type': dataType,
-              node: _node,
-              ref: _ref,
-              ...rest
-            } = props as typeof props & { 'data-type'?: string };
+          a(props: RemarkAnchorProps) {
+            const { children, className, 'data-type': dataType, node: _node, ref: _ref, ...rest } = props;
 
             if (dataType === 'hashtag') return <Molecules.PostHashtags {...props} />;
+            if (dataType === 'mention') return <Organisms.PostMentions {...props} />;
 
             return (
               <a

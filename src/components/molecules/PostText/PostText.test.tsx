@@ -33,6 +33,15 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
+// Mock @/organisms
+vi.mock('@/organisms', () => ({
+  PostMentions: ({ children, href }: { children?: React.ReactNode; href?: string }) => (
+    <a data-testid="post-mention" href={href}>
+      {children}
+    </a>
+  ),
+}));
+
 describe('PostText', () => {
   describe('Basic rendering', () => {
     it('renders plain text content', () => {
@@ -332,6 +341,78 @@ describe('PostText', () => {
     });
   });
 
+  describe('Mentions', () => {
+    const validPkMention = 'pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo';
+    const validPubkyMention = 'pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo';
+
+    it('renders mention as PostMentions component with pk: prefix', () => {
+      render(<PostText content={`Check out ${validPkMention}`} />);
+
+      const mention = screen.getByTestId('post-mention');
+      expect(mention).toHaveTextContent(validPkMention);
+      expect(mention).toHaveAttribute('href', '/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo');
+    });
+
+    it('renders mention as PostMentions component with pubky prefix', () => {
+      render(<PostText content={`Check out ${validPubkyMention}`} />);
+
+      const mention = screen.getByTestId('post-mention');
+      expect(mention).toHaveTextContent(validPubkyMention);
+      expect(mention).toHaveAttribute('href', '/profile/8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo');
+    });
+
+    it('renders mention at start of content', () => {
+      render(<PostText content={`${validPkMention} is a great user`} />);
+
+      const mention = screen.getByTestId('post-mention');
+      expect(mention).toHaveTextContent(validPkMention);
+    });
+
+    it('renders mention at end of content', () => {
+      render(<PostText content={`Check out this user ${validPkMention}`} />);
+
+      const mention = screen.getByTestId('post-mention');
+      expect(mention).toHaveTextContent(validPkMention);
+    });
+
+    it('renders multiple mentions', () => {
+      const secondMention = 'pk:7qinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo';
+      render(<PostText content={`${validPkMention} and ${secondMention}`} />);
+
+      const mentions = screen.getAllByTestId('post-mention');
+      expect(mentions).toHaveLength(2);
+      expect(mentions[0]).toHaveTextContent(validPkMention);
+      expect(mentions[1]).toHaveTextContent(secondMention);
+    });
+
+    it('renders mentions alongside regular links', () => {
+      render(<PostText content={`Visit [site](https://example.com) and follow ${validPkMention}`} />);
+
+      expect(screen.getByRole('link', { name: 'site' })).toBeInTheDocument();
+      expect(screen.getByTestId('post-mention')).toHaveTextContent(validPkMention);
+    });
+
+    it('renders mentions alongside hashtags', () => {
+      render(<PostText content={`${validPkMention} loves #bitcoin`} />);
+
+      expect(screen.getByTestId('post-mention')).toHaveTextContent(validPkMention);
+      expect(screen.getByTestId('post-hashtag')).toHaveTextContent('#bitcoin');
+    });
+
+    it('does not parse invalid mention with short key', () => {
+      render(<PostText content="This is pk:short not a mention" />);
+
+      expect(screen.queryByTestId('post-mention')).not.toBeInTheDocument();
+    });
+
+    it('renders mentions mixed with markdown formatting', () => {
+      render(<PostText content={`This is **bold** and ${validPkMention} text`} />);
+
+      expect(screen.getByText('bold').tagName).toBe('STRONG');
+      expect(screen.getByTestId('post-mention')).toHaveTextContent(validPkMention);
+    });
+  });
+
   describe('GFM (GitHub Flavored Markdown) features', () => {
     it('renders task lists as regular lists (checkboxes unwrapped)', () => {
       render(<PostText content={'- [ ] Todo\n- [x] Done'} />);
@@ -525,6 +606,55 @@ Third line`}
   it('matches snapshot for long hashtag', () => {
     const { container } = render(
       <PostText content="Check out this #verylooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonghashtagwithlotsofcharactersandnumbers123456789 tag" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for single mention with pk: prefix', () => {
+    const { container } = render(
+      <PostText content="Check out pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for single mention with pubky prefix', () => {
+    const { container } = render(
+      <PostText content="Check out pubky8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for multiple mentions', () => {
+    const { container } = render(
+      <PostText content="pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo and pk:7qinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for mention with text', () => {
+    const { container } = render(
+      <PostText content="This post mentions pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo in the middle" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for mention alongside hashtag', () => {
+    const { container } = render(
+      <PostText content="pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo loves #bitcoin" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for mention alongside link', () => {
+    const { container } = render(
+      <PostText content="Visit [Example](https://example.com) and follow pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot for mention with markdown formatting', () => {
+    const { container } = render(
+      <PostText content="This is **bold** with pk:8pinxxgqs41n4aididenw5apqp1urfmzdztr8jt4abrkdn435ewo and *italic* text" />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });

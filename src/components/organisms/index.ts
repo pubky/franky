@@ -33,6 +33,7 @@ export * from './PostHeader';
 export * from './ProfilePageSidebar';
 export * from './CoordinatorsManager';
 export * from './PostMain';
+export * from './PostMentions';
 export * from './PublicKeyCard';
 export * from './SinglePost';
 export * from './SinglePostContent';
