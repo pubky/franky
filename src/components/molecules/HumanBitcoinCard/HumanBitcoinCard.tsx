@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import { useSatUsdRate } from '@/hooks/useSatUsdRate';
 import * as Libs from '@/libs';
+import React from 'react';
 
 const SAT_PRICE = 1000;
 
@@ -44,7 +45,7 @@ export const HumanBitcoinCard = () => {
             </Atoms.Typography>
 
             <Atoms.Typography as="p" className="text-xs font-medium tracking-[0.1em] text-muted-foreground">
-              ₿1,000 = {rate && rate.satUsd ? `$${rate.satUsd * SAT_PRICE}` : 'Loading...'}
+              {rate?.satUsd ? <React.Fragment>₿1,000 = $ ${rate!.satUsd * SAT_PRICE}</React.Fragment> : <br />}
             </Atoms.Typography>
 
             <Atoms.Container className="gap-1 text-secondary-foreground/80">

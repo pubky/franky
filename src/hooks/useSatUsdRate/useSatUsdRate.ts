@@ -11,6 +11,7 @@ interface StoredRate {
   isLoading: boolean;
   /**
    * The stored rate. When loading, this is null.
+   * In case of an error, this is { satUsd: 0, lastUpdatedAt: 0 }.
    */
   rate: {
     /**
@@ -48,8 +49,7 @@ export function useSatUsdRate(): StoredRate {
     try {
       const rate = await getSatoshiUsdRate();
       setRate({ isLoading: false, rate: { satUsd: rate, lastUpdatedAt: Date.now() } });
-    } catch (error) {
-      console.error('Failed to fetch SAT/USD rate:', error);
+    } catch {
       setRate({ isLoading: false, rate: { satUsd: 0, lastUpdatedAt: 0 } });
     }
   }
