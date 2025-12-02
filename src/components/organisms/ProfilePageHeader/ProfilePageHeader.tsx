@@ -6,9 +6,20 @@ import * as Icons from '@/libs/icons';
 import * as Libs from '@/libs';
 import * as Types from './ProfilePageHeader.types';
 
-export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderProps) {
+export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Types.ProfilePageHeaderProps) {
   const { avatarUrl, emoji = '🌴', name, bio, publicKey, status } = profile;
-  const { onEdit, onCopyPublicKey, onCopyLink, onSignOut, onStatusChange, onAvatarClick, isLoggingOut } = actions;
+  const {
+    onEdit,
+    onCopyPublicKey,
+    onCopyLink,
+    onSignOut,
+    onStatusChange,
+    onAvatarClick,
+    isLoggingOut,
+    onFollowToggle,
+    isFollowLoading,
+    isFollowing,
+  } = actions;
 
   const formattedPublicKey = Libs.formatPublicKey({ key: publicKey, length: 12 });
   const displayEmoji = Libs.extractEmojiFromStatus(status || '', emoji);
@@ -43,44 +54,101 @@ export function ProfilePageHeader({ profile, actions }: Types.ProfilePageHeaderP
               {bio}
             </Atoms.Typography>
           )}
+          {/* Show status as read-only text for other users' profiles */}
+          {!isOwnProfile && status && (
+            <Atoms.Typography as="p" size="sm" className="font-medium text-muted-foreground lg:text-base">
+              {displayEmoji} {status}
+            </Atoms.Typography>
+          )}
         </Atoms.Container>
 
         <Atoms.Container
           overrideDefaults={true}
           className="flex flex-wrap items-center justify-center gap-3 lg:justify-start"
         >
-          <Atoms.Button variant="secondary" size="sm" onClick={onEdit}>
-            <Icons.Pencil className="size-4" />
-            Edit
-          </Atoms.Button>
-          <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
-            <Icons.KeyRound className="size-4" />
-            {formattedPublicKey}
-          </Atoms.Button>
-          <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
-            <Icons.Link className="size-4" />
-            Link
-          </Atoms.Button>
-          <Atoms.Button
-            variant="secondary"
-            size="sm"
-            onClick={onSignOut}
-            id="profile-logout-btn"
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? (
-              <>
-                <Icons.Loader2 className="size-4 animate-spin" />
-                Logging out...
-              </>
-            ) : (
-              <>
-                <Icons.LogOut className="size-4" />
-                Sign out
-              </>
-            )}
-          </Atoms.Button>
-          <Molecules.StatusPickerWrapper emoji={displayEmoji} status={status || ''} onStatusChange={onStatusChange} />
+          {/* Own profile actions */}
+          {isOwnProfile && (
+            <>
+              <Atoms.Button variant="secondary" size="sm" onClick={onEdit}>
+                <Icons.Pencil className="size-4" />
+                Edit
+              </Atoms.Button>
+              <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
+                <Icons.KeyRound className="size-4" />
+                {formattedPublicKey}
+              </Atoms.Button>
+              <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
+                <Icons.Link className="size-4" />
+                Link
+              </Atoms.Button>
+              <Atoms.Button
+                variant="secondary"
+                size="sm"
+                onClick={onSignOut}
+                id="profile-logout-btn"
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? (
+                  <>
+                    <Icons.Loader2 className="size-4 animate-spin" />
+                    Logging out...
+                  </>
+                ) : (
+                  <>
+                    <Icons.LogOut className="size-4" />
+                    Sign out
+                  </>
+                )}
+              </Atoms.Button>
+              <Molecules.StatusPickerWrapper
+                emoji={displayEmoji}
+                status={status || ''}
+                onStatusChange={onStatusChange}
+              />
+            </>
+          )}
+
+          {/* Other user profile actions */}
+          {!isOwnProfile && (
+            <>
+              {/* Follow/Unfollow button */}
+              <Atoms.Button
+                variant={isFollowing ? 'outline' : 'default'}
+                size="sm"
+                onClick={onFollowToggle}
+                disabled={isFollowLoading}
+              >
+                {isFollowLoading ? (
+                  <>
+                    <Icons.Loader2 className="size-4 animate-spin" />
+                    {isFollowing ? 'Unfollowing...' : 'Following...'}
+                  </>
+                ) : (
+                  <>
+                    {isFollowing ? (
+                      <>
+                        <Icons.UserCheck className="size-4" />
+                        Following
+                      </>
+                    ) : (
+                      <>
+                        <Icons.UserPlus className="size-4" />
+                        Follow
+                      </>
+                    )}
+                  </>
+                )}
+              </Atoms.Button>
+              <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
+                <Icons.KeyRound className="size-4" />
+                {formattedPublicKey}
+              </Atoms.Button>
+              <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
+                <Icons.Link className="size-4" />
+                Link
+              </Atoms.Button>
+            </>
+          )}
         </Atoms.Container>
       </Atoms.Container>
     </Atoms.Container>

@@ -24,3 +24,5 @@ export * from './useNotifications';
 export * from './useStreamPagination';
 export * from './usePostNavigation';
 export * from './useProfileConnections';
+export * from './useFollowUser';
+export * from './useIsFollowing';

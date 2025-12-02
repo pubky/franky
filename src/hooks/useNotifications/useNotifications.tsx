@@ -4,200 +4,149 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
 import * as Config from '@/config';
-import * as Libs from '@/libs';
 import type { FlatNotification } from '@/core';
 import type { UseNotificationsResult } from './useNotifications.types';
 
 /**
- * Deduplicate notifications using unique keys
- */
-function deduplicateNotifications(notifications: FlatNotification[]): FlatNotification[] {
-  const uniqueMap = new Map<string, FlatNotification>();
-  for (const notification of notifications) {
-    const key = Core.getNotificationKey(notification);
-    if (!uniqueMap.has(key)) {
-      uniqueMap.set(key, notification);
-    }
-  }
-  return Array.from(uniqueMap.values());
-}
-
-/**
- * Hook for fetching and managing notifications with pagination.
- *
- * Uses useLiveQuery to read from local database for persistence across page navigation.
- * Fetches from Nexus API when loading more notifications.
- *
- * @returns Notifications array, unread notifications, counts, loading states, pagination methods
+ * Hook for notifications with infinite scroll pagination.
+ * Uses local cache (via useLiveQuery) for real-time updates from polling,
+ * and fetches from Nexus for pagination.
  */
 export function useNotifications(): UseNotificationsResult {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const skipRef = useRef<number>(0);
+  const loadingRef = useRef(false);
+
+  const { currentUserPubky } = Core.useAuthStore();
+  const lastRead = Core.useNotificationStore((s) => s.lastRead);
+  const lastReadRef = useRef(lastRead);
+
+  useEffect(() => {
+    if (lastReadRef.current === 0 && lastRead > 0) {
+      lastReadRef.current = lastRead;
+    }
+  }, [lastRead]);
+
   const [initialLoadDone, setInitialLoadDone] = useState(false);
 
-  // Use refs for values that need to be accessed in callbacks without causing re-renders
-  const hasMoreRef = useRef(true);
-  const isLoadingMoreRef = useRef(false);
-  const notificationsRef = useRef<FlatNotification[]>([]);
+  // Get all notifications from local cache (reactive to polling updates)
+  const cachedNotifications = useLiveQuery(async () => {
+    if (!currentUserPubky) return undefined;
+    const notifications = await Core.NotificationModel.getAll();
+    setInitialLoadDone(true);
+    return notifications;
+  }, [currentUserPubky]);
 
-  // Get lastRead from notification store
-  const lastRead = Core.useNotificationStore((state) => state.lastRead);
-
-  // Capture the lastRead value when the hook first mounts
-  // This is used to show which notifications were unread when the user entered the page
-  // Even after markAllAsRead() is called, these notifications will still appear as "new" visually
-  const capturedLastReadRef = useRef<number | null>(null);
-  if (capturedLastReadRef.current === null && lastRead > 0) {
-    capturedLastReadRef.current = lastRead;
-  }
-
-  // Reset captured value on unmount so next mount captures fresh value
-  useEffect(() => {
-    return () => {
-      capturedLastReadRef.current = null;
-    };
-  }, []);
-
-  // Read notifications from local database using useLiveQuery
-  // This provides persistence across page navigation
-  const dbNotifications = useLiveQuery(async () => {
-    // Get all notifications from database via controller
-    return await Core.NotificationController.getAllFromCache();
-  }, []);
-
-  // Deduplicate notifications (database may have duplicates due to ++id schema)
+  // Sort notifications by timestamp (newest first)
   const notifications = useMemo(() => {
-    if (!dbNotifications) return [];
-    return deduplicateNotifications(dbNotifications);
-  }, [dbNotifications]);
+    return [...(cachedNotifications || [])].sort((a, b) => b.timestamp - a.timestamp);
+  }, [cachedNotifications]);
 
-  // Keep ref in sync with current notifications for stable callbacks
-  notificationsRef.current = notifications;
-
-  // Calculate if still loading initial data
-  const isLoading = dbNotifications === undefined;
+  // Loading until initial query completes
+  const isLoading = !initialLoadDone;
 
   /**
-   * Fetches more notifications from the API
-   */
-  const fetchMoreNotifications = useCallback(async () => {
-    // Prevent concurrent pagination requests
-    if (isLoadingMoreRef.current) return;
-    if (!hasMoreRef.current) return;
-
-    isLoadingMoreRef.current = true;
-    setIsLoadingMore(true);
-    setError(null);
-
-    try {
-      // Get the oldest notification timestamp for pagination
-      // Use ref to avoid recreating callback on every notification change
-      const currentNotifications = notificationsRef.current;
-      const oldestTimestamp =
-        currentNotifications.length > 0 ? Math.min(...currentNotifications.map((n) => n.timestamp)) : Infinity;
-
-      const result = await Core.NotificationController.getOrFetchNotifications({
-        olderThan: oldestTimestamp,
-        limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
-      });
-
-      // Determine if there are more notifications
-      const hasMoreNotifications =
-        result.olderThan !== undefined && result.notifications.length >= Config.NEXUS_NOTIFICATIONS_LIMIT;
-      hasMoreRef.current = hasMoreNotifications;
-      setHasMore(hasMoreNotifications);
-
-      // Notifications are automatically persisted to the database by the controller
-      // useLiveQuery will automatically update when the database changes
-    } catch (err) {
-      const errorMessage = Libs.isAppError(err) ? err.message : 'Failed to load notifications';
-      setError(errorMessage);
-      hasMoreRef.current = false;
-      setHasMore(false);
-      Libs.Logger.error('Failed to fetch notifications:', err);
-    } finally {
-      isLoadingMoreRef.current = false;
-      setIsLoadingMore(false);
-    }
-  }, []);
-
-  /**
-   * Load more notifications (pagination)
+   * Load more notifications from Nexus
    */
   const loadMore = useCallback(async () => {
-    await fetchMoreNotifications();
-  }, [fetchMoreNotifications]);
+    if (loadingRef.current || !hasMore || !currentUserPubky) return;
 
-  /**
-   * Refresh notifications - fetch latest from API
-   */
-  const refresh = useCallback(async () => {
-    hasMoreRef.current = true;
-    isLoadingMoreRef.current = false;
-    setHasMore(true);
-    setError(null);
+    loadingRef.current = true;
+    setIsLoadingMore(true);
 
     try {
-      // Fetch the most recent notifications
-      await Core.NotificationController.getOrFetchNotifications({
-        olderThan: Infinity,
+      const newNotifications = await Core.NexusUserService.notifications({
+        user_id: currentUserPubky,
+        skip: skipRef.current,
         limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
       });
-    } catch (err) {
-      const errorMessage = Libs.isAppError(err) ? err.message : 'Failed to refresh notifications';
-      setError(errorMessage);
-      Libs.Logger.error('Failed to refresh notifications:', err);
+
+      if (newNotifications.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      // Transform and save to cache
+      const flatNotifications = newNotifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+      await Core.NotificationModel.bulkSave(flatNotifications);
+
+      skipRef.current += newNotifications.length;
+
+      if (newNotifications.length < Config.NEXUS_NOTIFICATIONS_LIMIT) {
+        setHasMore(false);
+      }
+    } catch {
+      setError('Failed to load notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoadingMore(false);
     }
-  }, []);
+  }, [hasMore, currentUserPubky]);
 
   /**
-   * Mark all notifications as read by updating lastRead timestamp on homeserver and local store
+   * Refresh notifications
+   */
+  const refresh = useCallback(async () => {
+    if (!currentUserPubky) return;
+
+    skipRef.current = 0;
+    setHasMore(true);
+
+    try {
+      const newNotifications = await Core.NexusUserService.notifications({
+        user_id: currentUserPubky,
+        skip: 0,
+        limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
+      });
+
+      const flatNotifications = newNotifications.map((n) => Core.NotificationNormalizer.toFlatNotification(n));
+      await Core.NotificationModel.bulkSave(flatNotifications);
+
+      skipRef.current = newNotifications.length;
+      setHasMore(newNotifications.length >= Config.NEXUS_NOTIFICATIONS_LIMIT);
+    } catch {
+      setError('Failed to load notifications');
+    }
+  }, [currentUserPubky]);
+
+  /**
+   * Mark all notifications as read
    */
   const markAllAsRead = useCallback(() => {
-    // Call controller to update homeserver and local store
     Core.NotificationController.markAllAsRead();
   }, []);
 
   /**
-   * Check if a notification was unread when the user entered the page.
-   * Uses the captured lastRead value, not the current store value.
+   * Check if a notification is unread
    */
-  const isNotificationUnread = useCallback(
-    (notification: FlatNotification): boolean => {
-      const threshold = capturedLastReadRef.current ?? lastRead;
-      return notification.timestamp > threshold;
-    },
-    [lastRead],
-  );
+  const isNotificationUnread = useCallback((n: FlatNotification) => {
+    return n.timestamp > lastReadRef.current;
+  }, []);
 
   /**
-   * Calculate unread notifications based on captured lastRead timestamp.
-   * These are notifications that were unread when the user entered the page.
+   * List of unread notifications
    */
   const unreadNotifications = useMemo(() => {
-    const threshold = capturedLastReadRef.current ?? lastRead;
-    return notifications.filter((n) => n.timestamp > threshold);
-  }, [notifications, lastRead]);
+    return notifications.filter((n) => n.timestamp > lastReadRef.current);
+  }, [notifications]);
 
-  // Initial load - fetch notifications if database is empty
+  /**
+   * Initial load - fetch first page if cache is empty
+   */
   useEffect(() => {
-    if (initialLoadDone) return;
-    if (dbNotifications === undefined) return; // Still loading from DB
+    if (!currentUserPubky || isLoading) return;
 
-    setInitialLoadDone(true);
-
-    // If no notifications in database, fetch from API
-    if (dbNotifications.length === 0) {
-      Core.NotificationController.getOrFetchNotifications({
-        olderThan: Infinity,
-        limit: Config.NEXUS_NOTIFICATIONS_LIMIT,
-      }).catch((err) => {
-        setError(Libs.isAppError(err) ? err.message : 'Failed to load notifications');
-        Libs.Logger.error('Failed to fetch initial notifications:', err);
-      });
+    // If cache is empty, fetch first page
+    if (notifications.length === 0 && hasMore) {
+      loadMore();
+    } else {
+      // Update skip based on cached notifications
+      skipRef.current = notifications.length;
     }
-  }, [dbNotifications, initialLoadDone]);
+  }, [currentUserPubky, isLoading, notifications.length, hasMore, loadMore]);
 
   return {
     notifications,

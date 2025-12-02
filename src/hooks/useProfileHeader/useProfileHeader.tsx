@@ -1,16 +1,17 @@
 'use client';
 
-import * as Hooks from '@/hooks';
+// Import directly to avoid circular dependency with @/hooks barrel
+import { useUserProfile, type UserProfile } from '@/hooks/useUserProfile';
+import { useProfileStats, type ProfileStats } from '@/hooks/useProfileStats';
+import { useProfileActions, type ProfileActions } from '@/hooks/useProfileActions';
 
 // Re-export types from composed hooks for backwards compatibility
-export type { ProfileStats } from '@/hooks/useProfileStats';
-export type { UserProfile } from '@/hooks/useUserProfile';
-export type { ProfileActions } from '@/hooks/useProfileActions';
+export type { ProfileStats, UserProfile, ProfileActions };
 
 /**
  * Default profile data used during loading state or when profile is unavailable.
  */
-const DEFAULT_PROFILE: Hooks.UserProfile = {
+const DEFAULT_PROFILE: UserProfile = {
   name: '',
   bio: '',
   publicKey: '',
@@ -36,17 +37,17 @@ const DEFAULT_PROFILE: Hooks.UserProfile = {
  */
 export function useProfileHeader(userId: string) {
   // Fetch user profile data
-  const { profile, isLoading: isProfileLoading } = Hooks.useUserProfile(userId);
+  const { profile, isLoading: isProfileLoading } = useUserProfile(userId);
 
   // Fetch profile statistics
-  const { stats, isLoading: isStatsLoading } = Hooks.useProfileStats(userId);
+  const { stats, isLoading: isStatsLoading } = useProfileStats(userId);
 
   // Provide default profile values when profile is null (loading state)
   // This centralizes the fallback logic and ensures type consistency
   const profileData = profile ?? DEFAULT_PROFILE;
 
   // Get action handlers (only when profile is available)
-  const actions = Hooks.useProfileActions({
+  const actions = useProfileActions({
     publicKey: profileData.publicKey,
     link: profileData.link,
   });
