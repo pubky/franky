@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { userApi } from './user.api';
 import {
   TUserViewParams,
@@ -154,6 +154,130 @@ describe('User API', () => {
       expect(endpointKeys).toContain('relationship');
       expect(endpointKeys).toContain('taggers');
       expect(endpointKeys).toContain('tags');
+    });
+  });
+});
+
+describe('NexusUserService', () => {
+  const testUserId = 'qr3xqyz3e5cyf9npgxc5zfp15ehhcis6gqsxob4une7bwwazekry' as Core.Pubky;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('tags', () => {
+    it('should construct correct URL and handle successful response', async () => {
+      const mockTags = [
+        { label: 'developer', taggers: [] as Core.Pubky[], taggers_count: 0, relationship: false },
+      ] as Core.NexusTag[];
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockTags);
+
+      const result = await Core.NexusUserService.tags({
+        user_id: testUserId,
+        skip_tags: 5,
+        limit_tags: 20,
+      });
+
+      expect(result).toEqual(mockTags);
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        `${Config.NEXUS_URL}/v0/user/${testUserId}/tags?skip_tags=5&limit_tags=20`,
+      );
+    });
+
+    it('should handle null/undefined responses gracefully', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+
+      const result = await Core.NexusUserService.tags({
+        user_id: testUserId,
+        skip_tags: 0,
+        limit_tags: 10,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('taggers', () => {
+    it('should construct correct URL with encoded label', async () => {
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      await Core.NexusUserService.taggers({
+        user_id: testUserId,
+        label: 'rust & wasm',
+        skip: 10,
+        limit: 5,
+      });
+
+      // Verify label is URL-encoded (& becomes %26)
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/\/taggers\/rust%20%26%20wasm\?skip=10&limit=5$/),
+      );
+    });
+
+    it('should handle null/undefined responses gracefully', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+
+      const result = await Core.NexusUserService.taggers({
+        user_id: testUserId,
+        label: 'developer',
+        skip: 0,
+        limit: 10,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('details', () => {
+    it('should construct correct URL and handle successful response', async () => {
+      const mockUserDetails: Core.NexusUserDetails = {
+        id: testUserId,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'active',
+        links: [],
+        indexed_at: Date.now(),
+      };
+
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockUserDetails);
+
+      const result = await Core.NexusUserService.details({ user_id: testUserId });
+
+      expect(result).toEqual(mockUserDetails);
+      expect(queryNexusSpy).toHaveBeenCalledWith(`${Config.NEXUS_URL}/v0/user/${testUserId}/details`);
+    });
+
+    it('should handle null/undefined responses gracefully', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+
+      const result = await Core.NexusUserService.details({ user_id: testUserId });
+
+      expect(result).toEqual(null);
+    });
+
+    it('should handle user with complete profile data', async () => {
+      const mockUserDetails: Core.NexusUserDetails = {
+        id: testUserId,
+        name: 'Satoshi Nakamoto',
+        bio: 'Bitcoin creator',
+        image: '/path/to/avatar.jpg',
+        status: 'Busy',
+        links: [
+          { title: 'Website', url: 'https://bitcoin.org' },
+          { title: 'GitHub', url: 'https://github.com/bitcoin' },
+        ],
+        indexed_at: 1234567890,
+      };
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockUserDetails);
+
+      const result = await Core.NexusUserService.details({ user_id: testUserId });
+
+      expect(result).toEqual(mockUserDetails);
+      expect(result?.name).toBe('Satoshi Nakamoto');
+      expect(result?.links).toHaveLength(2);
     });
   });
 });

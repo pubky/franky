@@ -66,7 +66,15 @@ describe('LeftSidebar', () => {
     render(<LeftSidebar />);
 
     const sidebar = screen.getByTestId('left-sidebar');
-    expect(sidebar).toHaveClass('w-[180px]', 'hidden', 'lg:flex', 'flex-col', 'gap-6', 'justify-start', 'items-start');
+    expect(sidebar).toHaveClass(
+      'w-(--filter-bar-width)',
+      'hidden',
+      'lg:flex',
+      'flex-col',
+      'gap-6',
+      'justify-start',
+      'items-start',
+    );
   });
 
   it('renders filter components in correct order', () => {
@@ -117,7 +125,7 @@ describe('LeftSidebar', () => {
     render(<LeftSidebar />);
 
     const sidebar = screen.getByTestId('left-sidebar');
-    expect(sidebar).toHaveClass('w-[180px]', 'flex-col', 'gap-6', 'justify-start', 'items-start');
+    expect(sidebar).toHaveClass('w-(--filter-bar-width)', 'flex-col', 'gap-6', 'justify-start', 'items-start');
   });
 });
 

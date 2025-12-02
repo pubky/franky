@@ -5,6 +5,7 @@ import 'fake-indexeddb/auto';
 import { vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import { beforeAll, afterAll, afterEach, beforeEach } from 'vitest';
+
 // Polyfill IntersectionObserver for jsdom
 class MockIntersectionObserver implements IntersectionObserver {
   constructor() {}
@@ -18,12 +19,32 @@ class MockIntersectionObserver implements IntersectionObserver {
     return [];
   }
 }
+
+// Polyfill ResizeObserver for jsdom
+class MockResizeObserver implements ResizeObserver {
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback;
+  }
+  private callback: ResizeObserverCallback;
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
+// Mock URL.createObjectURL and URL.revokeObjectURL for jsdom
+URL.createObjectURL = vi.fn(() => 'blob:mock-url');
+URL.revokeObjectURL = vi.fn();
+
 // Assign to globals for jsdom
 (globalThis as unknown as { IntersectionObserver: typeof MockIntersectionObserver }).IntersectionObserver =
   MockIntersectionObserver;
-if (typeof window !== 'undefined')
+(globalThis as unknown as { ResizeObserver: typeof MockResizeObserver }).ResizeObserver = MockResizeObserver;
+
+if (typeof window !== 'undefined') {
   (window as unknown as { IntersectionObserver: typeof MockIntersectionObserver }).IntersectionObserver =
     MockIntersectionObserver;
+  (window as unknown as { ResizeObserver: typeof MockResizeObserver }).ResizeObserver = MockResizeObserver;
+}
 
 // Suppress specific WebAssembly and navigation warnings
 const originalConsoleError = console.error;

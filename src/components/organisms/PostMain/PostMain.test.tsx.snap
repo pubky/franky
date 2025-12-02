@@ -1,60 +1,163 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
+exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
 <div
-  data-class-name="cursor-pointer rounded-md py-0"
-  data-testid="card"
+  data-class-name="relative flex cursor-pointer"
+  data-testid="container"
 >
   <div
-    data-class-name="flex flex-col gap-4 p-6"
-    data-testid="card-content"
+    data-class-name="flex-1 rounded-md py-0"
+    data-testid="card"
   >
     <div
-      data-testid="post-header"
-    >
-      PostHeader 
-      post-123
-    </div>
-    <div
-      data-testid="post-content"
-    >
-      PostContent 
-      post-123
-    </div>
-    <div
-      class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
-      data-override-defaults="true"
-      data-testid="container"
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
     >
       <div
-        data-testid="click-stop"
+        data-testid="post-header"
       >
-        <ul
-          data-testid="post-tags-list"
-        >
-          <li>
-            alpha
-          </li>
-          <li>
-            beta
-          </li>
-          <li>
-            gamma
-          </li>
-        </ul>
+        PostHeader 
+        post-no-reply-456
       </div>
       <div
-        data-testid="click-stop"
+        data-testid="post-content"
+      >
+        PostContent 
+        post-no-reply-456
+      </div>
+      <div
+        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
       >
         <div
-          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-tags-list"
+        >
+          PostTagsList 
+          post-no-reply-456
+        </div>
+        <div
+          data-testid="post-actions"
+        >
+          Actions 
+          post-no-reply-456
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
+<div
+  data-class-name="relative flex cursor-pointer"
+  data-testid="container"
+>
+  <div
+    data-class-name="w-3 shrink-0"
+    data-testid="container"
+  >
+    <div
+      data-height="150"
+      data-testid="thread-connector"
+      data-variant="regular"
+    >
+      ThreadConnector
+    </div>
+  </div>
+  <div
+    data-class-name="flex-1 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
+    >
+      <div
+        data-testid="post-header"
+      >
+        PostHeader 
+        post-reply-123
+      </div>
+      <div
+        data-testid="post-content"
+      >
+        PostContent 
+        post-reply-123
+      </div>
+      <div
+        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-testid="post-tags-list"
+        >
+          PostTagsList 
+          post-reply-123
+        </div>
+        <div
+          data-testid="post-actions"
+        >
+          Actions 
+          post-reply-123
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
+<div
+  data-class-name="relative flex cursor-pointer"
+  data-testid="container"
+>
+  <div
+    data-class-name="w-3 shrink-0"
+    data-testid="container"
+  >
+    <div
+      data-height="150"
+      data-testid="thread-connector"
+      data-variant="regular"
+    >
+      ThreadConnector
+    </div>
+  </div>
+  <div
+    data-class-name="flex-1 rounded-md py-0"
+    data-testid="card"
+  >
+    <div
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
+    >
+      <div
+        data-testid="post-header"
+      >
+        PostHeader 
+        post-123
+      </div>
+      <div
+        data-testid="post-content"
+      >
+        PostContent 
+        post-123
+      </div>
+      <div
+        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
+      >
+        <div
+          data-testid="post-tags-list"
+        >
+          PostTagsList 
+          post-123
+        </div>
+        <div
           data-testid="post-actions"
         >
           Actions 
           post-123
-          <button>
-            Reply
-          </button>
         </div>
       </div>
     </div>
@@ -64,49 +167,56 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
 
 exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
 <div
-  data-class-name="cursor-pointer rounded-md py-0"
-  data-testid="card"
+  data-class-name="relative flex cursor-pointer"
+  data-testid="container"
 >
   <div
-    data-class-name="flex flex-col gap-4 p-6"
-    data-testid="card-content"
+    data-class-name="w-3 shrink-0"
+    data-testid="container"
   >
     <div
-      data-testid="post-header"
+      data-height="150"
+      data-testid="thread-connector"
+      data-variant="regular"
     >
-      PostHeader 
-      post-789
+      ThreadConnector
     </div>
+  </div>
+  <div
+    data-class-name="flex-1 rounded-md py-0"
+    data-testid="card"
+  >
     <div
-      data-testid="post-content"
-    >
-      PostContent 
-      post-789
-    </div>
-    <div
-      class="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
-      data-override-defaults="true"
-      data-testid="container"
+      data-class-name="flex flex-col gap-4 p-6"
+      data-testid="card-content"
     >
       <div
-        data-testid="click-stop"
+        data-testid="post-header"
       >
-        <ul
-          data-testid="post-tags-list"
-        />
+        PostHeader 
+        post-789
       </div>
       <div
-        data-testid="click-stop"
+        data-testid="post-content"
+      >
+        PostContent 
+        post-789
+      </div>
+      <div
+        data-class-name="flex flex-col justify-between gap-2 md:flex-row md:gap-0"
+        data-testid="container"
       >
         <div
-          data-class-name="w-full flex-1 justify-start md:justify-end"
+          data-testid="post-tags-list"
+        >
+          PostTagsList 
+          post-789
+        </div>
+        <div
           data-testid="post-actions"
         >
           Actions 
           post-789
-          <button>
-            Reply
-          </button>
         </div>
       </div>
     </div>

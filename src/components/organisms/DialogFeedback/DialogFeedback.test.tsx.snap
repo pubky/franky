@@ -27,7 +27,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot after sending feedback 1`
         </div>
       </div>
       <p
-        class="text-base font-medium text-muted-foreground"
+        class="text-base font-medium break-all text-muted-foreground"
         data-size="sm"
         data-testid="typography"
       >
@@ -97,7 +97,7 @@ exports[`DialogFeedback - Snapshots > matches snapshot for default DialogFeedbac
         </div>
       </div>
       <p
-        class="text-base font-medium text-muted-foreground"
+        class="text-base font-medium break-all text-muted-foreground"
         data-size="sm"
         data-testid="typography"
       >

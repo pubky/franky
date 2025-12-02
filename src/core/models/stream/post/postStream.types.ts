@@ -1,7 +1,16 @@
+import * as Core from '@/core';
+
 // Post Stream ID Pattern: sorting:source:kind
 // - SORTING: timeline (recent), total_engagement (popularity)
 // - SOURCE: all, following, friends, me, bookmarks, post_replies, author, author_replies
 // - KIND: all, short (posts), long (articles), image, video, link, file
+//
+// Dynamic Post Reply Stream ID Pattern: postReplies:compositePostId
+// - compositePostId format: author:postId (e.g., "did:key:abc123:post456")
+// - Example: "postReplies:did:key:abc123:post456"
+
+// Note: In some cases that we reference PostStreamTypes enum, we need to cast to PostStreamId to avoid type errors.
+// TypeScript's generic inference narrows PostStreamTypes enum to the enum type instead of widening to PostStreamId union.
 export enum PostStreamTypes {
   // ============================================
   // TIMELINE (Recent) - ALL Sources
@@ -37,7 +46,18 @@ export enum PostStreamTypes {
   TIMELINE_FRIENDS_FILE = 'timeline:friends:file',
 
   // ============================================
-  // TOTAL_ENGAGEMENT (Popularity) - ALL Sources
+  // TIMELINE (Recent) - BOOKMARKS Source
+  // ============================================
+  TIMELINE_BOOKMARKS_ALL = 'timeline:bookmarks:all',
+  TIMELINE_BOOKMARKS_SHORT = 'timeline:bookmarks:short',
+  TIMELINE_BOOKMARKS_LONG = 'timeline:bookmarks:long',
+  TIMELINE_BOOKMARKS_IMAGE = 'timeline:bookmarks:image',
+  TIMELINE_BOOKMARKS_VIDEO = 'timeline:bookmarks:video',
+  TIMELINE_BOOKMARKS_LINK = 'timeline:bookmarks:link',
+  TIMELINE_BOOKMARKS_FILE = 'timeline:bookmarks:file',
+
+  // ============================================
+  // POPULARITY (Total Engagement) - ALL Sources
   // ============================================
   POPULARITY_ALL_ALL = 'total_engagement:all:all',
   POPULARITY_ALL_SHORT = 'total_engagement:all:short',
@@ -48,7 +68,7 @@ export enum PostStreamTypes {
   POPULARITY_ALL_FILE = 'total_engagement:all:file',
 
   // ============================================
-  // TOTAL_ENGAGEMENT (Popularity) - FOLLOWING Source
+  // POPULARITY (Total Engagement) - FOLLOWING Source
   // ============================================
   POPULARITY_FOLLOWING_ALL = 'total_engagement:following:all',
   POPULARITY_FOLLOWING_SHORT = 'total_engagement:following:short',
@@ -59,7 +79,7 @@ export enum PostStreamTypes {
   POPULARITY_FOLLOWING_FILE = 'total_engagement:following:file',
 
   // ============================================
-  // TOTAL_ENGAGEMENT (Popularity) - FRIENDS Source
+  // POPULARITY (Total Engagement) - FRIENDS Source
   // ============================================
   POPULARITY_FRIENDS_ALL = 'total_engagement:friends:all',
   POPULARITY_FRIENDS_SHORT = 'total_engagement:friends:short',
@@ -69,3 +89,17 @@ export enum PostStreamTypes {
   POPULARITY_FRIENDS_LINK = 'total_engagement:friends:link',
   POPULARITY_FRIENDS_FILE = 'total_engagement:friends:file',
 }
+
+export type ReplyStreamCompositeId = `${Core.StreamSource.REPLIES}:${string}`;
+export type AuthorStreamCompositeId = `${Core.StreamSource.AUTHOR}:${string}`;
+export type AuthorRepliesStreamCompositeId = `${Core.StreamSource.AUTHOR_REPLIES}:${string}`;
+
+export function buildPostReplyStreamId(compositePostId: string): ReplyStreamCompositeId {
+  return `${Core.StreamSource.REPLIES}:${compositePostId}`;
+}
+
+export type PostStreamId =
+  | PostStreamTypes
+  | ReplyStreamCompositeId
+  | AuthorStreamCompositeId
+  | AuthorRepliesStreamCompositeId;

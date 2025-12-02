@@ -1,29 +1,92 @@
 import * as Core from '@/core';
-import * as Libs from '@/libs';
 
+/**
+ * Local Stream Users Service
+ *
+ * Simple service to manage user stream IDs in IndexedDB.
+ * Only stores arrays of user IDs (Pubky), no user data.
+ * Handles followers, following, friends, and other user stream types.
+ */
 export class LocalStreamUsersService {
   private constructor() {}
 
-  static async upsert(streamId: Core.UserStreamTypes, stream: string[]): Promise<void> {
-    try {
-      await Core.UserStreamModel.upsert(streamId, stream);
-    } catch (error) {
-      Libs.Logger.error('Failed to upsert user stream', { streamId, error });
-      throw error;
-    }
+  /**
+   * Save or update a stream of user IDs
+   * @param streamId - Composite ID in format 'userId:streamType' (e.g., 'user-ABC:followers')
+   */
+  static async upsert({ streamId, stream }: Core.TUserStreamUpsertParams): Promise<void> {
+    await Core.UserStreamModel.upsert(streamId, stream);
   }
 
-  static async persistUsers(users: Core.NexusUser[]): Promise<void> {
-    try {
-      await Promise.all([
-        Core.UserCountsModel.bulkSave(users.map((user) => [user.details.id, user.counts])),
-        Core.UserDetailsModel.bulkSave(users.map((user) => user.details)),
-        Core.UserRelationshipsModel.bulkSave(users.map((user) => [user.details.id, user.relationship])),
-        Core.UserTagsModel.bulkSave(users.map((user) => [user.details.id, user.tags])),
-      ]);
-    } catch (error) {
-      Libs.Logger.error('Failed to persist users', { error, count: users.length });
-      throw error;
+  /**
+   * Get a stream of user IDs by stream ID
+   * @param streamId - Composite ID in format 'userId:streamType' (e.g., 'user-ABC:followers')
+   */
+  static async findById(streamId: string): Promise<{ stream: Core.Pubky[] } | null> {
+    return await Core.UserStreamModel.findById(streamId);
+  }
+
+  /**
+   * Delete a user stream from cache
+   * @param streamId - Composite ID in format 'userId:streamType' (e.g., 'user-ABC:followers')
+   */
+  static async deleteById(streamId: string): Promise<void> {
+    await Core.UserStreamModel.deleteById(streamId);
+  }
+
+  /**
+   * Prepend user ID(s) to a stream
+   * Only adds users if not already present
+   *
+   * @param streamId - The stream to prepend to
+   * @param userIds - The user ID(s) to prepend
+   */
+  static async prependToStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
+    await Core.UserStreamModel.prependItems(streamId, userIds);
+  }
+
+  /**
+   * Remove user ID(s) from a stream
+   *
+   * @param streamId - The stream to remove from
+   * @param userIds - The user ID(s) to remove
+   */
+  static async removeFromStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
+    await Core.UserStreamModel.removeItems(streamId, userIds);
+  }
+
+  /**
+   * Persist user data to normalized tables
+   * Separates user details, counts, tags, and relationships
+   *
+   * @param users - Array of users from Nexus API
+   * @returns Array of user IDs (Pubky)
+   */
+  static async persistUsers(users: Core.NexusUser[]): Promise<Core.Pubky[]> {
+    const userCounts: Core.NexusModelTuple<Core.NexusUserCounts>[] = [];
+    const userRelationships: Core.NexusModelTuple<Core.NexusUserRelationship>[] = [];
+    const userTags: Core.NexusModelTuple<Core.NexusTag[]>[] = [];
+    const userDetails: Core.UserDetailsModelSchema[] = [];
+
+    const userIds: Core.Pubky[] = [];
+
+    for (const user of users) {
+      const userId = user.details.id;
+      userIds.push(userId);
+      userCounts.push([userId, user.counts]);
+      userRelationships.push([userId, user.relationship]);
+      userTags.push([userId, user.tags]);
+      userDetails.push(user.details);
     }
+
+    // Bulk save to normalized tables
+    await Promise.all([
+      Core.UserDetailsModel.bulkSave(userDetails),
+      Core.UserCountsModel.bulkSave(userCounts),
+      Core.UserTagsModel.bulkSave(userTags),
+      Core.UserRelationshipsModel.bulkSave(userRelationships),
+    ]);
+
+    return userIds;
   }
 }

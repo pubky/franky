@@ -48,7 +48,9 @@ When working on this codebase, prioritize reading these files in order:
     │   ├── 0004-layering-and-dependency-rules.md
     │   ├── 0005-ttl-refresh-policy.md
     │   ├── 0006-pipes-normalization.md
-    │   └── 0007-dexie-version-normalization.md
+    │   ├── 0007-dexie-version-normalization.md
+    │   ├── 0008-coordinators-layer.md
+    │   └── 0009-application-cross-domain-orchestration.md
     └── snapshot-testing.md         # Snapshot testing philosophy
 ```
 
@@ -59,20 +61,27 @@ When working on this codebase, prioritize reading these files in order:
 The application follows a strict layered architecture in `src/core/`:
 
 ```
-UI → Controllers → Application → Services → Models
-     ↓              ↓             ↓
-     Stores         Pipes         Database
+UI (user actions) ──────┐
+                        ↓
+Coordinators (system) ─→ Controllers → Application → Services → Models
+                         ↓              ↓             ↓
+                         Stores         Pipes         Database
 ```
 
 **Key rules:**
 
-- UI only interacts with controllers
-- Business logic lives in application layer
+- UI and Coordinators call controllers (entry points)
+- **Controllers**: Entry point for user-initiated actions
+- **Coordinators**: Entry point for system-initiated actions (polling, background sync)
+- **Application**: Orchestrates workflows (NOT an entry point, called BY controllers)
+- **Application can call other Applications** for cross-domain orchestration (acyclic only, max depth 1)
 - Services handle all IO boundaries
 - Models are Dexie-only (no network calls)
 - Pipes transform/validate data (no IO)
 
-📖 **Read more**: `.cursor/core-context.md` and `docs/adr/0004-layering-and-dependency-rules.md`
+⚠️ **Enforcement Note**: Since we use static classes without dependency injection, architectural constraints (circular dependencies, call depth) are enforced through code reviews and documentation, not at compile time.
+
+📖 **Read more**: `.cursor/core-context.md` and `docs/adr/0004-layering-and-dependency-rules.md`, `docs/adr/0009-application-cross-domain-orchestration.md`
 
 ### 2. Local-First Design
 
@@ -141,6 +150,8 @@ ADRs document key architectural choices. They capture the **why** behind decisio
 - [0005: TTL Refresh Policy](docs/adr/0005-ttl-refresh-policy.md) - Cache expiry management
 - [0006: Pipes Normalization](docs/adr/0006-pipes-normalization.md) - Data transformation layer
 - [0007: Dexie Version Normalization](docs/adr/0007-dexie-version-normalization.md) - Database versioning
+- [0008: Coordinators Layer](docs/adr/0008-coordinators-layer.md) - System-initiated workflows
+- [0009: Application Cross-Domain Orchestration](docs/adr/0009-application-cross-domain-orchestration.md) - Application-to-Application calls for workflow orchestration
 
 **Creating new ADRs**: Use `docs/adr/TEMPLATE.md` as the starting point.
 
@@ -186,6 +197,10 @@ For non-Cursor IDEs:
 ## Key Anti-Patterns to Avoid
 
 ❌ **Don't bypass the application layer** - Controllers should never call services directly  
+❌ **Don't let services/application call controllers** - Violates unidirectional flow  
+❌ **Don't let coordinators call application directly** - Must go through controllers  
+❌ **Don't create circular application dependencies** - Application A → B → A is forbidden  
+❌ **Don't create deep application call chains** - Max depth 1 (if A calls B, B cannot call another Application)  
 ❌ **Don't perform IO in pipes** - Pipes are for transformation only  
 ❌ **Don't mock `@/libs` indiscriminately** - Use real implementations unless testing errors  
 ❌ **Don't create components without checking Shadcn** - Reuse existing primitives  
@@ -324,17 +339,18 @@ When you make significant changes to:
 ## Quick Reference Card
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  FRANKY AI DEVELOPMENT QUICK REFERENCE                  │
-├─────────────────────────────────────────────────────────┤
-│  Architecture:  UI → Controllers → Application → Services
-│  Write Flow:    Local DB → UI Update → Background Sync  │
-│  Components:    Check Shadcn First → Match Figma 100%  │
-│  Testing:       Unit + Snapshot + Sandbox Validation    │
-│  Errors:        Always use AppError + layer-specific    │
-│  Mocking:       Real @/libs, Mock external deps         │
-│  Docs:          AGENTS.md → .cursor/*.md → docs/adr/    │
-└─────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  FRANKY AI DEVELOPMENT QUICK REFERENCE                       │
+├──────────────────────────────────────────────────────────────┤
+│  Entry Points:  UI (user) + Coordinators (system)            │
+│  Architecture:  Both → Controllers → Application → Services  │
+│  Write Flow:    Local DB → UI Update → Background Sync       │
+│  Components:    Check Shadcn First → Match Figma 100%        │
+│  Testing:       Unit + Snapshot + Sandbox Validation         │
+│  Errors:        Always use AppError + layer-specific         │
+│  Mocking:       Real @/libs, Mock external deps              │
+│  Docs:          AGENTS.md → .cursor/*.md → docs/adr/         │
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---

@@ -1,9 +1,7 @@
-import { PostStreamTypes } from './postStream.types';
+import { PostStreamId } from './postStream.types';
 import { BaseStreamModelSchema } from '@/core/models/shared/stream/stream.type';
 
-export interface PostStreamModelSchema extends BaseStreamModelSchema<PostStreamTypes, string> {
-  name: string | undefined;
-}
+export type PostStreamModelSchema = BaseStreamModelSchema<PostStreamId, string>;
 
 // Schema for Dexie table
-export const postStreamTableSchema = '&id, name, *stream';
+export const postStreamTableSchema = '&id, *stream';

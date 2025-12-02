@@ -1,28 +1,83 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from 'eslint-plugin-storybook';
-
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { FlatCompat } from '@eslint/eslintrc';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import { fixupConfigRules } from '@eslint/compat';
+import pluginNext from '@next/eslint-plugin-next';
+import pluginReact from 'eslint-plugin-react';
+import pluginReactHooks from 'eslint-plugin-react-hooks';
+import pluginStorybook from 'eslint-plugin-storybook';
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  ...storybook.configs['flat/recommended'],
   {
-    files: ['**/*.test.@(ts|tsx|js|jsx|mjs|cjs)'],
+    ignores: [
+      '**/node_modules/**',
+      '**/.next/**',
+      '**/out/**',
+      '**/build/**',
+      '**/dist/**',
+      '**/.turbo/**',
+      '**/coverage/**',
+      '**/storybook-static/**',
+      '**/.storybook/**',
+      '**/__snapshots__/**',
+      '*.config.js',
+      '*.config.mjs',
+      '*.config.ts',
+      'cypress/**',
+      'cypress.config.ts',
+      'next-env.d.ts',
+      'vitest.shims.d.ts',
+    ],
+  },
+  {
+    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      react: pluginReact,
+      'react-hooks': pluginReactHooks,
+      '@next/next': pluginNext,
+      storybook: pluginStorybook,
+    },
+    rules: {
+      ...tsPlugin.configs['recommended'].rules,
+      ...pluginReact.configs['recommended'].rules,
+      ...pluginReactHooks.configs['recommended'].rules,
+      ...pluginNext.configs['recommended'].rules,
+      ...pluginNext.configs['core-web-vitals'].rules,
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'react-hooks/set-state-in-effect': 'off', // Allow setState in effects
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+  },
+  {
+    files: ['**/*.test.{ts,tsx,js,jsx,mjs,cjs}'],
     rules: {
       '@next/next/no-img-element': 'off',
     },
   },
   {
-    files: ['**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)'],
+    files: ['**/*.stories.{ts,tsx,js,jsx,mjs,cjs}'],
     rules: {
       'storybook/no-redundant-story-name': 'off',
     },

@@ -1,0 +1,26 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TaggedList > matches snapshot with empty tags 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-2"
+  data-testid="container"
+/>
+`;
+
+exports[`TaggedList > matches snapshot with tags 1`] = `
+<div
+  class="mx-auto w-full flex-col flex gap-2"
+  data-testid="container"
+>
+  <div
+    data-testid="tagged-item"
+  >
+    bitcoin
+  </div>
+  <div
+    data-testid="tagged-item"
+  >
+    satoshi
+  </div>
+</div>
+`;

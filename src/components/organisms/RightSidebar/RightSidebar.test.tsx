@@ -6,13 +6,21 @@ import { RightSidebar } from './RightSidebar';
 vi.mock('@/molecules', () => ({
   WhoToFollow: () => <div data-testid="who-to-follow">Who to Follow</div>,
   ActiveUsers: () => <div data-testid="active-users">Active Users</div>,
+}));
+
+// Mock the organisms
+vi.mock('@/organisms', () => ({
   FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
 }));
 
 // Mock the libs
-vi.mock('@/libs', () => ({
-  cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-}));
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
+  };
+});
 
 describe('RightSidebar', () => {
   it('renders with default props', () => {
@@ -35,7 +43,15 @@ describe('RightSidebar', () => {
     render(<RightSidebar />);
 
     const sidebar = screen.getByTestId('right-sidebar');
-    expect(sidebar).toHaveClass('w-[180px]', 'hidden', 'lg:flex', 'flex-col', 'gap-6', 'justify-start', 'items-start');
+    expect(sidebar).toHaveClass(
+      'w-(--filter-bar-width)',
+      'hidden',
+      'lg:flex',
+      'flex-col',
+      'gap-6',
+      'justify-start',
+      'items-start',
+    );
   });
 
   it('renders components in correct order', () => {
@@ -67,7 +83,7 @@ describe('RightSidebar', () => {
     render(<RightSidebar />);
 
     const sidebar = screen.getByTestId('right-sidebar');
-    expect(sidebar).toHaveClass('w-[180px]', 'flex-col', 'gap-6', 'justify-start', 'items-start');
+    expect(sidebar).toHaveClass('w-(--filter-bar-width)', 'flex-col', 'gap-6', 'justify-start', 'items-start');
   });
 
   it('renders all required components', () => {

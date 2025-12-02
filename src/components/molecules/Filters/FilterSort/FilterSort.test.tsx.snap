@@ -2,15 +2,15 @@
 
 exports[`FilterSort - Snapshots > matches snapshot with Popularity content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r7»"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -20,25 +20,27 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
     </h2>
   </div>
   <div
-    aria-labelledby="«r7»"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="false"
         aria-label="Recent"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -75,16 +77,18 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
         >
           Recent
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="true"
         aria-label="Popularity"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -100,7 +104,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
         <span
@@ -108,7 +112,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
         >
           Popularity
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -116,15 +120,15 @@ exports[`FilterSort - Snapshots > matches snapshot with Popularity content selec
 
 exports[`FilterSort - Snapshots > matches snapshot with Recent content selected tab 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r6»"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -134,25 +138,27 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
     </h2>
   </div>
   <div
-    aria-labelledby="«r6»"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="true"
         aria-label="Recent"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -189,16 +195,18 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
         >
           Recent
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Popularity"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -214,7 +222,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
         <span
@@ -222,7 +230,7 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
         >
           Popularity
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>
@@ -230,15 +238,15 @@ exports[`FilterSort - Snapshots > matches snapshot with Recent content selected 
 
 exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >
   <div
-    class="flex flex-col gap-2"
+    class="m-0 gap-2 p-0"
     data-slot="filter-header"
     data-testid="filter-header"
-    id="«r5»"
+    id="radix-_r_0_"
   >
     <h2
       class="text-2xl font-light text-muted-foreground"
@@ -248,25 +256,27 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
     </h2>
   </div>
   <div
-    aria-labelledby="«r5»"
+    aria-labelledby="radix-_r_0_"
     class=""
     data-testid="filter-sort-radiogroup"
     role="radiogroup"
   >
     <div
-      class="mx-auto w-full flex flex-col gap-2"
+      class="mx-auto w-full flex-col flex gap-2"
       data-slot="filter-list"
       data-testid="filter-list"
     >
-      <p
+      <button
         aria-checked="true"
         aria-label="Recent"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+        aria-pressed="true"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
         data-selected="true"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="0"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -303,16 +313,18 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
         >
           Recent
         </span>
-      </p>
-      <p
+      </button>
+      <button
         aria-checked="false"
         aria-label="Popularity"
-        class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+        aria-pressed="false"
+        class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
         data-selected="false"
         data-slot="filter-item"
         data-testid="filter-item"
         role="radio"
         tabindex="-1"
+        type="button"
       >
         <svg
           aria-hidden="true"
@@ -328,7 +340,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+            d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"
           />
         </svg>
         <span
@@ -336,7 +348,7 @@ exports[`FilterSort - Snapshots > matches snapshot with default props 1`] = `
         >
           Popularity
         </span>
-      </p>
+      </button>
     </div>
   </div>
 </div>

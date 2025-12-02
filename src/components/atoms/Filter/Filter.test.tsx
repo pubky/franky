@@ -97,6 +97,7 @@ describe('Filter Components', () => {
       const item = screen.getByTestId('filter-item');
       expect(item).toMatchSnapshot();
       expect(item).toHaveAttribute('data-selected', 'true');
+      expect(item).toHaveAttribute('aria-pressed', 'true');
     });
 
     it('renders as unselected', () => {
@@ -109,6 +110,7 @@ describe('Filter Components', () => {
       const item = screen.getByTestId('filter-item');
       expect(item).toMatchSnapshot();
       expect(item).toHaveAttribute('data-selected', 'false');
+      expect(item).toHaveAttribute('aria-pressed', 'false');
     });
 
     it('calls onClick when clicked', () => {
@@ -134,6 +136,57 @@ describe('Filter Components', () => {
 
       const item = screen.getByTestId('filter-item');
       expect(item).toMatchSnapshot();
+    });
+
+    it('renders as a button element for accessibility', () => {
+      render(
+        <FilterItem>
+          <span>Test Item</span>
+        </FilterItem>,
+      );
+
+      const item = screen.getByTestId('filter-item');
+      expect(item.tagName).toBe('BUTTON');
+      expect(item).toHaveAttribute('type', 'button');
+    });
+
+    it('has proper ARIA attributes for screen readers', () => {
+      const { rerender } = render(
+        <FilterItem isSelected={false}>
+          <span>Test Item</span>
+        </FilterItem>,
+      );
+
+      const item = screen.getByTestId('filter-item');
+
+      // When unselected
+      expect(item).toHaveAttribute('aria-pressed', 'false');
+
+      // When selected
+      rerender(
+        <FilterItem isSelected={true}>
+          <span>Test Item</span>
+        </FilterItem>,
+      );
+
+      expect(item).toHaveAttribute('aria-pressed', 'true');
+    });
+
+    it('supports keyboard interaction when focused', () => {
+      const mockOnClick = vi.fn();
+      render(
+        <FilterItem onClick={mockOnClick}>
+          <span>Test Item</span>
+        </FilterItem>,
+      );
+
+      const item = screen.getByTestId('filter-item');
+      item.focus();
+      expect(item).toHaveFocus();
+
+      // Simulate pressing Enter key which triggers click on buttons
+      fireEvent.click(item);
+      expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
   });
 

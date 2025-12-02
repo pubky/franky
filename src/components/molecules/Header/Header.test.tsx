@@ -20,6 +20,13 @@ vi.mock('dexie-react-hooks', () => ({
 // Mock the core
 vi.mock('@/core', () => ({
   useAuthStore: vi.fn(),
+  useNotificationStore: vi.fn(),
+  ProfileController: {
+    read: vi.fn(() => Promise.resolve({ name: 'Test User', image: 'test-image.jpg' })),
+  },
+  FileController: {
+    getAvatarUrl: vi.fn((pubky: string) => `https://cdn.example.com/avatar/${pubky}`),
+  },
   db: {
     user_details: {
       get: vi.fn(),
@@ -146,6 +153,7 @@ describe('Header Components', () => {
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
     vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    vi.mocked(Core.useNotificationStore).mockReturnValue({ selectUnread: () => 0 });
     vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
   });
 
@@ -175,11 +183,12 @@ describe('Header Components', () => {
       expect(container).toHaveClass(
         'sticky',
         'top-0',
-        'z-20',
+        'z-(--z-sticky-header)',
         'w-full',
-        'bg-gradient-to-b',
-        'from-[var(--background)]/95',
-        'to-[var(--transparent)]',
+        'bg-linear-to-b',
+        'from-(--background)/95',
+        'to-(--transparent)',
+        'py-6',
         'backdrop-blur-sm',
       );
 
@@ -479,6 +488,7 @@ describe('Header Components - Snapshots', () => {
   beforeEach(() => {
     vi.mocked(useRouter).mockReturnValue(mockRouter as ReturnType<typeof useRouter>);
     vi.mocked(Core.useAuthStore).mockReturnValue({ currentUserPubky: 'test-pubky' });
+    vi.mocked(Core.useNotificationStore).mockReturnValue({ selectUnread: () => 0 });
     vi.mocked(useLiveQuery).mockReturnValue({ name: 'Test User', image: 'test-image.jpg' });
   });
 

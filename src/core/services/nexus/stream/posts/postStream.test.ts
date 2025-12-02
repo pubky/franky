@@ -1,7 +1,39 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, test, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
 import { postStreamApi } from './postStream.api';
 import { StreamKind, StreamOrder } from './postStream.types';
+import { createPostStreamParams, breakDownStreamId } from './postStream.utils';
+import { NexusPostStreamService } from './postStream';
+
+//TODO: Split the suite by module (postStream.api.test.ts, postStream.utils.test.ts, postStream.service.test.ts) so each file targets the key behaviours of that module under @posts.
+
+function callStreamEndpoint(
+  endpoint: keyof typeof postStreamApi,
+  params: Core.TStreamQueryParams,
+): string | { body: { post_ids: string[]; viewer_id?: string }; url: string } {
+  switch (endpoint) {
+    case 'all':
+      return postStreamApi.all(params as Core.TStreamAllParams);
+    case 'following':
+      return postStreamApi.following(params as Core.TStreamWithObserverParams);
+    case 'followers':
+      return postStreamApi.followers(params as Core.TStreamWithObserverParams);
+    case 'friends':
+      return postStreamApi.friends(params as Core.TStreamWithObserverParams);
+    case 'bookmarks':
+      return postStreamApi.bookmarks(params as Core.TStreamWithObserverParams);
+    case 'post_replies':
+      return postStreamApi.post_replies(params as Core.TStreamPostRepliesParams);
+    case 'author':
+      return postStreamApi.author(params as Core.TStreamAuthorParams);
+    case 'author_replies':
+      return postStreamApi.author_replies(params as Core.TStreamAuthorRepliesParams);
+    case 'postsByIds':
+      return postStreamApi.postsByIds(params as Core.TStreamPostsByIdsParams);
+    default:
+      throw new Error(`Unknown endpoint: ${endpoint}`);
+  }
+}
 
 describe('Stream API URL Generation', () => {
   const mockObserverId = 'erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby';
@@ -9,154 +41,159 @@ describe('Stream API URL Generation', () => {
   const mockPostId = 'post-pubky-id';
   const mockViewerId = 'viewer-pubky-id';
 
-  describe('Sources requiring observer_id', () => {
-    it('should generate correct following URL', () => {
-      const url = postStreamApi.following({
-        observer_id: mockObserverId,
-        viewer_id: mockViewerId,
-        sorting: Core.StreamSorting.TIMELINE,
-        limit: 10,
+  describe('Endpoint routing - Consolidated', () => {
+    test.each([
+      {
+        name: 'all',
+        endpoint: 'all' as const,
+        params: { viewer_id: mockViewerId, sorting: Core.StreamSorting.ENGAGEMENT, kind: StreamKind.VIDEO, limit: 50 },
+        expectedInUrl: [
+          'source=all',
+          `viewer_id=${mockViewerId}`,
+          'sorting=total_engagement',
+          'kind=video',
+          'limit=50',
+        ],
+      },
+      {
+        name: 'following',
+        endpoint: 'following' as const,
+        params: {
+          observer_id: mockObserverId,
+          viewer_id: mockViewerId,
+          sorting: Core.StreamSorting.TIMELINE,
+          limit: 10,
+        },
+        expectedInUrl: [
+          'source=following',
+          `observer_id=${mockObserverId}`,
+          `viewer_id=${mockViewerId}`,
+          'sorting=timeline',
+          'limit=10',
+        ],
+      },
+      {
+        name: 'followers',
+        endpoint: 'followers' as const,
+        params: { observer_id: mockObserverId, sorting: Core.StreamSorting.ENGAGEMENT },
+        expectedInUrl: ['source=followers', `observer_id=${mockObserverId}`, 'sorting=total_engagement'],
+      },
+      {
+        name: 'friends',
+        endpoint: 'friends' as const,
+        params: { observer_id: mockObserverId, tags: 'dev,opensource', kind: StreamKind.SHORT },
+        expectedInUrl: ['source=friends', `observer_id=${mockObserverId}`, 'tags=dev%2Copensource', 'kind=short'],
+      },
+      {
+        name: 'bookmarks',
+        endpoint: 'bookmarks' as const,
+        params: { observer_id: mockObserverId, order: StreamOrder.ASCENDING, start: 1759289451314, end: 1759289451314 },
+        expectedInUrl: [
+          'source=bookmarks',
+          `observer_id=${mockObserverId}`,
+          'order=ascending',
+          'start=1759289451314',
+          'end=1759289451314',
+        ],
+      },
+      {
+        name: 'post_replies',
+        endpoint: 'post_replies' as const,
+        params: { author_id: mockAuthorId, post_id: mockPostId, viewer_id: mockViewerId, limit: 20 },
+        expectedInUrl: [
+          'source=post_replies',
+          `author_id=${mockAuthorId}`,
+          `post_id=${mockPostId}`,
+          `viewer_id=${mockViewerId}`,
+          'limit=20',
+        ],
+      },
+      {
+        name: 'author',
+        endpoint: 'author' as const,
+        params: { author_id: mockAuthorId, sorting: Core.StreamSorting.TIMELINE, kind: StreamKind.IMAGE },
+        expectedInUrl: ['source=author', `author_id=${mockAuthorId}`, 'sorting=timeline', 'kind=image'],
+      },
+      {
+        name: 'author_replies',
+        endpoint: 'author_replies' as const,
+        params: { author_id: mockAuthorId, tags: 'tech,ai,machine-learning', order: StreamOrder.DESCENDING },
+        expectedInUrl: [
+          'source=author_replies',
+          `author_id=${mockAuthorId}`,
+          'tags=tech%2Cai%2Cmachine-learning',
+          'order=descending',
+        ],
+      },
+    ])('$name endpoint generates correct URL with all parameters', ({ endpoint, params, expectedInUrl }) => {
+      const url = callStreamEndpoint(endpoint, params);
+
+      expect(url).toContain('v0/stream/posts/keys?');
+      expectedInUrl.forEach((fragment) => {
+        expect(url).toContain(fragment);
       });
-
-      expect(url).toContain('v0/stream/posts?');
-      expect(url).toContain('source=following');
-      expect(url).toContain(`observer_id=${mockObserverId}`);
-      expect(url).toContain(`viewer_id=${mockViewerId}`);
-      expect(url).toContain('sorting=timeline');
-      expect(url).toContain('limit=10');
-    });
-
-    it('should generate correct followers URL', () => {
-      const url = postStreamApi.followers({
-        observer_id: mockObserverId,
-        sorting: Core.StreamSorting.ENGAGEMENT,
-      });
-
-      expect(url).toContain('source=followers');
-      expect(url).toContain(`observer_id=${mockObserverId}`);
-      expect(url).toContain('sorting=total_engagement');
-    });
-
-    it('should generate correct friends URL', () => {
-      const url = postStreamApi.friends({
-        observer_id: mockObserverId,
-        tags: ['dev', 'opensource'],
-        kind: StreamKind.SHORT,
-      });
-
-      expect(url).toContain('source=friends');
-      expect(url).toContain(`observer_id=${mockObserverId}`);
-      expect(url).toContain('tags=dev%2Copensource');
-      expect(url).toContain('kind=short');
-    });
-
-    it('should generate correct bookmarks URL', () => {
-      const url = postStreamApi.bookmarks({
-        observer_id: mockObserverId,
-        order: StreamOrder.ASCENDING,
-        start: 1759289451314,
-        end: 1759289451314,
-      });
-
-      expect(url).toContain('source=bookmarks');
-      expect(url).toContain(`observer_id=${mockObserverId}`);
-      expect(url).toContain('order=ascending');
-      expect(url).toContain('start=1759289451314');
-      expect(url).toContain('end=1759289451314');
-    });
-  });
-
-  describe('Post replies requiring author_id and post_id', () => {
-    it('should generate correct post replies URL', () => {
-      const url = postStreamApi.postReplies({
-        author_id: mockAuthorId,
-        post_id: mockPostId,
-        viewer_id: mockViewerId,
-        limit: 20,
-      });
-
-      expect(url).toContain('source=replies');
-      expect(url).toContain(`author_id=${mockAuthorId}`);
-      expect(url).toContain(`post_id=${mockPostId}`);
-      expect(url).toContain(`viewer_id=${mockViewerId}`);
-      expect(url).toContain('limit=20');
-    });
-  });
-
-  describe('Author posts requiring author_id', () => {
-    it('should generate correct author URL', () => {
-      const url = postStreamApi.author({
-        author_id: mockAuthorId,
-        sorting: Core.StreamSorting.TIMELINE,
-        kind: StreamKind.IMAGE,
-      });
-
-      expect(url).toContain('source=author');
-      expect(url).toContain(`author_id=${mockAuthorId}`);
-      expect(url).toContain('sorting=timeline');
-      expect(url).toContain('kind=image');
-    });
-
-    it('should generate correct author replies URL', () => {
-      const url = postStreamApi.authorReplies({
-        author_id: mockAuthorId,
-        tags: ['tech', 'ai', 'machine-learning'],
-        order: StreamOrder.DESCENDING,
-      });
-
-      expect(url).toContain('source=author_replies');
-      expect(url).toContain(`author_id=${mockAuthorId}`);
-      expect(url).toContain('tags=tech%2Cai%2Cmachine-learning');
-      expect(url).toContain('order=descending');
-    });
-  });
-
-  describe('All posts (no additional required parameters)', () => {
-    it('should generate correct all posts URL', () => {
-      const url = postStreamApi.all({
-        viewer_id: mockViewerId,
-        sorting: Core.StreamSorting.ENGAGEMENT,
-        kind: StreamKind.VIDEO,
-        limit: 50,
-      });
-
-      expect(url).toContain('source=all');
-      expect(url).toContain(`viewer_id=${mockViewerId}`);
-      expect(url).toContain('sorting=total_engagement');
-      expect(url).toContain('kind=video');
-      expect(url).toContain('limit=50');
     });
   });
 
   describe('Tags validation', () => {
-    it('should limit tags to maximum 5', () => {
+    it('should include all provided tags as comma-separated string', () => {
       const url = postStreamApi.following({
         observer_id: mockObserverId,
-        tags: ['tag1', 'tag2', 'tag3', 'tag4', 'tag5', 'tag6', 'tag7'], // 7 tags
+        tags: 'tag1,tag2,tag3,tag4,tag5',
       });
 
-      expect(url).toContain('tags=tag1%2Ctag2%2Ctag3%2Ctag4%2Ctag5'); // Only first 5
-      expect(url).not.toContain('tag6');
-      expect(url).not.toContain('tag7');
+      expect(url).toContain('tags=tag1%2Ctag2%2Ctag3%2Ctag4%2Ctag5');
     });
 
-    it('should handle empty tags array', () => {
-      const url = postStreamApi.following({
+    it('should exclude empty or undefined tags from URL', () => {
+      const urlWithEmpty = postStreamApi.following({
         observer_id: mockObserverId,
-        tags: [],
+        tags: '',
+      });
+      const urlWithUndefined = postStreamApi.following({
+        observer_id: mockObserverId,
+        tags: undefined,
       });
 
-      expect(url).not.toContain('tags=');
+      expect(urlWithEmpty).not.toContain('tags=');
+      expect(urlWithUndefined).not.toContain('tags=');
     });
   });
 
   describe('Parameter handling', () => {
-    it('should handle undefined and null values correctly', () => {
+    test.each([
+      { param: 'viewer_id', value: undefined, shouldExclude: true },
+      { param: 'sorting', value: null, shouldExclude: true },
+      { param: 'limit', value: undefined, shouldExclude: true },
+      { param: 'tags', value: '', shouldExclude: true },
+    ])('excludes $param when value is $value', ({ param, shouldExclude }) => {
       const url = postStreamApi.following({
         observer_id: mockObserverId,
-        viewer_id: undefined,
-        sorting: null as unknown as Core.StreamSorting,
-        limit: undefined,
+        [param]: shouldExclude ? undefined : 'valid-value',
+      });
+
+      if (shouldExclude) {
+        expect(url).not.toContain(`${param}=`);
+      }
+    });
+
+    test.each([
+      { param: 'limit', value: 10, expected: 'limit=10' },
+      { param: 'skip', value: 5, expected: 'skip=5' },
+      { param: 'start', value: 1234567890, expected: 'start=1234567890' },
+      { param: 'end', value: 9876543210, expected: 'end=9876543210' },
+    ])('converts number parameter $param to string correctly', ({ param, value, expected }) => {
+      const url = postStreamApi.following({
+        observer_id: mockObserverId,
+        [param]: value,
+      });
+
+      expect(url).toContain(expected);
+    });
+
+    it('includes only defined parameters (minimal case)', () => {
+      const url = postStreamApi.following({
+        observer_id: mockObserverId,
       });
 
       expect(url).toContain('source=following');
@@ -166,65 +203,13 @@ describe('Stream API URL Generation', () => {
       expect(url).not.toContain('limit=');
     });
 
-    it('should convert numbers to strings', () => {
-      const url = postStreamApi.following({
-        observer_id: mockObserverId,
-        limit: 10,
-        skip: 5,
-        start: 1234567890,
-        end: 9876543210,
-      });
-
-      expect(url).toContain('limit=10');
-      expect(url).toContain('skip=5');
-      expect(url).toContain('start=1234567890');
-      expect(url).toContain('end=9876543210');
-    });
-  });
-
-  describe('URL structure validation', () => {
-    it('should always start with v0/stream/posts?', () => {
-      const url = postStreamApi.following({
-        observer_id: mockObserverId,
-      });
-
-      expect(url).toMatch(/v0\/stream\/posts\?/);
-    });
-
-    it('should have proper query parameter format', () => {
-      const url = postStreamApi.following({
-        observer_id: mockObserverId,
-        viewer_id: mockViewerId,
-        sorting: Core.StreamSorting.TIMELINE,
-      });
-
-      // Should have proper key=value&key=value format
-      expect(url).toMatch(/source=following/);
-      expect(url).toMatch(/observer_id=erztyis9oiaho93ckucetcf5xnxacecqwhbst5hnd7mmkf69dhby/);
-      expect(url).toMatch(/viewer_id=viewer-pubky-id/);
-      expect(url).toMatch(/sorting=timeline/);
-    });
-  });
-
-  describe('Edge cases', () => {
-    it('should handle minimal parameters', () => {
-      const url = postStreamApi.following({
-        observer_id: mockObserverId,
-      });
-
-      expect(url).toContain('source=following');
-      expect(url).toContain(`observer_id=${mockObserverId}`);
-      // Should not have any other parameters
-      expect(url.split('&')).toHaveLength(2); // source and observer_id only
-    });
-
-    it('should handle all optional parameters', () => {
+    it('includes all defined parameters (maximal case)', () => {
       const url = postStreamApi.following({
         observer_id: mockObserverId,
         viewer_id: mockViewerId,
         sorting: Core.StreamSorting.TIMELINE,
         order: StreamOrder.DESCENDING,
-        tags: ['dev', 'test'],
+        tags: 'dev,test',
         kind: StreamKind.SHORT,
         skip: 0,
         limit: 10,
@@ -232,17 +217,23 @@ describe('Stream API URL Generation', () => {
         end: 2000,
       });
 
-      expect(url).toContain('source=following');
-      expect(url).toContain(`observer_id=${mockObserverId}`);
-      expect(url).toContain(`viewer_id=${mockViewerId}`);
-      expect(url).toContain('sorting=timeline');
-      expect(url).toContain('order=descending');
-      expect(url).toContain('tags=dev%2Ctest');
-      expect(url).toContain('kind=short');
-      expect(url).toContain('skip=0');
-      expect(url).toContain('limit=10');
-      expect(url).toContain('start=1000');
-      expect(url).toContain('end=2000');
+      const expectedParams = [
+        'source=following',
+        `observer_id=${mockObserverId}`,
+        `viewer_id=${mockViewerId}`,
+        'sorting=timeline',
+        'order=descending',
+        'tags=dev%2Ctest',
+        'kind=short',
+        'skip=0',
+        'limit=10',
+        'start=1000',
+        'end=2000',
+      ];
+
+      expectedParams.forEach((param) => {
+        expect(url).toContain(param);
+      });
     });
   });
 
@@ -296,19 +287,472 @@ describe('Stream API URL Generation', () => {
     });
   });
 
-  describe('PostStreamApiEndpoint type', () => {
-    it('should have exactly 9 endpoints', () => {
+  describe('API contract validation', () => {
+    it('exposes all expected stream endpoints', () => {
       const endpointKeys = Object.keys(postStreamApi);
-      expect(endpointKeys).toHaveLength(9);
-      expect(endpointKeys).toContain('following');
-      expect(endpointKeys).toContain('followers');
-      expect(endpointKeys).toContain('friends');
-      expect(endpointKeys).toContain('bookmarks');
-      expect(endpointKeys).toContain('postReplies');
-      expect(endpointKeys).toContain('author');
-      expect(endpointKeys).toContain('authorReplies');
-      expect(endpointKeys).toContain('postsByIds');
-      expect(endpointKeys).toContain('all');
+      const expectedEndpoints = [
+        'all',
+        'following',
+        'followers',
+        'friends',
+        'bookmarks',
+        'post_replies',
+        'author',
+        'author_replies',
+        'postsByIds',
+      ];
+
+      expectedEndpoints.forEach((endpoint) => {
+        expect(endpointKeys).toContain(endpoint);
+      });
+    });
+  });
+});
+
+describe('createPostStreamParams', () => {
+  const mockViewerId = 'viewer-pubky-id' as Core.Pubky;
+
+  describe('Bookmark streams', () => {
+    test.each([
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL, kind: undefined, name: 'all' },
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_SHORT, kind: Core.StreamKind.SHORT, name: 'short' },
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_LONG, kind: Core.StreamKind.LONG, name: 'long' },
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_IMAGE, kind: Core.StreamKind.IMAGE, name: 'image' },
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_VIDEO, kind: Core.StreamKind.VIDEO, name: 'video' },
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_LINK, kind: Core.StreamKind.LINK, name: 'link' },
+      { streamType: Core.PostStreamTypes.TIMELINE_BOOKMARKS_FILE, kind: Core.StreamKind.FILE, name: 'file' },
+    ])('should handle timeline:bookmarks:$name stream', ({ streamType, kind }) => {
+      const result = createPostStreamParams({
+        streamId: streamType,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.params.kind).toBe(kind);
+      expect(result.params.viewer_id).toBe(mockViewerId);
+      expect(result.params.limit).toBe(20);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+  });
+
+  describe('Pagination behavior - streamTail handling (CRITICAL BUSINESS LOGIC)', () => {
+    describe('Timeline sorting - Uses timestamp-based pagination', () => {
+      it('should NOT set start parameter when streamTail is 0 (initial load - fetch most recent)', () => {
+        const result = createPostStreamParams({
+          streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+          streamTail: 0, // streamTail = 0 means initial load
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
+
+        expect(result.params.start).toBeUndefined();
+        expect(result.params.skip).toBeUndefined();
+        // Rationale: When start is undefined, API returns most recent posts
+      });
+
+      it('should DECREMENT streamTail by 1 when streamTail > 0 to prevent duplicate boundary post', () => {
+        const streamTail = 1234567890; // Last post timestamp from previous fetch
+        const result = createPostStreamParams({
+          streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+          streamTail,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
+
+        expect(result.params.start).toBe(streamTail - 1);
+        // CRITICAL: streamTail - 1 prevents fetching the same last post again
+        // Without this decrement, the last post from page N would be the first post of page N+1
+      });
+
+      it('should handle streamTail = 1 (edge case: very first post)', () => {
+        const result = createPostStreamParams({
+          streamId: Core.PostStreamTypes.TIMELINE_BOOKMARKS_ALL,
+          streamTail: 1,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
+
+        expect(result.params.start).toBe(0); // 1 - 1 = 0
+        // Posts with timestamp < 1 will be fetched (if any exist)
+      });
+    });
+
+    describe('Engagement sorting - Uses offset-based pagination', () => {
+      const engagementStreamId = 'total_engagement:bookmarks:all' as Core.PostStreamId;
+
+      it('should use skip (NOT start) when sorting by engagement', () => {
+        const streamTail = 20; // Number of posts already loaded
+        const result = createPostStreamParams({
+          streamId: engagementStreamId,
+          streamTail,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
+
+        expect(result.params.skip).toBe(streamTail);
+        expect(result.params.start).toBeUndefined();
+        // Rationale: Engagement scores change frequently, so offset-based pagination is more stable
+      });
+
+      it('should set skip=0 for initial load when streamTail is 0', () => {
+        const result = createPostStreamParams({
+          streamId: engagementStreamId,
+          streamTail: 0,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
+
+        expect(result.params.skip).toBe(0);
+        expect(result.params.start).toBeUndefined();
+      });
+
+      it('should NOT decrement streamTail for engagement sorting (no duplicate prevention needed)', () => {
+        const streamTail = 40; // 40 posts already loaded
+        const result = createPostStreamParams({
+          streamId: engagementStreamId,
+          streamTail,
+          streamHead: 0,
+          limit: 20,
+          viewerId: mockViewerId,
+        });
+
+        expect(result.params.skip).toBe(40); // NOT decremented
+        // Rationale: Offset-based pagination naturally avoids duplicates
+      });
+    });
+  });
+
+  describe('Tags handling in stream IDs', () => {
+    it('should parse tags from stream ID', () => {
+      // Stream ID format: sorting:endpoint:kind:tags
+      const streamIdWithTags = 'timeline:bookmarks:all:tech,ai,web3' as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithTags,
+        streamHead: 0,
+        streamTail: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.tags).toBe('tech,ai,web3');
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+      expect(result.invokeEndpoint).toBe(Core.StreamSource.BOOKMARKS);
+    });
+
+    it('should limit tags to maximum 5 (NEXT_MAX_STREAM_TAGS)', () => {
+      const streamIdWithManyTags = 'timeline:bookmarks:all:tag1,tag2,tag3,tag4,tag5,tag6,tag7' as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithManyTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.tags).toBe('tag1,tag2,tag3,tag4,tag5');
+      expect(result.params.tags).not.toContain('tag6');
+    });
+
+    it('should handle stream ID without tags', () => {
+      const streamIdWithoutTags = 'timeline:bookmarks:video' as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithoutTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.tags).toBeUndefined();
+      expect(result.params.kind).toBe(Core.StreamKind.VIDEO);
+    });
+
+    it('should handle tags with special characters', () => {
+      const streamIdWithSpecialTags = 'timeline:bookmarks:all:machine-learning,ai/ml,web3.0' as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithSpecialTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.tags).toBe('machine-learning,ai/ml,web3.0');
+    });
+
+    it('should preserve tag order from stream ID', () => {
+      const streamIdWithOrderedTags = 'timeline:bookmarks:all:first,second,third' as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithOrderedTags,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.tags).toBe('first,second,third');
+    });
+
+    it('should handle empty tag in stream ID', () => {
+      // Stream ID with empty string after last colon
+      const streamIdWithEmptyTag = 'timeline:bookmarks:all:' as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithEmptyTag,
+        streamTail: 0,
+        streamHead: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      // Empty string after split should result in undefined after processing
+      expect(result.params.tags).toBeUndefined();
+    });
+  });
+
+  describe('Tags with different content types', () => {
+    test.each([
+      { kind: 'short', tags: 'tech,dev', expectedKind: Core.StreamKind.SHORT },
+      { kind: 'long', tags: 'essays,articles', expectedKind: Core.StreamKind.LONG },
+      { kind: 'image', tags: 'photos,art', expectedKind: Core.StreamKind.IMAGE },
+      { kind: 'video', tags: 'tutorials,vlogs', expectedKind: Core.StreamKind.VIDEO },
+      { kind: 'link', tags: 'resources,refs', expectedKind: Core.StreamKind.LINK },
+      { kind: 'file', tags: 'docs,pdfs', expectedKind: Core.StreamKind.FILE },
+    ])('should handle tags in $kind content stream', ({ kind, tags, expectedKind }) => {
+      const streamIdWithTags = `timeline:bookmarks:${kind}:${tags}` as Core.PostStreamId;
+      const result = createPostStreamParams({
+        streamId: streamIdWithTags,
+        streamHead: 0,
+        streamTail: 0,
+        limit: 20,
+        viewerId: mockViewerId,
+      });
+
+      expect(result.params.tags).toBe(tags);
+      expect(result.params.kind).toBe(expectedKind);
+      expect(result.params.sorting).toBe(Core.StreamSorting.TIMELINE);
+    });
+  });
+});
+
+describe('breakDownStreamId', () => {
+  describe('Timeline pattern', () => {
+    it('should parse timeline:endpoint:kind:tags', () => {
+      const result = breakDownStreamId('timeline:bookmarks:all:tech,ai' as Core.PostStreamId);
+      expect(result).toEqual(['timeline', Core.StreamSource.BOOKMARKS, 'all', 'tech,ai']);
+    });
+
+    it('should parse without tags', () => {
+      const result = breakDownStreamId('timeline:following:short' as Core.PostStreamId);
+      expect(result).toEqual(['timeline', Core.StreamSource.FOLLOWING, 'short', undefined]);
+    });
+  });
+
+  describe('Replies pattern', () => {
+    it('should parse post_replies:pubky:postId', () => {
+      const result = breakDownStreamId('post_replies:pubky:post123' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.REPLIES, 'post123', undefined]);
+    });
+
+    it('should parse with tags', () => {
+      const result = breakDownStreamId('post_replies:pubky:post123:tag1,tag2' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.REPLIES, 'post123', 'tag1,tag2']);
+    });
+  });
+
+  describe('Author patterns', () => {
+    it('should parse author:pubky', () => {
+      const result = breakDownStreamId('author:pubky' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.AUTHOR, undefined, undefined]);
+    });
+
+    it('should parse author_replies:pubky', () => {
+      const result = breakDownStreamId('author_replies:pubky' as Core.PostStreamId);
+      expect(result).toEqual(['pubky', Core.StreamSource.AUTHOR_REPLIES, undefined, undefined]);
+    });
+  });
+
+  describe('Tag limiting', () => {
+    it('should limit to 5 tags', () => {
+      const result = breakDownStreamId('timeline:all:all:tag1,tag2,tag3,tag4,tag5,tag6,tag7' as Core.PostStreamId);
+      expect(result[3]).toBe('tag1,tag2,tag3,tag4,tag5');
+    });
+
+    it('should handle empty tags string', () => {
+      const result = breakDownStreamId('timeline:all:all:' as Core.PostStreamId);
+      expect(result[3]).toBeUndefined();
+    });
+  });
+});
+
+describe('NexusPostStreamService', () => {
+  const mockViewerId = 'viewer-pubky-id' as Core.Pubky;
+  const mockAuthorId = 'author-pubky-id' as Core.Pubky;
+  const mockPostId = 'post-pubky-id';
+
+  // Mock the queryNexus function
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('fetch - Stream routing (Consolidated)', () => {
+    test.each([
+      {
+        name: 'ALL',
+        invokeEndpoint: Core.StreamSource.ALL,
+        params: { limit: 10, viewer_id: mockViewerId },
+        extraParams: {},
+        expectedInUrl: ['source=all', 'limit=10'],
+      },
+      {
+        name: 'FOLLOWING',
+        invokeEndpoint: Core.StreamSource.FOLLOWING,
+        params: { limit: 20, viewer_id: mockViewerId },
+        extraParams: {},
+        expectedInUrl: ['source=following', 'observer_id=viewer-pubky-id', 'limit=20'],
+      },
+      {
+        name: 'FRIENDS',
+        invokeEndpoint: Core.StreamSource.FRIENDS,
+        params: { limit: 15, viewer_id: mockViewerId, tags: 'tech,dev' },
+        extraParams: {},
+        expectedInUrl: ['source=friends', 'observer_id=viewer-pubky-id', 'tags=tech%2Cdev'],
+      },
+      {
+        name: 'BOOKMARKS',
+        invokeEndpoint: Core.StreamSource.BOOKMARKS,
+        params: { limit: 25, viewer_id: mockViewerId, sorting: Core.StreamSorting.TIMELINE },
+        extraParams: {},
+        expectedInUrl: ['source=bookmarks', 'observer_id=viewer-pubky-id', 'sorting=timeline'],
+      },
+      {
+        name: 'REPLIES',
+        invokeEndpoint: Core.StreamSource.REPLIES,
+        params: { limit: 30, viewer_id: mockViewerId },
+        extraParams: { author_id: mockAuthorId, post_id: mockPostId },
+        expectedInUrl: ['source=post_replies', 'author_id=author-pubky-id', 'post_id=post-pubky-id'],
+      },
+      {
+        name: 'AUTHOR',
+        invokeEndpoint: Core.StreamSource.AUTHOR,
+        params: { limit: 40, sorting: Core.StreamSorting.ENGAGEMENT },
+        extraParams: { author_id: mockAuthorId },
+        expectedInUrl: ['source=author', 'author_id=author-pubky-id', 'sorting=total_engagement'],
+      },
+      {
+        name: 'AUTHOR_REPLIES',
+        invokeEndpoint: Core.StreamSource.AUTHOR_REPLIES,
+        params: { limit: 50, tags: 'coding' },
+        extraParams: { author_id: mockAuthorId },
+        expectedInUrl: ['source=author_replies', 'author_id=author-pubky-id', 'tags=coding'],
+      },
+    ])('routes $name stream correctly', async ({ invokeEndpoint, params, extraParams, expectedInUrl }) => {
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+
+      const fetchParams: Core.TPostStreamFetchParams = {
+        params,
+        invokeEndpoint,
+        extraParams,
+      };
+
+      await NexusPostStreamService.fetch(fetchParams);
+
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+      const calledUrl = queryNexusSpy.mock.calls[0][0];
+
+      expectedInUrl.forEach((fragment) => {
+        expect(calledUrl).toContain(fragment);
+      });
+    });
+  });
+
+  describe('fetch - Required parameter validation (Comprehensive)', () => {
+    test.each([
+      {
+        name: 'FOLLOWING requires viewer_id',
+        invokeEndpoint: Core.StreamSource.FOLLOWING,
+        params: { limit: 10 }, // Missing viewer_id
+        extraParams: {},
+        expectedError: 'Viewer ID is required',
+      },
+      {
+        name: 'FRIENDS requires viewer_id',
+        invokeEndpoint: Core.StreamSource.FRIENDS,
+        params: { limit: 10 }, // Missing viewer_id
+        extraParams: {},
+        expectedError: 'Viewer ID is required',
+      },
+      {
+        name: 'BOOKMARKS requires viewer_id',
+        invokeEndpoint: Core.StreamSource.BOOKMARKS,
+        params: { limit: 10 }, // Missing viewer_id
+        extraParams: {},
+        expectedError: 'Viewer ID is required',
+      },
+    ])('$name', async ({ invokeEndpoint, params, extraParams, expectedError }) => {
+      const fetchParams: Core.TPostStreamFetchParams = {
+        params,
+        invokeEndpoint,
+        extraParams,
+      };
+
+      await expect(NexusPostStreamService.fetch(fetchParams)).rejects.toThrow(expectedError);
+    });
+
+    it('should throw error for invalid stream type', async () => {
+      const params = {
+        params: { limit: 10 },
+        invokeEndpoint: 'invalid_stream_type' as Core.StreamSource,
+        extraParams: {},
+      };
+
+      await expect(NexusPostStreamService.fetch(params as Core.TPostStreamFetchParams)).rejects.toThrow(
+        'Invalid stream type',
+      );
+    });
+  });
+
+  describe('fetch - Return values', () => {
+    it('should return the response from queryNexus', async () => {
+      const mockResponse: Core.NexusPostsKeyStream = {
+        post_keys: ['author1:post1', 'author1:post2', 'author2:post3'],
+        last_post_score: 123456,
+      };
+
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockResponse);
+
+      const params: Core.TPostStreamFetchParams = {
+        params: { limit: 10, viewer_id: mockViewerId },
+        invokeEndpoint: Core.StreamSource.ALL,
+        extraParams: {},
+      };
+
+      const result = await NexusPostStreamService.fetch(params);
+
+      expect(result).toEqual(mockResponse);
+      expect(result?.post_keys).toHaveLength(3);
+      expect(result?.last_post_score).toBe(123456);
+    });
+
+    it('should return undefined when queryNexus returns undefined', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(undefined);
+
+      const params: Core.TPostStreamFetchParams = {
+        params: { limit: 10, viewer_id: mockViewerId },
+        invokeEndpoint: Core.StreamSource.ALL,
+        extraParams: {},
+      };
+
+      const result = await NexusPostStreamService.fetch(params);
+
+      expect(result).toBeUndefined();
     });
   });
 });

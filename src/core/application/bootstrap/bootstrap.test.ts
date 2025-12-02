@@ -93,6 +93,9 @@ type MockConfig = {
   persistUsersError?: Error;
   persistPostsError?: Error;
   upsertPostsError?: Error;
+  upsertInfluencersError?: Error;
+  upsertTagsError?: Error;
+  persistFilesError?: Error;
   persistNotificationsError?: Error;
 };
 
@@ -102,8 +105,10 @@ type ServiceMocks = {
   nexusNotifications: unknown;
   persistUsers: unknown;
   persistPosts: unknown;
+  persistFiles: unknown;
   upsertPostsStream: unknown;
   upsertInfluencersStream: unknown;
+  upsertHotTags: unknown;
   upsertTagsStream: unknown;
   persistNotifications: unknown;
 };
@@ -119,8 +124,13 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
     persistUsersError,
     persistPostsError,
     upsertPostsError,
+    upsertInfluencersError,
+    upsertTagsError,
+    persistFilesError,
     persistNotificationsError,
   } = config;
+
+  vi.clearAllMocks();
 
   return {
     nexusFetch: vi
@@ -142,19 +152,31 @@ const setupMocks = (config: MockConfig = {}): ServiceMocks => {
       ),
     persistUsers: vi
       .spyOn(Core.LocalStreamUsersService, 'persistUsers')
-      .mockImplementation(
-        persistUsersError ? () => Promise.reject(persistUsersError) : () => Promise.resolve(undefined),
-      ),
+      .mockImplementation(persistUsersError ? () => Promise.reject(persistUsersError) : () => Promise.resolve([])),
     persistPosts: vi
       .spyOn(Core.LocalStreamPostsService, 'persistPosts')
-      .mockImplementation(persistPostsError ? () => Promise.reject(persistPostsError) : () => Promise.resolve([])),
+      .mockImplementation(
+        persistPostsError ? () => Promise.reject(persistPostsError) : () => Promise.resolve({ postAttachments: [] }),
+      ),
+    persistFiles: vi
+      .spyOn(Core.FileApplication, 'persistFiles')
+      .mockImplementation(
+        persistFilesError ? () => Promise.reject(persistFilesError) : () => Promise.resolve(undefined),
+      ),
     upsertPostsStream: vi
       .spyOn(Core.LocalStreamPostsService, 'upsert')
       .mockImplementation(upsertPostsError ? () => Promise.reject(upsertPostsError) : () => Promise.resolve(undefined)),
-    upsertInfluencersStream: vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined),
-    upsertTagsStream: vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined),
+    upsertInfluencersStream: vi
+      .spyOn(Core.LocalStreamUsersService, 'upsert')
+      .mockImplementation(
+        upsertInfluencersError ? () => Promise.reject(upsertInfluencersError) : () => Promise.resolve(undefined),
+      ),
+    upsertHotTags: vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined),
+    upsertTagsStream: vi
+      .spyOn(Core.LocalStreamTagsService, 'upsert')
+      .mockImplementation(upsertTagsError ? () => Promise.reject(upsertTagsError) : () => Promise.resolve(undefined)),
     persistNotifications: vi
-      .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+      .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
       .mockImplementation(
         persistNotificationsError
           ? () => Promise.reject(persistNotificationsError)
@@ -172,18 +194,24 @@ const assertCommonCalls = (
   expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
   expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
   expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
-  expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+  expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
   expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
     streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
     stream: bootstrapData.list.stream,
   });
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
-    bootstrapData.list.influencers,
-  );
-  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith(
-    Core.UserStreamTypes.RECOMMENDED,
-    bootstrapData.list.recommended,
+  // Check user streams are stored with UserStreamTypes directly
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+    stream: bootstrapData.list.influencers,
+  });
+  expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+    streamId: Core.UserStreamTypes.RECOMMENDED,
+    stream: bootstrapData.list.recommended,
+  });
+  // Check both hot tags features are called
+  expect(mocks.upsertHotTags).toHaveBeenCalledWith(
+    Core.buildHotTagsId(Core.UserStreamTimeframe.TODAY, 'all'),
+    bootstrapData.list.hot_tags,
   );
   expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
   expect(mocks.persistNotifications).toHaveBeenCalledWith(notifications, MOCK_LAST_READ);
@@ -191,6 +219,7 @@ const assertCommonCalls = (
 
 describe('BootstrapApplication', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllMocks();
     vi.spyOn(Core.NotificationNormalizer, 'to').mockReturnValue({
       meta: { url: MOCK_LAST_READ_URL },
@@ -198,6 +227,7 @@ describe('BootstrapApplication', () => {
   });
 
   afterEach(() => {
+    vi.clearAllMocks();
     vi.restoreAllMocks();
   });
 
@@ -210,7 +240,7 @@ describe('BootstrapApplication', () => {
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       assertCommonCalls(mocks, bootstrapData, notifications);
-      expect(result).toEqual({ unread: 1, lastRead: MOCK_LAST_READ });
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ }, filesUris: [] });
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {
@@ -219,10 +249,7 @@ describe('BootstrapApplication', () => {
       await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow('Network error');
 
       expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
-      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(mocks.persistUsers).not.toHaveBeenCalled();
-      expect(mocks.persistNotifications).not.toHaveBeenCalled();
     });
 
     it('should throw NO_CONTENT AppError when bootstrap data is empty (null)', async () => {
@@ -235,11 +262,7 @@ describe('BootstrapApplication', () => {
         message: 'No content found for bootstrap data',
       });
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
-      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(mocks.persistUsers).not.toHaveBeenCalled();
-      expect(mocks.persistNotifications).not.toHaveBeenCalled();
     });
 
     it('should throw error when LocalPersistenceService fails', async () => {
@@ -248,9 +271,6 @@ describe('BootstrapApplication', () => {
 
       await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow('Database error');
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
-      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
       expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
     });
 
@@ -261,17 +281,142 @@ describe('BootstrapApplication', () => {
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       assertCommonCalls(mocks, bootstrapData, []);
-      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
     });
 
-    it('should throw error when HomeserverService fails', async () => {
-      const mocks = setupMocks({ homeserverError: new Error('Homeserver error') });
+    it('should handle 404 homeserver error gracefully and create new lastRead', async () => {
+      const bootstrapData = emptyBootstrap();
+      const MOCK_NORMALIZED_TIMESTAMP = 9876543210;
+      const MOCK_NORMALIZED_LAST_READ_URL = 'pubky://test-pubky/pub/pubky.app/last-read';
+      const mockLastReadResult = {
+        last_read: {
+          timestamp: MOCK_NORMALIZED_TIMESTAMP,
+          toJson: vi.fn(() => ({ timestamp: MOCK_NORMALIZED_TIMESTAMP })),
+        },
+        meta: { url: MOCK_NORMALIZED_LAST_READ_URL },
+      };
 
-      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow('Homeserver error');
+      const mocks = setupMocks({ bootstrapData });
+      // Override homeserver mock to reject on GET with 404 error but allow PUT
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
+        if (action === Core.HomeserverAction.GET) {
+          return Promise.reject(
+            Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Not found', 404, { url }),
+          );
+        }
+        // Allow PUT to succeed (fire and forget)
+        return Promise.resolve(undefined);
+      });
+      mocks.homeserverRequest = homeserverRequestSpy;
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
-      expect(mocks.nexusNotifications).not.toHaveBeenCalled();
+      const lastReadNormalizerSpy = vi
+        .spyOn(Core.LastReadNormalizer, 'to')
+        .mockReturnValue(mockLastReadResult as unknown as LastReadResult);
+      const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      // Verify error was logged as info (not error) since 404 is expected for new users
+      expect(loggerInfoSpy).toHaveBeenCalledWith('Last read file not found, creating new one', { pubky: TEST_PUBKY });
+
+      // Verify LastReadNormalizer was called to create new lastRead
+      expect(lastReadNormalizerSpy).toHaveBeenCalledWith(TEST_PUBKY);
+
+      // Verify GET request failed (first call)
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT request was made to homeserver (fire and forget)
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        MOCK_NORMALIZED_LAST_READ_URL,
+        mockLastReadResult.last_read.toJson(),
+      );
+
+      // Verify notifications were still fetched (homeserver failure only affects lastRead, not notifications)
+      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
+
+      // Verify bootstrap data was still processed
+      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
+
+      // Verify result has empty notification list and normalized timestamp
+      expect(result).toEqual({
+        notification: { unread: 0, lastRead: MOCK_NORMALIZED_TIMESTAMP },
+        filesUris: [],
+      });
+    });
+
+    it('should throw error when homeserver returns 500 error', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      // Override homeserver mock to reject with 500 error
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action, url) => {
+        if (action === Core.HomeserverAction.GET) {
+          return Promise.reject(
+            Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Internal server error', 500, { url }),
+          );
+        }
+        return Promise.resolve(undefined);
+      });
+      mocks.homeserverRequest = homeserverRequestSpy;
+
+      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toMatchObject({
+        type: Libs.HomeserverErrorType.FETCH_FAILED,
+        statusCode: 500,
+        message: 'Internal server error',
+      });
+
+      // Verify error was logged
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch last read timestamp', expect.any(Error));
+
+      // Verify GET request was attempted
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT was NOT called (error should bubble up, not create new lastRead)
+      expect(homeserverRequestSpy).not.toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.any(String),
+        expect.any(Object),
+      );
+
+      // Verify bootstrap process stopped (persist should not be called)
+      expect(mocks.persistUsers).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when homeserver returns network error', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({ bootstrapData });
+
+      // Override homeserver mock to reject with network error (no status code)
+      const homeserverRequestSpy = vi.spyOn(Core.HomeserverService, 'request').mockImplementation((action) => {
+        if (action === Core.HomeserverAction.GET) {
+          return Promise.reject(new Error('Network timeout'));
+        }
+        return Promise.resolve(undefined);
+      });
+      mocks.homeserverRequest = homeserverRequestSpy;
+
+      const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow('Network timeout');
+
+      // Verify error was logged
+      expect(loggerErrorSpy).toHaveBeenCalledWith('Failed to fetch last read timestamp', expect.any(Error));
+
+      // Verify GET request was attempted
+      expect(homeserverRequestSpy).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
+
+      // Verify PUT was NOT called (error should bubble up)
+      expect(homeserverRequestSpy).not.toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.any(String),
+        expect.any(Object),
+      );
+
+      // Verify bootstrap process stopped
       expect(mocks.persistUsers).not.toHaveBeenCalled();
     });
 
@@ -282,9 +427,16 @@ describe('BootstrapApplication', () => {
         'Notifications error',
       );
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
+      // Verify homeserver was called for GET (to get lastRead)
       expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
-      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
+
+      // Verify PUT was NOT called (should not write to homeserver when notifications fail)
+      expect(mocks.homeserverRequest).not.toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        expect.any(String),
+        expect.any(Object),
+      );
+
       expect(mocks.persistUsers).not.toHaveBeenCalled();
     });
 
@@ -296,11 +448,7 @@ describe('BootstrapApplication', () => {
         'Posts persistence error',
       );
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(mocks.homeserverRequest).toHaveBeenCalledWith(Core.HomeserverAction.GET, MOCK_LAST_READ_URL);
-      expect(mocks.nexusNotifications).toHaveBeenCalledWith({ user_id: TEST_PUBKY, limit: 30 });
-      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
-      expect(mocks.persistPosts).toHaveBeenCalledWith(bootstrapData.posts);
+      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: bootstrapData.posts });
     });
 
     it('should throw error when upsert operations fail', async () => {
@@ -311,7 +459,6 @@ describe('BootstrapApplication', () => {
         'Stream upsert error',
       );
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
       expect(mocks.upsertPostsStream).toHaveBeenCalledWith({
         streamId: Core.PostStreamTypes.TIMELINE_ALL_ALL,
         stream: bootstrapData.list.stream,
@@ -329,9 +476,58 @@ describe('BootstrapApplication', () => {
         'Notification persistence error',
       );
 
-      expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
-      expect(mocks.persistUsers).toHaveBeenCalledWith(bootstrapData.users);
       expect(mocks.persistNotifications).toHaveBeenCalledWith([], MOCK_LAST_READ);
+    });
+
+    it('should throw error when upsert influencers stream fails', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({
+        bootstrapData,
+        upsertInfluencersError: new Error('Influencers stream upsert error'),
+      });
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow(
+        'Influencers stream upsert error',
+      );
+
+      expect(mocks.upsertInfluencersStream).toHaveBeenCalledWith({
+        streamId: Core.UserStreamTypes.TODAY_INFLUENCERS_ALL,
+        stream: bootstrapData.list.influencers,
+      });
+    });
+
+    it('should throw error when upsert tags stream fails', async () => {
+      const bootstrapData = emptyBootstrap();
+      const mocks = setupMocks({
+        bootstrapData,
+        upsertTagsError: new Error('Tags stream upsert error'),
+      });
+
+      await expect(BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY))).rejects.toThrow(
+        'Tags stream upsert error',
+      );
+
+      expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
+    });
+
+    it('should return filesUris with post attachments from persistPosts result', async () => {
+      const bootstrapData = createMockBootstrapData();
+      const notifications = [createMockNotification()];
+      const mockAttachments = [
+        'pubky://user-1/pub/pubky.app/files/file-1',
+        'pubky://user-1/pub/pubky.app/files/file-2',
+      ];
+
+      const mocks = setupMocks({ bootstrapData, notifications, unreadCount: 1 });
+      // Override persistPosts mock to return specific attachments
+      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue({
+        postAttachments: mockAttachments,
+      });
+      mocks.persistPosts = persistPostsSpy;
+
+      const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
+
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ }, filesUris: mockAttachments });
     });
   });
 
@@ -374,13 +570,17 @@ describe('BootstrapApplication', () => {
         .spyOn(Core.HomeserverService, 'request')
         .mockResolvedValue({ timestamp: MOCK_LAST_READ });
       const nexusNotificationsSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue(notifications);
-      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue(undefined);
-      const persistPostsSpy = vi.spyOn(Core.LocalStreamPostsService, 'persistPosts').mockResolvedValue([]);
+      const persistUsersSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
+      const persistPostsSpy = vi
+        .spyOn(Core.LocalStreamPostsService, 'persistPosts')
+        .mockResolvedValue({ postAttachments: [] });
+      const persistFilesSpy = vi.spyOn(Core.FileApplication, 'persistFiles').mockResolvedValue(undefined);
       const upsertPostsStreamSpy = vi.spyOn(Core.LocalStreamPostsService, 'upsert').mockResolvedValue(undefined);
       const upsertInfluencersStreamSpy = vi.spyOn(Core.LocalStreamUsersService, 'upsert').mockResolvedValue(undefined);
+      const upsertHotTagsSpy = vi.spyOn(Core.LocalHotService, 'upsert').mockResolvedValue(undefined);
       const upsertTagsStreamSpy = vi.spyOn(Core.LocalStreamTagsService, 'upsert').mockResolvedValue(undefined);
       const persistNotificationsSpy = vi
-        .spyOn(Core.LocalNotificationService, 'persitAndGetUnreadCount')
+        .spyOn(Core.LocalNotificationService, 'persistAndGetUnreadCount')
         .mockResolvedValue(unreadCount);
       const loggerInfoSpy = vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
       const loggerErrorSpy = vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
@@ -393,8 +593,10 @@ describe('BootstrapApplication', () => {
         persistPosts: persistPostsSpy,
         upsertPostsStream: upsertPostsStreamSpy,
         upsertInfluencersStream: upsertInfluencersStreamSpy,
+        upsertHotTags: upsertHotTagsSpy,
         upsertTagsStream: upsertTagsStreamSpy,
         persistNotifications: persistNotificationsSpy,
+        persistFiles: persistFilesSpy,
         loggerInfo: loggerInfoSpy,
         loggerError: loggerErrorSpy,
       };
@@ -410,7 +612,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.loggerInfo).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
       expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
       expect(mocks.persistUsers).toHaveBeenCalledWith(emptyBootstrap().users);
-      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
       expect(mocks.loggerError).not.toHaveBeenCalled();
     });
 
@@ -428,7 +630,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.nexusFetch).toHaveBeenCalledTimes(2);
       expect(mocks.homeserverRequest).toHaveBeenCalledTimes(2);
       expect(mocks.nexusNotifications).toHaveBeenCalledTimes(2);
-      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
     });
 
     it('should retry up to 3 times and throw error if all attempts fail', async () => {
@@ -441,24 +643,11 @@ describe('BootstrapApplication', () => {
 
       expect(mocks.loggerInfo).toHaveBeenCalledTimes(3);
       expect(mocks.loggerError).toHaveBeenCalledTimes(3);
-      expect(mocks.nexusFetch).toHaveBeenCalledTimes(3);
-      expect(mocks.homeserverRequest).toHaveBeenCalledTimes(3);
-      expect(mocks.nexusNotifications).toHaveBeenCalledTimes(3);
-      expect(mocks.persistUsers).not.toHaveBeenCalled();
-      expect(mocks.persistNotifications).not.toHaveBeenCalled();
-    });
-
-    it('should log retry count on each failure', async () => {
-      const mocks = setupRetryMocks({ fetchBehavior: 'fail' });
-      const bootstrapPromise = BootstrapApplication.initializeWithRetry(getBootstrapParams(TEST_PUBKY));
-      const assertion = expect(bootstrapPromise).rejects.toThrow('User still not indexed');
-
-      await vi.advanceTimersByTimeAsync(15000);
-      await assertion;
-
       expect(mocks.loggerError).toHaveBeenNthCalledWith(1, 'Failed to bootstrap', expect.any(Error), 0);
       expect(mocks.loggerError).toHaveBeenNthCalledWith(2, 'Failed to bootstrap', expect.any(Error), 1);
       expect(mocks.loggerError).toHaveBeenNthCalledWith(3, 'Failed to bootstrap', expect.any(Error), 2);
+      expect(mocks.nexusFetch).toHaveBeenCalledTimes(3);
+      expect(mocks.persistUsers).not.toHaveBeenCalled();
     });
 
     it('should wait 5 seconds between each retry attempt', async () => {
@@ -481,7 +670,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.nexusFetch).toHaveBeenCalledTimes(3);
       expect(mocks.homeserverRequest).toHaveBeenCalledTimes(3);
       expect(mocks.nexusNotifications).toHaveBeenCalledTimes(3);
-      expect(result).toEqual({ unread: 0, lastRead: MOCK_LAST_READ });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
     });
   });
 });

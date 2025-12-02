@@ -1,0 +1,511 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FollowerItem - Snapshots > matches snapshot when following 1`] = `
+<div
+  class="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0"
+  data-testid="container"
+>
+  <div
+    class="flex flex-wrap items-center justify-between gap-6 lg:flex-nowrap"
+    data-testid="container"
+  >
+    <a
+      class="flex min-w-0 flex-1 items-center gap-2"
+      data-testid="link"
+      href="/profile/test-user-1"
+    >
+      <div
+        data-avatar="https://example.com/avatar.png"
+        data-name="John Doe"
+        data-size="md"
+        data-testid="avatar-with-fallback"
+      >
+        <img
+          alt="John Doe"
+          src="https://example.com/avatar.png"
+        />
+      </div>
+      <div
+        data-testid="container"
+      >
+        <p
+          class="truncate font-bold"
+          data-testid="typography"
+        >
+          John Doe
+        </p>
+        <p
+          class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          test-user-
+        </p>
+      </div>
+    </a>
+    <div
+      class="hidden flex-wrap items-center gap-2 lg:flex"
+      data-testid="container"
+    >
+      <span
+        data-testid="tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="tag"
+      >
+        candid
+      </span>
+    </div>
+    <div
+      class="flex shrink-0 items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Tags
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          100
+        </p>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Posts
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          50
+        </p>
+      </div>
+    </div>
+    <button
+      aria-label="Unfollow"
+      class="group hidden w-[110px] justify-center lg:flex"
+      data-testid="button"
+    >
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Following
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-minus-icon"
+        />
+        <span>
+          Unfollow
+        </span>
+      </div>
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 lg:hidden"
+    data-testid="container"
+  >
+    <div
+      class="flex flex-1 flex-wrap items-center gap-2"
+      data-testid="container"
+    >
+      <span
+        data-testid="tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="tag"
+      >
+        candid
+      </span>
+    </div>
+    <button
+      aria-label="Unfollow"
+      class="group w-[110px] justify-center"
+      data-testid="button"
+    >
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Following
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-minus-icon"
+        />
+        <span>
+          Unfollow
+        </span>
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot when not following 1`] = `
+<div
+  class="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0"
+  data-testid="container"
+>
+  <div
+    class="flex flex-wrap items-center justify-between gap-6 lg:flex-nowrap"
+    data-testid="container"
+  >
+    <a
+      class="flex min-w-0 flex-1 items-center gap-2"
+      data-testid="link"
+      href="/profile/test-user-1"
+    >
+      <div
+        data-avatar="https://example.com/avatar.png"
+        data-name="John Doe"
+        data-size="md"
+        data-testid="avatar-with-fallback"
+      >
+        <img
+          alt="John Doe"
+          src="https://example.com/avatar.png"
+        />
+      </div>
+      <div
+        data-testid="container"
+      >
+        <p
+          class="truncate font-bold"
+          data-testid="typography"
+        >
+          John Doe
+        </p>
+        <p
+          class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          test-user-
+        </p>
+      </div>
+    </a>
+    <div
+      class="hidden flex-wrap items-center gap-2 lg:flex"
+      data-testid="container"
+    >
+      <span
+        data-testid="tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="tag"
+      >
+        candid
+      </span>
+    </div>
+    <div
+      class="flex shrink-0 items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Tags
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          100
+        </p>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Posts
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          50
+        </p>
+      </div>
+    </div>
+    <button
+      aria-label="Follow"
+      class="group hidden w-[110px] justify-center lg:flex"
+      data-testid="button"
+    >
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 lg:hidden"
+    data-testid="container"
+  >
+    <div
+      class="flex flex-1 flex-wrap items-center gap-2"
+      data-testid="container"
+    >
+      <span
+        data-testid="tag"
+      >
+        bitcoin
+      </span>
+      <span
+        data-testid="tag"
+      >
+        candid
+      </span>
+    </div>
+    <button
+      aria-label="Follow"
+      class="group w-[110px] justify-center"
+      data-testid="button"
+    >
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`FollowerItem - Snapshots > matches snapshot without tags 1`] = `
+<div
+  class="gap-3 rounded-md bg-card p-6 lg:bg-transparent lg:p-0"
+  data-testid="container"
+>
+  <div
+    class="flex flex-wrap items-center justify-between gap-6 lg:flex-nowrap"
+    data-testid="container"
+  >
+    <a
+      class="flex min-w-0 flex-1 items-center gap-2"
+      data-testid="link"
+      href="/profile/test-user-1"
+    >
+      <div
+        data-avatar="https://example.com/avatar.png"
+        data-name="John Doe"
+        data-size="md"
+        data-testid="avatar-with-fallback"
+      >
+        <img
+          alt="John Doe"
+          src="https://example.com/avatar.png"
+        />
+      </div>
+      <div
+        data-testid="container"
+      >
+        <p
+          class="truncate font-bold"
+          data-testid="typography"
+        >
+          John Doe
+        </p>
+        <p
+          class="truncate text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          test-user-
+        </p>
+      </div>
+    </a>
+    <div
+      class="flex shrink-0 items-center gap-3"
+      data-testid="container"
+    >
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Tags
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          100
+        </p>
+      </div>
+      <div
+        class="items-start"
+        data-testid="container"
+      >
+        <p
+          class="text-xs font-medium tracking-[1.2px] text-muted-foreground uppercase"
+          data-testid="typography"
+        >
+          Posts
+        </p>
+        <p
+          class="font-bold"
+          data-testid="typography"
+        >
+          50
+        </p>
+      </div>
+    </div>
+    <button
+      aria-label="Follow"
+      class="group hidden w-[110px] justify-center lg:flex"
+      data-testid="button"
+    >
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+    </button>
+  </div>
+  <div
+    class="flex flex-wrap items-center justify-between gap-3 lg:hidden"
+    data-testid="container"
+  >
+    <button
+      aria-label="Follow"
+      class="group w-[110px] justify-center"
+      data-testid="button"
+    >
+      <div
+        class="flex items-center gap-1.5 group-hover:hidden"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="user-round-plus-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+      <div
+        class="hidden items-center gap-1.5 group-hover:flex"
+        data-testid="container"
+      >
+        <svg
+          class="size-4"
+          data-testid="check-icon"
+        />
+        <span>
+          Follow
+        </span>
+      </div>
+    </button>
+  </div>
+</div>
+`;

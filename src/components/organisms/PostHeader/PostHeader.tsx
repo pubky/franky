@@ -17,20 +17,15 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
   const userId = hideTime ? postId : postId.split(':')[0];
 
   // Fetch post details to get indexed_at (only if we need to show time)
-  const postDetails = useLiveQuery(async () => {
+  const postDetails = useLiveQuery(() => {
     if (hideTime) return null;
-    return await Core.PostController.read({ postId });
+    return Core.PostController.getPostDetails({ compositeId: postId });
   }, [postId, hideTime]);
 
   // Fetch user details for avatar and name
-  const userDetails = useLiveQuery(async () => {
+  const userDetails = useLiveQuery(() => {
     if (!userId) return null;
-    try {
-      return await Core.ProfileController.read({ userId: userId as Core.Pubky });
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      return null;
-    }
+    return Core.UserController.getDetails({ userId });
   }, [userId]);
 
   // Show loading if user details or post details (when needed) are not available
@@ -48,7 +43,7 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
     <Atoms.Container className="flex justify-between" overrideDefaults>
       <Atoms.Container className="flex gap-3" overrideDefaults>
         <Atoms.Avatar size="default">
-          <Atoms.AvatarImage src={Core.filesApi.getAvatar(userId)} />
+          <Atoms.AvatarImage src={Core.FileController.getAvatarUrl(userId)} />
           <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
         </Atoms.Avatar>
         <Atoms.Container className="flex flex-col" overrideDefaults>

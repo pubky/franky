@@ -15,18 +15,10 @@ function buildPostStreamUrl(
   // Add source parameter
   queryParams.append('source', source);
 
-  // Add all parameters that exist (much simpler!)
+  // Add all parameters that exist and are not empty strings
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      if (key === 'tags' && Array.isArray(value)) {
-        // Handle tags specially - validate max 5 and join
-        const validTags = value.slice(0, 5);
-        if (validTags.length > 0) {
-          queryParams.append('tags', validTags.join(','));
-        }
-      } else {
-        queryParams.append(key, String(value));
-      }
+    if (value !== undefined && value !== null && value !== '') {
+      queryParams.append(key, String(value));
     }
   });
 
@@ -39,32 +31,33 @@ function buildPostStreamUrl(
  */
 export const postStreamApi = {
   // All posts (no additional required parameters)
-  all: (params: Core.TStreamAllParams) => buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS),
+  all: (params: Core.TStreamAllParams) =>
+    buildPostStreamUrl(params, Core.StreamSource.ALL, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Sources requiring observer_id
   following: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FOLLOWING, Core.STREAM_PREFIX.POSTS_KEYS),
 
   followers: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FOLLOWERS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   friends: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.FRIENDS, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.FRIENDS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   bookmarks: (params: Core.TStreamWithObserverParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.BOOKMARKS, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Post replies requiring author_id and post_id
-  postReplies: (params: Core.TStreamPostRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS),
+  post_replies: (params: Core.TStreamPostRepliesParams) =>
+    buildPostStreamUrl(params, Core.StreamSource.REPLIES, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Author posts requiring author_id
   author: (params: Core.TStreamAuthorParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS),
+    buildPostStreamUrl(params, Core.StreamSource.AUTHOR, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Author replies requiring author_id
-  authorReplies: (params: Core.TStreamAuthorRepliesParams) =>
-    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS),
+  author_replies: (params: Core.TStreamAuthorRepliesParams) =>
+    buildPostStreamUrl(params, Core.StreamSource.AUTHOR_REPLIES, Core.STREAM_PREFIX.POSTS_KEYS),
 
   // Posts by IDs (POST request)
   postsByIds: (params: Core.TStreamPostsByIdsParams) => {

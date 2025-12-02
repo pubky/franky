@@ -31,6 +31,7 @@ export type NotificationVariantMap = {
   [NotificationType.Repost]: RepostNotification;
   [NotificationType.Mention]: MentionNotification;
   [NotificationType.PostDeleted]: PostDeletedNotification;
+  [NotificationType.PostEdited]: PostEditedNotification;
 };
 
 export type CommonFields = {
@@ -105,5 +106,8 @@ type FlatFromMap<TMap, Common> = {
 /**
  * Flattened notification type that combines all notification variants with their specific fields
  * and common fields (timestamp, type) into a discriminated union.
+ * The `id` field is a unique key generated from the notification's type, timestamp, and actor.
  */
-export type FlatNotification = FlatFromMap<NotificationVariantMap, CommonFields>;
+export type FlatNotification = FlatFromMap<NotificationVariantMap, CommonFields> & {
+  id: string;
+};

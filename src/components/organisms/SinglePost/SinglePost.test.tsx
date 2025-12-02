@@ -46,15 +46,22 @@ vi.mock('@/organisms', () => ({
 }));
 
 // Mock ResizeObserver for useElementHeight
-const mockResizeObserver = vi.fn();
-mockResizeObserver.mockImplementation(() => ({
+const mockResizeObserverInstance = {
   observe: vi.fn(),
   disconnect: vi.fn(),
-}));
+  unobserve: vi.fn(),
+};
+
+class MockResizeObserver {
+  constructor() {
+    return mockResizeObserverInstance;
+  }
+}
 
 Object.defineProperty(window, 'ResizeObserver', {
   writable: true,
-  value: mockResizeObserver,
+  configurable: true,
+  value: MockResizeObserver,
 });
 
 // Mock getBoundingClientRect for useElementHeight
@@ -145,8 +152,8 @@ describe('SinglePost', () => {
     const card = screen.getByTestId('card');
     expect(card).toBeInTheDocument();
 
-    // ResizeObserver should have been called
-    expect(mockResizeObserver).toHaveBeenCalled();
+    // ResizeObserver should have been instantiated and observe called
+    expect(mockResizeObserverInstance.observe).toHaveBeenCalled();
   });
 });
 

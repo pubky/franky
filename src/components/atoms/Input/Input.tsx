@@ -4,16 +4,17 @@ import * as Libs from '@/libs';
 
 type InputTheme = 'default' | 'outline';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: React.HTMLAttributes<HTMLInputElement>['className'];
   theme?: InputTheme;
 }
+
 const defaultProps = {
   type: 'text',
   theme: 'default',
 };
 
-export const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(({ ...props }, ref) => {
   const { theme } = { ...defaultProps, ...props };
 
   const inputClassName = Libs.cn(

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Pubky } from '@/core';
-import type { BlobResult, FileResult, PubkyAppUser } from 'pubky-app-specs';
+import type { PubkyAppUser } from 'pubky-app-specs';
 
 // Avoid pulling WASM-heavy deps from type-only modules
 vi.mock('pubky-app-specs', () => ({}));
@@ -29,6 +29,7 @@ vi.mock('@/core/stores', () => ({
 
 let ProfileApplication: typeof import('./profile').ProfileApplication;
 let Core: typeof import('@/core');
+let Libs: typeof import('@/libs');
 
 beforeEach(async () => {
   vi.clearAllMocks();
@@ -39,55 +40,117 @@ beforeEach(async () => {
     setAuthenticated: vi.fn(),
   };
 
+  // Re-import after resetModules
+  Libs = await import('@/libs');
   Core = await import('@/core');
   ({ ProfileApplication } = await import('./profile'));
+
+  // Mock Logger to prevent AppError from logging during tests
+  vi.spyOn(Libs.Logger, 'error').mockImplementation(() => {});
+  vi.spyOn(Libs.Logger, 'warn').mockImplementation(() => {});
+  vi.spyOn(Libs.Logger, 'info').mockImplementation(() => {});
+  vi.spyOn(Libs.Logger, 'debug').mockImplementation(() => {});
 });
 
 describe('ProfileApplication', () => {
-  describe('uploadAvatar', () => {
-    it('uploads blob and then file record to homeserver', async () => {
-      const blobResult = {
-        blob: { data: new Uint8Array([1, 2, 3]) },
-        meta: { url: 'pubky://user/blob/avatar' },
-      } as unknown as BlobResult;
-      const fileJson = { id: 'file-1', kind: 'avatar' };
-      const fileResult = {
-        file: { toJson: vi.fn(() => fileJson) },
-        meta: { url: 'pubky://user/pub/pubky.app/files/avatar' },
-      } as unknown as FileResult;
+  describe('read', () => {
+    const userId = 'test-user-id' as Pubky;
 
-      const putBlobSpy = vi.spyOn(Core.HomeserverService, 'putBlob').mockResolvedValue(undefined as unknown as void);
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
-
-      await ProfileApplication.uploadAvatar({ blobResult, fileResult });
-
-      expect(putBlobSpy).toHaveBeenCalledWith(blobResult.meta.url, blobResult.blob.data);
-      expect(fileResult.file.toJson).toHaveBeenCalledTimes(1);
-      expect(requestSpy).toHaveBeenNthCalledWith(1, Core.HomeserverAction.PUT, fileResult.meta.url, fileJson);
-
-      // Ensure blob upload happened before file record request
-      expect(putBlobSpy.mock.invocationCallOrder[0]).toBeLessThan(requestSpy.mock.invocationCallOrder[0]);
+    beforeEach(async () => {
+      vi.clearAllMocks();
+      await Core.UserDetailsModel.table.clear();
     });
 
-    it('propagates errors if the first upload fails', async () => {
-      const blobResult = {
-        blob: { data: new Uint8Array([9, 9, 9]) },
-        meta: { url: 'pubky://user/blob/avatar' },
-      } as unknown as BlobResult;
-      const fileResult = {
-        file: { toJson: vi.fn() },
-        meta: { url: 'pubky://user/pub/pubky.app/files/avatar' },
-      } as unknown as FileResult;
+    it('should return user details from local database when found', async () => {
+      const mockUserDetails = {
+        id: userId,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'active',
+        links: null,
+        indexed_at: Date.now(),
+      };
+      // Create user in local database
+      await Core.UserDetailsModel.create(mockUserDetails);
 
-      const putBlobSpy = vi
-        .spyOn(Core.HomeserverService, 'putBlob')
-        .mockRejectedValueOnce(new Error('blob upload failed'));
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
+      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details');
 
-      await expect(ProfileApplication.uploadAvatar({ blobResult, fileResult })).rejects.toThrow('blob upload failed');
-      expect(putBlobSpy).toHaveBeenCalledTimes(1);
-      expect(requestSpy).not.toHaveBeenCalled();
-      expect(fileResult.file.toJson).not.toHaveBeenCalled();
+      const result = await ProfileApplication.read({ userId });
+
+      expect(result).not.toBeNull();
+      expect(result!.id).toBe(userId);
+      expect(result!.name).toBe('Test User');
+      // Should not call Nexus API when found locally
+      expect(nexusSpy).not.toHaveBeenCalled();
+    });
+
+    it('should fetch from Nexus and persist when not found locally', async () => {
+      const nexusUserDetails = {
+        id: userId,
+        name: 'Nexus User',
+        bio: 'Nexus bio',
+        image: '/avatar.jpg',
+        status: 'online',
+        links: [{ title: 'Website', url: 'https://example.com' }],
+        indexed_at: Date.now(),
+      };
+
+      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(nexusUserDetails);
+      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
+
+      const result = await ProfileApplication.read({ userId });
+
+      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
+      expect(upsertSpy).toHaveBeenCalledWith(nexusUserDetails);
+      expect(result).not.toBeNull();
+      expect(result!.id).toBe(userId);
+      expect(result!.name).toBe('Nexus User');
+    });
+
+    it('should return null when Nexus returns 404 (user not found)', async () => {
+      const notFoundError = new Libs.AppError(Libs.NexusErrorType.RESOURCE_NOT_FOUND, 'User not found', 404);
+
+      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(notFoundError);
+      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
+
+      const result = await ProfileApplication.read({ userId });
+
+      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
+      expect(result).toBeNull();
+      // Should not persist anything when user not found
+      expect(upsertSpy).not.toHaveBeenCalled();
+    });
+
+    it('should re-throw non-404 errors from Nexus', async () => {
+      const networkError = new Error('Network error');
+      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(networkError);
+
+      await expect(ProfileApplication.read({ userId })).rejects.toThrow('Network error');
+
+      expect(Core.NexusUserService.details).toHaveBeenCalledWith({ user_id: userId });
+    });
+
+    it('should re-throw server errors (500) from Nexus', async () => {
+      const serverError = new Libs.AppError(Libs.NexusErrorType.NETWORK_ERROR, 'Internal server error', 500);
+
+      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(serverError);
+
+      await expect(ProfileApplication.read({ userId })).rejects.toThrow('Internal server error');
+
+      expect(Core.NexusUserService.details).toHaveBeenCalledWith({ user_id: userId });
+    });
+
+    it('should return undefined when Nexus returns null/undefined', async () => {
+      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
+      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
+
+      const result = await ProfileApplication.read({ userId });
+
+      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
+      expect(result).toBeUndefined();
+      // Should not persist when Nexus returns null
+      expect(upsertSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -120,6 +183,170 @@ describe('ProfileApplication', () => {
 
       expect(mockAuthState.setAuthenticated).toHaveBeenCalledWith(false);
       expect(mockAuthState.setCurrentUserPubky).toHaveBeenCalledWith(null);
+    });
+  });
+
+  describe('update', () => {
+    const testPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Pubky;
+
+    beforeEach(async () => {
+      await Core.UserDetailsModel.table.clear();
+    });
+
+    it('updates status in both homeserver and local database', async () => {
+      // Setup: Create existing user in local DB
+      const existingUser = {
+        id: testPubky,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: 'https://example.com/avatar.jpg',
+        status: 'available',
+        links: [{ title: 'Website', url: 'https://example.com' }],
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      // Mock UserNormalizer
+      const mockUserResult = {
+        user: {
+          toJson: vi.fn(() => ({
+            name: 'Test User',
+            bio: 'Test bio',
+            image: 'https://example.com/avatar.jpg',
+            links: [{ title: 'Website', url: 'https://example.com' }],
+            status: 'vacationing',
+          })),
+        },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      const normalizerSpy = vi
+        .spyOn(Core.UserNormalizer, 'to')
+        .mockReturnValue(mockUserResult as unknown as UserResult);
+
+      // Mock HomeserverService
+      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      // Execute
+      await ProfileApplication.update({ pubky: testPubky, status: 'vacationing' });
+
+      // Verify UserNormalizer called with complete profile data
+      expect(normalizerSpy).toHaveBeenCalledWith(
+        {
+          name: 'Test User',
+          bio: 'Test bio',
+          image: 'https://example.com/avatar.jpg',
+          links: [{ title: 'Website', url: 'https://example.com' }],
+          status: 'vacationing',
+        },
+        testPubky,
+      );
+
+      // Verify homeserver PUT request
+      expect(requestSpy).toHaveBeenCalledWith(
+        Core.HomeserverAction.PUT,
+        `pubky://${testPubky}/pub/pubky.app/profile.json`,
+        mockUserResult.user.toJson(),
+      );
+
+      // Verify local database update
+      const updatedUser = await Core.UserDetailsModel.findById(testPubky);
+      expect(updatedUser).not.toBeNull();
+      expect(updatedUser!.status).toBe('vacationing');
+    });
+
+    it('handles empty status string', async () => {
+      const existingUser = {
+        id: testPubky,
+        name: 'Test User',
+        bio: '',
+        image: null,
+        status: 'available',
+        links: null,
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      const mockUserResult = {
+        user: { toJson: vi.fn(() => ({ name: 'Test User', bio: '', image: '', links: [], status: '' })) },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
+      vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await ProfileApplication.update({ pubky: testPubky, status: '' });
+
+      const updatedUser = await Core.UserDetailsModel.findById(testPubky);
+      expect(updatedUser!.status).toBeNull();
+    });
+
+    it('throws error when user not found', async () => {
+      await expect(ProfileApplication.update({ pubky: testPubky, status: 'available' })).rejects.toThrow(
+        'User profile not found',
+      );
+    });
+
+    it('rollback: does not update local DB if homeserver request fails', async () => {
+      const existingUser = {
+        id: testPubky,
+        name: 'Test User',
+        bio: 'Test bio',
+        image: null,
+        status: 'available',
+        links: null,
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      const mockUserResult = {
+        user: { toJson: vi.fn(() => ({ name: 'Test User', status: 'vacationing' })) },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
+      vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('Network error'));
+
+      await expect(ProfileApplication.update({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
+        'Network error',
+      );
+
+      // Verify local DB was NOT updated
+      const unchangedUser = await Core.UserDetailsModel.findById(testPubky);
+      expect(unchangedUser!.status).toBe('available'); // Still the old status
+    });
+
+    it('handles null links and image correctly', async () => {
+      const existingUser = {
+        id: testPubky,
+        name: 'Minimal User',
+        bio: '',
+        image: null,
+        status: null,
+        links: null,
+        indexed_at: Date.now(),
+      };
+      await Core.UserDetailsModel.create(existingUser);
+
+      const mockUserResult = {
+        user: { toJson: vi.fn(() => ({ name: 'Minimal User', bio: '', image: '', links: [], status: 'busy' })) },
+        meta: { url: `pubky://${testPubky}/pub/pubky.app/profile.json` },
+      };
+      const normalizerSpy = vi
+        .spyOn(Core.UserNormalizer, 'to')
+        .mockReturnValue(mockUserResult as unknown as UserResult);
+      vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
+
+      await ProfileApplication.update({ pubky: testPubky, status: 'busy' });
+
+      // Verify normalizer called with empty strings/arrays for null values
+      expect(normalizerSpy).toHaveBeenCalledWith(
+        {
+          name: 'Minimal User',
+          bio: '',
+          image: '',
+          links: [],
+          status: 'busy',
+        },
+        testPubky,
+      );
     });
   });
 });

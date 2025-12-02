@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -12,21 +11,18 @@ export interface PostMainProps {
   postId: string;
   onClick?: () => void;
   className?: string;
+  isReply?: boolean;
+  isLastReply?: boolean;
 }
 
-export function PostMain({ postId, onClick, className }: PostMainProps) {
+export function PostMain({ postId, onClick, className, isReply = false, isLastReply = false }: PostMainProps) {
   const [replyDialogOpen, setReplyDialogOpen] = useState(false);
 
-  // Fetch post tags
-  const postTags = useLiveQuery(async () => {
-    return await Core.PostTagsModel.findById(postId);
-  }, [postId]);
+  // Get post height for thread connector
+  const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
-  const tags =
-    postTags?.tags.map((tag, index) => ({
-      id: `${postId}-tag-${index}`,
-      label: tag.label,
-    })) || [];
+  // Determine thread connector variant based on reply status
+  const connectorVariant = isLastReply ? 'last' : 'regular';
 
   const handleReplyClick = () => {
     setReplyDialogOpen(true);
@@ -34,32 +30,32 @@ export function PostMain({ postId, onClick, className }: PostMainProps) {
 
   return (
     <>
-      <Atoms.Card className={Libs.cn('cursor-pointer rounded-md py-0', className)} onClick={onClick}>
-        <Atoms.CardContent className="flex flex-col gap-4 p-6">
-          <Organisms.PostHeader postId={postId} />
-          <Organisms.PostContent postId={postId} />
-          <Atoms.Container className="flex flex-col justify-between gap-2 md:flex-row md:gap-0" overrideDefaults>
-            <Atoms.ClickStop>
-              <Molecules.PostTagsList
-                tags={tags}
-                showInput={false}
-                showAddButton={false}
-                addMode
-                showEmojiPicker={false}
-                showTagClose={false}
-              />
-            </Atoms.ClickStop>
-
-            <Atoms.ClickStop>
-              <Organisms.PostActionsBar
-                postId={postId}
-                onReplyClick={handleReplyClick}
-                className="w-full flex-1 justify-start md:justify-end"
-              />
-            </Atoms.ClickStop>
+      <Atoms.Container overrideDefaults onClick={onClick} className="relative flex cursor-pointer">
+        {isReply && (
+          <Atoms.Container overrideDefaults className="w-3 shrink-0">
+            <Atoms.PostThreadConnector height={postHeight} variant={connectorVariant} />
           </Atoms.Container>
-        </Atoms.CardContent>
-      </Atoms.Card>
+        )}
+        <Atoms.Card ref={cardRef} className={Libs.cn('flex-1 rounded-md py-0', className)}>
+          <Atoms.CardContent className="flex flex-col gap-4 p-6">
+            <Organisms.PostHeader postId={postId} />
+            <Organisms.PostContent postId={postId} />
+            <Atoms.Container overrideDefaults className="flex flex-col justify-between gap-2 md:flex-row md:gap-0">
+              <Atoms.ClickStop>
+                <Molecules.PostTagsList postId={postId} showInput={false} addMode={true} />
+              </Atoms.ClickStop>
+
+              <Atoms.ClickStop>
+                <Organisms.PostActionsBar
+                  postId={postId}
+                  onReplyClick={handleReplyClick}
+                  className="w-full flex-1 justify-start md:justify-end"
+                />
+              </Atoms.ClickStop>
+            </Atoms.Container>
+          </Atoms.CardContent>
+        </Atoms.Card>
+      </Atoms.Container>
       <Organisms.DialogReply postId={postId} open={replyDialogOpen} onOpenChangeAction={setReplyDialogOpen} />
     </>
   );

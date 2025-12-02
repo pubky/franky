@@ -28,6 +28,12 @@ vi.mock('pubky-app-specs', () => ({
     Short: 0,
     Long: 1,
   },
+  PubkyAppPostEmbed: class {
+    constructor(
+      public uri: string,
+      public content: string,
+    ) {}
+  },
   postUriBuilder: (authorId: string, postId: string) => `pubky://${authorId}/pub/pubky.app/posts/${postId}`,
 }));
 
@@ -36,7 +42,7 @@ const testData = {
   authorPubky: 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Core.Pubky,
   postId: 'abc123xyz',
   get fullPostId() {
-    return Core.buildPostCompositeId({ pubky: this.authorPubky, postId: this.postId });
+    return Core.buildCompositeId({ pubky: this.authorPubky, id: this.postId });
   },
 };
 
@@ -71,6 +77,16 @@ const setupExistingPost = async () => {
     reposted: null,
     mentioned: [],
   });
+};
+
+const setupAuthUser = (pubky: Core.Pubky) => {
+  const authStore = Core.useAuthStore.getState();
+  authStore.setCurrentUserPubky(pubky);
+  authStore.setAuthenticated(true);
+};
+
+const cleanupAuthUser = () => {
+  Core.useAuthStore.getState().reset();
 };
 
 describe('PostController', () => {
@@ -108,6 +124,78 @@ describe('PostController', () => {
         await Core.PostTagsModel.table.clear();
       },
     );
+  });
+
+  describe('read', () => {
+    it('should return post details when post exists', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      const result = await PostController.getPostDetails({ compositeId: testData.fullPostId });
+
+      expect(result).toBeDefined();
+      expect(result?.id).toBe(testData.fullPostId);
+      expect(result?.content).toBe('Test post content');
+      expect(result?.kind).toBe('short');
+      expect(result?.uri).toBe(`pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId}`);
+    });
+
+    it('should return null when post not found', async () => {
+      const { PostController } = await import('./post');
+
+      const result = await PostController.getPostDetails({ compositeId: 'nonexistent:post' });
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getPostCounts', () => {
+    it('should return post counts when they exist', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      const result = await PostController.getPostCounts({ compositeId: testData.fullPostId });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(testData.fullPostId);
+      expect(result.tags).toBe(0);
+      expect(result.unique_tags).toBe(0);
+      expect(result.replies).toBe(0);
+      expect(result.reposts).toBe(0);
+    });
+
+    it('should return default counts when post not found', async () => {
+      const { PostController } = await import('./post');
+
+      const result = await PostController.getPostCounts({ compositeId: 'nonexistent:post' });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe('nonexistent:post');
+      expect(result.tags).toBe(0);
+      expect(result.unique_tags).toBe(0);
+      expect(result.replies).toBe(0);
+      expect(result.reposts).toBe(0);
+    });
+
+    it('should include all count fields in response', async () => {
+      await setupExistingPost();
+
+      // Update counts to non-zero values
+      await Core.PostCountsModel.table.update(testData.fullPostId, {
+        tags: 5,
+        unique_tags: 3,
+        replies: 10,
+        reposts: 2,
+      });
+
+      const { PostController } = await import('./post');
+      const result = await PostController.getPostCounts({ compositeId: testData.fullPostId });
+
+      expect(result.tags).toBe(5);
+      expect(result.unique_tags).toBe(3);
+      expect(result.replies).toBe(10);
+      expect(result.reposts).toBe(2);
+    });
   });
 
   describe('create', () => {
@@ -163,45 +251,94 @@ describe('PostController', () => {
         createSpy.mockRestore();
       }
     });
+
+    it('should create a repost when originalPostId is provided', async () => {
+      await setupExistingPost();
+      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
+      const { PostController } = await import('./post');
+
+      await PostController.create({
+        content: 'Reposting this!',
+        authorId: testData.authorPubky,
+        originalPostId: testData.fullPostId,
+      });
+
+      const allPosts = await Core.PostDetailsModel.table.toArray();
+      const repost = allPosts.find((p) => p.content === 'Reposting this!');
+
+      expect(repost).toBeTruthy();
+      expect(repost!.kind).toBe('short');
+    });
+
+    it('should throw error when original post not found for repost', async () => {
+      const { PostController } = await import('./post');
+
+      await expect(
+        PostController.create({
+          content: 'Reposting this!',
+          authorId: testData.authorPubky,
+          originalPostId: 'nonexistent:post',
+        }),
+      ).rejects.toThrow('Original post not found');
+    });
+
+    it('should create repost with empty content', async () => {
+      await setupExistingPost();
+      mockHomeserver.fetch.mockResolvedValueOnce({ ok: true });
+      const { PostController } = await import('./post');
+
+      await PostController.create({
+        content: '',
+        authorId: testData.authorPubky,
+        originalPostId: testData.fullPostId,
+      });
+
+      const allPosts = await Core.PostDetailsModel.table.toArray();
+      const repost = allPosts.find((p) => p.content === '');
+
+      expect(repost).toBeTruthy();
+    });
   });
 
   describe('delete', () => {
     it('should call application layer when user is author', async () => {
       await setupExistingPost();
+      setupAuthUser(testData.authorPubky);
+
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
       const deleteSpy = vi.spyOn(ApplicationModule.PostApplication, 'delete').mockResolvedValue(undefined);
 
       try {
-        await PostController.delete({
-          postId: testData.fullPostId,
-          deleterId: testData.authorPubky,
-        });
+        await PostController.delete({ compositePostId: testData.fullPostId });
 
-        expect(deleteSpy).toHaveBeenCalledWith({
-          postId: testData.fullPostId,
-          deleterId: testData.authorPubky,
-        });
+        expect(deleteSpy).toHaveBeenCalledWith({ compositePostId: testData.fullPostId });
       } finally {
         deleteSpy.mockRestore();
+        cleanupAuthUser();
       }
     });
 
     it('should throw error when user is not the author', async () => {
       await setupExistingPost();
+      setupAuthUser('different_user_pubky' as Core.Pubky);
+
       const { PostController } = await import('./post');
 
-      await expect(
-        PostController.delete({
-          postId: testData.fullPostId,
-          deleterId: 'different:user' as Core.Pubky,
-        }),
-      ).rejects.toThrow('User is not the author of this post');
+      try {
+        await expect(PostController.delete({ compositePostId: testData.fullPostId })).rejects.toThrow(
+          'User is not the author of this post',
+        );
+      } finally {
+        cleanupAuthUser();
+      }
     });
 
     it('should propagate errors from application layer', async () => {
       await setupExistingPost();
+      setupAuthUser(testData.authorPubky);
+
       const { PostController } = await import('./post');
       const ApplicationModule = await import('@/core/application');
 
@@ -210,14 +347,137 @@ describe('PostController', () => {
         .mockRejectedValueOnce(new Error('Database transaction failed'));
 
       try {
-        await expect(
-          PostController.delete({
-            postId: testData.fullPostId,
-            deleterId: testData.authorPubky,
-          }),
-        ).rejects.toThrow('Database transaction failed');
+        await expect(PostController.delete({ compositePostId: testData.fullPostId })).rejects.toThrow(
+          'Database transaction failed',
+        );
       } finally {
         deleteSpy.mockRestore();
+        cleanupAuthUser();
+      }
+    });
+  });
+
+  describe('getOrFetchPost', () => {
+    const mockViewerId = 'test-viewer-id' as Core.Pubky;
+
+    it('should return post from local database if exists', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      const post = await PostController.getOrFetchPost({ compositeId: testData.fullPostId, viewerId: mockViewerId });
+
+      expect(post).toBeTruthy();
+      expect(post?.id).toBe(testData.fullPostId);
+      expect(post?.content).toBe('Test post content');
+    });
+
+    it('should return null when PostApplication.getOrFetchPost returns null', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
+
+      try {
+        const post = await PostController.getOrFetchPost({ compositeId: 'nonexistent:post', viewerId: mockViewerId });
+        expect(post).toBeNull();
+      } finally {
+        getOrFetchSpy.mockRestore();
+      }
+    });
+
+    it('should propagate error when PostApplication throws an error', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getOrFetchSpy = vi
+        .spyOn(ApplicationModule.PostApplication, 'getOrFetchPost')
+        .mockRejectedValueOnce(new Error('Nexus error'));
+
+      try {
+        await expect(
+          PostController.getOrFetchPost({ compositeId: 'error:post', viewerId: mockViewerId }),
+        ).rejects.toThrow('Nexus error');
+      } finally {
+        getOrFetchSpy.mockRestore();
+      }
+    });
+
+    it('should call PostApplication.getOrFetchPost with correct postId', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getOrFetchSpy = vi.spyOn(ApplicationModule.PostApplication, 'getOrFetchPost').mockResolvedValue(null);
+
+      try {
+        await PostController.getOrFetchPost({ compositeId: 'author:post123', viewerId: mockViewerId });
+        expect(getOrFetchSpy).toHaveBeenCalledWith({ compositeId: 'author:post123', viewerId: mockViewerId });
+      } finally {
+        getOrFetchSpy.mockRestore();
+      }
+    });
+  });
+
+  describe('getPostRelationships', () => {
+    it('should return post relationships when they exist', async () => {
+      await setupExistingPost();
+      const { PostController } = await import('./post');
+
+      const relationships = await PostController.getPostRelationships({ compositeId: testData.fullPostId });
+
+      expect(relationships).not.toBeNull();
+      expect(relationships?.id).toBe(testData.fullPostId);
+      expect(relationships?.replied).toBeNull();
+      expect(relationships?.reposted).toBeNull();
+      expect(relationships?.mentioned).toEqual([]);
+    });
+
+    it('should return null when post relationships do not exist', async () => {
+      const { PostController } = await import('./post');
+
+      const relationships = await PostController.getPostRelationships({ compositeId: 'nonexistent:post' });
+
+      expect(relationships).toBeNull();
+    });
+
+    it('should return relationships with parent URI when post is a reply', async () => {
+      const parentUri = 'pubky://parent/pub/pubky.app/posts/parent123';
+      const postDetails: Core.PostDetailsModelSchema = {
+        id: testData.fullPostId,
+        content: 'Reply post content',
+        indexed_at: Date.now(),
+        kind: 'short',
+        uri: `pubky://${testData.authorPubky}/pub/pubky.app/posts/${testData.postId}`,
+        attachments: null,
+      };
+
+      await Core.PostDetailsModel.table.add(postDetails);
+      await Core.PostRelationshipsModel.table.add({
+        id: testData.fullPostId,
+        replied: parentUri,
+        reposted: null,
+        mentioned: [],
+      });
+
+      const { PostController } = await import('./post');
+      const relationships = await PostController.getPostRelationships({ compositeId: testData.fullPostId });
+
+      expect(relationships).not.toBeNull();
+      expect(relationships?.replied).toBe(parentUri);
+    });
+
+    it('should call PostApplication.getPostRelationships with correct postId', async () => {
+      const { PostController } = await import('./post');
+      const ApplicationModule = await import('@/core/application');
+
+      const getRelationshipsSpy = vi
+        .spyOn(ApplicationModule.PostApplication, 'getPostRelationships')
+        .mockResolvedValue(null);
+
+      try {
+        await PostController.getPostRelationships({ compositeId: 'author:post123' });
+        expect(getRelationshipsSpy).toHaveBeenCalledWith({ compositeId: 'author:post123' });
+      } finally {
+        getRelationshipsSpy.mockRestore();
       }
     });
   });

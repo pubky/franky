@@ -22,6 +22,9 @@ const meta = {
     asChild: {
       control: { type: 'boolean' },
     },
+    overrideDefaults: {
+      control: { type: 'boolean' },
+    },
   },
   args: { onClick: fn() },
 } satisfies Meta<typeof Button>;
@@ -95,5 +98,13 @@ export const Icon: Story = {
   args: {
     size: 'icon',
     children: '⚙️',
+  },
+};
+
+export const OverrideDefaults: Story = {
+  args: {
+    overrideDefaults: true,
+    children: 'Fully Custom Button',
+    className: 'px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600',
   },
 };

@@ -167,7 +167,7 @@ export const CreateProfileForm = () => {
       let image: string | null = null;
       if (avatarFile) {
         setContinueText('Uploading avatar...');
-        image = await Core.ProfileController.uploadAvatar(avatarFile, pubky);
+        image = await Core.FileController.upload({ file: avatarFile, pubky });
         if (!image) {
           setContinueText('Try again!');
           return;

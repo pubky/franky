@@ -25,7 +25,7 @@ describe('PostDetailsModel', () => {
     originalId: string,
     nexusDetails: typeof MOCK_NEXUS_POST_DETAILS,
   ): Core.PostDetailsModelSchema => {
-    const compositeId = Core.buildPostCompositeId({ pubky: nexusDetails.author, postId: originalId });
+    const compositeId = Core.buildCompositeId({ pubky: nexusDetails.author, id: originalId });
     // eslint-disable-next-line
     const { author, ...detailsWithoutAuthor } = nexusDetails;
     return { ...detailsWithoutAuthor, id: compositeId };
@@ -37,7 +37,7 @@ describe('PostDetailsModel', () => {
 
       const postDetails = new Core.PostDetailsModel(mockPostDetailsData);
 
-      expect(postDetails.id).toBe(Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId1 }));
+      expect(postDetails.id).toBe(Core.buildCompositeId({ pubky: testAuthor, id: testPostId1 }));
       expect(postDetails.content).toBe(mockPostDetailsData.content);
       expect(postDetails.indexed_at).toBe(mockPostDetailsData.indexed_at);
       expect(postDetails.kind).toBe(mockPostDetailsData.kind);
@@ -65,7 +65,7 @@ describe('PostDetailsModel', () => {
 
     it('should find post details by id', async () => {
       const mockPostDetailsData = createPostDetailsData(testPostId1, MOCK_NEXUS_POST_DETAILS);
-      const compositeId = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId1 });
+      const compositeId = Core.buildCompositeId({ pubky: testAuthor, id: testPostId1 });
 
       await Core.PostDetailsModel.create(mockPostDetailsData);
       const result = await Core.PostDetailsModel.findById(compositeId);
@@ -92,8 +92,8 @@ describe('PostDetailsModel', () => {
       expect(result).toBeDefined();
 
       // Verify the data was saved correctly
-      const compositeId1 = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId1 });
-      const compositeId2 = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId2 });
+      const compositeId1 = Core.buildCompositeId({ pubky: testAuthor, id: testPostId1 });
+      const compositeId2 = Core.buildCompositeId({ pubky: testAuthor, id: testPostId2 });
       const postDetails1 = await Core.PostDetailsModel.findById(compositeId1);
       const postDetails2 = await Core.PostDetailsModel.findById(compositeId2);
 
@@ -117,8 +117,8 @@ describe('PostDetailsModel', () => {
 
       await Core.PostDetailsModel.bulkSave(mockPostDetails);
 
-      const compositeId1 = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId1 });
-      const compositeId2 = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId2 });
+      const compositeId1 = Core.buildCompositeId({ pubky: testAuthor, id: testPostId1 });
+      const compositeId2 = Core.buildCompositeId({ pubky: testAuthor, id: testPostId2 });
       const postDetails1 = await Core.PostDetailsModel.findById(compositeId1);
       const postDetails2 = await Core.PostDetailsModel.findById(compositeId2);
 
@@ -136,8 +136,8 @@ describe('PostDetailsModel', () => {
 
       await Core.PostDetailsModel.bulkSave(mockPostDetails);
 
-      const compositeId1 = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId1 });
-      const compositeId2 = Core.buildPostCompositeId({ pubky: testAuthor, postId: testPostId2 });
+      const compositeId1 = Core.buildCompositeId({ pubky: testAuthor, id: testPostId1 });
+      const compositeId2 = Core.buildCompositeId({ pubky: testAuthor, id: testPostId2 });
       const postDetails1 = await Core.PostDetailsModel.findById(compositeId1);
       const postDetails2 = await Core.PostDetailsModel.findById(compositeId2);
 

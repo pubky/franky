@@ -14,7 +14,7 @@ body {
   --color-foreground: var(--foreground);
   --font-sans: Inter Tight, sans-serif;
   --font-serif: Inter Tight, serif;
-  --font-mono: Inter Tight, monospace;
+  --font-mono: monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -103,6 +103,116 @@ body {
   --sidebar-ring: oklch(0.472 0.007 274.863);
   --brand: oklch(0.928 0.23 123.978);
   --transparent: oklch(0.118 0.014 284.115 / 0);
+
+  /* ==================================================================
+   * LAYOUT DIMENSIONS
+   * ================================================================== */
+
+  /**
+   * Desktop header height (profile page header)
+   * - Used for sticky positioning of filter bars and sidebars
+   * - Matches ProfilePageHeader height on desktop (lg+)
+   * - Applied: ProfilePageFilterBar, ProfilePageSidebar sticky top offset
+   * - Responsive: Desktop only (hidden on mobile via lg:flex)
+   */
+  --header-height: 146px;
+
+  /**
+   * Mobile header height
+   * - Used for sticky positioning of mobile menu below header
+   * - Matches MobileHeader component height
+   * - Applied: ProfilePageMobileMenu sticky top offset
+   * - Responsive: Mobile only (hidden on desktop via lg:hidden)
+   */
+  --header-height-mobile: 80px;
+
+  /**
+   * Sidebar and filter bar width
+   * - Standard width for left/right sidebars and filter components
+   * - Ensures consistent layout across different sidebar types
+   * - Applied to: LeftSidebar, RightSidebar, ProfilePageSidebar, ProfilePageFilterBar
+   * - Responsive: Desktop only (hidden on mobile, sidebars use drawers instead)
+   * 
+   * Rationale:
+   * - 180px provides optimal content width for navigation/filter items
+   * - Balances readability with efficient use of horizontal space
+   * - Maintains 3-column layout (sidebar-content-sidebar) on wide screens
+   * - Consistent with Figma design specifications
+   * 
+   * Non-responsive by design:
+   * - On mobile (<lg): sidebars are hidden, content uses full width
+   * - On desktop (≥lg): fixed 180px ensures predictable layout
+   * - Responsive behavior handled via Tailwind's lg: breakpoint, not CSS variables
+   */
+  --filter-bar-width: 180px;
+
+  /**
+   * Popover width
+   * - Standard width for popover components (dropdowns, pickers)
+   * - Ensures consistent popover sizing across the application
+   * - Applied to: StatusPicker PopoverContent
+   * - Used for: Status selection dropdowns and similar picker components
+   */
+  --popover-width: 280px;
+
+  /**
+   * Avatar zoom modal size
+   * - Size of the avatar when displayed in the zoom modal
+   * - Used for full-screen avatar preview on profile page
+   * - Applied to: AvatarZoomModal component
+   * 
+   * Rationale:
+   * - 362px provides optimal viewing size on desktop
+   * - min() function ensures responsive sizing on mobile devices
+   * - 90vw (90% of viewport width) prevents overflow on small screens
+   * - Maintains aspect ratio across all device sizes
+   * - Ensures avatar is prominently displayed without overwhelming the viewport
+   * 
+   * Responsive behavior:
+   * - Desktop (≥402px width): 362px (max size)
+   * - Mobile (<402px width):  90% of viewport width
+   * - Examples:
+   *   → 1920px viewport: 362px
+   *   → 768px viewport:  362px
+   *   → 375px viewport:  337px (90% of 375px)
+   *   → 320px viewport:  288px (90% of 320px)
+   */
+  --avatar-zoom-size: min(362px, 90vw);
+
+  /* ==================================================================
+   * Z-INDEX LAYERS (Stacking Order)
+   * ================================================================== */
+
+  /**
+   * Z-index for sticky headers
+   * - Ensures headers stay above scrolling content
+   * - Used by: Header component (desktop main header)
+   * - Also used by: SettingsMobileMenu (fixed positioning)
+   * 
+   * Rationale for value 20:
+   * - Higher than content (0) and typical component overlays (1-10)
+   * - Lower than mobile menu (30) to ensure proper mobile stacking
+   * - Leaves room for intermediate layers (11-19) if needed
+   * - Avoids excessive values (100+) for maintainability
+   */
+  --z-sticky-header: 20;
+
+  /**
+   * Z-index for mobile-specific UI elements
+   * - Ensures mobile header and menu appear above sticky headers
+   * - Used by: MobileHeader, ProfilePageMobileMenu
+   * 
+   * Rationale for value 30:
+   * - Must be higher than sticky header (20) for proper mobile layering
+   * - Ensures mobile navigation is always accessible
+   * - Lower than modals/dialogs (typically 40-50+) to allow overlays
+   * - Part of a consistent z-index scale: content(0) < header(20) < mobile(30) < modal(40+)
+   * 
+   * Responsive behavior:
+   * - Only applied to mobile-only components (lg:hidden)
+   * - Desktop uses different layout without mobile menu
+   */
+  --z-mobile-menu: 30;
 }
 
 @layer base {

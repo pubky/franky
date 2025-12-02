@@ -1,0 +1,1101 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import * as Core from '@/core';
+import { APP_ROUTES, AUTH_ROUTES, ONBOARDING_ROUTES, PROFILE_ROUTES } from '@/app';
+import type { PollingServiceConfig } from '@/core/coordinators/base/coordinators.types';
+
+// =============================================================================
+// Test Helpers
+// =============================================================================
+
+/**
+ * Type helper for coordinator config that includes base polling config properties
+ * This is needed because TypeScript doesn't always recognize inherited properties
+ * from PollingServiceConfig in NotificationCoordinatorConfig
+ */
+type CoordinatorConfigWithBase = Core.NotificationCoordinatorConfig & PollingServiceConfig;
+
+/**
+ * Sets up an authenticated user with polling spy
+ * Reduces boilerplate for most tests
+ */
+function setupAuthenticatedTest(userId = 'user123') {
+  const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+  Core.useAuthStore.getState().setAuthenticated(true);
+  Core.useAuthStore.getState().setCurrentUserPubky(userId as unknown as Core.Pubky);
+  const coordinator = Core.NotificationCoordinator.getInstance();
+  return { spy, coordinator };
+}
+
+/**
+ * Flushes pending async promises
+ * Useful for pollOnStart tests
+ */
+async function flushPromises() {
+  await Promise.resolve();
+  await Promise.resolve();
+}
+
+// =============================================================================
+// Tests
+// =============================================================================
+
+describe('NotificationCoordinator', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    // Reset coordinator singleton and auth store before each test
+    Core.NotificationCoordinator.resetInstance();
+    Core.useAuthStore.getState().reset();
+  });
+
+  describe('Singleton Behavior', () => {
+    it('returns the same instance on multiple getInstance() calls', () => {
+      const instance1 = Core.NotificationCoordinator.getInstance();
+      const instance2 = Core.NotificationCoordinator.getInstance();
+      const instance3 = Core.NotificationCoordinator.getInstance();
+
+      // All should be the exact same object reference
+      expect(instance1).toBe(instance2);
+      expect(instance2).toBe(instance3);
+      expect(instance1).toBe(instance3);
+    });
+
+    it('shares state across all getInstance() references', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coord1 = Core.NotificationCoordinator.getInstance();
+      const coord2 = Core.NotificationCoordinator.getInstance();
+
+      // Configure and start through first reference
+      coord1.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coord1.start();
+
+      vi.advanceTimersByTime(2_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // Stop through second reference
+      coord2.stop();
+
+      // Both should reflect the same state (stopped)
+      // If they were different instances, coord1 would still be running
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(2); // No additional calls
+    });
+
+    it('creates a new instance after resetInstance()', () => {
+      const instance1 = Core.NotificationCoordinator.getInstance();
+
+      Core.NotificationCoordinator.resetInstance();
+
+      const instance2 = Core.NotificationCoordinator.getInstance();
+
+      // After reset, we should get a DIFFERENT instance
+      expect(instance1).not.toBe(instance2);
+    });
+
+    it('new instance after reset has fresh state', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coord1 = Core.NotificationCoordinator.getInstance();
+      coord1.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coord1.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Reset creates new instance with fresh state
+      Core.NotificationCoordinator.resetInstance();
+
+      // New instance should not be polling (start() was not called)
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional calls from coord2
+    });
+  });
+
+  describe('Race Conditions', () => {
+    it('handles multiple rapid start() calls gracefully', () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+
+      // Rapidly call start multiple times
+      coordinator.start();
+      coordinator.start();
+      coordinator.start();
+      coordinator.start();
+
+      // Should only have one interval running, not four
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1); // Only one poll
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(2); // Only one more poll, not 4x
+    });
+
+    it('handles multiple rapid stop() calls gracefully', () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Rapidly call stop multiple times
+      coordinator.stop();
+      coordinator.stop();
+      coordinator.stop();
+
+      // Should not throw or cause issues
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional polls
+    });
+
+    it('handles interleaved start/stop calls gracefully', () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+
+      // Rapid start/stop/start pattern
+      coordinator.start();
+      coordinator.stop();
+      coordinator.start();
+      coordinator.stop();
+      coordinator.start();
+
+      // Last call was start(), so should be polling
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Stop it
+      coordinator.stop();
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No more polls
+    });
+
+    it('handles multiple rapid configure() calls gracefully', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+
+      // Rapidly change configuration multiple times
+      coordinator.configure({ intervalMs: 1_000 });
+      coordinator.configure({ intervalMs: 2_000 });
+      coordinator.configure({ intervalMs: 500 });
+      coordinator.configure({ intervalMs: 3_000 });
+      coordinator.configure({ intervalMs: 1_000 });
+
+      // Last config should win (1_000ms interval)
+      coordinator.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('handles configure() during active polling without creating duplicate timers', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+
+      // Poll once
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Change interval mid-polling (should restart with new interval)
+      coordinator.configure({ intervalMs: 2_000 });
+
+      // Old 1s timer should be cleared, new 2s timer should be active
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No poll at 1s mark
+
+      vi.advanceTimersByTime(1_000); // Total 2s
+      expect(spy).toHaveBeenCalledTimes(2); // Poll at 2s mark
+
+      // Continue at 2s interval
+      vi.advanceTimersByTime(2_000);
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
+
+    it('handles start/configure/stop in rapid succession', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+
+      // Rapid succession of different operations
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+      coordinator.configure({ intervalMs: 500 });
+      coordinator.stop();
+      coordinator.configure({ intervalMs: 2_000 });
+      coordinator.start();
+
+      // Should be stopped, then started with 2s interval
+      vi.advanceTimersByTime(2_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(2_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('Memory Leaks & Cleanup', () => {
+    it('stops polling after destroy() is called', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+
+      vi.advanceTimersByTime(2_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // Destroy the coordinator
+      coordinator.destroy();
+
+      // Should not poll anymore
+      vi.advanceTimersByTime(10_000);
+      expect(spy).toHaveBeenCalledTimes(2); // No additional calls
+    });
+
+    it('removes visibility change listener on destroy()', () => {
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ respectPageVisibility: true } as Partial<CoordinatorConfigWithBase>);
+
+      // Should have added visibility listener during construction
+      expect(addEventListenerSpy).toHaveBeenCalledWith('visibilitychange', expect.any(Function));
+
+      const visibilityHandler = addEventListenerSpy.mock.calls.find((call) => call[0] === 'visibilitychange')?.[1];
+
+      coordinator.destroy();
+
+      // Should remove the listener
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('visibilitychange', visibilityHandler);
+
+      addEventListenerSpy.mockRestore();
+      removeEventListenerSpy.mockRestore();
+    });
+
+    it('does not respond to auth changes after destroy()', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Destroy the coordinator
+      coordinator.destroy();
+
+      // Change auth state (should not trigger polling)
+      Core.useAuthStore.getState().setAuthenticated(false);
+      Core.useAuthStore.getState().setAuthenticated(true);
+
+      vi.advanceTimersByTime(10_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional calls
+    });
+
+    it('does not respond to visibility changes after destroy()', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        respectPageVisibility: true,
+      } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Destroy the coordinator
+      coordinator.destroy();
+
+      // Change visibility (should not trigger polling)
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'hidden',
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      });
+      document.dispatchEvent(new Event('visibilitychange'));
+
+      vi.advanceTimersByTime(10_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional calls
+    });
+
+    it('can be safely destroyed multiple times', () => {
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+
+      // Multiple destroy calls should not throw
+      expect(() => {
+        coordinator.destroy();
+        coordinator.destroy();
+        coordinator.destroy();
+      }).not.toThrow();
+    });
+
+    it('resetInstance() properly cleans up before creating new instance', () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coord1 = Core.NotificationCoordinator.getInstance();
+      coord1.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coord1.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Reset (should call destroy internally)
+      Core.NotificationCoordinator.resetInstance();
+
+      // Old instance should not poll anymore
+      vi.advanceTimersByTime(10_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // New instance should be clean
+      const coord2 = Core.NotificationCoordinator.getInstance();
+      expect(coord2).not.toBe(coord1);
+    });
+  });
+
+  describe('UserId Edge Cases', () => {
+    it('does not poll when userId is null', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      // Don't set userId (will be null)
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      // Allow microtasks to flush
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // Should NOT poll without userId
+      expect(spy).not.toHaveBeenCalled();
+
+      // Advance time - still should not poll
+      vi.advanceTimersByTime(5_000);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('does not poll when userId is undefined', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky(undefined as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      // Allow microtasks to flush
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // Should NOT poll without userId
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('does not poll when userId is empty string', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      // Allow microtasks to flush
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // Should NOT poll with empty string userId
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('stops polling when userId becomes null mid-session', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({ userId: 'user123' });
+
+      // Clear userId mid-session - polling should stop
+      Core.useAuthStore.getState().setCurrentUserPubky(null as unknown as Core.Pubky);
+
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional calls
+    });
+
+    it('resumes polling when userId is set after being null', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      // Start with null userId
+      Core.useAuthStore.getState().setCurrentUserPubky(null as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      // Should not poll
+      vi.advanceTimersByTime(2_000);
+      expect(spy).not.toHaveBeenCalled();
+
+      // Set valid userId and trigger re-evaluation via route change
+      Core.useAuthStore.getState().setCurrentUserPubky('user456' as unknown as Core.Pubky);
+      coordinator.setRoute(PROFILE_ROUTES.PROFILE); // Trigger route change to re-evaluate
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith({ userId: 'user456' });
+    });
+
+    it('handles userId changing between polls', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user1' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledWith({ userId: 'user1' });
+
+      // Change userId - polling continues with new value
+      Core.useAuthStore.getState().setCurrentUserPubky('user2' as unknown as Core.Pubky);
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledWith({ userId: 'user2' });
+
+      // Change again
+      Core.useAuthStore.getState().setCurrentUserPubky('user3' as unknown as Core.Pubky);
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledWith({ userId: 'user3' });
+
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('Dynamic Configuration', () => {
+    it('respects disabledRoutes changes at runtime', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute('/admin');
+      coordinator.start();
+
+      // Should poll on /admin (not disabled by default)
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Add /admin to disabled routes
+      coordinator.configure({ disabledRoutes: [/^\/admin/] });
+
+      // Stop and restart to re-evaluate with new config
+      coordinator.stop();
+      coordinator.start();
+
+      // Should not poll on now-disabled route
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional calls
+
+      // Change to different route
+      coordinator.setRoute(APP_ROUTES.HOME);
+
+      // Should resume polling (home not disabled)
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+
+    it('allows disabling default routes via configure()', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        disabledRoutes: [], // Clear all disabled routes
+      } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(AUTH_ROUTES.SIGN_IN);
+      coordinator.start();
+
+      // Should poll on /sign-in now (disabled routes cleared)
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('respects respectPageVisibility toggle at runtime', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+
+      // Start with visibility respect enabled
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        respectPageVisibility: true,
+      } as Partial<CoordinatorConfigWithBase>);
+
+      // Set page to hidden and update coordinator's internal state
+      // (We can't dispatch the event due to unbound method, so we manually update state)
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'hidden',
+      });
+      // Manually update coordinator's internal state to match document visibility
+      (coordinator as unknown as { state: { isPageVisible: boolean } }).state.isPageVisible = false;
+
+      coordinator.start();
+      await flushPromises();
+
+      // Should not poll when hidden
+      vi.advanceTimersByTime(2_000);
+      expect(spy).not.toHaveBeenCalled();
+
+      // Toggle to ignore page visibility
+      coordinator.configure({ respectPageVisibility: false } as Partial<CoordinatorConfigWithBase>);
+
+      // Trigger re-evaluation by changing route (this will check visibility through shouldPoll)
+      coordinator.setRoute('/home');
+      await flushPromises();
+
+      // Should start polling (now ignoring visibility)
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('toggles respectPageVisibility from false to true', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+
+      // Start with visibility respect disabled
+      coordinator.configure({
+        pollOnStart: false,
+        intervalMs: 1_000,
+        respectPageVisibility: false,
+      } as Partial<CoordinatorConfigWithBase>);
+
+      // Set page to hidden
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'hidden',
+      });
+      // Manually update coordinator's internal state to match document visibility
+      (coordinator as unknown as { state: { isPageVisible: boolean } }).state.isPageVisible = false;
+
+      coordinator.start();
+      await flushPromises();
+
+      // Should poll despite being hidden (respectPageVisibility: false)
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      // Toggle to respect page visibility
+      coordinator.stop();
+      coordinator.configure({ respectPageVisibility: true } as Partial<CoordinatorConfigWithBase>);
+      coordinator.start();
+      await flushPromises();
+
+      // Should not poll because page is hidden and now we respect visibility
+      // Trigger re-evaluation to check visibility through shouldPoll()
+      coordinator.setRoute('/home');
+      await flushPromises();
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(1); // No additional calls
+
+      // Make visible again
+      Object.defineProperty(document, 'visibilityState', {
+        configurable: true,
+        get: () => 'visible',
+      });
+      // Update coordinator's internal state to match
+      (coordinator as unknown as { state: { isPageVisible: boolean } }).state.isPageVisible = true;
+      // Trigger re-evaluation by changing route
+      coordinator.setRoute('/feed');
+      await flushPromises();
+
+      // Should resume polling
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('Route Edge Cases', () => {
+    it('handles empty route string', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute('');
+      coordinator.start();
+
+      // Should poll normally with empty route (not disabled)
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles route with query parameters', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(PROFILE_ROUTES.PROFILE + '?tab=posts&sort=recent');
+      coordinator.start();
+
+      // Should poll normally
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles route with special regex characters', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+
+      // Routes with special chars that need escaping in regex
+      const specialRoutes = ['/user/$userId', '/post/[id]', '/search/(advanced)', '/settings.html', '/api/v1+v2'];
+
+      for (const route of specialRoutes) {
+        coordinator.setRoute(route);
+        coordinator.start();
+
+        vi.advanceTimersByTime(1_000);
+        expect(spy).toHaveBeenCalled(); // Should not crash
+
+        coordinator.stop();
+        spy.mockClear();
+      }
+    });
+
+    it('handles deeply nested routes', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute('/app/dashboard/analytics/reports/quarterly/2024/q1');
+      coordinator.start();
+
+      // Should poll normally
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Disabled Routes', () => {
+    it('does not poll on /sign-in route', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(AUTH_ROUTES.SIGN_IN);
+      coordinator.start();
+
+      await flushPromises();
+      expect(spy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(5_000);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('does not poll on /logout route', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(AUTH_ROUTES.LOGOUT);
+      coordinator.start();
+
+      await flushPromises();
+      expect(spy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(5_000);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('does not poll on /onboarding base route', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute('/onboarding');
+      coordinator.start();
+
+      await flushPromises();
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('does not poll on nested onboarding routes', async () => {
+      const { spy, coordinator } = setupAuthenticatedTest();
+      coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+
+      const onboardingRoutes = Object.values(ONBOARDING_ROUTES);
+
+      for (const route of onboardingRoutes) {
+        coordinator.setRoute(route);
+        coordinator.start();
+
+        await flushPromises();
+        expect(spy).not.toHaveBeenCalled();
+
+        coordinator.stop();
+      }
+    });
+
+    it('resumes polling when moving from disabled to enabled route', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(AUTH_ROUTES.SIGN_IN);
+      coordinator.start();
+
+      // Should not poll on disabled route
+      vi.advanceTimersByTime(2_000);
+      expect(spy).not.toHaveBeenCalled();
+
+      // Move to enabled route
+      coordinator.setRoute(APP_ROUTES.HOME);
+
+      // Should resume polling
+      vi.advanceTimersByTime(1_000);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('stops polling when moving from enabled to disabled route', async () => {
+      const spy = vi
+        .spyOn(Core.NotificationController, 'notifications')
+        .mockResolvedValue(undefined as unknown as never);
+
+      Core.useAuthStore.getState().setAuthenticated(true);
+      Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+      const coordinator = Core.NotificationCoordinator.getInstance();
+      coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+      coordinator.setRoute(APP_ROUTES.HOME);
+      coordinator.start();
+
+      // Should poll on enabled route
+      vi.advanceTimersByTime(2_000);
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      // Move to disabled route
+      coordinator.setRoute(ONBOARDING_ROUTES.PROFILE);
+
+      // Should stop polling
+      vi.advanceTimersByTime(5_000);
+      expect(spy).toHaveBeenCalledTimes(2); // No additional calls
+    });
+  });
+
+  it('polls on interval when started (no pollOnStart)', () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    expect(spy).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(999);
+    expect(spy).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    expect(spy).toHaveBeenCalledTimes(1);
+    vi.advanceTimersByTime(2_000);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('restarts polling when interval changes via configure()', () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    vi.advanceTimersByTime(2_000); // two ticks at 1s
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    // Change to 500ms and ensure more frequent ticks
+    coordinator.configure({ intervalMs: 500 });
+    vi.advanceTimersByTime(2_000); // four ticks at 0.5s
+    expect(spy).toHaveBeenCalledTimes(6);
+  });
+
+  it('respects page visibility: pauses when hidden, resumes when visible', async () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    // Set page to hidden before starting
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'hidden',
+    });
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({
+      pollOnStart: true,
+      intervalMs: 1_000,
+      respectPageVisibility: true,
+    } as Partial<CoordinatorConfigWithBase>);
+    // Manually update coordinator's internal state to match document visibility
+    (coordinator as unknown as { state: { isPageVisible: boolean } }).state.isPageVisible = false;
+    coordinator.start();
+
+    // Wait for coordinator to be fully initialized
+    await flushPromises();
+
+    // No immediate poll because hidden
+    await flushPromises();
+    expect(spy).not.toHaveBeenCalled();
+
+    // Make page visible and update coordinator's internal state
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'visible',
+    });
+    // Update coordinator's internal state to match
+    (coordinator as unknown as { state: { isPageVisible: boolean } }).state.isPageVisible = true;
+    // Trigger re-evaluation by changing route (this will check visibility through shouldPoll)
+    coordinator.setRoute('/home');
+    await flushPromises();
+
+    // Should poll now that page is visible
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    vi.advanceTimersByTime(1_000);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('ignores page visibility when respectPageVisibility is false', async () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    // Make page hidden
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'hidden',
+    });
+    document.dispatchEvent(new Event('visibilitychange'));
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({
+      pollOnStart: true,
+      intervalMs: 1_000,
+      respectPageVisibility: false,
+    } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    // Should poll immediately despite being hidden
+    await Promise.resolve();
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops when de-authenticated and resumes when authenticated again', async () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    vi.advanceTimersByTime(2_000);
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    // De-authenticate -> should stop
+    Core.useAuthStore.getState().setAuthenticated(false);
+    vi.advanceTimersByTime(2_000);
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    // Re-authenticate -> must also have a pubky set before polling can succeed
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+    Core.useAuthStore.getState().setAuthenticated(true);
+    vi.advanceTimersByTime(1_000);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('pauses on disabled route then resumes on allowed route', async () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({ pollOnStart: false, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.setRoute(APP_ROUTES.HOME);
+    coordinator.start();
+
+    vi.advanceTimersByTime(2_000);
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    coordinator.setRoute(AUTH_ROUTES.LOGOUT); // disabled by default
+    vi.advanceTimersByTime(2_000);
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    coordinator.setRoute(APP_ROUTES.HOME);
+    vi.advanceTimersByTime(1_000);
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+
+  it('forwards the correct userId to NotificationController.notifications', async () => {
+    const spy = vi.spyOn(Core.NotificationController, 'notifications').mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('userABC' as unknown as Core.Pubky);
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.setRoute(APP_ROUTES.HOME);
+    coordinator.start();
+
+    await Promise.resolve();
+    expect(spy).toHaveBeenCalled();
+    const callArg = spy.mock.calls[0]?.[0] as { userId: unknown };
+    expect(callArg?.userId).toBe('userABC');
+  });
+
+  it('continues polling even if a poll attempt throws', async () => {
+    const spy = vi
+      .spyOn(Core.NotificationController, 'notifications')
+      .mockRejectedValueOnce(new Error('network'))
+      .mockResolvedValue(undefined as unknown as never);
+
+    Core.useAuthStore.getState().setAuthenticated(true);
+    Core.useAuthStore.getState().setCurrentUserPubky('user123' as unknown as Core.Pubky);
+
+    const coordinator = Core.NotificationCoordinator.getInstance();
+    coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    // First immediate call rejects, but next interval should still run
+    await Promise.resolve();
+    vi.advanceTimersByTime(1_000);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not poll until start() is called', async () => {
+    const { spy } = setupAuthenticatedTest();
+
+    // Create instance but do not start (don't call start())
+    // Advance time – should not poll because start() wasn't called
+    vi.advanceTimersByTime(10_000);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('polls immediately on start when pollOnStart is true', async () => {
+    const { spy, coordinator } = setupAuthenticatedTest();
+    coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops polling when stop() is called', async () => {
+    const { spy, coordinator } = setupAuthenticatedTest();
+    coordinator.configure({ pollOnStart: true, intervalMs: 1_000 } as Partial<CoordinatorConfigWithBase>);
+    coordinator.start();
+
+    await flushPromises();
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    // Stop and ensure no more polls happen
+    coordinator.stop();
+    vi.advanceTimersByTime(5_000);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  afterEach(() => {
+    Core.NotificationCoordinator.resetInstance();
+    // Restore document visibility to visible for subsequent tests
+    Object.defineProperty(document, 'visibilityState', {
+      configurable: true,
+      get: () => 'visible',
+    });
+    vi.useRealTimers();
+  });
+});

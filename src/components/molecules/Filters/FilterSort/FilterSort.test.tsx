@@ -1,7 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { FilterSort, type SortTab } from './FilterSort';
-import { SORT } from '@/core/stores/home/home.types';
+import { FilterSort } from './FilterSort';
+import { SORT, type SortType } from '@/core/stores/home/home.types';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -30,7 +31,7 @@ describe('FilterSort', () => {
     const mockOnTabChange = vi.fn();
     render(<FilterSort onTabChange={mockOnTabChange} />);
 
-    const tabs: SortTab[] = ['timeline', 'total_engagement'];
+    const tabs: SortType[] = ['timeline', 'total_engagement'];
 
     tabs.forEach((tab) => {
       const element = screen.getByText(tab === 'timeline' ? 'Recent' : 'Popularity');
@@ -75,16 +76,19 @@ describe('FilterSort', () => {
 describe('FilterSort - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<FilterSort />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with Recent content selected tab', () => {
     const { container } = render(<FilterSort selectedTab={SORT.TIMELINE} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with Popularity content selected tab', () => {
     const { container } = render(<FilterSort selectedTab={SORT.ENGAGEMENT} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 });

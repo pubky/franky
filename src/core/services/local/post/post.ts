@@ -1,9 +1,30 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import type { TLocalSavePostParams } from './post.types';
 import { postUriBuilder } from 'pubky-app-specs';
 
 export class LocalPostService {
+  private constructor() {}
+
+  /**
+   * Read a post from the local database.
+   * @param postId - ID of the post to read
+   * @returns Post details
+   */
+  static async readPostDetails({ postId }: { postId: string }) {
+    try {
+      return await Core.PostDetailsModel.findById(postId);
+    } catch (error) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to read post', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  static async updatePostCounts({ postCompositeId, countChanges }: Core.TPostCountsParams) {
+    await Core.PostCountsModel.updateCounts({ postCompositeId, countChanges });
+  }
+
   /**
    * Save a new post to the local database.
    *
@@ -15,27 +36,26 @@ export class LocalPostService {
    *
    * If the post is a reply, also updates the parent post's reply count.
    *
-   * @param params.postId - Unique identifier for the post (format: "authorId:postId")
-   * @param params.content - Post content
-   * @param params.kind - Post kind ('short' or 'long')
    * @param params.authorId - Unique identifier of the post author
-   * @param params.parentUri - URI of parent post if this is a reply
-   * @param params.attachments - Optional array of attachment objects
+   * @param params.postId - Unique identifier for the post
+   * @param params.post - PubkyAppPost object
    *
    * @throws {DatabaseError} When database operations fail
    */
-  static async create({ postId, authorId, post }: TLocalSavePostParams) {
-    const compositePostId = Core.buildPostCompositeId({ pubky: authorId, postId });
+  static async create({ compositePostId, post }: Core.TLocalSavePostParams) {
     const { content, kind, parent: parentUri, attachments, embed } = post;
 
     const repostedUri = embed?.uri ?? null;
+    const normalizedKind = Core.PostNormalizer.postKindToLowerCase(kind);
+
+    const { pubky: authorId, id: postId } = Core.parseCompositeId(compositePostId);
 
     try {
       const postDetails: Core.PostDetailsModelSchema = {
         id: compositePostId,
         content,
         indexed_at: Date.now(),
-        kind: Core.PostNormalizer.postKindToLowerCase(kind),
+        kind: normalizedKind,
         uri: postUriBuilder(authorId, postId),
         attachments: attachments ?? null,
       };
@@ -63,6 +83,7 @@ export class LocalPostService {
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
           Core.UserCountsModel.table,
+          Core.PostStreamModel.table,
         ],
         async () => {
           await Promise.all([
@@ -83,21 +104,33 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts(authorId, { posts: 1, replies: parentUri ? 1 : 0 }));
+          ops.push(
+            Core.UserCountsModel.updateCounts({
+              userId: authorId,
+              countChanges: { posts: 1, replies: parentUri ? 1 : 0 },
+            }),
+          );
+
+          this.updatePostStream({
+            compositePostId,
+            kind: normalizedKind,
+            parentUri,
+            ops,
+            action: Core.HomeserverAction.PUT,
+          });
 
           await Promise.all(ops);
         },
       );
 
-      Libs.Logger.debug('Post saved successfully', { postId, kind, parentUri, repostedUri });
+      Libs.Logger.debug('Post saved successfully', { compositePostId, kind, parentUri, repostedUri });
     } catch (error) {
-      Libs.Logger.error('Failed to save post', { postId, authorId });
+      Libs.Logger.error('Failed to save post', { compositePostId });
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to save post', 500, {
         error,
-        postId,
+        compositePostId,
         content,
         kind,
-        authorId,
       });
     }
   }
@@ -115,12 +148,31 @@ export class LocalPostService {
    * @param params.repostedUri - URI of original post if this is a repost
    *
    * @throws {DatabaseError} When database operations fail
+   *
+   * @returns true if the post had connections like replies or reposts or tags, false otherwise
    */
-  static async delete({ postId, deleterId }: Core.TDeletePostParams) {
-    const postRelationships = await Core.PostRelationshipsModel.findById(postId);
+  static async delete({ compositePostId }: Core.TDeletePostParams): Promise<boolean> {
+    const { pubky: authorId } = Core.parseCompositeId(compositePostId);
+
+    const postCounts = await Core.PostCountsModel.findById(compositePostId);
+    if (!postCounts) {
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Post counts not found', 404, {
+        compositePostId,
+      });
+    }
+    if (this.isPostLinked(postCounts)) {
+      await Core.PostDetailsModel.update(compositePostId, { content: Core.DELETED });
+      return true;
+    }
+
+    const postRelationships = await Core.PostRelationshipsModel.findById(compositePostId);
 
     const parentUri = postRelationships?.replied ?? undefined;
     const repostedUri = postRelationships?.reposted ?? undefined;
+
+    // Fetch post details and relationships to get metadata
+    const postDetails = await Core.PostDetailsModel.findById(compositePostId);
+    const kind = postDetails?.kind ?? 'short';
 
     try {
       await Core.db.transaction(
@@ -131,13 +183,14 @@ export class LocalPostService {
           Core.PostCountsModel.table,
           Core.PostTagsModel.table,
           Core.UserCountsModel.table,
+          Core.PostStreamModel.table,
         ],
         async () => {
           await Promise.all([
-            Core.PostDetailsModel.deleteById(postId),
-            Core.PostRelationshipsModel.deleteById(postId),
-            Core.PostCountsModel.deleteById(postId),
-            Core.PostTagsModel.deleteById(postId),
+            Core.PostDetailsModel.deleteById(compositePostId),
+            Core.PostRelationshipsModel.deleteById(compositePostId),
+            Core.PostCountsModel.deleteById(compositePostId),
+            Core.PostTagsModel.deleteById(compositePostId),
           ]);
 
           const ops: Promise<unknown>[] = [];
@@ -151,19 +204,88 @@ export class LocalPostService {
           }
 
           // Update author's user counts in a single operation
-          ops.push(Core.UserCountsModel.updateCounts(deleterId, { posts: -1, replies: parentUri ? -1 : 0 }));
+          ops.push(
+            Core.UserCountsModel.updateCounts({
+              userId: authorId,
+              countChanges: { posts: -1, replies: parentUri ? -1 : 0 },
+            }),
+          );
+
+          // Remove post from streams
+          this.updatePostStream({ compositePostId, kind, parentUri, ops, action: Core.HomeserverAction.DELETE });
 
           await Promise.all(ops);
         },
       );
 
-      Libs.Logger.debug('Post deleted successfully', { postId, deleterId });
+      Libs.Logger.debug('Post deleted successfully', { compositePostId });
+      return false;
     } catch (error) {
-      Libs.Logger.error('Failed to delete post', { postId, deleterId });
+      Libs.Logger.error('Failed to delete post', { compositePostId });
       throw Libs.createDatabaseError(Libs.DatabaseErrorType.DELETE_FAILED, 'Failed to delete post', 500, {
         error,
+        compositePostId,
+      });
+    }
+  }
+
+  private static updatePostStream({
+    compositePostId,
+    kind,
+    parentUri,
+    ops,
+    action,
+  }: Core.TLocalUpdatePostStreamParams) {
+    const { pubky: authorId } = Core.parseCompositeId(compositePostId);
+
+    // Helper to call the appropriate method with proper class context
+    const updateStream = (streamId: Core.PostStreamId, items: string[]) => {
+      if (action === Core.HomeserverAction.PUT) {
+        return Core.PostStreamModel.prependItems(streamId, items);
+      } else {
+        return Core.PostStreamModel.removeItems(streamId, items);
+      }
+    };
+
+    if (parentUri) {
+      const parentCompositeId = Core.buildCompositeIdFromPubkyUri({
+        uri: parentUri,
+        domain: Core.CompositeIdDomain.POSTS,
+      });
+      ops.push(updateStream(`author_replies:${authorId}`, [compositePostId]));
+      ops.push(updateStream(`post_replies:${parentCompositeId}`, [compositePostId]));
+    } else {
+      ops.push(updateStream(Core.PostStreamTypes.TIMELINE_ALL_ALL, [compositePostId]));
+      ops.push(updateStream(`timeline:all:${kind}` as Core.PostStreamId, [compositePostId]));
+      ops.push(updateStream(Core.PostStreamTypes.TIMELINE_FOLLOWING_ALL, [compositePostId]));
+      ops.push(updateStream(`timeline:following:${kind}` as Core.PostStreamId, [compositePostId]));
+      ops.push(updateStream(Core.PostStreamTypes.TIMELINE_FRIENDS_ALL, [compositePostId]));
+      ops.push(updateStream(`timeline:friends:${kind}` as Core.PostStreamId, [compositePostId]));
+      ops.push(updateStream(`author:${authorId}`, [compositePostId]));
+    }
+  }
+
+  private static isPostLinked(postCounts: Core.PostCountsModelSchema): boolean {
+    return postCounts.replies > 0 || postCounts.reposts > 0 || postCounts.tags > 0;
+  }
+
+  /**
+   * Get post counts for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post counts or undefined if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readPostCounts(postId: string): Promise<Core.PostCountsModelSchema> {
+    try {
+      const counts = await Core.PostCountsModel.findById(postId);
+      return counts ?? ({ id: postId, tags: 0, unique_tags: 0, replies: 0, reposts: 0 } as Core.PostCountsModelSchema);
+    } catch (error) {
+      Libs.Logger.error('Failed to get post counts', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post counts', 500, {
+        error,
         postId,
-        deleterId,
       });
     }
   }
@@ -176,7 +298,7 @@ export class LocalPostService {
     countField: 'replies' | 'reposts',
     countChange: number,
   ): Promise<void> {
-    const postId = Core.buildPostIdFromPubkyUri(uri);
+    const postId = Core.buildCompositeIdFromPubkyUri({ uri, domain: Core.CompositeIdDomain.POSTS });
     if (!postId) return;
 
     const counts = await Core.PostCountsModel.findById(postId);
@@ -186,5 +308,66 @@ export class LocalPostService {
     const newCount = Math.max(0, currentCount + countChange);
 
     await Core.PostCountsModel.update(postId, { [countField]: newCount });
+  }
+
+  static async readPostTags(postId: string): Promise<Core.TagCollectionModelSchema<string>[]> {
+    try {
+      const tags = await Core.PostTagsModel.findById(postId);
+      if (!tags) return [];
+
+      return [tags] as unknown as Core.TagCollectionModelSchema<string>[];
+    } catch (error) {
+      Libs.Logger.error('Failed to get post tags', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post tags', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Get post relationships for a specific post
+   *
+   * @param postId - Composite post ID (author:postId)
+   * @returns Post relationships or null if not found
+   *
+   * @throws {DatabaseError} When database operations fail
+   */
+  static async readPostRelationships(postId: string): Promise<Core.PostRelationshipsModelSchema | null> {
+    try {
+      const relationships = await Core.PostRelationshipsModel.findById(postId);
+      return relationships ?? null;
+    } catch (error) {
+      Libs.Logger.error('Failed to get post relationships', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.QUERY_FAILED, 'Failed to get post relationships', 500, {
+        error,
+        postId,
+      });
+    }
+  }
+
+  /**
+   * Persists complete post data from Nexus to local database
+   * Uses LocalStreamPostsService.persistPosts for consistency
+   *
+   * @param params.postId - Composite post ID (author:postId) - not used, kept for API compatibility
+   * @param params.postData - Complete post data from Nexus
+   *
+   * @throws {DatabaseError} When database operations fail
+   * @returns Post attachments that need to be downloaded
+   */
+  static async persistPostData({ postId, postData }: { postId: string; postData: Core.NexusPost }): Promise<string[]> {
+    try {
+      Libs.Logger.debug(`[LocalPostService] Persisting post ${postId}`);
+      const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: [postData] });
+      Libs.Logger.debug(`[LocalPostService] Post ${postId} persisted with ${postAttachments.length} attachments`);
+      return postAttachments;
+    } catch (error) {
+      Libs.Logger.error('Failed to persist post data', { postId, error });
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.SAVE_FAILED, 'Failed to persist post data', 500, {
+        error,
+        postId,
+      });
+    }
   }
 }

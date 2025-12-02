@@ -10,6 +10,11 @@ import {
   hexToRgba,
   extractInitials,
   normaliseRadixIds,
+  truncateString,
+  minutesAgo,
+  hoursAgo,
+  daysAgo,
+  formatNotificationTime,
 } from './utils';
 
 describe('Utils', () => {
@@ -457,18 +462,18 @@ describe('Utils', () => {
 
     it('should normalize radix IDs in aria-controls attributes', () => {
       const element1 = document.createElement('button');
-      element1.setAttribute('aria-controls', 'radix-«r1»-content');
+      element1.setAttribute('aria-controls', 'radix-_r_1_');
       mockContainer.appendChild(element1);
 
       const element2 = document.createElement('button');
-      element2.setAttribute('aria-controls', 'radix-«r2»-trigger');
+      element2.setAttribute('aria-controls', 'radix-_r_2_');
       mockContainer.appendChild(element2);
 
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-«r0»');
-      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-«r0»');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(buttons[1].getAttribute('aria-controls')).toBe('radix-_r_0_');
     });
 
     it('should not modify non-radix aria-controls attributes', () => {
@@ -496,7 +501,7 @@ describe('Utils', () => {
 
     it('should handle mixed radix and non-radix elements', () => {
       const radixElement = document.createElement('button');
-      radixElement.setAttribute('aria-controls', 'radix-«r5»-content');
+      radixElement.setAttribute('aria-controls', 'radix-_r_5_');
       mockContainer.appendChild(radixElement);
 
       const normalElement = document.createElement('button');
@@ -506,8 +511,23 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       const buttons = normalized.querySelectorAll('button');
 
-      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-«r0»');
+      expect(buttons[0].getAttribute('aria-controls')).toBe('radix-_r_0_');
       expect(buttons[1].getAttribute('aria-controls')).toBe('normal-id');
+    });
+
+    it('should normalise shorthand radix IDs without the radix prefix', () => {
+      const element = document.createElement('div');
+      element.setAttribute('id', '_r_a_');
+      element.setAttribute('aria-controls', '_r_b_');
+      element.setAttribute('aria-labelledby', '_r_c_');
+      mockContainer.appendChild(element);
+
+      const normalized = normaliseRadixIds(mockContainer);
+      const div = normalized.querySelector('div');
+
+      expect(div?.getAttribute('id')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('aria-controls')).toBe('radix-_r_0_');
+      expect(div?.getAttribute('aria-labelledby')).toBe('radix-_r_0_');
     });
 
     it('should return a cloned container', () => {
@@ -525,6 +545,385 @@ describe('Utils', () => {
       const normalized = normaliseRadixIds(mockContainer);
       expect(normalized).toBeDefined();
       expect(normalized.children.length).toBe(0);
+    });
+  });
+
+  describe('truncateString', () => {
+    it('should truncate strings longer than maxLength', () => {
+      expect(truncateString('VeryLongUserName', 10)).toBe('VeryLongUs...');
+      expect(truncateString('Miguel Medeiros', 10)).toBe('Miguel Med...');
+    });
+
+    it('should not truncate strings shorter than maxLength', () => {
+      expect(truncateString('John', 10)).toBe('John');
+      expect(truncateString('Short', 10)).toBe('Short');
+    });
+
+    it('should handle strings exactly at maxLength', () => {
+      expect(truncateString('1234567890', 10)).toBe('1234567890');
+      expect(truncateString('ExactlyTen', 10)).toBe('ExactlyTen');
+    });
+
+    it('should handle empty string', () => {
+      expect(truncateString('', 10)).toBe('');
+    });
+
+    it('should handle very short maxLength', () => {
+      expect(truncateString('Hello World', 1)).toBe('H...');
+      expect(truncateString('Test', 2)).toBe('Te...');
+    });
+
+    it('should handle maxLength of 0', () => {
+      expect(truncateString('Test', 0)).toBe('...');
+    });
+
+    it('should handle single character strings', () => {
+      expect(truncateString('A', 1)).toBe('A');
+      expect(truncateString('A', 5)).toBe('A');
+    });
+
+    it('should handle special characters', () => {
+      expect(truncateString('Special!@#$%Characters', 10)).toBe('Special!@#...');
+      expect(truncateString('Email@domain.com', 10)).toBe('Email@doma...');
+    });
+
+    it('should handle unicode characters', () => {
+      // Note: Emojis are multi-byte characters, so string.length may not match visual character count
+      // This test verifies the function works correctly with the JavaScript string API
+      expect(truncateString('Hello 世界', 7)).toBe('Hello 世...');
+      expect(truncateString('Test 你好', 6)).toBe('Test 你...');
+    });
+
+    it('should handle strings with spaces', () => {
+      expect(truncateString('Hello World Test', 10)).toBe('Hello Worl...');
+      expect(truncateString('   Spaces   ', 5)).toBe('   Sp...');
+    });
+
+    it('should handle null and undefined as empty strings', () => {
+      expect(truncateString(null as unknown as string, 10)).toBe('');
+      expect(truncateString(undefined as unknown as string, 10)).toBe('');
+    });
+
+    it('should add exactly three dots as ellipsis', () => {
+      const result = truncateString('LongString', 5);
+      expect(result.endsWith('...')).toBe(true);
+      expect(result.split('...').length).toBe(2);
+    });
+
+    it('should preserve the first N characters before ellipsis', () => {
+      const result = truncateString('HelloWorld', 5);
+      expect(result.startsWith('Hello')).toBe(true);
+      expect(result).toBe('Hello...');
+    });
+
+    it('should handle consecutive truncations consistently', () => {
+      const str = 'ConsistentString';
+      const result1 = truncateString(str, 8);
+      const result2 = truncateString(str, 8);
+      expect(result1).toBe(result2);
+      expect(result1).toBe('Consiste...');
+    });
+
+    it('should handle different maxLength values for same string', () => {
+      const str = 'TestString';
+      expect(truncateString(str, 4)).toBe('Test...');
+      expect(truncateString(str, 6)).toBe('TestSt...');
+      expect(truncateString(str, 8)).toBe('TestStri...');
+      expect(truncateString(str, 10)).toBe('TestString');
+    });
+
+    it('should handle numbers as strings', () => {
+      expect(truncateString('123456789012345', 10)).toBe('1234567890...');
+    });
+
+    it('should handle mixed alphanumeric strings', () => {
+      expect(truncateString('User123Name456', 8)).toBe('User123N...');
+    });
+  });
+
+  describe('minutesAgo', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should return timestamp for minutes ago', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = minutesAgo(5);
+      const expected = now - 5 * 60 * 1000;
+
+      expect(result).toBe(expected);
+    });
+
+    it('should handle zero minutes', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = minutesAgo(0);
+      expect(result).toBe(now);
+    });
+
+    it('should handle large number of minutes', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = minutesAgo(1440); // 24 hours
+      const expected = now - 1440 * 60 * 1000;
+
+      expect(result).toBe(expected);
+    });
+  });
+
+  describe('hoursAgo', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should return timestamp for hours ago', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = hoursAgo(3);
+      const expected = now - 3 * 60 * 60 * 1000;
+
+      expect(result).toBe(expected);
+    });
+
+    it('should handle zero hours', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = hoursAgo(0);
+      expect(result).toBe(now);
+    });
+
+    it('should handle large number of hours', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = hoursAgo(48); // 2 days
+      const expected = now - 48 * 60 * 60 * 1000;
+
+      expect(result).toBe(expected);
+    });
+  });
+
+  describe('daysAgo', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should return timestamp for days ago', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = daysAgo(7);
+      const expected = now - 7 * 24 * 60 * 60 * 1000;
+
+      expect(result).toBe(expected);
+    });
+
+    it('should handle zero days', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = daysAgo(0);
+      expect(result).toBe(now);
+    });
+
+    it('should handle large number of days', () => {
+      const now = Date.now();
+      vi.setSystemTime(now);
+
+      const result = daysAgo(30);
+      const expected = now - 30 * 24 * 60 * 60 * 1000;
+
+      expect(result).toBe(expected);
+    });
+  });
+
+  describe('formatNotificationTime', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    describe('short format (default)', () => {
+      it('should return "now" for timestamps less than 1 minute ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 30 * 1000; // 30 seconds ago
+        expect(formatNotificationTime(timestamp)).toBe('now');
+      });
+
+      it('should return "now" for current timestamp', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        expect(formatNotificationTime(now)).toBe('now');
+      });
+
+      it('should return minutes format for timestamps less than 60 minutes ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 5 * 60 * 1000; // 5 minutes ago
+        expect(formatNotificationTime(timestamp)).toBe('5m');
+      });
+
+      it('should return minutes format for 59 minutes ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 59 * 60 * 1000;
+        expect(formatNotificationTime(timestamp)).toBe('59m');
+      });
+
+      it('should return hours format for timestamps less than 24 hours ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 3 * 60 * 60 * 1000; // 3 hours ago
+        expect(formatNotificationTime(timestamp)).toBe('3h');
+      });
+
+      it('should return days format for 2 days ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 2 * 24 * 60 * 60 * 1000;
+        expect(formatNotificationTime(timestamp)).toBe('2d');
+      });
+    });
+
+    describe('long format', () => {
+      it('should return "NOW" for timestamps less than 1 minute ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 30 * 1000; // 30 seconds ago
+        expect(formatNotificationTime(timestamp, true)).toBe('NOW');
+      });
+
+      it('should return "NOW" for current timestamp', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        expect(formatNotificationTime(now, true)).toBe('NOW');
+      });
+
+      it('should return minutes format for timestamps less than 60 minutes ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 5 * 60 * 1000; // 5 minutes ago
+        expect(formatNotificationTime(timestamp, true)).toBe('5 MINUTES AGO');
+      });
+
+      it('should return minutes format for 59 minutes ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 59 * 60 * 1000;
+        expect(formatNotificationTime(timestamp, true)).toBe('59 MINUTES AGO');
+      });
+
+      it('should return hours format for timestamps less than 24 hours ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 3 * 60 * 60 * 1000; // 3 hours ago
+        expect(formatNotificationTime(timestamp, true)).toBe('3 HOURS AGO');
+      });
+
+      it('should return hours format for 23 hours ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 23 * 60 * 60 * 1000;
+        expect(formatNotificationTime(timestamp, true)).toBe('23 HOURS AGO');
+      });
+
+      it('should return days format for timestamps less than 7 days ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 2 * 24 * 60 * 60 * 1000; // 2 days ago
+        expect(formatNotificationTime(timestamp, true)).toBe('2 DAYS AGO');
+      });
+
+      it('should return days format for 6 days ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 6 * 24 * 60 * 60 * 1000;
+        expect(formatNotificationTime(timestamp, true)).toBe('6 DAYS AGO');
+      });
+
+      it('should return days format for timestamps 7 or more days ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 7 * 24 * 60 * 60 * 1000; // 7 days ago
+        expect(formatNotificationTime(timestamp, true)).toBe('7 DAYS AGO');
+      });
+
+      it('should return days format for timestamps 30 days ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 30 * 24 * 60 * 60 * 1000; // 30 days ago
+        expect(formatNotificationTime(timestamp, true)).toBe('30 DAYS AGO');
+      });
+
+      it('should handle edge case: exactly 1 minute ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 60 * 1000; // exactly 1 minute
+        expect(formatNotificationTime(timestamp, true)).toBe('1 MINUTE AGO');
+      });
+
+      it('should handle edge case: exactly 60 minutes ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 60 * 60 * 1000; // exactly 1 hour
+        expect(formatNotificationTime(timestamp, true)).toBe('1 HOUR AGO');
+      });
+
+      it('should handle edge case: exactly 24 hours ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 24 * 60 * 60 * 1000; // exactly 1 day
+        expect(formatNotificationTime(timestamp, true)).toBe('1 DAY AGO');
+      });
+
+      it('should handle edge case: exactly 7 days ago', () => {
+        const now = Date.now();
+        vi.setSystemTime(now);
+
+        const timestamp = now - 7 * 24 * 60 * 60 * 1000; // exactly 7 days
+        expect(formatNotificationTime(timestamp, true)).toBe('7 DAYS AGO');
+      });
     });
   });
 });

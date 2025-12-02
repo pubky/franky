@@ -19,55 +19,63 @@ exports[`Filter Components > FilterHeader > renders with title 1`] = `
 `;
 
 exports[`Filter Components > FilterItem > applies custom className 1`] = `
-<p
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80 custom-item"
+<button
+  aria-pressed="false"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1 custom-item"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
+  type="button"
 >
   <span>
     Test Item
   </span>
-</p>
+</button>
 `;
 
 exports[`Filter Components > FilterItem > renders as selected 1`] = `
-<p
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-foreground"
+<button
+  aria-pressed="true"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-foreground m-0 h-full px-0 py-1"
   data-selected="true"
   data-slot="filter-item"
   data-testid="filter-item"
+  type="button"
 >
   <span>
     Selected Item
   </span>
-</p>
+</button>
 `;
 
 exports[`Filter Components > FilterItem > renders as unselected 1`] = `
-<p
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+<button
+  aria-pressed="false"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
+  type="button"
 >
   <span>
     Unselected Item
   </span>
-</p>
+</button>
 `;
 
 exports[`Filter Components > FilterItem > renders with default props 1`] = `
-<p
-  class="flex cursor-pointer items-center gap-2 text-base font-medium transition-colors text-muted-foreground hover:text-foreground/80"
+<button
+  aria-pressed="false"
+  class="flex cursor-pointer gap-2 text-base font-medium transition-colors border-0 bg-transparent p-0 text-left items-center justify-normal text-muted-foreground hover:text-foreground/80 m-0 h-full px-0 py-1"
   data-selected="false"
   data-slot="filter-item"
   data-testid="filter-item"
+  type="button"
 >
   <span>
     Test Item
   </span>
-</p>
+</button>
 `;
 
 exports[`Filter Components > FilterItemIcon > applies custom className 1`] = `
@@ -94,7 +102,7 @@ exports[`Filter Components > FilterItemLabel > applies custom className 1`] = `
 
 exports[`Filter Components > FilterList > applies custom className 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 custom-list"
+  class="mx-auto w-full flex-col flex gap-2 custom-list"
   data-slot="filter-list"
   data-testid="filter-list"
 >
@@ -106,7 +114,7 @@ exports[`Filter Components > FilterList > applies custom className 1`] = `
 
 exports[`Filter Components > FilterList > renders with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2"
+  class="mx-auto w-full flex-col flex gap-2"
   data-slot="filter-list"
   data-testid="filter-list"
 >
@@ -121,7 +129,7 @@ exports[`Filter Components > FilterList > renders with default props 1`] = `
 
 exports[`Filter Components > FilterRoot > applies custom className 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background custom-class"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0 custom-class"
   data-slot="filter-root"
   data-testid="filter-root"
 >
@@ -133,7 +141,7 @@ exports[`Filter Components > FilterRoot > applies custom className 1`] = `
 
 exports[`Filter Components > FilterRoot > renders with default props 1`] = `
 <div
-  class="mx-auto w-full flex flex-col gap-2 bg-background"
+  class="w-full flex-col flex m-0 gap-2 bg-background p-0"
   data-slot="filter-root"
   data-testid="filter-root"
 >

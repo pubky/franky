@@ -1,7 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { FilterLayout, type LayoutTab } from './FilterLayout';
-import { LAYOUT } from '@/core/stores/home/home.types';
+import { FilterLayout } from './FilterLayout';
+import { LAYOUT, type LayoutType } from '@/core/stores/home/home.types';
+import { normaliseRadixIds } from '@/libs/utils/utils';
 
 // Mock libs - use actual utility functions and icons from lucide-react
 vi.mock('@/libs', async (importOriginal) => {
@@ -37,7 +38,7 @@ describe('FilterLayout', () => {
     render(<FilterLayout onTabChange={onTabChange} />);
 
     // Test only enabled tabs (Visual is disabled)
-    ([LAYOUT.COLUMNS, LAYOUT.WIDE] as LayoutTab[]).forEach((tab) => {
+    ([LAYOUT.COLUMNS, LAYOUT.WIDE] as LayoutType[]).forEach((tab) => {
       const label = tab === LAYOUT.COLUMNS ? 'Columns' : 'Wide';
       fireEvent.click(screen.getByText(label));
       expect(onTabChange).toHaveBeenCalledWith(tab);
@@ -70,16 +71,19 @@ describe('FilterLayout', () => {
 describe('FilterLayout - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const { container } = render(<FilterLayout />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with Columns selected tab', () => {
     const { container } = render(<FilterLayout selectedTab={LAYOUT.COLUMNS} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with Wide selected tab', () => {
     const { container } = render(<FilterLayout selectedTab={LAYOUT.WIDE} />);
-    expect(container.firstChild).toMatchSnapshot();
+    const normalisedContainer = normaliseRadixIds(container);
+    expect(normalisedContainer.firstChild).toMatchSnapshot();
   });
 });

@@ -34,7 +34,7 @@ export function SinglePostReplies({ postId }: PostRepliesProps) {
   const handleReplyClick = useCallback(
     (combinedId: string) => {
       try {
-        const { pubky: authorId, postId: replyPostId } = Core.parsePostCompositeId(combinedId);
+        const { pubky: authorId, id: replyPostId } = Core.parseCompositeId(combinedId);
         router.push(`/post/${authorId}/${replyPostId}`);
       } catch {
         return; // defensive guard

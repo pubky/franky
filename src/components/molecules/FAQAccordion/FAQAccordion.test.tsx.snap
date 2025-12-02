@@ -15,13 +15,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content
       data-state="closed"
     >
       <button
-        aria-controls="radix-«r0»"
+        aria-controls="radix-_r_0_"
         aria-expanded="false"
         class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
-        id="radix-«r0»"
+        id="radix-_r_0_"
         type="button"
       >
         <span
@@ -49,12 +49,12 @@ exports[`FAQAccordion - Snapshots > matches snapshot with complex answer content
       </button>
     </h3>
     <div
-      aria-labelledby="radix-«r0»"
+      aria-labelledby="radix-_r_0_"
       class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       data-orientation="vertical"
       data-state="closed"
       hidden=""
-      id="radix-«r0»"
+      id="radix-_r_0_"
       role="region"
       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
     />
@@ -77,13 +77,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       data-state="closed"
     >
       <button
-        aria-controls="radix-«r0»"
+        aria-controls="radix-_r_0_"
         aria-expanded="false"
         class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
-        id="radix-«r0»"
+        id="radix-_r_0_"
         type="button"
       >
         <span
@@ -111,12 +111,12 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       </button>
     </h3>
     <div
-      aria-labelledby="radix-«r0»"
+      aria-labelledby="radix-_r_0_"
       class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       data-orientation="vertical"
       data-state="closed"
       hidden=""
-      id="radix-«r0»"
+      id="radix-_r_0_"
       role="region"
       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
     />
@@ -131,13 +131,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       data-state="closed"
     >
       <button
-        aria-controls="radix-«r0»"
+        aria-controls="radix-_r_0_"
         aria-expanded="false"
         class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
-        id="radix-«r0»"
+        id="radix-_r_0_"
         type="button"
       >
         <span
@@ -165,12 +165,12 @@ exports[`FAQAccordion - Snapshots > matches snapshot with custom className 1`] =
       </button>
     </h3>
     <div
-      aria-labelledby="radix-«r0»"
+      aria-labelledby="radix-_r_0_"
       class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       data-orientation="vertical"
       data-state="closed"
       hidden=""
-      id="radix-«r0»"
+      id="radix-_r_0_"
       role="region"
       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
     />
@@ -193,13 +193,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       data-state="closed"
     >
       <button
-        aria-controls="radix-«r0»"
+        aria-controls="radix-_r_0_"
         aria-expanded="false"
         class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
-        id="radix-«r0»"
+        id="radix-_r_0_"
         type="button"
       >
         <span
@@ -227,12 +227,12 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       </button>
     </h3>
     <div
-      aria-labelledby="radix-«r0»"
+      aria-labelledby="radix-_r_0_"
       class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       data-orientation="vertical"
       data-state="closed"
       hidden=""
-      id="radix-«r0»"
+      id="radix-_r_0_"
       role="region"
       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
     />
@@ -247,13 +247,13 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       data-state="closed"
     >
       <button
-        aria-controls="radix-«r0»"
+        aria-controls="radix-_r_0_"
         aria-expanded="false"
         class="flex w-full items-center justify-between px-6 py-4 cursor-pointer transition-colors hover:bg-white/5 group"
         data-orientation="vertical"
         data-radix-collection-item=""
         data-state="closed"
-        id="radix-«r0»"
+        id="radix-_r_0_"
         type="button"
       >
         <span
@@ -281,12 +281,12 @@ exports[`FAQAccordion - Snapshots > matches snapshot with default props 1`] = `
       </button>
     </h3>
     <div
-      aria-labelledby="radix-«r0»"
+      aria-labelledby="radix-_r_0_"
       class="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
       data-orientation="vertical"
       data-state="closed"
       hidden=""
-      id="radix-«r0»"
+      id="radix-_r_0_"
       role="region"
       style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
     />

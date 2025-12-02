@@ -42,19 +42,21 @@ export const Playground: Story = {
   },
 };
 
-export const Interactive: Story = {
-  render: () => {
-    const [selectedTab, setSelectedTab] = useState<Core.ContentType>('all');
+const InteractiveComponent = () => {
+  const [selectedTab, setSelectedTab] = useState<Core.ContentType>('all');
 
-    return (
-      <FilterContent
-        selectedTab={selectedTab}
-        onTabChange={(tab) => {
-          setSelectedTab(tab);
-        }}
-      />
-    );
-  },
+  return (
+    <FilterContent
+      selectedTab={selectedTab}
+      onTabChange={(tab) => {
+        setSelectedTab(tab);
+      }}
+    />
+  );
+};
+
+export const Interactive: Story = {
+  render: () => <InteractiveComponent />,
   parameters: {
     docs: {
       description: {

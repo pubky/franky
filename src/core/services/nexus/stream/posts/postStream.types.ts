@@ -2,6 +2,7 @@ import * as Core from '@/core';
 
 export enum STREAM_PREFIX {
   POSTS = 'v0/stream/posts',
+  POSTS_KEYS = 'v0/stream/posts/keys',
   POSTS_BY_IDS = 'v0/stream/posts/by_ids',
 }
 
@@ -11,7 +12,7 @@ export enum StreamSource {
   FOLLOWERS = 'followers',
   FRIENDS = 'friends',
   BOOKMARKS = 'bookmarks',
-  REPLIES = 'replies',
+  REPLIES = 'post_replies',
   AUTHOR = 'author',
   AUTHOR_REPLIES = 'author_replies',
 }
@@ -34,6 +35,10 @@ export type TStreamAuthorId = {
   author_id: Core.Pubky;
 };
 
+export type TStreamSource = {
+  value: string;
+};
+
 // Base parameters that are always optional
 export type TStreamBase = Core.TPaginationParams &
   Core.TPaginationRangeParams & {
@@ -42,7 +47,7 @@ export type TStreamBase = Core.TPaginationParams &
     sorting?: Core.StreamSorting;
     kind?: StreamKind;
     order?: StreamOrder;
-    tags?: string[]; // Max 5 tags
+    tags?: string; // Max 5 tags
   };
 
 // Specific parameter types for each source
@@ -76,8 +81,27 @@ export type TStreamQueryParams =
   | Core.TStreamAllParams
   | Core.TStreamPostsByIdsParams;
 
+/**
+ * Extra parameters needed for specific stream sources
+ */
+export type TStreamExtraParams = {
+  author_id?: string;
+  post_id?: string;
+};
+
 export type TPostStreamFetchParams = {
   params: TStreamBase;
-  invokeEndpoint: string;
-  // observer_id?: Core.Pubky;
+  invokeEndpoint: StreamSource;
+  extraParams: TStreamExtraParams;
 };
+
+/**
+ * Breakdown of a stream ID into its components
+ * [sorting, invokeEndpoint, kind, tags]
+ */
+export type TStreamIdBreakdown = [
+  sorting: string,
+  invokeEndpoint: StreamSource,
+  kind: string | undefined,
+  tags: string | undefined,
+];

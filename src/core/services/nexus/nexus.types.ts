@@ -37,6 +37,10 @@ export enum UserStreamReach {
   WOT = 'wot',
 }
 
+// Defining this type for usage in userId:reach id format. Not sure whether WOT needs
+// to be supported here, so I'm excluding it for now.
+export type UserStreamCompositeReach = Exclude<UserStreamReach, UserStreamReach.WOT>;
+
 export enum UserStreamTimeframe {
   TODAY = 'today',
   THIS_MONTH = 'this_month',
@@ -108,6 +112,11 @@ export type NexusUser = {
   relationship: NexusUserRelationship;
 };
 
+// User ID stream response containing only user identifiers
+export type NexusUserIdStream = {
+  user_ids: Pubky[];
+};
+
 // Post types
 export type NexusPostDetails = {
   id: string;
@@ -143,7 +152,34 @@ export type NexusPost = {
   bookmark: NexusBookmark | null;
 };
 
+export type NexusPostsKeyStream = {
+  post_keys: string[];
+  last_post_score: number;
+};
+
 export type NexusNotification = {
   timestamp: number;
   body: Record<string, unknown>; // Generic object to handle all notification types
+};
+
+// File types
+export type NexusFileDetails = {
+  id: string;
+  name: string;
+  src: string;
+  // TODO: Do we have some enum for that
+  content_type: string;
+  size: number;
+  created_at: Timestamp;
+  indexed_at: Timestamp;
+  metadata: Record<string, string>;
+  owner_id: string;
+  uri: string;
+  urls: NexusFileUrls;
+};
+
+export type NexusFileUrls = {
+  feed: string;
+  main: string;
+  small: string;
 };

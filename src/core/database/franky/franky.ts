@@ -13,10 +13,13 @@ import { postCountsTableSchema } from '@/core/models/post/counts/postCounts.sche
 import { postDetailsTableSchema } from '@/core/models/post/details/postDetails.schema';
 import { postRelationshipsTableSchema } from '@/core/models/post/relationships/postRelationships.schema';
 import { postTtlTableSchema } from '@/core/models/post/ttl/postTtl.schema';
+import { fileDetailsTableSchema } from '@/core/models/file/fileDetails.schema';
 import { tagCollectionTableSchema } from '@/core/models/shared/tag/tag.schema';
 import { UserStreamModelSchema, userStreamTableSchema } from '@/core/models/stream/user/userStream.schema';
 import { TagStreamModelSchema, tagStreamTableSchema } from '@/core/models/stream/tag/tagStream.schema';
+import { HotTagsModelSchema, hotTagsTableSchema } from '@/core/models/hot/hot.schema';
 import { notificationTableSchema } from '@/core/models/notification/notification.schema';
+import { bookmarkTableSchema } from '@/core/models/bookmark/bookmark.schema';
 
 export class AppDatabase extends Dexie {
   private static readonly DEXIE_VERSION_MULTIPLIER = 10;
@@ -35,10 +38,17 @@ export class AppDatabase extends Dexie {
   post_relationships!: Dexie.Table<Core.PostRelationshipsModelSchema>;
   post_tags!: Dexie.Table<Core.TagCollectionModelSchema<string>>;
   post_ttl!: Dexie.Table<Core.PostTtlModelSchema>;
+  // File
+  file_details!: Dexie.Table<Core.FileDetailsModelSchema>;
   // Streams
   post_streams!: Dexie.Table<PostStreamModelSchema>;
+  unread_post_streams!: Dexie.Table<PostStreamModelSchema>;
   user_streams!: Dexie.Table<UserStreamModelSchema>;
   tag_streams!: Dexie.Table<TagStreamModelSchema>;
+  // Bookmarks
+  bookmarks!: Dexie.Table<Core.BookmarkModelSchema>;
+  // Hot tags
+  hot_tags!: Dexie.Table<HotTagsModelSchema>;
   constructor(databaseName: string = Config.DB_NAME) {
     super(databaseName);
 
@@ -58,10 +68,17 @@ export class AppDatabase extends Dexie {
         post_relationships: postRelationshipsTableSchema,
         post_tags: tagCollectionTableSchema,
         post_ttl: postTtlTableSchema,
+        // File related tables
+        file_details: fileDetailsTableSchema,
         // Streams
         post_streams: postStreamTableSchema,
+        unread_post_streams: postStreamTableSchema,
         user_streams: userStreamTableSchema,
         tag_streams: tagStreamTableSchema,
+        // Bookmarks
+        bookmarks: bookmarkTableSchema,
+        // Hot tags
+        hot_tags: hotTagsTableSchema,
       });
     } catch (error) {
       throw Libs.createDatabaseError(

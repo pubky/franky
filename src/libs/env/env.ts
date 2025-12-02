@@ -17,33 +17,78 @@ const envSchema = z.object({
   NEXT_PUBLIC_DB_NAME: z.string().default('franky'),
   NEXT_PUBLIC_DB_VERSION: z
     .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive())
     .default('2')
-    .transform((val) => (typeof val === 'string' ? parseInt(val, 10) : val)),
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_DEBUG_MODE: z
     .string()
-    .transform((val) => val === 'true')
-    .pipe(z.boolean())
     .default('false')
-    .transform((val) => (typeof val === 'string' ? val === 'true' : val)),
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
 
   NEXT_PUBLIC_NEXUS_URL: z.string().url().default('https://nexus.staging.pubky.app'),
   NEXT_PUBLIC_CDN_URL: z.string().url().default('https://nexus.staging.pubky.app/static'),
 
   NEXT_PUBLIC_SYNC_TTL: z
     .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().int().positive())
     .default('300000') // 5 minutes in milliseconds
-    .transform((val) => (typeof val === 'string' ? parseInt(val, 10) : val)),
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: z
+    .string()
+    .default('8888') // 8888 milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: z
+    .string()
+    .default('false')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: z
+    .string()
+    .default('true')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: z
+    .string()
+    .default('8888') // 8888 milliseconds
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
+
+  NEXT_PUBLIC_STREAM_POLL_ON_START: z
+    .string()
+    .default('false')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: z
+    .string()
+    .default('true')
+    .transform((val) => val === 'true')
+    .pipe(z.boolean()),
+
+  NEXT_PUBLIC_STREAM_FETCH_LIMIT: z
+    .string()
+    .default('10')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_TESTNET: z
     .string()
+    .default('false')
     .transform((val) => val === 'true')
-    .pipe(z.boolean())
-    .default('false'),
+    .pipe(z.boolean()),
+
+  NEXT_MAX_STREAM_TAGS: z
+    .string()
+    .default('5')
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().int().positive()),
 
   NEXT_PUBLIC_PKARR_RELAYS: z.string().default('https://pkarr.pubky.app'),
 
@@ -93,6 +138,14 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_NEXUS_URL: process.env.NEXT_PUBLIC_NEXUS_URL,
       NEXT_PUBLIC_CDN_URL: process.env.NEXT_PUBLIC_CDN_URL,
       NEXT_PUBLIC_SYNC_TTL: process.env.NEXT_PUBLIC_SYNC_TTL,
+      NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_INTERVAL_MS,
+      NEXT_PUBLIC_NOTIFICATION_POLL_ON_START: process.env.NEXT_PUBLIC_NOTIFICATION_POLL_ON_START,
+      NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_NOTIFICATION_RESPECT_PAGE_VISIBILITY,
+      NEXT_MAX_STREAM_TAGS: process.env.NEXT_MAX_STREAM_TAGS,
+      NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS: process.env.NEXT_PUBLIC_STREAM_POLL_INTERVAL_MS,
+      NEXT_PUBLIC_STREAM_POLL_ON_START: process.env.NEXT_PUBLIC_STREAM_POLL_ON_START,
+      NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY: process.env.NEXT_PUBLIC_STREAM_RESPECT_PAGE_VISIBILITY,
+      NEXT_PUBLIC_STREAM_FETCH_LIMIT: process.env.NEXT_PUBLIC_STREAM_FETCH_LIMIT,
       NEXT_PUBLIC_TESTNET: process.env.NEXT_PUBLIC_TESTNET,
       NEXT_PUBLIC_PKARR_RELAYS: process.env.NEXT_PUBLIC_PKARR_RELAYS,
       NEXT_PUBLIC_HOMESERVER: process.env.NEXT_PUBLIC_HOMESERVER,
@@ -121,7 +174,7 @@ function parseEnv(): z.infer<typeof envSchema> {
     return parsed;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const details = error.errors.reduce(
+      const details = error.issues.reduce(
         (acc, err) => {
           acc[err.path.join('.')] = err.message;
           return acc;
