@@ -3,15 +3,11 @@
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { remarkHashtags, remarkMentions, remarkPlaintextCodeblock } from './PostText.utils';
-import { RemarkAnchorProps } from './PostText.types';
+import { RemarkAnchorProps, PostTextProps } from './PostText.types';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-
-type PostTextProps = {
-  content: string;
-};
 
 export const PostText = ({ content }: PostTextProps) => {
   return (

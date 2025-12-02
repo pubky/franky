@@ -1,31 +1,53 @@
-import type { Root, Paragraph, Text, Link, PhrasingContent } from 'mdast';
 import { ReactNode } from 'react';
-import { visit } from 'unist-util-visit';
+import type { MdastNode, TextNode, LinkNode, CodeNode, ParagraphNode, RootNode } from './PostText.types';
 
-// We assign full code blocks without a language specified as plaintext (ex. ```...```)
-export const remarkPlaintextCodeblock = () => (tree: Root) => {
-  visit(tree, 'code', (node) => {
+// ============================================================================
+// Tree Visitor Utility
+// ============================================================================
+
+/** Simple tree visitor - traverses all nodes and calls callback for matching types */
+const visit = <T extends MdastNode>(tree: MdastNode, type: string, callback: (node: T) => void): void => {
+  const walk = (node: MdastNode) => {
+    if (node.type === type) {
+      callback(node as T);
+    }
+    if (node.children) {
+      for (const child of node.children) {
+        walk(child);
+      }
+    }
+  };
+  walk(tree);
+};
+
+// ============================================================================
+// Remark Plugins
+// ============================================================================
+
+/** Assigns 'plaintext' language to code blocks without a language specified */
+export const remarkPlaintextCodeblock = () => (tree: RootNode) => {
+  visit<CodeNode>(tree, 'code', (node) => {
     node.lang = node.lang ?? 'plaintext';
   });
 };
 
-// Configuration for pattern-matching remark plugins
+/** Configuration for pattern-matching remark plugins */
 interface PatternPluginConfig {
-  // Regex to match - must have capture groups: (leadingWhitespace)(fullMatch)
+  /** Regex to match - must have capture groups: (leadingWhitespace)(fullMatch) */
   regex: RegExp;
-  // Function to generate the URL from the matched text
+  /** Function to generate the URL from the matched text */
   getUrl: (match: string) => string;
-  // The data-type attribute value for the link
+  /** The data-type attribute value for the link */
   dataType: string;
 }
 
-// Factory function that creates a remark plugin for pattern matching and link conversion
+/** Factory function that creates a remark plugin for pattern matching and link conversion */
 const createPatternPlugin = (config: PatternPluginConfig) => {
   const { regex, getUrl, dataType } = config;
 
-  return () => (tree: Root) => {
-    visit(tree, 'paragraph', (node: Paragraph) => {
-      const newChildren: PhrasingContent[] = [];
+  return () => (tree: RootNode) => {
+    visit<ParagraphNode>(tree, 'paragraph', (node) => {
+      const newChildren: MdastNode[] = [];
       let hasChanges = false;
 
       for (const child of node.children) {
@@ -35,8 +57,9 @@ const createPatternPlugin = (config: PatternPluginConfig) => {
           continue;
         }
 
-        const text = (child as Text).value;
-        const segments: PhrasingContent[] = [];
+        const textNode = child as TextNode;
+        const text = textNode.value;
+        const segments: MdastNode[] = [];
         let lastIndex = 0;
 
         for (const match of text.matchAll(regex)) {
@@ -47,33 +70,23 @@ const createPatternPlugin = (config: PatternPluginConfig) => {
           // Add text before the match (including any leading whitespace from the match)
           const textBefore = text.slice(lastIndex, matchStart) + leadingWhitespace;
           if (textBefore) {
-            segments.push({
-              type: 'text',
-              value: textBefore,
-            } as Text);
+            segments.push({ type: 'text', value: textBefore } satisfies TextNode);
           }
 
           // Create a link node with the appropriate data-type for differentiation
           segments.push({
             type: 'link',
             url: getUrl(matchedText),
-            data: {
-              hProperties: {
-                'data-type': dataType,
-              },
-            },
-            children: [{ type: 'text', value: matchedText } as Text],
-          } as Link);
+            data: { hProperties: { 'data-type': dataType } },
+            children: [{ type: 'text', value: matchedText } satisfies TextNode],
+          } satisfies LinkNode);
 
           lastIndex = matchStart + fullMatch.length;
         }
 
         // Add any remaining text after the last match
         if (lastIndex < text.length) {
-          segments.push({
-            type: 'text',
-            value: text.slice(lastIndex),
-          } as Text);
+          segments.push({ type: 'text', value: text.slice(lastIndex) } satisfies TextNode);
         }
 
         // If we found matches, use the segments; otherwise keep original child
