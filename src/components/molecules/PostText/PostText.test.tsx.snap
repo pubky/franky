@@ -395,6 +395,25 @@ exports[`PostText - Snapshots > matches snapshot for links 1`] = `
 </div>
 `;
 
+exports[`PostText - Snapshots > matches snapshot for long hashtag 1`] = `
+<div
+  class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <p>
+    Check out this 
+    <a
+      data-testid="post-hashtag"
+      href="/search?tags=verylooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonghashtagwithlotsofcharactersandnumbers123456789"
+    >
+      #verylooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonghashtagwithlotsofcharactersandnumbers123456789
+    </a>
+     tag
+  </p>
+</div>
+`;
+
 exports[`PostText - Snapshots > matches snapshot for multiline content with line breaks 1`] = `
 <div
   class="text-base leading-6 font-medium break-all whitespace-pre-line text-secondary-foreground"

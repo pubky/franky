@@ -521,4 +521,11 @@ Third line`}
     const { container } = render(<PostText content="This is **bold** with #hashtag and *italic* text" />);
     expect(container.firstChild).toMatchSnapshot();
   });
+
+  it('matches snapshot for long hashtag', () => {
+    const { container } = render(
+      <PostText content="Check out this #verylooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooonghashtagwithlotsofcharactersandnumbers123456789 tag" />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
 });

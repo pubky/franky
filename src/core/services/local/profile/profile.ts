@@ -73,12 +73,17 @@ export class LocalProfileService {
 
   /**
    * Upserts user counts into local database.
-   * @param params - Parameters containing user ID and user counts
+   * Creates a new record if it doesn't exist, or replaces it if it does.
+   * @param params - Parameters containing user ID
    * @param userCounts - The user counts to upsert
    * @returns Promise resolving to void
    */
-  static async upsertCounts(params: Core.TReadProfileParams, countChanges: Core.NexusUserCounts): Promise<void> {
-    await Core.UserCountsModel.updateCounts({ userId: params.userId, countChanges });
+  static async upsertCounts(params: Core.TReadProfileParams, userCounts: Core.NexusUserCounts): Promise<void> {
+    // Use proper upsert (put) to create the record if it doesn't exist
+    await Core.UserCountsModel.upsert({
+      id: params.userId,
+      ...userCounts,
+    });
   }
 
   /**

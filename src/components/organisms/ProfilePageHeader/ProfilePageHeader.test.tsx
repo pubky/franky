@@ -82,6 +82,27 @@ const mockProps: ProfilePageHeaderProps = {
     onStatusClick: vi.fn(),
     onAvatarClick: vi.fn(),
   },
+  isOwnProfile: true,
+};
+
+const mockOtherUserProps: ProfilePageHeaderProps = {
+  profile: {
+    name: 'Other User',
+    bio: 'Some bio',
+    publicKey: 'other123456789012345',
+    status: 'Active',
+    emoji: '🎉',
+    link: 'https://example.com/other',
+  },
+  actions: {
+    onCopyPublicKey: vi.fn(),
+    onCopyLink: vi.fn(),
+    onAvatarClick: vi.fn(),
+    onFollowToggle: vi.fn(),
+    isFollowLoading: false,
+    isFollowing: false,
+  },
+  isOwnProfile: false,
 };
 
 describe('ProfilePageHeader', () => {
@@ -203,5 +224,60 @@ describe('ProfilePageHeader', () => {
     const normalizedContainer = document.createElement('div');
     normalizedContainer.innerHTML = normalizedHtml;
     expect(normalizedContainer).toMatchSnapshot();
+  });
+});
+
+describe('ProfilePageHeader - Other User Profile', () => {
+  it('shows Follow button when viewing other user and not following', () => {
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    expect(screen.getByText('Follow')).toBeInTheDocument();
+  });
+
+  it('shows Following button when viewing other user and following', () => {
+    const props = {
+      ...mockOtherUserProps,
+      actions: { ...mockOtherUserProps.actions, isFollowing: true },
+    };
+    render(<ProfilePageHeader {...props} />);
+
+    expect(screen.getByText('Following')).toBeInTheDocument();
+  });
+
+  it('hides Edit, Sign out buttons when viewing other user', () => {
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    expect(screen.queryByText('Edit')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sign out')).not.toBeInTheDocument();
+  });
+
+  it('shows Copy Key and Link buttons when viewing other user', () => {
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    // formatPublicKey with length 12: first 6 + ... + last 6
+    // For 'other123456789012345', it should be 'other1...012345'
+    expect(screen.getByText(/other1\.\.\.012345/)).toBeInTheDocument();
+    expect(screen.getByText('Link')).toBeInTheDocument();
+  });
+
+  it('calls onFollowToggle when Follow button is clicked', () => {
+    const onFollowToggle = vi.fn();
+    const props = {
+      ...mockOtherUserProps,
+      actions: { ...mockOtherUserProps.actions, onFollowToggle },
+    };
+    render(<ProfilePageHeader {...props} />);
+
+    const followButton = screen.getByText('Follow').closest('button');
+    fireEvent.click(followButton!);
+
+    expect(onFollowToggle).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows status as read-only text when viewing other user', () => {
+    render(<ProfilePageHeader {...mockOtherUserProps} />);
+
+    // The status should be shown as text, not in a picker
+    expect(screen.getByText(/🎉 Active/)).toBeInTheDocument();
   });
 });

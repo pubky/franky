@@ -100,6 +100,7 @@ describe('FollowerItem', () => {
     status: 'active',
     links: null,
     indexed_at: 1704067200000,
+    avatarUrl: 'https://example.com/avatar.png',
     tags: ['bitcoin', 'candid'],
     stats: {
       tags: 100,
@@ -176,11 +177,11 @@ describe('FollowerItem', () => {
 
   it('calls onFollow when button is clicked', () => {
     const onFollow = vi.fn();
-    render(<FollowerItem follower={mockFollower} onFollow={onFollow} />);
+    render(<FollowerItem follower={mockFollower} isFollowing={true} onFollow={onFollow} />);
     const buttons = screen.getAllByTestId('button');
     const followButton = buttons.find((btn) => btn.getAttribute('aria-label') === 'Unfollow');
     fireEvent.click(followButton!);
-    expect(onFollow).toHaveBeenCalledWith('test-user-1');
+    expect(onFollow).toHaveBeenCalledWith('test-user-1', true);
   });
 
   it('handles follower without tags', () => {
@@ -222,6 +223,7 @@ describe('FollowerItem - Snapshots', () => {
     status: 'active',
     links: null,
     indexed_at: 1704067200000,
+    avatarUrl: 'https://example.com/avatar.png',
     tags: ['bitcoin', 'candid'],
     stats: {
       tags: 100,

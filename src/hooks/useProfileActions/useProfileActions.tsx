@@ -4,7 +4,8 @@ import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as Core from '@/core';
 import { AUTH_ROUTES } from '@/app';
-import * as Hooks from '@/hooks';
+// Import directly to avoid circular dependency with @/hooks barrel
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 
 export interface ProfileActions {
   onEdit: () => void;
@@ -30,7 +31,7 @@ export interface UseProfileActionsProps {
  */
 export function useProfileActions({ publicKey, link }: UseProfileActionsProps): ProfileActions {
   const router = useRouter();
-  const { copyToClipboard } = Hooks.useCopyToClipboard();
+  const { copyToClipboard } = useCopyToClipboard();
   const authStore = Core.useAuthStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 

@@ -29,7 +29,7 @@ vi.mock('@/hooks', async (importOriginal) => {
       isNotificationUnread: vi.fn(() => false),
     })),
     useInfiniteScroll: vi.fn(() => ({
-      sentinelRef: { current: null },
+      sentinelRef: vi.fn(),
     })),
   };
 });
@@ -45,6 +45,14 @@ vi.mock('@/atoms', () => ({
     );
   },
   Spinner: ({ size }: { size?: string }) => <div data-testid="spinner" data-size={size} />,
+  Container: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    overrideDefaults?: boolean;
+  }) => <div className={className}>{children}</div>,
 }));
 
 // Mock molecules

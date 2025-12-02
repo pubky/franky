@@ -2,20 +2,22 @@
 
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
+import * as Providers from '@/providers';
 
 /**
  * ProfileReplies
  *
- * Displays replies from the current user's profile with infinite scroll pagination.
+ * Displays replies from a user's profile with infinite scroll pagination.
  * Uses the author_replies stream (author_replies:{userId}) to fetch replies.
+ * Uses ProfileContext to get the target user's pubky.
  */
 export function ProfileReplies() {
-  // Get current authenticated user
-  const { currentUserPubky } = Core.useAuthStore();
+  // Get the profile pubky from context
+  const { pubky } = Providers.useProfileContext();
 
   // Build stream ID for user's replies: author_replies:{userId}
-  const streamId = currentUserPubky
-    ? (`${Core.StreamSource.AUTHOR_REPLIES}:${currentUserPubky}` as Core.AuthorRepliesStreamCompositeId)
+  const streamId = pubky
+    ? (`${Core.StreamSource.AUTHOR_REPLIES}:${pubky}` as Core.AuthorRepliesStreamCompositeId)
     : undefined;
 
   // If no streamId, render empty state

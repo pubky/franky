@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 
 import * as Core from '@/core';
-import * as Hooks from '@/hooks';
+// Import directly from local types to avoid circular dependency with @/hooks barrel
+import { AuthStatus, type AuthStatusResult } from './useAuthStatus.types';
 
-export function useAuthStatus(): Hooks.AuthStatusResult {
+export function useAuthStatus(): AuthStatusResult {
   // Get state from stores
   const onboardingStore = Core.useOnboardingStore();
   const authStore = Core.useAuthStore();
 
-  const authStatusResult = useMemo((): Hooks.AuthStatusResult => {
+  const authStatusResult = useMemo((): AuthStatusResult => {
     // Check if stores are still hydrating
     const isLoading = !onboardingStore.hasHydrated;
 
@@ -19,13 +20,13 @@ export function useAuthStatus(): Hooks.AuthStatusResult {
     const hasProfile = authStore.isAuthenticated;
 
     // Determine the authentication status
-    let status: Hooks.AuthStatus;
+    let status: AuthStatus;
 
     // TODO: add validation here to check when the user has a session but no profile
     if (!authStore.isAuthenticated) {
-      status = Hooks.AuthStatus.UNAUTHENTICATED;
+      status = AuthStatus.UNAUTHENTICATED;
     } else {
-      status = Hooks.AuthStatus.AUTHENTICATED;
+      status = AuthStatus.AUTHENTICATED;
     }
 
     return {
@@ -33,7 +34,7 @@ export function useAuthStatus(): Hooks.AuthStatusResult {
       isLoading,
       hasKeypair,
       hasProfile,
-      isFullyAuthenticated: status === Hooks.AuthStatus.AUTHENTICATED,
+      isFullyAuthenticated: status === AuthStatus.AUTHENTICATED,
     };
   }, [onboardingStore.hasHydrated, onboardingStore.pubky, onboardingStore.secretKey, authStore.isAuthenticated]);
 
