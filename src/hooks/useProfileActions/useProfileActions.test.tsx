@@ -24,8 +24,17 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
-// Mock useCopyToClipboard hook
+// Mock useCopyToClipboard hook - mock both paths
 const mockCopyToClipboard = vi.fn();
+
+// Mock direct import path (used by useProfileActions)
+vi.mock('@/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({
+    copyToClipboard: mockCopyToClipboard,
+  }),
+}));
+
+// Mock barrel export
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {

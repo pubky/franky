@@ -127,10 +127,9 @@ export class NotificationApplication {
     limit: number;
   }): Promise<Core.TGetOrFetchNotificationsResponse> {
     try {
-      // Fetch from Nexus using end parameter for timestamp-based pagination
+      // Fetch from Nexus using skip/limit pagination
       const nexusNotifications = await Core.NexusUserService.notifications({
         user_id: userId,
-        end: olderThan === Infinity ? undefined : olderThan,
         limit,
       });
 
@@ -142,9 +141,14 @@ export class NotificationApplication {
       const flatNotifications = nexusNotifications.map((notification) =>
         Core.NotificationNormalizer.toFlatNotification(notification),
       );
-      Core.NotificationModel.bulkSave(flatNotifications).catch((error) =>
-        Libs.Logger.warn('Failed to persist notifications to cache', { error }),
-      );
+
+      // IMPORTANT: Await the save so useLiveQuery can detect the database change
+      // before this function returns. Without await, pagination won't work correctly.
+      try {
+        await Core.LocalNotificationService.bulkSave(flatNotifications);
+      } catch (error) {
+        Libs.Logger.warn('Failed to persist notifications to cache', { error });
+      }
 
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;

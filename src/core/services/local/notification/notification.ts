@@ -39,4 +39,12 @@ export class LocalNotificationService {
   static async getAll(): Promise<Core.FlatNotification[]> {
     return await Core.NotificationModel.getAll();
   }
+
+  /**
+   * Persists flat notifications to the local database.
+   * @param notifications - Array of flat notifications to save
+   */
+  static async bulkSave(notifications: Core.FlatNotification[]): Promise<void> {
+    await Core.NotificationModel.bulkSave(notifications);
+  }
 }
