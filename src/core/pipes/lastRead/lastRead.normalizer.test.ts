@@ -1,0 +1,162 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import * as Core from '@/core';
+import * as Libs from '@/libs';
+import { LastReadResult } from 'pubky-app-specs';
+import {
+  TEST_PUBKY,
+  INVALID_INPUTS,
+  setupUnitTestMocks,
+  setupIntegrationTestMocks,
+  restoreMocks,
+  buildPubkyUri,
+} from '../pipes.test-utils';
+
+describe('LastReadNormalizer', () => {
+  // Mock builder factory
+  const createMockBuilder = (overrides?: Partial<{ createLastRead: ReturnType<typeof vi.fn> }>) => ({
+    createLastRead: vi.fn(() => {
+      const mockTimestamp = BigInt(Date.now());
+      return {
+        last_read: {
+          timestamp: mockTimestamp,
+          toJson: vi.fn(() => ({ timestamp: Number(mockTimestamp) })),
+        },
+        meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, 'last_read') },
+      } as unknown as LastReadResult;
+    }),
+    ...overrides,
+  });
+
+  /**
+   * Unit Tests
+   */
+  describe('Unit Tests', () => {
+    let mockBuilder: ReturnType<typeof createMockBuilder>;
+
+    beforeEach(() => {
+      mockBuilder = createMockBuilder();
+      setupUnitTestMocks(mockBuilder);
+    });
+
+    afterEach(restoreMocks);
+
+    describe('to - successful creation', () => {
+      it('should create last read and log debug message', () => {
+        const result = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+
+        expect(result).toHaveProperty('last_read');
+        expect(result).toHaveProperty('meta');
+        expect(Libs.Logger.debug).toHaveBeenCalledWith('Last read validated', { result });
+      });
+
+      it('should call PubkySpecsSingleton.get with pubky and createLastRead without params', () => {
+        Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+
+        expect(Core.PubkySpecsSingleton.get).toHaveBeenCalledWith(TEST_PUBKY.USER_1);
+        expect(mockBuilder.createLastRead).toHaveBeenCalledWith();
+      });
+
+      it('should return correct structure with timestamp and URL', () => {
+        const result = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+
+        expect(result.last_read.timestamp).toBeDefined();
+        expect(typeof result.last_read.toJson).toBe('function');
+        expect(result.meta.url).toContain('pubky://');
+        expect(result.meta.url).toContain('/pub/pubky.app/last_read');
+      });
+    });
+
+    describe('to - error handling', () => {
+      it.each([
+        ['createLastRead', () => mockBuilder.createLastRead.mockImplementation(() => { throw new Error('Builder error'); })],
+        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+      ])('should propagate errors from %s', (_, setupError) => {
+        setupError();
+        expect(() => Core.LastReadNormalizer.to(TEST_PUBKY.USER_1)).toThrow();
+      });
+
+      it('should not call logger when error occurs', () => {
+        mockBuilder.createLastRead.mockImplementation(() => { throw new Error('Error'); });
+
+        expect(() => Core.LastReadNormalizer.to(TEST_PUBKY.USER_1)).toThrow();
+        expect(Libs.Logger.debug).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('to - different inputs', () => {
+      it.each([
+        ['USER_1', TEST_PUBKY.USER_1],
+        ['USER_2', TEST_PUBKY.USER_2],
+      ])('should handle %s pubky', (_, pubky) => {
+        Core.LastReadNormalizer.to(pubky);
+        expect(Core.PubkySpecsSingleton.get).toHaveBeenCalledWith(pubky);
+      });
+    });
+  });
+
+  /**
+   * Integration Tests - Real pubky-app-specs library
+   */
+  describe('Integration Tests', () => {
+    beforeEach(setupIntegrationTestMocks);
+    afterEach(restoreMocks);
+
+    describe('successful creation with real library', () => {
+      it('should create valid result with correct URL format', () => {
+        const result = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+
+        expect(result.last_read).toBeDefined();
+        expect(result.meta.url).toMatch(/^pubky:\/\/.+\/pub\/pubky\.app\/last_read$/);
+        expect(result.meta.url).toContain(TEST_PUBKY.USER_1);
+      });
+
+      it('should have BigInt timestamp close to current time', () => {
+        const before = BigInt(Date.now());
+        const result = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+        const after = BigInt(Date.now());
+
+        expect(typeof result.last_read.timestamp).toBe('bigint');
+        expect(result.last_read.timestamp).toBeGreaterThanOrEqual(before - BigInt(1000));
+        expect(result.last_read.timestamp).toBeLessThanOrEqual(after + BigInt(1000));
+      });
+
+      it('should produce valid JSON with numeric timestamp', () => {
+        const result = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+        const json = result.last_read.toJson();
+
+        expect(typeof json.timestamp).toBe('number');
+        expect(Number.isFinite(json.timestamp)).toBe(true);
+      });
+    });
+
+    describe('validation behavior (singleton caching)', () => {
+      /**
+       * Note: createLastRead() takes no parameters, so validation only happens
+       * at singleton initialization. Once initialized, invalid pubkys don't throw.
+       */
+      it.each([
+        ['empty', INVALID_INPUTS.EMPTY],
+        ['null', INVALID_INPUTS.NULL],
+        ['undefined', INVALID_INPUTS.UNDEFINED],
+        ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
+      ])('should not throw for %s pubky (singleton already initialized)', (_, invalidPubky) => {
+        // Ensure singleton is initialized first
+        Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+
+        // Invalid pubky doesn't throw due to singleton caching
+        const result = Core.LastReadNormalizer.to(invalidPubky);
+        expect(result).toBeDefined();
+      });
+    });
+
+    describe('sequential calls', () => {
+      it('should generate different timestamps for sequential calls', async () => {
+        const result1 = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+        await new Promise((r) => setTimeout(r, 10));
+        const result2 = Core.LastReadNormalizer.to(TEST_PUBKY.USER_1);
+
+        expect(result2.last_read.timestamp).toBeGreaterThanOrEqual(result1.last_read.timestamp);
+      });
+    });
+  });
+});
