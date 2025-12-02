@@ -25,7 +25,7 @@ describe('UserApplication.follow', () => {
       followee,
     });
 
-    expect(createSpy).toHaveBeenCalledWith({ follower, followee });
+    expect(createSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
     expect(deleteSpy).not.toHaveBeenCalled();
     expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.PUT, followUrl, followJson);
   });
@@ -43,7 +43,7 @@ describe('UserApplication.follow', () => {
       followee,
     });
 
-    expect(deleteSpy).toHaveBeenCalledWith({ follower, followee });
+    expect(deleteSpy).toHaveBeenCalledWith({ follower, followee, activeStreamId: undefined });
     expect(createSpy).not.toHaveBeenCalled();
     expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, followUrl, followJson);
   });
