@@ -3,9 +3,13 @@
 exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
 <div
   class="flex justify-between"
+  data-override-defaults="true"
+  data-testid="container"
 >
   <div
     class="flex gap-3"
+    data-override-defaults="true"
+    data-testid="container"
   >
     <div
       data-testid="avatar"
@@ -17,52 +21,53 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       <div
         data-testid="avatar-fallback"
       >
-        SU
+        SN
       </div>
     </div>
     <div
       class="flex flex-col"
+      data-override-defaults="true"
+      data-testid="container"
     >
       <span
         class="text-base font-bold text-foreground"
+        data-as="span"
+        data-size="sm"
+        data-testid="typography"
       >
         Snapshot User
       </span>
-      <span
-        class="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground uppercase"
+      <div
+        class="flex min-w-0 items-center gap-2"
+        data-override-defaults="true"
+        data-testid="container"
       >
-        @
-        snap...rKey
-      </span>
+        <span
+          class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+          data-as="span"
+          data-size="sm"
+          data-testid="typography"
+        >
+          @
+          snapshot
+        </span>
+      </div>
     </div>
   </div>
   <div
     class="flex items-center gap-1"
+    data-override-defaults="true"
+    data-testid="container"
   >
     <svg
-      aria-hidden="true"
-      class="lucide lucide-clock size-4 text-muted-foreground"
-      fill="none"
-      height="24"
-      stroke="currentColor"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
-      viewBox="0 0 24 24"
-      width="24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M12 6v6l4 2"
-      />
-      <circle
-        cx="12"
-        cy="12"
-        r="10"
-      />
-    </svg>
+      class="size-4 text-muted-foreground"
+      data-testid="clock-icon"
+    />
     <span
       class="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+      data-as="span"
+      data-size="sm"
+      data-testid="typography"
     >
       2h
     </span>
@@ -73,6 +78,8 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
 exports[`PostHeader - Snapshots > matches snapshot in loading state 1`] = `
 <div
   class="text-muted-foreground"
+  data-override-defaults="true"
+  data-testid="container"
 >
   Loading header...
 </div>

@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Molecules from '@/molecules';
@@ -15,7 +14,6 @@ interface DialogReplyInputProps {
 const MAX_CHARACTER_LENGTH = 2000;
 
 export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputProps) {
-  const [tags, setTags] = useState<Array<{ id: string; label: string }>>([]);
   const { replyContent, setReplyContent, handleReplySubmit } = Hooks.usePostReply({
     postId,
     onSuccess: onSuccessAction,
@@ -36,19 +34,32 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
     }
   };
 
-  const handleTagAdd = (tag: string) => {
-    setTags((prevTags) => {
-      const normalizedTag = tag.trim().toLowerCase();
-      const isDuplicate = prevTags.some((existingTag) => existingTag.label.toLowerCase() === normalizedTag);
-      if (!isDuplicate) {
-        return [...prevTags, { id: `${Date.now()}`, label: tag.trim() }];
-      }
-      return prevTags;
-    });
+  const handleTagAdd = async (tag: string) => {
+    if (!currentUserId) return;
+    try {
+      await Core.TagController.create({
+        taggedId: postId,
+        label: tag.trim(),
+        taggerId: currentUserId,
+        taggedKind: Core.TagKind.POST,
+      });
+    } catch (error) {
+      console.error('Failed to add tag:', error);
+    }
   };
 
-  const handleTagClose = (_tag: unknown, index: number) => {
-    setTags((prevTags) => prevTags.filter((_, i) => i !== index));
+  const handleTagClose = async (tag: Core.NexusTag) => {
+    if (!currentUserId) return;
+    try {
+      await Core.TagController.delete({
+        taggedId: postId,
+        label: tag.label,
+        taggerId: currentUserId,
+        taggedKind: Core.TagKind.POST,
+      });
+    } catch (error) {
+      console.error('Failed to remove tag:', error);
+    }
   };
 
   return (
@@ -77,7 +88,7 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
 
         <Atoms.Container className="flex flex-col justify-between gap-4 md:flex-row md:gap-0" overrideDefaults>
           <Molecules.PostTagsList
-            tags={tags.map((tag) => ({ label: tag.label }))}
+            postId={postId}
             showInput={false}
             showAddButton={true}
             addMode={true}
