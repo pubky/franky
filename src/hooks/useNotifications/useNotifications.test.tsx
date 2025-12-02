@@ -4,12 +4,33 @@ import { useNotifications } from './useNotifications';
 import { NotificationType } from '@/core';
 import * as Core from '@/core';
 
-// Mock dexie-react-hooks
-let mockDbNotifications: Core.FlatNotification[] = [];
+// Hoist mock data
+const { mockDbNotifications, setMockDbNotifications, mockCurrentUserPubky, setMockCurrentUserPubky } = vi.hoisted(
+  () => {
+    const notifications = { current: [] as Core.FlatNotification[] };
+    const pubky = { current: 'test-user-pubky' as string | null };
+    return {
+      mockDbNotifications: notifications,
+      setMockDbNotifications: (value: Core.FlatNotification[]) => {
+        notifications.current = value;
+      },
+      mockCurrentUserPubky: pubky,
+      setMockCurrentUserPubky: (value: string | null) => {
+        pubky.current = value;
+      },
+    };
+  },
+);
+
+// Mock dexie-react-hooks - execute the query function to trigger side effects
 vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn(() => {
-    // Return the mock notifications
-    return mockDbNotifications;
+  useLiveQuery: vi.fn((queryFn) => {
+    if (!mockCurrentUserPubky.current) return undefined;
+    // Execute the async query function to trigger side effects like setInitialLoadDone
+    if (queryFn) {
+      queryFn();
+    }
+    return mockDbNotifications.current;
   }),
 }));
 
@@ -18,47 +39,36 @@ vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
     ...actual,
-    formatNotificationTime: vi.fn((timestamp: number) => {
-      const diffMs = Date.now() - timestamp;
-      const diffMins = Math.floor(diffMs / (1000 * 60));
-      if (diffMins < 1) return 'now';
-      if (diffMins < 60) return `${diffMins}m`;
-      return '1h';
-    }),
-    isAppError: vi.fn(() => false),
     Logger: {
       error: vi.fn(),
       warn: vi.fn(),
       info: vi.fn(),
+      debug: vi.fn(),
     },
   };
 });
-
-// Mock NotificationItem utils (now in organisms)
-vi.mock('@/components/organisms/NotificationItem/NotificationItem.utils', () => ({
-  getNotificationText: vi.fn((notification, userName) => `${userName} did something`),
-  getUserIdFromNotification: vi.fn((notification) => {
-    if ('followed_by' in notification) return notification.followed_by;
-    if ('replied_by' in notification) return notification.replied_by;
-    return '';
-  }),
-}));
 
 // Mock Core
 vi.mock('@/core', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/core')>();
   return {
     ...actual,
-    NotificationController: {
-      getOrFetchNotifications: vi.fn(() =>
-        Promise.resolve({
-          notifications: [],
-          olderThan: undefined,
-        }),
-      ),
-      markAllAsRead: vi.fn(),
-      getAllFromCache: vi.fn(() => Promise.resolve(mockDbNotifications)),
+    NotificationModel: {
+      getAll: vi.fn(() => Promise.resolve(mockDbNotifications.current)),
+      bulkSave: vi.fn(() => Promise.resolve()),
     },
+    NexusUserService: {
+      notifications: vi.fn(() => Promise.resolve([])),
+    },
+    NotificationNormalizer: {
+      toFlatNotification: vi.fn((n) => n),
+    },
+    NotificationController: {
+      markAllAsRead: vi.fn(),
+    },
+    useAuthStore: vi.fn(() => ({
+      currentUserPubky: mockCurrentUserPubky.current,
+    })),
     useNotificationStore: vi.fn((selector) => {
       const state = { lastRead: 0, setLastRead: vi.fn() };
       return selector ? selector(state) : state;
@@ -66,13 +76,19 @@ vi.mock('@/core', async (importOriginal) => {
   };
 });
 
+// Mock config
+vi.mock('@/config', () => ({
+  NEXUS_NOTIFICATIONS_LIMIT: 30,
+}));
+
 describe('useNotifications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockDbNotifications = [];
+    setMockDbNotifications([]);
+    setMockCurrentUserPubky('test-user-pubky');
   });
 
-  it('should return empty notifications array after loading', async () => {
+  it('should return empty notifications array when no data', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -83,7 +99,7 @@ describe('useNotifications', () => {
     expect(result.current.count).toBe(0);
   });
 
-  it('should return empty unread notifications array after loading', async () => {
+  it('should return empty unread notifications array when no data', async () => {
     const { result } = renderHook(() => useNotifications());
 
     await waitFor(() => {
@@ -94,18 +110,18 @@ describe('useNotifications', () => {
     expect(result.current.unreadCount).toBe(0);
   });
 
-  it('should start with isLoading as true when db returns undefined', () => {
-    // Set mock to return undefined (still loading from db)
-    mockDbNotifications = undefined as unknown as Core.FlatNotification[];
+  it('should start with isLoading as true', () => {
+    // Set mock to simulate not logged in (no currentUserPubky)
+    setMockCurrentUserPubky(null);
 
     const { result } = renderHook(() => useNotifications());
 
-    // Loading when db returns undefined
+    // Loading when not authenticated
     expect(result.current.isLoading).toBe(true);
   });
 
-  it('should return isLoading as false when db returns data', async () => {
-    mockDbNotifications = [];
+  it('should return isLoading as false when data is available', async () => {
+    setMockDbNotifications([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -115,7 +131,7 @@ describe('useNotifications', () => {
   });
 
   it('should return markAllAsRead function', async () => {
-    mockDbNotifications = [];
+    setMockDbNotifications([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -128,7 +144,7 @@ describe('useNotifications', () => {
   });
 
   it('should call markAllAsRead without errors', async () => {
-    mockDbNotifications = [];
+    setMockDbNotifications([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -137,10 +153,11 @@ describe('useNotifications', () => {
     });
 
     expect(() => result.current.markAllAsRead()).not.toThrow();
+    expect(Core.NotificationController.markAllAsRead).toHaveBeenCalled();
   });
 
   it('should return consistent counts', async () => {
-    mockDbNotifications = [];
+    setMockDbNotifications([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -153,7 +170,7 @@ describe('useNotifications', () => {
   });
 
   it('should return isNotificationUnread function', async () => {
-    mockDbNotifications = [];
+    setMockDbNotifications([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -166,7 +183,7 @@ describe('useNotifications', () => {
   });
 
   it('should return loadMore and refresh functions', async () => {
-    mockDbNotifications = [];
+    setMockDbNotifications([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -180,10 +197,10 @@ describe('useNotifications', () => {
 
   it('should return notifications from database', async () => {
     const mockNotifications = [
-      { type: NotificationType.Follow, timestamp: Date.now(), followed_by: 'user1' },
+      { id: 'test-1', type: NotificationType.Follow, timestamp: Date.now(), followed_by: 'user1' },
     ] as Core.FlatNotification[];
 
-    mockDbNotifications = mockNotifications;
+    setMockDbNotifications(mockNotifications);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -195,15 +212,15 @@ describe('useNotifications', () => {
     expect(result.current.count).toBe(1);
   });
 
-  it('should deduplicate notifications with same key', async () => {
-    const timestamp = Date.now();
+  it('should sort notifications by timestamp (newest first)', async () => {
+    const now = Date.now();
     const mockNotifications = [
-      { type: NotificationType.Follow, timestamp, followed_by: 'user1' },
-      { type: NotificationType.Follow, timestamp, followed_by: 'user1' }, // duplicate
-      { type: NotificationType.Follow, timestamp, followed_by: 'user2' }, // different user
+      { id: 'test-1', type: NotificationType.Follow, timestamp: now - 1000, followed_by: 'user1' },
+      { id: 'test-2', type: NotificationType.Follow, timestamp: now, followed_by: 'user2' },
+      { id: 'test-3', type: NotificationType.Follow, timestamp: now - 2000, followed_by: 'user3' },
     ] as Core.FlatNotification[];
 
-    mockDbNotifications = mockNotifications;
+    setMockDbNotifications(mockNotifications);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -211,19 +228,16 @@ describe('useNotifications', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    // Should have 2 unique notifications (user1 and user2)
-    expect(result.current.notifications).toHaveLength(2);
+    // Should be sorted newest first
+    expect(result.current.notifications[0].followed_by).toBe('user2');
+    expect(result.current.notifications[1].followed_by).toBe('user1');
+    expect(result.current.notifications[2].followed_by).toBe('user3');
   });
 
-  it('should call loadMore and fetch more notifications', async () => {
-    mockDbNotifications = [
-      { type: NotificationType.Follow, timestamp: 3000, followed_by: 'user1' },
-    ] as Core.FlatNotification[];
+  it('should call loadMore and fetch from Nexus', async () => {
+    setMockDbNotifications([]);
 
-    vi.mocked(Core.NotificationController.getOrFetchNotifications).mockResolvedValueOnce({
-      notifications: [],
-      olderThan: undefined,
-    });
+    vi.mocked(Core.NexusUserService.notifications).mockResolvedValueOnce([]);
 
     const { result } = renderHook(() => useNotifications());
 
@@ -235,6 +249,6 @@ describe('useNotifications', () => {
       await result.current.loadMore();
     });
 
-    expect(Core.NotificationController.getOrFetchNotifications).toHaveBeenCalled();
+    expect(Core.NexusUserService.notifications).toHaveBeenCalled();
   });
 });

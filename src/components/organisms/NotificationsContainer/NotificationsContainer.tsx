@@ -37,18 +37,18 @@ export function NotificationsContainer() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <Atoms.Container overrideDefaults={true} className="flex items-center justify-center py-12">
         <Atoms.Spinner size="lg" />
-      </div>
+      </Atoms.Container>
     );
   }
 
   // Error state
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center gap-4 py-12">
+      <Atoms.Container overrideDefaults={true} className="flex flex-col items-center justify-center gap-4 py-12">
         <p className="text-muted-foreground">{error}</p>
-      </div>
+      </Atoms.Container>
     );
   }
 
@@ -64,14 +64,14 @@ export function NotificationsContainer() {
       </Atoms.Heading>
       <Organisms.NotificationsList notifications={notifications} unreadNotifications={unreadNotifications} />
 
-      {/* Infinite scroll sentinel */}
-      <div ref={sentinelRef} className="h-1" />
+      {/* Infinite scroll sentinel - triggers loadMore when visible */}
+      <div ref={sentinelRef} className="h-10" />
 
       {/* Loading more indicator */}
       {isLoadingMore && (
-        <div className="flex items-center justify-center py-4">
+        <Atoms.Container overrideDefaults={true} className="flex items-center justify-center py-4">
           <Atoms.Spinner size="md" />
-        </div>
+        </Atoms.Container>
       )}
     </>
   );

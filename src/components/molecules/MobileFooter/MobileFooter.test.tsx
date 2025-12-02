@@ -38,6 +38,23 @@ vi.mock('@/app', () => ({
     SETTINGS: '/settings',
     PROFILE: '/profile',
   },
+  UNAUTHENTICATED_ROUTES: [],
+  AUTHENTICATED_ROUTES: [],
+}));
+
+// Mock Core
+vi.mock('@/core', () => ({
+  FileController: {
+    getAvatarUrl: vi.fn((pubky: string) => `https://example.com/avatar/${pubky}`),
+  },
+}));
+
+// Mock Hooks
+vi.mock('@/hooks', () => ({
+  useCurrentUserProfile: vi.fn(() => ({
+    userDetails: { name: 'Test User' },
+    currentUserPubky: 'pk:test-user-pubky',
+  })),
 }));
 
 describe('MobileFooter', () => {
@@ -98,13 +115,12 @@ describe('MobileFooter', () => {
     expect(document.querySelector('.lucide-settings')).toBeInTheDocument();
   });
 
-  it('renders avatar fallback with user icon', () => {
+  it('renders avatar fallback with user initials', () => {
     render(<MobileFooter />);
 
     const fallback = screen.getByTestId('avatar-fallback');
     expect(fallback).toBeInTheDocument();
-    const userIcon = document.querySelector('.lucide-user') as HTMLElement | null;
-    expect(userIcon).toHaveClass('h-5', 'w-5');
+    expect(fallback).toHaveTextContent('TU'); // "Test User" initials
   });
 
   it('applies correct icon classes', () => {

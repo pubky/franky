@@ -4,11 +4,12 @@ import { useUserProfile } from './useUserProfile';
 import * as Core from '@/core';
 
 // Hoist mock data using vi.hoisted
+// Note: undefined = query not executed yet (loading), null = query executed but no data found
 const { mockUserDetails, setMockUserDetails } = vi.hoisted(() => {
-  const data = { current: null as Core.UserDetailsModelSchema | null };
+  const data = { current: undefined as Core.UserDetailsModelSchema | null | undefined };
   return {
     mockUserDetails: data,
-    setMockUserDetails: (value: Core.UserDetailsModelSchema | null) => {
+    setMockUserDetails: (value: Core.UserDetailsModelSchema | null | undefined) => {
       data.current = value;
     },
   };
@@ -54,15 +55,27 @@ vi.mock('@/config', async (importOriginal) => {
 describe('useUserProfile', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setMockUserDetails(null);
+    // Default to undefined (simulating query not yet executed)
+    setMockUserDetails(undefined);
   });
 
   describe('Profile data fetching', () => {
-    it('returns null profile when user details are not available', () => {
+    it('returns null profile and isLoading true when query has not executed yet (undefined)', () => {
+      // undefined = query not executed yet
+      setMockUserDetails(undefined);
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.profile).toBeNull();
       expect(result.current.isLoading).toBe(true);
+    });
+
+    it('returns null profile and isLoading false when user not found (null)', () => {
+      // null = query executed but user not found
+      setMockUserDetails(null);
+      const { result } = renderHook(() => useUserProfile('test-user-id'));
+
+      expect(result.current.profile).toBeNull();
+      expect(result.current.isLoading).toBe(false);
     });
 
     it('returns profile data when user exists', () => {
@@ -189,10 +202,18 @@ describe('useUserProfile', () => {
   });
 
   describe('Loading state', () => {
-    it('isLoading is true when user details are null', () => {
+    it('isLoading is true when query has not executed yet (undefined)', () => {
+      setMockUserDetails(undefined);
       const { result } = renderHook(() => useUserProfile('test-user-id'));
 
       expect(result.current.isLoading).toBe(true);
+    });
+
+    it('isLoading is false when user not found (null)', () => {
+      setMockUserDetails(null);
+      const { result } = renderHook(() => useUserProfile('test-user-id'));
+
+      expect(result.current.isLoading).toBe(false);
     });
 
     it('isLoading is false when user details are available', () => {
