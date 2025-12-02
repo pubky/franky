@@ -1,5 +1,6 @@
 import { feedUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
+import type { FeedDeleteParams, FeedPutParams, FeedUpdateParams, PersistAndSyncParams } from './feed.types';
 
 export class FeedApplication {
   private constructor() {}
@@ -16,13 +17,7 @@ export class FeedApplication {
     return this.handlePut({ userId, params });
   }
 
-  private static async handleDelete({
-    userId,
-    params,
-  }: {
-    userId: string;
-    params: Core.TFeedPersistParams;
-  }): Promise<undefined> {
+  private static async handleDelete({ userId, params }: FeedDeleteParams): Promise<undefined> {
     Core.FeedValidators.validateDeleteParams(params);
 
     // Convert numeric ID to string for URI builder
@@ -36,13 +31,7 @@ export class FeedApplication {
     return undefined;
   }
 
-  private static async handleUpdate({
-    userId,
-    params,
-  }: {
-    userId: string;
-    params: Core.TFeedPersistUpdateParams;
-  }): Promise<Core.FeedModelSchema> {
+  private static async handleUpdate({ userId, params }: FeedUpdateParams): Promise<Core.FeedModelSchema> {
     const { feedId, changes } = params;
 
     const existing = await Core.LocalFeedService.findById(feedId);
@@ -87,13 +76,7 @@ export class FeedApplication {
     return this.persistAndSync({ userId, feedSchema, normalizedFeed });
   }
 
-  private static async handlePut({
-    userId,
-    params,
-  }: {
-    userId: string;
-    params: Core.TFeedPersistParams;
-  }): Promise<Core.FeedModelSchema> {
+  private static async handlePut({ userId, params }: FeedPutParams): Promise<Core.FeedModelSchema> {
     Core.FeedValidators.validatePutParams(params);
 
     const { feed, existingId } = params;
@@ -127,11 +110,7 @@ export class FeedApplication {
     userId,
     feedSchema,
     normalizedFeed,
-  }: {
-    userId: string;
-    feedSchema: Core.FeedModelSchema;
-    normalizedFeed: { feed: { toJson: () => Record<string, unknown> } };
-  }): Promise<Core.FeedModelSchema> {
+  }: PersistAndSyncParams): Promise<Core.FeedModelSchema> {
     // Dexie auto-generates ID when id is 0, returns feed with actual ID
     const persistedFeed = await Core.LocalFeedService.persist(feedSchema);
 

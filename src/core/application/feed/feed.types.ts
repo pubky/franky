@@ -1,5 +1,26 @@
-import { FeedResult } from 'pubky-app-specs';
 import * as Core from '@/core';
+import { FeedResult } from 'pubky-app-specs';
+
+export interface FeedDeleteParams {
+  userId: string;
+  params: Core.TFeedPersistParams;
+}
+
+export interface FeedUpdateParams {
+  userId: string;
+  params: Core.TFeedPersistUpdateParams;
+}
+
+export interface FeedPutParams {
+  userId: string;
+  params: Core.TFeedPersistParams;
+}
+
+export interface PersistAndSyncParams {
+  userId: string;
+  feedSchema: Core.FeedModelSchema;
+  normalizedFeed: { feed: { toJson: () => Record<string, unknown> } };
+}
 
 export type TFeedPersistCreateParams = {
   feed: FeedResult;
