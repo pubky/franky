@@ -83,15 +83,12 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
       expect(bulkSaveSpy).toHaveBeenCalledOnce();
     });
 
-    it.each([
-      { olderThan: Infinity, expectedEnd: undefined },
-      { olderThan: 5000, expectedEnd: 5000 },
-    ])('should pass end=$expectedEnd when olderThan=$olderThan', async ({ olderThan, expectedEnd }) => {
+    it('should call Nexus with user_id and limit', async () => {
       const nexusSpy = vi.spyOn(Core.NexusUserService, 'notifications').mockResolvedValue([]);
 
-      await NotificationApplication.getOrFetchNotifications({ userId, olderThan, limit });
+      await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit });
 
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: expectedEnd, limit });
+      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, limit });
     });
 
     it.each([
@@ -129,7 +126,7 @@ describe('NotificationApplication.getOrFetchNotifications', () => {
 
       await NotificationApplication.getOrFetchNotifications({ userId, olderThan: Infinity, limit: 10 });
 
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, end: 900, limit: 8 });
+      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId, limit: 8 });
     });
 
     it('should deduplicate by timestamp', async () => {

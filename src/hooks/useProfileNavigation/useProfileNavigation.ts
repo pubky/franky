@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { PROFILE_ROUTES } from '@/app';
 import { PROFILE_PAGE_TYPES, ProfilePageType, FilterBarPageType } from '@/app/profile/types';
+import * as Providers from '@/providers';
 
 /**
  * Profile routes configuration - single source of truth
@@ -14,34 +15,47 @@ const PROFILE_ROUTES_CONFIG: Record<
   {
     /** Primary route for this page type */
     route: string;
+    /** Sub-path for dynamic routes (e.g., '/posts', '/followers') */
+    subPath: string;
     /** Alternative routes that also map to this page type */
     aliases?: string[];
+    /** Whether this page is only available for own profile */
+    ownProfileOnly?: boolean;
   }
 > = {
   [PROFILE_PAGE_TYPES.NOTIFICATIONS]: {
     route: PROFILE_ROUTES.PROFILE,
+    subPath: '',
     aliases: [PROFILE_ROUTES.NOTIFICATIONS],
+    ownProfileOnly: true, // Notifications only for logged-in user
   },
   [PROFILE_PAGE_TYPES.POSTS]: {
     route: PROFILE_ROUTES.POSTS,
+    subPath: '/posts',
   },
   [PROFILE_PAGE_TYPES.REPLIES]: {
     route: PROFILE_ROUTES.REPLIES,
+    subPath: '/replies',
   },
   [PROFILE_PAGE_TYPES.FOLLOWERS]: {
     route: PROFILE_ROUTES.FOLLOWERS,
+    subPath: '/followers',
   },
   [PROFILE_PAGE_TYPES.FOLLOWING]: {
     route: PROFILE_ROUTES.FOLLOWING,
+    subPath: '/following',
   },
   [PROFILE_PAGE_TYPES.FRIENDS]: {
     route: PROFILE_ROUTES.FRIENDS,
+    subPath: '/friends',
   },
   [PROFILE_PAGE_TYPES.UNIQUE_TAGS]: {
     route: PROFILE_ROUTES.UNIQUE_TAGS,
+    subPath: '/tagged',
   },
   [PROFILE_PAGE_TYPES.PROFILE]: {
     route: PROFILE_ROUTES.PROFILE_PAGE,
+    subPath: '/profile',
   },
 };
 
@@ -92,6 +106,31 @@ const PAGE_PATH_MAP = derivePagePathMap();
 const ROUTE_MAP = deriveRouteMap();
 
 /**
+ * Extracts the page type from a dynamic route pathname
+ * Handles paths like /profile/{pubky}/posts, /profile/{pubky}/followers, etc.
+ */
+const getPageTypeFromDynamicPath = (pathname: string): ProfilePageType | null => {
+  // Match pattern: /profile/{pubky}/{subPath}
+  const dynamicRouteMatch = pathname.match(/^\/profile\/[^/]+(\/.+)?$/);
+
+  if (!dynamicRouteMatch) {
+    return null;
+  }
+
+  const subPath = dynamicRouteMatch[1] || '';
+
+  // Find the page type by subPath
+  for (const [pageType, config] of Object.entries(PROFILE_ROUTES_CONFIG)) {
+    if (config.subPath === subPath) {
+      return pageType as ProfilePageType;
+    }
+  }
+
+  // Default to POSTS for /profile/{pubky} (no subPath) for other users
+  return PROFILE_PAGE_TYPES.POSTS;
+};
+
+/**
  * Return type for the useProfileNavigation hook
  */
 export interface UseProfileNavigationReturn {
@@ -116,6 +155,7 @@ export interface UseProfileNavigationReturn {
  * - Determining the active page based on current pathname
  * - Mapping between page types and routes
  * - Providing navigation functionality
+ * - Handling dynamic routes for other users' profiles
  *
  * @returns {UseProfileNavigationReturn} Navigation state and handlers
  *
@@ -136,34 +176,72 @@ export function useProfileNavigation(): UseProfileNavigationReturn {
   const pathname = usePathname();
   const router = useRouter();
 
+  // Get profile context to determine if we're on a dynamic route
+  const { pubky, isOwnProfile } = Providers.useProfileContext();
+
   /**
    * Determine the active page from the current pathname
-   * Defaults to NOTIFICATIONS if pathname is not in the map
+   * Handles both static routes (/profile/posts) and dynamic routes (/profile/{pubky}/posts)
    */
   const activePage = useMemo(() => {
-    return PAGE_PATH_MAP[pathname] || PROFILE_PAGE_TYPES.NOTIFICATIONS;
-  }, [pathname]);
+    // First try exact match in static routes
+    if (PAGE_PATH_MAP[pathname]) {
+      return PAGE_PATH_MAP[pathname];
+    }
+
+    // Try to extract page type from dynamic route
+    const dynamicPageType = getPageTypeFromDynamicPath(pathname);
+    if (dynamicPageType) {
+      return dynamicPageType;
+    }
+
+    // Default: for own profile show notifications, for others show posts
+    return isOwnProfile ? PROFILE_PAGE_TYPES.NOTIFICATIONS : PROFILE_PAGE_TYPES.POSTS;
+  }, [pathname, isOwnProfile]);
 
   /**
    * Calculate the filter bar active page
-   * The filter bar doesn't show the PROFILE page type, so we map it to NOTIFICATIONS
+   * The filter bar doesn't show the PROFILE page type, so we map it to NOTIFICATIONS or POSTS
    */
   const filterBarActivePage = useMemo(() => {
-    return activePage === PROFILE_PAGE_TYPES.PROFILE
-      ? PROFILE_PAGE_TYPES.NOTIFICATIONS
-      : (activePage as FilterBarPageType);
-  }, [activePage]);
+    if (activePage === PROFILE_PAGE_TYPES.PROFILE) {
+      return isOwnProfile ? PROFILE_PAGE_TYPES.NOTIFICATIONS : PROFILE_PAGE_TYPES.POSTS;
+    }
+    // For other users without notifications, default to POSTS
+    if (!isOwnProfile && activePage === PROFILE_PAGE_TYPES.NOTIFICATIONS) {
+      return PROFILE_PAGE_TYPES.POSTS;
+    }
+    return activePage as FilterBarPageType;
+  }, [activePage, isOwnProfile]);
 
   /**
    * Navigate to a specific profile page
-   * Maps the page type to its corresponding route and pushes to router
+   * Generates dynamic routes for other users' profiles
    */
   const navigateToPage = useCallback(
     (page: ProfilePageType) => {
-      const route = ROUTE_MAP[page];
-      router.push(route);
+      const config = PROFILE_ROUTES_CONFIG[page];
+
+      // For own profile, use static routes
+      if (isOwnProfile) {
+        const route = ROUTE_MAP[page];
+        router.push(route);
+        return;
+      }
+
+      // For other users, generate dynamic route
+      // Skip notifications for other users
+      if (config.ownProfileOnly) {
+        // Redirect to posts instead
+        const postsRoute = `/profile/${pubky}/posts`;
+        router.push(postsRoute);
+        return;
+      }
+
+      const dynamicRoute = `/profile/${pubky}${config.subPath}`;
+      router.push(dynamicRoute);
     },
-    [router],
+    [router, isOwnProfile, pubky],
   );
 
   return {

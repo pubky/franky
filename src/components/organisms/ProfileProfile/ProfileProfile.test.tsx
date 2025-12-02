@@ -12,13 +12,18 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock Core
-vi.mock('@/core', () => ({
-  useAuthStore: vi.fn(() => ({
-    currentUserPubky: 'pk:1QX7GKW3abcdef1234567890',
-  })),
-}));
+vi.mock('@/core', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/core')>();
+  return {
+    ...actual,
+    useAuthStore: vi.fn(() => ({
+      currentUserPubky: 'pk:1QX7GKW3abcdef1234567890',
+    })),
+    useNotificationStore: vi.fn(() => 0),
+  };
+});
 
-// Mock useProfileHeader hook
+// Mock hooks
 vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
@@ -32,6 +37,7 @@ vi.mock('@/hooks', async (importOriginal) => {
         status: 'Vacationing',
         avatarUrl: undefined,
         link: 'http://localhost:3000/profile/1QX7GKW3abcdef1234567890',
+        links: [],
       },
       actions: {
         onEdit: vi.fn(),
@@ -44,6 +50,28 @@ vi.mock('@/hooks', async (importOriginal) => {
       },
       isLoading: false,
     })),
+    useFollowUser: vi.fn(() => ({
+      toggleFollow: vi.fn(),
+      isLoading: false,
+    })),
+    useIsFollowing: vi.fn(() => ({
+      isFollowing: false,
+    })),
+    useTagged: vi.fn(() => ({
+      tags: [],
+      isLoading: false,
+      handleTagToggle: vi.fn(),
+    })),
+  };
+});
+
+// Mock molecules
+vi.mock('@/molecules', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/molecules')>();
+  return {
+    ...actual,
+    ProfilePageTaggedAs: () => <div data-testid="profile-page-tagged-as">Tagged as section</div>,
+    ProfilePageLinks: () => <div data-testid="profile-page-links">Links section</div>,
   };
 });
 

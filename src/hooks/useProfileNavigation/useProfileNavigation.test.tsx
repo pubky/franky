@@ -15,11 +15,24 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
+// Mock ProfileContext - default to own profile
+const mockPubky = 'user123';
+const mockIsOwnProfile = vi.fn(() => true);
+
+vi.mock('@/providers', () => ({
+  useProfileContext: () => ({
+    pubky: mockPubky,
+    isOwnProfile: mockIsOwnProfile(),
+    isLoading: false,
+  }),
+}));
+
 describe('useProfileNavigation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Default to notifications route
+    // Default to notifications route and own profile
     mockPathname.mockReturnValue(PROFILE_ROUTES.PROFILE);
+    mockIsOwnProfile.mockReturnValue(true);
   });
 
   describe('activePage', () => {

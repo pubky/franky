@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as App from '@/app';
+import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 
 export interface MobileFooterProps {
   className?: string;
@@ -12,8 +14,13 @@ export interface MobileFooterProps {
 
 export function MobileFooter({ className }: MobileFooterProps) {
   const pathname = usePathname();
+  const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
   const isActive = (path: string) => pathname === path;
+
+  // Get avatar URL and fallback initial - same logic as desktop header
+  const avatarUrl = currentUserPubky ? Core.FileController.getAvatarUrl(currentUserPubky) : undefined;
+  const avatarInitial = Libs.extractInitials({ name: userDetails?.name || '' }) || 'U';
 
   const navItems = [
     { href: App.APP_ROUTES.HOME, icon: Libs.Home, label: 'Home' },
@@ -49,10 +56,8 @@ export function MobileFooter({ className }: MobileFooterProps) {
           className="relative flex-shrink-0"
         >
           <Atoms.Avatar className={Libs.cn('h-12 w-12', isActive(App.APP_ROUTES.PROFILE) ? 'ring-2 ring-primary' : '')}>
-            <Atoms.AvatarImage src="https://i.pravatar.cc/150?img=68" alt="Profile" />
-            <Atoms.AvatarFallback>
-              <Libs.User className="h-5 w-5" />
-            </Atoms.AvatarFallback>
+            <Atoms.AvatarImage src={avatarUrl} alt="Profile" />
+            <Atoms.AvatarFallback>{avatarInitial}</Atoms.AvatarFallback>
           </Atoms.Avatar>
         </Link>
       </div>

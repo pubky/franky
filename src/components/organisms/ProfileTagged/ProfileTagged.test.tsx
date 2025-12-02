@@ -2,11 +2,24 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProfileTagged } from './ProfileTagged';
 
+// Mock providers
+vi.mock('@/providers', () => ({
+  useProfileContext: () => ({
+    pubky: 'test-user-pubky',
+    isOwnProfile: true,
+    isLoading: false,
+  }),
+}));
+
 // Mock hooks
 vi.mock('@/hooks', () => ({
   useCurrentUserProfile: () => ({
     userDetails: { name: 'Satoshi' },
     currentUserPubky: 'test-user-pubky',
+  }),
+  useUserProfile: () => ({
+    profile: { name: 'Satoshi' },
+    isLoading: false,
   }),
   useTagged: () => ({
     tags: [

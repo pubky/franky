@@ -28,6 +28,7 @@ import { ProfilePageLayoutProps } from './ProfilePageLayout.types';
  *   filterBarActivePage={filterBarActivePage}
  *   navigateToPage={handleNavigate}
  *   isLoading={false}
+ *   isOwnProfile={true}
  * >
  *   <ProfileContent />
  * </ProfilePageLayout>
@@ -42,6 +43,7 @@ export function ProfilePageLayout({
   filterBarActivePage,
   navigateToPage,
   isLoading,
+  isOwnProfile = true,
 }: ProfilePageLayoutProps) {
   const [isAvatarZoomOpen, setIsAvatarZoomOpen] = useState(false);
 
@@ -63,11 +65,17 @@ export function ProfilePageLayout({
     <>
       <Molecules.MobileHeader showLeftButton={false} showRightButton={false} />
 
-      <Molecules.ProfilePageMobileMenu activePage={activePage} onPageChangeAction={navigateToPage} />
+      <Molecules.ProfilePageMobileMenu
+        activePage={activePage}
+        onPageChangeAction={navigateToPage}
+        isOwnProfile={isOwnProfile}
+      />
 
       <Molecules.ProfilePageLayoutWrapper>
         <Atoms.Container overrideDefaults={true} className="hidden bg-background pb-6 shadow-sm lg:block">
-          {!isLoading && <Organisms.ProfilePageHeader profile={profile} actions={headerActions} />}
+          {!isLoading && (
+            <Organisms.ProfilePageHeader profile={profile} actions={headerActions} isOwnProfile={isOwnProfile} />
+          )}
         </Atoms.Container>
 
         <Atoms.Container overrideDefaults={true} className="flex gap-6">
@@ -75,6 +83,7 @@ export function ProfilePageLayout({
             activePage={filterBarActivePage}
             onPageChangeAction={navigateToPage}
             stats={stats}
+            isOwnProfile={isOwnProfile}
           />
 
           <Atoms.Container overrideDefaults={true} className="flex-1">

@@ -3,6 +3,7 @@
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import * as Providers from '@/providers';
 
 /**
  * ProfileTagged Organism
@@ -13,13 +14,19 @@ import * as Hooks from '@/hooks';
  * - Fetching and managing tags
  * - Handling tag add/toggle operations
  * - Managing loading and empty states
+ * Uses ProfileContext to get the target user's pubky.
  */
 export function ProfileTagged() {
-  const { currentUserPubky, userDetails } = Hooks.useCurrentUserProfile();
-  const { tags, count, isLoading, handleTagAdd, handleTagToggle, hasMore, isLoadingMore, loadMore } =
-    Hooks.useTagged(currentUserPubky);
+  // Get the profile pubky from context
+  const { pubky } = Providers.useProfileContext();
 
-  const userName = userDetails?.name || '';
+  // Get user profile data for the target user
+  const { profile } = Hooks.useUserProfile(pubky ?? '');
+
+  const { tags, count, isLoading, handleTagAdd, handleTagToggle, hasMore, isLoadingMore, loadMore } =
+    Hooks.useTagged(pubky);
+
+  const userName = profile?.name || '';
 
   // Show loading state while fetching initial data
   if (isLoading) {

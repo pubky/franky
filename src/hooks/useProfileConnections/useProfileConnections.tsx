@@ -70,43 +70,62 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
     new Map<Core.Pubky, Core.NexusUserCounts>(),
   );
 
+  // Subscribe to relationships from local database (reactive)
+  // This tracks whether the current user is following each connection
+  const userRelationshipsMap = useLiveQuery(
+    async () => {
+      if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+      const relationships = await Core.UserRelationshipsModel.findByIds(userIds);
+      const map = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+      for (const rel of relationships) {
+        map.set(rel.id, rel);
+      }
+      return map;
+    },
+    [userIds],
+    new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
+  );
+
   // Combine user IDs with their details and computed avatar URLs
   const connections = useMemo((): UserConnectionData[] => {
-    return userIds
-      .map((id) => {
-        const details = userDetailsMap.get(id);
-        const counts = userCountsMap.get(id);
-        // Generate avatar URL from user ID using FileController
-        const avatarUrl = Core.FileController.getAvatarUrl(id);
+    return userIds.map((id) => {
+      const details = userDetailsMap.get(id);
+      const counts = userCountsMap.get(id);
+      const relationship = userRelationshipsMap.get(id);
+      // Generate avatar URL from user ID using FileController
+      const avatarUrl = Core.FileController.getAvatarUrl(id);
 
-        if (!details) {
-          // Return minimal data if details not yet loaded
-          return {
-            id,
-            name: '',
-            bio: '',
-            image: null,
-            status: null,
-            links: null,
-            indexed_at: 0,
-            avatarUrl,
-            tags: [],
-            stats: { tags: 0, posts: 0 },
-          } as UserConnectionData;
-        }
-
+      if (!details) {
+        // Return minimal data if details not yet loaded
         return {
-          ...details,
+          id,
+          name: '',
+          bio: '',
+          image: null,
+          status: null,
+          links: null,
+          indexed_at: 0,
           avatarUrl,
-          tags: [], // TODO: Fetch tags when available
-          stats: {
-            tags: counts?.tagged ?? 0,
-            posts: counts?.posts ?? 0,
-          },
+          tags: [],
+          stats: { tags: 0, posts: 0 },
+          isFollowing: relationship?.following ?? false,
         } as UserConnectionData;
-      })
-      .filter((conn) => conn.name !== ''); // Filter out users without loaded details
-  }, [userIds, userDetailsMap, userCountsMap]);
+      }
+
+      return {
+        ...details,
+        avatarUrl,
+        tags: [], // TODO: Fetch tags when available
+        stats: {
+          tags: counts?.unique_tags ?? 0,
+          posts: counts?.posts ?? 0,
+        },
+        isFollowing: relationship?.following ?? false,
+      } as UserConnectionData;
+    });
+    // Note: We no longer filter out users with empty names - they will appear
+    // with placeholder data while their details are being fetched in background
+  }, [userIds, userDetailsMap, userCountsMap, userRelationshipsMap]);
 
   /**
    * Fetches a slice from the user stream

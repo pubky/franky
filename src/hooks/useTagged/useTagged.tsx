@@ -1,8 +1,9 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Hooks from '@/hooks';
+// Import directly to avoid circular dependency with @/hooks barrel
+import { useProfileStats } from '@/hooks/useProfileStats';
 import { toast } from '@/molecules/Toaster/use-toast';
 import type { UseTaggedResult, UseTaggedOptions } from './useTagged.types';
 import { transformTagWithAvatars } from '@/molecules/TaggedItem/TaggedItem.utils';
@@ -29,7 +30,7 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
   const [tagOrder, setTagOrder] = useState<Map<string, number>>(new Map());
 
   // Only fetch stats if enabled
-  const { stats, isLoading: isLoadingStats } = Hooks.useProfileStats(enableStats ? (userId ?? '') : '');
+  const { stats, isLoading: isLoadingStats } = useProfileStats(enableStats ? (userId ?? '') : '');
 
   // Fetch tags directly from IndexedDB - this will react to any changes made by TagController
   const localTags = useLiveQuery(async () => {
@@ -58,24 +59,46 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
     });
   }, [localTags]);
 
-  // Initial fetch from server (populates IndexedDB if empty)
-  useLiveQuery(async () => {
-    if (!userId) return;
+  // Track if we've already fetched from server for this user
+  const [hasFetched, setHasFetched] = useState(false);
+  const prevUserIdRef = useRef<string | null | undefined>(null);
 
-    // Only fetch from server if we don't have local data
-    if (localTags === null) {
+  // Reset hasFetched when userId changes
+  useEffect(() => {
+    if (prevUserIdRef.current !== userId) {
+      setHasFetched(false);
+      prevUserIdRef.current = userId;
+    }
+  }, [userId]);
+
+  // Initial fetch from server (always fetch to ensure we have all tags)
+  useEffect(() => {
+    if (!userId || hasFetched) return;
+
+    const fetchTags = async () => {
       try {
-        // This will fetch from server and populate the local DB
-        await Core.UserController.tags({
+        // Fetch from server
+        const fetchedTags = await Core.UserController.tags({
           user_id: userId,
           viewer_id: viewerId ?? undefined,
           ...(enablePagination && { limit_tags: TAGS_PER_PAGE, skip_tags: 0 }),
         });
+
+        // Save to IndexedDB so useLiveQuery reacts
+        await Core.UserTagsModel.upsert({
+          id: userId as Core.Pubky,
+          tags: fetchedTags,
+        });
+
+        setHasFetched(true);
       } catch {
         // Ignore fetch errors - we'll show empty state
+        setHasFetched(true);
       }
-    }
-  }, [userId, viewerId, enablePagination, localTags]);
+    };
+
+    fetchTags();
+  }, [userId, viewerId, enablePagination, hasFetched]);
 
   // Combine local tags with zero-tagger tags, preserving order
   const allTags = useMemo(() => {
@@ -228,17 +251,28 @@ export function useTagged(userId: string | null | undefined, options: UseTaggedO
     if (!enablePagination || !userId || !hasMore) return;
 
     try {
-      await Core.UserController.tags({
+      const moreTags = await Core.UserController.tags({
         user_id: userId,
         viewer_id: viewerId ?? undefined,
         limit_tags: TAGS_PER_PAGE,
         skip_tags: allTags.length,
       });
-      // The response will update IndexedDB, and useLiveQuery will react
+
+      // Merge with existing tags and save to IndexedDB
+      if (moreTags.length > 0) {
+        const existingLabels = new Set(allTags.map((t) => t.label.toLowerCase()));
+        const newTags = moreTags.filter((t) => !existingLabels.has(t.label.toLowerCase()));
+        const mergedTags = [...allTags, ...newTags];
+
+        await Core.UserTagsModel.upsert({
+          id: userId as Core.Pubky,
+          tags: mergedTags,
+        });
+      }
     } catch {
       // Ignore pagination errors
     }
-  }, [enablePagination, userId, viewerId, allTags.length, hasMore]);
+  }, [enablePagination, userId, viewerId, allTags, hasMore]);
 
   const isLoading = localTags === undefined || (enableStats && isLoadingStats);
 
