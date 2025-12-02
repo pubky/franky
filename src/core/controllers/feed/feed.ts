@@ -13,13 +13,7 @@ export class FeedController {
 
     Core.FeedValidators.validatePutParams({ feed: normalizedFeed });
 
-    const feed = await Core.FeedApplication.persist({
-      action: Core.HomeserverAction.PUT,
-      userId,
-      params: {
-        feed: normalizedFeed,
-      },
-    });
+    const feed = await Core.FeedApplication.persist({ userId, params: { feed: normalizedFeed } });
 
     return feed!;
   }
@@ -41,12 +35,8 @@ export class FeedController {
     Core.FeedValidators.validatePutParams({ feed: normalizedFeed, existingId: params.feedId });
 
     const feed = await Core.FeedApplication.persist({
-      action: Core.HomeserverAction.PUT,
       userId,
-      params: {
-        feed: normalizedFeed,
-        existingId: params.feedId,
-      },
+      params: { feed: normalizedFeed, existingId: params.feedId },
     });
 
     return feed!;
@@ -57,13 +47,7 @@ export class FeedController {
 
     Core.FeedValidators.validateDeleteParams({ feedId: params.feedId });
 
-    await Core.FeedApplication.persist({
-      action: Core.HomeserverAction.DELETE,
-      userId,
-      params: {
-        feedId: params.feedId,
-      },
-    });
+    await Core.FeedApplication.delete({ userId, params: { feedId: params.feedId } });
   }
 
   static async list(): Promise<Core.FeedModelSchema[]> {

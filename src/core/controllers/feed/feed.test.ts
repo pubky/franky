@@ -45,6 +45,7 @@ describe('FeedController', () => {
 
     // Mock FeedApplication
     vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(createMockFeedSchema());
+    vi.spyOn(Core.FeedApplication, 'delete').mockResolvedValue(undefined);
     vi.spyOn(Core.FeedApplication, 'list').mockResolvedValue([createMockFeedSchema()]);
     vi.spyOn(Core.FeedApplication, 'get').mockResolvedValue(createMockFeedSchema());
 
@@ -61,7 +62,6 @@ describe('FeedController', () => {
       const result = await FeedController.create(params);
 
       expect(persistSpy).toHaveBeenCalledWith({
-        action: Core.HomeserverAction.PUT,
         userId: testData.userPubky,
         params: {
           feed: expect.any(Object),
@@ -109,7 +109,6 @@ describe('FeedController', () => {
         changes: { tags: ['bitcoin', 'mining'] },
       });
       expect(persistSpy).toHaveBeenCalledWith({
-        action: Core.HomeserverAction.PUT,
         userId: testData.userPubky,
         params: {
           feed: expect.any(Object),
@@ -141,23 +140,17 @@ describe('FeedController', () => {
   });
 
   describe('delete', () => {
-    it('should call persist with DELETE action', async () => {
-      const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
+    it('should call delete in application layer', async () => {
+      const deleteSpy = vi.spyOn(Core.FeedApplication, 'delete');
       const deleteParams: TFeedDeleteParams = { feedId: 123 };
 
       await FeedController.delete(deleteParams);
 
-      expect(persistSpy).toHaveBeenCalledWith({
-        action: Core.HomeserverAction.DELETE,
-        userId: testData.userPubky,
-        params: {
-          feedId: 123,
-        },
-      });
+      expect(deleteSpy).toHaveBeenCalledWith({ userId: testData.userPubky, params: { feedId: 123 } });
     });
 
     it('should throw when user is not authenticated (via application layer)', async () => {
-      vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('User not authenticated'));
+      vi.spyOn(Core.FeedApplication, 'delete').mockRejectedValue(new Error('User not authenticated'));
 
       await expect(FeedController.delete({ feedId: 123 })).rejects.toThrow('User not authenticated');
     });

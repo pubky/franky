@@ -96,11 +96,7 @@ describe('FeedApplication', () => {
       persistSpy.mockResolvedValue(mockPersistedFeed);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.persist({
-        action: Core.HomeserverAction.PUT,
-        userId: testUserId,
-        params: mockParams,
-      });
+      const result = await FeedApplication.persist({ userId: testUserId, params: mockParams });
 
       expect(persistSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -140,11 +136,7 @@ describe('FeedApplication', () => {
       persistSpy.mockResolvedValue(existingFeed);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.persist({
-        action: Core.HomeserverAction.PUT,
-        userId: testUserId,
-        params: mockParams,
-      });
+      const result = await FeedApplication.persist({ userId: testUserId, params: mockParams });
 
       expect(result!.id).toBe(42);
       expect(result!.created_at).toBe(1000000);
@@ -156,13 +148,9 @@ describe('FeedApplication', () => {
 
       persistSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(
-        FeedApplication.persist({
-          action: Core.HomeserverAction.PUT,
-          userId: testUserId,
-          params: mockParams,
-        }),
-      ).rejects.toThrow('Database error');
+      await expect(FeedApplication.persist({ userId: testUserId, params: mockParams })).rejects.toThrow(
+        'Database error',
+      );
     });
 
     it('should throw when homeserver sync fails', async () => {
@@ -183,13 +171,9 @@ describe('FeedApplication', () => {
       persistSpy.mockResolvedValue(mockPersistedFeed);
       requestSpy.mockRejectedValue(new Error('Failed to PUT to homeserver: 500'));
 
-      await expect(
-        FeedApplication.persist({
-          action: Core.HomeserverAction.PUT,
-          userId: testUserId,
-          params: mockParams,
-        }),
-      ).rejects.toThrow('Failed to PUT to homeserver: 500');
+      await expect(FeedApplication.persist({ userId: testUserId, params: mockParams })).rejects.toThrow(
+        'Failed to PUT to homeserver: 500',
+      );
     });
   });
 
@@ -201,11 +185,7 @@ describe('FeedApplication', () => {
       deleteSpy.mockResolvedValue(undefined);
       requestSpy.mockResolvedValue(undefined);
 
-      const result = await FeedApplication.persist({
-        action: Core.HomeserverAction.DELETE,
-        userId: testUserId,
-        params: mockParams,
-      });
+      const result = await FeedApplication.delete({ userId: testUserId, params: mockParams });
 
       expect(deleteSpy).toHaveBeenCalledWith(123);
       expect(requestSpy).toHaveBeenCalledWith(Core.HomeserverAction.DELETE, expect.stringContaining('pubky://'));
@@ -218,13 +198,9 @@ describe('FeedApplication', () => {
 
       deleteSpy.mockRejectedValue(new Error('Feed not found'));
 
-      await expect(
-        FeedApplication.persist({
-          action: Core.HomeserverAction.DELETE,
-          userId: testUserId,
-          params: mockParams,
-        }),
-      ).rejects.toThrow('Feed not found');
+      await expect(FeedApplication.delete({ userId: testUserId, params: mockParams })).rejects.toThrow(
+        'Feed not found',
+      );
     });
 
     it('should throw when homeserver sync fails', async () => {
@@ -234,13 +210,9 @@ describe('FeedApplication', () => {
       deleteSpy.mockResolvedValue(undefined);
       requestSpy.mockRejectedValue(new Error('Failed to DELETE from homeserver: 404'));
 
-      await expect(
-        FeedApplication.persist({
-          action: Core.HomeserverAction.DELETE,
-          userId: testUserId,
-          params: mockParams,
-        }),
-      ).rejects.toThrow('Failed to DELETE from homeserver: 404');
+      await expect(FeedApplication.delete({ userId: testUserId, params: mockParams })).rejects.toThrow(
+        'Failed to DELETE from homeserver: 404',
+      );
     });
   });
 });
