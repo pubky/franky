@@ -10,6 +10,9 @@ export class FeedController {
     Core.FeedValidators.validateTags(params.tags);
 
     const normalizedFeed = Core.FeedNormalizer.to({ params, userId });
+
+    Core.FeedValidators.validatePutParams({ feed: normalizedFeed });
+
     const feed = await Core.FeedApplication.persist({
       action: Core.HomeserverAction.PUT,
       userId,
@@ -35,6 +38,8 @@ export class FeedController {
 
     const normalizedFeed = Core.FeedNormalizer.to({ params: mergedParams, userId });
 
+    Core.FeedValidators.validatePutParams({ feed: normalizedFeed, existingId: params.feedId });
+
     const feed = await Core.FeedApplication.persist({
       action: Core.HomeserverAction.PUT,
       userId,
@@ -49,6 +54,9 @@ export class FeedController {
 
   static async delete(params: Core.TFeedDeleteParams): Promise<void> {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
+
+    Core.FeedValidators.validateDeleteParams({ feedId: params.feedId });
+
     await Core.FeedApplication.persist({
       action: Core.HomeserverAction.DELETE,
       userId,

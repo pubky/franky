@@ -6,7 +6,7 @@ import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './fe
 export class FeedApplication {
   private constructor() {}
 
-  static async persist({ action, userId, params }: Core.TFeedPersistInput): Promise<Core.FeedModelSchema | undefined> {
+  static async persist({ action, userId, params }: Core.TFeedPersistInput): Promise<Core.FeedModelSchema | void> {
     if (action === Core.HomeserverAction.DELETE) {
       return this.handleDelete({ userId, params });
     }
@@ -14,18 +14,14 @@ export class FeedApplication {
     return this.handlePut({ userId, params });
   }
 
-  private static async handleDelete({ userId, params }: FeedDeleteParams): Promise<undefined> {
-    Core.FeedValidators.validateDeleteParams(params);
-
+  private static async handleDelete({ userId, params }: FeedDeleteParams) {
     // Convert numeric ID to string for URI builder
-    const feedUrl = feedUriBuilder(userId, String(params.feedId));
+    const feedUrl = feedUriBuilder(userId, String((params as Core.TFeedPersistDeleteParams).feedId));
 
     await Promise.all([
-      Core.LocalFeedService.delete(params.feedId),
+      Core.LocalFeedService.delete((params as Core.TFeedPersistDeleteParams).feedId),
       Core.HomeserverService.request(Core.HomeserverAction.DELETE, feedUrl),
     ]);
-
-    return undefined;
   }
 
   static async prepareUpdateParams({ feedId, changes }: Core.TFeedUpdateParams): Promise<Core.TFeedCreateParams> {
@@ -45,9 +41,7 @@ export class FeedApplication {
   }
 
   private static async handlePut({ userId, params }: FeedPutParams): Promise<Core.FeedModelSchema> {
-    Core.FeedValidators.validatePutParams(params);
-
-    const { feed, existingId } = params;
+    const { feed, existingId } = params as Core.TFeedPersistCreateParams;
     const feedData = feed.feed;
     const feedConfig = feedData.feed;
 
