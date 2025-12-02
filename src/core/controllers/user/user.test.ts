@@ -172,6 +172,7 @@ describe('UserController', () => {
         followJson: mockFollowJson,
         follower,
         followee,
+        activeStreamId: null, // Returns null in test environment (not on /home route)
       });
     });
 
@@ -198,6 +199,7 @@ describe('UserController', () => {
         followJson: mockFollowJson,
         follower,
         followee,
+        activeStreamId: null, // Returns null in test environment (not on /home route)
       });
     });
 

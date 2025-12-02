@@ -6,11 +6,18 @@ export class UserApplication {
    * Performs local database operations and syncs with the homeserver.
    * @param params - Parameters containing event type, URLs, JSON data, and user IDs
    */
-  static async follow({ eventType, followUrl, followJson, follower, followee }: Core.TUserApplicationFollowParams) {
+  static async follow({
+    eventType,
+    followUrl,
+    followJson,
+    follower,
+    followee,
+    activeStreamId,
+  }: Core.TUserApplicationFollowParams) {
     if (eventType === Core.HomeserverAction.PUT) {
-      await Core.LocalFollowService.create({ follower, followee });
+      await Core.LocalFollowService.create({ follower, followee, activeStreamId });
     } else if (eventType === Core.HomeserverAction.DELETE) {
-      await Core.LocalFollowService.delete({ follower, followee });
+      await Core.LocalFollowService.delete({ follower, followee, activeStreamId });
     }
     await Core.HomeserverService.request(eventType, followUrl, followJson);
   }

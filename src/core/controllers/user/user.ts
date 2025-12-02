@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { getActiveStreamId } from '../controller.helpers';
 
 export class UserController {
   private constructor() {} // Prevent instantiation
@@ -37,12 +38,17 @@ export class UserController {
 
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
+
+    // Get active stream ID from store (controller layer responsibility)
+    const activeStreamId = getActiveStreamId();
+
     await Core.UserApplication.follow({
       eventType,
       followUrl: meta.url,
       followJson: follow.toJson(),
       follower,
       followee,
+      activeStreamId,
     });
   }
 

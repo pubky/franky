@@ -4,6 +4,7 @@ export type TUserApplicationFollowParams = Core.TFollowParams & {
   eventType: Core.HomeserverAction;
   followUrl: string;
   followJson: Record<string, unknown>;
+  activeStreamId?: Core.PostStreamTypes | null;
 };
 
 export type TUserApplicationMuteParams = Core.TMuteParams & {

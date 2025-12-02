@@ -35,6 +35,27 @@ export class LocalStreamUsersService {
   }
 
   /**
+   * Prepend user ID(s) to a stream
+   * Only adds users if not already present
+   *
+   * @param streamId - The stream to prepend to
+   * @param userIds - The user ID(s) to prepend
+   */
+  static async prependToStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
+    await Core.UserStreamModel.prependItems(streamId, userIds);
+  }
+
+  /**
+   * Remove user ID(s) from a stream
+   *
+   * @param streamId - The stream to remove from
+   * @param userIds - The user ID(s) to remove
+   */
+  static async removeFromStream(streamId: Core.UserStreamId, userIds: Core.Pubky[]): Promise<void> {
+    await Core.UserStreamModel.removeItems(streamId, userIds);
+  }
+
+  /**
    * Persist user data to normalized tables
    * Separates user details, counts, tags, and relationships
    *
