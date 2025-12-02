@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import LinkifyIt from 'linkify-it';
 
 import * as Atoms from '@/atoms';
 import * as Providers from './Providers';
 import * as Types from './PostLinkEmbeds.types';
+import { parseFirstUrl } from './PostLinkEmbeds.utils';
 
 // Register all embed providers here
 const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
@@ -16,9 +16,6 @@ const EMBED_PROVIDERS: Providers.EmbedProvider[] = [
   // Add more providers here:
   // Providers.Twitch,
 ];
-
-// Protocol types to ignore when parsing links
-const IGNORED_PROTOCOLS = ['ftp:', 'mailto:'];
 
 /**
  * Create a hostname-to-provider lookup map for O(1) performance
@@ -33,21 +30,6 @@ const getProviderMap = (): Map<string, Providers.EmbedProvider> => {
     );
   }
   return PROVIDER_MAP;
-};
-
-/**
- * Parse content for URLs
- * Returns the first URL
- */
-const parseContentForUrl = (content: string) => {
-  const linkify = new LinkifyIt();
-
-  // Disable unwanted protocol types
-  IGNORED_PROTOCOLS.forEach((protocol) => linkify.add(protocol, null));
-
-  const match = linkify.match(content);
-
-  return match?.[0].url;
 };
 
 /**
@@ -90,7 +72,7 @@ export const PostLinkEmbeds = ({ content }: Types.PostLinkEmbedsProps) => {
     let cancelled = false;
 
     const getLinkEmbed = async () => {
-      const url = parseContentForUrl(content);
+      const url = parseFirstUrl(content);
       if (!url) return;
 
       setIsLoading(true);
