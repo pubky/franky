@@ -4,10 +4,10 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
-import { PROFILE_ROUTES } from '@/app/routes';
+import { PROFILE_ROUTES, getProfileRoute } from '@/app/routes';
 import type { ProfilePageTaggedAsProps } from './ProfilePageTaggedAs.types';
 
-export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick }: ProfilePageTaggedAsProps) {
+export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky }: ProfilePageTaggedAsProps) {
   const router = useRouter();
 
   return (
@@ -42,7 +42,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick }: Pro
         variant="outline"
         size="sm"
         className="border border-border bg-foreground/5"
-        onClick={() => router.push(PROFILE_ROUTES.UNIQUE_TAGS)}
+        onClick={() => router.push(getProfileRoute(PROFILE_ROUTES.UNIQUE_TAGS, pubky))}
       >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">

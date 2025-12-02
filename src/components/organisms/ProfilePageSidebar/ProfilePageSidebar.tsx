@@ -41,7 +41,12 @@ export function ProfilePageSidebar() {
       className="sticky top-(--header-height) hidden w-(--filter-bar-width) flex-col gap-6 self-start lg:flex"
     >
       {!isTaggedPage && (
-        <Molecules.ProfilePageTaggedAs tags={topTags} isLoading={isLoadingTags} onTagClick={handleTagToggle} />
+        <Molecules.ProfilePageTaggedAs
+          tags={topTags}
+          isLoading={isLoadingTags}
+          onTagClick={handleTagToggle}
+          pubky={pubky ?? ''}
+        />
       )}
       <Molecules.ProfilePageLinks links={profile?.links} />
       <Organisms.FeedbackCard />
