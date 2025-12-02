@@ -1,13 +1,15 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { FOLLOWING_TIMELINE_STREAMS, FRIENDS_TIMELINE_STREAMS } from './follow.constants';
+import type {
+  CreateFollowParams,
+  DeleteFollowParams,
+  InvalidateTimelineStreamsParams,
+  UpdateUserStreamsParams,
+} from './follow.types';
 
 export class LocalFollowService {
-  static async create({
-    follower,
-    followee,
-    activeStreamId,
-  }: Core.TFollowParams & { activeStreamId?: Core.PostStreamTypes | null }) {
+  static async create({ follower, followee, activeStreamId }: CreateFollowParams) {
     try {
       let becomingFriends = false;
 
@@ -74,11 +76,7 @@ export class LocalFollowService {
     }
   }
 
-  static async delete({
-    follower,
-    followee,
-    activeStreamId,
-  }: Core.TFollowParams & { activeStreamId?: Core.PostStreamTypes | null }) {
+  static async delete({ follower, followee, activeStreamId }: DeleteFollowParams) {
     try {
       let breakingFriendship = false;
 
@@ -159,10 +157,10 @@ export class LocalFollowService {
    * @param includeFriends - Whether to also invalidate friends timelines
    * @param activeStreamId - Optional active stream ID to preserve (passed from controller layer)
    */
-  private static async invalidateTimelineStreams(
-    includeFriends: boolean,
-    activeStreamId?: Core.PostStreamTypes | null,
-  ): Promise<void> {
+  private static async invalidateTimelineStreams({
+    includeFriends,
+    activeStreamId,
+  }: InvalidateTimelineStreamsParams): Promise<void> {
     const streams: Core.PostStreamTypes[] = [...FOLLOWING_TIMELINE_STREAMS];
 
     if (includeFriends) {
@@ -198,13 +196,7 @@ export class LocalFollowService {
     followee,
     friendshipChanged,
     activeStreamId,
-  }: {
-    isFollowing: boolean;
-    follower: Core.Pubky;
-    followee: Core.Pubky;
-    friendshipChanged: boolean;
-    activeStreamId?: Core.PostStreamTypes | null;
-  }): Promise<void> {
+  }: UpdateUserStreamsParams): Promise<void> {
     const ops: Promise<unknown>[] = [];
 
     // Select the appropriate stream operation based on action
@@ -227,7 +219,7 @@ export class LocalFollowService {
     }
 
     // Invalidate timeline caches
-    ops.push(this.invalidateTimelineStreams(friendshipChanged, activeStreamId));
+    ops.push(this.invalidateTimelineStreams({ includeFriends: friendshipChanged, activeStreamId }));
 
     await Promise.all(ops);
   }

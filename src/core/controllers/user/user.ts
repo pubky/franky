@@ -1,4 +1,5 @@
 import * as Core from '@/core';
+import { getActiveStreamId } from '../controller.helpers';
 
 export class UserController {
   private constructor() {} // Prevent instantiation
@@ -39,7 +40,7 @@ export class UserController {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
 
     // Get active stream ID from store (controller layer responsibility)
-    const activeStreamId = this.getActiveStreamId();
+    const activeStreamId = getActiveStreamId();
 
     await Core.UserApplication.follow({
       eventType,
@@ -49,28 +50,6 @@ export class UserController {
       followee,
       activeStreamId,
     });
-  }
-
-  /**
-   * Gets the currently active stream ID from the home store if on /home route.
-   * This is a controller responsibility - controllers can access UI state stores.
-   *
-   * @returns The active stream ID, or null if not on /home route or if retrieval fails
-   */
-  private static getActiveStreamId(): Core.PostStreamTypes | null {
-    if (typeof window === 'undefined' || window.location.pathname !== '/home') {
-      return null;
-    }
-
-    try {
-      const homeState = Core.useHomeStore.getState();
-      const activeStreamId = Core.getStreamId(homeState.sort, homeState.reach, homeState.content);
-      return activeStreamId;
-    } catch (error) {
-      // Controllers don't have direct access to Libs.Logger, use console.warn
-      console.warn('Failed to get active stream ID', { error });
-      return null;
-    }
   }
 
   static async mute(eventType: Core.HomeserverAction, { muter, mutee }: Core.TMuteParams) {
