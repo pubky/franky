@@ -10,7 +10,7 @@ export const PostMentions = (props: RemarkAnchorProps) => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
 
   const mentionText = extractTextFromChildren(children);
-  const userId = Libs.extractPubkyPublicKey(mentionText);
+  const userId = Libs.Identity.extractPubkyPublicKey(mentionText);
   const { userDetails } = useUserDetails(userId);
   const shortenedText = Libs.truncateMiddle(mentionText, 20);
   const finalMention = userDetails?.name ? `@${userDetails.name}` : shortenedText;

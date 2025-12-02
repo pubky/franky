@@ -223,4 +223,39 @@ export class Identity {
       });
     }
   }
+
+  /**
+   * Extracts the public key from a pubky identifier string
+   * Validates that the input matches the expected format and returns only the key portion
+   *
+   * @param pubky - The pubky identifier string (e.g., "pk:abc123..." or "pubkyabc123...")
+   * @returns The 52-character public key portion, or null if the format is invalid
+   *
+   * @example
+   * Identity.extractPubkyPublicKey("pk:abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnop") // "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnop"
+   * Identity.extractPubkyPublicKey("pubkyabcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnop") // "abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnop"
+   * Identity.extractPubkyPublicKey("invalid") // null
+   */
+  static extractPubkyPublicKey(pubky: string): string | null {
+    if (!pubky || typeof pubky !== 'string') {
+      return null;
+    }
+
+    // Pattern for 52 lowercase alphanumeric characters
+    const keyPattern = /^[a-z0-9]{52}$/;
+
+    // Check for "pk:" prefix
+    if (pubky.startsWith('pk:')) {
+      const key = pubky.slice(3);
+      return keyPattern.test(key) ? key : null;
+    }
+
+    // Check for "pubky" prefix
+    if (pubky.startsWith('pubky')) {
+      const key = pubky.slice(5);
+      return keyPattern.test(key) ? key : null;
+    }
+
+    return null;
+  }
 }
