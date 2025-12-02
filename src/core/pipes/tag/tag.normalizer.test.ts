@@ -169,6 +169,42 @@ describe('TagNormalizer', () => {
         });
       });
 
+      describe('label length limits', () => {
+        const uri = postUriBuilder(TEST_PUBKY.USER_2, TEST_POST_IDS.POST_1);
+
+        it('should accept label at maximum length (20 characters)', () => {
+          const maxLengthLabel = 'A'.repeat(20);
+          const result = Core.TagNormalizer.to(uri, maxLengthLabel, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          // Library converts labels to lowercase
+          expect(result.tag.label).toBe(maxLengthLabel.toLowerCase());
+        });
+
+        it('should throw error for label exceeding maximum length', () => {
+          const tooLongLabel = 'A'.repeat(21);
+          expect(() => Core.TagNormalizer.to(uri, tooLongLabel, TEST_PUBKY.USER_1)).toThrow();
+        });
+
+        it('should throw error for label with emojis exceeding maximum length', () => {
+          const tooLongEmojiLabel = '🎉'.repeat(21);
+          expect(() => Core.TagNormalizer.to(uri, tooLongEmojiLabel, TEST_PUBKY.USER_1)).toThrow();
+        });
+
+        it('should accept mixed label at maximum length', () => {
+          const mixedLabel = 'A'.repeat(15) + '🎉'.repeat(5);
+          const result = Core.TagNormalizer.to(uri, mixedLabel, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          expect(result.tag.label).toBe('a'.repeat(15) + '🎉'.repeat(5));
+        });
+
+        it('should throw error for mixed label exceeding maximum length', () => {
+          const tooLongMixedLabel = 'A'.repeat(16) + '🎉'.repeat(5);
+          expect(() => Core.TagNormalizer.to(uri, tooLongMixedLabel, TEST_PUBKY.USER_1)).toThrow();
+        });
+      });
+
       describe('special characters in labels', () => {
         const uri = postUriBuilder(TEST_PUBKY.USER_2, TEST_POST_IDS.POST_1);
 

@@ -330,6 +330,82 @@ describe('PostNormalizer', () => {
           await expect(Core.PostNormalizer.to(post, TEST_PUBKY.USER_1)).rejects.toThrow();
         });
       });
+
+      describe('content length stress tests', () => {
+        it('should handle moderate length Short post (2000 characters)', async () => {
+          const moderateContent = 'A'.repeat(2000);
+          const post = createBasicPost({ content: moderateContent, kind: PubkyAppPostKind.Short });
+          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          expect(result.post.toJson().content).toBe(moderateContent);
+        });
+
+        /**
+         * Note: The pubky-app-specs library truncates Short posts to 2000 characters.
+         */
+        it('should truncate very long Short post (10,000 characters) to 2000 characters', async () => {
+          const longContent = 'B'.repeat(10_000);
+          const post = createBasicPost({ content: longContent, kind: PubkyAppPostKind.Short });
+          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          const returnedContent = result.post.toJson().content;
+          expect(returnedContent.length).toBe(2000);
+          expect(returnedContent).toBe('B'.repeat(2000));
+        });
+
+        /**
+         * Note: pubky-app-specs counts emoji units as 1 character, unlike how JavaScript counts string length.
+         */
+        it('should truncate Short post with unicode characters exceeding limit', async () => {
+          const unicodeContent = '🎉'.repeat(2000); // 4,000 string length (2 chars per emoji)
+          const post = createBasicPost({ content: unicodeContent, kind: PubkyAppPostKind.Short });
+          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          const returnedContent = result.post.toJson().content;
+          expect(returnedContent.length).toBe(4000);
+          expect(returnedContent).toBe('🎉'.repeat(2000));
+        });
+
+        it('should handle very long Long post (10,000 characters)', async () => {
+          const longContent = 'E'.repeat(10_000);
+          const post = createBasicPost({ content: longContent, kind: PubkyAppPostKind.Long });
+          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          expect(result.post.toJson().content).toBe(longContent);
+        });
+
+        /**
+         * Note: The pubky-app-specs library truncates Long posts to 50000 characters.
+         */
+        it('should truncate extremely long Long post (100,000 characters) to 50000 characters', async () => {
+          const extremelyLongContent = 'F'.repeat(100_000);
+          const post = createBasicPost({ content: extremelyLongContent, kind: PubkyAppPostKind.Long });
+          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          const returnedContent = result.post.toJson().content;
+          expect(returnedContent.length).toBe(50_000);
+          expect(returnedContent).toBe('F'.repeat(50_000));
+        });
+
+        /**
+         * Note: pubky-app-specs counts emoji units as 1 character, unlike how JavaScript counts string length.
+         */
+        it('should handle Long post with unicode characters (library may not truncate unicode)', async () => {
+          const unicodeContent = '🚀'.repeat(30_000); // 60,000 string length (2 chars per emoji)
+          const post = createBasicPost({ content: unicodeContent, kind: PubkyAppPostKind.Long });
+          const result = await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
+
+          expect(result).toBeDefined();
+          const returnedContent = result.post.toJson().content;
+          expect(returnedContent.length).toBe(60_000);
+          expect(returnedContent).toBe('🚀'.repeat(30_000));
+        });
+      });
     });
   });
 });

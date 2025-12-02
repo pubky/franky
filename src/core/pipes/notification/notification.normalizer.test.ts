@@ -235,6 +235,30 @@ describe('NotificationNormalizer', () => {
 
         expect(id1).not.toBe(id2);
       });
+
+      it('should generate different ids for reply notifications from same user to different posts', () => {
+        const notification1 = createNexusNotification(
+          Core.NotificationType.Reply,
+          {
+            replied_by: TEST_PUBKY.USER_2,
+            reply_uri: 'pubky://author/pub/pubky.app/posts/post123',
+          },
+          1700000000000,
+        );
+        const notification2 = createNexusNotification(
+          Core.NotificationType.Reply,
+          {
+            replied_by: TEST_PUBKY.USER_2,
+            reply_uri: 'pubky://author/pub/pubky.app/posts/post456',
+          },
+          1700000000000,
+        );
+
+        const id1 = Core.NotificationNormalizer.toFlatNotification(notification1).id;
+        const id2 = Core.NotificationNormalizer.toFlatNotification(notification2).id;
+
+        expect(id1).not.toBe(id2);
+      });
     });
 
     describe('edge cases', () => {

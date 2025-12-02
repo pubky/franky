@@ -5,6 +5,7 @@ import { BookmarkResult, postUriBuilder } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
   TEST_POST_IDS,
+  INVALID_INPUTS,
   setupUnitTestMocks,
   setupIntegrationTestMocks,
   restoreMocks,
@@ -119,13 +120,24 @@ describe('BookmarkNormalizer', () => {
 
     describe('to - edge cases', () => {
       it.each([
-        ['empty string', ''],
+        ['empty string', INVALID_INPUTS.EMPTY],
         ['special characters', 'pubky://author/pub/pubky.app/posts/post-123_test.456'],
         ['query parameters', `${createPostUri()}?param=value`],
         ['very long URI', createPostUri(TEST_PUBKY.USER_1, 'a'.repeat(1000))],
       ])('should pass %s postUri to builder', (_, uri) => {
         Core.BookmarkNormalizer.to(uri, TEST_PUBKY.USER_1);
         expect(mockBuilder.createBookmark).toHaveBeenCalledWith(uri);
+      });
+
+      it.each([
+        ['empty userId', INVALID_INPUTS.EMPTY],
+        ['null userId', INVALID_INPUTS.NULL],
+        ['undefined userId', INVALID_INPUTS.UNDEFINED],
+        ['invalid format userId', INVALID_INPUTS.INVALID_FORMAT],
+      ])('should pass %s to PubkySpecsSingleton.get (unit test)', (_, invalidUserId) => {
+        // In unit tests, mocks don't validate - just verify calls
+        Core.BookmarkNormalizer.to(createPostUri(), invalidUserId);
+        expect(Core.PubkySpecsSingleton.get).toHaveBeenCalledWith(invalidUserId);
       });
     });
   });
@@ -171,9 +183,10 @@ describe('BookmarkNormalizer', () => {
 
     describe('validation with real library', () => {
       it.each([
-        ['empty', ''],
-        ['null', null as unknown as string],
-        ['undefined', undefined as unknown as string],
+        ['empty', INVALID_INPUTS.EMPTY],
+        ['null', INVALID_INPUTS.NULL],
+        ['undefined', INVALID_INPUTS.UNDEFINED],
+        ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
       ])('should throw error for %s post URI', (_, invalidUri) => {
         expect(() => Core.BookmarkNormalizer.to(invalidUri, TEST_PUBKY.USER_1)).toThrow();
       });

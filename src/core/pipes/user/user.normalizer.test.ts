@@ -319,23 +319,221 @@ describe('UserNormalizer', () => {
         expect(() => Core.UserNormalizer.to(user, TEST_PUBKY.USER_1)).toThrow();
       });
 
-      it('should accept reasonable length name', () => {
+      it('should accept name at maximum length (50 characters)', () => {
         const user = createUserData({ name: 'A'.repeat(50) });
         const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
 
         expect(result).toBeDefined();
+        expect(result.user.toJson().name).toBe('A'.repeat(50));
       });
 
-      it('should handle very long name (library may reject)', () => {
-        const user = createUserData({ name: 'A'.repeat(1000) });
+      it('should truncate name exceeding maximum length (51 characters) to 50 characters', () => {
+        const user = createUserData({ name: 'A'.repeat(51) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
 
-        try {
-          const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
-          expect(result).toBeDefined();
-        } catch {
-          // Library may reject very long names
-          expect(true).toBe(true);
-        }
+        expect(result).toBeDefined();
+        expect(result.user.toJson().name).toBe('A'.repeat(50));
+      });
+
+      it('should accept name with emojis at maximum length', () => {
+        const user = createUserData({ name: '🎉'.repeat(50) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().name).toBe('🎉'.repeat(50));
+      });
+
+      it('should accept name with emojis exceeding maximum length', () => {
+        const user = createUserData({ name: '🎉'.repeat(51) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().name).toBe('🎉'.repeat(50));
+      });
+    });
+
+    describe('bio length validation', () => {
+      it('should accept bio at maximum length (160 characters)', () => {
+        const user = createUserData({ bio: 'B'.repeat(160) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().bio).toBe('B'.repeat(160));
+      });
+
+      it('should truncate bio exceeding maximum length (161 characters) to 160 characters', () => {
+        const user = createUserData({ bio: 'B'.repeat(161) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().bio).toBe('B'.repeat(160));
+      });
+
+      it('should accept bio with emojis at maximum length', () => {
+        const user = createUserData({ bio: '🚀'.repeat(160) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().bio).toBe('🚀'.repeat(160));
+      });
+
+      it('should accept bio with emojis exceeding maximum length', () => {
+        const user = createUserData({ bio: '🚀'.repeat(161) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().bio).toBe('🚀'.repeat(160));
+      });
+    });
+
+    describe('image URL length validation', () => {
+      it('should accept image URL at maximum length (300 characters)', () => {
+        const longImageUrl = 'https://example.com/' + 'A'.repeat(280);
+        const user = createUserData({ image: longImageUrl });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().image).toBe(longImageUrl);
+      });
+
+      it('should truncate image URL exceeding maximum length (361 characters) to 300 characters', () => {
+        const tooLongImageUrl = 'https://example.com/' + 'A'.repeat(341);
+        const user = createUserData({ image: tooLongImageUrl });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        const returnedUrl = result.user.toJson().image;
+        expect(returnedUrl).toBeDefined();
+        expect(returnedUrl!.length).toBe(300);
+      });
+    });
+
+    describe('links validation', () => {
+      it('should accept maximum number of links (5 links)', () => {
+        const user = createUserData({
+          links: Array.from({ length: 5 }, (_, i) => ({
+            title: `Link ${i + 1}`,
+            url: `https://example.com/link${i + 1}`,
+          })),
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().links).toHaveLength(5);
+      });
+
+      it('should truncate exceeding maximum number of links (6 links) to 5 links', () => {
+        const user = createUserData({
+          links: Array.from({ length: 6 }, (_, i) => ({
+            title: `Link ${i + 1}`,
+            url: `https://example.com/link${i + 1}`,
+          })),
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().links).toHaveLength(5);
+      });
+
+      it('should accept link title at maximum length (100 characters)', () => {
+        const maxLengthTitle = 'T'.repeat(100);
+        const user = createUserData({
+          links: [{ title: maxLengthTitle, url: 'https://example.com' }],
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().links?.[0]?.title).toBe(maxLengthTitle);
+      });
+
+      it('should truncate link title exceeding maximum length (101 characters) to 100 characters', () => {
+        const tooLongTitle = 'T'.repeat(101);
+        const user = createUserData({
+          links: [{ title: tooLongTitle, url: 'https://example.com' }],
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        const returnedTitle = result.user.toJson().links?.[0]?.title;
+        expect(returnedTitle).toBeDefined();
+        expect(returnedTitle!.length).toBe(100);
+      });
+
+      it('should accept link URL at maximum length (300 characters)', () => {
+        const maxLengthUrl = 'https://example.com/' + 'A'.repeat(280);
+        const user = createUserData({
+          links: [{ title: 'Website', url: maxLengthUrl }],
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().links?.[0]?.url).toBe(maxLengthUrl);
+      });
+
+      it('should truncate link URL exceeding maximum length (301 characters) to 300 characters', () => {
+        const tooLongUrl = 'https://example.com/' + 'A'.repeat(281);
+        const user = createUserData({
+          links: [{ title: 'Website', url: tooLongUrl }],
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        const returnedUrl = result.user.toJson().links?.[0]?.url;
+        expect(returnedUrl).toBeDefined();
+        expect(returnedUrl!.length).toBe(300);
+      });
+
+      it('should accept multiple links with maximum title and URL length', () => {
+        const maxLengthTitle = 'T'.repeat(100);
+        const maxLengthUrl = 'https://example.com/' + 'A'.repeat(280);
+        const user = createUserData({
+          links: Array.from({ length: 5 }, () => ({
+            title: maxLengthTitle,
+            url: maxLengthUrl,
+          })),
+        });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().links).toHaveLength(5);
+        result.user.toJson().links?.forEach((link: Core.NexusUserLink) => {
+          expect(link.title).toBe(maxLengthTitle);
+          expect(link.url).toBe(maxLengthUrl);
+        });
+      });
+    });
+
+    describe('status length validation', () => {
+      it('should accept status at maximum length (50 characters)', () => {
+        const user = createUserData({ status: 'S'.repeat(50) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().status).toBe('S'.repeat(50));
+      });
+
+      it('should truncate status exceeding maximum length (51 characters) to 50 characters', () => {
+        const user = createUserData({ status: 'S'.repeat(51) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().status).toBe('S'.repeat(50));
+      });
+
+      it('should accept status with emojis at maximum length', () => {
+        const user = createUserData({ status: '⭐'.repeat(50) }); // 50 JavaScript characters (2 chars per emoji)
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().status).toBe('⭐'.repeat(50));
+      });
+
+      it('should accept status with emojis exceeding maximum length', () => {
+        const user = createUserData({ status: '⭐'.repeat(51) });
+        const result = Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
+
+        expect(result).toBeDefined();
+        expect(result.user.toJson().status).toBe('⭐'.repeat(50));
       });
     });
 

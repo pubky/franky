@@ -261,8 +261,22 @@ describe('FileNormalizer', () => {
         expect(result.fileResult.file.toJson().size).toBe(1);
       });
 
-      it('should handle large file content', async () => {
-        const largeContent = new Uint8Array(10000).fill(255);
+      it('should handle moderate file content (10KB)', async () => {
+        const moderateContent = new Uint8Array(10000).fill(255);
+        const moderateFile = createMockFile(
+          'moderate.bin',
+          'application/octet-stream',
+          moderateContent.length,
+          moderateContent,
+        );
+        const result = await Core.FileNormalizer.toFileAttachment({ file: moderateFile, pubky: TEST_PUBKY.USER_1 });
+
+        expect(result.fileResult.file.toJson().size).toBe(moderateContent.length);
+      });
+
+      it('should handle large file size (10MB)', async () => {
+        const tenMB = 10 * 1024 * 1024;
+        const largeContent = new Uint8Array(tenMB).fill(255);
         const largeFile = createMockFile('large.bin', 'application/octet-stream', largeContent.length, largeContent);
         const result = await Core.FileNormalizer.toFileAttachment({ file: largeFile, pubky: TEST_PUBKY.USER_1 });
 
