@@ -40,20 +40,26 @@ describe('FileNormalizer', () => {
       createFile: ReturnType<typeof vi.fn>;
     }>,
   ) => ({
-    createBlob: vi.fn((blobData: Uint8Array) => ({
-      blob: { data: blobData, toJson: vi.fn(() => ({ data: Array.from(blobData) })) },
-      meta: { url: FILE_TEST_DATA.blobUrl },
-    }) as unknown as BlobResult),
-    createFile: vi.fn((name: string, src: string, contentType: string, size: number) => ({
-      file: {
-        name,
-        src,
-        content_type: contentType,
-        size,
-        toJson: vi.fn(() => ({ name, src, content_type: contentType, size })),
-      },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `files/${Date.now()}`) },
-    }) as unknown as FileResult),
+    createBlob: vi.fn(
+      (blobData: Uint8Array) =>
+        ({
+          blob: { data: blobData, toJson: vi.fn(() => ({ data: Array.from(blobData) })) },
+          meta: { url: FILE_TEST_DATA.blobUrl },
+        }) as unknown as BlobResult,
+    ),
+    createFile: vi.fn(
+      (name: string, src: string, contentType: string, size: number) =>
+        ({
+          file: {
+            name,
+            src,
+            content_type: contentType,
+            size,
+            toJson: vi.fn(() => ({ name, src, content_type: contentType, size })),
+          },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `files/${Date.now()}`) },
+        }) as unknown as FileResult,
+    ),
     ...overrides,
   });
 
@@ -137,9 +143,24 @@ describe('FileNormalizer', () => {
 
     describe('toFileAttachment - error handling', () => {
       it.each([
-        ['file.arrayBuffer', () => (createMockFile().arrayBuffer as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Read error'))],
-        ['createBlob', () => mockBuilder.createBlob.mockImplementation(() => { throw new Error('Blob error'); })],
-        ['createFile', () => mockBuilder.createFile.mockImplementation(() => { throw new Error('File error'); })],
+        [
+          'file.arrayBuffer',
+          () => (createMockFile().arrayBuffer as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Read error')),
+        ],
+        [
+          'createBlob',
+          () =>
+            mockBuilder.createBlob.mockImplementation(() => {
+              throw new Error('Blob error');
+            }),
+        ],
+        [
+          'createFile',
+          () =>
+            mockBuilder.createFile.mockImplementation(() => {
+              throw new Error('File error');
+            }),
+        ],
       ])('should propagate errors from %s', async (errorSource, setupError) => {
         const file = createMockFile();
         if (errorSource === 'file.arrayBuffer') {
@@ -152,7 +173,9 @@ describe('FileNormalizer', () => {
       });
 
       it('should not call createFile when createBlob throws', async () => {
-        mockBuilder.createBlob.mockImplementation(() => { throw new Error('Blob error'); });
+        mockBuilder.createBlob.mockImplementation(() => {
+          throw new Error('Blob error');
+        });
         const file = createMockFile();
 
         await expect(Core.FileNormalizer.toFileAttachment({ file, pubky: TEST_PUBKY.USER_1 })).rejects.toThrow();

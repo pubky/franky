@@ -14,10 +14,13 @@ import {
 
 describe('BookmarkNormalizer', () => {
   const createMockBuilder = (overrides?: Partial<{ createBookmark: ReturnType<typeof vi.fn> }>) => ({
-    createBookmark: vi.fn((uri: string) => ({
-      bookmark: { uri, toJson: vi.fn(() => ({ uri })) },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `bookmarks/${Date.now()}`) },
-    }) as unknown as BookmarkResult),
+    createBookmark: vi.fn(
+      (uri: string) =>
+        ({
+          bookmark: { uri, toJson: vi.fn(() => ({ uri })) },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `bookmarks/${Date.now()}`) },
+        }) as unknown as BookmarkResult,
+    ),
     ...overrides,
   });
 
@@ -85,15 +88,29 @@ describe('BookmarkNormalizer', () => {
 
     describe('to - error handling', () => {
       it.each([
-        ['createBookmark', () => mockBuilder.createBookmark.mockImplementation(() => { throw new Error('Builder error'); })],
-        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+        [
+          'createBookmark',
+          () =>
+            mockBuilder.createBookmark.mockImplementation(() => {
+              throw new Error('Builder error');
+            }),
+        ],
+        [
+          'PubkySpecsSingleton.get',
+          () =>
+            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+              throw new Error('Singleton error');
+            }),
+        ],
       ])('should propagate errors from %s', (_, setupError) => {
         setupError();
         expect(() => Core.BookmarkNormalizer.to(createPostUri(), TEST_PUBKY.USER_1)).toThrow();
       });
 
       it('should not call logger when error occurs', () => {
-        mockBuilder.createBookmark.mockImplementation(() => { throw new Error('Error'); });
+        mockBuilder.createBookmark.mockImplementation(() => {
+          throw new Error('Error');
+        });
 
         expect(() => Core.BookmarkNormalizer.to(createPostUri(), TEST_PUBKY.USER_1)).toThrow();
         expect(Libs.Logger.debug).not.toHaveBeenCalled();

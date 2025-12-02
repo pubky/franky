@@ -56,8 +56,20 @@ describe('NotificationNormalizer', () => {
       });
 
       it.each([
-        ['createLastRead', () => mockBuilder.createLastRead.mockImplementation(() => { throw new Error('Builder error'); })],
-        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+        [
+          'createLastRead',
+          () =>
+            mockBuilder.createLastRead.mockImplementation(() => {
+              throw new Error('Builder error');
+            }),
+        ],
+        [
+          'PubkySpecsSingleton.get',
+          () =>
+            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+              throw new Error('Singleton error');
+            }),
+        ],
       ])('should propagate errors from %s', (_, setupError) => {
         setupError();
         expect(() => Core.NotificationNormalizer.to(TEST_PUBKY.USER_1)).toThrow();
@@ -180,9 +192,7 @@ describe('NotificationNormalizer', () => {
 
     describe('id generation', () => {
       it('should generate unique ids for different notification types', () => {
-        const ids = Object.values(sampleNotifications).map(
-          (n) => Core.NotificationNormalizer.toFlatNotification(n).id,
-        );
+        const ids = Object.values(sampleNotifications).map((n) => Core.NotificationNormalizer.toFlatNotification(n).id);
 
         expect(new Set(ids).size).toBe(ids.length);
       });
@@ -258,4 +268,3 @@ describe('NotificationNormalizer', () => {
     });
   });
 });
-

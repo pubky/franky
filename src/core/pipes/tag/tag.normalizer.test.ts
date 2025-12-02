@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
-import { TagResult, postUriBuilder, userUriBuilder } from 'pubky-app-specs';
+import { TagResult, postUriBuilder } from 'pubky-app-specs';
 import {
   TEST_PUBKY,
   TEST_POST_IDS,
@@ -13,10 +13,13 @@ import {
 
 describe('TagNormalizer', () => {
   const createMockBuilder = (overrides?: Partial<{ createTag: ReturnType<typeof vi.fn> }>) => ({
-    createTag: vi.fn((uri: string, label: string) => ({
-      tag: { label, toJson: vi.fn(() => ({ uri, label })) },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `tags/${encodeURIComponent(label)}`) },
-    }) as unknown as TagResult),
+    createTag: vi.fn(
+      (uri: string, label: string) =>
+        ({
+          tag: { label, toJson: vi.fn(() => ({ uri, label })) },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `tags/${encodeURIComponent(label)}`) },
+        }) as unknown as TagResult,
+    ),
     ...overrides,
   });
 
@@ -63,12 +66,7 @@ describe('TagNormalizer', () => {
       });
 
       describe('different inputs', () => {
-        it.each([
-          ['technology'],
-          ['Developer'],
-          ['tech-tag'],
-          ['tag_123'],
-        ])('should handle label "%s"', (label) => {
+        it.each([['technology'], ['Developer'], ['tech-tag'], ['tag_123']])('should handle label "%s"', (label) => {
           const uri = buildPubkyUri(TEST_PUBKY.USER_2, 'posts/123');
           Core.TagNormalizer.to(uri, label, TEST_PUBKY.USER_1);
 
@@ -88,15 +86,29 @@ describe('TagNormalizer', () => {
 
       describe('error handling', () => {
         it.each([
-          ['createTag', () => mockBuilder.createTag.mockImplementation(() => { throw new Error('Builder error'); })],
-          ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+          [
+            'createTag',
+            () =>
+              mockBuilder.createTag.mockImplementation(() => {
+                throw new Error('Builder error');
+              }),
+          ],
+          [
+            'PubkySpecsSingleton.get',
+            () =>
+              vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+                throw new Error('Singleton error');
+              }),
+          ],
         ])('should propagate errors from %s', (_, setupError) => {
           setupError();
           expect(() => Core.TagNormalizer.to('uri', 'label', TEST_PUBKY.USER_1)).toThrow();
         });
 
         it('should not call logger when error occurs', () => {
-          mockBuilder.createTag.mockImplementation(() => { throw new Error('Error'); });
+          mockBuilder.createTag.mockImplementation(() => {
+            throw new Error('Error');
+          });
 
           expect(() => Core.TagNormalizer.to('uri', 'label', TEST_PUBKY.USER_1)).toThrow();
           expect(Libs.Logger.debug).not.toHaveBeenCalled();

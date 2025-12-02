@@ -13,12 +13,7 @@ describe('UserValidator', () => {
 
   describe('check - successful validation', () => {
     it('should validate complete user data', () => {
-      const result = UserValidator.check(
-        'John Doe',
-        'Software developer',
-        createValidLinks(),
-        createMockImageFile(),
-      );
+      const result = UserValidator.check('John Doe', 'Software developer', createValidLinks(), createMockImageFile());
 
       expect(result.error).toHaveLength(0);
       expect(result.data).toEqual({
@@ -126,34 +121,31 @@ describe('UserValidator', () => {
       expect(result.data?.links?.[1].label).toBe('Blog');
     });
 
-    it.each([
-      ['not-a-url'],
-      ['just-text'],
-      ['missing-protocol.com'],
-      ['://no-scheme'],
-    ])('should reject invalid URL format: "%s"', (invalidUrl) => {
-      const links = [{ label: 'Invalid', url: invalidUrl }];
-      const result = UserValidator.check('TestUser', '', links, null);
+    it.each([['not-a-url'], ['just-text'], ['missing-protocol.com'], ['://no-scheme']])(
+      'should reject invalid URL format: "%s"',
+      (invalidUrl) => {
+        const links = [{ label: 'Invalid', url: invalidUrl }];
+        const result = UserValidator.check('TestUser', '', links, null);
 
-      expect(result.error).toContainEqual({
-        type: 'link_0',
-        message: 'Invalid URL',
-      });
-    });
+        expect(result.error).toContainEqual({
+          type: 'link_0',
+          message: 'Invalid URL',
+        });
+      },
+    );
 
     /**
      * Note: Zod's url() validator accepts various protocols, not just http/https
      */
-    it.each([
-      ['https://example.com'],
-      ['http://example.com'],
-      ['ftp://files.example.com'],
-    ])('should accept valid URL format: "%s"', (validUrl) => {
-      const links = [{ label: 'Valid', url: validUrl }];
-      const result = UserValidator.check('TestUser', '', links, null);
+    it.each([['https://example.com'], ['http://example.com'], ['ftp://files.example.com']])(
+      'should accept valid URL format: "%s"',
+      (validUrl) => {
+        const links = [{ label: 'Valid', url: validUrl }];
+        const result = UserValidator.check('TestUser', '', links, null);
 
-      expect(result.error).toHaveLength(0);
-    });
+        expect(result.error).toHaveLength(0);
+      },
+    );
 
     it('should report errors for multiple invalid URLs with correct indices', () => {
       const links = [

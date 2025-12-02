@@ -13,10 +13,13 @@ import {
 
 describe('FollowNormalizer', () => {
   const createMockBuilder = (overrides?: Partial<{ createFollow: ReturnType<typeof vi.fn> }>) => ({
-    createFollow: vi.fn((followee: string) => ({
-      follow: { followee, toJson: vi.fn(() => ({})) },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `follows/${followee}`) },
-    }) as unknown as FollowResult),
+    createFollow: vi.fn(
+      (followee: string) =>
+        ({
+          follow: { followee, toJson: vi.fn(() => ({})) },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `follows/${followee}`) },
+        }) as unknown as FollowResult,
+    ),
     ...overrides,
   });
 
@@ -77,15 +80,29 @@ describe('FollowNormalizer', () => {
 
     describe('to - error handling', () => {
       it.each([
-        ['createFollow', () => mockBuilder.createFollow.mockImplementation(() => { throw new Error('Builder error'); })],
-        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+        [
+          'createFollow',
+          () =>
+            mockBuilder.createFollow.mockImplementation(() => {
+              throw new Error('Builder error');
+            }),
+        ],
+        [
+          'PubkySpecsSingleton.get',
+          () =>
+            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+              throw new Error('Singleton error');
+            }),
+        ],
       ])('should propagate errors from %s', (_, setupError) => {
         setupError();
         expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 })).toThrow();
       });
 
       it('should not call logger when error occurs', () => {
-        mockBuilder.createFollow.mockImplementation(() => { throw new Error('Error'); });
+        mockBuilder.createFollow.mockImplementation(() => {
+          throw new Error('Error');
+        });
 
         expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: TEST_PUBKY.USER_2 })).toThrow();
         expect(Libs.Logger.debug).not.toHaveBeenCalled();
@@ -153,9 +170,7 @@ describe('FollowNormalizer', () => {
         ['undefined', INVALID_INPUTS.UNDEFINED],
         ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
       ])('should throw error for %s followee', (_, invalidFollowee) => {
-        expect(() =>
-          Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: invalidFollowee }),
-        ).toThrow();
+        expect(() => Core.FollowNormalizer.to({ follower: TEST_PUBKY.USER_1, followee: invalidFollowee })).toThrow();
       });
     });
   });

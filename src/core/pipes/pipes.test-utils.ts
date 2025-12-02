@@ -70,4 +70,3 @@ export const buildPubkyUri = (pubky: Core.Pubky, path: string) => `pubky://${pub
  */
 export const createPostUri = (authorPubky = TEST_PUBKY.USER_1, postId = TEST_POST_IDS.POST_1) =>
   buildPubkyUri(authorPubky, `posts/${postId}`);
-

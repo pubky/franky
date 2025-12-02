@@ -22,17 +22,20 @@ describe('UserNormalizer', () => {
   });
 
   const createMockBuilder = (overrides?: Partial<{ createUser: ReturnType<typeof vi.fn> }>) => ({
-    createUser: vi.fn((name, bio, image, links, status) => ({
-      user: {
-        name,
-        bio,
-        image,
-        links,
-        status,
-        toJson: vi.fn(() => ({ name, bio, image, links, status })),
-      },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, 'profile.json') },
-    }) as unknown as UserResult),
+    createUser: vi.fn(
+      (name, bio, image, links, status) =>
+        ({
+          user: {
+            name,
+            bio,
+            image,
+            links,
+            status,
+            toJson: vi.fn(() => ({ name, bio, image, links, status })),
+          },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, 'profile.json') },
+        }) as unknown as UserResult,
+    ),
     ...overrides,
   });
 
@@ -70,13 +73,7 @@ describe('UserNormalizer', () => {
         const user = createUserData();
         Core.UserNormalizer.to(user, TEST_PUBKY.USER_1);
 
-        expect(mockBuilder.createUser).toHaveBeenCalledWith(
-          user.name,
-          user.bio,
-          user.image,
-          user.links,
-          user.status,
-        );
+        expect(mockBuilder.createUser).toHaveBeenCalledWith(user.name, user.bio, user.image, user.links, user.status);
       });
 
       it('should return correct structure with user and meta URL', () => {
@@ -178,15 +175,29 @@ describe('UserNormalizer', () => {
 
     describe('to - error handling', () => {
       it.each([
-        ['createUser', () => mockBuilder.createUser.mockImplementation(() => { throw new Error('Builder error'); })],
-        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+        [
+          'createUser',
+          () =>
+            mockBuilder.createUser.mockImplementation(() => {
+              throw new Error('Builder error');
+            }),
+        ],
+        [
+          'PubkySpecsSingleton.get',
+          () =>
+            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+              throw new Error('Singleton error');
+            }),
+        ],
       ])('should propagate errors from %s', (_, setupError) => {
         setupError();
         expect(() => Core.UserNormalizer.to(createUserData(), TEST_PUBKY.USER_1)).toThrow();
       });
 
       it('should not call logger when error occurs', () => {
-        mockBuilder.createUser.mockImplementation(() => { throw new Error('Error'); });
+        mockBuilder.createUser.mockImplementation(() => {
+          throw new Error('Error');
+        });
 
         expect(() => Core.UserNormalizer.to(createUserData(), TEST_PUBKY.USER_1)).toThrow();
         expect(Libs.Logger.debug).not.toHaveBeenCalled();
@@ -353,4 +364,3 @@ describe('UserNormalizer', () => {
     });
   });
 });
-

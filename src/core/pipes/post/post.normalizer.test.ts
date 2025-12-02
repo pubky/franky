@@ -44,10 +44,19 @@ describe('PostNormalizer', () => {
   });
 
   const createMockBuilder = (overrides?: Partial<{ createPost: ReturnType<typeof vi.fn> }>) => ({
-    createPost: vi.fn((content, kind, parent, embed, attachments) => ({
-      post: { content, kind, parent: parent || undefined, embed: embed || undefined, attachments: attachments || undefined },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `posts/${TEST_POST_IDS.POST_1}`) },
-    }) as unknown as PostResult),
+    createPost: vi.fn(
+      (content, kind, parent, embed, attachments) =>
+        ({
+          post: {
+            content,
+            kind,
+            parent: parent || undefined,
+            embed: embed || undefined,
+            attachments: attachments || undefined,
+          },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `posts/${TEST_POST_IDS.POST_1}`) },
+        }) as unknown as PostResult,
+    ),
     ...overrides,
   });
 
@@ -95,13 +104,7 @@ describe('PostNormalizer', () => {
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
           expect(Core.PubkySpecsSingleton.get).toHaveBeenCalledWith(TEST_PUBKY.USER_1);
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            null,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, null, null, null);
         });
       });
 
@@ -113,13 +116,7 @@ describe('PostNormalizer', () => {
           const post = createBasicPost({ kind });
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            expect.any(String),
-            kind,
-            null,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(expect.any(String), kind, null, null, null);
         });
       });
 
@@ -130,26 +127,14 @@ describe('PostNormalizer', () => {
 
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            parentUri,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, parentUri, null, null);
         });
 
         it('should pass null when parentUri not provided', async () => {
           const post = createBasicPost();
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            null,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, null, null, null);
         });
       });
 
@@ -179,13 +164,7 @@ describe('PostNormalizer', () => {
           const post = createBasicPost({ embed: embedUri });
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            null,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, null, null, null);
         });
 
         it('should pass null embed when embedded post not found', async () => {
@@ -195,13 +174,7 @@ describe('PostNormalizer', () => {
           const post = createBasicPost({ embed: embedUri });
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            null,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, null, null, null);
         });
       });
 
@@ -212,29 +185,17 @@ describe('PostNormalizer', () => {
 
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            null,
-            null,
-            [
-              buildPubkyUri(TEST_PUBKY.USER_1, 'files/file1'),
-              buildPubkyUri(TEST_PUBKY.USER_1, 'files/file2'),
-            ],
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, null, null, [
+            buildPubkyUri(TEST_PUBKY.USER_1, 'files/file1'),
+            buildPubkyUri(TEST_PUBKY.USER_1, 'files/file2'),
+          ]);
         });
 
         it('should pass null when no attachments', async () => {
           const post = createBasicPost();
           await Core.PostNormalizer.to(post, TEST_PUBKY.USER_1);
 
-          expect(mockBuilder.createPost).toHaveBeenCalledWith(
-            post.content,
-            post.kind,
-            null,
-            null,
-            null,
-          );
+          expect(mockBuilder.createPost).toHaveBeenCalledWith(post.content, post.kind, null, null, null);
         });
       });
 
@@ -267,8 +228,20 @@ describe('PostNormalizer', () => {
 
       describe('error handling', () => {
         it.each([
-          ['buildCompositeIdFromPubkyUri', () => vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockImplementation(() => { throw new Error('URI error'); })],
-          ['createPost', () => mockBuilder.createPost.mockImplementation(() => { throw new Error('Builder error'); })],
+          [
+            'buildCompositeIdFromPubkyUri',
+            () =>
+              vi.spyOn(Core, 'buildCompositeIdFromPubkyUri').mockImplementation(() => {
+                throw new Error('URI error');
+              }),
+          ],
+          [
+            'createPost',
+            () =>
+              mockBuilder.createPost.mockImplementation(() => {
+                throw new Error('Builder error');
+              }),
+          ],
         ])('should propagate errors from %s', async (_, setupError) => {
           setupError();
           const post = createBasicPost({ embed: 'pubky://embed' });
@@ -286,7 +259,9 @@ describe('PostNormalizer', () => {
         });
 
         it('should not call logger when error occurs', async () => {
-          mockBuilder.createPost.mockImplementation(() => { throw new Error('Error'); });
+          mockBuilder.createPost.mockImplementation(() => {
+            throw new Error('Error');
+          });
 
           await expect(Core.PostNormalizer.to(createBasicPost(), TEST_PUBKY.USER_1)).rejects.toThrow();
           expect(Libs.Logger.debug).not.toHaveBeenCalled();

@@ -68,15 +68,29 @@ describe('LastReadNormalizer', () => {
 
     describe('to - error handling', () => {
       it.each([
-        ['createLastRead', () => mockBuilder.createLastRead.mockImplementation(() => { throw new Error('Builder error'); })],
-        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+        [
+          'createLastRead',
+          () =>
+            mockBuilder.createLastRead.mockImplementation(() => {
+              throw new Error('Builder error');
+            }),
+        ],
+        [
+          'PubkySpecsSingleton.get',
+          () =>
+            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+              throw new Error('Singleton error');
+            }),
+        ],
       ])('should propagate errors from %s', (_, setupError) => {
         setupError();
         expect(() => Core.LastReadNormalizer.to(TEST_PUBKY.USER_1)).toThrow();
       });
 
       it('should not call logger when error occurs', () => {
-        mockBuilder.createLastRead.mockImplementation(() => { throw new Error('Error'); });
+        mockBuilder.createLastRead.mockImplementation(() => {
+          throw new Error('Error');
+        });
 
         expect(() => Core.LastReadNormalizer.to(TEST_PUBKY.USER_1)).toThrow();
         expect(Libs.Logger.debug).not.toHaveBeenCalled();

@@ -13,10 +13,13 @@ import {
 
 describe('MuteNormalizer', () => {
   const createMockBuilder = (overrides?: Partial<{ createMute: ReturnType<typeof vi.fn> }>) => ({
-    createMute: vi.fn((mutee: string) => ({
-      mute: { mutee, toJson: vi.fn(() => ({})) },
-      meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `mutes/${mutee}`) },
-    }) as unknown as MuteResult),
+    createMute: vi.fn(
+      (mutee: string) =>
+        ({
+          mute: { mutee, toJson: vi.fn(() => ({})) },
+          meta: { url: buildPubkyUri(TEST_PUBKY.USER_1, `mutes/${mutee}`) },
+        }) as unknown as MuteResult,
+    ),
     ...overrides,
   });
 
@@ -77,15 +80,29 @@ describe('MuteNormalizer', () => {
 
     describe('to - error handling', () => {
       it.each([
-        ['createMute', () => mockBuilder.createMute.mockImplementation(() => { throw new Error('Builder error'); })],
-        ['PubkySpecsSingleton.get', () => vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => { throw new Error('Singleton error'); })],
+        [
+          'createMute',
+          () =>
+            mockBuilder.createMute.mockImplementation(() => {
+              throw new Error('Builder error');
+            }),
+        ],
+        [
+          'PubkySpecsSingleton.get',
+          () =>
+            vi.spyOn(Core.PubkySpecsSingleton, 'get').mockImplementation(() => {
+              throw new Error('Singleton error');
+            }),
+        ],
       ])('should propagate errors from %s', (_, setupError) => {
         setupError();
         expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 })).toThrow();
       });
 
       it('should not call logger when error occurs', () => {
-        mockBuilder.createMute.mockImplementation(() => { throw new Error('Error'); });
+        mockBuilder.createMute.mockImplementation(() => {
+          throw new Error('Error');
+        });
 
         expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: TEST_PUBKY.USER_2 })).toThrow();
         expect(Libs.Logger.debug).not.toHaveBeenCalled();
@@ -152,11 +169,8 @@ describe('MuteNormalizer', () => {
         ['undefined', INVALID_INPUTS.UNDEFINED],
         ['invalid format', INVALID_INPUTS.INVALID_FORMAT],
       ])('should throw error for %s mutee', (_, invalidMutee) => {
-        expect(() =>
-          Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: invalidMutee }),
-        ).toThrow();
+        expect(() => Core.MuteNormalizer.to({ muter: TEST_PUBKY.USER_1, mutee: invalidMutee })).toThrow();
       });
     });
   });
 });
-
