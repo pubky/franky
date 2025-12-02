@@ -40,7 +40,8 @@ describe('FeedController', () => {
     // Mock auth store (needed for application layer)
     vi.spyOn(Core.useAuthStore, 'getState').mockReturnValue({
       selectCurrentUserPubky: () => testData.userPubky,
-    } as Partial<AuthStore>);
+      currentUserPubky: testData.userPubky,
+    } as AuthStore);
 
     // Mock FeedApplication
     vi.spyOn(Core.FeedApplication, 'persist').mockResolvedValue(createMockFeedSchema());
@@ -92,6 +93,9 @@ describe('FeedController', () => {
   describe('update', () => {
     it('should pass changes to application layer for persistence', async () => {
       const persistSpy = vi.spyOn(Core.FeedApplication, 'persist');
+      const prepareSpy = vi
+        .spyOn(Core.FeedApplication, 'prepareUpdateParams')
+        .mockResolvedValue(createFeedParams({ tags: ['bitcoin', 'mining'] }));
 
       const updateParams: TFeedUpdateParams = {
         feedId: 123,
@@ -100,19 +104,23 @@ describe('FeedController', () => {
 
       const result = await FeedController.update(updateParams);
 
+      expect(prepareSpy).toHaveBeenCalledWith({
+        feedId: 123,
+        changes: { tags: ['bitcoin', 'mining'] },
+      });
       expect(persistSpy).toHaveBeenCalledWith({
         action: Core.HomeserverAction.PUT,
         userId: testData.userPubky,
         params: {
-          feedId: 123,
-          changes: { tags: ['bitcoin', 'mining'] },
+          feed: expect.any(Object),
+          existingId: 123,
         },
       });
       expect(result).toBeTruthy();
     });
 
     it('should throw when feed not found', async () => {
-      vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('Feed not found'));
+      vi.spyOn(Core.FeedApplication, 'prepareUpdateParams').mockRejectedValue(new Error('Feed not found'));
 
       const updateParams: TFeedUpdateParams = {
         feedId: 999,
@@ -123,6 +131,7 @@ describe('FeedController', () => {
     });
 
     it('should throw when user is not authenticated (via application layer)', async () => {
+      vi.spyOn(Core.FeedApplication, 'prepareUpdateParams').mockResolvedValue(createFeedParams({ tags: ['new'] }));
       vi.spyOn(Core.FeedApplication, 'persist').mockRejectedValue(new Error('User not authenticated'));
 
       await expect(FeedController.update({ feedId: 123, changes: { tags: ['new'] } })).rejects.toThrow(

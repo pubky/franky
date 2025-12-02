@@ -23,12 +23,24 @@ export class FeedController {
 
   static async update(params: Core.TFeedUpdateParams): Promise<Core.FeedModelSchema> {
     const userId = Core.useAuthStore.getState().selectCurrentUserPubky();
+
+    if (params.changes.tags) {
+      Core.FeedValidators.validateTags(params.changes.tags);
+    }
+
+    const mergedParams = await Core.FeedApplication.prepareUpdateParams({
+      feedId: params.feedId,
+      changes: params.changes,
+    });
+
+    const normalizedFeed = Core.FeedNormalizer.to({ params: mergedParams, userId });
+
     const feed = await Core.FeedApplication.persist({
       action: Core.HomeserverAction.PUT,
       userId,
       params: {
-        feedId: params.feedId,
-        changes: params.changes,
+        feed: normalizedFeed,
+        existingId: params.feedId,
       },
     });
 

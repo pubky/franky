@@ -1,6 +1,7 @@
 import { feedUriBuilder } from 'pubky-app-specs';
 import * as Core from '@/core';
-import type { FeedDeleteParams, FeedPutParams, FeedUpdateParams, PersistAndSyncParams } from './feed.types';
+import * as Libs from '@/libs';
+import type { FeedDeleteParams, FeedPutParams, PersistAndSyncParams } from './feed.types';
 
 export class FeedApplication {
   private constructor() {}
@@ -8,10 +9,6 @@ export class FeedApplication {
   static async persist({ action, userId, params }: Core.TFeedPersistInput): Promise<Core.FeedModelSchema | undefined> {
     if (action === Core.HomeserverAction.DELETE) {
       return this.handleDelete({ userId, params });
-    }
-
-    if (action === Core.HomeserverAction.PUT && Core.isFeedUpdateParams(params)) {
-      return this.handleUpdate({ userId, params });
     }
 
     return this.handlePut({ userId, params });
@@ -31,21 +28,13 @@ export class FeedApplication {
     return undefined;
   }
 
-  private static async handleUpdate({ userId, params }: FeedUpdateParams): Promise<Core.FeedModelSchema> {
-    const { feedId, changes } = params;
-
+  static async prepareUpdateParams({ feedId, changes }: Core.TFeedUpdateParams): Promise<Core.TFeedCreateParams> {
     const existing = await Core.LocalFeedService.findById(feedId);
     if (!existing) {
-      throw new Error('Feed not found');
+      throw Libs.createDatabaseError(Libs.DatabaseErrorType.RECORD_NOT_FOUND, 'Feed not found', 404, { feedId });
     }
 
-    // Validate tags early if being changed to fail fast before normalization
-    if (changes.tags) {
-      Core.FeedValidators.validateTags(changes.tags);
-    }
-
-    // Merge partial changes with existing feed to create complete params for normalization
-    const mergedParams: Core.TFeedCreateParams = {
+    return {
       name: existing.name,
       tags: changes.tags ?? existing.tags,
       reach: changes.reach ?? existing.reach,
@@ -53,27 +42,6 @@ export class FeedApplication {
       content: changes.content !== undefined ? changes.content : existing.content,
       layout: changes.layout ?? existing.layout,
     };
-
-    // Normalize merged params to ensure consistent format before persistence
-    const normalizedFeed = Core.FeedNormalizer.to({ params: mergedParams, userId });
-    const feedData = normalizedFeed.feed;
-    const feedConfig = feedData.feed;
-
-    const now = Date.now();
-
-    const feedSchema: Core.FeedModelSchema = {
-      id: feedId,
-      name: feedData.name,
-      tags: feedConfig.tags ?? [],
-      reach: feedConfig.reach,
-      sort: feedConfig.sort,
-      content: feedConfig.content ?? null,
-      layout: feedConfig.layout,
-      created_at: existing.created_at,
-      updated_at: now,
-    };
-
-    return this.persistAndSync({ userId, feedSchema, normalizedFeed });
   }
 
   private static async handlePut({ userId, params }: FeedPutParams): Promise<Core.FeedModelSchema> {
