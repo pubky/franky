@@ -1,1 +1,1 @@
-export * from './DialogReply';
+export { DialogReply, type DialogReplyProps } from './DialogReply';

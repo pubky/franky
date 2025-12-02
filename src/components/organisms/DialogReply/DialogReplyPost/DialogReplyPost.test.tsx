@@ -29,12 +29,6 @@ describe('DialogReplyPost', () => {
     expect(getByTestId('post-content')).toBeInTheDocument();
     expect(getByTestId('post-content')).toHaveTextContent('test-post-id');
   });
-
-  it('applies custom className', () => {
-    const { container } = render(<DialogReplyPost postId="test-post-id" className="custom-class" />);
-
-    expect(container.firstChild).toHaveClass('custom-class');
-  });
 });
 
 describe('DialogReplyPost - Snapshots', () => {
@@ -44,11 +38,6 @@ describe('DialogReplyPost - Snapshots', () => {
 
   it('matches snapshot', () => {
     const { container } = render(<DialogReplyPost postId="snapshot-post-id" />);
-    expect(container.firstChild).toMatchSnapshot();
-  });
-
-  it('matches snapshot with custom className', () => {
-    const { container } = render(<DialogReplyPost postId="snapshot-post-id" className="test-class" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

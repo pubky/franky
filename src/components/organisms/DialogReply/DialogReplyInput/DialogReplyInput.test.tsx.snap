@@ -2,25 +2,23 @@
 
 exports[`DialogReplyInput - Snapshots > matches snapshot in default state 1`] = `
 <div
-  class="relative flex flex-col rounded-md border border-dashed border-input p-6"
-  data-override-defaults="true"
+  class="relative rounded-md border border-dashed border-input p-6"
   data-testid="container"
 >
   <div
     data-testid="post-reply-connector"
   />
   <div
-    class="flex flex-col gap-4"
-    data-override-defaults="true"
+    class="gap-4"
     data-testid="container"
   >
     <div
       data-hide-time="true"
-      data-post-id="test-user-id:pubkey"
+      data-post-id="snapshot-user-id:pubkey"
       data-testid="post-header"
     >
       PostHeader 
-      test-user-id:pubkey
+      snapshot-user-id:pubkey
     </div>
     <textarea
       class="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -28,12 +26,11 @@ exports[`DialogReplyInput - Snapshots > matches snapshot in default state 1`] = 
       placeholder="Write a reply..."
     />
     <div
-      class="flex flex-col justify-between gap-4 md:flex-row md:gap-0"
-      data-override-defaults="true"
+      class="justify-between gap-4 md:flex-row md:gap-0"
       data-testid="container"
     >
       <div
-        data-testid="post-tags-list"
+        data-testid="dialog-reply-tags"
       >
         <button
           data-testid="add-tag-button"
@@ -59,16 +56,14 @@ exports[`DialogReplyInput - Snapshots > matches snapshot in default state 1`] = 
 
 exports[`DialogReplyInput - Snapshots > matches snapshot with user details 1`] = `
 <div
-  class="relative flex flex-col rounded-md border border-dashed border-input p-6"
-  data-override-defaults="true"
+  class="relative rounded-md border border-dashed border-input p-6"
   data-testid="container"
 >
   <div
     data-testid="post-reply-connector"
   />
   <div
-    class="flex flex-col gap-4"
-    data-override-defaults="true"
+    class="gap-4"
     data-testid="container"
   >
     <div
@@ -85,12 +80,11 @@ exports[`DialogReplyInput - Snapshots > matches snapshot with user details 1`] =
       placeholder="Write a reply..."
     />
     <div
-      class="flex flex-col justify-between gap-4 md:flex-row md:gap-0"
-      data-override-defaults="true"
+      class="justify-between gap-4 md:flex-row md:gap-0"
       data-testid="container"
     >
       <div
-        data-testid="post-tags-list"
+        data-testid="dialog-reply-tags"
       >
         <button
           data-testid="add-tag-button"
@@ -116,38 +110,27 @@ exports[`DialogReplyInput - Snapshots > matches snapshot with user details 1`] =
 
 exports[`DialogReplyInput - Snapshots > matches snapshot without user details 1`] = `
 <div
-  class="relative flex flex-col rounded-md border border-dashed border-input p-6"
-  data-override-defaults="true"
+  class="relative rounded-md border border-dashed border-input p-6"
   data-testid="container"
 >
   <div
     data-testid="post-reply-connector"
   />
   <div
-    class="flex flex-col gap-4"
-    data-override-defaults="true"
+    class="gap-4"
     data-testid="container"
   >
-    <div
-      data-hide-time="true"
-      data-post-id="test-user-id:pubkey"
-      data-testid="post-header"
-    >
-      PostHeader 
-      test-user-id:pubkey
-    </div>
     <textarea
       class="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
       data-testid="textarea"
       placeholder="Write a reply..."
     />
     <div
-      class="flex flex-col justify-between gap-4 md:flex-row md:gap-0"
-      data-override-defaults="true"
+      class="justify-between gap-4 md:flex-row md:gap-0"
       data-testid="container"
     >
       <div
-        data-testid="post-tags-list"
+        data-testid="dialog-reply-tags"
       >
         <button
           data-testid="add-tag-button"

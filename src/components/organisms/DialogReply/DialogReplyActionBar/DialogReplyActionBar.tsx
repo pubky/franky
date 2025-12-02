@@ -3,15 +3,7 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-
-export interface DialogReplyActionBarProps {
-  onEmojiClick?: () => void;
-  onImageClick?: () => void;
-  onFileClick?: () => void;
-  onArticleClick?: () => void;
-  onPostClick?: () => void;
-  isPostDisabled?: boolean;
-}
+import type { DialogReplyActionBarProps } from './DialogReplyActionBar.types';
 
 interface ActionButtonConfig {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;

@@ -143,3 +143,38 @@ describe('DialogReplyActionBar', () => {
     expect(postButton).toHaveTextContent('Post');
   });
 });
+
+describe('DialogReplyActionBar - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('matches snapshot with default props', () => {
+    const { container } = render(<DialogReplyActionBar />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with all callbacks', () => {
+    const onEmojiClick = vi.fn();
+    const onImageClick = vi.fn();
+    const onFileClick = vi.fn();
+    const onArticleClick = vi.fn();
+    const onPostClick = vi.fn();
+
+    const { container } = render(
+      <DialogReplyActionBar
+        onEmojiClick={onEmojiClick}
+        onImageClick={onImageClick}
+        onFileClick={onFileClick}
+        onArticleClick={onArticleClick}
+        onPostClick={onPostClick}
+      />,
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with disabled post button', () => {
+    const { container } = render(<DialogReplyActionBar isPostDisabled={true} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+});

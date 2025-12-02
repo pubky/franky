@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DialogReply - Snapshots > matches snapshot with default props 1`] = `
+exports[`DialogReplyContent - Snapshots > matches snapshot with default props 1`] = `
 <div
   data-open="false"
   data-testid="dialog"
@@ -52,7 +52,7 @@ exports[`DialogReply - Snapshots > matches snapshot with default props 1`] = `
 </div>
 `;
 
-exports[`DialogReply - Snapshots > matches snapshot with onOpenChangeAction prop 1`] = `
+exports[`DialogReplyContent - Snapshots > matches snapshot with onOpenChangeAction prop 1`] = `
 <div
   data-open="false"
   data-testid="dialog"
@@ -104,7 +104,7 @@ exports[`DialogReply - Snapshots > matches snapshot with onOpenChangeAction prop
 </div>
 `;
 
-exports[`DialogReply - Snapshots > matches snapshot with open prop 1`] = `
+exports[`DialogReplyContent - Snapshots > matches snapshot with open prop 1`] = `
 <div
   data-open="true"
   data-testid="dialog"

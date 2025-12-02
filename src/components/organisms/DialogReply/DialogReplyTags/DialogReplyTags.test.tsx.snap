@@ -1,0 +1,92 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogReplyTags - Snapshots > matches snapshot with empty tags 1`] = `
+<div
+  class="flex flex-wrap items-center gap-2"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <button
+    data-testid="add-tag-button"
+  >
+    +
+  </button>
+</div>
+`;
+
+exports[`DialogReplyTags - Snapshots > matches snapshot with input open 1`] = `
+<div
+  class="flex flex-wrap items-center gap-2"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    class="relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
+    data-override-defaults="true"
+    data-testid="container"
+  >
+    <input
+      class="flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white border-none shadow-none ring-0 outline-none hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none placeholder:font-bold placeholder:text-input text-input"
+      data-testid="tag-input"
+      placeholder="add tag"
+      value=""
+    />
+    <button
+      aria-label="Open emoji picker"
+      class="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark"
+      data-testid="button"
+    >
+      <svg
+        class="size-4"
+        data-stroke-width="2"
+        data-testid="smile-icon"
+      />
+    </button>
+    <button
+      aria-label="Close tag input"
+      class="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 hover:opacity-80"
+      data-testid="button"
+    >
+      <svg
+        class="size-3"
+        data-stroke-width="2"
+        data-testid="x-icon"
+      />
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DialogReplyTags - Snapshots > matches snapshot with tags 1`] = `
+<div
+  class="flex flex-wrap items-center gap-2"
+  data-override-defaults="true"
+  data-testid="container"
+>
+  <div
+    data-testid="tag-tag1"
+  >
+    tag1
+    <button
+      data-testid="tag-close-tag1"
+    >
+      ×
+    </button>
+  </div>
+  <div
+    data-testid="tag-tag2"
+  >
+    tag2
+    <button
+      data-testid="tag-close-tag2"
+    >
+      ×
+    </button>
+  </div>
+  <button
+    data-testid="add-tag-button"
+  >
+    +
+  </button>
+</div>
+`;

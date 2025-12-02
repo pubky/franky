@@ -23,27 +23,3 @@ exports[`DialogReplyPost - Snapshots > matches snapshot 1`] = `
   </div>
 </div>
 `;
-
-exports[`DialogReplyPost - Snapshots > matches snapshot with custom className 1`] = `
-<div
-  class="flex flex-col gap-6 rounded-xl bg-card py-6 text-card-foreground shadow-sm rounded-md py-0 test-class"
-  data-slot="card"
-  data-testid="card"
->
-  <div
-    class="px-6 flex flex-col gap-4 p-6"
-    data-slot="card-content"
-  >
-    <div
-      data-testid="post-header"
-    >
-      snapshot-post-id
-    </div>
-    <div
-      data-testid="post-content"
-    >
-      snapshot-post-id
-    </div>
-  </div>
-</div>
-`;

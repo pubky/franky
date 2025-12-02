@@ -3,9 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DialogReplyInput } from './DialogReplyInput';
 import { useLiveQuery } from 'dexie-react-hooks';
 import * as Core from '@/core';
-import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
+import { DialogReplyActionBar } from '../DialogReplyActionBar';
+import { DialogReplyTags } from '../DialogReplyTags';
 
 vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(),
@@ -57,35 +58,30 @@ vi.mock('@/atoms', () => ({
 }));
 
 vi.mock('@/molecules', () => ({
-  PostTagsList: vi.fn(({ tags, showInput, showAddButton, showTagClose, onTagAdd, onTagClose }) => (
-    <div data-testid="post-tags-list">
-      {tags.map((tag: { label: string }, index: number) => (
-        <div key={index} data-testid={`tag-${tag.label}`}>
-          {tag.label}
-          {showTagClose && (
-            <button data-testid={`tag-close-${index}`} onClick={() => onTagClose?.(tag, index)}>
-              ×
-            </button>
-          )}
+  EmojiPickerDialog: vi.fn(
+    ({
+      open,
+      onOpenChange,
+      onEmojiSelect,
+    }: {
+      open: boolean;
+      onOpenChange: (open: boolean) => void;
+      onEmojiSelect: (emoji: { native: string }) => void;
+    }) =>
+      open ? (
+        <div data-testid="emoji-picker-dialog">
+          <button data-testid="emoji-select" onClick={() => onEmojiSelect({ native: '😀' })}>
+            Select Emoji
+          </button>
+          <button data-testid="emoji-close" onClick={() => onOpenChange(false)}>
+            Close
+          </button>
         </div>
-      ))}
-      {showAddButton && !showInput && (
-        <button
-          data-testid="add-tag-button"
-          onClick={() => {
-            // Simulate opening input and adding tag
-            onTagAdd?.('new-tag');
-          }}
-        >
-          +
-        </button>
-      )}
-      {showInput && <input data-testid="tag-input" />}
-    </div>
-  )),
+      ) : null,
+  ),
 }));
 
-vi.mock('@/organisms', () => ({
+vi.mock('../DialogReplyActionBar', () => ({
   DialogReplyActionBar: vi.fn(({ onPostClick, isPostDisabled }) => (
     <div data-testid="dialog-reply-action-bar">
       <button data-testid="post-button" onClick={onPostClick} disabled={isPostDisabled} aria-label="Post reply">
@@ -93,6 +89,35 @@ vi.mock('@/organisms', () => ({
       </button>
     </div>
   )),
+}));
+
+vi.mock('../DialogReplyTags', () => ({
+  DialogReplyTags: vi.fn(({ tags, onTagsChange }) => (
+    <div data-testid="dialog-reply-tags">
+      {tags.map((tag: string, index: number) => (
+        <div key={index} data-testid={`tag-${tag}`}>
+          {tag}
+          <button
+            data-testid={`tag-close-${index}`}
+            onClick={() => onTagsChange(tags.filter((_: string, i: number) => i !== index))}
+          >
+            ×
+          </button>
+        </div>
+      ))}
+      <button
+        data-testid="add-tag-button"
+        onClick={() => {
+          onTagsChange([...tags, 'new-tag']);
+        }}
+      >
+        +
+      </button>
+    </div>
+  )),
+}));
+
+vi.mock('@/organisms', () => ({
   PostHeader: vi.fn(({ postId, hideTime }) => (
     <div data-testid="post-header" data-post-id={postId} data-hide-time={hideTime}>
       PostHeader {postId}
@@ -119,6 +144,7 @@ vi.mock('@/core', () => ({
 vi.mock('@/hooks', () => ({
   useElementHeight: vi.fn(() => ({ ref: { current: null } })),
   usePostReply: vi.fn(),
+  useCurrentUserProfile: vi.fn(() => ({ currentUserPubky: 'test-user-id:pubkey' })),
 }));
 
 // Use real libs, only stub cn to a deterministic join
@@ -135,6 +161,7 @@ vi.mock('@/libs', async (importOriginal) => {
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockPostControllerCreate = vi.mocked(Core.PostController.create);
 const mockUsePostReply = vi.mocked(Hooks.usePostReply);
+const mockUseCurrentUserProfile = vi.mocked(Hooks.useCurrentUserProfile);
 
 describe('DialogReplyInput', () => {
   const mockOnSuccess = vi.fn();
@@ -143,6 +170,10 @@ describe('DialogReplyInput', () => {
     vi.clearAllMocks();
     mockUseLiveQuery.mockReturnValue({ name: 'Test User' });
     mockPostControllerCreate.mockResolvedValue(undefined);
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: 'test-user-id:pubkey',
+      userDetails: { name: 'Test User' },
+    });
     mockUsePostReply.mockReturnValue({
       replyContent: '',
       setReplyContent: vi.fn(),
@@ -172,19 +203,16 @@ describe('DialogReplyInput', () => {
     );
   });
 
-  it('renders PostTagsList with correct props', () => {
+  it('renders DialogReplyTags with correct props', () => {
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
-    const tagsList = screen.getByTestId('post-tags-list');
-    expect(tagsList).toBeInTheDocument();
-    expect(Molecules.PostTagsList).toHaveBeenCalledTimes(1);
-    const callArgs = (Molecules.PostTagsList as ReturnType<typeof vi.fn>).mock.calls[0][0];
-    expect(callArgs).toMatchObject({
-      showInput: false,
-      showAddButton: true,
-      addMode: true,
-      showTagClose: true,
-    });
+    expect(DialogReplyTags).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tags: [],
+        onTagsChange: expect.any(Function),
+      }),
+      undefined,
+    );
   });
 
   it('handles textarea value changes', () => {
@@ -203,7 +231,7 @@ describe('DialogReplyInput', () => {
     expect(setReplyContent).toHaveBeenCalledWith('Test reply content');
   });
 
-  it('handles Enter key submission', async () => {
+  it('handles Post button click submission', async () => {
     const handleReplySubmit = vi.fn();
     mockUsePostReply.mockReturnValue({
       replyContent: 'Test reply content',
@@ -213,26 +241,26 @@ describe('DialogReplyInput', () => {
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+    const postButton = screen.getByTestId('post-button');
+    fireEvent.click(postButton);
 
-    expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('does not submit on Shift+Enter', () => {
-    const handleReplySubmit = vi.fn();
+  it('renders textarea correctly', () => {
     mockUsePostReply.mockReturnValue({
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
-      handleReplySubmit,
+      handleReplySubmit: vi.fn(),
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
     const textarea = screen.getByTestId('textarea');
-    fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: true });
-
-    expect(handleReplySubmit).not.toHaveBeenCalled();
+    expect(textarea).toBeInTheDocument();
+    expect(textarea).toHaveValue('Test reply content');
   });
 
   it('does not submit empty content', async () => {
@@ -245,12 +273,11 @@ describe('DialogReplyInput', () => {
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
-
-    // The hook handles validation, so handleReplySubmit might still be called
-    // but it will return early if content is empty
-    expect(handleReplySubmit).toHaveBeenCalledTimes(1);
+    const postButton = screen.getByTestId('post-button');
+    expect(postButton).toBeDisabled();
+    // Button is disabled, so clicking won't trigger submission
+    fireEvent.click(postButton);
+    expect(handleReplySubmit).not.toHaveBeenCalled();
   });
 
   it('clears textarea after successful submission', async () => {
@@ -266,8 +293,8 @@ describe('DialogReplyInput', () => {
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
 
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+    const postButton = screen.getByTestId('post-button');
+    fireEvent.click(postButton);
 
     await waitFor(() => {
       expect(handleReplySubmit).toHaveBeenCalledTimes(1);
@@ -287,8 +314,8 @@ describe('DialogReplyInput', () => {
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={onSuccess} />);
 
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+    const postButton = screen.getByTestId('post-button');
+    fireEvent.click(postButton);
 
     await waitFor(() => {
       expect(handleReplySubmit).toHaveBeenCalledTimes(1);
@@ -306,13 +333,10 @@ describe('DialogReplyInput', () => {
 
     const postButton = screen.getByTestId('post-button');
     expect(postButton).toBeDisabled();
-    expect(Organisms.DialogReplyActionBar).toHaveBeenCalledWith(
-      {
-        isPostDisabled: true,
-        onPostClick: expect.any(Function),
-      },
-      undefined,
-    );
+    expect(DialogReplyActionBar).toHaveBeenCalled();
+    const callArgs = (DialogReplyActionBar as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(callArgs.isPostDisabled).toBe(true);
+    expect(callArgs.onPostClick).toBeDefined();
   });
 
   it('enables Post button when content is not empty', () => {
@@ -326,13 +350,10 @@ describe('DialogReplyInput', () => {
 
     const postButton = screen.getByTestId('post-button');
     expect(postButton).not.toBeDisabled();
-    expect(Organisms.DialogReplyActionBar).toHaveBeenCalledWith(
-      {
-        isPostDisabled: false,
-        onPostClick: expect.any(Function),
-      },
-      undefined,
-    );
+    expect(DialogReplyActionBar).toHaveBeenCalled();
+    const callArgs = (DialogReplyActionBar as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(callArgs.isPostDisabled).toBe(false);
+    expect(callArgs.onPostClick).toBeDefined();
   });
 
   it('handles tag addition', () => {
@@ -379,10 +400,14 @@ describe('DialogReplyInput', () => {
 
 describe('DialogReplyInput - Snapshots', () => {
   const mockOnSuccess = vi.fn();
+  const mockUseCurrentUserProfile = vi.mocked(Hooks.useCurrentUserProfile);
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseLiveQuery.mockReturnValue({ name: 'Snapshot User' });
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: 'snapshot-user-id:pubkey',
+      userDetails: { name: 'Snapshot User' },
+    });
     mockUsePostReply.mockReturnValue({
       replyContent: '',
       setReplyContent: vi.fn(),
@@ -396,7 +421,10 @@ describe('DialogReplyInput - Snapshots', () => {
   });
 
   it('matches snapshot with user details', () => {
-    mockUseLiveQuery.mockReturnValue({ name: 'Test User' });
+    mockUseCurrentUserProfile.mockReturnValue({
+      currentUserPubky: 'test-user-id:pubkey',
+      userDetails: { name: 'Test User' },
+    });
     mockUsePostReply.mockReturnValue({
       replyContent: '',
       setReplyContent: vi.fn(),
@@ -407,7 +435,7 @@ describe('DialogReplyInput - Snapshots', () => {
   });
 
   it('matches snapshot without user details', () => {
-    mockUseLiveQuery.mockReturnValue(null);
+    mockUseCurrentUserProfile.mockReturnValue({ currentUserPubky: null, userDetails: null });
     mockUsePostReply.mockReturnValue({
       replyContent: '',
       setReplyContent: vi.fn(),

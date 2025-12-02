@@ -1,7 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as Organisms from '@/organisms';
-import { DialogReply } from './DialogReply';
+import { DialogReplyContent } from './DialogReplyContent';
+import { DialogReplyPost } from '../DialogReplyPost';
+import { DialogReplyInput } from '../DialogReplyInput';
 
 // Mock Radix UI Dialog components
 vi.mock('@radix-ui/react-dialog', () => ({
@@ -51,9 +52,12 @@ vi.mock('@radix-ui/react-dialog', () => ({
   ),
 }));
 
-// Mock organisms
-vi.mock('@/organisms', () => ({
+// Mock local components
+vi.mock('../DialogReplyPost', () => ({
   DialogReplyPost: vi.fn(({ postId }: { postId: string }) => <div data-testid="dialog-reply-post">{postId}</div>),
+}));
+
+vi.mock('../DialogReplyInput', () => ({
   DialogReplyInput: vi.fn(({ onSuccessAction }: { postId: string; onSuccessAction: () => void }) => (
     <div data-testid="dialog-reply-input">
       <button data-testid="mock-success-btn" onClick={onSuccessAction}>
@@ -122,14 +126,14 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-describe('DialogReply', () => {
+describe('DialogReplyContent', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders with required props', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     expect(screen.getByTestId('dialog')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-content')).toBeInTheDocument();
@@ -140,16 +144,16 @@ describe('DialogReply', () => {
 
   it('renders DialogReplyPost with correct postId', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
-    expect(Organisms.DialogReplyPost).toHaveBeenCalledWith({ postId: 'test-post-123' }, undefined);
+    expect(DialogReplyPost).toHaveBeenCalledWith({ postId: 'test-post-123' }, undefined);
   });
 
   it('renders DialogReplyInput with correct postId', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
-    expect(Organisms.DialogReplyInput).toHaveBeenCalledWith(
+    expect(DialogReplyInput).toHaveBeenCalledWith(
       expect.objectContaining({
         postId: 'test-post-123',
         onSuccessAction: expect.any(Function),
@@ -160,7 +164,7 @@ describe('DialogReply', () => {
 
   it('passes onOpenChangeAction to Dialog', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={true} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={true} onOpenChangeAction={onOpenChangeAction} />);
 
     const dialog = screen.getByTestId('dialog');
     expect(dialog).toHaveAttribute('data-open', 'true');
@@ -168,7 +172,7 @@ describe('DialogReply', () => {
 
   it('calls onOpenChangeAction when DialogReplyInput onSuccessAction is called', async () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     const successButton = screen.getByTestId('mock-success-btn');
     fireEvent.click(successButton);
@@ -180,7 +184,7 @@ describe('DialogReply', () => {
 
   it('applies correct className to DialogContent', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     const dialogContent = screen.getByTestId('dialog-content');
     expect(dialogContent).toHaveClass('w-3xl');
@@ -188,7 +192,7 @@ describe('DialogReply', () => {
 
   it('sets hiddenTitle on DialogContent', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     const dialogContent = screen.getByTestId('dialog-content');
     expect(dialogContent).toHaveAttribute('aria-label', 'Reply to post');
@@ -196,7 +200,7 @@ describe('DialogReply', () => {
 
   it('renders DialogHeader with title', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     expect(screen.getByTestId('dialog-header')).toBeInTheDocument();
     expect(screen.getByTestId('dialog-title')).toHaveTextContent('Reply');
@@ -204,7 +208,7 @@ describe('DialogReply', () => {
 
   it('renders Container with gap-3 className', () => {
     const onOpenChangeAction = vi.fn();
-    render(<DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
+    render(<DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />);
 
     const containers = screen.getAllByTestId('container');
     const mainContainer = containers.find((c) => c.className.includes('gap-3'));
@@ -215,19 +219,19 @@ describe('DialogReply', () => {
   it('handles open prop correctly', () => {
     const onOpenChangeAction = vi.fn();
     const { rerender } = render(
-      <DialogReply postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />,
+      <DialogReplyContent postId="test-post-123" open={false} onOpenChangeAction={onOpenChangeAction} />,
     );
 
     let dialog = screen.getByTestId('dialog');
     expect(dialog).toHaveAttribute('data-open', 'false');
 
-    rerender(<DialogReply postId="test-post-123" open={true} onOpenChangeAction={onOpenChangeAction} />);
+    rerender(<DialogReplyContent postId="test-post-123" open={true} onOpenChangeAction={onOpenChangeAction} />);
     dialog = screen.getByTestId('dialog');
     expect(dialog).toHaveAttribute('data-open', 'true');
   });
 });
 
-describe('DialogReply - Snapshots', () => {
+describe('DialogReplyContent - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -235,7 +239,7 @@ describe('DialogReply - Snapshots', () => {
   it('matches snapshot with default props', () => {
     const onOpenChangeAction = vi.fn();
     const { container } = render(
-      <DialogReply postId="snapshot-post-id" open={false} onOpenChangeAction={onOpenChangeAction} />,
+      <DialogReplyContent postId="snapshot-post-id" open={false} onOpenChangeAction={onOpenChangeAction} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
@@ -243,7 +247,7 @@ describe('DialogReply - Snapshots', () => {
   it('matches snapshot with open prop', () => {
     const onOpenChangeAction = vi.fn();
     const { container } = render(
-      <DialogReply postId="snapshot-post-id" open={true} onOpenChangeAction={onOpenChangeAction} />,
+      <DialogReplyContent postId="snapshot-post-id" open={true} onOpenChangeAction={onOpenChangeAction} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
@@ -251,7 +255,7 @@ describe('DialogReply - Snapshots', () => {
   it('matches snapshot with onOpenChangeAction prop', () => {
     const onOpenChangeAction = vi.fn();
     const { container } = render(
-      <DialogReply postId="snapshot-post-id" open={false} onOpenChangeAction={onOpenChangeAction} />,
+      <DialogReplyContent postId="snapshot-post-id" open={false} onOpenChangeAction={onOpenChangeAction} />,
     );
     expect(container.firstChild).toMatchSnapshot();
   });
