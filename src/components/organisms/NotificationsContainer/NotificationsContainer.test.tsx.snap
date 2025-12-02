@@ -15,7 +15,7 @@ exports[`NotificationsContainer > matches snapshot 1`] = `
      notifications
   </div>
   <div
-    class="h-1"
+    class="h-10"
   />
 </div>
 `;

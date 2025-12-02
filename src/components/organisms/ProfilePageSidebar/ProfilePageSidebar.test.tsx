@@ -31,6 +31,15 @@ vi.mock('@/core', () => ({
   },
 }));
 
+// Mock @/providers
+vi.mock('@/providers', () => ({
+  useProfileContext: vi.fn(() => ({
+    pubky: 'test-pubky-123',
+    isOwnProfile: true,
+    isLoading: false,
+  })),
+}));
+
 // Mock @/hooks
 vi.mock('@/hooks', () => ({
   useCurrentUserProfile: vi.fn(() => ({
@@ -41,6 +50,10 @@ vi.mock('@/hooks', () => ({
     tags: [],
     isLoading: false,
     handleTagToggle: vi.fn(),
+  })),
+  useUserProfile: vi.fn(() => ({
+    profile: { links: null },
+    isLoading: false,
   })),
 }));
 

@@ -24,6 +24,8 @@ export interface UserConnectionData extends Core.NexusUserDetails {
     tags: number;
     posts: number;
   };
+  /** Whether the current user is following this connection */
+  isFollowing?: boolean;
 }
 
 export interface UseProfileConnectionsResult {

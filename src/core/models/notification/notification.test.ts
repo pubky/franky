@@ -1,19 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import { NotificationModel } from './notification';
 import { NotificationType, FlatNotification } from './notification.types';
+import { getNotificationKey } from '@/core/pipes/notification/notification.utils';
 
-// Factory for creating test notifications
-const createNotification = (timestamp: number, type = NotificationType.Follow): FlatNotification =>
-  ({ type, timestamp, followed_by: `user-${timestamp}` }) as FlatNotification;
+// Factory for creating test notifications with unique id
+const createNotification = (timestamp: number, type = NotificationType.Follow): FlatNotification => {
+  const base = { type, timestamp, followed_by: `user-${timestamp}` } as Omit<FlatNotification, 'id'>;
+  return { ...base, id: getNotificationKey(base as FlatNotification) } as FlatNotification;
+};
 
-const createReply = (timestamp: number): FlatNotification =>
-  ({
+const createReply = (timestamp: number): FlatNotification => {
+  const base = {
     type: NotificationType.Reply,
     timestamp,
     replied_by: `user-${timestamp}`,
     parent_post_uri: 'post123',
     reply_uri: 'reply456',
-  }) as FlatNotification;
+  } as Omit<FlatNotification, 'id'>;
+  return { ...base, id: getNotificationKey(base as FlatNotification) } as FlatNotification;
+};
 
 describe('NotificationModel', () => {
   describe('bulkSave', () => {

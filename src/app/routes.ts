@@ -86,3 +86,56 @@ export const AUTHENTICATED_ROUTES = {
 export const HOME_ROUTES = {
   HOME: APP_ROUTES.HOME,
 };
+
+// ============================================================================
+// Profile Route Helpers
+// ============================================================================
+
+/**
+ * Generates a profile route for a specific user.
+ * If no pubky is provided, returns the route for the logged-in user.
+ *
+ * @param route - The base profile route (e.g., PROFILE_ROUTES.FOLLOWERS)
+ * @param pubky - Optional pubky for viewing another user's profile
+ * @returns The full route path
+ *
+ * @example
+ * ```ts
+ * // For logged-in user
+ * getProfileRoute(PROFILE_ROUTES.FOLLOWERS) // => '/profile/followers'
+ *
+ * // For specific user
+ * getProfileRoute(PROFILE_ROUTES.FOLLOWERS, 'pk:abc123') // => '/profile/pk:abc123/followers'
+ * ```
+ */
+export function getProfileRoute(route: PROFILE_ROUTES, pubky?: string): string {
+  if (!pubky) {
+    return route;
+  }
+
+  // Extract the sub-path after /profile
+  const subPath = route.replace('/profile', '');
+
+  // For notifications, always return own profile route (notifications only for logged-in user)
+  if (route === PROFILE_ROUTES.NOTIFICATIONS || route === PROFILE_ROUTES.PROFILE) {
+    // For default profile page on other users, redirect to posts
+    if (subPath === '' || subPath === '/notifications') {
+      return `/profile/${pubky}/posts`;
+    }
+  }
+
+  return `/profile/${pubky}${subPath}`;
+}
+
+/**
+ * Profile route page types for dynamic route generation
+ */
+export const PROFILE_PAGE_PATHS = {
+  posts: '/posts',
+  replies: '/replies',
+  followers: '/followers',
+  following: '/following',
+  friends: '/friends',
+  tagged: '/tagged',
+  profile: '/profile',
+} as const;
