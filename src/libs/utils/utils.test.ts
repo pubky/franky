@@ -15,6 +15,7 @@ import {
   hoursAgo,
   daysAgo,
   formatNotificationTime,
+  extractPubkyPublicKey,
 } from './utils';
 
 describe('Utils', () => {
@@ -923,6 +924,137 @@ describe('Utils', () => {
 
         const timestamp = now - 7 * 24 * 60 * 60 * 1000; // exactly 7 days
         expect(formatNotificationTime(timestamp, true)).toBe('7 DAYS AGO');
+      });
+    });
+  });
+
+  describe('extractPubkyPublicKey', () => {
+    const validKey = 'o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7dy';
+
+    describe('with "pk:" prefix', () => {
+      it('should extract valid 52-character lowercase alphanumeric key', () => {
+        const result = extractPubkyPublicKey(`pk:${validKey}`);
+        expect(result).toBe(validKey);
+      });
+
+      it('should return null for key shorter than 52 characters', () => {
+        const result = extractPubkyPublicKey('pk:o1gg96ewuojmopcjbz8895478wdtxt');
+        expect(result).toBeNull();
+      });
+
+      it('should return null for key longer than 52 characters', () => {
+        const result = extractPubkyPublicKey(`pk:${validKey}extra`);
+        expect(result).toBeNull();
+      });
+
+      it('should return null for key with uppercase characters', () => {
+        const result = extractPubkyPublicKey('pk:O1GG96EWUOJMOPCJBZ8895478WDTXTZZBER7AEZQ6ROR5A91J7DY');
+        expect(result).toBeNull();
+      });
+
+      it('should return null for key with special characters', () => {
+        const result = extractPubkyPublicKey('pk:o1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7d!');
+        expect(result).toBeNull();
+      });
+
+      it('should return null for empty key after prefix', () => {
+        const result = extractPubkyPublicKey('pk:');
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('with "pubky" prefix', () => {
+      it('should extract valid 52-character lowercase alphanumeric key', () => {
+        const result = extractPubkyPublicKey(`pubky${validKey}`);
+        expect(result).toBe(validKey);
+      });
+
+      it('should return null for key shorter than 52 characters', () => {
+        const result = extractPubkyPublicKey('pubkyo1gg96ewuojmopcjbz8895478wdtxt');
+        expect(result).toBeNull();
+      });
+
+      it('should return null for key longer than 52 characters', () => {
+        const result = extractPubkyPublicKey(`pubky${validKey}extra`);
+        expect(result).toBeNull();
+      });
+
+      it('should return null for key with uppercase characters', () => {
+        const result = extractPubkyPublicKey('pubkyO1GG96EWUOJMOPCJBZ8895478WDTXTZZBER7AEZQ6ROR5A91J7DY');
+        expect(result).toBeNull();
+      });
+
+      it('should return null for key with special characters', () => {
+        const result = extractPubkyPublicKey('pubkyo1gg96ewuojmopcjbz8895478wdtxtzzber7aezq6ror5a91j7d!');
+        expect(result).toBeNull();
+      });
+
+      it('should return null for empty key after prefix', () => {
+        const result = extractPubkyPublicKey('pubky');
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('invalid inputs', () => {
+      it('should return null for string without valid prefix', () => {
+        expect(extractPubkyPublicKey(validKey)).toBeNull();
+      });
+
+      it('should return null for string with wrong prefix', () => {
+        expect(extractPubkyPublicKey(`key:${validKey}`)).toBeNull();
+      });
+
+      it('should return null for empty string', () => {
+        expect(extractPubkyPublicKey('')).toBeNull();
+      });
+
+      it('should return null for null input', () => {
+        expect(extractPubkyPublicKey(null as unknown as string)).toBeNull();
+      });
+
+      it('should return null for undefined input', () => {
+        expect(extractPubkyPublicKey(undefined as unknown as string)).toBeNull();
+      });
+
+      it('should return null for non-string input', () => {
+        expect(extractPubkyPublicKey(12345 as unknown as string)).toBeNull();
+        expect(extractPubkyPublicKey({} as unknown as string)).toBeNull();
+        expect(extractPubkyPublicKey([] as unknown as string)).toBeNull();
+      });
+
+      it('should return null for string with only whitespace', () => {
+        expect(extractPubkyPublicKey('   ')).toBeNull();
+      });
+
+      it('should return null for pk: prefix with spaces in key', () => {
+        expect(extractPubkyPublicKey('pk:o1gg96ewuojmopcjbz8895478 wdtxtzzber7aezq6ror5a91j7dy')).toBeNull();
+      });
+    });
+
+    describe('edge cases', () => {
+      it('should be case-sensitive for prefix "pk:"', () => {
+        expect(extractPubkyPublicKey(`PK:${validKey}`)).toBeNull();
+        expect(extractPubkyPublicKey(`Pk:${validKey}`)).toBeNull();
+      });
+
+      it('should be case-sensitive for prefix "pubky"', () => {
+        expect(extractPubkyPublicKey(`PUBKY${validKey}`)).toBeNull();
+        expect(extractPubkyPublicKey(`Pubky${validKey}`)).toBeNull();
+      });
+
+      it('should handle key with all zeros', () => {
+        const allZeros = '0000000000000000000000000000000000000000000000000000';
+        expect(extractPubkyPublicKey(`pk:${allZeros}`)).toBe(allZeros);
+      });
+
+      it('should handle key with all letters', () => {
+        const allLetters = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        expect(extractPubkyPublicKey(`pk:${allLetters}`)).toBe(allLetters);
+      });
+
+      it('should handle key with mixed alphanumeric', () => {
+        const mixedKey = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6';
+        expect(extractPubkyPublicKey(`pubky${mixedKey}`)).toBe(mixedKey);
       });
     });
   });
