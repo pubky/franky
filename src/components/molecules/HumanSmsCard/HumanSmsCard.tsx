@@ -36,7 +36,7 @@ export const HumanSmsCard = () => {
               as="p"
               className="text-xs font-medium tracking-[0.1em] whitespace-nowrap text-muted-foreground uppercase"
             >
-              We securely hash your number
+              LESS PRIVATE, BUT EASY
             </Atoms.Typography>
 
             <Atoms.Container className="gap-1 text-secondary-foreground/80">

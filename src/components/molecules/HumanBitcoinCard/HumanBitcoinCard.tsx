@@ -1,9 +1,14 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import { useSatUsdRate } from '@/hooks/useSatUsdRate';
 import * as Libs from '@/libs';
 
+const SAT_PRICE = 1000;
+
 export const HumanBitcoinCard = () => {
+  const { rate } = useSatUsdRate();
+
   return (
     <Atoms.Card
       data-testid="bitcoin-payment-card"
@@ -38,8 +43,8 @@ export const HumanBitcoinCard = () => {
               ₿ 1,000
             </Atoms.Typography>
 
-            <Atoms.Typography as="p" className="text-xs font-medium tracking-[0.1em] text-muted-foreground uppercase">
-              ₿1,000 = $1.00
+            <Atoms.Typography as="p" className="text-xs font-medium tracking-[0.1em] text-muted-foreground">
+              ₿1,000 = {rate && rate.satUsd ? `$${rate.satUsd * SAT_PRICE}` : 'Loading...'}
             </Atoms.Typography>
 
             <Atoms.Container className="gap-1 text-secondary-foreground/80">

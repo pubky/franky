@@ -74,6 +74,8 @@ const envSchema = z.object({
   NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: z.string().default('admin'),
   NEXT_PUBLIC_DEFAULT_HTTP_RELAY: z.string().url().default('https://relay.pubky.app'),
 
+  NEXT_PUBLIC_EXCHANGE_RATE_API: z.url().default('https://api1.blocktank.to/api/fx/rates/btc'),
+
   // Test environment variable (optional)
   VITEST: z.string().optional(),
 
@@ -124,6 +126,7 @@ function parseEnv(): z.infer<typeof envSchema> {
       NEXT_PUBLIC_HOMESERVER_ADMIN_URL: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_URL,
       NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD: process.env.NEXT_PUBLIC_HOMESERVER_ADMIN_PASSWORD,
       NEXT_PUBLIC_DEFAULT_HTTP_RELAY: process.env.NEXT_PUBLIC_DEFAULT_HTTP_RELAY,
+      NEXT_PUBLIC_EXCHANGE_RATE_API: process.env.NEXT_PUBLIC_EXCHANGE_RATE_API,
       VITEST: process.env.VITEST,
       NEXT_PUBLIC_PREVIEW_IMAGE: process.env.NEXT_PUBLIC_PREVIEW_IMAGE,
       NEXT_PUBLIC_DEFAULT_URL: process.env.NEXT_PUBLIC_DEFAULT_URL,
