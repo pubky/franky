@@ -289,8 +289,8 @@ Cypress.Commands.add('saveCopiedPubkyToAlias', (alias: string) => {
       win.focus();
       // requires browser to be in focus
       return win.navigator.clipboard.readText().then((text) => {
-        // assert that pubky was copied to clipboard in correct format
-        expect(text).to.match(/^pk:/);
+        // todo: add format assertion once we use `pubky` prefix
+        //expect(text).to.match(/^pk:/);
         return text;
       });
       // previous 'then' is callback of a promise which doesn't guarantee synchronous execution
