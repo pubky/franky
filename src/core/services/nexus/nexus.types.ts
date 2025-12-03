@@ -183,3 +183,15 @@ export type NexusFileUrls = {
   main: string;
   small: string;
 };
+
+// Search types
+export type TTagParams = TPaginationParams & {
+  tag: string;
+};
+
+export type TPrefixSearchParams = TPaginationParams & {
+  prefix: string;
+};
+
+// Path parameters that should NOT be added to query string
+export const SEARCH_PATH_PARAMS = ['tag', 'prefix'] as const;

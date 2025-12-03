@@ -6,7 +6,20 @@ import * as Libs from '@/libs';
  *
  * Handles fetching user data from Nexus API.
  */
+export type UserSearchType = 'id' | 'name';
+
 export class NexusUserService {
+  /**
+   * Search users by ID or name prefix
+   * @returns Array of user IDs (pubkeys) matching the search prefix
+   */
+  static async search(params: Core.TPrefixSearchParams, by: UserSearchType): Promise<string[]> {
+    const url = by === 'id' ? Core.userApi.searchById(params) : Core.userApi.searchByName(params);
+    const response = await Core.queryNexus<string[]>(url);
+    Libs.Logger.debug(`Users by ${by} fetched successfully`, { count: response?.length ?? 0 });
+    return response || [];
+  }
+
   /**
    * Retrieves user data from Nexus API
    *

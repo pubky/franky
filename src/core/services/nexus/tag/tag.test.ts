@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { tagApi } from './tag.api';
 import { TTagViewParams, TTagHotParams, TTagTaggersParams } from './tag.types';
 import * as Config from '@/config';
@@ -104,12 +104,57 @@ describe('Tag API', () => {
   });
 
   describe('TagApiEndpoint type', () => {
-    it('should have exactly 3 endpoints', () => {
+    it('should have exactly 4 endpoints', () => {
       const endpointKeys = Object.keys(tagApi);
-      expect(endpointKeys).toHaveLength(3);
+      expect(endpointKeys).toHaveLength(4);
       expect(endpointKeys).toContain('view');
       expect(endpointKeys).toContain('hot');
       expect(endpointKeys).toContain('taggers');
+      expect(endpointKeys).toContain('search');
+    });
+  });
+});
+
+describe('NexusTagService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  describe('search', () => {
+    it('should search tags by prefix and return results', async () => {
+      const mockTags = ['developer', 'design', 'devops'];
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockTags);
+
+      const result = await Core.NexusTagService.search({ prefix: 'dev', limit: 10 });
+
+      expect(result).toEqual(mockTags);
+      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/tags/by_prefix/dev'));
+    });
+
+    it('should return empty array when no tags found', async () => {
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+
+      const result = await Core.NexusTagService.search({ prefix: 'nonexistent' });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should encode special characters in prefix', async () => {
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      await Core.NexusTagService.search({ prefix: 'rust & wasm' });
+
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/v0/search/tags/by_prefix/rust%20%26%20wasm'),
+      );
+    });
+
+    it('should include pagination parameters in URL', async () => {
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+
+      await Core.NexusTagService.search({ prefix: 'test', skip: 10, limit: 20 });
+
+      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringMatching(/skip=10.*limit=20|limit=20.*skip=10/));
     });
   });
 });

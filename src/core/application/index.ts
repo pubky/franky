@@ -10,4 +10,3 @@ export * from './file';
 export * from './bookmark';
 export * from './feed';
 export * from './notification';
-export * from './search';

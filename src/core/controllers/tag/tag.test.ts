@@ -198,3 +198,34 @@ describe('TagController', () => {
     });
   });
 });
+
+// Search tests are separate because they use simple mocking without database setup
+describe('TagController.search', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should delegate to TagApplication.search', async () => {
+    const mockTags = ['developer', 'design', 'devops'];
+    const searchSpy = vi.spyOn(Core.TagApplication, 'search').mockResolvedValue(mockTags);
+
+    const result = await Core.TagController.search({ prefix: 'dev', limit: 10 });
+
+    expect(result).toEqual(mockTags);
+    expect(searchSpy).toHaveBeenCalledWith({ prefix: 'dev', limit: 10 });
+  });
+
+  it('should return empty array when no tags found', async () => {
+    vi.spyOn(Core.TagApplication, 'search').mockResolvedValue([]);
+
+    const result = await Core.TagController.search({ prefix: 'nonexistent' });
+
+    expect(result).toEqual([]);
+  });
+
+  it('should propagate errors from application layer', async () => {
+    vi.spyOn(Core.TagApplication, 'search').mockRejectedValue(new Error('Application error'));
+
+    await expect(Core.TagController.search({ prefix: 'test' })).rejects.toThrow('Application error');
+  });
+});

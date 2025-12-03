@@ -131,4 +131,30 @@ describe('Tag Application', () => {
       expect(requestSpy).toHaveBeenCalledOnce();
     });
   });
+
+  describe('search', () => {
+    it('should delegate to NexusTagService.search', async () => {
+      const mockTags = ['developer', 'design', 'devops'];
+      const searchSpy = vi.spyOn(Core.NexusTagService, 'search').mockResolvedValue(mockTags);
+
+      const result = await TagApplication.search({ prefix: 'dev', limit: 10 });
+
+      expect(result).toEqual(mockTags);
+      expect(searchSpy).toHaveBeenCalledWith({ prefix: 'dev', limit: 10 });
+    });
+
+    it('should return empty array when no tags found', async () => {
+      vi.spyOn(Core.NexusTagService, 'search').mockResolvedValue([]);
+
+      const result = await TagApplication.search({ prefix: 'nonexistent' });
+
+      expect(result).toEqual([]);
+    });
+
+    it('should propagate errors from service layer', async () => {
+      vi.spyOn(Core.NexusTagService, 'search').mockRejectedValue(new Error('Network error'));
+
+      await expect(TagApplication.search({ prefix: 'test' })).rejects.toThrow('Network error');
+    });
+  });
 });
