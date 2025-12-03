@@ -1,12 +1,9 @@
-import { AnchorHTMLAttributes, ClassAttributes, JSX } from 'react';
-import { ExtraProps } from 'react-markdown';
+import { JSX } from 'react';
+import { RemarkAnchorProps } from '../PostText/PostText.types';
+import { extractTextFromChildren } from '../PostText/PostText.utils';
 import * as Libs from '@/libs';
 import * as Icons from '@/libs/icons';
 import * as Atoms from '@/atoms';
-
-type PostHashtagsProps = ClassAttributes<HTMLAnchorElement> &
-  AnchorHTMLAttributes<HTMLAnchorElement> &
-  ExtraProps & { 'data-type'?: string };
 
 type TagIcons = {
   [key: string]: JSX.Element | undefined;
@@ -21,16 +18,10 @@ const tagIcons: TagIcons = {
   '#bitcoin': <Icons.BTCIcon size={24} />,
 };
 
-export const PostHashtags = (props: PostHashtagsProps) => {
+export const PostHashtags = (props: RemarkAnchorProps) => {
   const { href, children, className, node: _node, ref: _ref, ...rest } = props;
 
-  // Extract text safely - children from remark is typically a text node
-  const hashtagText =
-    typeof children === 'string'
-      ? children
-      : Array.isArray(children) && typeof children[0] === 'string'
-        ? children[0]
-        : '';
+  const hashtagText = extractTextFromChildren(children);
 
   const Icon = tagIcons[hashtagText.toLowerCase()] || null;
 

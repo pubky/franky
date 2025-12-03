@@ -32,12 +32,6 @@ export interface TLoginWithAuthUrlParams {
   publicKey: PublicKey;
 }
 
-export interface TBootstrapResponseParams {
-  authStore: Core.AuthStore;
-  bootstrapResponse: { notification: Core.NotificationState; filesUris: string[] };
-}
-
 export interface TBootstrapResponse {
   notification: Core.NotificationState;
-  filesUris: string[];
 }

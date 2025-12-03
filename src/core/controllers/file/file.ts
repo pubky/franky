@@ -38,16 +38,16 @@ export class FileController {
   }
 
   /**
-   * Gets the CDN URL for an image file with a specific variant.
+   * Gets the CDN URL for a file with a specific variant.
    *
-   * @param params - Parameters for image URL
+   * @param params - Parameters for file URL
    * @param params.pubky - User's public key
    * @param params.fileId - File identifier
-   * @param params.variant - Image variant (small, feed, main)
+   * @param params.variant - File variant (small, feed, main)
    * @returns CDN URL string
    */
-  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
-    return Core.FileApplication.getImageUrl({ fileId, variant });
+  static getFileUrl({ fileId, variant }: Core.TGetFileUrlParams): string {
+    return Core.FileApplication.getFileUrl({ fileId, variant });
   }
 
   /**

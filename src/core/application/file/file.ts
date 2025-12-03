@@ -69,9 +69,9 @@ export class FileApplication {
     return Core.filesApi.getAvatarUrl(pubky);
   }
 
-  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
+  static getFileUrl({ fileId, variant }: Core.TGetFileUrlParams): string {
     const { pubky, id } = Core.parseCompositeId(fileId);
-    return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
+    return Core.filesApi.getFileUrl({ pubky, file_id: id, variant });
   }
 
   /**
@@ -82,6 +82,23 @@ export class FileApplication {
    * @returns Promise that resolves when files are persisted
    */
   static async persistFiles(fileUris: string[]) {
-    return Core.persistFilesFromUris(fileUris);
+    if (fileUris.length === 0) {
+      return;
+    }
+
+    const nexusFiles = await Core.NexusFileService.fetchFiles(fileUris);
+    const filesWithCompositeIds = nexusFiles.map((file) => {
+      const compositeId = Core.buildCompositeIdFromPubkyUri({
+        uri: file.uri,
+        domain: Core.CompositeIdDomain.FILES,
+      });
+      return {
+        ...file,
+        urls: JSON.parse(file.urls as unknown as string) as Core.NexusFileUrls,
+        id: compositeId,
+      };
+    });
+
+    await Core.LocalFileService.persistFiles({ files: filesWithCompositeIds as Core.NexusFileDetails[] });
   }
 }

@@ -43,10 +43,11 @@ export class BootstrapApplication {
       Core.LocalNotificationService.persistAndGetUnreadCount(notificationList, lastRead),
     ]);
 
-    const filesUris = results[1].postAttachments;
+    // TODO: That data in the future will should come from the bootstrap data and we will persist directly in the Promise.all call
+    await Core.FileApplication.persistFiles(results[1].postAttachments);
     const unread = results[results.length - 1] as number;
 
-    return { notification: { unread, lastRead }, filesUris };
+    return { notification: { unread, lastRead } };
   }
 
   /**
@@ -100,7 +101,7 @@ export class BootstrapApplication {
   static async initializeWithRetry(params: Core.TBootstrapParams): Promise<Core.TBootstrapResponse> {
     let success = false;
     let retries = 0;
-    let notificationState: Core.TBootstrapResponse = { notification: Core.notificationInitialState, filesUris: [] };
+    let notificationState: Core.TBootstrapResponse = { notification: Core.notificationInitialState };
     while (!success && retries < 3) {
       try {
         // Wait 5 seconds before each attempt to let Nexus index the user
