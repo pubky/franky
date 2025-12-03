@@ -52,12 +52,12 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
 
   return (
     <Atoms.Container className="relative rounded-md border border-dashed border-input p-6">
-      <Atoms.PostReplyConnector />
+      <Atoms.DialogPostReplyThreadConnector />
       <Atoms.Container className="gap-4">
         {currentUserPubky && (
           <Organisms.PostHeader
             postId={currentUserPubky}
-            hideTime={true}
+            isReplyInput={true}
             characterCount={replyContent.length}
             maxLength={MAX_CHARACTER_LENGTH}
           />

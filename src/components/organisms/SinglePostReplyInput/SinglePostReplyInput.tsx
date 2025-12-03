@@ -16,13 +16,13 @@ export function SinglePostReplyInput({ postId, onSuccess }: PostReplyInputProps)
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleReplySubmit();
+      void handleReplySubmit();
     }
   };
 
   return (
     <div className="flex gap-4">
-      <div className="w-8 flex-shrink-0">
+      <div className="w-8 shrink-0">
         <Atoms.ReplyLine height={containerHeight} isLast={true} />
       </div>
       <div ref={containerRef} className="flex-1">

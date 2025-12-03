@@ -1,35 +1,31 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 
 export interface PostHeaderProps {
   postId: string;
-  hideTime?: boolean;
+  isReplyInput?: boolean;
   characterCount?: number;
   maxLength?: number;
 }
 
-export function PostHeader({ postId, hideTime = false, characterCount, maxLength }: PostHeaderProps) {
-  // Extract userId from postId (format: userId:postId or just userId if hideTime is true)
-  const userId = hideTime ? postId : postId.split(':')[0];
+export function PostHeader({ postId, isReplyInput = false, characterCount, maxLength }: PostHeaderProps) {
+  // Extract userId from postId (format: userId:postId or just userId if isReplyInput is true)
+  const userId = isReplyInput ? postId : postId.split(':')[0];
 
-  // Fetch post details to get indexed_at (only if we need to show time)
-  const postDetails = useLiveQuery(() => {
-    if (hideTime) return null;
-    return Core.PostController.getPostDetails({ compositeId: postId });
-  }, [postId, hideTime]);
+  // When isReplyInput is true, skip fetching the post details since there's no post yet
+  const { postDetails } = Hooks.usePostDetails(isReplyInput ? null : postId);
 
   // Fetch user details for avatar and name
-  const userDetails = useLiveQuery(() => {
-    if (!userId) return null;
-    return Core.UserController.getDetails({ userId });
-  }, [userId]);
+  const { userDetails } = Hooks.useUserDetails(userId);
 
-  // Show loading if user details or post details (when needed) are not available
-  if (!userDetails || (!hideTime && !postDetails)) {
+  // Compute avatar URL from user details (only if the user has an image)
+  const avatarUrl = Hooks.useAvatarUrl(userDetails);
+
+  if (!userDetails || (!isReplyInput && !postDetails)) {
     return (
       <Atoms.Container className="text-muted-foreground" overrideDefaults>
         Loading header...
@@ -37,32 +33,29 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
     );
   }
 
-  const timeAgo = !hideTime && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
+  const timeAgo = !isReplyInput && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
     <Atoms.Container className="flex justify-between" overrideDefaults>
       <Atoms.Container className="flex gap-3" overrideDefaults>
-        <Atoms.Avatar size="default">
-          <Atoms.AvatarImage src={Core.FileController.getAvatarUrl(userId)} />
-          <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
-        </Atoms.Avatar>
-        <Atoms.Container className="flex flex-col" overrideDefaults>
-          <Atoms.Typography as="span" size="sm" className="text-base font-bold text-foreground">
+        <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails.name || ''} size="default" />
+        <Atoms.Container>
+          <Atoms.Typography as="span" className="text-base font-bold text-foreground" overrideDefaults>
             {userDetails.name}
           </Atoms.Typography>
           <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
             <Atoms.Typography
               as="span"
-              size="sm"
               className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+              overrideDefaults
             >
               @{Libs.formatPublicKey({ key: userId, length: 8 })}
             </Atoms.Typography>
             {characterCount !== undefined && maxLength !== undefined && (
               <Atoms.Typography
                 as="span"
-                size="sm"
-                className="flex-shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+                className="shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+                overrideDefaults
               >
                 {characterCount}/{maxLength}
               </Atoms.Typography>
@@ -75,8 +68,8 @@ export function PostHeader({ postId, hideTime = false, characterCount, maxLength
           <Libs.Clock className="size-4 text-muted-foreground" />
           <Atoms.Typography
             as="span"
-            size="sm"
             className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+            overrideDefaults
           >
             {timeAgo}
           </Atoms.Typography>

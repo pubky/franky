@@ -1,18 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostHeader } from './PostHeader';
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
+import * as Hooks from '@/hooks';
 import * as Libs from '@/libs';
+import * as Core from '@/core';
 
-vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn(),
-}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    usePostDetails: vi.fn(),
+    useUserDetails: vi.fn(),
+    useAvatarUrl: vi.fn(),
+  };
+});
 
 vi.mock('@/atoms', () => ({
-  Avatar: vi.fn(({ children }) => <div data-testid="avatar">{children}</div>),
-  AvatarImage: vi.fn(() => <img data-testid="avatar-image" alt="" />),
-  AvatarFallback: vi.fn(({ children }) => <div data-testid="avatar-fallback">{children}</div>),
   Container: ({
     children,
     className,
@@ -46,16 +49,13 @@ vi.mock('@/atoms', () => ({
   },
 }));
 
-vi.mock('@/core', () => ({
-  FileController: {
-    getAvatarUrl: vi.fn((userId: string) => `https://example.com/avatar/${userId}.png`),
-  },
-  PostController: {
-    getPostDetails: vi.fn(),
-  },
-  UserController: {
-    getDetails: vi.fn(),
-  },
+vi.mock('@/molecules', () => ({
+  AvatarWithFallback: ({ avatarUrl, name, size }: { avatarUrl?: string; name: string; size?: string }) => (
+    <div data-testid="avatar" data-size={size}>
+      {avatarUrl ? <img data-testid="avatar-image" src={avatarUrl} alt={name} /> : null}
+      <div data-testid="avatar-fallback">{name.substring(0, 2).toUpperCase()}</div>
+    </div>
+  ),
 }));
 
 // Use real libs, only stub cn to a deterministic join (as in Header.test.tsx)
@@ -71,7 +71,9 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-const mockUseLiveQuery = vi.mocked(useLiveQuery);
+const mockUsePostDetails = vi.mocked(Hooks.usePostDetails);
+const mockUseUserDetails = vi.mocked(Hooks.useUserDetails);
+const mockUseAvatarUrl = vi.mocked(Hooks.useAvatarUrl);
 
 describe('PostHeader', () => {
   beforeEach(() => {
@@ -79,10 +81,9 @@ describe('PostHeader', () => {
   });
 
   it('shows loading when details are unavailable', () => {
-    // First call (postDetails) returns null, second (userDetails) returns null
-    mockUseLiveQuery
-      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.PostController.getPostDetails>>)
-      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.UserController.getDetails>>);
+    mockUsePostDetails.mockReturnValue({ postDetails: null, isLoading: false });
+    mockUseUserDetails.mockReturnValue({ userDetails: null, isLoading: false });
+    mockUseAvatarUrl.mockReturnValue(undefined);
 
     const { container } = render(<PostHeader postId="user123:post456" />);
     expect(container.firstChild).toHaveTextContent('Loading header...');
@@ -90,9 +91,15 @@ describe('PostHeader', () => {
 
   it('renders user name, handle and time', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
-    mockUseLiveQuery
-      .mockReturnValueOnce({ indexed_at: '2024-01-01T00:00:00.000Z' })
-      .mockReturnValueOnce({ name: 'Test User' });
+    mockUsePostDetails.mockReturnValue({
+      postDetails: { indexed_at: '2024-01-01T00:00:00.000Z' } as Core.PostDetailsModelSchema,
+      isLoading: false,
+    });
+    mockUseUserDetails.mockReturnValue({
+      userDetails: { id: 'userpubkykey', name: 'Test User', image: 'test-image-id' } as Core.NexusUserDetails,
+      isLoading: false,
+    });
+    mockUseAvatarUrl.mockReturnValue('https://example.com/avatar/userpubkykey.png');
 
     render(<PostHeader postId="userpubkykey:post456" />);
 
@@ -102,13 +109,16 @@ describe('PostHeader', () => {
     timeSpy.mockRestore();
   });
 
-  it('hides time when hideTime is true', () => {
-    // When hideTime is true, postDetails query returns null immediately, then userDetails query returns user data
-    mockUseLiveQuery
-      .mockReturnValueOnce(null) // postDetails query (returns null when hideTime is true)
-      .mockReturnValueOnce({ name: 'Test User' }); // userDetails query
+  it('hides time when isReplyInput is true', () => {
+    // When isReplyInput is true, postDetails is not fetched
+    mockUsePostDetails.mockReturnValue({ postDetails: null, isLoading: false });
+    mockUseUserDetails.mockReturnValue({
+      userDetails: { id: 'userpubkykey', name: 'Test User', image: 'test-image-id' } as Core.NexusUserDetails,
+      isLoading: false,
+    });
+    mockUseAvatarUrl.mockReturnValue('https://example.com/avatar/userpubkykey.png');
 
-    const { container } = render(<PostHeader postId="userpubkykey:post456" hideTime={true} />);
+    const { container } = render(<PostHeader postId="userpubkykey:post456" isReplyInput={true} />);
 
     expect(screen.getByTestId('avatar')).toBeInTheDocument();
     expect(screen.getByText('Test User')).toBeInTheDocument();
@@ -116,12 +126,12 @@ describe('PostHeader', () => {
     expect(container.querySelector('[data-testid="clock-icon"]')).not.toBeInTheDocument();
   });
 
-  it('shows loading when user details are not available and hideTime is true', () => {
-    // When hideTime is true and userDetails is null, should show loading state
-    mockUseLiveQuery.mockReturnValueOnce(null); // postDetails query (returns null when hideTime is true)
-    mockUseLiveQuery.mockReturnValueOnce(null); // userDetails query (returns null)
+  it('shows loading when user details are not available and isReplyInput is true', () => {
+    mockUsePostDetails.mockReturnValue({ postDetails: null, isLoading: false });
+    mockUseUserDetails.mockReturnValue({ userDetails: null, isLoading: false });
+    mockUseAvatarUrl.mockReturnValue(undefined);
 
-    const { container } = render(<PostHeader postId="userpubkykey:post456" hideTime={true} />);
+    const { container } = render(<PostHeader postId="userpubkykey:post456" isReplyInput={true} />);
 
     expect(container.firstChild).toHaveTextContent('Loading header...');
   });
@@ -134,9 +144,19 @@ describe('PostHeader - Snapshots', () => {
 
   it('matches snapshot in loaded state', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
-    mockUseLiveQuery
-      .mockReturnValueOnce({ indexed_at: '2024-01-01T00:00:00.000Z' })
-      .mockReturnValueOnce({ name: 'Snapshot User' });
+    mockUsePostDetails.mockReturnValue({
+      postDetails: { indexed_at: '2024-01-01T00:00:00.000Z' } as Core.PostDetailsModelSchema,
+      isLoading: false,
+    });
+    mockUseUserDetails.mockReturnValue({
+      userDetails: {
+        id: 'snapshotUserKey',
+        name: 'Snapshot User',
+        image: 'snapshot-image-id',
+      } as Core.NexusUserDetails,
+      isLoading: false,
+    });
+    mockUseAvatarUrl.mockReturnValue('https://example.com/avatar/snapshotUserKey.png');
 
     const { container } = render(<PostHeader postId="snapshotUserKey:post789" />);
     expect(container.firstChild).toMatchSnapshot();
@@ -145,9 +165,9 @@ describe('PostHeader - Snapshots', () => {
 
   it('matches snapshot in loading state', () => {
     const timeSpy = vi.spyOn(Libs, 'timeAgo').mockReturnValue('2h');
-    mockUseLiveQuery
-      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.PostController.getPostDetails>>)
-      .mockReturnValueOnce(null as unknown as Awaited<ReturnType<typeof Core.UserController.getDetails>>);
+    mockUsePostDetails.mockReturnValue({ postDetails: null, isLoading: false });
+    mockUseUserDetails.mockReturnValue({ userDetails: null, isLoading: false });
+    mockUseAvatarUrl.mockReturnValue(undefined);
 
     const { container } = render(<PostHeader postId="user123:post456" />);
     expect(container.firstChild).toMatchSnapshot();

@@ -12,11 +12,13 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
     data-testid="container"
   >
     <div
+      data-size="default"
       data-testid="avatar"
     >
       <img
-        alt=""
+        alt="Snapshot User"
         data-testid="avatar-image"
+        src="https://example.com/avatar/snapshotUserKey.png"
       />
       <div
         data-testid="avatar-fallback"
@@ -32,7 +34,6 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       <span
         class="text-base font-bold text-foreground"
         data-as="span"
-        data-size="sm"
         data-testid="typography"
       >
         Snapshot User
@@ -45,7 +46,6 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
         <span
           class="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
           data-as="span"
-          data-size="sm"
           data-testid="typography"
         >
           @
@@ -66,7 +66,6 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
     <span
       class="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
       data-as="span"
-      data-size="sm"
       data-testid="typography"
     >
       2h

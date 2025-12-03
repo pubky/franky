@@ -20,7 +20,7 @@ vi.mock('@/atoms', () => ({
   )),
   AvatarImage: vi.fn(() => <img data-testid="avatar-image" alt="" />),
   AvatarFallback: vi.fn(({ children }) => <div data-testid="avatar-fallback">{children}</div>),
-  PostReplyConnector: vi.fn(() => <div data-testid="post-reply-connector" />),
+  DialogPostReplyThreadConnector: vi.fn(() => <div data-testid="dialog-post-reply-thread-connector" />),
   Textarea: vi.fn(({ value, onChange, onKeyDown, placeholder, className }) => (
     <textarea
       data-testid="textarea"
@@ -118,8 +118,8 @@ vi.mock('../DialogReplyTags', () => ({
 }));
 
 vi.mock('@/organisms', () => ({
-  PostHeader: vi.fn(({ postId, hideTime }) => (
-    <div data-testid="post-header" data-post-id={postId} data-hide-time={hideTime}>
+  PostHeader: vi.fn(({ postId, isReplyInput }) => (
+    <div data-testid="post-header" data-post-id={postId} data-is-reply-input={isReplyInput}>
       PostHeader {postId}
     </div>
   )),
@@ -195,7 +195,7 @@ describe('DialogReplyInput', () => {
     expect(Organisms.PostHeader).toHaveBeenCalledWith(
       {
         postId: 'test-user-id:pubkey',
-        hideTime: true,
+        isReplyInput: true,
         characterCount: 0,
         maxLength: 2000,
       },

@@ -41,7 +41,7 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
           </Atoms.Container>
         )}
         <Atoms.Card ref={cardRef} className={Libs.cn('flex-1 rounded-md py-0', className)}>
-          <Atoms.CardContent className="gap-4 p-6">
+          <Atoms.CardContent className="flex flex-col gap-4 p-6">
             <Organisms.PostHeader postId={postId} />
             <Organisms.PostContent postId={postId} />
             <Atoms.Container onClick={handleFooterClick} className="justify-between gap-2 md:flex-row md:gap-0">

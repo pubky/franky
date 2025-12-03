@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { PostReplyConnector } from './PostReplyConnector';
+import { DialogPostReplyThreadConnector } from './DialogPostReplyThreadConnector';
 
 vi.mock('@/atoms', () => ({
   Container: ({
@@ -26,9 +26,9 @@ vi.mock('@/libs', () => ({
   ),
 }));
 
-describe('PostReplyConnector', () => {
+describe('DialogPostReplyThreadConnector', () => {
   it('renders connector elements', () => {
-    const { container } = render(<PostReplyConnector />);
+    const { container } = render(<DialogPostReplyThreadConnector />);
 
     // Check that the main container is rendered
     const wrapper = container.firstChild;
@@ -38,13 +38,13 @@ describe('PostReplyConnector', () => {
   });
 
   it('renders vertical line with correct styling', () => {
-    const { container } = render(<PostReplyConnector />);
+    const { container } = render(<DialogPostReplyThreadConnector />);
 
     const verticalLine = container.querySelector('.border-l.border-secondary');
     expect(verticalLine).toBeInTheDocument();
     expect(verticalLine).toHaveClass(
       'absolute',
-      'left-[-12px]',
+      '-left-3',
       'top-[-13px]',
       'h-[35px]',
       'w-px',
@@ -54,7 +54,7 @@ describe('PostReplyConnector', () => {
   });
 
   it('renders horizontal connector SVG', () => {
-    const { container } = render(<PostReplyConnector />);
+    const { container } = render(<DialogPostReplyThreadConnector />);
 
     const svg = container.querySelector('svg');
     expect(svg).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe('PostReplyConnector', () => {
   });
 
   it('renders SVG path element', () => {
-    const { container } = render(<PostReplyConnector />);
+    const { container } = render(<DialogPostReplyThreadConnector />);
 
     const path = container.querySelector('path');
     expect(path).toBeInTheDocument();
@@ -74,9 +74,9 @@ describe('PostReplyConnector', () => {
   });
 });
 
-describe('PostReplyConnector - Snapshots', () => {
+describe('DialogPostReplyThreadConnector - Snapshots', () => {
   it('matches snapshot with default props', () => {
-    const { container } = render(<PostReplyConnector />);
+    const { container } = render(<DialogPostReplyThreadConnector />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

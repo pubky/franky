@@ -9,17 +9,17 @@ export interface PostTagInputProps {
   placeholder?: string;
   /** Show emoji picker button */
   showEmojiPicker?: boolean;
-  /** Callback when input value changes */
+  /** Callback when the input value changes */
   onChange?: (value: string) => void;
   /** Callback when Enter is pressed */
   onSubmit?: (value: string) => void;
   /** Callback when input loses focus */
   onBlur?: () => void;
-  /** Callback when emoji picker is clicked */
+  /** Callback when the emoji picker is clicked */
   onEmojiClick?: () => void;
   /** Additional className */
   className?: string;
-  /** Auto focus on mount */
+  /** Autofocus on mount */
   autoFocus?: boolean;
 }
 

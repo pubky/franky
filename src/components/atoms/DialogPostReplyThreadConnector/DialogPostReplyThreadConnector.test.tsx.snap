@@ -1,17 +1,17 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`PostReplyConnector - Snapshots > matches snapshot with default props 1`] = `
+exports[`DialogPostReplyThreadConnector - Snapshots > matches snapshot with default props 1`] = `
 <div
   data-override-defaults="true"
   data-testid="container"
 >
   <div
-    class="absolute top-[-13px] left-[-12px] h-[35px] w-px border-l border-secondary"
+    class="absolute top-[-13px] -left-3 h-[35px] w-px border-l border-secondary"
     data-override-defaults="true"
     data-testid="container"
   />
   <div
-    class="absolute top-[22px] left-[-12px]"
+    class="absolute top-[22px] -left-3"
     data-override-defaults="true"
     data-testid="container"
   >
