@@ -69,9 +69,9 @@ export class FileApplication {
     return Core.filesApi.getAvatarUrl(pubky);
   }
 
-  static getImageUrl({ fileId, variant }: Core.TGetImageUrlParams): string {
+  static getFileUrl({ fileId, variant }: Core.TGetFileUrlParams): string {
     const { pubky, id } = Core.parseCompositeId(fileId);
-    return Core.filesApi.getImageUrl({ pubky, file_id: id, variant });
+    return Core.filesApi.getFileUrl({ pubky, file_id: id, variant });
   }
 
   /**

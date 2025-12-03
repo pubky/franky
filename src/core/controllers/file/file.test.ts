@@ -12,7 +12,7 @@ const mockFileNormalizer = {
 const mockFileApplication = {
   upload: vi.fn(),
   getAvatarUrl: vi.fn(),
-  getImageUrl: vi.fn(),
+  getFileUrl: vi.fn(),
   getMetadata: vi.fn(),
 };
 
@@ -81,7 +81,7 @@ describe('FileController', () => {
     mockFileNormalizer.toFileAttachment.mockReset();
     mockFileApplication.upload.mockReset();
     mockFileApplication.getAvatarUrl.mockReset();
-    mockFileApplication.getImageUrl.mockReset();
+    mockFileApplication.getFileUrl.mockReset();
     mockFileApplication.getMetadata.mockReset();
 
     ({ FileController } = await import('./file'));
@@ -153,36 +153,36 @@ describe('FileController', () => {
     });
   });
 
-  describe('getImageUrl', () => {
-    it('delegates to FileApplication.getImageUrl with correct parameters', () => {
+  describe('getFileUrl', () => {
+    it('delegates to FileApplication.getFileUrl with correct parameters', () => {
       const fileId = 'user123:file456';
       const variant = FileVariant.SMALL;
       const expectedUrl = 'https://cdn.example.com/files/user123/file456/small';
 
-      mockFileApplication.getImageUrl.mockReturnValue(expectedUrl);
+      mockFileApplication.getFileUrl.mockReturnValue(expectedUrl);
 
-      const result = FileController.getImageUrl({
+      const result = FileController.getFileUrl({
         fileId,
         variant,
       });
 
-      expect(mockFileApplication.getImageUrl).toHaveBeenCalledWith({
+      expect(mockFileApplication.getFileUrl).toHaveBeenCalledWith({
         fileId,
         variant,
       });
       expect(result).toBe(expectedUrl);
     });
 
-    it('propagates errors when FileApplication.getImageUrl fails (e.g., invalid fileId)', () => {
+    it('propagates errors when FileApplication.getFileUrl fails (e.g., invalid fileId)', () => {
       const invalidFileId = 'invalid-file-id';
       const variant = FileVariant.SMALL;
       const error = new Error('Invalid composite id: invalid-file-id');
 
-      mockFileApplication.getImageUrl.mockImplementation(() => {
+      mockFileApplication.getFileUrl.mockImplementation(() => {
         throw error;
       });
 
-      expect(() => FileController.getImageUrl({ fileId: invalidFileId, variant })).toThrow(
+      expect(() => FileController.getFileUrl({ fileId: invalidFileId, variant })).toThrow(
         'Invalid composite id: invalid-file-id',
       );
     });
