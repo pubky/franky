@@ -9,12 +9,9 @@ interface HumanSmsCardProps {
 
 export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
   return (
-    <Atoms.Card
-      data-testid="sms-verification-card"
-      className="gap-0 rounded-3xl border border-border/60 bg-card/95 p-6 text-card-foreground shadow-sm md:p-12"
-    >
+    <Atoms.Card data-testid="sms-verification-card" className="gap-0 p-6 md:p-12">
       <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-center">
-        <Atoms.Container className="flex h-full w-full flex-1 items-center lg:w-auto">
+        <Atoms.Container className="flex hidden h-full w-full flex-1 items-center lg:block lg:w-auto">
           <Atoms.Image
             priority={true}
             src="/images/sms-verification-phone.png"
@@ -32,7 +29,7 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
               SMS Verification
             </Atoms.Typography>
 
-            <Atoms.Typography as="p" className="text-6xl leading-none font-semibold text-brand">
+            <Atoms.Typography as="p" className="text-5xl leading-none font-semibold text-brand lg:text-6xl">
               Free
             </Atoms.Typography>
 

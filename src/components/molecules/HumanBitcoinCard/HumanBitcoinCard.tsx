@@ -15,12 +15,9 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
   const { rate } = useSatUsdRate();
 
   return (
-    <Atoms.Card
-      data-testid="bitcoin-payment-card"
-      className="gap-0 rounded-3xl border border-border/60 bg-card/95 p-6 text-card-foreground shadow-sm md:p-12"
-    >
+    <Atoms.Card data-testid="bitcoin-payment-card" className="gap-0 p-6 md:p-12">
       <Atoms.Container className="flex-col gap-10 lg:flex-row lg:items-start">
-        <Atoms.Container className="w-full flex-1 flex-col items-center gap-3 lg:w-auto">
+        <Atoms.Container className="hidden w-full flex-1 flex-col items-center gap-3 lg:block lg:w-auto">
           <Atoms.Image
             priority={true}
             src="/images/bitcoin-payment.png"
@@ -44,7 +41,10 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
               Bitcoin Payment
             </Atoms.Typography>
 
-            <Atoms.Typography as="p" className="text-6xl leading-none font-semibold whitespace-nowrap text-brand">
+            <Atoms.Typography
+              as="p"
+              className="text-5xl leading-none font-semibold whitespace-nowrap text-brand lg:text-6xl"
+            >
               ₿ 1,000
             </Atoms.Typography>
 

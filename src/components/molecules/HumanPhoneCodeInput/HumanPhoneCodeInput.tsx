@@ -111,10 +111,10 @@ export const HumanPhoneCodeInput = ({ value, onChange, onEnter = () => {} }: Hum
           overrideDefaults={true}
           data-testid={`human-phone-code-input-${index}`}
           className={Libs.cn(
-            'rounded-md border border-dashed border-brand bg-[rgba(5,5,10,0.1)]',
+            'rounded-md border border-dashed border-brand',
             'px-2 py-4 shadow-xs',
             'flex items-center justify-center',
-            'w-[50px] flex-shrink-0 flex-grow-0',
+            'w-[33px] flex-shrink-0 flex-grow-0 md:w-[50px]',
           )}
         >
           <Atoms.Input

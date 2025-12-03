@@ -59,13 +59,10 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
       </Atoms.PageHeader>
 
       {/* Verification code card */}
-      <Atoms.Card
-        data-testid="human-phone-code-card"
-        className="mt-6 gap-0 rounded-md border border-border/60 bg-card p-12 text-card-foreground shadow-sm"
-      >
+      <Atoms.Card data-testid="human-phone-code-card" className="gap-0 p-6 lg:p-12">
         <Atoms.Container className="flex-col gap-12 lg:flex-row lg:items-start">
           {/* Phone image */}
-          <Atoms.Container className="flex h-full w-full items-center lg:w-auto">
+          <Atoms.Container className="flex hidden h-full w-full items-center lg:block lg:w-auto">
             <Atoms.Image
               priority={true}
               src="/images/sms-verification-phone.png"
@@ -104,8 +101,8 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           variant="secondary"
           onClick={onBack}
         >
-          <Libs.ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          <Libs.RefreshCcw className="mr-2 h-4 w-4" />
+          Resend Code
         </Atoms.Button>
         <Atoms.Button
           id="human-phone-send-code-btn"

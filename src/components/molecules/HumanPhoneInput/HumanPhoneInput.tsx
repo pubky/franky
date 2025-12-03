@@ -32,12 +32,9 @@ export const HumanPhoneInput = ({
   onEnter,
 }: HumanPhoneInputProps) => {
   return (
-    <Atoms.Card
-      data-testid="human-phone-input-card"
-      className="gap-0 rounded-3xl border border-border/60 bg-card/95 p-6 text-card-foreground shadow-sm md:p-10 lg:p-12"
-    >
+    <Atoms.Card data-testid="human-phone-input-card" className="gap-0 p-6 lg:p-12">
       <Atoms.Container className="flex-col gap-8 lg:flex-row lg:items-center">
-        <Atoms.Container className="flex h-full w-full flex-1 items-center lg:w-auto">
+        <Atoms.Container className="flex hidden h-full w-full flex-1 items-center lg:block lg:w-auto">
           <Atoms.Image
             priority={true}
             src="/images/sms-verification-phone.png"
@@ -60,7 +57,7 @@ export const HumanPhoneInput = ({
           <Atoms.Container className="gap-2">
             <Atoms.Container
               data-testid="human-phone-input-wrapper"
-              className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand bg-[rgba(5,5,10,0.1)] px-5 py-2 shadow-xs-dark"
+              className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand px-5 py-2 shadow-xs-dark"
             >
               <Atoms.Input
                 data-testid="human-phone-input"
