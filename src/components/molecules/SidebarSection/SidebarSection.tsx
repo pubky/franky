@@ -19,6 +19,7 @@ export function SidebarSection({
   footerIcon,
   footerText,
   onFooterClick,
+  footerTestId,
   className,
   'data-testid': dataTestId,
 }: SidebarSectionProps) {
@@ -52,7 +53,7 @@ export function SidebarSection({
 
       {/* Footer */}
       {footerIcon && footerText && (
-        <Atoms.SidebarButton icon={footerIcon} onClick={onFooterClick}>
+        <Atoms.SidebarButton icon={footerIcon} onClick={onFooterClick} data-testid={footerTestId}>
           {footerText}
         </Atoms.SidebarButton>
       )}

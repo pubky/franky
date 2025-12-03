@@ -17,6 +17,8 @@ export interface SidebarSectionProps {
   footerText?: string;
   /** Callback for footer button */
   onFooterClick?: () => void;
+  /** Test ID for footer button */
+  footerTestId?: string;
   /** Custom className */
   className?: string;
   /** Test ID */

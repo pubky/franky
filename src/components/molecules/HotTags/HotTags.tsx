@@ -36,6 +36,7 @@ export function HotTags({ tags, onTagClick, onAddTag, onSeeAll, maxTags = 5, cla
       footerIcon={Libs.Tag}
       footerText="Explore all"
       onFooterClick={onSeeAll}
+      footerTestId="see-all-button"
       className={className}
       data-testid="hot-tags"
     >

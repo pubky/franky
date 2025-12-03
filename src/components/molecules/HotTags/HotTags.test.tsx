@@ -15,7 +15,7 @@ describe('HotTags', () => {
   it('renders the component with title', () => {
     render(<HotTags tags={mockTags} />);
 
-    expect(screen.getByText('Hot Tags')).toBeInTheDocument();
+    expect(screen.getByText('Hot tags')).toBeInTheDocument();
   });
 
   it('renders up to 5 tags by default', () => {
@@ -40,17 +40,18 @@ describe('HotTags', () => {
     expect(screen.queryByText('ethereum')).not.toBeInTheDocument();
   });
 
-  it('shows "Explore all" button when there are more tags than maxTags', () => {
+  it('shows "Explore all" button always', () => {
     render(<HotTags tags={mockTags} maxTags={3} />);
 
     expect(screen.getByTestId('see-all-button')).toBeInTheDocument();
     expect(screen.getByText('Explore all')).toBeInTheDocument();
   });
 
-  it('does not show "See all" button when tags are less than or equal to maxTags', () => {
+  it('shows "Explore all" button even when tags are less than or equal to maxTags', () => {
     render(<HotTags tags={mockTags.slice(0, 3)} maxTags={5} />);
 
-    expect(screen.queryByTestId('see-all-button')).not.toBeInTheDocument();
+    // "Explore all" button is always shown
+    expect(screen.getByTestId('see-all-button')).toBeInTheDocument();
   });
 
   it('calls onTagClick when tag is clicked', () => {
@@ -63,7 +64,7 @@ describe('HotTags', () => {
     expect(mockOnTagClick).toHaveBeenCalledWith('bitcoin');
   });
 
-  it('calls onSeeAll when "See all" button is clicked', () => {
+  it('calls onSeeAll when "Explore all" button is clicked', () => {
     const mockOnSeeAll = vi.fn();
     render(<HotTags tags={mockTags} onSeeAll={mockOnSeeAll} />);
 
@@ -92,8 +93,9 @@ describe('HotTags', () => {
   it('handles empty tags array', () => {
     render(<HotTags tags={[]} />);
 
-    expect(screen.getByText('Hot Tags')).toBeInTheDocument();
-    expect(screen.queryByTestId('see-all-button')).not.toBeInTheDocument();
+    expect(screen.getByText('Hot tags')).toBeInTheDocument();
+    // "Explore all" button is always shown
+    expect(screen.getByTestId('see-all-button')).toBeInTheDocument();
   });
 
   it('renders tags with correct data-testid', () => {
