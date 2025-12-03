@@ -46,7 +46,7 @@ vi.mock('@/core', async (importOriginal) => {
     ...actual,
     filesApi: {
       getAvatarUrl: vi.fn(),
-      getImageUrl: vi.fn(),
+      getFileUrl: vi.fn(),
       getFiles: vi.fn(),
     },
     FileDetailsModel: {
@@ -315,20 +315,20 @@ describe('FileApplication', () => {
     });
   });
 
-  describe('getImageUrl', () => {
-    it('parses composite ID and delegates to filesApi.getImageUrl', () => {
+  describe('getFileUrl', () => {
+    it('parses composite ID and delegates to filesApi.getFileUrl', () => {
       const fileId = 'file-123';
       const compositeId = Core.buildCompositeId({ pubky: TEST_PUBKY, id: fileId });
       const variant = FileVariant.SMALL;
       const expectedUrl = 'https://cdn.example.com/files/encoded-pubky/encoded-file-id/small';
 
       const parseCompositeIdSpy = vi.spyOn(Core, 'parseCompositeId').mockReturnValue({ pubky: TEST_PUBKY, id: fileId });
-      vi.spyOn(Core.filesApi, 'getImageUrl').mockReturnValue(expectedUrl);
+      vi.spyOn(Core.filesApi, 'getFileUrl').mockReturnValue(expectedUrl);
 
-      const result = FileApplication.getImageUrl({ fileId: compositeId, variant });
+      const result = FileApplication.getFileUrl({ fileId: compositeId, variant });
 
       expect(parseCompositeIdSpy).toHaveBeenCalledWith(compositeId);
-      expect(Core.filesApi.getImageUrl).toHaveBeenCalledWith({ pubky: TEST_PUBKY, file_id: fileId, variant });
+      expect(Core.filesApi.getFileUrl).toHaveBeenCalledWith({ pubky: TEST_PUBKY, file_id: fileId, variant });
       expect(result).toBe(expectedUrl);
     });
 
@@ -340,10 +340,10 @@ describe('FileApplication', () => {
         throw new Error(`Invalid composite id: ${invalidCompositeId}`);
       });
 
-      expect(() => FileApplication.getImageUrl({ fileId: invalidCompositeId, variant })).toThrow(
+      expect(() => FileApplication.getFileUrl({ fileId: invalidCompositeId, variant })).toThrow(
         `Invalid composite id: ${invalidCompositeId}`,
       );
-      expect(Core.filesApi.getImageUrl).not.toHaveBeenCalled();
+      expect(Core.filesApi.getFileUrl).not.toHaveBeenCalled();
     });
   });
 
