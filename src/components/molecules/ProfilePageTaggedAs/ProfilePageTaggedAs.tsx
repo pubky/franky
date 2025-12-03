@@ -27,7 +27,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
         ) : (
           <>
             {tags.map((tag) => (
-              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} />
+              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} maxTagLength={10} hideAvatars />
             ))}
             {tags.length === 0 && (
               <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">
@@ -46,7 +46,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
       >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">
-          Add Tag
+          Tag {pubky ? 'User' : 'Yourself'}
         </Atoms.Typography>
       </Atoms.Button>
     </Atoms.Container>

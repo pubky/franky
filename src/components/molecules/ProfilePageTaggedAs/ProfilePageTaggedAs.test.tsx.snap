@@ -55,7 +55,8 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with empty tags 1`] 
       class="text-foreground text-sm font-bold"
       data-testid="typography"
     >
-      Add Tag
+      Tag 
+      Yourself
     </span>
   </button>
 </div>
@@ -125,7 +126,8 @@ exports[`ProfilePageTaggedAs - Snapshots > matches snapshot with tags 1`] = `
       class="text-foreground text-sm font-bold"
       data-testid="typography"
     >
-      Add Tag
+      Tag 
+      Yourself
     </span>
   </button>
 </div>

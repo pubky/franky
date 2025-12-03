@@ -55,15 +55,21 @@ describe('ProfilePageTaggedAs', () => {
     expect(taggedItems).toHaveLength(defaultTags.length);
   });
 
-  it('renders Add Tag button', () => {
+  it('renders Tag Yourself button when viewing own profile', () => {
     render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} />);
-    const addTagButton = screen.getByText('Add Tag');
+    const addTagButton = screen.getByText(/Tag Yourself/);
     expect(addTagButton).toBeInTheDocument();
   });
 
-  it('Add Tag button has correct styling', () => {
+  it('renders Tag User button when viewing other profile', () => {
+    render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} pubky="pk:abc123" />);
+    const addTagButton = screen.getByText(/Tag User/);
+    expect(addTagButton).toBeInTheDocument();
+  });
+
+  it('Tag button has correct styling', () => {
     render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} />);
-    const addTagButton = screen.getByText('Add Tag').closest('button');
+    const addTagButton = screen.getByText(/Tag Yourself/).closest('button');
     expect(addTagButton).toHaveClass('border', 'border-border', 'bg-foreground/5');
   });
 
