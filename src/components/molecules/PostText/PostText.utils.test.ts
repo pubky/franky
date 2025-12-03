@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { Root, Paragraph, Text, Code, Link } from 'mdast';
-import { remarkPlaintextCodeblock, remarkHashtags } from './PostText.utils';
+import { remarkPlaintextCodeblock, remarkHashtags, remarkMentions, extractTextFromChildren } from './PostText.utils';
 
 // Helper to create a simple paragraph node with text
 const createParagraph = (text: string): Paragraph => ({
@@ -431,6 +431,529 @@ describe('remarkHashtags', () => {
       const links = getLinks(paragraph);
       expect(links[0].url).toBe('/search?tags=example');
       expect(links[0].url).not.toContain('#');
+    });
+  });
+});
+
+// Valid public key for testing (pk: + 52 lowercase alphanumeric chars = 55 total)
+const VALID_PK = 'pk:6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy';
+const VALID_PK_2 = 'pk:abcdefghijklmnopqrstuvwxyz01234567890abcdefghijklmno';
+const VALID_PK_3 = 'pk:zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz1';
+
+// Valid public key with pubky prefix (pubky + 52 lowercase alphanumeric chars = 57 total)
+const VALID_PUBKY = 'pubky6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy';
+const VALID_PUBKY_2 = 'pubkyabcdefghijklmnopqrstuvwxyz01234567890abcdefghijklmno';
+
+// Raw public keys without prefix (52 lowercase alphanumeric chars)
+const RAW_PK = '6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy';
+const RAW_PK_2 = 'abcdefghijklmnopqrstuvwxyz01234567890abcdefghijklmno';
+const RAW_PK_3 = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz1';
+
+describe('remarkMentions', () => {
+  describe('Basic mention detection', () => {
+    it('converts a single mention to a link', () => {
+      const paragraph = createParagraph(VALID_PK);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+      expect(links[0].data?.hProperties).toEqual({ 'data-type': 'mention' });
+      expect((links[0].children[0] as Text).value).toBe(VALID_PK);
+    });
+
+    it('converts mention at start of text', () => {
+      const paragraph = createParagraph(`${VALID_PK} is a user`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+
+    it('converts mention preceded by whitespace', () => {
+      const paragraph = createParagraph(`Check out ${VALID_PK} today`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+
+    it('converts multiple mentions in one paragraph', () => {
+      const paragraph = createParagraph(`${VALID_PK} and ${VALID_PK_2} are friends with ${VALID_PK_3}`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(3);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+      expect(links[1].url).toBe(`/profile/${encodeURIComponent(RAW_PK_2)}`);
+      expect(links[2].url).toBe(`/profile/${encodeURIComponent(RAW_PK_3)}`);
+    });
+
+    it('preserves text before, between, and after mentions', () => {
+      const paragraph = createParagraph(`Hello ${VALID_PK} this is ${VALID_PK_2} right?`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const textNodes = getTextNodes(paragraph);
+      expect(textNodes).toHaveLength(3);
+      expect(textNodes[0].value).toBe('Hello ');
+      expect(textNodes[1].value).toBe(' this is ');
+      expect(textNodes[2].value).toBe(' right?');
+    });
+  });
+
+  describe('Mention pattern validation', () => {
+    it('requires pk: or pubky prefix', () => {
+      const paragraph = createParagraph('6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoy');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('converts pubky prefix mentions to links', () => {
+      const paragraph = createParagraph(VALID_PUBKY);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+      expect((links[0].children[0] as Text).value).toBe(VALID_PUBKY);
+    });
+
+    it('converts multiple pubky prefix mentions', () => {
+      const paragraph = createParagraph(`${VALID_PUBKY} and ${VALID_PUBKY_2}`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(2);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+      expect(links[1].url).toBe(`/profile/${encodeURIComponent(RAW_PK_2)}`);
+    });
+
+    it('handles mixed pk: and pubky prefix mentions', () => {
+      const paragraph = createParagraph(`${VALID_PK} and ${VALID_PUBKY_2}`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(2);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+      expect(links[1].url).toBe(`/profile/${encodeURIComponent(RAW_PK_2)}`);
+    });
+
+    it('requires exactly 52 characters after pk:', () => {
+      // Too short (51 chars after pk:)
+      const paragraph = createParagraph('pk:6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproaho');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('does not match if too long after pk:', () => {
+      // Too long - 53 chars after pk: (the regex should only match exactly 52)
+      const paragraph = createParagraph('pk:6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoyy');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      // Should match the first 55 chars as valid, leaving extra 'y' as text
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe(VALID_PK);
+    });
+
+    it('requires lowercase letters only', () => {
+      // Contains uppercase letter
+      const paragraph = createParagraph('pk:6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehproahoY');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('allows numbers in the key', () => {
+      const paragraph = createParagraph('pk:0123456789012345678901234567890123456789012345678901');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+    });
+
+    it('stops at punctuation after valid mention', () => {
+      const paragraph = createParagraph(`${VALID_PK}, is mentioned`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe(VALID_PK);
+    });
+
+    it('stops at special characters after valid mention', () => {
+      const paragraph = createParagraph(`${VALID_PK}!world`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect((links[0].children[0] as Text).value).toBe(VALID_PK);
+    });
+  });
+
+  describe('False positive prevention', () => {
+    it('does not match pk: not preceded by whitespace', () => {
+      const paragraph = createParagraph(`no${VALID_PK} here`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('does not match pk: in middle of word', () => {
+      const paragraph = createParagraph(`test${VALID_PK} should not match`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('does not process non-text children (preserves existing links)', () => {
+      const existingLink: Link = {
+        type: 'link',
+        url: `https://example.com/${VALID_PK}`,
+        children: [{ type: 'text', value: 'link with pk' } as Text],
+      };
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [
+          { type: 'text', value: 'Check out ' } as Text,
+          existingLink,
+          { type: 'text', value: ' for more' } as Text,
+        ],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      // The existing link should be preserved unchanged
+      expect(paragraph.children).toContain(existingLink);
+      expect(existingLink.url).toBe(`https://example.com/${VALID_PK}`);
+    });
+
+    it('does not match standalone pk: without key', () => {
+      const paragraph = createParagraph('Use pk: for mentions');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+
+    it('does not match pk: with special characters in key', () => {
+      const paragraph = createParagraph('pk:6mfxozzqmb36rc9rgy3rykoyfghfao74n8igt5tf1boehpro_hoy');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('handles empty text', () => {
+      const paragraph = createParagraph('');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      expect(paragraph.children).toHaveLength(1);
+      expect((paragraph.children[0] as Text).value).toBe('');
+    });
+
+    it('handles text with no mentions', () => {
+      const paragraph = createParagraph('Just some regular text without mentions');
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(0);
+      expect((paragraph.children[0] as Text).value).toBe('Just some regular text without mentions');
+    });
+
+    it('handles mention at end of text', () => {
+      const paragraph = createParagraph(`Check out ${VALID_PK}`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+
+    it('handles consecutive mentions', () => {
+      const paragraph = createParagraph(`${VALID_PK} ${VALID_PK_2} ${VALID_PK_3}`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(3);
+    });
+
+    it('handles newlines as whitespace', () => {
+      const paragraph = createParagraph(`line one\n${VALID_PK} on new line`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+
+    it('handles tabs as whitespace', () => {
+      const paragraph = createParagraph(`text\t${VALID_PK} after tab`);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+
+    it('encodes the public key in URL', () => {
+      const paragraph = createParagraph(VALID_PK);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      // The URL should only contain the raw public key (no prefix)
+      expect(links[0].url).toBe(`/profile/${RAW_PK}`);
+      // The URL should NOT contain pk: or pubky prefix
+      expect(links[0].url).not.toContain('pk:');
+      expect(links[0].url).not.toContain('pubky');
+    });
+
+    it('does not modify tree when no paragraphs exist', () => {
+      const codeBlock: Code = { type: 'code', value: VALID_PK };
+      const tree = createRoot([codeBlock]);
+
+      remarkMentions()(tree);
+
+      expect(tree.children).toHaveLength(1);
+      expect(tree.children[0].type).toBe('code');
+    });
+
+    it('handles paragraph with only link children', () => {
+      const existingLink: Link = {
+        type: 'link',
+        url: 'https://example.com',
+        children: [{ type: 'text', value: 'example' } as Text],
+      };
+      const paragraph: Paragraph = {
+        type: 'paragraph',
+        children: [existingLink],
+      };
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      // Should not modify anything
+      expect(paragraph.children).toHaveLength(1);
+      expect(paragraph.children[0]).toBe(existingLink);
+    });
+  });
+
+  describe('Link node structure', () => {
+    it('creates link with correct data-type attribute', () => {
+      const paragraph = createParagraph(VALID_PK);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].data).toEqual({
+        hProperties: {
+          'data-type': 'mention',
+        },
+      });
+    });
+
+    it('creates link with full public key as text', () => {
+      const paragraph = createParagraph(VALID_PK);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].children).toHaveLength(1);
+      expect((links[0].children[0] as Text).type).toBe('text');
+      expect((links[0].children[0] as Text).value).toBe(VALID_PK);
+    });
+
+    it('creates URL with public key only (without prefix)', () => {
+      const paragraph = createParagraph(VALID_PK);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+
+    it('creates URL with public key only for pubky prefix', () => {
+      const paragraph = createParagraph(VALID_PUBKY);
+      const tree = createRoot([paragraph]);
+
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links[0].url).toBe(`/profile/${encodeURIComponent(RAW_PK)}`);
+    });
+  });
+
+  describe('Interaction with hashtags', () => {
+    it('mentions and hashtags do not interfere with each other', () => {
+      const paragraph = createParagraph(`#hello ${VALID_PK} #world`);
+      const tree = createRoot([paragraph]);
+
+      // Apply mentions first
+      remarkMentions()(tree);
+
+      // Mentions should be detected, hashtags should remain as text
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(1);
+      expect(links[0].data?.hProperties).toEqual({ 'data-type': 'mention' });
+    });
+
+    it('both plugins can be applied in sequence', () => {
+      const paragraph = createParagraph(`#hello ${VALID_PK} #world`);
+      const tree = createRoot([paragraph]);
+
+      // Apply both plugins
+      remarkHashtags()(tree);
+      remarkMentions()(tree);
+
+      const links = getLinks(paragraph);
+      expect(links).toHaveLength(3);
+
+      // Check that we have both hashtags and mentions
+      const hashtags = links.filter((l) => l.data?.hProperties?.['data-type'] === 'hashtag');
+      const mentions = links.filter((l) => l.data?.hProperties?.['data-type'] === 'mention');
+
+      expect(hashtags).toHaveLength(2);
+      expect(mentions).toHaveLength(1);
+    });
+  });
+});
+
+describe('extractTextFromChildren', () => {
+  describe('String input', () => {
+    it('returns the string when children is a string', () => {
+      expect(extractTextFromChildren('hello world')).toBe('hello world');
+    });
+
+    it('returns empty string when children is an empty string', () => {
+      expect(extractTextFromChildren('')).toBe('');
+    });
+
+    it('handles strings with special characters', () => {
+      expect(extractTextFromChildren('#hashtag @mention <html>')).toBe('#hashtag @mention <html>');
+    });
+
+    it('handles multiline strings', () => {
+      expect(extractTextFromChildren('line1\nline2\nline3')).toBe('line1\nline2\nline3');
+    });
+  });
+
+  describe('Array input', () => {
+    it('returns first element when array starts with a string', () => {
+      expect(extractTextFromChildren(['first', 'second', 'third'])).toBe('first');
+    });
+
+    it('returns empty string for first element if it is empty', () => {
+      expect(extractTextFromChildren(['', 'second'])).toBe('');
+    });
+
+    it('returns empty string when array is empty', () => {
+      expect(extractTextFromChildren([])).toBe('');
+    });
+
+    it('returns empty string when first element is not a string', () => {
+      expect(extractTextFromChildren([123, 'second'])).toBe('');
+    });
+
+    it('returns empty string when first element is an object', () => {
+      expect(extractTextFromChildren([{ text: 'hello' }, 'second'] as unknown as React.ReactNode)).toBe('');
+    });
+
+    it('returns empty string when first element is null', () => {
+      expect(extractTextFromChildren([null, 'second'])).toBe('');
+    });
+
+    it('returns empty string when first element is undefined', () => {
+      expect(extractTextFromChildren([undefined, 'second'])).toBe('');
+    });
+  });
+
+  describe('Other input types', () => {
+    it('returns empty string for null', () => {
+      expect(extractTextFromChildren(null)).toBe('');
+    });
+
+    it('returns empty string for undefined', () => {
+      expect(extractTextFromChildren(undefined)).toBe('');
+    });
+
+    it('returns empty string for number', () => {
+      expect(extractTextFromChildren(42 as unknown as React.ReactNode)).toBe('');
+    });
+
+    it('returns empty string for boolean', () => {
+      expect(extractTextFromChildren(true as unknown as React.ReactNode)).toBe('');
+    });
+
+    it('returns empty string for object', () => {
+      expect(extractTextFromChildren({ type: 'element' } as unknown as React.ReactNode)).toBe('');
     });
   });
 });

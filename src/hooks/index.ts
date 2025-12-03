@@ -14,6 +14,7 @@ export * from './useRadiogroupKeyboard';
 export * from './useProfileHeader';
 export * from './useProfileNavigation';
 export * from './useUserProfile';
+export * from './useUserDetails';
 export * from './useProfileStats';
 export * from './useProfileActions';
 export * from './useBodyScrollLock';
