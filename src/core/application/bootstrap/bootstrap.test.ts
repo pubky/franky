@@ -240,7 +240,7 @@ describe('BootstrapApplication', () => {
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       assertCommonCalls(mocks, bootstrapData, notifications);
-      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ }, filesUris: [] });
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
     });
 
     it('should throw error when NexusBootstrapService fails', async () => {
@@ -281,7 +281,7 @@ describe('BootstrapApplication', () => {
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
       assertCommonCalls(mocks, bootstrapData, []);
-      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
     });
 
     it('should handle 404 homeserver error gracefully and create new lastRead', async () => {
@@ -342,7 +342,6 @@ describe('BootstrapApplication', () => {
       // Verify result has empty notification list and normalized timestamp
       expect(result).toEqual({
         notification: { unread: 0, lastRead: MOCK_NORMALIZED_TIMESTAMP },
-        filesUris: [],
       });
     });
 
@@ -510,7 +509,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.upsertTagsStream).toHaveBeenCalledWith(Core.TagStreamTypes.TODAY_ALL, bootstrapData.list.hot_tags);
     });
 
-    it('should return filesUris with post attachments from persistPosts result', async () => {
+    it('should persist files from post attachments but not return them', async () => {
       const bootstrapData = createMockBootstrapData();
       const notifications = [createMockNotification()];
       const mockAttachments = [
@@ -527,7 +526,10 @@ describe('BootstrapApplication', () => {
 
       const result = await BootstrapApplication.initialize(getBootstrapParams(TEST_PUBKY));
 
-      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ }, filesUris: mockAttachments });
+      // Verify files were persisted
+      expect(mocks.persistFiles).toHaveBeenCalledWith(mockAttachments);
+      // Verify result doesn't include filesUris
+      expect(result).toEqual({ notification: { unread: 1, lastRead: MOCK_LAST_READ } });
     });
   });
 
@@ -612,7 +614,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.loggerInfo).toHaveBeenCalledWith('Waiting 5 seconds before bootstrap attempt 1...');
       expect(mocks.nexusFetch).toHaveBeenCalledWith(TEST_PUBKY);
       expect(mocks.persistUsers).toHaveBeenCalledWith(emptyBootstrap().users);
-      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
       expect(mocks.loggerError).not.toHaveBeenCalled();
     });
 
@@ -630,7 +632,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.nexusFetch).toHaveBeenCalledTimes(2);
       expect(mocks.homeserverRequest).toHaveBeenCalledTimes(2);
       expect(mocks.nexusNotifications).toHaveBeenCalledTimes(2);
-      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
     });
 
     it('should retry up to 3 times and throw error if all attempts fail', async () => {
@@ -670,7 +672,7 @@ describe('BootstrapApplication', () => {
       expect(mocks.nexusFetch).toHaveBeenCalledTimes(3);
       expect(mocks.homeserverRequest).toHaveBeenCalledTimes(3);
       expect(mocks.nexusNotifications).toHaveBeenCalledTimes(3);
-      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ }, filesUris: [] });
+      expect(result).toEqual({ notification: { unread: 0, lastRead: MOCK_LAST_READ } });
     });
   });
 });
