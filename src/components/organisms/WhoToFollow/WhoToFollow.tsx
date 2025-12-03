@@ -12,18 +12,18 @@ import type { WhoToFollowProps } from './WhoToFollow.types';
  * WhoToFollow
  *
  * Sidebar section showing recommended users to follow.
- * Uses SidebarSection and SidebarUserItem for consistent layout.
+ * Uses SidebarSection and UserListItem for consistent layout.
  *
  * Note: This is an Organism because it interacts with Core via hooks (useUserStream, useFollowUser).
  */
 export function WhoToFollow({ className }: WhoToFollowProps) {
   const router = useRouter();
-  const { users } = Hooks.useUserStream({
+  const { users, isLoading: isStreamLoading } = Hooks.useUserStream({
     streamId: Core.UserStreamTypes.RECOMMENDED,
     limit: 3,
     includeRelationships: true,
   });
-  const { toggleFollow, isLoading: isFollowLoading } = Hooks.useFollowUser();
+  const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
   const handleUserClick = (pubky: Core.Pubky) => {
     router.push(`${APP_ROUTES.PROFILE}/${pubky}`);
@@ -48,14 +48,12 @@ export function WhoToFollow({ className }: WhoToFollowProps) {
       data-testid="who-to-follow"
     >
       {users.map((user) => (
-        <Molecules.SidebarUserItem
+        <Molecules.UserListItem
           key={user.id}
-          id={user.id}
-          name={user.name}
-          image={user.image}
-          subtitle={Libs.formatPublicKey({ key: user.id, length: 12 })}
-          isFollowing={user.isFollowing}
-          isLoading={isFollowLoading}
+          user={user}
+          variant="compact"
+          isLoading={isUserLoading(user.id)}
+          isStatusLoading={isStreamLoading}
           onUserClick={handleUserClick}
           onFollowClick={handleFollowClick}
         />

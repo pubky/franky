@@ -85,4 +85,5 @@ export * from './Toaster';
 export * from './WordSlot';
 export * from './User';
 export * from './UserConnectionsList';
+export * from './UserListItem';
 export * from './UsersList';

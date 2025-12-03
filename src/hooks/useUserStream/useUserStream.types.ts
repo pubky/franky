@@ -12,6 +12,8 @@ export interface UserStreamUser {
   name: string;
   bio: string;
   image: string | null;
+  /** Avatar URL computed from user ID (CDN URL), null if user has no avatar */
+  avatarUrl: string | null;
   status: string | null;
   counts?: UserStreamUserCounts;
   /** Whether the current user is following this user */

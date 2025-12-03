@@ -79,12 +79,15 @@ export function useUserStream({
 
       const counts = userCountsMap.get(id);
       const relationship = userRelationshipsMap.get(id);
+      // Only compute CDN avatar URL if user has an image set
+      const avatarUrl = details.image ? Core.FileController.getAvatarUrl(id) : null;
 
       result.push({
         id: details.id,
         name: details.name,
         bio: details.bio,
         image: details.image,
+        avatarUrl,
         status: details.status,
         counts: counts
           ? {
