@@ -51,8 +51,10 @@ vi.mock('@/atoms', () => ({
 // Mock Molecules
 vi.mock('@/molecules', () => ({
   FollowingEmpty: () => <div data-testid="following-empty">No following</div>,
-  UserConnectionsList: ({ connections }: { connections: unknown[] }) => (
-    <div data-testid="user-connections-list">{connections.length} connections</div>
+  UserListItem: ({ user }: { user: { id: string } }) => (
+    <div data-testid="user-list-item" data-user-id={user.id}>
+      User item
+    </div>
   ),
 }));
 
