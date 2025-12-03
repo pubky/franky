@@ -13,15 +13,9 @@ export class NotificationNormalizer {
   }
 
   static toFlatNotification(nexusNotification: Core.NexusNotification): Core.FlatNotification {
-    // Create base notification without id
-    const base = {
+    return {
       timestamp: nexusNotification.timestamp,
       ...nexusNotification.body,
-    } as Omit<Core.FlatNotification, 'id'>;
-
-    // Generate unique id from notification content
-    const id = Core.getNotificationKey(base as Core.FlatNotification);
-
-    return { ...base, id } as Core.FlatNotification;
+    } as Core.FlatNotification;
   }
 }

@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { LastReadResult } from 'pubky-app-specs';
 
 export class NotificationApplication {
   private constructor() {} // Prevent instantiation
@@ -22,17 +23,10 @@ export class NotificationApplication {
    * @param pubky - The user's public key
    * @returns The new lastRead timestamp
    */
-  static markAllAsRead(pubky: Core.Pubky): number {
-    // Create new lastRead with current timestamp using normalizer
-    const lastRead = Core.LastReadNormalizer.to(pubky);
-    const timestamp = Number(lastRead.last_read.timestamp);
-
-    // Update homeserver (fire-and-forget)
-    Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson()).catch(
+  static markAllAsRead({ meta, last_read }: LastReadResult) {
+    Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, last_read.toJson()).catch(
       (error) => Libs.Logger.warn('Failed to update lastRead on homeserver', { error }),
     );
-
-    return timestamp;
   }
 
   /**
@@ -106,9 +100,9 @@ export class NotificationApplication {
       limit: remainingLimit,
     });
 
-    // Combine cached and fetched, ensuring no duplicates by unique key
-    const seenKeys = new Set(cachedNotifications.map((n) => Core.getNotificationKey(n)));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenKeys.has(Core.getNotificationKey(n)));
+    // Combine cached and fetched, ensuring no duplicates by timestamp
+    const seenTimestamps = new Set(cachedNotifications.map((n) => n.timestamp));
+    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenTimestamps.has(n.timestamp));
     const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
 
     return { notifications: combinedNotifications, olderThan: nextOlderThan };
@@ -131,6 +125,7 @@ export class NotificationApplication {
       const nexusNotifications = await Core.NexusUserService.notifications({
         user_id: userId,
         limit,
+        start: olderThan === Infinity ? undefined : olderThan,
       });
 
       if (!nexusNotifications || nexusNotifications.length === 0) {
@@ -153,7 +148,8 @@ export class NotificationApplication {
       // Calculate next olderThan from the oldest notification in this batch
       const nextOlderThan = flatNotifications[flatNotifications.length - 1]?.timestamp;
 
-      return { notifications: flatNotifications, olderThan: nextOlderThan };
+      // Decrement the timestamp. If not we will get duplicated notification. Infinity is used for initial load.
+      return { notifications: flatNotifications, olderThan: nextOlderThan - 1 };
     } catch (error) {
       Libs.Logger.warn('Failed to fetch notifications from Nexus', { userId, olderThan, limit, error });
       return { notifications: [], olderThan: undefined };
