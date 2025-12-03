@@ -4,8 +4,10 @@ import {
   type NexusHotTag,
   type NexusUser,
   type NexusPostsKeyStream,
+  type TPrefixSearchParams,
+  type TTagSearchParams,
+  type TTagHotParams,
 } from '@/core/services/nexus';
-import type { THotTagsParams, TSearchUsersParams, TSearchTagsParams, TSearchPostsParams } from './search.types';
 
 /**
  * Search Application Layer
@@ -18,35 +20,35 @@ export class SearchApplication {
   /**
    * Get hot/trending tags
    */
-  static async hotTags(params: THotTagsParams): Promise<NexusHotTag[]> {
+  static async hotTags(params: TTagHotParams): Promise<NexusHotTag[]> {
     return await NexusHotService.fetch(params);
   }
 
   /**
    * Search users by ID prefix (pubky)
    */
-  static async usersById(params: TSearchUsersParams): Promise<NexusUser[]> {
+  static async usersById(params: TPrefixSearchParams): Promise<NexusUser[]> {
     return await NexusSearchService.usersById(params);
   }
 
   /**
    * Search users by name prefix
    */
-  static async usersByName(params: TSearchUsersParams): Promise<NexusUser[]> {
+  static async usersByName(params: TPrefixSearchParams): Promise<NexusUser[]> {
     return await NexusSearchService.usersByName(params);
   }
 
   /**
    * Search tags by prefix
    */
-  static async tags(params: TSearchTagsParams): Promise<string[]> {
+  static async tags(params: TPrefixSearchParams): Promise<string[]> {
     return await NexusSearchService.tags(params);
   }
 
   /**
    * Search posts by tag
    */
-  static async posts(params: TSearchPostsParams): Promise<NexusPostsKeyStream> {
+  static async posts(params: TTagSearchParams): Promise<NexusPostsKeyStream> {
     return await NexusSearchService.posts(params);
   }
 }

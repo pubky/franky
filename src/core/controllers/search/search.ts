@@ -1,11 +1,12 @@
+import { SearchApplication } from '@/core/application/search';
 import {
-  SearchApplication,
-  type THotTagsParams,
-  type TSearchUsersParams,
-  type TSearchTagsParams,
-  type TSearchPostsParams,
-} from '@/core/application/search';
-import { type NexusHotTag, type NexusUser, type NexusPostsKeyStream } from '@/core/services/nexus';
+  type NexusHotTag,
+  type NexusUser,
+  type NexusPostsKeyStream,
+  type TPrefixSearchParams,
+  type TTagSearchParams,
+  type TTagHotParams,
+} from '@/core/services/nexus';
 import * as Libs from '@/libs';
 import type { TSearchUserResult } from './search.types';
 
@@ -15,14 +16,14 @@ export class SearchController {
   /**
    * Get hot/trending tags
    */
-  static async getHotTags(params: THotTagsParams): Promise<NexusHotTag[]> {
+  static async getHotTags(params: TTagHotParams): Promise<NexusHotTag[]> {
     return await SearchApplication.hotTags(params);
   }
 
   /**
    * Search users by ID prefix (pubky)
    */
-  static async getUsersById(params: TSearchUsersParams): Promise<TSearchUserResult[]> {
+  static async getUsersById(params: TPrefixSearchParams): Promise<TSearchUserResult[]> {
     const users = await SearchApplication.usersById(params);
     return users.map((user) => SearchController.mapNexusUserToSearchResult(user));
   }
@@ -30,7 +31,7 @@ export class SearchController {
   /**
    * Search users by name prefix
    */
-  static async getUsersByName(params: TSearchUsersParams): Promise<TSearchUserResult[]> {
+  static async getUsersByName(params: TPrefixSearchParams): Promise<TSearchUserResult[]> {
     const users = await SearchApplication.usersByName(params);
     return users.map((user) => SearchController.mapNexusUserToSearchResult(user));
   }
@@ -38,14 +39,14 @@ export class SearchController {
   /**
    * Search tags by prefix
    */
-  static async getTags(params: TSearchTagsParams): Promise<string[]> {
+  static async getTags(params: TPrefixSearchParams): Promise<string[]> {
     return await SearchApplication.tags(params);
   }
 
   /**
    * Search posts by tag
    */
-  static async getPosts(params: TSearchPostsParams): Promise<NexusPostsKeyStream> {
+  static async getPosts(params: TTagSearchParams): Promise<NexusPostsKeyStream> {
     return await SearchApplication.posts(params);
   }
 
