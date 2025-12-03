@@ -140,7 +140,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               {status && (
                 <Atoms.Container overrideDefaults={true} className="flex items-center gap-1">
                   <span className="text-base">{displayEmoji}</span>
-                  <Atoms.Typography as="span" size="base" className="font-bold text-foreground">
+                  <Atoms.Typography as="span" className="font-bold text-foreground">
                     {Libs.parseStatus(status).text}
                   </Atoms.Typography>
                 </Atoms.Container>
