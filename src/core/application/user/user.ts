@@ -109,11 +109,6 @@ export class UserApplication {
    * @returns Promise resolving to a Map of user ID to relationship data
    */
   static async bulkRelationships(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
-    const relationships = await Core.UserRelationshipsModel.findByIds(userIds);
-    const map = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-    for (const rel of relationships) {
-      map.set(rel.id, rel);
-    }
-    return map;
+    return await Core.LocalProfileService.bulkRelationships(userIds);
   }
 }
