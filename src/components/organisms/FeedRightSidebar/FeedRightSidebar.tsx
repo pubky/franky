@@ -27,7 +27,7 @@ function HomeFeedContent() {
   };
 
   const handleSeeAllTags = () => {
-    router.push(APP_ROUTES.SEARCH);
+    router.push(APP_ROUTES.HOT);
   };
 
   return (
