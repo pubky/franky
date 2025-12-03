@@ -27,3 +27,4 @@ export * from './usePostNavigation';
 export * from './useProfileConnections';
 export * from './useFollowUser';
 export * from './useIsFollowing';
+export * from './useHotTags';

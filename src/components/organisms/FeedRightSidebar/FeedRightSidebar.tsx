@@ -1,8 +1,38 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
+import * as Hooks from '@/hooks';
+
+// ============================================================================
+// Shared Components
+// ============================================================================
+
+/**
+ * HomeFeedContent
+ *
+ * Shared content for Home feed sidebars - WhoToFollow, ActiveUsers, HotTags, FeedbackCard.
+ * Used by both HomeFeedRightSidebar (desktop) and HomeFeedRightDrawer (tablet).
+ */
+function HomeFeedContent() {
+  const router = useRouter();
+  const { tags } = Hooks.useHotTags();
+
+  const handleTagClick = (tagName: string) => {
+    router.push(`/search?tags=${encodeURIComponent(tagName)}`);
+  };
+
+  return (
+    <>
+      <Molecules.WhoToFollow />
+      <Molecules.ActiveUsers />
+      <Molecules.HotTags tags={tags} onTagClick={handleTagClick} />
+      <Organisms.FeedbackCard />
+    </>
+  );
+}
 
 // ============================================================================
 // Home Feed Right Sidebar Components
@@ -15,23 +45,7 @@ import * as Organisms from '@/organisms';
  * Desktop version.
  */
 export function HomeFeedRightSidebar() {
-  return (
-    <>
-      <Molecules.WhoToFollow />
-      <Molecules.ActiveUsers />
-      <Molecules.HotTags
-        tags={[
-          { name: 'bitcoin', count: 1234 },
-          { name: 'nostr', count: 892 },
-          { name: 'decentralization', count: 567 },
-          { name: 'privacy', count: 445 },
-          { name: 'web3', count: 321 },
-          { name: 'opensource', count: 289 },
-        ]}
-      />
-      <Organisms.FeedbackCard />
-    </>
-  );
+  return <HomeFeedContent />;
 }
 
 /**
@@ -42,19 +56,7 @@ export function HomeFeedRightSidebar() {
 export function HomeFeedRightDrawer() {
   return (
     <div className="flex flex-col gap-6">
-      <Molecules.WhoToFollow />
-      <Molecules.ActiveUsers />
-      <Molecules.HotTags
-        tags={[
-          { name: 'bitcoin', count: 1234 },
-          { name: 'nostr', count: 892 },
-          { name: 'decentralization', count: 567 },
-          { name: 'privacy', count: 445 },
-          { name: 'web3', count: 321 },
-          { name: 'opensource', count: 289 },
-        ]}
-      />
-      <Organisms.FeedbackCard />
+      <HomeFeedContent />
     </div>
   );
 }
