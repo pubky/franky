@@ -1,0 +1,134 @@
+'use client';
+
+import React, { useCallback, useRef } from 'react';
+import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
+
+// Number of digits in the verification code
+const DIGITS = 6;
+
+export interface HumanPhoneCodeInputProps {
+  /**
+   * Current verification code as an array of digits.
+   */
+  value: string[];
+  /**
+   * Callback fired when the code changes.
+   */
+  onChange: (value: string[]) => void;
+
+  /**
+   * Callback fired when the user presses enter and the code is complete.
+   */
+  onEnter?: () => void;
+}
+
+/**
+ * HumanPhoneCodeInput component. Takes a 6 digit verification code and displays it as a grid of input fields.
+ * @param value - The current verification code as an array of digits.
+ * @param onChange - Callback fired when the code changes.
+ * @returns
+ */
+export const HumanPhoneCodeInput = ({ value, onChange, onEnter = () => {} }: HumanPhoneCodeInputProps) => {
+  const isCodeComplete = value.every((digit) => digit !== '') && value.join('').length === DIGITS;
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const handleCodeChange = useCallback(
+    (index: number, digitValue: string) => {
+      // Only allow single digit
+      if (digitValue.length > 1) {
+        return;
+      }
+
+      // Only allow digits
+      if (digitValue && !/^\d$/.test(digitValue)) {
+        return;
+      }
+
+      const newCode = [...value];
+      newCode[index] = digitValue;
+      onChange(newCode);
+
+      // Auto-focus next input if digit entered
+      if (digitValue && index < DIGITS - 1) {
+        inputRefs.current[index + 1]?.focus();
+      }
+    },
+    [value, onChange],
+  );
+
+  const handleKeyDown = useCallback(
+    (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Handle backspace - move focus to previous input when current is empty
+      if (e.key === 'Backspace' && !value[index] && index > 0) {
+        inputRefs.current[index - 1]?.focus();
+      }
+
+      // Handle paste (Ctrl/Cmd + V)
+      if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        navigator.clipboard.readText().then((text) => {
+          const digits = text.replace(/\D/g, '').slice(0, DIGITS).split('');
+          const newCode = [...value];
+
+          digits.forEach((digit, i) => {
+            if (index + i < DIGITS) {
+              newCode[index + i] = digit;
+            }
+          });
+
+          onChange(newCode);
+
+          // Focus the last filled input or the next empty one
+          const lastFilledIndex = Math.min(index + digits.length - 1, DIGITS - 1);
+          const nextEmptyIndex = newCode.findIndex((digit, i) => i > lastFilledIndex && digit === '');
+          const focusIndex = nextEmptyIndex !== -1 ? nextEmptyIndex : lastFilledIndex;
+          inputRefs.current[focusIndex]?.focus();
+        });
+      }
+
+      // Handle enter - if the code is complete, call onEnter
+      if (e.key === 'Enter' && isCodeComplete) {
+        onEnter();
+      }
+    },
+    [value, onChange, onEnter, isCodeComplete],
+  );
+
+  return (
+    <Atoms.Container className={Libs.cn('flex-row flex-wrap gap-3')} data-testid="code-input-container">
+      {value.map((digit, index) => (
+        <Atoms.Container
+          key={index}
+          overrideDefaults={true}
+          data-testid={`human-phone-code-input-${index}`}
+          className={Libs.cn(
+            'rounded-md border border-dashed border-brand bg-[rgba(5,5,10,0.1)]',
+            'px-2 py-4 shadow-xs',
+            'flex items-center justify-center',
+            'w-[50px] flex-shrink-0 flex-grow-0',
+          )}
+        >
+          <Atoms.Input
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
+            id={`human-phone-code-input-${index}-input`}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            value={digit}
+            onChange={(e) => handleCodeChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            className={Libs.cn(
+              'text-center text-base font-medium text-brand',
+              '!h-auto !border-none !bg-transparent !p-0',
+              'focus:ring-0 focus:outline-none',
+            )}
+            data-testid={`code-input-${index}`}
+          />
+        </Atoms.Container>
+      ))}
+    </Atoms.Container>
+  );
+};

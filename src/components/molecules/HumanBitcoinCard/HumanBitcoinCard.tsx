@@ -7,7 +7,11 @@ import React from 'react';
 
 const SAT_PRICE = 1000;
 
-export const HumanBitcoinCard = () => {
+interface HumanBitcoinCardProps {
+  onClick?: () => void;
+}
+
+export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
   const { rate } = useSatUsdRate();
 
   return (
@@ -61,6 +65,7 @@ export const HumanBitcoinCard = () => {
           <Atoms.Button
             variant={Atoms.ButtonVariant.BRAND}
             className="h-12 w-full rounded-full px-5 py-3 text-sm font-semibold text-background sm:w-auto"
+            onClick={onClick}
           >
             <Libs.Wallet className="mr-2 h-4 w-4" />
             Pay Once

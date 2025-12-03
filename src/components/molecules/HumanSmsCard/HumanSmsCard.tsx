@@ -1,17 +1,13 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
-export const HumanSmsCard = () => {
-  const router = useRouter();
+interface HumanSmsCardProps {
+  onClick?: () => void;
+}
 
-  const handleReceiveSmsClick = () => {
-    router.push('/onboarding/human/phone');
-  };
-
+export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
   return (
     <Atoms.Card
       data-testid="sms-verification-card"
@@ -60,7 +56,7 @@ export const HumanSmsCard = () => {
           <Atoms.Button
             variant={Atoms.ButtonVariant.SECONDARY}
             className="h-12 w-full rounded-full px-5 py-3 text-sm font-semibold text-secondary-foreground shadow-xs-dark sm:w-auto"
-            onClick={handleReceiveSmsClick}
+            onClick={onClick}
           >
             <Libs.Smartphone className="mr-2 h-4 w-4" />
             Receive SMS

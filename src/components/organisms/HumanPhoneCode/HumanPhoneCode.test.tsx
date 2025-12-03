@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-import { HumanVerificationCards } from './HumanVerificationCards';
+import { HumanPhoneCode } from './HumanPhoneCode';
 
 vi.mock('@/molecules', async () => {
   const actual = await vi.importActual<Record<string, unknown>>('@/molecules');
@@ -15,14 +15,14 @@ vi.mock('@/molecules', async () => {
 
 describe('HumanVerificationCards', () => {
   it('renders both verification cards', () => {
-    render(<HumanVerificationCards />);
+    render(<HumanPhoneCode phoneNumber="1234567890" onBack={() => {}} onSuccess={() => {}} />);
 
     expect(screen.getByTestId('mock-sms-card')).toBeInTheDocument();
     expect(screen.getByTestId('mock-bitcoin-card')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HumanVerificationCards />);
+    const { container } = render(<HumanPhoneCode phoneNumber="1234567890" onBack={() => {}} onSuccess={() => {}} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

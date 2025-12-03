@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import * as App from '@/app';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
@@ -14,7 +12,7 @@ import React, { useState } from 'react';
  * @returns The parsed phone number if valid, undefined otherwise
  */
 function parsePhoneNumber(phoneNumber: string): PhoneNumber | undefined {
-  const trimmed = phoneNumber.trim().replaceAll(" ", "");
+  const trimmed = phoneNumber.trim().replaceAll(' ', '');
 
   // Check if there are any non-digit characters other than the plus sign
   const regex = /^\+(\d)*$/;
@@ -24,7 +22,6 @@ function parsePhoneNumber(phoneNumber: string): PhoneNumber | undefined {
 
   // Use libphonenumber-js to parse and validate the number
   const parsed = parsePhoneNumberFromString(trimmed);
-
 
   if (!parsed) {
     return;
@@ -37,9 +34,14 @@ function parsePhoneNumber(phoneNumber: string): PhoneNumber | undefined {
   return parsed;
 }
 
-export const HumanPhoneVerification = () => {
-  const router = useRouter();
-  const [phoneNumberInput, setPhoneNumberInput] = useState('');
+interface HumanPhoneInputProps {
+  onBack: () => void;
+  onSendCode: (phoneNumber: string) => void;
+  initialPhoneNumber?: string;
+}
+
+export const HumanPhoneInput = ({ onBack, onSendCode, initialPhoneNumber }: HumanPhoneInputProps) => {
+  const [phoneNumberInput, setPhoneNumberInput] = useState(initialPhoneNumber || '');
 
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhoneNumberInput(e.target.value);
@@ -47,24 +49,22 @@ export const HumanPhoneVerification = () => {
 
   const isValidNumber = !!parsePhoneNumber(phoneNumberInput);
 
-  const handleBack = () => {
-    router.push(App.ONBOARDING_ROUTES.HUMAN);
-  };
-  const handleSendCode = () => {
-    console.log('send code');
-  };
-
   return (
     <React.Fragment>
       <Molecules.HumanPhoneHeader />
-      <Molecules.HumanPhoneInput value={phoneNumberInput} onChange={handlePhoneNumberChange} isValid={isValidNumber} />
-      <Atoms.Container className={Libs.cn('flex-row justify-between gap-3 lg:gap-6 mt-6')}>
+      <Molecules.HumanPhoneInput
+        value={phoneNumberInput}
+        onChange={handlePhoneNumberChange}
+        isValid={isValidNumber}
+        onEnter={() => onSendCode(phoneNumberInput)}
+      />
+      <Atoms.Container className={Libs.cn('mt-6 flex-row justify-between gap-3 lg:gap-6')}>
         <Atoms.Button
           id="human-phone-back-btn"
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="secondary"
-          onClick={handleBack}
+          onClick={onBack}
         >
           <Libs.ArrowLeft className="mr-2 h-4 w-4" />
           Back
@@ -75,7 +75,7 @@ export const HumanPhoneVerification = () => {
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
           disabled={!isValidNumber}
-          onClick={handleSendCode}
+          onClick={() => onSendCode(phoneNumberInput)}
         >
           <Libs.ArrowRight className="mr-2 h-4 w-4" />
           Send Code

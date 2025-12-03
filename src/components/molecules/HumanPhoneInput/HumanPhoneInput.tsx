@@ -1,6 +1,5 @@
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import { parsePhoneNumberFromString } from 'libphonenumber-js/mobile';
 
 export interface HumanPhoneInputProps {
   /**
@@ -21,11 +20,17 @@ export interface HumanPhoneInputProps {
    * Whether to show the validation checkmark.
    */
   isValid?: boolean;
+
+  onEnter?: () => void;
 }
 
-
-export const HumanPhoneInput = ({ value, onChange, placeholder = '+316XXXXXXXX', isValid = false }: HumanPhoneInputProps) => {
-
+export const HumanPhoneInput = ({
+  value,
+  onChange,
+  placeholder = '+316XXXXXXXX',
+  isValid = false,
+  onEnter,
+}: HumanPhoneInputProps) => {
   return (
     <Atoms.Card
       data-testid="human-phone-input-card"
@@ -41,19 +46,13 @@ export const HumanPhoneInput = ({ value, onChange, placeholder = '+316XXXXXXXX',
           />
         </Atoms.Container>
 
-        <Atoms.Container className="w-full flex-3 gap-6 mr-6">
+        <Atoms.Container className="mr-6 w-full flex-3 gap-6">
           <Atoms.Container className="gap-3">
-            <Atoms.Typography
-              as="h3"
-              className="text-2xl leading-[32px] font-semibold text-foreground sm:text-[28px]"
-            >
+            <Atoms.Typography as="h3" className="text-2xl leading-[32px] font-semibold text-foreground sm:text-[28px]">
               Phone number
             </Atoms.Typography>
 
-            <Atoms.Typography
-              as="p"
-              className="text-base leading-6 font-medium text-muted-foreground/80"
-            >
+            <Atoms.Typography as="p" className="text-base leading-6 font-medium text-muted-foreground/80">
               Enter your phone number, including country code (e.g. +1 for US).
             </Atoms.Typography>
           </Atoms.Container>
@@ -61,7 +60,7 @@ export const HumanPhoneInput = ({ value, onChange, placeholder = '+316XXXXXXXX',
           <Atoms.Container className="gap-2">
             <Atoms.Container
               data-testid="human-phone-input-wrapper"
-              className="ml-0 flex flex-row items-center rounded-md border border-dashed border-brand bg-[rgba(5,5,10,0.1)] px-5 py-2 shadow-xs-dark max-w-128"
+              className="ml-0 flex max-w-128 flex-row items-center rounded-md border border-dashed border-brand bg-[rgba(5,5,10,0.1)] px-5 py-2 shadow-xs-dark"
             >
               <Atoms.Input
                 data-testid="human-phone-input"
@@ -69,12 +68,15 @@ export const HumanPhoneInput = ({ value, onChange, placeholder = '+316XXXXXXXX',
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className="border-none bg-transparent text-base font-medium text-brand placeholder:text-brand/50 focus:outline-none focus:ring-0"
+                className="border-none bg-transparent text-base font-medium text-brand placeholder:text-brand/50 focus:ring-0 focus:outline-none"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && isValid) {
+                    onEnter?.();
+                  }
+                }}
               />
 
-              {isValid && (
-                <Libs.CheckCircle2 className="h-6 w-6 shrink-0 text-brand" aria-hidden="true" />
-              )}
+              {isValid && <Libs.CheckCircle2 className="h-6 w-6 shrink-0 text-brand" aria-hidden="true" />}
             </Atoms.Container>
           </Atoms.Container>
         </Atoms.Container>
