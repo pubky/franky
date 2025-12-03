@@ -3,19 +3,26 @@
 import { useMemo } from 'react';
 import * as Atoms from '@/atoms';
 import * as Organisms from '@/organisms';
-import * as Core from '@/core';
 import type { NotificationsListProps } from './NotificationsList.types';
+import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 
 export function NotificationsList({ notifications, unreadNotifications }: NotificationsListProps) {
-  // Create a Set of unread notification keys for O(1) lookup
-  const unreadKeys = useMemo(() => new Set(unreadNotifications.map(Core.getNotificationKey)), [unreadNotifications]);
+
+  // Create a Set of unread notification business keys for O(1) lookup
+  // Early return optimization for empty unread list
+  const unreadKeys = useMemo(() => {
+    if (unreadNotifications.length === 0) return new Set<string>();
+    return new Set(unreadNotifications.map(getBusinessKey));
+  }, [unreadNotifications]);
 
   return (
     <Atoms.Container className="gap-3 rounded-md bg-card p-6">
-      {notifications.map((notification) => {
-        const key = Core.getNotificationKey(notification);
-        const isUnread = unreadKeys.has(key);
-        return <Organisms.NotificationItem key={key} notification={notification} isUnread={isUnread} />;
+      {notifications.map((notification) => {        
+        // Use business key for unread lookup (to match unreadNotifications)
+        const businessKey = getBusinessKey(notification);
+        const isUnread = unreadKeys.has(businessKey);
+        
+        return <Organisms.NotificationItem key={businessKey} notification={notification} isUnread={isUnread} />;
       })}
     </Atoms.Container>
   );

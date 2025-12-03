@@ -1,6 +1,7 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import { LastReadResult } from 'pubky-app-specs';
+import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 
 export class NotificationApplication {
   private constructor() {} // Prevent instantiation
@@ -100,9 +101,9 @@ export class NotificationApplication {
       limit: remainingLimit,
     });
 
-    // Combine cached and fetched, ensuring no duplicates by timestamp
-    const seenTimestamps = new Set(cachedNotifications.map((n) => n.timestamp));
-    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenTimestamps.has(n.timestamp));
+    // Combine cached and fetched, ensuring no duplicates by business key
+    const seenKeys = new Set(cachedNotifications.map((n) => getBusinessKey(n)));
+    const uniqueNexusNotifications = nexusNotifications.filter((n) => !seenKeys.has(getBusinessKey(n)));
     const combinedNotifications = [...cachedNotifications, ...uniqueNexusNotifications];
 
     return { notifications: combinedNotifications, olderThan: nextOlderThan };

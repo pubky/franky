@@ -3,6 +3,7 @@ import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Config from '@/config';
 import { FlatNotification, NotificationType } from './notification.types';
+import { getBusinessKey } from './notification.helpers';
 
 // Primary key: auto-incrementing integer (++id) managed by Dexie
 export class NotificationModel {
@@ -37,7 +38,32 @@ export class NotificationModel {
 
   static async bulkSave(notifications: FlatNotification[]) {
     try {
-      return await this.table.bulkPut(notifications);
+      if (notifications.length === 0) {
+        return [];
+      }
+
+      // Query existing notifications with matching timestamps to check for duplicates
+      const existingNotifications = await this.table
+        .where('timestamp')
+        .anyOf(notifications.map((n) => n.timestamp))
+        .toArray();
+
+      const existingKeys = new Set(existingNotifications.map((n) => getBusinessKey(n)));
+
+      // Filter out duplicates
+      const newNotifications = notifications.filter((n) => !existingKeys.has(getBusinessKey(n)));
+
+      if (newNotifications.length === 0) {
+        console.log(`[NotificationModel.bulkSave] All ${notifications.length} notifications are duplicates, skipping save`);
+        return [];
+      }
+
+      const duplicateCount = notifications.length - newNotifications.length;
+      if (duplicateCount > 0) {
+        console.log(`[NotificationModel.bulkSave] Filtered out ${duplicateCount} duplicates, saving ${newNotifications.length} new notifications`);
+      }
+
+      return await this.table.bulkPut(newNotifications);
     } catch (error) {
       throw Libs.createDatabaseError(
         Libs.DatabaseErrorType.BULK_OPERATION_FAILED,

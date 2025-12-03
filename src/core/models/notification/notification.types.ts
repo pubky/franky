@@ -108,6 +108,4 @@ type FlatFromMap<TMap, Common> = {
  * and common fields (timestamp, type) into a discriminated union.
  * The `id` field is a unique key generated from the notification's type, timestamp, and actor.
  */
-export type FlatNotification = FlatFromMap<NotificationVariantMap, CommonFields> & {
-  id: string;
-};
+export type FlatNotification = FlatFromMap<NotificationVariantMap, CommonFields>;
