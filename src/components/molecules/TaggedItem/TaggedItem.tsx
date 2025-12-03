@@ -35,11 +35,9 @@ export function TaggedItem({ tag, onTagClick, onSearchClick, maxTagLength, hideA
       <Atoms.Tag
         name={displayLabel}
         count={tag.taggers_count}
+        clicked={!!tag.relationship}
         onClick={handleTagClick}
-        className={Libs.cn(
-          'max-w-[160px] cursor-pointer transition-opacity hover:opacity-80',
-          tag.relationship && 'ring-2 ring-brand',
-        )}
+        className="max-w-[160px] cursor-pointer transition-opacity hover:opacity-80"
       />
 
       {/* Search button */}
