@@ -63,6 +63,7 @@ export function ProfileProfile() {
         isLoading={isLoadingTags}
         onTagClick={handleTagToggle}
         pubky={pubky ?? ''}
+        userName={profile?.name}
       />
 
       {/* Links section */}

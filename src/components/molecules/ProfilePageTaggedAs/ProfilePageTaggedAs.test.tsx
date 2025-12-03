@@ -61,9 +61,28 @@ describe('ProfilePageTaggedAs', () => {
     expect(addTagButton).toBeInTheDocument();
   });
 
-  it('renders Tag User button when viewing other profile', () => {
+  it('renders Tag User button when viewing other profile without userName', () => {
     render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} pubky="pk:abc123" />);
     const addTagButton = screen.getByText(/Tag User/);
+    expect(addTagButton).toBeInTheDocument();
+  });
+
+  it('renders Tag with userName when viewing other profile with userName', () => {
+    render(<ProfilePageTaggedAs tags={defaultTags} onTagClick={mockOnTagClick} pubky="pk:abc123" userName="Alice" />);
+    const addTagButton = screen.getByText(/Tag Alice/);
+    expect(addTagButton).toBeInTheDocument();
+  });
+
+  it('renders truncated userName when name is too long', () => {
+    render(
+      <ProfilePageTaggedAs
+        tags={defaultTags}
+        onTagClick={mockOnTagClick}
+        pubky="pk:abc123"
+        userName="SuperLongUserName"
+      />,
+    );
+    const addTagButton = screen.getByText(/Tag SuperLongU\.\.\./);
     expect(addTagButton).toBeInTheDocument();
   });
 
