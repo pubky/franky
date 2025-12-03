@@ -79,6 +79,16 @@ vi.mock('@/molecules', () => ({
         </div>
       ) : null,
   ),
+  PostTag: vi.fn(({ label, showClose, onClose }: { label: string; showClose?: boolean; onClose?: () => void }) => (
+    <div data-testid={`post-tag-${label}`}>
+      {label}
+      {showClose && onClose && (
+        <button data-testid={`post-tag-close-${label}`} onClick={onClose}>
+          ×
+        </button>
+      )}
+    </div>
+  )),
 }));
 
 vi.mock('../DialogReplyActionBar', () => ({

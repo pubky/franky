@@ -5,7 +5,7 @@ exports[`SinglePostReplyInput - Snapshots > matches snapshot with default props 
   class="flex gap-4"
 >
   <div
-    class="w-8 flex-shrink-0"
+    class="w-8 shrink-0"
   >
     <div
       data-height="100"
@@ -32,7 +32,7 @@ exports[`SinglePostReplyInput - Snapshots > matches snapshot with different post
   class="flex gap-4"
 >
   <div
-    class="w-8 flex-shrink-0"
+    class="w-8 shrink-0"
   >
     <div
       data-height="100"
@@ -59,7 +59,7 @@ exports[`SinglePostReplyInput - Snapshots > matches snapshot with empty postId 1
   class="flex gap-4"
 >
   <div
-    class="w-8 flex-shrink-0"
+    class="w-8 shrink-0"
   >
     <div
       data-height="100"

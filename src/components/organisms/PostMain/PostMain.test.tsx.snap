@@ -11,7 +11,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply false 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="gap-4 p-6"
+      data-class-name="flex flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -76,7 +76,7 @@ exports[`PostMain - Snapshots > matches snapshot with isReply true 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="gap-4 p-6"
+      data-class-name="flex flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -128,7 +128,7 @@ exports[`PostMain - Snapshots > matches snapshot with tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="gap-4 p-6"
+      data-class-name="flex flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div
@@ -180,7 +180,7 @@ exports[`PostMain - Snapshots > matches snapshot without tags 1`] = `
     data-testid="card"
   >
     <div
-      data-class-name="gap-4 p-6"
+      data-class-name="flex flex-col gap-4 p-6"
       data-testid="card-content"
     >
       <div

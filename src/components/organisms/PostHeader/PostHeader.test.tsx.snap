@@ -27,8 +27,6 @@ exports[`PostHeader - Snapshots > matches snapshot in loaded state 1`] = `
       </div>
     </div>
     <div
-      class="flex flex-col"
-      data-override-defaults="true"
       data-testid="container"
     >
       <span

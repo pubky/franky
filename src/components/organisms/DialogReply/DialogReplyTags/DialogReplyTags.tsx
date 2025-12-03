@@ -6,23 +6,38 @@ import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import type { DialogReplyTagsProps } from './DialogReplyTags.types';
 
+const MAX_TAGS = 5;
+
 export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
   const [tagInputValue, setTagInputValue] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const tagInputRef = useRef<HTMLInputElement>(null);
 
-  const handleTagAdd = (tag: string) => {
-    const normalizedTag = tag.trim().toLowerCase();
-    const isDuplicate = tags.some((existingTag) => existingTag.toLowerCase() === normalizedTag);
-    if (!isDuplicate && normalizedTag) {
-      onTagsChange([...tags, tag.trim()]);
-      setTagInputValue('');
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTagInputValue(e.target.value);
   };
 
-  const handleTagClose = (index: number) => {
-    onTagsChange(tags.filter((_, i) => i !== index));
+  const handleTagAdd = (tag: string) => {
+    // Validate tag count limit
+    if (tags.length >= MAX_TAGS) {
+      return;
+    }
+
+    const trimmedTag = tag.trim();
+    if (!trimmedTag) {
+      return;
+    }
+
+    // Normalize for duplicate check (case-insensitive)
+    const normalizedTag = trimmedTag.toLowerCase();
+    const isDuplicate = tags.some((existingTag) => existingTag.toLowerCase() === normalizedTag);
+
+    if (!isDuplicate) {
+      // Store tag with original case (trimmed)
+      onTagsChange([...tags, trimmedTag]);
+      setTagInputValue('');
+    }
   };
 
   const handleTagInputSubmit = (value: string) => {
@@ -45,13 +60,18 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
     const end = input.selectionEnd ?? 0;
     const newValue = tagInputValue.slice(0, start) + emoji.native + tagInputValue.slice(end);
 
-    setTagInputValue(newValue);
+    // Use handleInputChange for consistency and to ensure all input changes go through the same path
+    handleInputChange({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
 
-    setTimeout(() => {
-      input.focus();
-      const newCursorPos = start + emoji.native.length;
-      input.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
+    // Use requestAnimationFrame to ensure the state update completes before focusing
+    requestAnimationFrame(() => {
+      // Check if input still exists (component might have unmounted)
+      if (input && tagInputRef.current === input) {
+        input.focus();
+        const newCursorPos = start + emoji.native.length;
+        input.setSelectionRange(newCursorPos, newCursorPos);
+      }
+    });
   };
 
   const handleCloseInput = () => {
@@ -62,16 +82,6 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
   return (
     <>
       <Atoms.Container overrideDefaults className="flex flex-wrap items-center gap-2">
-        {/* Render local tags */}
-        {tags.map((tag, index) => (
-          <Molecules.PostTag
-            key={`${tag}-${index}`}
-            label={tag}
-            showClose={true}
-            onClose={() => handleTagClose(index)}
-          />
-        ))}
-
         {/* Add tag input */}
         {isAddingTag && (
           <Atoms.Container
@@ -83,7 +93,7 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
               type="text"
               value={tagInputValue}
               placeholder="add tag"
-              onChange={(e) => setTagInputValue(e.target.value)}
+              onChange={handleInputChange}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && tagInputValue.trim()) {
                   e.preventDefault();
@@ -132,7 +142,6 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
         open={showEmojiPicker}
         onOpenChange={setShowEmojiPicker}
         onEmojiSelect={handleEmojiSelect}
-        currentInput={tagInputValue}
       />
     </>
   );

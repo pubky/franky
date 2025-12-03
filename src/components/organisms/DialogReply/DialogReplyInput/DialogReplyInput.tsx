@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
@@ -41,7 +41,8 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
     const end = textarea.selectionEnd ?? 0;
     const newValue = replyContent.slice(0, start) + emoji.native + replyContent.slice(end);
 
-    setReplyContent(newValue);
+    // Use handleChange to ensure validation is applied
+    handleChange({ target: { value: newValue } } as React.ChangeEvent<HTMLTextAreaElement>);
 
     setTimeout(() => {
       textarea.focus();
@@ -73,6 +74,21 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
           rows={1}
         />
 
+        {/* Tags row */}
+        {tags.length > 0 && (
+          <Atoms.Container className="flex flex-wrap items-center gap-2" overrideDefaults>
+            {tags.map((tag, index) => (
+              <Molecules.PostTag
+                key={`${tag}-${index}`}
+                label={tag}
+                showClose={true}
+                onClose={() => setTags(tags.filter((_, i) => i !== index))}
+              />
+            ))}
+          </Atoms.Container>
+        )}
+
+        {/* Tag input and action buttons row */}
         <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
           <DialogReplyTags tags={tags} onTagsChange={setTags} />
           <DialogReplyActionBar
@@ -82,13 +98,10 @@ export function DialogReplyInput({ postId, onSuccessAction }: DialogReplyInputPr
           />
         </Atoms.Container>
 
-        {/* Reply Emoji Picker Dialog */}
         <Molecules.EmojiPickerDialog
           open={showReplyEmojiPicker}
           onOpenChange={setShowReplyEmojiPicker}
           onEmojiSelect={handleReplyEmojiSelect}
-          currentInput={replyContent}
-          maxLength={MAX_CHARACTER_LENGTH}
         />
       </Atoms.Container>
     </Atoms.Container>

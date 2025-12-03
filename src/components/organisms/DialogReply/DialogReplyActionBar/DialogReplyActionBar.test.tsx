@@ -129,11 +129,22 @@ describe('DialogReplyActionBar', () => {
     expect(postButton).toBeDisabled();
   });
 
-  it('enables Post button when isPostDisabled is false', () => {
-    render(<DialogReplyActionBar isPostDisabled={false} />);
+  it('enables Post button when isPostDisabled is false and handler is provided', () => {
+    const onPostClick = vi.fn();
+    render(<DialogReplyActionBar isPostDisabled={false} onPostClick={onPostClick} />);
 
     const postButton = screen.getByRole('button', { name: 'Post reply' });
     expect(postButton).not.toBeDisabled();
+  });
+
+  it('disables buttons without handlers', () => {
+    render(<DialogReplyActionBar />);
+
+    expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add image' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add file' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Add article' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Post reply' })).toBeDisabled();
   });
 
   it('renders Post button with label text', () => {

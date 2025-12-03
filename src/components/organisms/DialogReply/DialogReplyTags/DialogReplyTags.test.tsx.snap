@@ -57,32 +57,12 @@ exports[`DialogReplyTags - Snapshots > matches snapshot with input open 1`] = `
 </div>
 `;
 
-exports[`DialogReplyTags - Snapshots > matches snapshot with tags 1`] = `
+exports[`DialogReplyTags - Snapshots > matches snapshot with tags (tags not rendered by this component) 1`] = `
 <div
   class="flex flex-wrap items-center gap-2"
   data-override-defaults="true"
   data-testid="container"
 >
-  <div
-    data-testid="tag-tag1"
-  >
-    tag1
-    <button
-      data-testid="tag-close-tag1"
-    >
-      ×
-    </button>
-  </div>
-  <div
-    data-testid="tag-tag2"
-  >
-    tag2
-    <button
-      data-testid="tag-close-tag2"
-    >
-      ×
-    </button>
-  </div>
   <button
     data-testid="add-tag-button"
   >

@@ -200,6 +200,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -241,6 +242,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -278,6 +280,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -302,6 +305,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -339,6 +343,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <div
       class="flex items-center gap-2"
@@ -389,6 +394,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with disabled post 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -430,6 +436,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with disabled post 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -467,6 +474,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with disabled post 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -491,6 +499,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with disabled post 
     class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
+    disabled=""
   >
     <svg
       aria-hidden="true"
@@ -525,7 +534,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with disabled post 
   </button>
   <button
     aria-label="Post reply"
-    class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark opacity-40"
+    class="h-8 px-3 py-2 rounded-full border-none shadow-xs-dark"
     data-size="sm"
     data-variant="secondary"
     disabled=""

@@ -131,17 +131,11 @@ describe('DialogReplyTags', () => {
     expect(screen.getByTestId('add-tag-button')).toBeInTheDocument();
   });
 
-  it('renders existing tags', () => {
+  it('does not render tags (tags are rendered by parent component)', () => {
     render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
-    expect(screen.getByTestId('tag-tag1')).toBeInTheDocument();
-    expect(screen.getByTestId('tag-tag2')).toBeInTheDocument();
-  });
-
-  it('calls onTagsChange when tag is removed', () => {
-    render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
-    const closeButton = screen.getByTestId('tag-close-tag1');
-    fireEvent.click(closeButton);
-    expect(mockOnTagsChange).toHaveBeenCalledWith(['tag2']);
+    // Tags are no longer rendered by DialogReplyTags - they're rendered by DialogReplyInput
+    expect(screen.queryByTestId('tag-tag1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('tag-tag2')).not.toBeInTheDocument();
   });
 
   it('shows input when add button is clicked', () => {
@@ -211,6 +205,18 @@ describe('DialogReplyTags', () => {
       expect(input.value).toBe('😀');
     }
   });
+
+  it('does not add tag when MAX_TAGS limit is reached', () => {
+    const maxTags = ['tag1', 'tag2', 'tag3', 'tag4', 'tag5'];
+    render(<DialogReplyTags tags={maxTags} onTagsChange={mockOnTagsChange} />);
+    const addButton = screen.getByTestId('add-tag-button');
+    fireEvent.click(addButton);
+    const input = screen.getByTestId('tag-input');
+    fireEvent.change(input, { target: { value: 'new-tag' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    // Should not call onTagsChange since MAX_TAGS (5) is already reached
+    expect(mockOnTagsChange).not.toHaveBeenCalled();
+  });
 });
 
 describe('DialogReplyTags - Snapshots', () => {
@@ -225,7 +231,7 @@ describe('DialogReplyTags - Snapshots', () => {
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with tags', () => {
+  it('matches snapshot with tags (tags not rendered by this component)', () => {
     const { container } = render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
     expect(container.firstChild).toMatchSnapshot();
   });
