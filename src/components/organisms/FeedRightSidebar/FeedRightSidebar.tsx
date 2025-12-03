@@ -1,12 +1,9 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
-import * as Hooks from '@/hooks';
-import { APP_ROUTES } from '@/app/routes';
 
 // ============================================================================
 // Shared Components
@@ -19,22 +16,11 @@ import { APP_ROUTES } from '@/app/routes';
  * Used by both HomeFeedRightSidebar (desktop) and HomeFeedRightDrawer (tablet).
  */
 function HomeFeedContent() {
-  const router = useRouter();
-  const { tags } = Hooks.useHotTags();
-
-  const handleTagClick = (tagName: string) => {
-    router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
-  };
-
-  const handleSeeAllTags = () => {
-    router.push(APP_ROUTES.HOT);
-  };
-
   return (
     <>
       <Organisms.WhoToFollow />
       <Organisms.ActiveUsers />
-      <Molecules.HotTags tags={tags} onTagClick={handleTagClick} onSeeAll={handleSeeAllTags} />
+      <Organisms.HotTags />
       <Organisms.FeedbackCard />
     </>
   );

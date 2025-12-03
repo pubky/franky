@@ -8,7 +8,6 @@ export * from './ContainerRoot';
 export * from './FeedSection';
 export * from './Homeserver';
 export * from './ButtonFilters';
-export * from './HotTags';
 export * from './ButtonsNavigation';
 export * from './Content';
 export * from './FAQAccordion';

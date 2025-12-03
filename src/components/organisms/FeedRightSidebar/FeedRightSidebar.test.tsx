@@ -8,42 +8,16 @@ import {
   HotFeedRightDrawer,
 } from './FeedRightSidebar';
 
-// Mock Next.js router
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: vi.fn(),
-    replace: vi.fn(),
-    back: vi.fn(),
-    forward: vi.fn(),
-    refresh: vi.fn(),
-    prefetch: vi.fn(),
-  }),
-}));
-
-// Mock useHotTags hook
-vi.mock('@/hooks', () => ({
-  useHotTags: () => ({
-    tags: [
-      { name: 'bitcoin', count: 10 },
-      { name: 'pubky', count: 5 },
-    ],
-    isLoading: false,
-    error: null,
-  }),
-}));
-
 // Mock Molecules
 vi.mock('@/molecules', () => ({
-  HotTags: ({ tags }: { tags: { name: string; count: number }[] }) => (
-    <div data-testid="hot-tags">{tags.length} tags</div>
-  ),
   FeedSection: () => <div data-testid="feed-section">FeedSection</div>,
 }));
 
-// Mock Organisms - WhoToFollow and ActiveUsers were moved from molecules to organisms
+// Mock Organisms
 vi.mock('@/organisms', () => ({
   WhoToFollow: () => <div data-testid="who-to-follow">WhoToFollow</div>,
   ActiveUsers: () => <div data-testid="active-users">ActiveUsers</div>,
+  HotTags: () => <div data-testid="hot-tags">HotTags</div>,
   FeedbackCard: () => <div data-testid="feedback-card">FeedbackCard</div>,
 }));
 

@@ -26,6 +26,7 @@ export * from './Header';
 export * from './HomeFeedSidebar';
 export * from './HotFeed';
 export * from './HotFeedFilters';
+export * from './HotTags';
 export * from './HomeserverCard';
 export * from './LeftSidebar';
 export * from './PostActionsBar';
