@@ -17,8 +17,8 @@ export type ConnectionType = (typeof CONNECTION_TYPE)[keyof typeof CONNECTION_TY
 // ============================================================================
 
 export interface UserConnectionData extends Core.NexusUserDetails {
-  /** Avatar URL computed from user ID */
-  avatarUrl: string;
+  /** Avatar URL computed from user ID, null if user has no avatar */
+  avatarUrl: string | null;
   tags?: string[];
   stats?: {
     tags: number;

@@ -72,7 +72,7 @@ export function ProfilePageLayout({
       />
 
       <Molecules.ProfilePageLayoutWrapper>
-        <Atoms.Container overrideDefaults={true} className="hidden bg-background pb-6 shadow-sm lg:block">
+        <Atoms.Container overrideDefaults={true} className="hidden bg-background pb-12 shadow-sm lg:block">
           {!isLoading && (
             <Organisms.ProfilePageHeader profile={profile} actions={headerActions} isOwnProfile={isOwnProfile} />
           )}

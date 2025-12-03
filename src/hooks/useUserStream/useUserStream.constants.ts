@@ -1,0 +1,1 @@
+export const DEFAULT_USER_STREAM_LIMIT = 3;

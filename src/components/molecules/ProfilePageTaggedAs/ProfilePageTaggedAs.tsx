@@ -6,9 +6,22 @@ import * as Libs from '@/libs';
 import { useRouter } from 'next/navigation';
 import { PROFILE_ROUTES, getProfileRoute } from '@/app/routes';
 import type { ProfilePageTaggedAsProps } from './ProfilePageTaggedAs.types';
+import { MAX_NAME_LENGTH } from './ProfilePageTaggedAs.constants';
 
-export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky }: ProfilePageTaggedAsProps) {
+export function ProfilePageTaggedAs({
+  tags,
+  isLoading = false,
+  onTagClick,
+  pubky,
+  userName,
+}: ProfilePageTaggedAsProps) {
   const router = useRouter();
+
+  const getButtonLabel = () => {
+    if (!pubky) return 'Tag Yourself';
+    if (userName) return `Tag ${Libs.truncateString(userName, MAX_NAME_LENGTH)}`;
+    return 'Tag User';
+  };
 
   return (
     <Atoms.Container overrideDefaults={true} className="flex flex-col gap-2">
@@ -27,7 +40,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
         ) : (
           <>
             {tags.map((tag) => (
-              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} />
+              <Molecules.TaggedItem key={tag.label} tag={tag} onTagClick={onTagClick} maxTagLength={10} hideAvatars />
             ))}
             {tags.length === 0 && (
               <Atoms.Typography as="span" className="text-sm font-medium text-muted-foreground">
@@ -46,7 +59,7 @@ export function ProfilePageTaggedAs({ tags, isLoading = false, onTagClick, pubky
       >
         <Libs.Tag size={16} className="text-foreground" />
         <Atoms.Typography as="span" className="text-sm font-bold">
-          Add Tag
+          {getButtonLabel()}
         </Atoms.Typography>
       </Atoms.Button>
     </Atoms.Container>

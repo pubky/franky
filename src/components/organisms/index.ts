@@ -1,3 +1,4 @@
+export * from './ActiveUsers';
 export * from './AlertBackup';
 export * from './BackupMethodCard';
 export * from './ContentLayout';
@@ -25,6 +26,7 @@ export * from './Header';
 export * from './HomeFeedSidebar';
 export * from './HotFeed';
 export * from './HotFeedFilters';
+export * from './HotTags';
 export * from './HomeserverCard';
 export * from './LeftSidebar';
 export * from './PostActionsBar';
@@ -58,3 +60,4 @@ export * from './ProfileTagged';
 export * from './NotificationItem';
 export * from './NotificationsContainer';
 export * from './NotificationsList';
+export * from './WhoToFollow';

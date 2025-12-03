@@ -3,6 +3,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { TaggedItem } from './TaggedItem';
 import type { TagWithAvatars } from './TaggedItem.types';
 
+// Mock next/navigation
+const mockPush = vi.fn();
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+}));
+
 // Mock Atoms.Tag
 vi.mock('@/atoms', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/atoms')>();
@@ -50,6 +58,7 @@ describe('TaggedItem', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockPush.mockClear();
   });
 
   it('renders tag label and count', () => {
@@ -64,14 +73,42 @@ describe('TaggedItem', () => {
     expect(mockOnSearchClick).toHaveBeenCalledTimes(1);
   });
 
+  it('navigates to search with tag when search button clicked without onSearchClick', () => {
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
+    fireEvent.click(screen.getByTestId('search-button'));
+    expect(mockPush).toHaveBeenCalledWith('/search?tags=bitcoin');
+  });
+
   it('renders avatars for taggers', () => {
     render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
     const avatars = screen.getAllByTestId('avatar');
     expect(avatars.length).toBeGreaterThan(0);
   });
 
+  it('hides avatars when hideAvatars is true', () => {
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} hideAvatars />);
+    expect(screen.queryAllByTestId('avatar')).toHaveLength(0);
+  });
+
+  it('still shows count in tag when hideAvatars is true', () => {
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} hideAvatars />);
+    expect(screen.getByText('bitcoin (3)')).toBeInTheDocument();
+  });
+
+  it('truncates tag label when maxTagLength is set', () => {
+    render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} maxTagLength={4} />);
+    expect(screen.getByText(/bitc\.\.\./)).toBeInTheDocument();
+  });
+
   it('matches snapshot', () => {
     const { container } = render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('matches snapshot with hideAvatars', () => {
+    const { container } = render(
+      <TaggedItem tag={mockTag} onTagClick={mockOnTagClick} hideAvatars maxTagLength={10} />,
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 });
