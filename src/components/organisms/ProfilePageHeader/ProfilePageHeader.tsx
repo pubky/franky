@@ -138,11 +138,9 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               </Atoms.Button>
               {/* Status display inline with buttons */}
               {status && (
-                <Atoms.Container overrideDefaults={true} className="flex items-center gap-1">
-                  <span className="text-base">{displayEmoji}</span>
-                  <Atoms.Typography as="span" className="font-bold text-foreground">
-                    {Libs.parseStatus(status).text}
-                  </Atoms.Typography>
+                <Atoms.Container overrideDefaults={true} className="flex h-8 items-center gap-1">
+                  <span className="text-base leading-6">{displayEmoji}</span>
+                  <span className="text-base leading-6 font-bold text-white">{Libs.parseStatus(status).text}</span>
                 </Atoms.Container>
               )}
             </>
