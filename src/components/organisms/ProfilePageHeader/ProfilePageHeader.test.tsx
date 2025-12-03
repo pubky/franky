@@ -274,10 +274,13 @@ describe('ProfilePageHeader - Other User Profile', () => {
     expect(onFollowToggle).toHaveBeenCalledTimes(1);
   });
 
-  it('shows status as read-only text when viewing other user', () => {
+  it('shows status inline with buttons when viewing other user', () => {
     render(<ProfilePageHeader {...mockOtherUserProps} />);
 
-    // The status should be shown as text, not in a picker
-    expect(screen.getByText(/🎉 Active/)).toBeInTheDocument();
+    // The status should be shown inline with buttons (emoji and text in separate elements)
+    // Emoji appears both in avatar badge and status display
+    const emojis = screen.getAllByText('🎉');
+    expect(emojis.length).toBeGreaterThanOrEqual(2); // Badge + status
+    expect(screen.getByText('Active')).toBeInTheDocument();
   });
 });

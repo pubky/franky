@@ -10,24 +10,26 @@ import {
 
 // Mock Molecules
 vi.mock('@/molecules', () => ({
-  WhoToFollow: () => <div data-testid="who-to-follow">WhoToFollow</div>,
-  ActiveUsers: () => <div data-testid="active-users">ActiveUsers</div>,
-  HotTags: ({ tags }: { tags: { name: string; count: number }[] }) => (
-    <div data-testid="hot-tags">{tags.length} tags</div>
-  ),
   FeedSection: () => <div data-testid="feed-section">FeedSection</div>,
 }));
 
-// Mock Organisms - only mock the specific component we need
+// Mock Organisms
 vi.mock('@/organisms', () => ({
+  WhoToFollow: () => <div data-testid="who-to-follow">WhoToFollow</div>,
+  ActiveUsers: () => <div data-testid="active-users">ActiveUsers</div>,
+  HotTags: () => <div data-testid="hot-tags">HotTags</div>,
   FeedbackCard: () => <div data-testid="feedback-card">FeedbackCard</div>,
 }));
 
-// Mock Libs icons
-vi.mock('@/libs', () => ({
-  UsersRound: () => <span>UsersRound</span>,
-  Pencil: () => <span>Pencil</span>,
-}));
+// Mock Libs icons and utilities
+vi.mock('@/libs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/libs')>();
+  return {
+    ...actual,
+    UsersRound: () => <span>UsersRound</span>,
+    Pencil: () => <span>Pencil</span>,
+  };
+});
 
 describe('HomeFeedRightSidebar', () => {
   it('renders all components', () => {

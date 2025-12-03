@@ -1,8 +1,30 @@
 'use client';
 
-import * as Molecules from '@/molecules';
+import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+
+// ============================================================================
+// Shared Components
+// ============================================================================
+
+/**
+ * HomeFeedContent
+ *
+ * Shared content for Home feed sidebars - WhoToFollow, ActiveUsers, HotTags, FeedbackCard.
+ * Used by both HomeFeedRightSidebar (desktop) and HomeFeedRightDrawer (tablet).
+ */
+function HomeFeedContent() {
+  return (
+    <>
+      <Organisms.WhoToFollow />
+      <Organisms.ActiveUsers />
+      <Organisms.HotTags />
+      <Organisms.FeedbackCard />
+    </>
+  );
+}
 
 // ============================================================================
 // Home Feed Right Sidebar Components
@@ -15,23 +37,7 @@ import * as Organisms from '@/organisms';
  * Desktop version.
  */
 export function HomeFeedRightSidebar() {
-  return (
-    <>
-      <Molecules.WhoToFollow />
-      <Molecules.ActiveUsers />
-      <Molecules.HotTags
-        tags={[
-          { name: 'bitcoin', count: 1234 },
-          { name: 'nostr', count: 892 },
-          { name: 'decentralization', count: 567 },
-          { name: 'privacy', count: 445 },
-          { name: 'web3', count: 321 },
-          { name: 'opensource', count: 289 },
-        ]}
-      />
-      <Organisms.FeedbackCard />
-    </>
-  );
+  return <HomeFeedContent />;
 }
 
 /**
@@ -41,21 +47,9 @@ export function HomeFeedRightSidebar() {
  */
 export function HomeFeedRightDrawer() {
   return (
-    <div className="flex flex-col gap-6">
-      <Molecules.WhoToFollow />
-      <Molecules.ActiveUsers />
-      <Molecules.HotTags
-        tags={[
-          { name: 'bitcoin', count: 1234 },
-          { name: 'nostr', count: 892 },
-          { name: 'decentralization', count: 567 },
-          { name: 'privacy', count: 445 },
-          { name: 'web3', count: 321 },
-          { name: 'opensource', count: 289 },
-        ]}
-      />
-      <Organisms.FeedbackCard />
-    </div>
+    <Atoms.Container overrideDefaults className="flex flex-col gap-6">
+      <HomeFeedContent />
+    </Atoms.Container>
   );
 }
 
@@ -90,10 +84,10 @@ export function HomeFeedRightDrawerMobile() {
 export function HotFeedRightSidebar() {
   return (
     <>
-      <Molecules.WhoToFollow />
-      <div className="sticky top-[100px] self-start">
+      <Organisms.WhoToFollow />
+      <Atoms.Container overrideDefaults className="sticky top-[100px] self-start">
         <Organisms.FeedbackCard />
-      </div>
+      </Atoms.Container>
     </>
   );
 }
@@ -105,9 +99,9 @@ export function HotFeedRightSidebar() {
  */
 export function HotFeedRightDrawer() {
   return (
-    <div className="flex flex-col gap-6">
-      <Molecules.WhoToFollow />
+    <Atoms.Container overrideDefaults className="flex flex-col gap-6">
+      <Organisms.WhoToFollow />
       <Organisms.FeedbackCard />
-    </div>
+    </Atoms.Container>
   );
 }

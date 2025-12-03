@@ -30,3 +30,5 @@ export * from './useProfileConnections';
 export * from './useFollowUser';
 export * from './useIsFollowing';
 export * from './useAvatarUrl';
+export * from './useHotTags';
+export * from './useUserStream';
