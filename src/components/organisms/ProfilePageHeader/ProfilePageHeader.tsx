@@ -54,12 +54,6 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
               {bio}
             </Atoms.Typography>
           )}
-          {/* Show status as read-only text for other users' profiles */}
-          {!isOwnProfile && status && (
-            <Atoms.Typography as="p" size="sm" className="font-medium text-muted-foreground lg:text-base">
-              {displayEmoji} {status}
-            </Atoms.Typography>
-          )}
         </Atoms.Container>
 
         <Atoms.Container
@@ -111,13 +105,16 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
           {/* Other user profile actions */}
           {!isOwnProfile && (
             <>
+              <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
+                <Icons.KeyRound className="size-4" />
+                {formattedPublicKey}
+              </Atoms.Button>
+              <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
+                <Icons.Link className="size-4" />
+                Link
+              </Atoms.Button>
               {/* Follow/Unfollow button */}
-              <Atoms.Button
-                variant={isFollowing ? 'outline' : 'default'}
-                size="sm"
-                onClick={onFollowToggle}
-                disabled={isFollowLoading}
-              >
+              <Atoms.Button variant="secondary" size="sm" onClick={onFollowToggle} disabled={isFollowLoading}>
                 {isFollowLoading ? (
                   <>
                     <Icons.Loader2 className="size-4 animate-spin" />
@@ -127,7 +124,7 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                   <>
                     {isFollowing ? (
                       <>
-                        <Icons.UserCheck className="size-4" />
+                        <Icons.Check className="size-4" />
                         Following
                       </>
                     ) : (
@@ -139,14 +136,15 @@ export function ProfilePageHeader({ profile, actions, isOwnProfile = true }: Typ
                   </>
                 )}
               </Atoms.Button>
-              <Atoms.Button variant="secondary" size="sm" onClick={onCopyPublicKey}>
-                <Icons.KeyRound className="size-4" />
-                {formattedPublicKey}
-              </Atoms.Button>
-              <Atoms.Button variant="secondary" size="sm" onClick={onCopyLink}>
-                <Icons.Link className="size-4" />
-                Link
-              </Atoms.Button>
+              {/* Status display inline with buttons */}
+              {status && (
+                <Atoms.Container overrideDefaults={true} className="flex items-center gap-1">
+                  <span className="text-base">{displayEmoji}</span>
+                  <Atoms.Typography as="span" size="base" className="font-bold text-foreground">
+                    {Libs.parseStatus(status).text}
+                  </Atoms.Typography>
+                </Atoms.Container>
+              )}
             </>
           )}
         </Atoms.Container>
