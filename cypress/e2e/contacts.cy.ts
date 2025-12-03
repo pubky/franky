@@ -10,6 +10,9 @@ describe('contacts', () => {
     cy.deleteDownloadsFolder();
   });
 
+  // todo
+  it.skip('can follow and unfollow');
+
   // todo: FAILING due to no list items being displayed, see https://github.com/pubky/franky/issues/505
   it.skip('follow, be followed, and make a friend', () => {
     const profileName1 = '#1 Friend';

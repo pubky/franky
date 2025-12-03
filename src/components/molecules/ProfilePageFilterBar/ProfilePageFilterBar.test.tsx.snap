@@ -19,6 +19,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-custom"
         data-testid="container"
       >
         <span>
@@ -32,6 +33,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with custom items 1
       </div>
       <span
         class="text-base font-medium text-foreground"
+        data-cy="profile-filter-item-custom-count"
         data-testid="typography"
       >
         10
@@ -60,6 +62,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-notifications"
         data-testid="container"
       >
         <svg
@@ -105,6 +108,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-posts"
         data-testid="container"
       >
         <svg
@@ -150,6 +154,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-replies"
         data-testid="container"
       >
         <svg
@@ -192,6 +197,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-followers"
         data-testid="container"
       >
         <svg
@@ -242,6 +248,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-following"
         data-testid="container"
       >
         <svg
@@ -283,6 +290,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-friends"
         data-testid="container"
       >
         <svg
@@ -325,6 +333,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with loading state 
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-tagged"
         data-testid="container"
       >
         <svg
@@ -386,6 +395,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-notifications"
         data-testid="container"
       >
         <svg
@@ -416,6 +426,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-foreground"
+        data-cy="profile-filter-item-notifications-count"
         data-testid="typography"
       >
         2
@@ -431,6 +442,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-posts"
         data-testid="container"
       >
         <svg
@@ -461,6 +473,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-posts-count"
         data-testid="typography"
       >
         4
@@ -476,6 +489,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-replies"
         data-testid="container"
       >
         <svg
@@ -503,6 +517,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-replies-count"
         data-testid="typography"
       >
         7
@@ -518,6 +533,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-followers"
         data-testid="container"
       >
         <svg
@@ -553,6 +569,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-followers-count"
         data-testid="typography"
       >
         115
@@ -568,6 +585,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-following"
         data-testid="container"
       >
         <svg
@@ -594,6 +612,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-following-count"
         data-testid="typography"
       >
         27
@@ -609,6 +628,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-friends"
         data-testid="container"
       >
         <svg
@@ -636,6 +656,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-friends-count"
         data-testid="typography"
       >
         10
@@ -651,6 +672,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-tagged"
         data-testid="container"
       >
         <svg
@@ -684,6 +706,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with stats 1`] = `
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-tagged-count"
         data-testid="typography"
       >
         0
@@ -712,6 +735,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-notifications"
         data-testid="container"
       >
         <svg
@@ -742,6 +766,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-foreground"
+        data-cy="profile-filter-item-notifications-count"
         data-testid="typography"
       >
         0
@@ -757,6 +782,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-posts"
         data-testid="container"
       >
         <svg
@@ -787,6 +813,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-posts-count"
         data-testid="typography"
       >
         0
@@ -802,6 +829,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-replies"
         data-testid="container"
       >
         <svg
@@ -829,6 +857,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-replies-count"
         data-testid="typography"
       >
         0
@@ -844,6 +873,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-followers"
         data-testid="container"
       >
         <svg
@@ -879,6 +909,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-followers-count"
         data-testid="typography"
       >
         0
@@ -894,6 +925,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-following"
         data-testid="container"
       >
         <svg
@@ -920,6 +952,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-following-count"
         data-testid="typography"
       >
         0
@@ -935,6 +968,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-friends"
         data-testid="container"
       >
         <svg
@@ -962,6 +996,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-friends-count"
         data-testid="typography"
       >
         0
@@ -977,6 +1012,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
     >
       <div
         class="flex items-center gap-2"
+        data-cy="profile-filter-item-tagged"
         data-testid="container"
       >
         <svg
@@ -1010,6 +1046,7 @@ exports[`ProfilePageFilterBar - Snapshots > matches snapshot with zero stats 1`]
       </div>
       <span
         class="text-base font-medium text-muted-foreground"
+        data-cy="profile-filter-item-tagged-count"
         data-testid="typography"
       >
         0

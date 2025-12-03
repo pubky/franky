@@ -21,12 +21,17 @@ export const searchForProfileByName = (profileName: string) => {
   cy.get('[data-cy="profile-username-header"]').should('have.text', profileName);
 };
 
-export const searchAndFollowProfile = (pubky: string, profileName: string) => {
+export const searchAndFollowProfile = (pubky: string, profileName: string, interceptAlias?: string) => {
   // search for profile
   searchForProfileByPubky(pubky, profileName);
 
   // Check follow button is displayed for account 1
   cy.get('[data-cy="profile-follow-toggle-btn"]').should('be.visible').and('have.text', 'Follow');
+
+  // for waiting for data to index
+  if (interceptAlias) {
+    cy.intercept('GET', '**/v0/stream/users/ids*').as(interceptAlias);
+  }
 
   // follow profile
   clickFollowButton();
