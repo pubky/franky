@@ -35,7 +35,7 @@ export function Human() {
         <Organisms.HumanPhoneInput
           initialPhoneNumber={phoneNumber}
           onBack={() => setState(States.Selection)}
-          onSendCode={(phoneNum) => {
+          onCodeSent={(phoneNum) => {
             setPhoneNumber(phoneNum);
             setState(States.PhoneCode);
           }}

@@ -65,6 +65,7 @@ export const HumanPhoneInput = ({
               <Atoms.Input
                 data-testid="human-phone-input"
                 type="tel"
+                autoFocus
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}

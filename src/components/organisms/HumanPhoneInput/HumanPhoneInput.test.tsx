@@ -15,14 +15,14 @@ vi.mock('@/molecules', async () => {
 
 describe('HumanVerificationCards', () => {
   it('renders both verification cards', () => {
-    render(<HumanPhoneInput onBack={() => {}} onSendCode={() => {}} />);
+    render(<HumanPhoneInput onBack={() => {}} onCodeSent={() => {}} />);
 
     expect(screen.getByTestId('mock-sms-card')).toBeInTheDocument();
     expect(screen.getByTestId('mock-bitcoin-card')).toBeInTheDocument();
   });
 
   it('matches snapshot', () => {
-    const { container } = render(<HumanPhoneInput onBack={() => {}} onSendCode={() => {}} />);
+    const { container } = render(<HumanPhoneInput onBack={() => {}} onCodeSent={() => {}} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

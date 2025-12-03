@@ -1,6 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import { Homegate } from '@/core/application/homegate';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
@@ -13,21 +14,36 @@ interface HumanPhoneCodeProps {
 
 export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCodeProps) => {
   const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
   const { toast } = Molecules.useToast();
 
   // Verify the code
   async function onVerifyCode() {
-    // const codeValue = code.join('');
-
-    toast({
-      title: 'Verification Code Valid',
-    });
-
-    // If successful, call onSuccess
-    const inviteCode = '1VJP-P9HQ-CJYA';
-    onSuccess(inviteCode);
+    const codeValue = code.join('');
+    try {
+      setIsVerifyingCode(true);
+      const result = await Homegate.verifySmsCode(phoneNumber, codeValue);
+      if (result.valid) {
+        toast({
+          title: 'Verification Code Valid',
+        });
+        onSuccess(result.inviteCode!);
+      } else {
+        toast({
+          title: 'Verification Code Invalid. Try again.',
+          description: result.error,
+        });
+      }
+    } catch (e) {
+      console.error('Failed to verify sms code', e);
+      toast({
+        title: 'Failed to verify sms code',
+        description: 'Please try again later. If the problem persists, please contact support.',
+      });
+    } finally {
+      setIsVerifyingCode(false);
+    }
   }
-
   const isCodeComplete = code.every((digit) => digit !== '') && code.join('').length === 6;
 
   return (
@@ -73,7 +89,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
             <Molecules.HumanPhoneCodeInput
               value={code}
               onChange={setCode}
-              onEnter={() => isCodeComplete && onVerifyCode()}
+              onEnter={() => isCodeComplete && !isVerifyingCode && onVerifyCode()}
             />
           </Atoms.Container>
         </Atoms.Container>
@@ -96,8 +112,8 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
-          disabled={!isCodeComplete}
-          onClick={() => isCodeComplete && onVerifyCode()}
+          disabled={!isCodeComplete || isVerifyingCode}
+          onClick={() => isCodeComplete && !isVerifyingCode && onVerifyCode()}
         >
           <Libs.ArrowRight className="mr-2 h-4 w-4" />
           Verify Code

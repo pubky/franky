@@ -1,6 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
+import { Homegate } from '@/core/application/homegate';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import parsePhoneNumberFromString, { PhoneNumber } from 'libphonenumber-js/mobile';
@@ -36,18 +37,39 @@ function parsePhoneNumber(phoneNumber: string): PhoneNumber | undefined {
 
 interface HumanPhoneInputProps {
   onBack: () => void;
-  onSendCode: (phoneNumber: string) => void;
+  onCodeSent: (phoneNumber: string) => void;
   initialPhoneNumber?: string;
 }
 
-export const HumanPhoneInput = ({ onBack, onSendCode, initialPhoneNumber }: HumanPhoneInputProps) => {
+export const HumanPhoneInput = ({ onBack, onCodeSent, initialPhoneNumber }: HumanPhoneInputProps) => {
   const [phoneNumberInput, setPhoneNumberInput] = useState(initialPhoneNumber || '');
+  const [isSendingCode, setIsSendingCode] = useState(false);
 
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPhoneNumberInput(e.target.value);
   };
 
   const isValidNumber = !!parsePhoneNumber(phoneNumberInput);
+
+  async function onSendCode(phoneNumber: string) {
+    if (isSendingCode) {
+      return;
+    }
+
+    try {
+      setIsSendingCode(true);
+      await Homegate.sendSmsCode(phoneNumber);
+      onCodeSent(phoneNumber);
+    } catch (e) {
+      console.error('Failed to send sms code', e);
+      Molecules.toast({
+        title: 'Failed to send sms code',
+        description: 'Please try again later. If the problem persists, please contact support.',
+      });
+    } finally {
+      setIsSendingCode(false);
+    }
+  }
 
   return (
     <React.Fragment>
@@ -56,7 +78,7 @@ export const HumanPhoneInput = ({ onBack, onSendCode, initialPhoneNumber }: Huma
         value={phoneNumberInput}
         onChange={handlePhoneNumberChange}
         isValid={isValidNumber}
-        onEnter={() => onSendCode(phoneNumberInput)}
+        onEnter={() => isValidNumber && onSendCode(phoneNumberInput)}
       />
       <Atoms.Container className={Libs.cn('mt-6 flex-row justify-between gap-3 lg:gap-6')}>
         <Atoms.Button
@@ -74,8 +96,8 @@ export const HumanPhoneInput = ({ onBack, onSendCode, initialPhoneNumber }: Huma
           size="lg"
           className="w-full flex-1 rounded-full md:flex-0"
           variant="default"
-          disabled={!isValidNumber}
-          onClick={() => onSendCode(phoneNumberInput)}
+          disabled={!isValidNumber || isSendingCode}
+          onClick={() => isValidNumber && onSendCode(phoneNumberInput)}
         >
           <Libs.ArrowRight className="mr-2 h-4 w-4" />
           Send Code

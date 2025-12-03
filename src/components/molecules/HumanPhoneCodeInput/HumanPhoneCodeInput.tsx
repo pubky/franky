@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 
@@ -32,6 +32,14 @@ export interface HumanPhoneCodeInputProps {
 export const HumanPhoneCodeInput = ({ value, onChange, onEnter = () => {} }: HumanPhoneCodeInputProps) => {
   const isCodeComplete = value.every((digit) => digit !== '') && value.join('').length === DIGITS;
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  useEffect(() => {
+    // Auto-focus the first input when the component mounts or when the code is cleared
+    const hasAnyDigit = value.some((digit) => digit !== '');
+    if (!hasAnyDigit) {
+      inputRefs.current[0]?.focus();
+    }
+  }, [value]);
 
   const handleCodeChange = useCallback(
     (index: number, digitValue: string) => {
