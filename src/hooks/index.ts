@@ -3,6 +3,7 @@ export * from './useIsTouchDevice';
 export * from './useAuthStatus';
 export * from './useAuthActions';
 export * from './useElementHeight';
+export * from './useEmojiInsert';
 export * from './useInfiniteScroll';
 export * from './useEnterSubmit';
 export * from './useIsMobile';

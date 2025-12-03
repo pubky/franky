@@ -12,6 +12,11 @@ vi.mock('dexie-react-hooks', () => ({
   useLiveQuery: vi.fn(),
 }));
 
+vi.mock('@/config', () => ({
+  POST_MAX_CHARACTER_LENGTH: 2000,
+  POST_MAX_TAGS: 5,
+}));
+
 vi.mock('@/atoms', () => ({
   Avatar: vi.fn(({ children, size }) => (
     <div data-testid="avatar" data-size={size}>
@@ -89,6 +94,7 @@ vi.mock('@/molecules', () => ({
       )}
     </div>
   )),
+  useToast: vi.fn(() => ({ toast: vi.fn() })),
 }));
 
 vi.mock('../DialogReplyActionBar', () => ({
@@ -155,6 +161,7 @@ vi.mock('@/hooks', () => ({
   useElementHeight: vi.fn(() => ({ ref: { current: null } })),
   usePostReply: vi.fn(),
   useCurrentUserProfile: vi.fn(() => ({ currentUserPubky: 'test-user-id:pubkey' })),
+  useEmojiInsert: vi.fn(() => vi.fn()),
 }));
 
 // Use real libs, only stub cn to a deterministic join
@@ -188,6 +195,8 @@ describe('DialogReplyInput', () => {
       replyContent: '',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
   });
 
@@ -231,6 +240,8 @@ describe('DialogReplyInput', () => {
       replyContent: '',
       setReplyContent,
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -247,6 +258,8 @@ describe('DialogReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -264,6 +277,8 @@ describe('DialogReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -279,6 +294,8 @@ describe('DialogReplyInput', () => {
       replyContent: '   ',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -299,6 +316,8 @@ describe('DialogReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent,
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -320,6 +339,8 @@ describe('DialogReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={onSuccess} />);
@@ -337,6 +358,8 @@ describe('DialogReplyInput', () => {
       replyContent: '',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -354,6 +377,8 @@ describe('DialogReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -395,6 +420,8 @@ describe('DialogReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<DialogReplyInput postId="test-post-123" onSuccessAction={mockOnSuccess} />);
@@ -422,6 +449,8 @@ describe('DialogReplyInput - Snapshots', () => {
       replyContent: '',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
   });
 
@@ -439,6 +468,8 @@ describe('DialogReplyInput - Snapshots', () => {
       replyContent: '',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
     const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccessAction={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();
@@ -450,6 +481,8 @@ describe('DialogReplyInput - Snapshots', () => {
       replyContent: '',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
     const { container } = render(<DialogReplyInput postId="snapshot-post-id" onSuccessAction={mockOnSuccess} />);
     expect(container.firstChild).toMatchSnapshot();

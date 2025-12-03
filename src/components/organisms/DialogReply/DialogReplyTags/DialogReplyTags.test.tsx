@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DialogReplyTags } from './DialogReplyTags';
+import { POST_MAX_TAGS } from '@/config';
 
 vi.mock('@/atoms', () => ({
   Container: ({
@@ -25,6 +26,7 @@ vi.mock('@/atoms', () => ({
       placeholder,
       className,
       ref,
+      disabled,
     }: {
       value: string;
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -33,6 +35,7 @@ vi.mock('@/atoms', () => ({
       placeholder?: string;
       className?: string;
       ref?: React.Ref<HTMLInputElement>;
+      disabled?: boolean;
     }) => (
       <input
         ref={ref}
@@ -43,6 +46,7 @@ vi.mock('@/atoms', () => ({
         onBlur={onBlur}
         placeholder={placeholder}
         className={className}
+        disabled={disabled}
       />
     ),
   ),
@@ -52,15 +56,34 @@ vi.mock('@/atoms', () => ({
       children,
       'aria-label': ariaLabel,
       className,
+      disabled,
     }: {
       onClick?: () => void;
       children: React.ReactNode;
       'aria-label'?: string;
       className?: string;
+      disabled?: boolean;
     }) => (
-      <button data-testid="button" onClick={onClick} aria-label={ariaLabel} className={className}>
+      <button data-testid="button" onClick={onClick} aria-label={ariaLabel} className={className} disabled={disabled}>
         {children}
       </button>
+    ),
+  ),
+  Typography: vi.fn(
+    ({
+      children,
+      as,
+      size,
+      className,
+    }: {
+      children: React.ReactNode;
+      as?: string;
+      size?: string;
+      className?: string;
+    }) => (
+      <span data-testid="typography" data-as={as} data-size={size} className={className}>
+        {children}
+      </span>
     ),
   ),
 }));
@@ -76,8 +99,8 @@ vi.mock('@/molecules', () => ({
       )}
     </div>
   )),
-  PostTagAddButton: vi.fn(({ onClick }: { onClick: () => void }) => (
-    <button data-testid="add-tag-button" onClick={onClick}>
+  PostTagAddButton: vi.fn(({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) => (
+    <button data-testid="add-tag-button" onClick={onClick} disabled={disabled}>
       +
     </button>
   )),
@@ -104,6 +127,10 @@ vi.mock('@/molecules', () => ({
   ),
 }));
 
+vi.mock('@/hooks', () => ({
+  useEmojiInsert: vi.fn(() => vi.fn()),
+}));
+
 vi.mock('@/libs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/libs')>();
   return {
@@ -127,7 +154,7 @@ describe('DialogReplyTags', () => {
 
   it('renders with empty tags array', () => {
     render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
-    expect(screen.getByTestId('container')).toBeInTheDocument();
+    expect(screen.getAllByTestId('container').length).toBeGreaterThan(0);
     expect(screen.getByTestId('add-tag-button')).toBeInTheDocument();
   });
 
@@ -136,6 +163,8 @@ describe('DialogReplyTags', () => {
     // Tags are no longer rendered by DialogReplyTags - they're rendered by DialogReplyInput
     expect(screen.queryByTestId('tag-tag1')).not.toBeInTheDocument();
     expect(screen.queryByTestId('tag-tag2')).not.toBeInTheDocument();
+    // Should show tag count indicator
+    expect(screen.getByText(`2/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
   it('shows input when add button is clicked', () => {
@@ -190,7 +219,12 @@ describe('DialogReplyTags', () => {
     }
   });
 
-  it('inserts emoji into input when emoji is selected', () => {
+  it('calls useEmojiInsert handler when emoji is selected', async () => {
+    // Get the mocked useEmojiInsert to verify it's called
+    const mockEmojiHandler = vi.fn();
+    const { useEmojiInsert } = await import('@/hooks');
+    vi.mocked(useEmojiInsert).mockReturnValue(mockEmojiHandler);
+
     render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
@@ -200,22 +234,35 @@ describe('DialogReplyTags', () => {
       fireEvent.click(emojiButton);
       const emojiSelect = screen.getByTestId('emoji-select');
       fireEvent.click(emojiSelect);
-      // The emoji should be inserted into the input value
-      const input = screen.getByTestId('tag-input') as HTMLInputElement;
-      expect(input.value).toBe('😀');
+      // The emoji handler should be called with the emoji
+      expect(mockEmojiHandler).toHaveBeenCalledWith({ native: '😀' });
     }
   });
 
-  it('does not add tag when MAX_TAGS limit is reached', () => {
-    const maxTags = ['tag1', 'tag2', 'tag3', 'tag4', 'tag5'];
+  it('disables add button when POST_MAX_TAGS limit is reached', () => {
+    const maxTags = Array.from({ length: POST_MAX_TAGS }, (_, i) => `tag${i + 1}`);
     render(<DialogReplyTags tags={maxTags} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
-    fireEvent.click(addButton);
-    const input = screen.getByTestId('tag-input');
-    fireEvent.change(input, { target: { value: 'new-tag' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
-    // Should not call onTagsChange since MAX_TAGS (5) is already reached
-    expect(mockOnTagsChange).not.toHaveBeenCalled();
+    // Add button should be disabled when limit is reached
+    expect(addButton).toBeDisabled();
+    // Should show tag count with limit indicator
+    expect(screen.getByText(`${POST_MAX_TAGS}/${POST_MAX_TAGS}`)).toBeInTheDocument();
+  });
+
+  it('shows tag count indicator when tags exist', () => {
+    render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
+    expect(screen.getByText(`2/${POST_MAX_TAGS}`)).toBeInTheDocument();
+  });
+
+  it('uses custom maxTags when provided', () => {
+    const customMax = 3;
+    const tags = ['tag1', 'tag2', 'tag3'];
+    render(<DialogReplyTags tags={tags} onTagsChange={mockOnTagsChange} maxTags={customMax} />);
+    const addButton = screen.getByTestId('add-tag-button');
+    // Add button should be disabled when custom limit is reached
+    expect(addButton).toBeDisabled();
+    // Should show custom limit count
+    expect(screen.getByText(`3/3`)).toBeInTheDocument();
   });
 });
 

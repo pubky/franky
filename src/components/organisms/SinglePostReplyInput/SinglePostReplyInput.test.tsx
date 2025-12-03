@@ -15,7 +15,7 @@ vi.mock('@/libs', async (importOriginal) => {
 // Mock the atoms
 vi.mock('@/atoms', () => ({
   ReplyLine: vi.fn(({ height, isLast }) => <div data-testid="reply-line" data-height={height} data-is-last={isLast} />),
-  Textarea: vi.fn(({ placeholder, className, value, onChange, onKeyDown }) => (
+  Textarea: vi.fn(({ placeholder, className, value, onChange, onKeyDown, disabled }) => (
     <textarea
       data-testid="textarea"
       placeholder={placeholder}
@@ -23,8 +23,14 @@ vi.mock('@/atoms', () => ({
       value={value}
       onChange={onChange}
       onKeyDown={onKeyDown}
+      disabled={disabled}
     />
   )),
+}));
+
+// Mock the molecules
+vi.mock('@/molecules', () => ({
+  useToast: vi.fn(() => ({ toast: vi.fn() })),
 }));
 
 // Mock the hooks
@@ -54,6 +60,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: '',
       setReplyContent: vi.fn(),
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
   });
 
@@ -70,6 +78,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: '',
       setReplyContent,
       handleReplySubmit: vi.fn(),
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -86,6 +96,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -102,6 +114,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -118,6 +132,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: '   ',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -136,6 +152,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: '  Test reply content  ',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -155,6 +173,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent,
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -175,6 +195,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -193,6 +215,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);
@@ -209,6 +233,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="" />);
@@ -225,6 +251,8 @@ describe('SinglePostReplyInput', () => {
       replyContent: 'Test reply content',
       setReplyContent: vi.fn(),
       handleReplySubmit,
+      isSubmitting: false,
+      error: null,
     });
 
     render(<SinglePostReplyInput postId="test-post-123" />);

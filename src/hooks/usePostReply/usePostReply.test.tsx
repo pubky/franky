@@ -20,10 +20,12 @@ describe('usePostReply', () => {
     mockPostControllerCreate.mockResolvedValue(undefined);
   });
 
-  it('returns initial state with empty replyContent', () => {
+  it('returns initial state with empty replyContent, isSubmitting false, and error null', () => {
     const { result } = renderHook(() => usePostReply({ postId: 'test-post-123' }));
 
     expect(result.current.replyContent).toBe('');
+    expect(result.current.isSubmitting).toBe(false);
+    expect(result.current.error).toBeNull();
     expect(typeof result.current.setReplyContent).toBe('function');
     expect(typeof result.current.handleReplySubmit).toBe('function');
   });
@@ -135,7 +137,7 @@ describe('usePostReply', () => {
     });
   });
 
-  it('handles submission errors', async () => {
+  it('handles submission errors and sets error state', async () => {
     const error = new Error('Submission failed');
     mockPostControllerCreate.mockRejectedValueOnce(error);
     const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -152,6 +154,8 @@ describe('usePostReply', () => {
 
     await waitFor(() => {
       expect(mockConsoleError).toHaveBeenCalledWith('Failed to submit reply:', error);
+      expect(result.current.error).toBe('Failed to post reply. Please try again.');
+      expect(result.current.isSubmitting).toBe(false);
     });
 
     mockConsoleError.mockRestore();
@@ -173,5 +177,73 @@ describe('usePostReply', () => {
     });
 
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it('sets isSubmitting to true during submission and false after', async () => {
+    let resolvePromise: () => void;
+    const pendingPromise = new Promise<void>((resolve) => {
+      resolvePromise = resolve;
+    });
+    mockPostControllerCreate.mockReturnValueOnce(pendingPromise);
+
+    const { result } = renderHook(() => usePostReply({ postId: 'test-post-123' }));
+
+    act(() => {
+      result.current.setReplyContent('Test reply');
+    });
+
+    expect(result.current.isSubmitting).toBe(false);
+
+    // Start submission but don't await
+    let submitPromise: Promise<void>;
+    act(() => {
+      submitPromise = result.current.handleReplySubmit();
+    });
+
+    // isSubmitting should be true while the request is pending
+    expect(result.current.isSubmitting).toBe(true);
+
+    // Resolve the promise
+    await act(async () => {
+      resolvePromise!();
+      await submitPromise;
+    });
+
+    // isSubmitting should be false after completion
+    expect(result.current.isSubmitting).toBe(false);
+  });
+
+  it('clears error state on new submission attempt', async () => {
+    const error = new Error('Submission failed');
+    mockPostControllerCreate.mockRejectedValueOnce(error);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const { result } = renderHook(() => usePostReply({ postId: 'test-post-123' }));
+
+    act(() => {
+      result.current.setReplyContent('Test reply');
+    });
+
+    // First submission fails
+    await act(async () => {
+      await result.current.handleReplySubmit();
+    });
+
+    expect(result.current.error).toBe('Failed to post reply. Please try again.');
+
+    // Set content for second attempt
+    act(() => {
+      result.current.setReplyContent('Second attempt');
+    });
+
+    // Mock successful second attempt
+    mockPostControllerCreate.mockResolvedValueOnce(undefined);
+
+    // Second submission should clear error
+    await act(async () => {
+      await result.current.handleReplySubmit();
+    });
+
+    expect(result.current.error).toBeNull();
   });
 });

@@ -3,17 +3,7 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import type { DialogReplyActionBarProps } from './DialogReplyActionBar.types';
-
-interface ActionButtonConfig {
-  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  onClick?: () => void;
-  ariaLabel: string;
-  disabled?: boolean;
-  className?: string;
-  showLabel?: boolean;
-  labelText?: string;
-}
+import type { DialogReplyActionBarProps, ActionButtonConfig } from './DialogReplyActionBar.types';
 
 export function DialogReplyActionBar({
   onEmojiClick,
@@ -22,6 +12,7 @@ export function DialogReplyActionBar({
   onArticleClick,
   onPostClick,
   isPostDisabled = false,
+  isSubmitting = false,
 }: DialogReplyActionBarProps) {
   const commonButtonProps = React.useMemo(
     () => ({
@@ -38,42 +29,52 @@ export function DialogReplyActionBar({
         icon: Libs.Smile,
         onClick: onEmojiClick,
         ariaLabel: 'Add emoji',
-        disabled: !onEmojiClick,
+        disabled: !onEmojiClick || isSubmitting,
       },
       {
         icon: Libs.Image,
         onClick: onImageClick,
         ariaLabel: 'Add image',
-        disabled: !onImageClick,
+        disabled: !onImageClick || isSubmitting,
       },
       {
         icon: Libs.Paperclip,
         onClick: onFileClick,
         ariaLabel: 'Add file',
-        disabled: !onFileClick,
+        disabled: !onFileClick || isSubmitting,
       },
       {
         icon: Libs.Newspaper,
         onClick: onArticleClick,
         ariaLabel: 'Add article',
-        disabled: !onArticleClick,
+        disabled: !onArticleClick || isSubmitting,
       },
       {
-        icon: Libs.Send,
+        icon: isSubmitting ? Libs.Loader2 : Libs.Send,
         onClick: onPostClick,
         disabled: isPostDisabled || !onPostClick,
-        ariaLabel: 'Post reply',
+        ariaLabel: isSubmitting ? 'Posting...' : 'Post reply',
         showLabel: true,
-        labelText: 'Post',
+        labelText: isSubmitting ? 'Posting...' : 'Post',
+        iconClassName: isSubmitting ? 'animate-spin' : undefined,
       },
     ],
-    [onEmojiClick, onImageClick, onFileClick, onArticleClick, onPostClick, isPostDisabled],
+    [onEmojiClick, onImageClick, onFileClick, onArticleClick, onPostClick, isPostDisabled, isSubmitting],
   );
 
   return (
     <Atoms.Container className="flex items-center justify-end gap-2" overrideDefaults>
       {actionButtons.map(
-        ({ icon: Icon, onClick, ariaLabel, disabled, className: buttonClassName, showLabel, labelText }) => (
+        ({
+          icon: Icon,
+          onClick,
+          ariaLabel,
+          disabled,
+          className: buttonClassName,
+          iconClassName,
+          showLabel,
+          labelText,
+        }) => (
           <Atoms.Button
             key={ariaLabel}
             {...commonButtonProps}
@@ -84,13 +85,13 @@ export function DialogReplyActionBar({
           >
             {showLabel && labelText ? (
               <Atoms.Container className="flex items-center gap-2" overrideDefaults>
-                <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
+                <Icon className={Libs.cn('size-4 text-secondary-foreground', iconClassName)} strokeWidth={2} />
                 <Atoms.Typography as="span" size="sm" className="text-xs leading-4 font-bold text-secondary-foreground">
                   {labelText}
                 </Atoms.Typography>
               </Atoms.Container>
             ) : (
-              <Icon className="size-4 text-secondary-foreground" strokeWidth={2} />
+              <Icon className={Libs.cn('size-4 text-secondary-foreground', iconClassName)} strokeWidth={2} />
             )}
           </Atoms.Button>
         ),

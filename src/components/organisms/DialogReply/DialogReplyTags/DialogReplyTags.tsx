@@ -1,26 +1,40 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
+import * as Hooks from '@/hooks';
+import { POST_MAX_TAGS } from '@/config';
 import type { DialogReplyTagsProps } from './DialogReplyTags.types';
 
-const MAX_TAGS = 5;
-
-export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
+export function DialogReplyTags({
+  tags,
+  onTagsChange,
+  maxTags = POST_MAX_TAGS,
+  disabled = false,
+}: DialogReplyTagsProps) {
   const [tagInputValue, setTagInputValue] = useState('');
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [limitReached, setLimitReached] = useState(false);
   const tagInputRef = useRef<HTMLInputElement>(null);
+
+  const isAtLimit = tags.length >= maxTags;
+  const isDisabled = disabled || isAtLimit;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTagInputValue(e.target.value);
+    // Clear limit reached message when user starts typing again
+    if (limitReached) {
+      setLimitReached(false);
+    }
   };
 
   const handleTagAdd = (tag: string) => {
     // Validate tag count limit
-    if (tags.length >= MAX_TAGS) {
+    if (isAtLimit) {
+      setLimitReached(true);
       return;
     }
 
@@ -37,6 +51,7 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
       // Store tag with original case (trimmed)
       onTagsChange([...tags, trimmedTag]);
       setTagInputValue('');
+      setLimitReached(false);
     }
   };
 
@@ -52,27 +67,22 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
     }
   };
 
-  const handleEmojiSelect = (emoji: { native: string }) => {
-    const input = tagInputRef.current;
-    if (!input) return;
-
-    const start = input.selectionStart ?? 0;
-    const end = input.selectionEnd ?? 0;
-    const newValue = tagInputValue.slice(0, start) + emoji.native + tagInputValue.slice(end);
-
-    // Use handleInputChange for consistency and to ensure all input changes go through the same path
-    handleInputChange({ target: { value: newValue } } as React.ChangeEvent<HTMLInputElement>);
-
-    // Use requestAnimationFrame to ensure the state update completes before focusing
-    requestAnimationFrame(() => {
-      // Check if input still exists (component might have unmounted)
-      if (input && tagInputRef.current === input) {
-        input.focus();
-        const newCursorPos = start + emoji.native.length;
-        input.setSelectionRange(newCursorPos, newCursorPos);
+  // Wrapper to clear limit reached message when emoji is inserted
+  const handleEmojiChange = useCallback(
+    (newValue: string) => {
+      setTagInputValue(newValue);
+      if (limitReached) {
+        setLimitReached(false);
       }
-    });
-  };
+    },
+    [limitReached],
+  );
+
+  const handleEmojiSelect = Hooks.useEmojiInsert({
+    inputRef: tagInputRef,
+    value: tagInputValue,
+    onChange: handleEmojiChange,
+  });
 
   const handleCloseInput = () => {
     setTagInputValue('');
@@ -81,65 +91,92 @@ export function DialogReplyTags({ tags, onTagsChange }: DialogReplyTagsProps) {
 
   return (
     <>
-      <Atoms.Container overrideDefaults className="flex flex-wrap items-center gap-2">
-        {/* Add tag input */}
-        {isAddingTag && (
-          <Atoms.Container
-            overrideDefaults={true}
-            className="relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
-          >
-            <Atoms.Input
-              ref={tagInputRef}
-              type="text"
-              value={tagInputValue}
-              placeholder="add tag"
-              onChange={handleInputChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && tagInputValue.trim()) {
-                  e.preventDefault();
-                  handleTagInputSubmit(tagInputValue);
-                }
-              }}
-              onBlur={handleTagInputBlur}
+      <Atoms.Container overrideDefaults className="flex flex-col gap-1">
+        <Atoms.Container overrideDefaults className="flex flex-wrap items-center gap-2">
+          {/* Add tag input */}
+          {isAddingTag && !disabled && (
+            <Atoms.Container
+              overrideDefaults={true}
               className={Libs.cn(
-                'flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white',
-                'border-none shadow-none ring-0 outline-none hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
-                'placeholder:font-bold placeholder:text-input',
-                tagInputValue ? 'text-foreground' : 'text-input',
+                'relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed pr-1 pl-3 shadow-sm',
+                limitReached ? 'border-destructive' : 'border-input',
               )}
-            />
-            <Atoms.Button
-              overrideDefaults={true}
-              onClick={() => setShowEmojiPicker(true)}
-              className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark"
-              aria-label="Open emoji picker"
             >
-              <Libs.Smile className="size-4" strokeWidth={2} />
-            </Atoms.Button>
-            <Atoms.Button
-              overrideDefaults={true}
-              onClick={handleCloseInput}
-              className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 hover:opacity-80"
-              aria-label="Close tag input"
-            >
-              <Libs.X className="size-3" strokeWidth={2} />
-            </Atoms.Button>
-          </Atoms.Container>
-        )}
+              <Atoms.Input
+                ref={tagInputRef}
+                type="text"
+                value={tagInputValue}
+                placeholder={isAtLimit ? 'limit reached' : 'add tag'}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && tagInputValue.trim()) {
+                    e.preventDefault();
+                    handleTagInputSubmit(tagInputValue);
+                  }
+                }}
+                onBlur={handleTagInputBlur}
+                disabled={isDisabled}
+                className={Libs.cn(
+                  'flex-1 bg-transparent p-0 text-sm leading-5 font-bold caret-white',
+                  'border-none shadow-none ring-0 outline-none hover:outline-none focus:ring-0 focus:ring-offset-0 focus:outline-none',
+                  'placeholder:font-bold',
+                  isAtLimit ? 'placeholder:text-destructive' : 'placeholder:text-input',
+                  tagInputValue ? 'text-foreground' : 'text-input',
+                )}
+              />
+              <Atoms.Button
+                overrideDefaults={true}
+                onClick={() => setShowEmojiPicker(true)}
+                className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 shadow-xs-dark hover:shadow-xs-dark"
+                aria-label="Open emoji picker"
+                disabled={isDisabled}
+              >
+                <Libs.Smile className="size-4" strokeWidth={2} />
+              </Atoms.Button>
+              <Atoms.Button
+                overrideDefaults={true}
+                onClick={handleCloseInput}
+                className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full p-1 hover:opacity-80"
+                aria-label="Close tag input"
+              >
+                <Libs.X className="size-3" strokeWidth={2} />
+              </Atoms.Button>
+            </Atoms.Container>
+          )}
 
-        {/* Add button */}
-        {!isAddingTag && (
-          <Molecules.PostTagAddButton
-            onClick={() => {
-              setIsAddingTag(true);
-            }}
-          />
+          {/* Add button - disabled when at limit or disabled */}
+          {!isAddingTag && (
+            <Molecules.PostTagAddButton
+              onClick={() => {
+                setIsAddingTag(true);
+              }}
+              disabled={isDisabled}
+            />
+          )}
+
+          {/* Tag count indicator */}
+          {tags.length > 0 && (
+            <Atoms.Typography
+              as="span"
+              size="sm"
+              className={Libs.cn('text-muted-foreground', isAtLimit && 'text-destructive')}
+            >
+              {tags.length}/{maxTags}
+            </Atoms.Typography>
+          )}
+        </Atoms.Container>
+
+        {/* Limit reached message */}
+        {limitReached && (
+          <Atoms.Typography as="span" size="sm" className="text-destructive">
+            Maximum of {maxTags} tags allowed
+          </Atoms.Typography>
         )}
       </Atoms.Container>
 
       {/* Emoji Picker Dialog */}
       <Molecules.EmojiPickerDialog
-        open={showEmojiPicker}
+        open={showEmojiPicker && !disabled}
         onOpenChange={setShowEmojiPicker}
         onEmojiSelect={handleEmojiSelect}
       />

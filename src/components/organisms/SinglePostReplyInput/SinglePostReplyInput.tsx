@@ -1,20 +1,31 @@
 'use client';
 
+import { useEffect } from 'react';
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import type { SinglePostReplyInputProps } from './SinglePostReplyInput.types';
 
-interface PostReplyInputProps {
-  postId: string;
-  onCancel?: () => void;
-  onSuccess?: () => void;
-}
-
-export function SinglePostReplyInput({ postId, onSuccess }: PostReplyInputProps) {
-  const { replyContent, setReplyContent, handleReplySubmit } = Hooks.usePostReply({ postId, onSuccess });
+export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps) {
+  const { replyContent, setReplyContent, handleReplySubmit, isSubmitting, error } = Hooks.usePostReply({
+    postId,
+    onSuccess,
+  });
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
+  const { toast } = Molecules.useToast();
+
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
+      });
+    }
+  }, [error, toast]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !isSubmitting) {
       e.preventDefault();
       void handleReplySubmit();
     }
@@ -32,6 +43,7 @@ export function SinglePostReplyInput({ postId, onSuccess }: PostReplyInputProps)
           value={replyContent}
           onChange={(e) => setReplyContent(e.target.value)}
           onKeyDown={handleKeyDown}
+          disabled={isSubmitting}
         />
       </div>
     </div>

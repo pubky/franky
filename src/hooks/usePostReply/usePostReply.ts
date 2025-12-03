@@ -13,11 +13,11 @@ interface UsePostReplyOptions {
  * Custom hook to handle post reply submission
  *
  * @param options - Configuration object containing postId, optional tags array, and optional onSuccess callback
- * @returns Object containing replyContent state, setReplyContent function, and handleReplySubmit function
+ * @returns Object containing replyContent state, setReplyContent function, handleReplySubmit function, isSubmitting state, and error state
  *
  * @example
  * ```tsx
- * const { replyContent, setReplyContent, handleReplySubmit } = usePostReply({
+ * const { replyContent, setReplyContent, handleReplySubmit, isSubmitting, error } = usePostReply({
  *   postId: 'post-123',
  *   tags: ['tag1', 'tag2'],
  *   onSuccess: () => console.log('Reply submitted!'),
@@ -26,10 +26,15 @@ interface UsePostReplyOptions {
  */
 export function usePostReply({ postId, tags = [], onSuccess }: UsePostReplyOptions) {
   const [replyContent, setReplyContent] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
 
   const handleReplySubmit = useCallback(async () => {
     if (!replyContent.trim() || !postId || !currentUserId) return;
+
+    setIsSubmitting(true);
+    setError(null);
 
     try {
       await Core.PostController.create({
@@ -40,8 +45,11 @@ export function usePostReply({ postId, tags = [], onSuccess }: UsePostReplyOptio
       });
       setReplyContent('');
       onSuccess?.();
-    } catch (error) {
-      console.error('Failed to submit reply:', error);
+    } catch (err) {
+      console.error('Failed to submit reply:', err);
+      setError('Failed to post reply. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   }, [replyContent, postId, currentUserId, tags, onSuccess]);
 
@@ -49,5 +57,7 @@ export function usePostReply({ postId, tags = [], onSuccess }: UsePostReplyOptio
     replyContent,
     setReplyContent,
     handleReplySubmit,
+    isSubmitting,
+    error,
   };
 }
