@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
 
 export interface TagProps {
   name: string;
@@ -12,35 +12,44 @@ export interface TagProps {
 interface HotTagsProps {
   tags: TagProps[];
   onTagClick?: (tagName: string) => void;
+  onAddTag?: () => void;
   onSeeAll?: () => void;
   maxTags?: number;
+  className?: string;
 }
 
-export function HotTags({ tags, onTagClick, onSeeAll, maxTags = 5, ...props }: HotTagsProps) {
+/**
+ * HotTags
+ *
+ * Sidebar section showing trending tags.
+ * Uses SidebarSection for consistent layout.
+ */
+export function HotTags({ tags, onTagClick, onAddTag, onSeeAll, maxTags = 5, className }: HotTagsProps) {
   const displayTags = tags.slice(0, maxTags);
 
-  const handleSeeAll = () => {
-    onSeeAll?.();
-  };
-
   return (
-    <Atoms.Container className="flex flex-col gap-2 bg-background" {...props}>
-      <Atoms.Heading level={2} size="lg" className="font-light text-muted-foreground">
-        Hot Tags
-      </Atoms.Heading>
-
-      {/* Tags List */}
-
-      {displayTags.map((tag, index) => (
-        <Atoms.Tag key={tag.name} name={tag.name} count={tag.count} onClick={onTagClick} data-testid={`tag-${index}`} />
-      ))}
-
-      {/* See All Button */}
-      {tags.length > maxTags && (
-        <Atoms.SidebarButton icon={Libs.Tag} onClick={handleSeeAll} data-testid="see-all-button">
-          Explore all
-        </Atoms.SidebarButton>
-      )}
-    </Atoms.Container>
+    <Molecules.SidebarSection
+      title="Hot tags"
+      headerActionIcon={onAddTag ? Libs.Plus : undefined}
+      onHeaderAction={onAddTag}
+      headerActionLabel="Add tag"
+      footerIcon={Libs.Tag}
+      footerText="Explore all"
+      onFooterClick={onSeeAll}
+      className={className}
+      data-testid="hot-tags"
+    >
+      <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
+        {displayTags.map((tag, index) => (
+          <Atoms.Tag
+            key={tag.name}
+            name={tag.name}
+            count={tag.count}
+            onClick={onTagClick}
+            data-testid={`tag-${index}`}
+          />
+        ))}
+      </Atoms.Container>
+    </Molecules.SidebarSection>
   );
 }

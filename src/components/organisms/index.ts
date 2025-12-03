@@ -1,3 +1,4 @@
+export * from './ActiveUsers';
 export * from './AlertBackup';
 export * from './BackupMethodCard';
 export * from './ContentLayout';
@@ -58,3 +59,4 @@ export * from './ProfileTagged';
 export * from './NotificationItem';
 export * from './NotificationsContainer';
 export * from './NotificationsList';
+export * from './WhoToFollow';

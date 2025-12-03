@@ -101,4 +101,19 @@ export class UserApplication {
   static async bulkCounts(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.NexusUserCounts>> {
     return await Core.LocalProfileService.bulkCounts(userIds);
   }
+
+  /**
+   * Bulk read multiple user relationships from local database.
+   * Returns a Map for efficient lookup by user ID.
+   * @param userIds - Array of user IDs to fetch relationships for
+   * @returns Promise resolving to a Map of user ID to relationship data
+   */
+  static async bulkRelationships(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+    const relationships = await Core.UserRelationshipsModel.findByIds(userIds);
+    const map = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+    for (const rel of relationships) {
+      map.set(rel.id, rel);
+    }
+    return map;
+  }
 }

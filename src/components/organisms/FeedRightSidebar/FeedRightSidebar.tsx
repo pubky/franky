@@ -1,10 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
+import { APP_ROUTES } from '@/app/routes';
 
 // ============================================================================
 // Shared Components
@@ -21,14 +23,18 @@ function HomeFeedContent() {
   const { tags } = Hooks.useHotTags();
 
   const handleTagClick = (tagName: string) => {
-    router.push(`/search?tags=${encodeURIComponent(tagName)}`);
+    router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
+  };
+
+  const handleSeeAllTags = () => {
+    router.push(APP_ROUTES.SEARCH);
   };
 
   return (
     <>
-      <Molecules.WhoToFollow />
-      <Molecules.ActiveUsers />
-      <Molecules.HotTags tags={tags} onTagClick={handleTagClick} />
+      <Organisms.WhoToFollow />
+      <Organisms.ActiveUsers />
+      <Molecules.HotTags tags={tags} onTagClick={handleTagClick} onSeeAll={handleSeeAllTags} />
       <Organisms.FeedbackCard />
     </>
   );
@@ -55,9 +61,9 @@ export function HomeFeedRightSidebar() {
  */
 export function HomeFeedRightDrawer() {
   return (
-    <div className="flex flex-col gap-6">
+    <Atoms.Container overrideDefaults className="flex flex-col gap-6">
       <HomeFeedContent />
-    </div>
+    </Atoms.Container>
   );
 }
 
@@ -92,10 +98,10 @@ export function HomeFeedRightDrawerMobile() {
 export function HotFeedRightSidebar() {
   return (
     <>
-      <Molecules.WhoToFollow />
-      <div className="sticky top-[100px] self-start">
+      <Organisms.WhoToFollow />
+      <Atoms.Container overrideDefaults className="sticky top-[100px] self-start">
         <Organisms.FeedbackCard />
-      </div>
+      </Atoms.Container>
     </>
   );
 }
@@ -107,9 +113,9 @@ export function HotFeedRightSidebar() {
  */
 export function HotFeedRightDrawer() {
   return (
-    <div className="flex flex-col gap-6">
-      <Molecules.WhoToFollow />
+    <Atoms.Container overrideDefaults className="flex flex-col gap-6">
+      <Organisms.WhoToFollow />
       <Organisms.FeedbackCard />
-    </div>
+    </Atoms.Container>
   );
 }

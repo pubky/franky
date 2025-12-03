@@ -70,17 +70,12 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
     new Map<Core.Pubky, Core.NexusUserCounts>(),
   );
 
-  // Subscribe to relationships from local database (reactive)
+  // Subscribe to relationships from local database (reactive via Controller)
   // This tracks whether the current user is following each connection
   const userRelationshipsMap = useLiveQuery(
     async () => {
       if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      const relationships = await Core.UserRelationshipsModel.findByIds(userIds);
-      const map = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      for (const rel of relationships) {
-        map.set(rel.id, rel);
-      }
-      return map;
+      return await Core.UserController.bulkGetRelationships(userIds);
     },
     [userIds],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
