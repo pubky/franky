@@ -3,17 +3,14 @@
 exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant 1`] = `
 <div
   class="flex h-[12px] w-[12px] flex-col items-start"
-  data-testid="container"
   data-variant="gap-fix"
   style="height: 100px;"
 >
   <div
     class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
-    data-testid="container"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border"
-      data-testid="container"
     />
   </div>
 </div>
@@ -22,21 +19,17 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant
 exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`] = `
 <div
   class="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
-  data-testid="container"
   data-variant="regular"
   style="height: 300px;"
 >
   <div
     class="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start"
-    data-testid="container"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0"
-      data-testid="container"
     />
     <div
       class="relative size-[12px] shrink-0"
-      data-testid="container"
     >
       <svg
         class="block size-full"
@@ -56,7 +49,6 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`
   </div>
   <div
     class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
-    data-testid="container"
   />
 </div>
 `;
@@ -64,21 +56,17 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`
 exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`] = `
 <div
   class="flex h-[96px] w-[12px] flex-col items-start"
-  data-testid="container"
   data-variant="last"
   style="height: 100px;"
 >
   <div
     class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
-    data-testid="container"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border"
-      data-testid="container"
     />
     <div
       class="relative size-[12px] shrink-0"
-      data-testid="container"
     >
       <svg
         class="block size-full"
@@ -98,7 +86,6 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`
   </div>
   <div
     class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
-    data-testid="container"
   />
 </div>
 `;
@@ -106,21 +93,17 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`
 exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant 1`] = `
 <div
   class="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
-  data-testid="container"
   data-variant="regular"
   style="height: 100px;"
 >
   <div
     class="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start"
-    data-testid="container"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0"
-      data-testid="container"
     />
     <div
       class="relative size-[12px] shrink-0"
-      data-testid="container"
     >
       <svg
         class="block size-full"
@@ -140,7 +123,6 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant
   </div>
   <div
     class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
-    data-testid="container"
   />
 </div>
 `;
@@ -148,21 +130,17 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant
 exports[`PostThreadConnector > Snapshots > matches snapshot with small height 1`] = `
 <div
   class="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
-  data-testid="container"
   data-variant="regular"
   style="height: 50px;"
 >
   <div
     class="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start"
-    data-testid="container"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0"
-      data-testid="container"
     />
     <div
       class="relative size-[12px] shrink-0"
-      data-testid="container"
     >
       <svg
         class="block size-full"
@@ -182,7 +160,6 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with small height 1`
   </div>
   <div
     class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
-    data-testid="container"
   />
 </div>
 `;

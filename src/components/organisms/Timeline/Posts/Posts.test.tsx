@@ -3,7 +3,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { TimelinePosts } from './Posts';
-import * as Core from '@/core';
 import * as Hooks from '@/hooks';
 
 // Mock dependencies
@@ -13,9 +12,7 @@ vi.mock('@/hooks', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/hooks')>();
   return {
     ...actual,
-    useStreamIdFromFilters: vi.fn(),
     useInfiniteScroll: vi.fn(),
-    useStreamPagination: vi.fn(),
     usePostNavigation: vi.fn(),
   };
 });
@@ -75,13 +72,10 @@ vi.mock('@/organisms', () => ({
 const mockPush = vi.fn();
 const mockUseLiveQuery = vi.mocked(useLiveQuery);
 const mockUseRouter = vi.mocked(useRouter);
-const mockUseStreamIdFromFilters = vi.mocked(Hooks.useStreamIdFromFilters);
 const mockUseInfiniteScroll = vi.mocked(Hooks.useInfiniteScroll);
-const mockUseStreamPagination = vi.mocked(Hooks.useStreamPagination);
 const mockUsePostNavigation = vi.mocked(Hooks.usePostNavigation);
 
 describe('TimelinePosts', () => {
-  const mockStreamId = Core.PostStreamTypes.TIMELINE_ALL_ALL;
   const mockPostIds = ['author1:post1', 'author2:post2', 'author3:post3'];
 
   beforeEach(() => {
@@ -97,23 +91,9 @@ describe('TimelinePosts', () => {
       prefetch: vi.fn(),
     } as ReturnType<typeof useRouter>);
 
-    // Mock stream ID
-    mockUseStreamIdFromFilters.mockReturnValue(mockStreamId);
-
     // Mock infinite scroll
     mockUseInfiniteScroll.mockReturnValue({
       sentinelRef: { current: null },
-    });
-
-    // Mock useStreamPagination
-    mockUseStreamPagination.mockReturnValue({
-      postIds: mockPostIds,
-      loading: false,
-      loadingMore: false,
-      error: null,
-      hasMore: true,
-      loadMore: vi.fn(),
-      refresh: vi.fn(),
     });
 
     // Mock usePostNavigation
@@ -131,33 +111,31 @@ describe('TimelinePosts', () => {
 
   describe('Loading States', () => {
     it('should render loading state initially', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: [],
-        loading: true,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={[]}
+          loading={true}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       expect(screen.getByTestId('timeline-loading')).toBeInTheDocument();
     });
 
     it('should render posts after successful fetch', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
@@ -165,17 +143,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should show loading more indicator when paginating', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: true,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={true}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-loading-more')).toBeInTheDocument();
@@ -185,17 +162,16 @@ describe('TimelinePosts', () => {
 
   describe('Empty States', () => {
     it('should render empty state when no posts are returned', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: [],
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={[]}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-empty')).toBeInTheDocument();
@@ -205,17 +181,16 @@ describe('TimelinePosts', () => {
     it('should render end message when no more posts to load', async () => {
       const fewPosts = ['author1:post1', 'author2:post2']; // Less than NEXUS_POSTS_PER_PAGE
 
-      mockUseStreamPagination.mockReturnValue({
-        postIds: fewPosts,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={fewPosts}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-end-message')).toBeInTheDocument();
@@ -225,17 +200,16 @@ describe('TimelinePosts', () => {
 
   describe('Error States', () => {
     it('should render error state on initial fetch failure', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: [],
-        loading: false,
-        loadingMore: false,
-        error: 'Network error',
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={[]}
+          loading={false}
+          loadingMore={false}
+          error="Network error"
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-initial-error')).toBeInTheDocument();
@@ -244,17 +218,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should show error message when pagination fails', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: 'Pagination failed',
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error="Pagination failed"
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-error')).toBeInTheDocument();
@@ -262,17 +235,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should stop loading more posts after pagination error', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: 'Pagination failed',
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error="Pagination failed"
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const { hasMore } = mockUseInfiniteScroll.mock.calls[0][0];
@@ -283,17 +255,16 @@ describe('TimelinePosts', () => {
 
   describe('Post Rendering', () => {
     it('should render all fetched posts', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         mockPostIds.forEach((postId) => {
@@ -303,17 +274,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should render PostWithReplies for each post', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const postContainers = screen.getAllByTestId(/^post-/);
@@ -322,17 +292,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should render posts with correct keys', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      const { container } = render(<TimelinePosts />);
+      const { container } = render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const posts = container.querySelectorAll('[data-testid^="post-"]');
@@ -343,17 +312,16 @@ describe('TimelinePosts', () => {
 
   describe('Navigation', () => {
     it('should navigate to post detail when post is clicked', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: ['author1:post123'],
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={['author1:post123']}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const post = screen.getByTestId('post-author1:post123');
@@ -364,17 +332,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should navigate with correct URL format for different posts', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const post1 = screen.getByTestId('post-author1:post1');
@@ -388,17 +355,16 @@ describe('TimelinePosts', () => {
   describe('Pagination', () => {
     it('should call loadMore when infinite scroll triggers', async () => {
       const mockLoadMore = vi.fn();
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: mockLoadMore,
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={mockLoadMore}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('post-author1:post1')).toBeInTheDocument();
@@ -412,17 +378,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should pass hasMore to infinite scroll hook', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const { hasMore } = mockUseInfiniteScroll.mock.calls[0][0];
@@ -431,17 +396,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should pass loadingMore to infinite scroll hook', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: true,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={true}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const { isLoading } = mockUseInfiniteScroll.mock.calls[0][0];
@@ -451,61 +415,55 @@ describe('TimelinePosts', () => {
   });
 
   describe('Stream Changes', () => {
-    it('should use streamId from filters when not provided', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+    it('should render posts with provided props', async () => {
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
-        expect(mockUseStreamPagination).toHaveBeenCalledWith({
-          streamId: mockStreamId,
-        });
+        expect(screen.getByTestId('post-author1:post1')).toBeInTheDocument();
       });
     });
 
-    it('should use provided streamId prop over filters', async () => {
-      const customStreamId = Core.PostStreamTypes.POPULARITY_ALL_ALL;
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts streamId={customStreamId} />);
+    it('should handle different post lists', async () => {
+      const customPostIds = ['author4:post4', 'author5:post5'];
+      render(
+        <TimelinePosts
+          postIds={customPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
-        expect(mockUseStreamPagination).toHaveBeenCalledWith({
-          streamId: customStreamId,
-        });
+        expect(screen.getByTestId('post-author4:post4')).toBeInTheDocument();
+        expect(screen.getByTestId('post-author5:post5')).toBeInTheDocument();
       });
     });
   });
 
   describe('Infinite Scroll Configuration', () => {
     it('should configure infinite scroll with correct parameters', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      render(<TimelinePosts />);
+      render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(mockUseInfiniteScroll).toHaveBeenCalledWith({
@@ -519,17 +477,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should render sentinel element for infinite scroll', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      const { container } = render(<TimelinePosts />);
+      const { container } = render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         const sentinel = container.querySelector('.h-\\[20px\\]');
@@ -540,33 +497,31 @@ describe('TimelinePosts', () => {
 
   describe('Snapshots', () => {
     it('should match snapshot for loading state', () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: [],
-        loading: true,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      const { container } = render(<TimelinePosts />);
+      const { container } = render(
+        <TimelinePosts
+          postIds={[]}
+          loading={true}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       expect(container).toMatchSnapshot();
     });
 
     it('should match snapshot for empty state', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: [],
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      const { container } = render(<TimelinePosts />);
+      const { container } = render(
+        <TimelinePosts
+          postIds={[]}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-empty')).toBeInTheDocument();
@@ -576,17 +531,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should match snapshot for error state', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: [],
-        loading: false,
-        loadingMore: false,
-        error: 'Network error',
-        hasMore: false,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      const { container } = render(<TimelinePosts />);
+      const { container } = render(
+        <TimelinePosts
+          postIds={[]}
+          loading={false}
+          loadingMore={false}
+          error="Network error"
+          hasMore={false}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.getByTestId('timeline-initial-error')).toBeInTheDocument();
@@ -596,17 +550,16 @@ describe('TimelinePosts', () => {
     });
 
     it('should match snapshot with posts', async () => {
-      mockUseStreamPagination.mockReturnValue({
-        postIds: mockPostIds,
-        loading: false,
-        loadingMore: false,
-        error: null,
-        hasMore: true,
-        loadMore: vi.fn(),
-        refresh: vi.fn(),
-      });
-
-      const { container } = render(<TimelinePosts />);
+      const { container } = render(
+        <TimelinePosts
+          postIds={mockPostIds}
+          loading={false}
+          loadingMore={false}
+          error={null}
+          hasMore={true}
+          loadMore={vi.fn()}
+        />,
+      );
 
       await waitFor(() => {
         expect(screen.queryByTestId('timeline-loading')).not.toBeInTheDocument();
