@@ -15,7 +15,7 @@ export class ProfileController {
         name: profile.name,
         bio: profile.bio ?? '',
         image: image ?? '',
-        links: (profile.links ?? []).map((link) => ({ title: link.label, url: link.url })),
+        links: Core.UserNormalizer.linksFromUi(profile.links),
         status: '', // default is blank
       },
       pubky,
@@ -37,14 +37,12 @@ export class ProfileController {
   }
 
   static async updateProfile(profile: z.infer<typeof Core.UiUserSchema>, image: string | null, pubky: Core.Pubky) {
-    const links = (profile.links ?? []).map((link) => ({ title: link.label, url: link.url }));
-
     await Core.ProfileApplication.updateProfile({
       pubky,
       name: profile.name,
       bio: profile.bio ?? '',
       image,
-      links,
+      links: Core.UserNormalizer.linksFromUi(profile.links),
     });
   }
 }
