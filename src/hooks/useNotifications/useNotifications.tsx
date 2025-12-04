@@ -1,25 +1,24 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { useLiveQuery } from 'dexie-react-hooks';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import * as Core from '@/core';
+import { getBusinessKey } from '@/core/models/notification/notification.helpers';
 import type { FlatNotification } from '@/core';
 import type { UseNotificationsResult } from './useNotifications.types';
 
 /**
  * Hook for notifications with infinite scroll pagination.
- * Uses local cache (via useLiveQuery) for real-time updates from polling,
- * and fetches from Nexus for pagination via NotificationController.
+ * Fetches directly from NotificationController using timestamp-based pagination.
  */
 export function useNotifications(): UseNotificationsResult {
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [notifications, setNotifications] = useState<FlatNotification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const olderThanRef = useRef<number | undefined>(Infinity);
+  const olderThanRef = useRef<number | undefined>(undefined);
   const loadingRef = useRef(false);
-  const initialLoadTriggeredRef = useRef(false);
 
   const { currentUserPubky } = Core.useAuthStore();
   const lastRead = Core.useNotificationStore((s) => s.lastRead);
@@ -31,38 +30,26 @@ export function useNotifications(): UseNotificationsResult {
     }
   }, [lastRead]);
 
-  // Get all notifications from local cache (reactive to polling updates)
-  const cachedNotifications = useLiveQuery(async () => {
-    if (!currentUserPubky) return undefined;
-    return await Core.NotificationModel.getAll();
-  }, [currentUserPubky]);
-
-  // Sort notifications by timestamp (newest first)
-  // useLiveQuery is needed for reactive updates when coordinator polls and saves new notifications
-  const notifications = useMemo(() => {
-    if (!cachedNotifications || cachedNotifications.length === 0) return [];
-    
-    return [...cachedNotifications].sort((a, b) => b.timestamp - a.timestamp);
-  }, [cachedNotifications]);
-
   /**
    * Perform initial load - fetches first page of notifications
    */
   const performInitialLoad = useCallback(async () => {
-    if (!currentUserPubky || initialLoadTriggeredRef.current) return;
+    if (!currentUserPubky || loadingRef.current) return;
 
-    initialLoadTriggeredRef.current = true;
+    loadingRef.current = true;
     setIsLoading(true);
+    setError(null);
 
     try {
-      // Empty object - controller defaults olderThan to Infinity
       const result = await Core.NotificationController.getOrFetchNotifications({});
 
+      setNotifications(result.notifications);
       olderThanRef.current = result.olderThan;
       setHasMore(result.olderThan !== undefined);
     } catch {
       setError('Failed to load notifications');
     } finally {
+      loadingRef.current = false;
       setIsLoading(false);
     }
   }, [currentUserPubky]);
@@ -79,16 +66,23 @@ export function useNotifications(): UseNotificationsResult {
 
     loadingRef.current = true;
     setIsLoadingMore(true);
+    setError(null);
 
     try {
       const result = await Core.NotificationController.getOrFetchNotifications({
         olderThan: olderThanRef.current,
       });
 
+      setNotifications((prev) => {
+        // Deduplicate using businessKey
+        const existingKeys = new Set(prev.map(getBusinessKey));
+        const newNotifications = result.notifications.filter((n) => !existingKeys.has(getBusinessKey(n)));
+        return [...prev, ...newNotifications];
+      });
       olderThanRef.current = result.olderThan;
       setHasMore(result.olderThan !== undefined);
     } catch {
-      setError('Failed to load notifications');
+      setError('Failed to load more notifications');
     } finally {
       loadingRef.current = false;
       setIsLoadingMore(false);
@@ -99,20 +93,25 @@ export function useNotifications(): UseNotificationsResult {
    * Refresh notifications - resets pagination and fetches from start
    */
   const refresh = useCallback(async () => {
-    if (!currentUserPubky) return;
+    if (!currentUserPubky || loadingRef.current) return;
 
-    olderThanRef.current = Infinity;
+    loadingRef.current = true;
+    setIsLoading(true);
+    setError(null);
+    olderThanRef.current = undefined;
     setHasMore(true);
-    initialLoadTriggeredRef.current = false; // Allow re-initial load
 
     try {
-      // Empty object - controller defaults olderThan to Infinity
       const result = await Core.NotificationController.getOrFetchNotifications({});
 
+      setNotifications(result.notifications);
       olderThanRef.current = result.olderThan;
       setHasMore(result.olderThan !== undefined);
     } catch {
-      setError('Failed to load notifications');
+      setError('Failed to refresh notifications');
+    } finally {
+      loadingRef.current = false;
+      setIsLoading(false);
     }
   }, [currentUserPubky]);
 
@@ -133,9 +132,7 @@ export function useNotifications(): UseNotificationsResult {
   /**
    * List of unread notifications
    */
-  const unreadNotifications = useMemo(() => {
-    return notifications.filter((n) => n.timestamp > lastReadRef.current);
-  }, [notifications]);
+  const unreadNotifications = notifications.filter((n) => n.timestamp > lastReadRef.current);
 
   /**
    * Initial load - fetch first page when component mounts
@@ -143,8 +140,7 @@ export function useNotifications(): UseNotificationsResult {
   useEffect(() => {
     if (!currentUserPubky) return;
     performInitialLoad();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUserPubky]);
+  }, [currentUserPubky, performInitialLoad]);
 
   return {
     notifications,
