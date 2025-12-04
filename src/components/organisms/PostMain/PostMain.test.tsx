@@ -1,11 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PostMain } from './PostMain';
-import { useLiveQuery } from 'dexie-react-hooks';
-
-vi.mock('dexie-react-hooks', () => ({
-  useLiveQuery: vi.fn(),
-}));
 
 // Use real libs, only stub cn for deterministic class joining
 vi.mock('@/libs', async (importOriginal) => {
@@ -22,9 +17,21 @@ vi.mock('@/atoms', () => ({
     children,
     className,
     onClick,
+    overrideDefaults,
     ...props
-  }: React.PropsWithChildren<{ className?: string; onClick?: () => void; [key: string]: unknown }>) => (
-    <div data-testid="container" data-class-name={className} onClick={onClick} {...props}>
+  }: React.PropsWithChildren<{
+    className?: string;
+    onClick?: () => void;
+    overrideDefaults?: boolean;
+    [key: string]: unknown;
+  }>) => (
+    <div
+      data-testid="container"
+      data-class-name={className}
+      data-override-defaults={overrideDefaults}
+      onClick={onClick}
+      {...props}
+    >
       {children}
     </div>
   ),
@@ -49,9 +56,31 @@ vi.mock('@/atoms', () => ({
 vi.mock('@/organisms', () => ({
   PostHeader: ({ postId }: { postId: string }) => <div data-testid="post-header">PostHeader {postId}</div>,
   PostContent: ({ postId }: { postId: string }) => <div data-testid="post-content">PostContent {postId}</div>,
-  PostActionsBar: ({ postId, className }: { postId: string; className?: string }) => (
+  PostActionsBar: ({
+    postId,
+    className,
+    onReplyClick,
+  }: {
+    postId: string;
+    className?: string;
+    onReplyClick?: () => void;
+  }) => (
     <div data-testid="post-actions" data-class-name={className}>
       Actions {postId}
+      {onReplyClick && <button onClick={onReplyClick}>Reply</button>}
+    </div>
+  ),
+  DialogReply: ({
+    postId,
+    open,
+    onOpenChangeAction,
+  }: {
+    postId: string;
+    open: boolean;
+    onOpenChangeAction: (open: boolean) => void;
+  }) => (
+    <div data-testid="dialog-reply" data-post-id={postId} data-open={open} onClick={() => onOpenChangeAction(false)}>
+      DialogReply
     </div>
   ),
 }));
@@ -59,13 +88,6 @@ vi.mock('@/organisms', () => ({
 // Stub molecules used by PostMain
 vi.mock('@/molecules', () => ({
   PostTagsList: ({ postId }: { postId: string }) => <div data-testid="post-tags-list">PostTagsList {postId}</div>,
-}));
-
-// Keep Core shape only for potential spying if needed
-vi.mock('@/core', () => ({
-  PostTagsModel: {
-    findById: vi.fn(),
-  },
 }));
 
 // Mock useElementHeight hook
@@ -76,16 +98,12 @@ vi.mock('@/hooks', () => ({
   })),
 }));
 
-const mockUseLiveQuery = vi.mocked(useLiveQuery);
-
 describe('PostMain', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders header, content, tags and actions', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [{ label: 'alpha' }, { label: 'beta' }] });
-
     render(<PostMain postId="post-123" />);
 
     expect(screen.getByTestId('post-header')).toHaveTextContent('PostHeader post-123');
@@ -95,7 +113,6 @@ describe('PostMain', () => {
   });
 
   it('invokes onClick handler when clickable area is clicked', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [] });
     const onClick = vi.fn();
 
     render(<PostMain postId="post-abc" onClick={onClick} />);
@@ -109,16 +126,12 @@ describe('PostMain', () => {
   });
 
   it('does not render thread connector when isReply is false', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [] });
-
     render(<PostMain postId="post-123" isReply={false} />);
 
     expect(screen.queryByTestId('thread-connector')).not.toBeInTheDocument();
   });
 
   it('renders thread connector when isReply is true', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [] });
-
     render(<PostMain postId="post-123" isReply={true} />);
 
     const connector = screen.getByTestId('thread-connector');
@@ -130,29 +143,21 @@ describe('PostMain', () => {
 
 describe('PostMain - Snapshots', () => {
   it('matches snapshot with tags', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [{ label: 'alpha' }, { label: 'beta' }, { label: 'gamma' }] });
-
     const { container } = render(<PostMain postId="post-123" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot without tags', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [] });
-
     const { container } = render(<PostMain postId="post-789" />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with isReply true', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [{ label: 'alpha' }] });
-
     const { container } = render(<PostMain postId="post-reply-123" isReply={true} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with isReply false', () => {
-    mockUseLiveQuery.mockReturnValue({ tags: [{ label: 'alpha' }] });
-
     const { container } = render(<PostMain postId="post-no-reply-456" isReply={false} />);
     expect(container.firstChild).toMatchSnapshot();
   });

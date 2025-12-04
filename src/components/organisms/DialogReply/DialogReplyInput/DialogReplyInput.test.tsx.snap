@@ -1,0 +1,155 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DialogReplyInput - Snapshots > matches snapshot in default state 1`] = `
+<div
+  class="relative rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    data-testid="dialog-post-reply-thread-connector"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-is-reply-input="true"
+      data-post-id="snapshot-user-id:pubkey"
+      data-testid="post-header"
+    >
+      PostHeader 
+      snapshot-user-id:pubkey
+    </div>
+    <textarea
+      class="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+    <div
+      class="justify-between gap-4 md:flex-row md:gap-0"
+      data-testid="container"
+    >
+      <div
+        data-testid="dialog-reply-tags"
+      >
+        <button
+          data-testid="add-tag-button"
+        >
+          +
+        </button>
+      </div>
+      <div
+        data-testid="dialog-reply-action-bar"
+      >
+        <button
+          aria-label="Post reply"
+          data-testid="post-button"
+          disabled=""
+        >
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogReplyInput - Snapshots > matches snapshot with user details 1`] = `
+<div
+  class="relative rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    data-testid="dialog-post-reply-thread-connector"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-is-reply-input="true"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    >
+      PostHeader 
+      test-user-id:pubkey
+    </div>
+    <textarea
+      class="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+    <div
+      class="justify-between gap-4 md:flex-row md:gap-0"
+      data-testid="container"
+    >
+      <div
+        data-testid="dialog-reply-tags"
+      >
+        <button
+          data-testid="add-tag-button"
+        >
+          +
+        </button>
+      </div>
+      <div
+        data-testid="dialog-reply-action-bar"
+      >
+        <button
+          aria-label="Post reply"
+          data-testid="post-button"
+          disabled=""
+        >
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`DialogReplyInput - Snapshots > matches snapshot without user details 1`] = `
+<div
+  class="relative rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    data-testid="dialog-post-reply-thread-connector"
+  />
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <textarea
+      class="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+    <div
+      class="justify-between gap-4 md:flex-row md:gap-0"
+      data-testid="container"
+    >
+      <div
+        data-testid="dialog-reply-tags"
+      >
+        <button
+          data-testid="add-tag-button"
+        >
+          +
+        </button>
+      </div>
+      <div
+        data-testid="dialog-reply-action-bar"
+      >
+        <button
+          aria-label="Post reply"
+          data-testid="post-button"
+          disabled=""
+        >
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

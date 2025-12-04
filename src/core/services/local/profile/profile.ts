@@ -63,6 +63,26 @@ export class LocalProfileService {
   }
 
   /**
+   * Bulk retrieves multiple user relationships from local database.
+   * @param userIds - Array of user IDs to fetch relationships for
+   * @returns Promise resolving to Map of user ID to user relationships
+   */
+  static async bulkRelationships(userIds: Core.Pubky[]): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+    if (userIds.length === 0) return new Map();
+
+    const results = await Core.UserRelationshipsModel.findByIds(userIds);
+    const map = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
+
+    for (const relationship of results) {
+      if (relationship) {
+        map.set(relationship.id, relationship);
+      }
+    }
+
+    return map;
+  }
+
+  /**
    * Upserts user details into local database.
    * @param userDetails - The user details to upsert
    * @returns Promise resolving to void

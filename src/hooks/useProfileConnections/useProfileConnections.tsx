@@ -70,17 +70,12 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
     new Map<Core.Pubky, Core.NexusUserCounts>(),
   );
 
-  // Subscribe to relationships from local database (reactive)
+  // Subscribe to relationships from local database (reactive via Controller)
   // This tracks whether the current user is following each connection
   const userRelationshipsMap = useLiveQuery(
     async () => {
       if (userIds.length === 0) return new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      const relationships = await Core.UserRelationshipsModel.findByIds(userIds);
-      const map = new Map<Core.Pubky, Core.UserRelationshipsModelSchema>();
-      for (const rel of relationships) {
-        map.set(rel.id, rel);
-      }
-      return map;
+      return await Core.UserController.bulkGetRelationships(userIds);
     },
     [userIds],
     new Map<Core.Pubky, Core.UserRelationshipsModelSchema>(),
@@ -92,8 +87,8 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
       const details = userDetailsMap.get(id);
       const counts = userCountsMap.get(id);
       const relationship = userRelationshipsMap.get(id);
-      // Generate avatar URL from user ID using FileController
-      const avatarUrl = Core.FileController.getAvatarUrl(id);
+      // Only compute CDN avatar URL if user has an image set
+      const avatarUrl = details?.image ? Core.FileController.getAvatarUrl(id) : null;
 
       if (!details) {
         // Return minimal data if details not yet loaded
@@ -105,7 +100,7 @@ export function useProfileConnections(type: ConnectionType, userId?: Core.Pubky)
           status: null,
           links: null,
           indexed_at: 0,
-          avatarUrl,
+          avatarUrl: null,
           tags: [],
           stats: { tags: 0, posts: 0 },
           isFollowing: relationship?.following ?? false,

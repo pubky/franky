@@ -5,6 +5,7 @@ import {
   Github2,
   Telegram,
   UsersRound2,
+  LineHorizontal,
   Synonym,
   Blocktank,
   Bitkit,
@@ -201,6 +202,51 @@ describe('Custom Icons', () => {
       expect(path).toHaveAttribute('stroke-width', '1.5');
       expect(path).toHaveAttribute('stroke-linecap', 'round');
       expect(path).toHaveAttribute('stroke-linejoin', 'round');
+    });
+  });
+
+  describe('LineHorizontal', () => {
+    it('should render correctly with default props', () => {
+      const { container } = render(<LineHorizontal />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toBeInTheDocument();
+      expect(svg).toHaveAttribute('width', '12');
+      expect(svg).toHaveAttribute('height', '12');
+      expect(svg).toHaveAttribute('viewBox', '0 0 12 12');
+      expect(svg).toHaveAttribute('fill', 'none');
+    });
+
+    it('should apply custom size', () => {
+      const { container } = render(<LineHorizontal size={16} />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('width', '16');
+      expect(svg).toHaveAttribute('height', '16');
+    });
+
+    it('should have fill-secondary class hardcoded', () => {
+      const { container } = render(<LineHorizontal />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveClass('fill-secondary');
+    });
+
+    it('should apply additional props', () => {
+      const { container } = render(<LineHorizontal data-testid="line-icon" />);
+      const svg = container.querySelector('svg');
+
+      expect(svg).toHaveAttribute('data-testid', 'line-icon');
+    });
+
+    it('should render the correct SVG content', () => {
+      const { container } = render(<LineHorizontal />);
+      const path = container.querySelector('path');
+
+      expect(path).toBeInTheDocument();
+      expect(path).toHaveAttribute('fill-rule', 'evenodd');
+      expect(path).toHaveAttribute('clip-rule', 'evenodd');
+      // Note: fill is handled via CSS classes, not as an attribute
     });
   });
 

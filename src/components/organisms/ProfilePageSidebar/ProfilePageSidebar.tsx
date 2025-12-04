@@ -7,8 +7,7 @@ import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Hooks from '@/hooks';
 import * as Providers from '@/providers';
-
-const MAX_SIDEBAR_TAGS = 5;
+import { MAX_SIDEBAR_TAGS } from './ProfilePageSidebar.constants';
 
 export function ProfilePageSidebar() {
   const pathname = usePathname();
@@ -46,6 +45,7 @@ export function ProfilePageSidebar() {
           isLoading={isLoadingTags}
           onTagClick={handleTagToggle}
           pubky={pubky ?? ''}
+          userName={profile?.name}
         />
       )}
       <Molecules.ProfilePageLinks links={profile?.links} />

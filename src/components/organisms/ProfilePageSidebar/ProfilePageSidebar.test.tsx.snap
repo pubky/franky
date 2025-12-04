@@ -59,7 +59,7 @@ exports[`ProfilePageSidebar - Snapshots > matches snapshot with default state 1`
         class="text-foreground text-sm font-bold"
         data-testid="typography"
       >
-        Add Tag
+        Tag User
       </span>
     </button>
   </div>

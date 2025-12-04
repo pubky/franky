@@ -2,14 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { RightSidebar } from './RightSidebar';
 
-// Mock the molecules
-vi.mock('@/molecules', () => ({
+// Mock the organisms (WhoToFollow and ActiveUsers were moved from molecules to organisms)
+vi.mock('@/organisms', () => ({
   WhoToFollow: () => <div data-testid="who-to-follow">Who to Follow</div>,
   ActiveUsers: () => <div data-testid="active-users">Active Users</div>,
-}));
-
-// Mock the organisms
-vi.mock('@/organisms', () => ({
   FeedbackCard: () => <div data-testid="feedback-card">Feedback Card</div>,
 }));
 
