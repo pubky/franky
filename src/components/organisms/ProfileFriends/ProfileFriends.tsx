@@ -12,6 +12,8 @@ import * as Providers from '@/providers';
  * Organism that displays a user's friends list with infinite scroll pagination.
  * Handles data fetching, loading states, and follow/unfollow actions.
  * Uses ProfileContext to get the target user's pubky.
+ *
+ * Note: Friends are by definition mutual follows, so isFollowing is always true.
  */
 export function ProfileFriends() {
   // Get the profile pubky from context
@@ -23,7 +25,7 @@ export function ProfileFriends() {
     Hooks.CONNECTION_TYPE.FRIENDS,
     pubky ?? undefined,
   );
-  const { toggleFollow } = Hooks.useFollowUser();
+  const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
   // Handle infinite scroll
   const { sentinelRef } = Hooks.useInfiniteScroll({
@@ -58,11 +60,20 @@ export function ProfileFriends() {
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Friends {count > 0 && `(${count})`}
       </Atoms.Heading>
-      <Molecules.UserConnectionsList
-        connections={connections}
-        onFollow={handleFollow}
-        currentUserPubky={currentUserPubky}
-      />
+      <Atoms.Container className="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6">
+        {connections.map((connection) => (
+          <Molecules.UserListItem
+            key={connection.id}
+            user={connection}
+            variant="full"
+            isFollowing={true} // Friends are by definition mutual follows
+            isLoading={isUserLoading(connection.id)}
+            isStatusLoading={isLoading}
+            isCurrentUser={currentUserPubky === connection.id}
+            onFollowClick={handleFollow}
+          />
+        ))}
+      </Atoms.Container>
 
       {/* Infinite scroll trigger */}
       <div ref={sentinelRef} className="h-1" />

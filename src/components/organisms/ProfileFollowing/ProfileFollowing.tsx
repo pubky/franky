@@ -23,7 +23,7 @@ export function ProfileFollowing() {
     Hooks.CONNECTION_TYPE.FOLLOWING,
     pubky ?? undefined,
   );
-  const { toggleFollow } = Hooks.useFollowUser();
+  const { toggleFollow, isUserLoading } = Hooks.useFollowUser();
 
   // Handle infinite scroll
   const { sentinelRef } = Hooks.useInfiniteScroll({
@@ -58,11 +58,19 @@ export function ProfileFollowing() {
       <Atoms.Heading level={5} size="lg" className="leading-normal font-light text-muted-foreground lg:hidden">
         Following {count > 0 && `(${count})`}
       </Atoms.Heading>
-      <Molecules.UserConnectionsList
-        connections={connections}
-        onFollow={handleFollow}
-        currentUserPubky={currentUserPubky}
-      />
+      <Atoms.Container className="gap-3.5 rounded-md bg-transparent p-0 lg:gap-3 lg:bg-card lg:p-6">
+        {connections.map((connection) => (
+          <Molecules.UserListItem
+            key={connection.id}
+            user={connection}
+            variant="full"
+            isLoading={isUserLoading(connection.id)}
+            isStatusLoading={isLoading}
+            isCurrentUser={currentUserPubky === connection.id}
+            onFollowClick={handleFollow}
+          />
+        ))}
+      </Atoms.Container>
 
       {/* Infinite scroll trigger */}
       <div ref={sentinelRef} className="h-1" />

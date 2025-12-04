@@ -16,16 +16,20 @@ import type { UseFollowUserResult } from './useFollowUser.types';
  *
  * @example
  * ```tsx
- * const { toggleFollow, isLoading, error } = useFollowUser();
+ * const { toggleFollow, isLoading, isUserLoading, error } = useFollowUser();
  *
  * const handleFollow = async (userId: Pubky, isFollowing: boolean) => {
  *   await toggleFollow(userId, isFollowing);
  * };
+ *
+ * // Check if a specific user is loading
+ * const showSpinner = isUserLoading(userId);
  * ```
  */
 export function useFollowUser(): UseFollowUserResult {
   const { currentUserPubky } = Core.useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingUserId, setLoadingUserId] = useState<Core.Pubky | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const toggleFollow = useCallback(
@@ -41,6 +45,7 @@ export function useFollowUser(): UseFollowUserResult {
       }
 
       setIsLoading(true);
+      setLoadingUserId(userId);
       setError(null);
 
       try {
@@ -61,14 +66,22 @@ export function useFollowUser(): UseFollowUserResult {
         throw err;
       } finally {
         setIsLoading(false);
+        setLoadingUserId(null);
       }
     },
     [currentUserPubky],
   );
 
+  const isUserLoading = useCallback(
+    (userId: Core.Pubky) => isLoading && loadingUserId === userId,
+    [isLoading, loadingUserId],
+  );
+
   return {
     toggleFollow,
     isLoading,
+    loadingUserId,
+    isUserLoading,
     error,
   };
 }

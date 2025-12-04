@@ -42,6 +42,23 @@ describe('PostTagAddButton', () => {
     const button = screen.getByLabelText('Add new tag');
     expect(button).toBeInTheDocument();
   });
+
+  it('is disabled when disabled prop is true', () => {
+    render(<PostTagAddButton disabled />);
+
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+  });
+
+  it('does not call onClick when disabled', () => {
+    const mockOnClick = vi.fn();
+    render(<PostTagAddButton onClick={mockOnClick} disabled />);
+
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+
+    expect(mockOnClick).not.toHaveBeenCalled();
+  });
 });
 
 describe('PostTagAddButton - Snapshots', () => {

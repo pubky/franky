@@ -58,15 +58,16 @@ export const Tag = ({
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      title={name}
       data-testid={dataTestId || 'tag'}
       {...props}
     >
-      <Atoms.Typography size="sm" data-testid="tag-name">
+      <Atoms.Typography size="sm" className="truncate" data-testid="tag-name">
         {name}
       </Atoms.Typography>
 
       {count !== undefined && (
-        <Atoms.Typography size="sm" className="ml-1.5 font-medium text-foreground/50" data-testid="tag-count">
+        <Atoms.Typography size="sm" className="ml-1.5 shrink-0 font-medium text-foreground/50" data-testid="tag-count">
           {count}
         </Atoms.Typography>
       )}

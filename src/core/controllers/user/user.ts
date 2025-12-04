@@ -36,6 +36,16 @@ export class UserController {
     return await Core.UserApplication.bulkCounts(userIds);
   }
 
+  /**
+   * Get multiple user relationships from local database (bulk operation)
+   * This is a read-only operation that queries the local cache
+   */
+  static async bulkGetRelationships(
+    userIds: Core.Pubky[],
+  ): Promise<Map<Core.Pubky, Core.UserRelationshipsModelSchema>> {
+    return await Core.UserApplication.bulkRelationships(userIds);
+  }
+
   static async follow(eventType: Core.HomeserverAction, { follower, followee }: Core.TFollowParams) {
     const { meta, follow } = Core.FollowNormalizer.to({ follower, followee });
 

@@ -219,13 +219,21 @@ describe('PostTagsList', () => {
     fireEvent.blur(input);
     expect(screen.getByRole('button', { name: 'Add new tag' })).toBeInTheDocument();
 
-    // entering value and pressing Enter should keep button (since value clears)
+    // entering value and pressing Enter should keep input open for adding multiple tags (addMode behavior)
     fireEvent.click(screen.getByRole('button', { name: 'Add new tag' }));
     const input2 = screen.getByRole('textbox') as HTMLInputElement;
     fireEvent.change(input2, { target: { value: 'new' } });
     fireEvent.keyDown(input2, { key: 'Enter' });
-    // after submit, value cleared and input remains visible for next add
-    expect((screen.getByRole('textbox') as HTMLInputElement).value).toBe('');
+    // after submit in addMode, input stays open so you can add multiple tags in a row
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Add new tag' })).not.toBeInTheDocument();
+    // input should be cleared and ready for next tag
+    expect(input2.value).toBe('');
+
+    // blur with empty value -> should return to button when addMode
+    fireEvent.blur(input2);
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add new tag' })).toBeInTheDocument();
   });
 });
 
