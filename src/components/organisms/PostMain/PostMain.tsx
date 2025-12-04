@@ -25,7 +25,9 @@ export function PostMain({ postId, onClick, className, isReply = false, isLastRe
   const { ref: cardRef, height: postHeight } = Hooks.useElementHeight();
 
   // Determine thread connector variant based on reply status
-  const connectorVariant = isLastReply ? 'last' : 'regular';
+  const connectorVariant = isLastReply
+    ? Atoms.POST_THREAD_CONNECTOR_VARIANTS.LAST
+    : Atoms.POST_THREAD_CONNECTOR_VARIANTS.REGULAR;
 
   const handleReplyClick = () => {
     setReplyDialogOpen(true);
