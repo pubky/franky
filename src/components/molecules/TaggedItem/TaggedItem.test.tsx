@@ -42,20 +42,20 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
+const mockTag: TagWithAvatars = {
+  label: 'bitcoin',
+  taggers: [
+    { id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1' },
+    { id: 'user2', avatarUrl: 'https://cdn.example.com/avatar/user2' },
+    { id: 'user3', avatarUrl: 'https://cdn.example.com/avatar/user3' },
+  ],
+  taggers_count: 3,
+  relationship: false,
+};
+
+const mockOnTagClick = vi.fn();
+
 describe('TaggedItem', () => {
-  const mockTag: TagWithAvatars = {
-    label: 'bitcoin',
-    taggers: [
-      { id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1' },
-      { id: 'user2', avatarUrl: 'https://cdn.example.com/avatar/user2' },
-      { id: 'user3', avatarUrl: 'https://cdn.example.com/avatar/user3' },
-    ],
-    taggers_count: 3,
-    relationship: false,
-  };
-
-  const mockOnTagClick = vi.fn();
-
   beforeEach(() => {
     vi.clearAllMocks();
     mockPush.mockClear();
@@ -103,6 +103,13 @@ describe('TaggedItem', () => {
   it('matches snapshot', () => {
     const { container } = render(<TaggedItem tag={mockTag} onTagClick={mockOnTagClick} />);
     expect(container.firstChild).toMatchSnapshot();
+  });
+});
+
+describe('TaggedItem - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockPush.mockClear();
   });
 
   it('matches snapshot with hideAvatars', () => {
