@@ -1,10 +1,26 @@
-import * as Core from '@/core';
-
 export interface TimelinePostsProps {
   /**
-   * Optional stream ID to use instead of filters
-   * If provided, the component will fetch posts from this stream
-   * If not provided, it will use the global filters to determine the stream
+   * Post IDs to display
    */
-  streamId?: Core.PostStreamId;
+  postIds: string[];
+  /**
+   * Loading state
+   */
+  loading: boolean;
+  /**
+   * Loading more state (for pagination)
+   */
+  loadingMore: boolean;
+  /**
+   * Error message if any
+   */
+  error: string | null;
+  /**
+   * Whether there are more posts to load
+   */
+  hasMore: boolean;
+  /**
+   * Function to load more posts
+   */
+  loadMore: () => Promise<void>;
 }

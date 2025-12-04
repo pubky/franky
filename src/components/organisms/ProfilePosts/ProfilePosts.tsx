@@ -3,6 +3,7 @@
 import * as Core from '@/core';
 import * as Organisms from '@/organisms';
 import * as Providers from '@/providers';
+import * as Hooks from '@/hooks';
 
 /**
  * ProfilePosts
@@ -18,6 +19,20 @@ export function ProfilePosts() {
   // Build stream ID for user's posts: author:{userId}
   const streamId = pubky ? (`${Core.StreamSource.AUTHOR}:${pubky}` as Core.AuthorStreamCompositeId) : undefined;
 
-  // Delegate to TimelinePosts with the specific streamId
-  return <Organisms.TimelinePosts streamId={streamId} />;
+  // Use stream pagination hook (only if streamId is available)
+  const { postIds, loading, loadingMore, error, hasMore, loadMore } = Hooks.useStreamPagination({
+    streamId: streamId ?? (Core.PostStreamTypes.TIMELINE_ALL_ALL as Core.PostStreamId),
+  });
+
+  // Delegate to TimelinePosts with the stream data
+  return (
+    <Organisms.TimelinePosts
+      postIds={postIds}
+      loading={loading}
+      loadingMore={loadingMore}
+      error={error}
+      hasMore={hasMore}
+      loadMore={loadMore}
+    />
+  );
 }
