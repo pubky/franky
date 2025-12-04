@@ -114,7 +114,7 @@ export function PostInput({ variant, postId, onSuccess, placeholder, showThreadC
                 key={`${tag}-${index}`}
                 label={tag}
                 showClose={!isSubmitting}
-                onClose={() => setTags(tags.filter((_, i) => i !== index))}
+                onClose={() => setTags((prevTags) => prevTags.filter((_, i) => i !== index))}
               />
             ))}
           </Atoms.Container>
