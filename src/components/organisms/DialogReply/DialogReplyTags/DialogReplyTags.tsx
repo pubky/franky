@@ -36,20 +36,20 @@ export function DialogReplyTags({
     <>
       <Atoms.Container overrideDefaults className="flex flex-col gap-1">
         <Atoms.Container overrideDefaults className="flex flex-wrap items-center gap-2">
-          {/* Add tag input */}
-          {isAddingTag && !disabled && (
+          {/* Add tag input - keep visible but disabled during loading */}
+          {isAddingTag && (
             <Molecules.TagInput
               onTagAdd={handleTagAdd}
               placeholder="add tag"
               existingTags={tags.map((tag) => ({ label: tag }))}
-              showCloseButton
+              showCloseButton={!disabled}
               onClose={handleCloseInput}
               hideSuggestions
               disabled={disabled}
               maxTags={maxTags}
               currentTagsCount={tags.length}
               limitReachedPlaceholder="limit reached"
-              onBlur={handleInputBlur}
+              onBlur={disabled ? undefined : handleInputBlur}
             />
           )}
 
