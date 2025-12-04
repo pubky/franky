@@ -24,14 +24,12 @@ vi.mock('@/atoms', () => ({
       {children}
     </div>
   ),
-  Textarea: vi.fn(({ value, onChange, onFocus, onBlur, placeholder, disabled, ref }) => (
+  Textarea: vi.fn(({ value, onChange, placeholder, disabled, ref }) => (
     <textarea
       ref={ref}
       data-testid="textarea"
       value={value}
       onChange={onChange}
-      onFocus={onFocus}
-      onBlur={onBlur}
       placeholder={placeholder}
       disabled={disabled}
     />
@@ -61,6 +59,36 @@ vi.mock('@/organisms', () => ({
       data-count={characterCount}
       data-max={maxLength}
     />
+  )),
+}));
+
+vi.mock('../PostInputTags', () => ({
+  PostInputTags: vi.fn(({ tags, disabled }) => (
+    <div data-testid="post-input-tags" data-disabled={disabled}>
+      {tags.map((tag: string, index: number) => (
+        <div key={index} data-testid={`tag-${tag}`}>
+          {tag}
+        </div>
+      ))}
+    </div>
+  )),
+}));
+
+vi.mock('../PostInputActionBar', () => ({
+  PostInputActionBar: vi.fn(({ onPostClick, onEmojiClick, isPostDisabled, isSubmitting }) => (
+    <div data-testid="post-input-action-bar">
+      <button data-testid="emoji-button" onClick={onEmojiClick} aria-label="Add emoji">
+        Emoji
+      </button>
+      <button
+        data-testid="post-button"
+        onClick={onPostClick}
+        disabled={isPostDisabled}
+        aria-label={isSubmitting ? 'Posting...' : 'Post reply'}
+      >
+        {isSubmitting ? 'Posting...' : 'Post'}
+      </button>
+    </div>
   )),
 }));
 
@@ -180,43 +208,14 @@ describe('PostInput', () => {
     expect(mockSetContent).toHaveBeenCalledWith('Test content');
   });
 
-  it('shows bottom bar when textarea is focused', () => {
+  it('always shows bottom bar', () => {
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.focus(textarea);
-
-    // Bottom bar should be rendered when focused - check for rendered elements
-    expect(screen.getByTestId('add-tag-button')).toBeInTheDocument();
+    // Bottom bar should always be rendered
+    expect(screen.getByTestId('post-input-tags')).toBeInTheDocument();
+    expect(screen.getByTestId('post-input-action-bar')).toBeInTheDocument();
     expect(screen.getByLabelText('Add emoji')).toBeInTheDocument();
     expect(screen.getByLabelText('Post reply')).toBeInTheDocument();
-  });
-
-  it('shows bottom bar when content exists', () => {
-    mockUsePost.mockReturnValue({
-      content: 'Some content',
-      setContent: mockSetContent,
-      reply: mockReply,
-      post: mockPost,
-      isSubmitting: false,
-      error: null,
-    });
-
-    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
-
-    // Bottom bar should be rendered when content exists - check for rendered elements
-    expect(screen.getByTestId('add-tag-button')).toBeInTheDocument();
-    expect(screen.getByLabelText('Add emoji')).toBeInTheDocument();
-    expect(screen.getByLabelText('Post reply')).toBeInTheDocument();
-  });
-
-  it('hides bottom bar when not focused and no content', () => {
-    render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
-
-    // Bottom bar should not be visible when not focused and no content
-    expect(screen.queryByTestId('add-tag-button')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Add emoji')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Post reply')).not.toBeInTheDocument();
   });
 
   it('handles post submission for post variant', async () => {
@@ -233,9 +232,6 @@ describe('PostInput', () => {
     });
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} onSuccess={mockOnSuccess} />);
-
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.focus(textarea);
 
     // Click the post button
     const postButton = screen.getByLabelText('Post reply');
@@ -261,7 +257,7 @@ describe('PostInput', () => {
 
     render(<PostInput variant={POST_INPUT_VARIANT.REPLY} postId="test-post-123" onSuccess={mockOnSuccess} />);
 
-    // For reply variant, bottom bar is always shown, so post button should be visible
+    // Bottom bar is always shown, so post button should be visible
     const postButton = screen.getByLabelText('Post reply');
     fireEvent.click(postButton);
 
@@ -287,9 +283,6 @@ describe('PostInput', () => {
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
-    const textarea = screen.getByTestId('textarea');
-    fireEvent.focus(textarea);
-
     // Check that post button is disabled when content is empty
     const postButton = screen.getByLabelText('Post reply');
     expect(postButton).toBeDisabled();
@@ -307,7 +300,7 @@ describe('PostInput', () => {
 
     render(<PostInput variant={POST_INPUT_VARIANT.POST} />);
 
-    // Bottom bar shows when content exists, so post button should be visible but disabled
+    // Bottom bar is always shown, so post button should be visible but disabled
     const postButton = screen.getByLabelText('Posting...');
     expect(postButton).toBeDisabled();
   });

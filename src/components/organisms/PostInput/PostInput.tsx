@@ -14,7 +14,6 @@ import type { PostInputProps } from './PostInput.types';
 export function PostInput({ variant, postId, onSuccess, placeholder, showThreadConnector = false }: PostInputProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentUserPubky } = Hooks.useCurrentUserProfile();
   const { content, setContent, reply, post, isSubmitting } = Hooks.usePost();
@@ -69,20 +68,8 @@ export function PostInput({ variant, postId, onSuccess, placeholder, showThreadC
     onChange: handleEmojiChange,
   });
 
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
-
   // Check if content has non-whitespace characters
   const hasContent = content.trim().length > 0;
-
-  // Show bottom bar when focused OR has content OR has tags
-  // For reply variant, always show bottom bar (dialog context - shouldn't hide on blur)
-  const showBottomBar = variant === POST_INPUT_VARIANT.REPLY || isFocused || hasContent || tags.length > 0;
 
   // Determine placeholder text
   const placeholderMap = {
@@ -111,8 +98,6 @@ export function PostInput({ variant, postId, onSuccess, placeholder, showThreadC
           className="min-h-6 resize-none border-none bg-transparent p-0 text-base font-medium break-all text-secondary-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
           value={content}
           onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
           maxLength={POST_MAX_CHARACTER_LENGTH}
           rows={1}
           disabled={isSubmitting}
@@ -135,18 +120,15 @@ export function PostInput({ variant, postId, onSuccess, placeholder, showThreadC
           </Atoms.Container>
         )}
 
-        {/* Tag input and action buttons row - only show when focused or has content/tags */}
-        {showBottomBar && (
-          <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
-            <PostInputTags tags={tags} onTagsChange={setTags} disabled={isSubmitting} />
-            <PostInputActionBar
-              onPostClick={handleSubmit}
-              onEmojiClick={() => setShowEmojiPicker(true)}
-              isPostDisabled={!content.trim() || isSubmitting}
-              isSubmitting={isSubmitting}
-            />
-          </Atoms.Container>
-        )}
+        <Atoms.Container className="justify-between gap-4 md:flex-row md:gap-0">
+          <PostInputTags tags={tags} onTagsChange={setTags} disabled={isSubmitting} />
+          <PostInputActionBar
+            onPostClick={handleSubmit}
+            onEmojiClick={() => setShowEmojiPicker(true)}
+            isPostDisabled={!content.trim() || isSubmitting}
+            isSubmitting={isSubmitting}
+          />
+        </Atoms.Container>
 
         <Molecules.EmojiPickerDialog
           open={showEmojiPicker && !isSubmitting}
