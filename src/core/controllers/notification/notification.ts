@@ -1,6 +1,5 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
-import * as Libs from '@/libs';
 
 export class NotificationController {
   private constructor() {} // Prevent instantiation

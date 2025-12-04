@@ -54,13 +54,18 @@ export class NotificationModel {
       const newNotifications = notifications.filter((n) => !existingKeys.has(getBusinessKey(n)));
 
       if (newNotifications.length === 0) {
-        console.log(`[NotificationModel.bulkSave] All ${notifications.length} notifications are duplicates, skipping save`);
+        Libs.Logger.debug('All notifications are duplicates, skipping save', {
+          count: notifications.length,
+        });
         return [];
       }
 
       const duplicateCount = notifications.length - newNotifications.length;
       if (duplicateCount > 0) {
-        console.log(`[NotificationModel.bulkSave] Filtered out ${duplicateCount} duplicates, saving ${newNotifications.length} new notifications`);
+        Libs.Logger.debug('Filtered out duplicates', {
+          duplicateCount,
+          newCount: newNotifications.length,
+        });
       }
 
       return await this.table.bulkPut(newNotifications);
