@@ -3,6 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DialogReplyTags } from './DialogReplyTags';
 import { POST_MAX_TAGS } from '@/config';
 
+// Mock state for TagInput simulation
+let mockTagInputValue = '';
+let mockShowEmojiPicker = false;
+
 vi.mock('@/atoms', () => ({
   Container: ({
     children,
@@ -16,58 +20,6 @@ vi.mock('@/atoms', () => ({
     <div data-testid="container" className={className} data-override-defaults={overrideDefaults}>
       {children}
     </div>
-  ),
-  Input: vi.fn(
-    ({
-      value,
-      onChange,
-      onKeyDown,
-      onBlur,
-      placeholder,
-      className,
-      ref,
-      disabled,
-    }: {
-      value: string;
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-      onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-      onBlur?: () => void;
-      placeholder?: string;
-      className?: string;
-      ref?: React.Ref<HTMLInputElement>;
-      disabled?: boolean;
-    }) => (
-      <input
-        ref={ref}
-        data-testid="tag-input"
-        value={value}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        onBlur={onBlur}
-        placeholder={placeholder}
-        className={className}
-        disabled={disabled}
-      />
-    ),
-  ),
-  Button: vi.fn(
-    ({
-      onClick,
-      children,
-      'aria-label': ariaLabel,
-      className,
-      disabled,
-    }: {
-      onClick?: () => void;
-      children: React.ReactNode;
-      'aria-label'?: string;
-      className?: string;
-      disabled?: boolean;
-    }) => (
-      <button data-testid="button" onClick={onClick} aria-label={ariaLabel} className={className} disabled={disabled}>
-        {children}
-      </button>
-    ),
   ),
   Typography: vi.fn(
     ({
@@ -89,46 +41,88 @@ vi.mock('@/atoms', () => ({
 }));
 
 vi.mock('@/molecules', () => ({
-  PostTag: vi.fn(({ label, showClose, onClose }: { label: string; showClose: boolean; onClose: () => void }) => (
-    <div data-testid={`tag-${label}`}>
-      {label}
-      {showClose && (
-        <button data-testid={`tag-close-${label}`} onClick={onClose}>
-          ×
-        </button>
-      )}
-    </div>
-  )),
   PostTagAddButton: vi.fn(({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) => (
     <button data-testid="add-tag-button" onClick={onClick} disabled={disabled}>
       +
     </button>
   )),
-  EmojiPickerDialog: vi.fn(
+  TagInput: vi.fn(
     ({
-      open,
-      onOpenChange,
-      onEmojiSelect,
+      onTagAdd,
+      placeholder,
+      showCloseButton,
+      onClose,
+      disabled,
+      maxTags,
+      currentTagsCount,
+      onBlur,
     }: {
-      open: boolean;
-      onOpenChange: (open: boolean) => void;
-      onEmojiSelect: (emoji: { native: string }) => void;
-    }) =>
-      open ? (
-        <div data-testid="emoji-picker-dialog">
-          <button data-testid="emoji-select" onClick={() => onEmojiSelect({ native: '😀' })}>
-            Select Emoji
+      onTagAdd: (tag: string) => void;
+      placeholder?: string;
+      showCloseButton?: boolean;
+      onClose?: () => void;
+      hideSuggestions?: boolean;
+      disabled?: boolean;
+      maxTags?: number;
+      currentTagsCount?: number;
+      limitReachedPlaceholder?: string;
+      onBlur?: () => void;
+    }) => {
+      const isAtLimit = maxTags !== undefined && (currentTagsCount ?? 0) >= maxTags;
+      return (
+        <div data-testid="tag-input-wrapper">
+          <input
+            data-testid="tag-input"
+            value={mockTagInputValue}
+            placeholder={isAtLimit ? 'limit reached' : placeholder}
+            disabled={disabled || isAtLimit}
+            onChange={(e) => {
+              mockTagInputValue = e.target.value;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && mockTagInputValue.trim()) {
+                e.preventDefault();
+                onTagAdd(mockTagInputValue.trim());
+                mockTagInputValue = '';
+              }
+            }}
+            onBlur={() => {
+              if (!mockTagInputValue && onBlur) {
+                onBlur();
+              }
+            }}
+          />
+          <button
+            data-testid="emoji-button"
+            aria-label="Open emoji picker"
+            onClick={() => {
+              mockShowEmojiPicker = true;
+            }}
+            disabled={disabled || isAtLimit}
+          >
+            😀
           </button>
-          <button data-testid="emoji-close" onClick={() => onOpenChange(false)}>
-            Close
-          </button>
+          {showCloseButton && (
+            <button data-testid="close-button" aria-label="Close tag input" onClick={onClose}>
+              ×
+            </button>
+          )}
+          {mockShowEmojiPicker && (
+            <div data-testid="emoji-picker-dialog">
+              <button
+                data-testid="emoji-select"
+                onClick={() => {
+                  mockTagInputValue += '😀';
+                }}
+              >
+                Select Emoji
+              </button>
+            </div>
+          )}
         </div>
-      ) : null,
+      );
+    },
   ),
-}));
-
-vi.mock('@/hooks', () => ({
-  useEmojiInsert: vi.fn(() => vi.fn()),
 }));
 
 vi.mock('@/libs', async (importOriginal) => {
@@ -136,12 +130,6 @@ vi.mock('@/libs', async (importOriginal) => {
   return {
     ...actual,
     cn: (...classes: (string | undefined)[]) => classes.filter(Boolean).join(' '),
-    Smile: ({ className, strokeWidth }: { className?: string; strokeWidth?: number }) => (
-      <svg data-testid="smile-icon" className={className} data-stroke-width={strokeWidth} />
-    ),
-    X: ({ className, strokeWidth }: { className?: string; strokeWidth?: number }) => (
-      <svg data-testid="x-icon" className={className} data-stroke-width={strokeWidth} />
-    ),
   };
 });
 
@@ -150,6 +138,8 @@ describe('DialogReplyTags', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockTagInputValue = '';
+    mockShowEmojiPicker = false;
   });
 
   it('renders with empty tags array', () => {
@@ -167,10 +157,11 @@ describe('DialogReplyTags', () => {
     expect(screen.getByText(`2/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
-  it('shows input when add button is clicked', () => {
+  it('shows TagInput when add button is clicked', () => {
     render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
+    expect(screen.getByTestId('tag-input-wrapper')).toBeInTheDocument();
     expect(screen.getByTestId('tag-input')).toBeInTheDocument();
   });
 
@@ -180,6 +171,7 @@ describe('DialogReplyTags', () => {
     fireEvent.click(addButton);
     const input = screen.getByTestId('tag-input');
     fireEvent.change(input, { target: { value: 'new-tag' } });
+    mockTagInputValue = 'new-tag';
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(mockOnTagsChange).toHaveBeenCalledWith(['new-tag']);
   });
@@ -190,62 +182,36 @@ describe('DialogReplyTags', () => {
     fireEvent.click(addButton);
     const input = screen.getByTestId('tag-input');
     fireEvent.change(input, { target: { value: 'existing-tag' } });
+    mockTagInputValue = 'existing-tag';
     fireEvent.keyDown(input, { key: 'Enter' });
+    // Should not call onTagsChange for duplicates
     expect(mockOnTagsChange).not.toHaveBeenCalled();
   });
 
-  it('closes input when X button is clicked', () => {
+  it('closes input when close button is clicked', () => {
     render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
-    expect(screen.getByTestId('tag-input')).toBeInTheDocument();
-    const buttons = screen.getAllByTestId('button');
-    const closeButton = buttons.find((btn) => btn.getAttribute('aria-label') === 'Close tag input');
-    if (closeButton) {
-      fireEvent.click(closeButton);
-      expect(screen.queryByTestId('tag-input')).not.toBeInTheDocument();
-    }
+    expect(screen.getByTestId('tag-input-wrapper')).toBeInTheDocument();
+    const closeButton = screen.getByTestId('close-button');
+    fireEvent.click(closeButton);
+    expect(screen.queryByTestId('tag-input-wrapper')).not.toBeInTheDocument();
   });
 
-  it('opens emoji picker when emoji button is clicked', () => {
+  it('renders emoji button in TagInput', () => {
     render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
-    const buttons = screen.getAllByTestId('button');
-    const emojiButton = buttons.find((btn) => btn.getAttribute('aria-label') === 'Open emoji picker');
-    if (emojiButton) {
-      fireEvent.click(emojiButton);
-      expect(screen.getByTestId('emoji-picker-dialog')).toBeInTheDocument();
-    }
-  });
-
-  it('calls useEmojiInsert handler when emoji is selected', async () => {
-    // Get the mocked useEmojiInsert to verify it's called
-    const mockEmojiHandler = vi.fn();
-    const { useEmojiInsert } = await import('@/hooks');
-    vi.mocked(useEmojiInsert).mockReturnValue(mockEmojiHandler);
-
-    render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
-    const addButton = screen.getByTestId('add-tag-button');
-    fireEvent.click(addButton);
-    const buttons = screen.getAllByTestId('button');
-    const emojiButton = buttons.find((btn) => btn.getAttribute('aria-label') === 'Open emoji picker');
-    if (emojiButton) {
-      fireEvent.click(emojiButton);
-      const emojiSelect = screen.getByTestId('emoji-select');
-      fireEvent.click(emojiSelect);
-      // The emoji handler should be called with the emoji
-      expect(mockEmojiHandler).toHaveBeenCalledWith({ native: '😀' });
-    }
+    const emojiButton = screen.getByTestId('emoji-button');
+    expect(emojiButton).toBeInTheDocument();
+    expect(emojiButton).toHaveAttribute('aria-label', 'Open emoji picker');
   });
 
   it('disables add button when POST_MAX_TAGS limit is reached', () => {
     const maxTags = Array.from({ length: POST_MAX_TAGS }, (_, i) => `tag${i + 1}`);
     render(<DialogReplyTags tags={maxTags} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
-    // Add button should be disabled when limit is reached
     expect(addButton).toBeDisabled();
-    // Should show tag count with limit indicator
     expect(screen.getByText(`${POST_MAX_TAGS}/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
@@ -259,9 +225,7 @@ describe('DialogReplyTags', () => {
     const tags = ['tag1', 'tag2', 'tag3'];
     render(<DialogReplyTags tags={tags} onTagsChange={mockOnTagsChange} maxTags={customMax} />);
     const addButton = screen.getByTestId('add-tag-button');
-    // Add button should be disabled when custom limit is reached
     expect(addButton).toBeDisabled();
-    // Should show custom limit count
     expect(screen.getByText(`3/3`)).toBeInTheDocument();
   });
 });
@@ -271,6 +235,8 @@ describe('DialogReplyTags - Snapshots', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockTagInputValue = '';
+    mockShowEmojiPicker = false;
   });
 
   it('matches snapshot with empty tags', () => {

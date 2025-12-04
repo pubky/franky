@@ -2,15 +2,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TagInput } from './TagInput';
 
-// Mock // Mock hooks
-vi.mock('@/hooks', () => ({
-  useEnterSubmit: (isValid: () => boolean, onSubmit: () => void) => (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey && isValid()) {
-      e.preventDefault();
-      onSubmit();
-    }
-  },
-}));
+// Use real hooks, only mock useEmojiInsert
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useEmojiInsert: vi.fn(() => vi.fn()),
+  };
+});
 
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();

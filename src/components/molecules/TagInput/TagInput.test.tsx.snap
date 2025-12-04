@@ -2,7 +2,7 @@
 
 exports[`TagInput > matches snapshot 1`] = `
 <div
-  class="relative flex w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
+  class="relative flex h-8 w-48 items-center gap-1 rounded-md border border-dashed border-input pr-1 pl-3 shadow-sm"
   data-testid="container"
 >
   <input

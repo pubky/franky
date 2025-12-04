@@ -33,3 +33,4 @@ export * from './useIsFollowing';
 export * from './useAvatarUrl';
 export * from './useHotTags';
 export * from './useUserStream';
+export * from './useTagInput';
