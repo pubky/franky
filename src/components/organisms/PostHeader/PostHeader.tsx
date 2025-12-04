@@ -1,51 +1,80 @@
 'use client';
 
-import { useLiveQuery } from 'dexie-react-hooks';
-import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
+import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
 
 export interface PostHeaderProps {
   postId: string;
-  className?: string;
+  isReplyInput?: boolean;
+  characterCount?: number;
+  maxLength?: number;
 }
 
-export function PostHeader({ postId, className }: PostHeaderProps) {
-  const [userId] = postId.split(':');
+export function PostHeader({ postId, isReplyInput = false, characterCount, maxLength }: PostHeaderProps) {
+  // Extract userId from postId (format: userId:postId or just userId if isReplyInput is true)
+  const userId = isReplyInput ? postId : postId.split(':')[0];
 
-  // Fetch post details to get indexed_at
-  const postDetails = useLiveQuery(() => Core.PostController.getPostDetails({ compositeId: postId }), [postId]);
+  // When isReplyInput is true, skip fetching the post details since there's no post yet
+  const { postDetails } = Hooks.usePostDetails(isReplyInput ? null : postId);
 
   // Fetch user details for avatar and name
-  const userDetails = useLiveQuery(() => Core.UserController.getDetails({ userId }), [userId]);
+  const { userDetails } = Hooks.useUserDetails(userId);
 
-  if (!postDetails || !userDetails) {
-    // TODO: Add skeleton loading component for PostHeader
-    return <div className="text-muted-foreground">Loading header...</div>;
+  // Compute avatar URL from user details (only if the user has an image)
+  const avatarUrl = Hooks.useAvatarUrl(userDetails);
+
+  if (!userDetails || (!isReplyInput && !postDetails)) {
+    return (
+      <Atoms.Container className="text-muted-foreground" overrideDefaults>
+        Loading header...
+      </Atoms.Container>
+    );
   }
 
-  const timeAgo = Libs.timeAgo(new Date(postDetails.indexed_at));
+  const timeAgo = !isReplyInput && postDetails ? Libs.timeAgo(new Date(postDetails.indexed_at)) : null;
 
   return (
-    <div className={Libs.cn('flex justify-between', className)}>
-      <div className="flex gap-3">
-        <Atoms.Avatar size="default">
-          <Atoms.AvatarImage src={Core.FileController.getAvatarUrl(userId)} />
-          <Atoms.AvatarFallback>{Libs.extractInitials({ name: userDetails.name, maxLength: 2 })}</Atoms.AvatarFallback>
-        </Atoms.Avatar>
-        <div className="flex flex-col">
-          <span className="text-base font-bold text-foreground">{userDetails.name}</span>
-          <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground uppercase">
-            @{Libs.formatPublicKey({ key: userId, length: 8 })}
-          </span>
-        </div>
-      </div>
+    <Atoms.Container className="flex justify-between" overrideDefaults>
+      <Atoms.Container className="flex gap-3" overrideDefaults>
+        <Molecules.AvatarWithFallback avatarUrl={avatarUrl} name={userDetails.name || ''} size="default" />
+        <Atoms.Container>
+          <Atoms.Typography as="span" className="text-base font-bold text-foreground" overrideDefaults>
+            {userDetails.name}
+          </Atoms.Typography>
+          <Atoms.Container className="flex min-w-0 items-center gap-2" overrideDefaults>
+            <Atoms.Typography
+              as="span"
+              className="text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground uppercase"
+              overrideDefaults
+            >
+              @{Libs.formatPublicKey({ key: userId, length: 8 })}
+            </Atoms.Typography>
+            {characterCount !== undefined && maxLength !== undefined && (
+              <Atoms.Typography
+                as="span"
+                className="shrink-0 text-xs leading-4 font-medium tracking-[0.075rem] whitespace-nowrap text-muted-foreground"
+                overrideDefaults
+              >
+                {characterCount}/{maxLength}
+              </Atoms.Typography>
+            )}
+          </Atoms.Container>
+        </Atoms.Container>
+      </Atoms.Container>
       {timeAgo && (
-        <div className="flex items-center gap-1">
+        <Atoms.Container className="flex items-center gap-1" overrideDefaults>
           <Libs.Clock className="size-4 text-muted-foreground" />
-          <span className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground">{timeAgo}</span>
-        </div>
+          <Atoms.Typography
+            as="span"
+            className="text-xs leading-4 font-medium tracking-[0.075rem] text-muted-foreground"
+            overrideDefaults
+          >
+            {timeAgo}
+          </Atoms.Typography>
+        </Atoms.Container>
       )}
-    </div>
+    </Atoms.Container>
   );
 }

@@ -2,6 +2,7 @@ export * from './database';
 export * from './externalLinks';
 export * from './network';
 export * from './nexus';
+export * from './posts';
 export * from './sync';
 export * from './logs';
 export * from './metadata';

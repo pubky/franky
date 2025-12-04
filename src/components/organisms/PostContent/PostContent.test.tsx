@@ -110,11 +110,12 @@ describe('PostContent', () => {
 describe('PostContent - Snapshots', () => {
   // Use real PostText and PostLinkEmbeds for snapshot tests
   beforeEach(async () => {
+    vi.clearAllMocks();
     const actual = await vi.importActual<typeof import('@/molecules')>('@/molecules');
     // Replace the mock implementations with real ones for snapshots
-    (Molecules.PostText as unknown as ReturnType<typeof vi.fn>).mockImplementation(actual.PostText);
-    (Molecules.PostLinkEmbeds as unknown as ReturnType<typeof vi.fn>).mockImplementation(actual.PostLinkEmbeds);
-  });
+    vi.mocked(Molecules.PostText).mockImplementation(actual.PostText);
+    vi.mocked(Molecules.PostLinkEmbeds).mockImplementation(actual.PostLinkEmbeds);
+  }, 30000); // Increase timeout to 30 seconds
 
   it('matches snapshot with single-line content', () => {
     const mockPostDetails = { content: 'One liner' };

@@ -1,0 +1,58 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import * as Atoms from '@/atoms';
+import * as Libs from '@/libs';
+import * as Molecules from '@/molecules';
+import * as Hooks from '@/hooks';
+import { APP_ROUTES } from '@/app/routes';
+import { MAX_TAGS } from './HotTags.constants';
+import type { HotTagsProps } from './HotTags.types';
+
+/**
+ * HotTags
+ *
+ * Sidebar section showing trending tags.
+ * Fetches tags via useHotTags hook and handles navigation.
+ *
+ * Note: This is an Organism because it interacts with Core via hooks (useHotTags)
+ * and handles routing.
+ */
+export function HotTags({ className }: HotTagsProps) {
+  const router = useRouter();
+  const { tags } = Hooks.useHotTags();
+
+  const displayTags = tags.slice(0, MAX_TAGS);
+
+  const handleTagClick = (tagName: string) => {
+    router.push(`${APP_ROUTES.SEARCH}?tags=${encodeURIComponent(tagName)}`);
+  };
+
+  const handleSeeAll = () => {
+    router.push(APP_ROUTES.HOT);
+  };
+
+  return (
+    <Molecules.SidebarSection
+      title="Hot tags"
+      footerIcon={Libs.Tag}
+      footerText="Explore all"
+      onFooterClick={handleSeeAll}
+      footerTestId="see-all-button"
+      className={className}
+      data-testid="hot-tags"
+    >
+      <Atoms.Container overrideDefaults className="flex w-full flex-col gap-2">
+        {displayTags.map((tag, index) => (
+          <Atoms.Tag
+            key={tag.name}
+            name={tag.name}
+            count={tag.count}
+            onClick={handleTagClick}
+            data-testid={`tag-${index}`}
+          />
+        ))}
+      </Atoms.Container>
+    </Molecules.SidebarSection>
+  );
+}
