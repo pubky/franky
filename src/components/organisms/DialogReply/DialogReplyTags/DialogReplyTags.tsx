@@ -19,12 +19,8 @@ export function DialogReplyTags({
   const isDisabled = disabled || isAtLimit;
 
   const handleTagAdd = (tag: string) => {
-    // Check for duplicates (case-insensitive)
-    const normalizedTag = tag.toLowerCase();
-    const isDuplicate = tags.some((t) => t.toLowerCase() === normalizedTag);
-    if (!isDuplicate) {
-      onTagsChange([...tags, tag]);
-    }
+    // Duplicate check is handled by useTagInput internally
+    onTagsChange([...tags, tag]);
   };
 
   const handleInputBlur = () => {
@@ -45,6 +41,7 @@ export function DialogReplyTags({
             <Molecules.TagInput
               onTagAdd={handleTagAdd}
               placeholder="add tag"
+              existingTags={tags.map((tag) => ({ label: tag }))}
               showCloseButton
               onClose={handleCloseInput}
               hideSuggestions

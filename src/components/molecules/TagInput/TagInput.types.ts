@@ -1,8 +1,6 @@
 export interface TagInputProps {
-  /** Callback when a tag is added */
-  onTagAdd: (
-    tag: string,
-  ) => void | { success: boolean; error?: string } | Promise<{ success: boolean; error?: string }>;
+  /** Callback when a tag is added. Can return a Promise for async handling. */
+  onTagAdd: (tag: string) => void | Promise<{ success: boolean; error?: string }>;
   /** Placeholder text for the input */
   placeholder?: string;
   /** Existing tags for autocomplete suggestions */

@@ -50,6 +50,7 @@ vi.mock('@/molecules', () => ({
     ({
       onTagAdd,
       placeholder,
+      existingTags = [],
       showCloseButton,
       onClose,
       disabled,
@@ -59,6 +60,7 @@ vi.mock('@/molecules', () => ({
     }: {
       onTagAdd: (tag: string) => void;
       placeholder?: string;
+      existingTags?: Array<{ label: string }>;
       showCloseButton?: boolean;
       onClose?: () => void;
       hideSuggestions?: boolean;
@@ -82,7 +84,12 @@ vi.mock('@/molecules', () => ({
             onKeyDown={(e) => {
               if (e.key === 'Enter' && mockTagInputValue.trim()) {
                 e.preventDefault();
-                onTagAdd(mockTagInputValue.trim());
+                const trimmedValue = mockTagInputValue.trim();
+                // Check for duplicates (case-insensitive) - simulating useTagInput behavior
+                const isDuplicate = existingTags.some((tag) => tag.label.toLowerCase() === trimmedValue.toLowerCase());
+                if (!isDuplicate) {
+                  onTagAdd(trimmedValue);
+                }
                 mockTagInputValue = '';
               }
             }}
