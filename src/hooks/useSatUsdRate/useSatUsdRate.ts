@@ -2,55 +2,82 @@
 
 import { useEffect, useState } from 'react';
 
-import { getSatoshiUsdRate } from '@/libs/exchangerate/exchangerate';
+import { BtcRate, getSatoshiUsdRate } from '@/libs/exchangerate/exchangerate';
 
-interface StoredRate {
-  /**
-   * Whether the rate is still loading
-   */
-  isLoading: boolean;
-  /**
-   * The stored rate. When loading, this is null.
-   * In case of an error, this is { satUsd: 0, lastUpdatedAt: 0 }.
-   */
-  rate: {
-    /**
-     * The current SAT/USD rate
-     */
-    satUsd: number;
-    /**
-     * The timestamp of the last update
-     */
-    lastUpdatedAt: number;
-  } | null;
+/**
+ * Module-level cache for the SAT/USD rate.
+ * This ensures the rate is only fetched once across all hook instances.
+ */
+let cachedRate: BtcRate | null = null;
+let cachePromise: Promise<BtcRate> | null = null;
+
+/**
+ * The maximum age of the cached rate.
+ */
+const MAX_CACHE_AGE = 1000 * 60 * 30; // 30 minutes
+
+/**
+ * Fetches the SAT/USD rate with caching.
+ * Multiple concurrent calls will share the same promise.
+ */
+async function getCachedSatoshiUsdRate(): Promise<BtcRate> {
+  // Invalidate cache if it's older than the maximum cache age
+  const isCacheOutdated = cachedRate && cachedRate.lastUpdatedAt.getTime() + MAX_CACHE_AGE < Date.now();
+  if (isCacheOutdated) {
+    cachedRate = null;
+  }
+
+  // Return cached value if available
+  if (cachedRate !== null) {
+    return cachedRate;
+  }
+
+  // Return existing promise if a fetch is already in progress
+  if (cachePromise !== null) {
+    return cachePromise;
+  }
+
+  // Create new fetch promise
+  cachePromise = getSatoshiUsdRate()
+    .then((rate) => {
+      cachedRate = rate;
+      return cachedRate;
+    })
+    .finally(() => {
+      // Clear the promise so we can fetch again if needed
+      cachePromise = null;
+    });
+
+  return cachePromise;
 }
 
 /**
- * Fetch the current SAT/USD exchange rate
+ * Fetch the current SAT/USD exchange rate.
+ * This rate is cached for 30 minutes.
  *
- * @returns boolean indicating if the current viewport is below the breakpoint
+ * @returns The current SAT/USD rate, or null if the rate is not available
  *
  * @example
  * ```tsx
- * const {isLoading, rate} = useSatUsdRate();
- * if (isLoading) return <div>Loading...</div>;
+ * const rate = useBtcRate();
+ * if (rate === null) return <div>Rate not available</div>;
  *
  * const sats = 1000;
  * const usd = sats * rate.satUsd;
  * return <div>{sats} SAT = ${usd}</div>;
  * ```
  */
-export function useSatUsdRate(): StoredRate {
-  const [rate, setRate] = useState(() => {
-    return { isLoading: true, rate: null } as StoredRate;
+export function useBtcRate(): BtcRate | null {
+  const [rate, setRate] = useState<BtcRate | null>(() => {
+    return null;
   });
 
   async function fetchRate() {
     try {
-      const rate = await getSatoshiUsdRate();
-      setRate({ isLoading: false, rate: { satUsd: rate, lastUpdatedAt: Date.now() } });
+      const rate = await getCachedSatoshiUsdRate();
+      setRate(rate);
     } catch {
-      setRate({ isLoading: false, rate: { satUsd: 0, lastUpdatedAt: 0 } });
+      setRate(null);
     }
   }
 

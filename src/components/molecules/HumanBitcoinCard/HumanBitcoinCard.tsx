@@ -1,7 +1,7 @@
 'use client';
 
 import * as Atoms from '@/atoms';
-import { useSatUsdRate } from '@/hooks/useSatUsdRate';
+import { useBtcRate } from '@/hooks/useSatUsdRate';
 import * as Libs from '@/libs';
 import React from 'react';
 
@@ -12,7 +12,7 @@ interface HumanBitcoinCardProps {
 }
 
 export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
-  const { rate } = useSatUsdRate();
+  const rate = useBtcRate();
 
   return (
     <Atoms.Card data-testid="bitcoin-payment-card" className="gap-0 p-6 md:p-12">
@@ -49,14 +49,18 @@ export const HumanBitcoinCard = ({ onClick }: HumanBitcoinCardProps) => {
             </Atoms.Typography>
 
             <Atoms.Typography as="p" className="text-xs font-medium tracking-[0.1em] text-muted-foreground">
-              {rate?.satUsd ? <React.Fragment>₿1,000 = $ ${rate!.satUsd * SAT_PRICE}</React.Fragment> : <br />}
+              {rate?.satUsd ? (
+                <React.Fragment>₿1,000 = ${Math.round(rate!.satUsd * SAT_PRICE * 100) / 100}</React.Fragment>
+              ) : (
+                <br />
+              )}
             </Atoms.Typography>
 
-            <Atoms.Container className="gap-1 text-secondary-foreground/80">
-              <Atoms.Typography as="p" className="text-base leading-6 font-medium">
+            <Atoms.Container className="gap-1">
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
                 1GB storage
               </Atoms.Typography>
-              <Atoms.Typography as="p" className="text-base leading-6 font-medium">
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
                 1MB/s speed limit
               </Atoms.Typography>
             </Atoms.Container>

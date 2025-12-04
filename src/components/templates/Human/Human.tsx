@@ -48,6 +48,9 @@ export function Human() {
           onSuccess={onSuccess}
         />
       )}
+      {state === States.Payment && (
+        <Organisms.HumanLightningPayment onBack={() => setState(States.Selection)} onSuccess={onSuccess} />
+      )}
     </Molecules.OnboardingLayout>
   );
 }

@@ -89,7 +89,26 @@ export async function getBtcUsdRate(): Promise<number> {
   }
 }
 
-export async function getSatoshiUsdRate(): Promise<number> {
+export interface BtcRate {
+  /**
+   * The current SAT/USD rate
+   */
+  satUsd: number;
+  /**
+   * The current BTC/USD rate
+   */
+  btcUsd: number;
+  /**
+   * The timestamp of the last update
+   */
+  lastUpdatedAt: Date;
+}
+
+export async function getSatoshiUsdRate(): Promise<BtcRate> {
   const btcusd = await getBtcUsdRate();
-  return btcusd / 100_000_000;
+  return {
+    satUsd: btcusd / 100_000_000,
+    btcUsd: btcusd,
+    lastUpdatedAt: new Date(),
+  };
 }

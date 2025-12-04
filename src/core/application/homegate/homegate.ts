@@ -60,4 +60,14 @@ export class Homegate {
       error: undefined,
     };
   }
+
+  /**
+   * Requests a Lightning invoice for the user to receive a invite code after the payment is confirmed.
+   * @returns The Lightning invoice.
+   */
+  static async requestLightningInvoice(): Promise<string> {
+    await sleep(1000); // Mock sleep for 1 second
+    console.log('mock requestLightningInvoice');
+    return 'lnbc1pv3n26035l50e7c6l0h64n57860h5l870zxtf7k72z560gdp2r6m34w1l06g0e502l4q48x7l78z9w6d25e7x3e4v3j6c30y70c1g23p';
+  }
 }

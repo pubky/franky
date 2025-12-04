@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-import { HumanPhoneHeader } from './HumanPhoneHeader';
+import { HumanPhoneHeader } from './HumanPhoneInputField';
 
 describe('HumanHeader', () => {
   it('renders the highlighted title text', () => {

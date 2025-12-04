@@ -24,7 +24,7 @@ export interface HumanPhoneInputProps {
   onEnter?: () => void;
 }
 
-export const HumanPhoneInput = ({
+export const HumanPhoneInputField = ({
   value,
   onChange,
   placeholder = '+316XXXXXXXX',
@@ -49,7 +49,7 @@ export const HumanPhoneInput = ({
               Phone number
             </Atoms.Typography>
 
-            <Atoms.Typography as="p" className="text-base leading-6 font-medium text-muted-foreground/80">
+            <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
               Enter your phone number, including country code (e.g. +1 for US).
             </Atoms.Typography>
           </Atoms.Container>

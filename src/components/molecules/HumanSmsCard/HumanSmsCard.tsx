@@ -40,11 +40,11 @@ export const HumanSmsCard = ({ onClick }: HumanSmsCardProps) => {
               LESS PRIVATE, BUT EASY
             </Atoms.Typography>
 
-            <Atoms.Container className="gap-1 text-secondary-foreground/80">
-              <Atoms.Typography as="p" className="text-base leading-6 font-medium">
+            <Atoms.Container className="gap-1">
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
                 1GB storage
               </Atoms.Typography>
-              <Atoms.Typography as="p" className="text-base leading-6 font-medium">
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
                 1MB/s speed limit
               </Atoms.Typography>
             </Atoms.Container>

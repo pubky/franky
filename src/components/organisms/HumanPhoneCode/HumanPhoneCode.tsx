@@ -48,15 +48,11 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
 
   return (
     <React.Fragment>
-      {/* Header */}
-      <Atoms.PageHeader className="gap-2 lg:gap-3" data-testid="human-header">
-        <Molecules.PageTitle size="large" className="leading-none font-semibold tracking-tight">
-          Enter <span className="text-brand">Code.</span>
-        </Molecules.PageTitle>
-        <Atoms.PageSubtitle className="max-w-3xl text-muted-foreground">
-          We sent a 6-digit verification code to {phoneNumber}.
-        </Atoms.PageSubtitle>
-      </Atoms.PageHeader>
+      <Molecules.HumanHeader
+        preTitle="Enter"
+        highlightedTitle="Code."
+        subtitle={`We sent a 6-digit verification code to ${phoneNumber}.`}
+      />
 
       {/* Verification code card */}
       <Atoms.Card data-testid="human-phone-code-card" className="gap-0 p-6 lg:p-12">
@@ -78,7 +74,7 @@ export const HumanPhoneCode = ({ phoneNumber, onBack, onSuccess }: HumanPhoneCod
               <Atoms.Typography as="h3" className="text-2xl leading-[32px] font-semibold text-foreground">
                 Verification code
               </Atoms.Typography>
-              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-muted-foreground/80">
+              <Atoms.Typography as="p" className="text-base leading-6 font-medium text-secondary-foreground/80">
                 Enter the code you received on {phoneNumber}.
               </Atoms.Typography>
             </Atoms.Container>
