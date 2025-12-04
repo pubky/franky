@@ -1,26 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
 import * as Atoms from '@/atoms';
-import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
 import type { SinglePostReplyInputProps } from './SinglePostReplyInput.types';
 
 export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps) {
-  const { content, setContent, reply, isSubmitting, error } = Hooks.usePost();
+  const { content, setContent, reply, isSubmitting } = Hooks.usePost();
   const handleReplySubmit = reply({ postId, onSuccess });
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
-  const { toast } = Molecules.useToast();
-
-  useEffect(() => {
-    if (error) {
-      toast({
-        title: 'Error',
-        description: error,
-        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
-      });
-    }
-  }, [error, toast]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey && !isSubmitting) {

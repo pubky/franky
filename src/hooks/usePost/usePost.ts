@@ -38,7 +38,7 @@ export function usePost() {
   const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
   const { toast } = Molecules.useToast();
 
-  // Handle error display
+  // Handle error display and clear after showing toast
   useEffect(() => {
     if (error) {
       toast({
@@ -46,6 +46,8 @@ export function usePost() {
         description: error,
         className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
+      // Clear error after showing toast to prevent duplicate toasts
+      setError(null);
     }
   }, [error, toast]);
 
