@@ -8,7 +8,7 @@ import * as Core from '@/core';
 const PREFIX = 'v0/search';
 
 export const searchApi = {
-  byTag: (params: Core.TTagParams) => {
+  byTag: (params: Core.TTagSearchParams) => {
     const tag = Core.encodePathSegment(params.tag);
     return Core.buildUrlWithQuery(`${PREFIX}/posts/by_tag/${tag}`, params, Core.SEARCH_PATH_PARAMS);
   },
