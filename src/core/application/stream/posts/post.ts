@@ -1,8 +1,76 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { BatchQueue } from '@/core/application/shared/BatchQueue';
+
+/**
+ * Batch queue for post stream fetches.
+ * Accumulates post IDs from multiple rapid calls and batches them into fewer API requests.
+ */
+let postStreamBatchQueue: BatchQueue<string, void> | null = null;
+let currentPostViewerId: Core.Pubky | undefined;
+
+/**
+ * Fetch missing users for posts using the UserStreamApplication batch queue.
+ * This is a helper to avoid circular dependency issues.
+ */
+const fetchMissingUsersForPosts = async (posts: Core.NexusPost[], viewerId: Core.Pubky) => {
+  const existingUserIds = await Core.UserDetailsModel.findByIdsPreserveOrder(posts.map((post) => post.details.author));
+  const cacheMissUserIds = posts
+    .map((post) => post.details.author)
+    .filter((_userId, index) => existingUserIds[index] === undefined);
+
+  if (cacheMissUserIds.length > 0) {
+    await Core.UserStreamApplication.fetchMissingUsersFromNexus({
+      cacheMissUserIds,
+      viewerId,
+    });
+  }
+};
+
+const getPostStreamBatchQueue = (viewerId: Core.Pubky): BatchQueue<string, void> => {
+  // Update viewerId
+  currentPostViewerId = viewerId;
+
+  if (!postStreamBatchQueue) {
+    postStreamBatchQueue = new BatchQueue<string, void>({
+      name: 'PostStreamBatch',
+      delayMs: 500,
+      executeBatch: async (postIds: string[]) => {
+        try {
+          const { url, body } = Core.postStreamApi.postsByIds({
+            post_ids: postIds,
+            viewer_id: currentPostViewerId,
+          });
+          const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
+          if (postBatch) {
+            const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
+            // Persist the post attachments metadata
+            await Core.FileApplication.persistFiles(postAttachments);
+            // Persist the missing authors of the posts
+            await fetchMissingUsersForPosts(postBatch, currentPostViewerId!);
+          }
+        } catch (error) {
+          Libs.Logger.warn('Failed to fetch missing posts from Nexus', { postIds, error });
+        }
+      },
+    });
+  }
+  return postStreamBatchQueue;
+};
 
 export class PostStreamApplication {
   private constructor() {}
+
+  /**
+   * Clears the batching state.
+   * Exposed for testing purposes only.
+   * @internal
+   */
+  static _clearBatchState(): void {
+    postStreamBatchQueue?.clear();
+    postStreamBatchQueue = null;
+    currentPostViewerId = undefined;
+  }
 
   // ============================================================================
   // Public API
@@ -81,26 +149,19 @@ export class PostStreamApplication {
   }
 
   /**
-   * Fetch missing posts from nexus and persist them to cache
+   * Fetch missing posts from nexus and persist them to cache.
+   * Uses batching with debounce to combine rapid sequential calls into fewer API requests.
+   *
    * @param cacheMissPostIds - Array of post IDs that are not persisted in cache
    * @param viewerId - ID of the viewer
-   * @param streamHead - Detects if the call is coming from the streamCoordinator.
-   * @param streamId - ID of the stream. If not provided, it means that it is a single post operation.
    */
   static async fetchMissingPostsFromNexus({ cacheMissPostIds, viewerId }: Core.TMissingPostsParams) {
-    try {
-      const { url, body } = Core.postStreamApi.postsByIds({ post_ids: cacheMissPostIds, viewer_id: viewerId });
-      const postBatch = await Core.queryNexus<Core.NexusPost[]>(url, 'POST', JSON.stringify(body));
-      if (postBatch) {
-        const { postAttachments } = await Core.LocalStreamPostsService.persistPosts({ posts: postBatch });
-        // Persist the post attachments metadata
-        await Core.FileApplication.persistFiles(postAttachments);
-        // Persist the missing authors of the posts
-        await this.fetchMissingUsersFromNexus({ posts: postBatch, viewerId });
-      }
-    } catch (error) {
-      Libs.Logger.warn('Failed to fetch missing posts from Nexus', { cacheMissPostIds, viewerId, error });
+    if (cacheMissPostIds.length === 0) {
+      return;
     }
+
+    const queue = getPostStreamBatchQueue(viewerId);
+    await queue.enqueueMany(cacheMissPostIds);
   }
 
   // ============================================================================

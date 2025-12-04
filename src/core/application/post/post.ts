@@ -1,7 +1,22 @@
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 
+/**
+ * In-flight request map for request deduplication.
+ * Prevents "thundering herd" problem when multiple components request the same post concurrently.
+ * When a request is in progress for a compositeId, subsequent requests will share the same Promise.
+ */
+const inFlightPostRequests = new Map<string, Promise<Core.PostDetailsModelSchema | null>>();
+
 export class PostApplication {
+  /**
+   * Clears the in-flight request cache.
+   * Exposed for testing purposes only.
+   * @internal
+   */
+  static _clearInFlightRequests(): void {
+    inFlightPostRequests.clear();
+  }
   static async create({ postUrl, compositePostId, post, fileAttachments, tags }: Core.TCreatePostInput) {
     if (fileAttachments && fileAttachments.length > 0) {
       await Core.FileApplication.upload({ fileAttachments });
@@ -37,6 +52,7 @@ export class PostApplication {
   /**
    * Get or fetch a post - reads from local DB first, fetches from Nexus if not found
    * Also fetches and persists related data: counts, relationships, tags, and author
+   * Uses request deduplication to prevent thundering herd when multiple components request the same post.
    * @param compositeId - Composite post ID in format "authorId:postId"
    * @returns Post details or null if not found
    */
@@ -47,6 +63,34 @@ export class PostApplication {
     const localPost = await Core.LocalPostService.readPostDetails({ postId: compositeId });
     if (localPost) return localPost;
 
+    // Check if there's already an in-flight request for this post
+    const existingRequest = inFlightPostRequests.get(compositeId);
+    if (existingRequest) {
+      Libs.Logger.debug(`Reusing in-flight request for post ${compositeId}`);
+      return existingRequest;
+    }
+
+    // Create a new request and store it in the in-flight map
+    const requestPromise = this._fetchAndCachePost(compositeId, viewerId);
+    inFlightPostRequests.set(compositeId, requestPromise);
+
+    try {
+      return await requestPromise;
+    } finally {
+      // Clean up the in-flight request after it completes (success or error)
+      inFlightPostRequests.delete(compositeId);
+    }
+  }
+
+  /**
+   * Internal method to fetch post from Nexus and cache locally.
+   * Separated to allow the in-flight request pattern.
+   * @private
+   */
+  private static async _fetchAndCachePost(
+    compositeId: string,
+    viewerId: Core.Pubky,
+  ): Promise<Core.PostDetailsModelSchema | null> {
     // Reuse stream posts logic to fetch and persist single post
     await Core.PostStreamApplication.fetchMissingPostsFromNexus({
       cacheMissPostIds: [compositeId],
