@@ -1,16 +1,39 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`PostThreadConnector > Snapshots > matches snapshot with dialog-reply variant 1`] = `
+<div
+  data-override-defaults="true"
+  data-variant="dialog-reply"
+>
+  <div
+    class="absolute top-[-13px] -left-3 h-[35px] w-px border-l border-secondary"
+    data-override-defaults="true"
+  />
+  <div
+    class="absolute top-[22px] -left-3"
+    data-override-defaults="true"
+  >
+    <svg
+      data-testid="line-horizontal"
+    />
+  </div>
+</div>
+`;
+
 exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant 1`] = `
 <div
-  class="flex h-[12px] w-[12px] flex-col items-start"
+  class="flex h-3 w-3 flex-col items-start"
+  data-override-defaults="true"
   data-variant="gap-fix"
   style="height: 100px;"
 >
   <div
     class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
+    data-override-defaults="true"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border"
+      data-override-defaults="true"
     />
   </div>
 </div>
@@ -18,148 +41,124 @@ exports[`PostThreadConnector > Snapshots > matches snapshot with gap-fix variant
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with large height 1`] = `
 <div
-  class="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
+  class="flex h-24 w-3 flex-col items-start border-l border-border"
+  data-override-defaults="true"
   data-variant="regular"
   style="height: 300px;"
 >
   <div
-    class="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-3 min-w-px shrink-0 grow basis-0 flex-col items-start"
+    data-override-defaults="true"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0"
+      data-override-defaults="true"
     />
     <div
-      class="relative size-[12px] shrink-0"
+      class="relative size-3 shrink-0"
+      data-override-defaults="true"
     >
       <svg
-        class="block size-full"
-        fill="none"
-        height="12"
-        preserveAspectRatio="none"
-        viewBox="0 0 12 12"
-        width="12"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z"
-          fill="#303034"
-        />
-      </svg>
+        data-testid="rounded-corner"
+      />
     </div>
   </div>
   <div
-    class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
+    class="min-h-px w-3 min-w-px shrink-0 grow basis-0"
+    data-override-defaults="true"
   />
 </div>
 `;
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with last variant 1`] = `
 <div
-  class="flex h-[96px] w-[12px] flex-col items-start"
+  class="flex h-24 w-3 flex-col items-start"
+  data-override-defaults="true"
   data-variant="last"
   style="height: 100px;"
 >
   <div
     class="relative flex min-h-px w-full min-w-px shrink-0 grow basis-0 flex-col items-start"
+    data-override-defaults="true"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0 border-l border-border"
+      data-override-defaults="true"
     />
     <div
-      class="relative size-[12px] shrink-0"
+      class="relative size-3 shrink-0"
+      data-override-defaults="true"
     >
       <svg
-        class="block size-full"
-        fill="none"
-        height="12"
-        preserveAspectRatio="none"
-        viewBox="0 0 12 12"
-        width="12"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z"
-          fill="#303034"
-        />
-      </svg>
+        data-testid="rounded-corner"
+      />
     </div>
   </div>
   <div
-    class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
+    class="min-h-px w-3 min-w-px shrink-0 grow basis-0"
+    data-override-defaults="true"
   />
 </div>
 `;
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with regular variant 1`] = `
 <div
-  class="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
+  class="flex h-24 w-3 flex-col items-start border-l border-border"
+  data-override-defaults="true"
   data-variant="regular"
   style="height: 100px;"
 >
   <div
-    class="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-3 min-w-px shrink-0 grow basis-0 flex-col items-start"
+    data-override-defaults="true"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0"
+      data-override-defaults="true"
     />
     <div
-      class="relative size-[12px] shrink-0"
+      class="relative size-3 shrink-0"
+      data-override-defaults="true"
     >
       <svg
-        class="block size-full"
-        fill="none"
-        height="12"
-        preserveAspectRatio="none"
-        viewBox="0 0 12 12"
-        width="12"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z"
-          fill="#303034"
-        />
-      </svg>
+        data-testid="rounded-corner"
+      />
     </div>
   </div>
   <div
-    class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
+    class="min-h-px w-3 min-w-px shrink-0 grow basis-0"
+    data-override-defaults="true"
   />
 </div>
 `;
 
 exports[`PostThreadConnector > Snapshots > matches snapshot with small height 1`] = `
 <div
-  class="flex h-[96px] w-[12px] flex-col items-start border-l border-border"
+  class="flex h-24 w-3 flex-col items-start border-l border-border"
+  data-override-defaults="true"
   data-variant="regular"
   style="height: 50px;"
 >
   <div
-    class="relative flex min-h-px w-[12px] min-w-px shrink-0 grow basis-0 flex-col items-start"
+    class="relative flex min-h-px w-3 min-w-px shrink-0 grow basis-0 flex-col items-start"
+    data-override-defaults="true"
   >
     <div
       class="min-h-px w-full min-w-px shrink-0 grow basis-0"
+      data-override-defaults="true"
     />
     <div
-      class="relative size-[12px] shrink-0"
+      class="relative size-3 shrink-0"
+      data-override-defaults="true"
     >
       <svg
-        class="block size-full"
-        fill="none"
-        height="12"
-        preserveAspectRatio="none"
-        viewBox="0 0 12 12"
-        width="12"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 0C1 6.07513 5.92487 11 12 11V12C5.37258 12 0 6.62742 0 0H1Z"
-          fill="#303034"
-        />
-      </svg>
+        data-testid="rounded-corner"
+      />
     </div>
   </div>
   <div
-    class="min-h-px w-[12px] min-w-px shrink-0 grow basis-0"
+    class="min-h-px w-3 min-w-px shrink-0 grow basis-0"
+    data-override-defaults="true"
   />
 </div>
 `;
