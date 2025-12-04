@@ -72,6 +72,13 @@ vi.mock('@/molecules', () => ({
   )),
   TagInput: vi.fn(() => <div data-testid="tag-input" />),
   PostTag: vi.fn(({ label }) => <div data-testid={`post-tag-${label}`}>{label}</div>),
+  PostLinkEmbeds: vi.fn(({ content }: { content: string }) => {
+    // Only render if content contains a URL-like pattern
+    if (content.includes('http') || content.includes('youtube') || content.includes('youtu.be')) {
+      return <div data-testid="post-link-embeds">Link preview</div>;
+    }
+    return null;
+  }),
   EmojiPickerDialog: vi.fn(
     ({
       open,

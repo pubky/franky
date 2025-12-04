@@ -77,10 +77,12 @@ export function PostInput({ variant, postId, onSuccess, placeholder, showThreadC
     setIsFocused(false);
   };
 
+  // Check if content has non-whitespace characters
+  const hasContent = content.trim().length > 0;
+
   // Show bottom bar when focused OR has content OR has tags
   // For reply variant, always show bottom bar (dialog context - shouldn't hide on blur)
-  const showBottomBar =
-    variant === POST_INPUT_VARIANT.REPLY ? true : isFocused || content.trim().length > 0 || tags.length > 0;
+  const showBottomBar = variant === POST_INPUT_VARIANT.REPLY || isFocused || hasContent || tags.length > 0;
 
   // Determine placeholder text
   const placeholderMap = {
@@ -115,6 +117,9 @@ export function PostInput({ variant, postId, onSuccess, placeholder, showThreadC
           rows={1}
           disabled={isSubmitting}
         />
+
+        {/* Link preview - show when content has URLs */}
+        {hasContent && <Molecules.PostLinkEmbeds content={content} />}
 
         {/* Tags row */}
         {tags.length > 0 && (
