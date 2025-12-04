@@ -35,12 +35,16 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
     }
   }
 
+  async function onPaid() {
+    toast({
+      title: 'Payment successful',
+    });
+    onSuccess('1234567890');
+  }
+
   React.useEffect(() => {
     if (window === undefined) return; // No SSR
     requestLightningInvoice();
-    if (false) {
-      onSuccess('1234567890');
-    }
   }, []);
 
   function copyToClipboard(text: string) {
@@ -118,6 +122,17 @@ export const HumanLightningPayment = ({ onBack, onSuccess }: HumanLightningPayme
         >
           <Libs.Copy className="mr-2 h-4 w-4" />
           Copy Invoice
+        </Atoms.Button>
+
+        <Atoms.Button
+          id="human-lightning-payment-on-paid-btn"
+          size="lg"
+          className="w-full flex-1 rounded-full md:flex-0"
+          variant="default"
+          onClick={onPaid}
+        >
+          <Libs.Copy className="mr-2 h-4 w-4" />
+          On Paid
         </Atoms.Button>
       </Atoms.Container>
     </React.Fragment>

@@ -9,6 +9,7 @@ enum States {
   PhoneInput = 'phoneInput',
   PhoneCode = 'phoneCode',
   Payment = 'payment',
+  InviteCode = 'inviteCode',
 }
 
 export function Human() {
@@ -27,6 +28,8 @@ export function Human() {
               setState(States.PhoneInput);
             } else if (card === 'payment') {
               setState(States.Payment);
+            } else if (card === 'inviteCode') {
+              setState(States.InviteCode);
             }
           }}
         />
@@ -50,6 +53,9 @@ export function Human() {
       )}
       {state === States.Payment && (
         <Organisms.HumanLightningPayment onBack={() => setState(States.Selection)} onSuccess={onSuccess} />
+      )}
+      {state === States.InviteCode && (
+        <Organisms.HumanInviteCode onBack={() => setState(States.Selection)} onSuccess={onSuccess} />
       )}
     </Molecules.OnboardingLayout>
   );

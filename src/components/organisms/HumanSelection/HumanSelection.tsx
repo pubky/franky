@@ -3,7 +3,7 @@ import * as Molecules from '@/molecules';
 import React from 'react';
 
 interface HumanSelectionProps {
-  onClick: (card: 'sms' | 'payment') => void;
+  onClick: (card: 'sms' | 'payment' | 'inviteCode') => void;
 }
 
 export const HumanSelection = ({ onClick }: HumanSelectionProps) => {
@@ -18,7 +18,11 @@ export const HumanSelection = ({ onClick }: HumanSelectionProps) => {
         <Molecules.HumanSmsCard onClick={() => onClick('sms')} />
         <Molecules.HumanBitcoinCard onClick={() => onClick('payment')} />
       </Atoms.Container>
-      <Molecules.HumanFooter />
+      <Molecules.HumanFooter
+        onDevMode={() => {
+          onClick('inviteCode');
+        }}
+      />
     </React.Fragment>
   );
 };

@@ -26,6 +26,7 @@ export * from './HumanSelection';
 export * from './HumanPhoneInput';
 export * from './HumanPhoneCode';
 export * from './HumanLightningPayment';
+export * from './HumanInviteCode';
 export * from './LeftSidebar';
 export * from './PostActionsBar';
 export * from './PostContent';
