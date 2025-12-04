@@ -16,13 +16,6 @@ import * as Core from '@/core';
  * - Consider compensation rollback on homeserver failure if strict consistency is required
  */
 export class TagApplication {
-  /**
-   * Search tags by prefix
-   */
-  static async search(params: Core.TPrefixSearchParams): Promise<string[]> {
-    return await Core.NexusTagService.search(params);
-  }
-
   static async create({ tagList }: Core.TCreateTagListInput) {
     await Promise.all(
       tagList.map(async ({ taggerId, taggedId, label, tagUrl, tagJson, taggedKind }: Core.TCreateTagInput) => {

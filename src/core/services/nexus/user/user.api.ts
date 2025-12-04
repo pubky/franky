@@ -12,14 +12,6 @@ export const userApi = {
     const userId = Core.encodePathSegment(params.user_id);
     return Core.buildUrlWithQuery(`${PREFIX}/${userId}`, params, Core.USER_PATH_PARAMS);
   },
-  searchById: (params: Core.TPrefixSearchParams) => {
-    const prefix = Core.encodePathSegment(params.prefix);
-    return Core.buildUrlWithQuery(`v0/search/users/by_id/${prefix}`, params, Core.SEARCH_PATH_PARAMS);
-  },
-  searchByName: (params: Core.TPrefixSearchParams) => {
-    const prefix = Core.encodePathSegment(params.prefix);
-    return Core.buildUrlWithQuery(`v0/search/users/by_name/${prefix}`, params, Core.SEARCH_PATH_PARAMS);
-  },
   counts: (params: Core.TUserId) => {
     const userId = Core.encodePathSegment(params.user_id);
     return Core.buildNexusUrl(`${PREFIX}/${userId}/counts`);

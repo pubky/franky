@@ -2,14 +2,6 @@ import * as Core from '@/core';
 
 export class UserApplication {
   /**
-   * Search users by ID or name prefix
-   * @returns Array of user IDs (pubkeys) matching the search prefix
-   */
-  static async search(params: Core.TPrefixSearchParams, by: Core.UserSearchType): Promise<string[]> {
-    return await Core.NexusUserService.search(params, by);
-  }
-
-  /**
    * Handles following or unfollowing a user.
    * Performs local database operations and syncs with the homeserver.
    * @param params - Parameters containing event type, URLs, JSON data, and user IDs

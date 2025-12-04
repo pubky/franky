@@ -19,10 +19,6 @@ export const tagApi = {
     const label = Core.encodePathSegment(params.label);
     return Core.buildUrlWithQuery(`${PREFIX}/taggers/${label}`, params, Core.TAGS_PATH_PARAMS);
   },
-  search: (params: Core.TPrefixSearchParams) => {
-    const prefix = Core.encodePathSegment(params.prefix);
-    return Core.buildUrlWithQuery(`v0/search/tags/by_prefix/${prefix}`, params, Core.SEARCH_PATH_PARAMS);
-  },
 };
 
 export type TagApiEndpoint = keyof typeof tagApi;

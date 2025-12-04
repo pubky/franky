@@ -4,13 +4,6 @@ export class TagController {
   private constructor() {}
 
   /**
-   * Search tags by prefix
-   */
-  static async search(params: Core.TPrefixSearchParams): Promise<string[]> {
-    return await Core.TagApplication.search(params);
-  }
-
-  /**
    * Create a tag
    * @param params - Parameters object
    * @param params.targetId - ID of the post or user to tag

@@ -312,39 +312,4 @@ describe('UserController', () => {
       ).rejects.toThrow('Application error');
     });
   });
-
-  describe('search', () => {
-    const mockUserIds: string[] = ['user1', 'user2'];
-
-    it('should delegate to UserApplication.search and return user IDs', async () => {
-      const searchSpy = vi.spyOn(Core.UserApplication, 'search').mockResolvedValue(mockUserIds);
-
-      const result = await UserController.search({ prefix: 'test', limit: 10 }, 'name');
-
-      expect(searchSpy).toHaveBeenCalledWith({ prefix: 'test', limit: 10 }, 'name');
-      expect(result).toEqual(mockUserIds);
-    });
-
-    it('should search by id when type is id', async () => {
-      const searchSpy = vi.spyOn(Core.UserApplication, 'search').mockResolvedValue(mockUserIds);
-
-      await UserController.search({ prefix: 'qr3x' }, 'id');
-
-      expect(searchSpy).toHaveBeenCalledWith({ prefix: 'qr3x' }, 'id');
-    });
-
-    it('should return empty array when no users found', async () => {
-      vi.spyOn(Core.UserApplication, 'search').mockResolvedValue([]);
-
-      const result = await UserController.search({ prefix: 'nonexistent' }, 'name');
-
-      expect(result).toEqual([]);
-    });
-
-    it('should propagate errors from application layer', async () => {
-      vi.spyOn(Core.UserApplication, 'search').mockRejectedValue(new Error('Application error'));
-
-      await expect(UserController.search({ prefix: 'test' }, 'name')).rejects.toThrow('Application error');
-    });
-  });
 });

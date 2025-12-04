@@ -140,12 +140,10 @@ describe('User API', () => {
   });
 
   describe('UserApiEndpoint type', () => {
-    it('should have exactly 13 endpoints', () => {
+    it('should have exactly 11 endpoints', () => {
       const endpointKeys = Object.keys(userApi);
-      expect(endpointKeys).toHaveLength(13);
+      expect(endpointKeys).toHaveLength(11);
       expect(endpointKeys).toContain('view');
-      expect(endpointKeys).toContain('searchById');
-      expect(endpointKeys).toContain('searchByName');
       expect(endpointKeys).toContain('counts');
       expect(endpointKeys).toContain('details');
       expect(endpointKeys).toContain('followers');
@@ -280,44 +278,6 @@ describe('NexusUserService', () => {
       expect(result).toEqual(mockUserDetails);
       expect(result?.name).toBe('Satoshi Nakamoto');
       expect(result?.links).toHaveLength(2);
-    });
-  });
-
-  describe('search', () => {
-    const mockUserIds: string[] = [testUserId, 'another-user-id'];
-
-    it('should search users by ID prefix and return user IDs', async () => {
-      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockUserIds);
-
-      const result = await Core.NexusUserService.search({ prefix: 'qr3x', limit: 10 }, 'id');
-
-      expect(result).toEqual(mockUserIds);
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/users/by_id/qr3x'));
-    });
-
-    it('should search users by name prefix and return user IDs', async () => {
-      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue(mockUserIds);
-
-      const result = await Core.NexusUserService.search({ prefix: 'Test', limit: 10 }, 'name');
-
-      expect(result).toEqual(mockUserIds);
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/users/by_name/Test'));
-    });
-
-    it('should return empty array when no matches found', async () => {
-      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
-
-      const result = await Core.NexusUserService.search({ prefix: 'nonexistent' }, 'id');
-
-      expect(result).toEqual([]);
-    });
-
-    it('should encode special characters in prefix', async () => {
-      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
-
-      await Core.NexusUserService.search({ prefix: 'test user' }, 'name');
-
-      expect(queryNexusSpy).toHaveBeenCalledWith(expect.stringContaining('/v0/search/users/by_name/test%20user'));
     });
   });
 });
