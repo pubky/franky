@@ -5,14 +5,9 @@ import * as Atoms from '@/atoms';
 import * as Molecules from '@/molecules';
 import * as Libs from '@/libs';
 import { POST_MAX_TAGS } from '@/config';
-import type { DialogReplyTagsProps } from './DialogReplyTags.types';
+import type { PostInputTagsProps } from './PostInputTags.types';
 
-export function DialogReplyTags({
-  tags,
-  onTagsChange,
-  maxTags = POST_MAX_TAGS,
-  disabled = false,
-}: DialogReplyTagsProps) {
+export function PostInputTags({ tags, onTagsChange, maxTags = POST_MAX_TAGS, disabled = false }: PostInputTagsProps) {
   const [isAddingTag, setIsAddingTag] = useState(false);
 
   const isAtLimit = tags.length >= maxTags;

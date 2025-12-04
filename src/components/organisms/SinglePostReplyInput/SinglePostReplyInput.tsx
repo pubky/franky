@@ -7,10 +7,8 @@ import * as Hooks from '@/hooks';
 import type { SinglePostReplyInputProps } from './SinglePostReplyInput.types';
 
 export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps) {
-  const { replyContent, setReplyContent, handleReplySubmit, isSubmitting, error } = Hooks.usePostReply({
-    postId,
-    onSuccess,
-  });
+  const { content, setContent, reply, isSubmitting, error } = Hooks.usePost();
+  const handleReplySubmit = reply({ postId, onSuccess });
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
   const { toast } = Molecules.useToast();
 
@@ -40,8 +38,8 @@ export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInput
         <Atoms.Textarea
           placeholder="Write a reply..."
           className="min-h-20"
-          value={replyContent}
-          onChange={(e) => setReplyContent(e.target.value)}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
           disabled={isSubmitting}
         />

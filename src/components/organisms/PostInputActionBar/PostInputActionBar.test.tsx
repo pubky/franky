@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { DialogReplyActionBar } from './DialogReplyActionBar';
+import { PostInputActionBar } from './PostInputActionBar';
 
 // Use real libs, only stub cn for deterministic class joining
 vi.mock('@/libs', async (importOriginal) => {
@@ -11,7 +11,7 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-// Minimal atoms used by DialogReplyActionBar
+// Minimal atoms used by PostInputActionBar
 vi.mock('@/atoms', () => ({
   Button: ({
     children,
@@ -77,13 +77,13 @@ vi.mock('@/atoms', () => ({
   },
 }));
 
-describe('DialogReplyActionBar', () => {
+describe('PostInputActionBar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders all action buttons with aria labels', () => {
-    render(<DialogReplyActionBar />);
+    render(<PostInputActionBar />);
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add image' })).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('DialogReplyActionBar', () => {
     const onPostClick = vi.fn();
 
     render(
-      <DialogReplyActionBar
+      <PostInputActionBar
         onEmojiClick={onEmojiClick}
         onImageClick={onImageClick}
         onFileClick={onFileClick}
@@ -123,7 +123,7 @@ describe('DialogReplyActionBar', () => {
   });
 
   it('disables Post button when isPostDisabled is true', () => {
-    render(<DialogReplyActionBar isPostDisabled={true} />);
+    render(<PostInputActionBar isPostDisabled={true} />);
 
     const postButton = screen.getByRole('button', { name: 'Post reply' });
     expect(postButton).toBeDisabled();
@@ -131,14 +131,14 @@ describe('DialogReplyActionBar', () => {
 
   it('enables Post button when isPostDisabled is false and handler is provided', () => {
     const onPostClick = vi.fn();
-    render(<DialogReplyActionBar isPostDisabled={false} onPostClick={onPostClick} />);
+    render(<PostInputActionBar isPostDisabled={false} onPostClick={onPostClick} />);
 
     const postButton = screen.getByRole('button', { name: 'Post reply' });
     expect(postButton).not.toBeDisabled();
   });
 
   it('disables buttons without handlers', () => {
-    render(<DialogReplyActionBar />);
+    render(<PostInputActionBar />);
 
     expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Add image' })).toBeDisabled();
@@ -148,20 +148,33 @@ describe('DialogReplyActionBar', () => {
   });
 
   it('renders Post button with label text', () => {
-    render(<DialogReplyActionBar />);
+    render(<PostInputActionBar />);
 
     const postButton = screen.getByRole('button', { name: 'Post reply' });
     expect(postButton).toHaveTextContent('Post');
   });
+
+  it('shows loading state when isSubmitting is true', () => {
+    render(<PostInputActionBar onPostClick={vi.fn()} isSubmitting={true} />);
+
+    const postButton = screen.getByRole('button', { name: 'Posting...' });
+    expect(postButton).toHaveTextContent('Posting...');
+  });
+
+  it('disables all buttons when isSubmitting is true', () => {
+    render(<PostInputActionBar onEmojiClick={vi.fn()} isSubmitting={true} />);
+
+    expect(screen.getByRole('button', { name: 'Add emoji' })).toBeDisabled();
+  });
 });
 
-describe('DialogReplyActionBar - Snapshots', () => {
+describe('PostInputActionBar - Snapshots', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('matches snapshot with default props', () => {
-    const { container } = render(<DialogReplyActionBar />);
+    const { container } = render(<PostInputActionBar />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
@@ -173,7 +186,7 @@ describe('DialogReplyActionBar - Snapshots', () => {
     const onPostClick = vi.fn();
 
     const { container } = render(
-      <DialogReplyActionBar
+      <PostInputActionBar
         onEmojiClick={onEmojiClick}
         onImageClick={onImageClick}
         onFileClick={onFileClick}
@@ -185,7 +198,7 @@ describe('DialogReplyActionBar - Snapshots', () => {
   });
 
   it('matches snapshot with disabled post button', () => {
-    const { container } = render(<DialogReplyActionBar isPostDisabled={true} />);
+    const { container } = render(<PostInputActionBar isPostDisabled={true} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 });

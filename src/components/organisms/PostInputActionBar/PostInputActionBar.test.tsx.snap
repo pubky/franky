@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DialogReplyActionBar - Snapshots > matches snapshot with all callbacks 1`] = `
+exports[`PostInputActionBar - Snapshots > matches snapshot with all callbacks 1`] = `
 <div
   class="flex items-center justify-end gap-2"
   data-override-defaults="true"
@@ -189,7 +189,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with all callbacks 
 </div>
 `;
 
-exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 1`] = `
+exports[`PostInputActionBar - Snapshots > matches snapshot with default props 1`] = `
 <div
   class="flex items-center justify-end gap-2"
   data-override-defaults="true"
@@ -383,7 +383,7 @@ exports[`DialogReplyActionBar - Snapshots > matches snapshot with default props 
 </div>
 `;
 
-exports[`DialogReplyActionBar - Snapshots > matches snapshot with disabled post button 1`] = `
+exports[`PostInputActionBar - Snapshots > matches snapshot with disabled post button 1`] = `
 <div
   class="flex items-center justify-end gap-2"
   data-override-defaults="true"

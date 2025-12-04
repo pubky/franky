@@ -1,5 +1,16 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`DialogReplyInput - Snapshots > matches snapshot 1`] = `
+<div
+  data-post-id="snapshot-post-id"
+  data-show-thread="true"
+  data-testid="post-input"
+  data-variant="reply"
+>
+  PostInput Component
+</div>
+`;
+
 exports[`DialogReplyInput - Snapshots > matches snapshot in default state 1`] = `
 <div
   class="relative rounded-md border border-dashed border-input p-6"

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { DialogReplyTags } from './DialogReplyTags';
+import { PostInputTags } from './PostInputTags';
 import { POST_MAX_TAGS } from '@/config';
 
 // Mock state for TagInput simulation
@@ -140,7 +140,7 @@ vi.mock('@/libs', async (importOriginal) => {
   };
 });
 
-describe('DialogReplyTags', () => {
+describe('PostInputTags', () => {
   const mockOnTagsChange = vi.fn();
 
   beforeEach(() => {
@@ -150,22 +150,18 @@ describe('DialogReplyTags', () => {
   });
 
   it('renders with empty tags array', () => {
-    render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     expect(screen.getAllByTestId('container').length).toBeGreaterThan(0);
     expect(screen.getByTestId('add-tag-button')).toBeInTheDocument();
   });
 
-  it('does not render tags (tags are rendered by parent component)', () => {
-    render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
-    // Tags are no longer rendered by DialogReplyTags - they're rendered by DialogReplyInput
-    expect(screen.queryByTestId('tag-tag1')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('tag-tag2')).not.toBeInTheDocument();
-    // Should show tag count indicator
+  it('shows tag count indicator when tags exist', () => {
+    render(<PostInputTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
     expect(screen.getByText(`2/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
   it('shows TagInput when add button is clicked', () => {
-    render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
     expect(screen.getByTestId('tag-input-wrapper')).toBeInTheDocument();
@@ -173,7 +169,7 @@ describe('DialogReplyTags', () => {
   });
 
   it('adds tag when Enter is pressed in input', () => {
-    render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
     const input = screen.getByTestId('tag-input');
@@ -184,7 +180,7 @@ describe('DialogReplyTags', () => {
   });
 
   it('does not add duplicate tags', () => {
-    render(<DialogReplyTags tags={['existing-tag']} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={['existing-tag']} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
     const input = screen.getByTestId('tag-input');
@@ -196,7 +192,7 @@ describe('DialogReplyTags', () => {
   });
 
   it('closes input when close button is clicked', () => {
-    render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
     expect(screen.getByTestId('tag-input-wrapper')).toBeInTheDocument();
@@ -206,7 +202,7 @@ describe('DialogReplyTags', () => {
   });
 
   it('renders emoji button in TagInput', () => {
-    render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
     const emojiButton = screen.getByTestId('emoji-button');
@@ -216,28 +212,29 @@ describe('DialogReplyTags', () => {
 
   it('disables add button when POST_MAX_TAGS limit is reached', () => {
     const maxTags = Array.from({ length: POST_MAX_TAGS }, (_, i) => `tag${i + 1}`);
-    render(<DialogReplyTags tags={maxTags} onTagsChange={mockOnTagsChange} />);
+    render(<PostInputTags tags={maxTags} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     expect(addButton).toBeDisabled();
     expect(screen.getByText(`${POST_MAX_TAGS}/${POST_MAX_TAGS}`)).toBeInTheDocument();
   });
 
-  it('shows tag count indicator when tags exist', () => {
-    render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
-    expect(screen.getByText(`2/${POST_MAX_TAGS}`)).toBeInTheDocument();
-  });
-
   it('uses custom maxTags when provided', () => {
     const customMax = 3;
     const tags = ['tag1', 'tag2', 'tag3'];
-    render(<DialogReplyTags tags={tags} onTagsChange={mockOnTagsChange} maxTags={customMax} />);
+    render(<PostInputTags tags={tags} onTagsChange={mockOnTagsChange} maxTags={customMax} />);
     const addButton = screen.getByTestId('add-tag-button');
     expect(addButton).toBeDisabled();
     expect(screen.getByText(`3/3`)).toBeInTheDocument();
   });
+
+  it('disables input when disabled prop is true', () => {
+    render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} disabled={true} />);
+    const addButton = screen.getByTestId('add-tag-button');
+    expect(addButton).toBeDisabled();
+  });
 });
 
-describe('DialogReplyTags - Snapshots', () => {
+describe('PostInputTags - Snapshots', () => {
   const mockOnTagsChange = vi.fn();
 
   beforeEach(() => {
@@ -247,17 +244,17 @@ describe('DialogReplyTags - Snapshots', () => {
   });
 
   it('matches snapshot with empty tags', () => {
-    const { container } = render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    const { container } = render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it('matches snapshot with tags (tags not rendered by this component)', () => {
-    const { container } = render(<DialogReplyTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
+  it('matches snapshot with tags', () => {
+    const { container } = render(<PostInputTags tags={['tag1', 'tag2']} onTagsChange={mockOnTagsChange} />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('matches snapshot with input open', () => {
-    const { container } = render(<DialogReplyTags tags={[]} onTagsChange={mockOnTagsChange} />);
+    const { container } = render(<PostInputTags tags={[]} onTagsChange={mockOnTagsChange} />);
     const addButton = screen.getByTestId('add-tag-button');
     fireEvent.click(addButton);
     expect(container.firstChild).toMatchSnapshot();

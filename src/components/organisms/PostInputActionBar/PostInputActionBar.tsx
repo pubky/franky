@@ -3,9 +3,9 @@
 import * as React from 'react';
 import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
-import type { DialogReplyActionBarProps, ActionButtonConfig } from './DialogReplyActionBar.types';
+import type { PostInputActionBarProps, ActionButtonConfig } from './PostInputActionBar.types';
 
-export function DialogReplyActionBar({
+export function PostInputActionBar({
   onEmojiClick,
   onImageClick,
   onFileClick,
@@ -13,7 +13,7 @@ export function DialogReplyActionBar({
   onPostClick,
   isPostDisabled = false,
   isSubmitting = false,
-}: DialogReplyActionBarProps) {
+}: PostInputActionBarProps) {
   const commonButtonProps = React.useMemo(
     () => ({
       variant: 'secondary' as const,

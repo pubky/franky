@@ -1,0 +1,49 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`PostInput - Snapshots > matches snapshot for post variant 1`] = `
+<div
+  class="relative rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="What's on your mind?"
+    />
+  </div>
+</div>
+`;
+
+exports[`PostInput - Snapshots > matches snapshot for reply variant 1`] = `
+<div
+  class="relative rounded-md border border-dashed border-input p-6"
+  data-testid="container"
+>
+  <div
+    class="gap-4"
+    data-testid="container"
+  >
+    <div
+      data-count="0"
+      data-is-reply="true"
+      data-max="2000"
+      data-post-id="test-user-id:pubkey"
+      data-testid="post-header"
+    />
+    <textarea
+      data-testid="textarea"
+      placeholder="Write a reply..."
+    />
+  </div>
+</div>
+`;

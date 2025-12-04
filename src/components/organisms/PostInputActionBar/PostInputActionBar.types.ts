@@ -1,6 +1,6 @@
 import type * as React from 'react';
 
-export interface DialogReplyActionBarProps {
+export interface PostInputActionBarProps {
   onEmojiClick?: () => void;
   onImageClick?: () => void;
   onFileClick?: () => void;

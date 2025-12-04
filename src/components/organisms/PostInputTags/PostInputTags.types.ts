@@ -1,4 +1,4 @@
-export interface DialogReplyTagsProps {
+export interface PostInputTagsProps {
   tags: string[];
   onTagsChange: (tags: string[]) => void;
   /** Maximum number of tags allowed. Defaults to POST_MAX_TAGS from config */
