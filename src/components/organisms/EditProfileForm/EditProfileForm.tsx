@@ -172,11 +172,23 @@ export const EditProfileForm = () => {
         </Atoms.Card>
 
         {/* Navigation Buttons */}
-        <Atoms.Container className="mt-auto flex-row justify-end gap-4">
-          <Atoms.Button variant="outline" onClick={handlers.handleCancel} disabled={state.isSaving}>
+        <Atoms.Container className="mt-auto flex-row justify-between">
+          <Atoms.Button
+            variant="outline"
+            size="lg"
+            onClick={handlers.handleCancel}
+            disabled={state.isSaving}
+            className="rounded-full px-8"
+          >
             Cancel
           </Atoms.Button>
-          <Atoms.Button onClick={handlers.handleSubmit} disabled={isSubmitDisabled} data-testid="save-profile-button">
+          <Atoms.Button
+            size="lg"
+            onClick={handlers.handleSubmit}
+            disabled={isSubmitDisabled}
+            data-testid="save-profile-button"
+            className="rounded-full px-8"
+          >
             {state.isSaving && <Atoms.Spinner size="sm" className="mr-2" />}
             {state.submitText}
           </Atoms.Button>

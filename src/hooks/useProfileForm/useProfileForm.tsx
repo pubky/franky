@@ -37,7 +37,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(mode === 'edit');
-  const [submitText, setSubmitText] = useState(mode === 'create' ? 'Finish' : 'Save');
+  const [submitText, setSubmitText] = useState(mode === 'create' ? 'Finish' : 'Save Profile');
 
   // Edit mode specific state
   const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string | null>(null);
@@ -236,7 +236,7 @@ export function useProfileForm(props: UseProfileFormProps): UseProfileFormReturn
     try {
       const user = validateUser();
       if (!user) {
-        setSubmitText(mode === 'create' ? 'Finish' : 'Save');
+        setSubmitText(mode === 'create' ? 'Finish' : 'Save Profile');
         return;
       }
 
