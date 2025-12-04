@@ -16,6 +16,7 @@ export * from './DialogDeleteAccount';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogFeedback';
 export * from './DialogPrivacy';
+export * from './DialogReply';
 export * from './DialogRestoreEncryptedFile';
 export * from './DialogRestoreRecoveryPhrase';
 export * from './DialogTerms';

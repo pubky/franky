@@ -18,6 +18,7 @@ export * from './List';
 export * from './PageHeader';
 export * from './PageSubtitle';
 export * from './Popover';
+export * from './DialogPostReplyThreadConnector';
 export * from './PostThreadConnector';
 export * from './PostThreadSpacer';
 export * from './ReplyLine';

@@ -1,47 +1,39 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import * as Atoms from '@/atoms';
-import * as Core from '@/core';
+import * as Molecules from '@/molecules';
 import * as Hooks from '@/hooks';
+import type { SinglePostReplyInputProps } from './SinglePostReplyInput.types';
 
-interface PostReplyInputProps {
-  postId: string;
-  onCancel?: () => void;
-  onSuccess?: () => void;
-}
-
-export function SinglePostReplyInput({ postId }: PostReplyInputProps) {
-  const [replyContent, setReplyContent] = useState('');
-  const currentUserId = Core.useAuthStore((state) => state.selectCurrentUserPubky());
+export function SinglePostReplyInput({ postId, onSuccess }: SinglePostReplyInputProps) {
+  const { replyContent, setReplyContent, handleReplySubmit, isSubmitting, error } = Hooks.usePostReply({
+    postId,
+    onSuccess,
+  });
   const { ref: containerRef, height: containerHeight } = Hooks.useElementHeight();
+  const { toast } = Molecules.useToast();
 
-  const handleReplySubmit = async () => {
-    if (!replyContent.trim() || !postId || !currentUserId) return;
-
-    try {
-      await Core.PostController.create({
-        parentPostId: postId,
-        content: replyContent.trim(),
-        authorId: currentUserId,
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error,
+        className: 'destructive border-destructive bg-destructive text-destructive-foreground',
       });
-      // useLiveQuery in PostReplies will automatically update the replies list
-      setReplyContent('');
-    } catch (error) {
-      console.error('Failed to submit reply:', error);
     }
-  };
+  }, [error, toast]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !isSubmitting) {
       e.preventDefault();
-      handleReplySubmit();
+      void handleReplySubmit();
     }
   };
 
   return (
     <div className="flex gap-4">
-      <div className="w-8 flex-shrink-0">
+      <div className="w-8 shrink-0">
         <Atoms.ReplyLine height={containerHeight} isLast={true} />
       </div>
       <div ref={containerRef} className="flex-1">
@@ -51,6 +43,7 @@ export function SinglePostReplyInput({ postId }: PostReplyInputProps) {
           value={replyContent}
           onChange={(e) => setReplyContent(e.target.value)}
           onKeyDown={handleKeyDown}
+          disabled={isSubmitting}
         />
       </div>
     </div>
