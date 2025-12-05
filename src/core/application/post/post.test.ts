@@ -102,7 +102,9 @@ describe('Post Application', () => {
   });
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
+    Core.PostApplication._clearBatchState();
+    Core.PostStreamApplication._clearBatchState();
   });
 
   describe('create', () => {
@@ -783,48 +785,88 @@ describe('Post Application', () => {
       expect(result).toEqual(mockPostDetails);
     });
 
-    it('should fetch post from Nexus using stream posts logic', async () => {
+    it('should batch fetch posts from Nexus when not found locally', async () => {
       const mockViewerId = 'test-viewer-id' as Core.Pubky;
-      const readSpyFirst = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+
+      // Track call count to return different values
+      let readCallCount = 0;
+      vi.spyOn(Core.LocalPostService, 'readPostDetails').mockImplementation(async () => {
+        readCallCount++;
+        // First call returns null, subsequent calls return the post
+        return readCallCount === 1 ? null : mockPostDetails;
+      });
+
       const fetchMissingSpy = vi
         .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
         .mockResolvedValue(undefined);
-      const readSpySecond = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(mockPostDetails);
 
       const result = await Core.PostApplication.getOrFetchPost({
         compositeId: 'author:post123',
         viewerId: mockViewerId,
       });
 
-      expect(readSpyFirst).toHaveBeenCalledWith({ postId: 'author:post123' });
+      // Verify batch fetch was called
       expect(fetchMissingSpy).toHaveBeenCalledWith({
         cacheMissPostIds: ['author:post123'],
         viewerId: mockViewerId,
       });
-      expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toEqual(mockPostDetails);
     });
 
-    it('should return null when post not found in Nexus', async () => {
+    it('should return null when post not found after batch fetch', async () => {
       const mockViewerId = 'test-viewer-id' as Core.Pubky;
-      const readSpyFirst = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
+
+      // Mock: both calls return null (post doesn't exist)
+      vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValue(null);
+
       const fetchMissingSpy = vi
         .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
         .mockResolvedValue(undefined);
-      const readSpySecond = vi.spyOn(Core.LocalPostService, 'readPostDetails').mockResolvedValueOnce(null);
 
       const result = await Core.PostApplication.getOrFetchPost({
         compositeId: 'author:post123',
         viewerId: mockViewerId,
       });
 
-      expect(readSpyFirst).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(fetchMissingSpy).toHaveBeenCalledWith({
         cacheMissPostIds: ['author:post123'],
         viewerId: mockViewerId,
       });
-      expect(readSpySecond).toHaveBeenCalledWith({ postId: 'author:post123' });
       expect(result).toBeNull();
+    });
+
+    it('should batch multiple concurrent post requests', async () => {
+      const mockViewerId = 'test-viewer-id' as Core.Pubky;
+
+      // Mock returns null for initial checks, then returns posts after fetch
+      let callCount = 0;
+      vi.spyOn(Core.LocalPostService, 'readPostDetails').mockImplementation(async ({ postId }) => {
+        callCount++;
+        // First 3 calls return null (initial checks), then return the post
+        if (callCount <= 3) return null;
+        return { ...mockPostDetails, id: postId };
+      });
+
+      const fetchMissingSpy = vi
+        .spyOn(Core.PostStreamApplication, 'fetchMissingPostsFromNexus')
+        .mockResolvedValue(undefined);
+
+      // Make 3 concurrent requests
+      const results = await Promise.all([
+        Core.PostApplication.getOrFetchPost({ compositeId: 'author:post1', viewerId: mockViewerId }),
+        Core.PostApplication.getOrFetchPost({ compositeId: 'author:post2', viewerId: mockViewerId }),
+        Core.PostApplication.getOrFetchPost({ compositeId: 'author:post3', viewerId: mockViewerId }),
+      ]);
+
+      // All requests should be batched into one call
+      expect(fetchMissingSpy).toHaveBeenCalledTimes(1);
+      expect(fetchMissingSpy).toHaveBeenCalledWith({
+        cacheMissPostIds: expect.arrayContaining(['author:post1', 'author:post2', 'author:post3']),
+        viewerId: mockViewerId,
+      });
+
+      // All results should be returned
+      expect(results.length).toBe(3);
     });
   });
 

@@ -1,5 +1,6 @@
 import * as Core from '@/core';
 import * as Config from '@/config';
+import { BatchQueue } from '@/core/application/shared/BatchQueue';
 
 /**
  * Internal type for fetchStreamFromNexus parameters
@@ -10,6 +11,43 @@ type TFetchStreamFromNexusParams = Core.TFetchUserStreamChunkParams & {
 };
 
 /**
+ * Batch queue for user stream fetches.
+ * Accumulates user IDs from multiple rapid calls and batches them into fewer API requests.
+ */
+let userStreamBatchQueue: BatchQueue<Core.Pubky, void> | null = null;
+let currentViewerId: Core.Pubky | undefined;
+
+const getUserStreamBatchQueue = (viewerId?: Core.Pubky): BatchQueue<Core.Pubky, void> => {
+  // Update viewerId if provided
+  if (viewerId) {
+    currentViewerId = viewerId;
+  }
+
+  if (!userStreamBatchQueue) {
+    userStreamBatchQueue = new BatchQueue<Core.Pubky, void>({
+      name: 'UserStreamBatch',
+      delayMs: 500,
+      executeBatch: async (userIds: Core.Pubky[]) => {
+        try {
+          const { url, body } = Core.userStreamApi.usersByIds({
+            user_ids: userIds,
+            viewer_id: currentViewerId,
+          });
+
+          const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
+          if (userBatch) {
+            await Core.LocalStreamUsersService.persistUsers(userBatch);
+          }
+        } catch (error) {
+          console.error('Failed to fetch missing users from Nexus:', error);
+        }
+      },
+    });
+  }
+  return userStreamBatchQueue;
+};
+
+/**
  * User Stream Application
  *
  * Manages user stream data flow between Nexus API and local cache.
@@ -17,6 +55,17 @@ type TFetchStreamFromNexusParams = Core.TFetchUserStreamChunkParams & {
  */
 export class UserStreamApplication {
   private constructor() {}
+
+  /**
+   * Clears the batching state.
+   * Exposed for testing purposes only.
+   * @internal
+   */
+  static _clearBatchState(): void {
+    userStreamBatchQueue?.clear();
+    userStreamBatchQueue = null;
+    currentViewerId = undefined;
+  }
 
   /**
    * Get or fetch a slice of a user stream (followers, following, friends, etc.)
@@ -49,8 +98,8 @@ export class UserStreamApplication {
   }
 
   /**
-   * Fetch missing user details from Nexus
-   * Called in background to populate cache with full user data
+   * Fetch missing user details from Nexus.
+   * Uses batching with debounce to combine rapid sequential calls into fewer API requests.
    *
    * @param cacheMissUserIds - Array of user IDs that need to be fetched
    * @param viewerId - Optional viewer ID for relationship data
@@ -60,19 +109,8 @@ export class UserStreamApplication {
       return;
     }
 
-    try {
-      const { url, body } = Core.userStreamApi.usersByIds({
-        user_ids: cacheMissUserIds,
-        viewer_id: viewerId,
-      });
-
-      const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
-      if (userBatch) {
-        await Core.LocalStreamUsersService.persistUsers(userBatch);
-      }
-    } catch (error) {
-      console.error('Failed to fetch missing users from Nexus:', error);
-    }
+    const queue = getUserStreamBatchQueue(viewerId);
+    await queue.enqueueMany(cacheMissUserIds);
   }
 
   /**

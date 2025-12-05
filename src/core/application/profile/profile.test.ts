@@ -85,72 +85,193 @@ describe('ProfileApplication', () => {
       expect(nexusSpy).not.toHaveBeenCalled();
     });
 
-    it('should fetch from Nexus and persist when not found locally', async () => {
-      const nexusUserDetails = {
-        id: userId,
-        name: 'Nexus User',
-        bio: 'Nexus bio',
-        image: '/avatar.jpg',
-        status: 'online',
-        links: [{ title: 'Website', url: 'https://example.com' }],
-        indexed_at: Date.now(),
-      };
+    it('should fetch from Nexus using batch endpoint and persist when not found locally', async () => {
+      // Clear batch state
+      ProfileApplication._clearBatchState();
 
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(nexusUserDetails);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([
+        {
+          details: {
+            id: userId,
+            name: 'Nexus User',
+            bio: 'Nexus bio',
+            image: '/avatar.jpg',
+            status: 'online',
+            links: [{ title: 'Website', url: 'https://example.com' }],
+            indexed_at: Date.now(),
+          },
+        },
+      ]);
 
-      const result = await ProfileApplication.read({ userId });
+      const persistSpy = vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-      expect(upsertSpy).toHaveBeenCalledWith(nexusUserDetails);
-      expect(result).not.toBeNull();
-      expect(result!.id).toBe(userId);
-      expect(result!.name).toBe('Nexus User');
+      await ProfileApplication.read({ userId });
+
+      // Should use batch endpoint
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/users/by_ids'),
+        'POST',
+        expect.stringContaining(userId),
+      );
+      expect(persistSpy).toHaveBeenCalled();
     });
 
-    it('should return null when Nexus returns 404 (user not found)', async () => {
-      const notFoundError = new Libs.AppError(Libs.NexusErrorType.RESOURCE_NOT_FOUND, 'User not found', 404);
+    it('should return null when user not found in batch response', async () => {
+      // Clear batch state
+      ProfileApplication._clearBatchState();
 
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(notFoundError);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
+      // Mock batch endpoint returning empty array (user not found)
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue([]);
+      vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       const result = await ProfileApplication.read({ userId });
 
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
+      // User not in response means not found
       expect(result).toBeNull();
-      // Should not persist anything when user not found
-      expect(upsertSpy).not.toHaveBeenCalled();
     });
 
-    it('should re-throw non-404 errors from Nexus', async () => {
-      const networkError = new Error('Network error');
-      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(networkError);
+    it('should handle batch endpoint errors gracefully', async () => {
+      // Clear batch state
+      ProfileApplication._clearBatchState();
 
-      await expect(ProfileApplication.read({ userId })).rejects.toThrow('Network error');
+      // Mock batch endpoint failing
+      vi.spyOn(Core, 'queryNexus').mockRejectedValue(new Error('Network error'));
+      const warnSpy = vi.spyOn(Libs.Logger, 'warn');
 
-      expect(Core.NexusUserService.details).toHaveBeenCalledWith({ user_id: userId });
+      // Should not throw, just log warning and return null
+      const result = await ProfileApplication.read({ userId });
+
+      expect(warnSpy).toHaveBeenCalled();
+      expect(result).toBeNull();
     });
 
-    it('should re-throw server errors (500) from Nexus', async () => {
-      const serverError = new Libs.AppError(Libs.NexusErrorType.NETWORK_ERROR, 'Internal server error', 500);
+    it('should return null when batch response is null/undefined', async () => {
+      // Clear batch state
+      ProfileApplication._clearBatchState();
 
-      vi.spyOn(Core.NexusUserService, 'details').mockRejectedValue(serverError);
-
-      await expect(ProfileApplication.read({ userId })).rejects.toThrow('Internal server error');
-
-      expect(Core.NexusUserService.details).toHaveBeenCalledWith({ user_id: userId });
-    });
-
-    it('should return undefined when Nexus returns null/undefined', async () => {
-      const nexusSpy = vi.spyOn(Core.NexusUserService, 'details').mockResolvedValue(undefined);
-      const upsertSpy = vi.spyOn(Core.UserDetailsModel, 'upsert');
+      vi.spyOn(Core, 'queryNexus').mockResolvedValue(null);
+      vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
 
       const result = await ProfileApplication.read({ userId });
 
-      expect(nexusSpy).toHaveBeenCalledWith({ user_id: userId });
-      expect(result).toBeUndefined();
-      // Should not persist when Nexus returns null
-      expect(upsertSpy).not.toHaveBeenCalled();
+      expect(result).toBeNull();
+    });
+
+    it('should batch concurrent requests for the same user (thundering herd prevention)', async () => {
+      // Clear any previous batch state
+      ProfileApplication._clearBatchState();
+
+      // Mock the batch endpoint
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([
+        {
+          details: {
+            id: userId,
+            name: 'Dedup User',
+            bio: 'Testing deduplication',
+            image: null,
+            status: 'online',
+            links: null,
+            indexed_at: Date.now(),
+          },
+        },
+      ]);
+
+      vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
+
+      // Trigger 10 concurrent requests for the same user
+      const concurrentRequests = Array.from({ length: 10 }, () => ProfileApplication.read({ userId }));
+
+      // Wait for all requests to complete
+      await Promise.all(concurrentRequests);
+
+      // Nexus batch API should only be called ONCE despite 10 concurrent requests
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+      // The batch should contain only one unique user ID
+      expect(queryNexusSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/stream/users/by_ids'),
+        'POST',
+        expect.stringContaining(userId),
+      );
+    });
+
+    it('should batch concurrent requests for different users into single call', async () => {
+      // Clear any previous batch state
+      ProfileApplication._clearBatchState();
+
+      const userId2 = 'test-user-id-2' as Pubky;
+
+      // Mock the batch endpoint
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([
+        {
+          details: {
+            id: userId,
+            name: `User ${userId}`,
+            bio: '',
+            image: null,
+            status: null,
+            links: null,
+            indexed_at: Date.now(),
+          },
+        },
+        {
+          details: {
+            id: userId2,
+            name: `User ${userId2}`,
+            bio: '',
+            image: null,
+            status: null,
+            links: null,
+            indexed_at: Date.now(),
+          },
+        },
+      ]);
+
+      vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
+
+      // Trigger concurrent requests for different users
+      await Promise.all([ProfileApplication.read({ userId }), ProfileApplication.read({ userId: userId2 })]);
+
+      // Should batch both users into ONE API call
+      expect(queryNexusSpy).toHaveBeenCalledTimes(1);
+      // The batch should contain both user IDs
+      const callArgs = queryNexusSpy.mock.calls[0][2] as string;
+      expect(callArgs).toContain(userId);
+      expect(callArgs).toContain(userId2);
+    });
+
+    it('should allow new requests after batch completes', async () => {
+      // Clear any previous batch state
+      ProfileApplication._clearBatchState();
+
+      // Mock the batch endpoint
+      const queryNexusSpy = vi.spyOn(Core, 'queryNexus').mockResolvedValue([
+        {
+          details: {
+            id: userId,
+            name: 'Sequential User',
+            bio: '',
+            image: null,
+            status: null,
+            links: null,
+            indexed_at: Date.now(),
+          },
+        },
+      ]);
+
+      vi.spyOn(Core.LocalStreamUsersService, 'persistUsers').mockResolvedValue([]);
+
+      // First request
+      await ProfileApplication.read({ userId });
+
+      // Clear database and batch state to force new fetch
+      await Core.UserDetailsModel.table.clear();
+      ProfileApplication._clearBatchState();
+
+      // Second request (should make a new batch call)
+      await ProfileApplication.read({ userId });
+
+      // Should be called twice since requests were sequential and state was cleared
+      expect(queryNexusSpy).toHaveBeenCalledTimes(2);
     });
   });
 

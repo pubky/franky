@@ -855,7 +855,7 @@ describe('PostStreamApplication', () => {
       expect(queryNexusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle when cacheMissPostIds is empty array', async () => {
+    it('should return early when cacheMissPostIds is empty array (no API call)', async () => {
       const cacheMissPostIds: string[] = [];
       const mocks = setupDefaultMocks();
 
@@ -866,12 +866,9 @@ describe('PostStreamApplication', () => {
         viewerId,
       });
 
-      expect(queryNexusSpy).toHaveBeenCalledWith(
-        expect.stringContaining('/stream/posts/by_ids'),
-        'POST',
-        expect.stringContaining(JSON.stringify({ post_ids: [], viewer_id: viewerId })),
-      );
-      expect(mocks.persistPosts).toHaveBeenCalledWith({ posts: [] });
+      // Should not make any API calls for empty array
+      expect(queryNexusSpy).not.toHaveBeenCalled();
+      expect(mocks.persistPosts).not.toHaveBeenCalled();
     });
 
     it('should handle when postBatch is empty array', async () => {

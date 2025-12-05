@@ -3,11 +3,47 @@ import JSZip from 'jszip';
 import * as Specs from 'pubky-app-specs';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
+import { BatchQueue } from '@/core/application/shared/BatchQueue';
+
+/**
+ * Batch queue for profile reads.
+ * Accumulates user IDs from multiple rapid calls and batches them into fewer API requests.
+ */
+const profileBatchQueue = new BatchQueue<string, Core.NexusUserDetails>({
+  name: 'ProfileBatch',
+  delayMs: 500,
+  executeBatch: async (userIds: string[]) => {
+    try {
+      const { url, body } = Core.userStreamApi.usersByIds({
+        user_ids: userIds as Core.Pubky[],
+      });
+
+      const userBatch = await Core.queryNexus<Core.NexusUser[]>(url, 'POST', JSON.stringify(body));
+      if (userBatch) {
+        await Core.LocalStreamUsersService.persistUsers(userBatch);
+      }
+    } catch (error) {
+      Libs.Logger.warn('Failed to fetch users in batch from Nexus', { userIds, error });
+    }
+  },
+  getResult: async (userId: string) => {
+    return await Core.UserDetailsModel.findById(userId);
+  },
+});
 
 export class ProfileApplication {
   private constructor() {} // Prevent instantiation
 
-  static async read({ userId }: Core.TReadProfileParams) {
+  /**
+   * Clears the batching state.
+   * Exposed for testing purposes only.
+   * @internal
+   */
+  static _clearBatchState(): void {
+    profileBatchQueue.clear();
+  }
+
+  static async read({ userId }: Core.TReadProfileParams): Promise<Core.NexusUserDetails | null | undefined> {
     // Try to get from local database first
     const localUserDetails = await Core.UserDetailsModel.findById(userId);
 
@@ -16,24 +52,8 @@ export class ProfileApplication {
       return localUserDetails;
     }
 
-    // If not found locally, fetch from Nexus API
-    try {
-      const nexusUserDetails = await Core.NexusUserService.details({ user_id: userId });
-
-      // If found from Nexus, persist it to local database
-      if (nexusUserDetails) {
-        await Core.UserDetailsModel.upsert(nexusUserDetails);
-        return await Core.UserDetailsModel.findById(userId);
-      }
-    } catch (error) {
-      // Handle 404 (user not found) gracefully - profile.json was not created yet
-      if (error instanceof Libs.AppError && error.statusCode === 404) {
-        // User doesn't exist in Nexus yet, return null
-        return null;
-      }
-      // Re-throw other errors (network issues, server errors, etc.)
-      throw error;
-    }
+    // Queue for batch fetching
+    return profileBatchQueue.enqueue(userId);
   }
 
   /**
