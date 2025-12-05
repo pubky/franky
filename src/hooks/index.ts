@@ -34,3 +34,4 @@ export * from './useAvatarUrl';
 export * from './useHotTags';
 export * from './useUserStream';
 export * from './useTagInput';
+export * from './useProfileForm';

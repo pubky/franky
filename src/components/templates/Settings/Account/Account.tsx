@@ -1,15 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
+import * as App from '@/app';
 
 export interface AccountProps {
   className?: string;
 }
 
 export function Account({ className }: AccountProps) {
+  const router = useRouter();
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [progressDownload, setProgressDownload] = useState(0);
   const [disposableAccount] = useState(false);
@@ -29,6 +32,10 @@ export function Account({ className }: AccountProps) {
     setShowDeleteDialog(true);
   };
 
+  const handleEditProfile = () => {
+    router.push(App.SETTINGS_ROUTES.EDIT);
+  };
+
   return (
     <>
       <Molecules.SettingsSectionCard className={className}>
@@ -39,7 +46,7 @@ export function Account({ className }: AccountProps) {
           buttonText="Edit profile"
           buttonIcon={Libs.Pencil}
           buttonId="edit-profile-btn"
-          buttonOnClick={() => {}}
+          buttonOnClick={handleEditProfile}
         />
 
         <Molecules.SettingsDivider />

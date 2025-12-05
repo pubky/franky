@@ -185,10 +185,6 @@ describe('AuthController', () => {
   describe('signUp', () => {
     beforeEach(() => {
       setupOnboardingStore();
-      vi.spyOn(Core.LastReadNormalizer, 'to').mockReturnValue({
-        last_read: { toJson: vi.fn(() => ({ timestamp: 1234567890 })) },
-        meta: { url: 'pubky://test-pubky/pub/pubky.app/last-read' },
-      } as unknown as LastReadResult);
     });
 
     it('should successfully sign up a user and call setSession', async () => {
@@ -210,9 +206,6 @@ describe('AuthController', () => {
         keypair,
         signupToken,
         secretKey: TEST_SECRET_KEY,
-        lastRead: expect.objectContaining({
-          meta: expect.objectContaining({ url: expect.any(String) }),
-        }),
       });
       expect(authStore.setSession).toHaveBeenCalledWith(mockSession);
       expect(authStore.setCurrentUserPubky).toHaveBeenCalledWith(keypair.pubky);
@@ -231,9 +224,6 @@ describe('AuthController', () => {
         keypair,
         signupToken,
         secretKey: TEST_SECRET_KEY,
-        lastRead: expect.objectContaining({
-          meta: expect.objectContaining({ url: expect.any(String) }),
-        }),
       });
     });
   });

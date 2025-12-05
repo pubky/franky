@@ -1,213 +1,20 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { z } from 'zod';
-import { useRouter } from 'next/navigation';
-
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
+import * as Hooks from '@/hooks';
 import * as Core from '@/core';
-import * as App from '@/app';
 
 export const CreateProfileForm = () => {
-  const router = useRouter();
-  const { toast } = Molecules.useToast();
   const { pubky, setShowWelcomeDialog } = Core.useOnboardingStore();
-  const [name, setName] = useState('');
-  const [bio, setBio] = useState('');
-  const [continueText, setContinueText] = useState('Finish');
-  const [links, setLinks] = useState<{ label: string; url: string }[]>([
-    { label: 'WEBSITE', url: '' },
-    { label: 'X (TWITTER)', url: '' },
-  ]);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [cropDialogOpen, setCropDialogOpen] = useState(false);
-  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
-  const [pendingAvatarPreview, setPendingAvatarPreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
 
-  const urlSchema = z.string().trim().url('Invalid URL');
-
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [linkUrlErrors, setLinkUrlErrors] = useState<Record<number, string | null>>({});
-  const [avatarError, setAvatarError] = useState<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
-      if (pendingAvatarPreview) URL.revokeObjectURL(pendingAvatarPreview);
-    };
-  }, [avatarPreview, pendingAvatarPreview]);
-
-  const handleChooseFileClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] ?? null;
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      setAvatarError('Avatar must be an image file');
-      return;
-    }
-
-    if (pendingAvatarPreview) URL.revokeObjectURL(pendingAvatarPreview);
-
-    const nextPreview = URL.createObjectURL(file);
-
-    setPendingAvatarFile(file);
-    setPendingAvatarPreview(nextPreview);
-    setCropDialogOpen(true);
-    setAvatarError(null);
-  };
-
-  const handleDeleteLink = (index: number) => {
-    setLinks(links.filter((_, i) => i !== index));
-    setLinkUrlErrors({});
-  };
-
-  const handleDeleteAvatar = () => {
-    if (avatarPreview) {
-      URL.revokeObjectURL(avatarPreview);
-    }
-    setAvatarFile(null);
-    setAvatarPreview(null);
-    setAvatarError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const resetPendingAvatar = () => {
-    if (pendingAvatarPreview) {
-      URL.revokeObjectURL(pendingAvatarPreview);
-    }
-    setPendingAvatarFile(null);
-    setPendingAvatarPreview(null);
-  };
-
-  const handleCropCancel = () => {
-    resetPendingAvatar();
-    setCropDialogOpen(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleCropBack = () => {
-    resetPendingAvatar();
-    setCropDialogOpen(false);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleCropComplete = (file: File, previewUrl: string) => {
-    resetPendingAvatar();
-    if (avatarPreview) {
-      URL.revokeObjectURL(avatarPreview);
-    }
-    setAvatarFile(file);
-    setAvatarPreview(previewUrl);
-    setCropDialogOpen(false);
-    setAvatarError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const validateUser = () => {
-    const { data, error } = Core.UserValidator.check(name, bio, links, avatarFile);
-
-    if (error.length > 0) {
-      for (const issue of error) {
-        switch (issue.type) {
-          case 'name':
-            setNameError(issue.message);
-            break;
-          case 'avatar':
-            setAvatarError(issue.message);
-            break;
-          default:
-            // Handle URL errors with pattern 'url_0', 'url_1', etc.
-            if (issue.type.startsWith('link_')) {
-              const linkIndex = parseInt(issue.type.split('_')[1], 10);
-              if (!isNaN(linkIndex)) {
-                setLinkUrlErrors((prev) => ({ ...prev, [linkIndex]: issue.message }));
-              }
-            }
-            break;
-        }
-      }
-      return;
-    }
-
-    return data;
-  };
-
-  const handleContinue = async () => {
-    setIsSaving(true);
-    setContinueText('Saving...');
-
-    try {
-      const user = validateUser();
-      if (!user) {
-        setContinueText('Finish');
-        return;
-      }
-
-      // TODO: maybe optimistically upload to homeserver the avatar image when the user selects the file
-      //       and save the state of the avatar file and the preview image in the store
-      let image: string | null = null;
-      if (avatarFile) {
-        setContinueText('Uploading avatar...');
-        image = await Core.FileController.upload({ file: avatarFile, pubky });
-        if (!image) {
-          setContinueText('Try again!');
-          return;
-        }
-      }
-
-      setContinueText('Saving profile...');
-
-      await Core.ProfileController.create(user, image, pubky);
-
-      await Core.AuthController.authorizeAndBootstrap();
-
-      // Set welcome dialog to show for new users
-      setShowWelcomeDialog(true);
-
-      router.push(App.HOME_ROUTES.HOME);
-    } catch (error) {
-      // TODO: Improve error handling, to much for UI to handle
-      if (
-        error instanceof Libs.AppError &&
-        Object.values(Libs.HomeserverErrorType).includes(error.type as Libs.HomeserverErrorType)
-      ) {
-        Libs.Logger.error('Failed to save profile in Homeserver', error);
-        setContinueText('Try again!');
-        toast({
-          title: 'Failed to save profile',
-          description: 'Please try again.',
-        });
-        return;
-      } else {
-        setContinueText('Try again!');
-        toast({
-          title: 'Please try again.',
-          description: 'Failed to fetch the new user data. Indexing might be in progress...',
-        });
-      }
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  const { state, errors, handlers, cropDialog, fileInputRef, isSubmitDisabled } = Hooks.useProfileForm({
+    mode: 'create',
+    pubky,
+    setShowWelcomeDialog,
+  });
 
   return (
     <>
@@ -228,16 +35,11 @@ export const CreateProfileForm = () => {
                   id="profile-name-input"
                   placeholder="Blue-Rabbit-Hat"
                   variant="dashed"
-                  value={name}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setName(value);
-                    const res = z.string().trim().min(3, 'Name must be at least 3 characters').safeParse(value);
-                    setNameError(res.success ? null : (res.error.issues[0]?.message ?? 'Invalid name'));
-                  }}
-                  status={nameError ? 'error' : 'default'}
-                  message={nameError ?? undefined}
-                  messageType={nameError ? 'error' : 'default'}
+                  value={state.name}
+                  onChange={(e) => handlers.setName(e.target.value)}
+                  status={errors.nameError ? 'error' : 'default'}
+                  message={errors.nameError ?? undefined}
+                  messageType={errors.nameError ? 'error' : 'default'}
                 />
               </Atoms.Container>
 
@@ -246,10 +48,10 @@ export const CreateProfileForm = () => {
                 <Molecules.TextareaField
                   id="profile-bio-input"
                   placeholder="Tell a bit about yourself."
-                  value={bio}
+                  value={state.bio}
                   variant="dashed"
                   rows={40}
-                  onChange={(e) => setBio(e.target.value)}
+                  onChange={(e) => handlers.setBio(e.target.value)}
                 />
               </Atoms.Container>
             </Atoms.Container>
@@ -264,7 +66,7 @@ export const CreateProfileForm = () => {
             </Atoms.Container>
 
             <Atoms.Container className="gap-6">
-              {links.map((link, index) => (
+              {state.links.map((link, index) => (
                 <Atoms.Container className="gap-2" key={`${link.label}-${index}`}>
                   <Atoms.Label className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                     {link.label}
@@ -276,30 +78,22 @@ export const CreateProfileForm = () => {
                     variant="dashed"
                     onChange={(e) => {
                       const value = e.target.value;
-                      setLinks(links.map((l, i) => (i === index ? { ...l, url: value } : l)));
-                      if (value.trim().length === 0) {
-                        setLinkUrlErrors((prev) => ({ ...prev, [index]: null }));
-                      } else {
-                        const res = urlSchema.safeParse(value);
-                        setLinkUrlErrors((prev) => ({
-                          ...prev,
-                          [index]: res.success ? null : (res.error.issues[0]?.message ?? 'Invalid URL'),
-                        }));
-                      }
+                      handlers.setLinks(state.links.map((l, i) => (i === index ? { ...l, url: value } : l)));
+                      handlers.validateLinkUrl(value, index);
                     }}
                     icon={<Libs.Trash2 className="h-4 w-4" />}
-                    onClickIcon={() => handleDeleteLink(index)}
+                    onClickIcon={() => handlers.handleDeleteLink(index)}
                     iconPosition="right"
-                    status={linkUrlErrors[index] ? 'error' : 'default'}
-                    message={linkUrlErrors[index] ?? undefined}
-                    messageType={linkUrlErrors[index] ? 'error' : 'default'}
+                    status={errors.linkUrlErrors[index] ? 'error' : 'default'}
+                    message={errors.linkUrlErrors[index] ?? undefined}
+                    messageType={errors.linkUrlErrors[index] ? 'error' : 'default'}
                   />
                 </Atoms.Container>
               ))}
 
               <Organisms.DialogAddLink
                 onSave={(label, url) => {
-                  setLinks([...links, { label, url }]);
+                  handlers.setLinks([...state.links, { label, url }]);
                 }}
               />
             </Atoms.Container>
@@ -315,16 +109,18 @@ export const CreateProfileForm = () => {
 
             <Atoms.Container className="flex-row justify-center">
               <Atoms.Avatar
-                key={avatarPreview ? 'with-image' : 'without-image'}
+                key={state.avatarPreview ? 'with-image' : 'without-image'}
                 className="h-48 w-48 cursor-pointer bg-muted"
-                onClick={handleChooseFileClick}
+                onClick={handlers.handleChooseFileClick}
                 role="button"
                 aria-label="Choose avatar image"
               >
-                {avatarPreview ? (
+                {state.avatarPreview ? (
                   <Atoms.AvatarImage
-                    src={avatarPreview}
-                    alt={avatarFile ? `Selected avatar preview: ${avatarFile.name}` : 'Selected avatar preview'}
+                    src={state.avatarPreview}
+                    alt={
+                      state.avatarFile ? `Selected avatar preview: ${state.avatarFile.name}` : 'Selected avatar preview'
+                    }
                   />
                 ) : (
                   <Atoms.AvatarFallback className="text-4xl">SN</Atoms.AvatarFallback>
@@ -333,14 +129,20 @@ export const CreateProfileForm = () => {
             </Atoms.Container>
 
             <Atoms.Container className="justify-center">
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handlers.handleFileChange}
+              />
               <Atoms.Button
                 variant="secondary"
                 size="sm"
                 className="mx-auto rounded-full"
-                onClick={avatarPreview ? handleDeleteAvatar : handleChooseFileClick}
+                onClick={state.avatarPreview ? handlers.handleDeleteAvatar : handlers.handleChooseFileClick}
               >
-                {avatarPreview ? (
+                {state.avatarPreview ? (
                   <>
                     <Libs.Trash2 className="h-4 w-4" />
                     <span>Delete</span>
@@ -352,9 +154,9 @@ export const CreateProfileForm = () => {
                   </>
                 )}
               </Atoms.Button>
-              {avatarError && (
+              {errors.avatarError && (
                 <Atoms.Typography as="small" size="sm" className="ml-1 text-red-500">
-                  {avatarError}
+                  {errors.avatarError}
                 </Atoms.Typography>
               )}
             </Atoms.Container>
@@ -363,27 +165,21 @@ export const CreateProfileForm = () => {
         <Molecules.ProfileNavigation
           className="onboarding-nav mt-auto lg:pt-0"
           backButtonDisabled={true}
-          continueButtonDisabled={
-            !!nameError ||
-            name.trim().length < 3 ||
-            Object.values(linkUrlErrors).some((m) => !!m) ||
-            !!avatarError ||
-            isSaving
-          }
-          continueButtonLoading={isSaving}
-          continueText={continueText}
-          onContinue={handleContinue}
+          continueButtonDisabled={isSubmitDisabled}
+          continueButtonLoading={state.isSaving}
+          continueText={state.submitText}
+          onContinue={handlers.handleSubmit}
         />
       </Atoms.Container>
 
       <Organisms.DialogCropImage
-        open={cropDialogOpen}
-        imageSrc={pendingAvatarPreview}
-        fileName={pendingAvatarFile?.name ?? 'avatar.png'}
-        fileType={pendingAvatarFile?.type ?? 'image/png'}
-        onClose={handleCropCancel}
-        onBack={handleCropBack}
-        onCrop={handleCropComplete}
+        open={cropDialog.cropDialogOpen}
+        imageSrc={cropDialog.pendingAvatarPreview}
+        fileName={cropDialog.pendingAvatarFile?.name ?? 'avatar.png'}
+        fileType={cropDialog.pendingAvatarFile?.type ?? 'image/png'}
+        onClose={handlers.handleCropCancel}
+        onBack={handlers.handleCropBack}
+        onCrop={handlers.handleCropComplete}
       />
     </>
   );
