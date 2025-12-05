@@ -1,4 +1,6 @@
-import type { PostInputVariant } from './PostInput.constants';
+import { POST_INPUT_VARIANT } from './PostInput.constants';
+
+export type PostInputVariant = (typeof POST_INPUT_VARIANT)[keyof typeof POST_INPUT_VARIANT];
 
 export interface PostInputProps {
   /** Variant determines if this is a reply or a new post */
