@@ -37,6 +37,7 @@ export enum PROFILE_ROUTES {
 
 export enum SETTINGS_ROUTES {
   ACCOUNT = '/settings/account',
+  EDIT = '/settings/edit',
   NOTIFICATIONS = '/settings/notifications',
   PRIVACY_SAFETY = '/settings/privacy-safety',
   MUTED_USERS = '/settings/muted-users',

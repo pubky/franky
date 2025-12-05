@@ -84,6 +84,25 @@ export class HomeserverService {
     );
   }
 
+  /**
+   * Checks if the response indicates a session expiration (401 Unauthorized).
+   * If so, throws a SESSION_EXPIRED error with the response message.
+   */
+  private static async checkSessionExpiration(response: Response, url: string): Promise<void> {
+    if (response.status === 401) {
+      let errorMessage = 'Session expired';
+      try {
+        const text = await response.text();
+        if (text) {
+          errorMessage = text;
+        }
+      } catch {
+        // Ignore error reading response body
+      }
+      throw Libs.createHomeserverError(Libs.HomeserverErrorType.SESSION_EXPIRED, errorMessage, 401, { url });
+    }
+  }
+
   private async checkHomeserver(pubky: Core.Pubky) {
     try {
       const pubkyPublicKey = Pubky.PublicKey.from(pubky);
@@ -185,6 +204,8 @@ export class HomeserverService {
     });
 
     if (!response.ok) {
+      await this.checkSessionExpiration(response, url);
+
       throw Libs.createHomeserverError(Libs.HomeserverErrorType.FETCH_FAILED, 'Failed to fetch data', response.status, {
         url,
         statusCode: response.status,
@@ -222,9 +243,16 @@ export class HomeserverService {
     });
 
     if (!response.ok) {
-      throw Libs.createHomeserverError(Libs.HomeserverErrorType.PUT_FAILED, 'Failed to PUT blob data', 500, {
-        url,
-      });
+      await this.checkSessionExpiration(response, url);
+
+      throw Libs.createHomeserverError(
+        Libs.HomeserverErrorType.PUT_FAILED,
+        'Failed to PUT blob data',
+        response.status,
+        {
+          url,
+        },
+      );
     }
   }
 
