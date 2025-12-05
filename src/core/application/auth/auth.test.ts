@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as Core from '@/core';
-import { LastReadResult } from 'pubky-app-specs';
 import type { Session, Keypair } from '@synonymdev/pubky';
 
 vi.mock('pubky-app-specs', () => ({
@@ -24,13 +23,9 @@ describe('AuthApplication', () => {
       keypair: { pubky: 'test-pubky' as Core.Pubky, secretKey: 'test-secret-key-hex' },
       signupToken: 'test-signup-token',
       secretKey: 'test-secret-key',
-      lastRead: {
-        last_read: { toJson: vi.fn(() => ({ timestamp: 1234567890 })) },
-        meta: { url: 'pubky://test-pubky/pub/pubky.app/last-read' },
-      } as unknown as LastReadResult,
     });
 
-    it('should sign up and update last read', async () => {
+    it('should sign up successfully', async () => {
       const params = createParams();
       const mockInstance = createMockInstance();
       const mockSession = { token: 'test-token' } as unknown as Session;
@@ -39,17 +34,11 @@ describe('AuthApplication', () => {
       vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
         mockInstance as unknown as Core.HomeserverService,
       );
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined);
       mockInstance.signup.mockResolvedValue(expectedResult);
 
       const result = await Core.AuthApplication.signUp(params);
 
       expect(mockInstance.signup).toHaveBeenCalledWith(params.keypair, params.signupToken);
-      expect(requestSpy).toHaveBeenCalledWith(
-        Core.HomeserverAction.PUT,
-        params.lastRead.meta.url,
-        params.lastRead.last_read.toJson(),
-      );
       expect(result).toEqual(expectedResult);
     });
 
@@ -59,29 +48,10 @@ describe('AuthApplication', () => {
       vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
         mockInstance as unknown as Core.HomeserverService,
       );
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
       mockInstance.signup.mockRejectedValue(new Error('Signup failed'));
 
       await expect(Core.AuthApplication.signUp(params)).rejects.toThrow('Signup failed');
       expect(mockInstance.signup).toHaveBeenCalledOnce();
-      expect(requestSpy).not.toHaveBeenCalled();
-    });
-
-    it('should propagate error when last read update fails', async () => {
-      const params = createParams();
-      const mockInstance = createMockInstance();
-      const mockSession = { token: 'test-token' } as unknown as Session;
-      vi.spyOn(Core.HomeserverService, 'getInstance').mockReturnValue(
-        mockInstance as unknown as Core.HomeserverService,
-      );
-      const requestSpy = vi.spyOn(Core.HomeserverService, 'request');
-
-      mockInstance.signup.mockResolvedValue({ pubky: 'test-pubky' as Core.Pubky, session: mockSession });
-      requestSpy.mockRejectedValue(new Error('Failed to update last read'));
-
-      await expect(Core.AuthApplication.signUp(params)).rejects.toThrow('Failed to update last read');
-      expect(mockInstance.signup).toHaveBeenCalledOnce();
-      expect(requestSpy).toHaveBeenCalledOnce();
     });
   });
 

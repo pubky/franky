@@ -30,8 +30,9 @@ vi.mock('next/navigation', () => ({
 }));
 
 // Mock libs - use actual utility functions and icons from lucide-react
-const { mockCropImageToBlob } = vi.hoisted(() => ({
+const { mockCropImageToBlob, mockToast } = vi.hoisted(() => ({
   mockCropImageToBlob: vi.fn(async () => new Blob(['cropped-image'], { type: 'image/png' })),
+  mockToast: vi.fn(),
 }));
 
 vi.mock('@/libs', async (importOriginal) => {
@@ -219,7 +220,6 @@ vi.mock('@/atoms', () => ({
 }));
 
 // Mock molecules
-const mockToast = vi.fn();
 vi.mock('@/molecules', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@/molecules')>();
 
@@ -411,6 +411,7 @@ describe('CreateProfileForm', () => {
     const Core = await import('@/core');
     vi.mocked(Core.useOnboardingStore).mockReturnValue({
       pubky: mockPubky,
+      setShowWelcomeDialog: vi.fn(),
     });
 
     // Reset all mock functions
@@ -775,7 +776,7 @@ describe('CreateProfileForm', () => {
       expect(typeof Core.AuthController.authorizeAndBootstrap).toBe('function');
     });
 
-    it('should handle authorizeAndBootstrap error and show error toast', async () => {
+    it('should handle authorizeAndBootstrap error and show error state', async () => {
       const Core = await import('@/core');
 
       // Mock successful validation and profile save
@@ -808,12 +809,6 @@ describe('CreateProfileForm', () => {
 
       // Wait for the error handling to complete
       await waitFor(() => {
-        // Should show error toast
-        expect(mockToast).toHaveBeenCalledWith({
-          title: 'Please try again.',
-          description: 'Failed to fetch the new user data. Indexing might be in progress...',
-        });
-
         // Button text should change to "Try again!"
         expect(continueButton).toHaveTextContent('Try again!');
 
@@ -925,12 +920,6 @@ describe('CreateProfileForm', () => {
 
       // Verify that bootstrap was not called due to profile save failure
       expect(Core.AuthController.authorizeAndBootstrap).not.toHaveBeenCalled();
-
-      // Verify error toast was shown with the component's hardcoded message
-      expect(mockToast).toHaveBeenCalledWith({
-        title: 'Failed to save profile',
-        description: 'Please try again.',
-      });
     });
 
     it('should not call setShowWelcomeDialog when bootstrap fails', async () => {

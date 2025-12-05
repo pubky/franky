@@ -56,8 +56,7 @@ export class AuthController {
    */
   static async signUp({ keypair, signupToken }: Core.TSignUpParams) {
     const { secretKey } = Core.useOnboardingStore.getState();
-    const lastRead = Core.LastReadNormalizer.to(keypair.pubky);
-    const { session, pubky } = await Core.AuthApplication.signUp({ keypair, signupToken, secretKey, lastRead });
+    const { session, pubky } = await Core.AuthApplication.signUp({ keypair, signupToken, secretKey });
     const authStore = Core.useAuthStore.getState();
     authStore.setSession(session);
     authStore.setCurrentUserPubky(pubky);

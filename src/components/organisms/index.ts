@@ -13,6 +13,8 @@ export * from './DialogConfirmBackup';
 export * from './DialogBackupEncrypted';
 export * from './DialogCropImage';
 export * from './DialogDeleteAccount';
+export * from './EditProfileForm';
+export * from './EditProfileHeader';
 export * from './DialogDownloadPubkyRing';
 export * from './DialogFeedback';
 export * from './DialogPrivacy';
