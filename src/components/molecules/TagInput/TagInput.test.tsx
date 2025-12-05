@@ -19,9 +19,9 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
-describe('TagInput', () => {
-  const mockOnTagAdd = vi.fn(() => ({ success: true }));
+const mockOnTagAdd = vi.fn(() => ({ success: true }));
 
+describe('TagInput', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockOnTagAdd.mockReturnValue({ success: true });
@@ -45,6 +45,13 @@ describe('TagInput', () => {
 
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockOnTagAdd).toHaveBeenCalledWith('bitcoin');
+  });
+});
+
+describe('TagInput - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockOnTagAdd.mockReturnValue({ success: true });
   });
 
   it('matches snapshot', () => {
