@@ -6,10 +6,12 @@ export interface OnboardingState {
   mnemonic: string;
   hasHydrated: boolean;
   showWelcomeDialog: boolean;
+  inviteCode: string;
 }
 
 export interface OnboardingActions {
   reset: () => void;
+  setInviteCode: (inviteCode: string) => void;
   setPubky: (pubky: Core.Pubky) => void;
   setSecretKey: (secretKey: string) => void;
   setMnemonic: (mnemonic: string) => void;
@@ -28,6 +30,7 @@ export const onboardingInitialState: OnboardingState = {
   mnemonic: '',
   hasHydrated: false,
   showWelcomeDialog: false,
+  inviteCode: '',
 };
 
 export enum OnboardingActionTypes {
@@ -40,4 +43,5 @@ export enum OnboardingActionTypes {
   SET_KEYPAIR_FROM_MNEMONIC = 'SET_KEYPAIR_FROM_MNEMONIC',
   SET_HYDRATED = 'SET_HYDRATED',
   SET_SHOW_WELCOME_DIALOG = 'SET_SHOW_WELCOME_DIALOG',
+  SET_INVITE_CODE = 'SET_INVITE_CODE',
 }

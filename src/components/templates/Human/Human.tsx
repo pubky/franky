@@ -2,7 +2,11 @@
 
 import * as Molecules from '@/molecules';
 import * as Organisms from '@/organisms';
+import * as Core from '@/core';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ONBOARDING_ROUTES } from '@/app';
+import React from 'react';
 
 enum States {
   Selection = 'selection',
@@ -15,9 +19,17 @@ enum States {
 export function Human() {
   const [state, setState] = useState<States>(States.Selection);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const { setInviteCode, reset } = Core.useOnboardingStore();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    reset();
+  }, [reset]);
 
   function onSuccess(inviteCode: string) {
-    console.log('inviteCode', inviteCode);
+    console.log('Set inviteCode', inviteCode);
+    setInviteCode(inviteCode);
+    router.push(ONBOARDING_ROUTES.INSTALL);
   }
   return (
     <Molecules.OnboardingLayout testId="human-content">
@@ -28,8 +40,14 @@ export function Human() {
               setState(States.PhoneInput);
             } else if (card === 'payment') {
               setState(States.Payment);
-            } else if (card === 'inviteCode') {
+            }
+          }}
+          onDevMode={async (variant) => {
+            if (variant === 'inviteCode') {
               setState(States.InviteCode);
+            } else if (variant === 'skip') {
+              const code = await Core.AuthController.generateSignupToken();
+              onSuccess(code);
             }
           }}
         />

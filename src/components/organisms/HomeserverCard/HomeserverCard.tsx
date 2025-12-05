@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import * as Molecules from '@/molecules';
@@ -8,34 +8,17 @@ import * as Atoms from '@/atoms';
 import * as Core from '@/core';
 import * as Libs from '@/libs';
 import * as App from '@/app';
-import * as Hooks from '@/hooks';
 
 export function HomeserverCard() {
   const router = useRouter();
 
   const { toast } = Molecules.useToast();
 
-  const [inviteCode, setInviteCode] = useState('');
   const [continueButtonDisabled, setContinueButtonDisabled] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
-  const { pubky, secretKey } = Core.useOnboardingStore();
+  // const [status, setStatus] = useState<'default' | 'success' | 'error'>('default');
+  const { pubky, secretKey, inviteCode } = Core.useOnboardingStore();
   const [buttonContinueText, setButtonContinueText] = useState('Continue');
-
-  // generate an invite code and put it in console log if you are in development mode
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      Core.AuthController.generateSignupToken().then((token) => {
-        Libs.Logger.info(token, token);
-      });
-    }
-  }, []);
-
-  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = Libs.formatInviteCode(e.target.value);
-    setInviteCode(formatted);
-    setContinueButtonDisabled(formatted.length !== 14);
-  };
 
   const showErrorToast = () => {
     const toastInstance = toast({
@@ -56,7 +39,7 @@ export function HomeserverCard() {
   const onHandleContinueButton = async () => {
     try {
       setContinueButtonDisabled(true);
-      setStatus('default');
+      // setStatus('default');
       setIsLoading(true);
       setButtonContinueText('Validating');
       const keypair = { pubky, secretKey };
@@ -67,7 +50,7 @@ export function HomeserverCard() {
     } catch {
       showErrorToast();
       setContinueButtonDisabled(false);
-      setStatus('error');
+      // setStatus('error');
       setButtonContinueText('Try again');
       setIsLoading(false);
     }
@@ -77,7 +60,7 @@ export function HomeserverCard() {
     return !continueButtonDisabled && !isLoading;
   };
 
-  const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onHandleContinueButton);
+  // const handleKeyDown = Hooks.useEnterSubmit(isFormValid, onHandleContinueButton);
 
   return (
     <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="homeserver-card">
@@ -91,7 +74,7 @@ export function HomeserverCard() {
       >
         <Atoms.Container className="gap-1">
           <Atoms.Heading level={3} size="lg" className="flex flex-row items-center gap-1">
-            Invite code for Pubky homeserver
+            Invite code for Pubky homeserver {inviteCode}
             <Molecules.PopoverInviteHomeserver />
           </Atoms.Heading>
           <Atoms.Typography size="sm" className="text-base font-medium text-secondary-foreground opacity-80">
@@ -100,20 +83,6 @@ export function HomeserverCard() {
         </Atoms.Container>
 
         <Atoms.Container className="mt-3 w-full flex-col gap-3">
-          <Atoms.Container className="w-full flex-col items-start justify-start gap-3">
-            <Molecules.InputField
-              id="invite-code-input"
-              value={inviteCode}
-              variant="dashed"
-              onChange={handleOnChange}
-              onKeyDown={handleKeyDown}
-              placeholder="XXXX-XXXX-XXXX"
-              maxLength={14}
-              disabled={isLoading}
-              status={status}
-              className="w-full max-w-[576px]"
-            />
-          </Atoms.Container>
           <Atoms.Container className="mt-3 flex-col items-start gap-3 md:flex-row md:items-center">
             <Atoms.Button variant={'secondary'} className="rounded-full" onClick={() => {}} disabled={true}>
               <Libs.Server className="mr-2 h-4 w-4" />

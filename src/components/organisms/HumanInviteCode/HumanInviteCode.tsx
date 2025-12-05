@@ -4,6 +4,7 @@ import * as Atoms from '@/atoms';
 import * as Libs from '@/libs';
 import * as Molecules from '@/molecules';
 import React, { useState } from 'react';
+import * as Core from '@/core';
 
 interface HumanInviteCodeProps {
   onBack: () => void;
@@ -18,7 +19,6 @@ interface HumanInviteCodeProps {
  */
 export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => {
   const [inviteCode, setInviteCode] = useState('');
-
   const trimmedInviteCode = inviteCode.trim();
   const isInviteCodeEntered = trimmedInviteCode.length === 14;
 
@@ -29,6 +29,15 @@ export const HumanInviteCode = ({ onBack, onSuccess }: HumanInviteCodeProps) => 
 
     onSuccess(trimmedInviteCode);
   }
+
+  // generate an invite code and put it in console log if you are in development mode
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      Core.AuthController.generateSignupToken().then((token) => {
+        Libs.Logger.info(token, token);
+      });
+    }
+  }, []);
 
   return (
     <React.Fragment>

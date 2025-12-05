@@ -22,6 +22,7 @@ export const BackupNavigation = () => {
       id="backup-navigation"
       className="py-6"
       onHandleBackButton={onHandleBackButton}
+      continueButtonDisabled={true}
       onHandleContinueButton={onHandleContinueButton}
       backText="Back"
       continueText="Continue"

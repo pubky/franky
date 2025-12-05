@@ -13,7 +13,7 @@ export const HomeActions = () => {
   const router = useRouter();
 
   const handleCreateAccount = () => {
-    router.push(App.ONBOARDING_ROUTES.INSTALL);
+    router.push(App.ONBOARDING_ROUTES.HUMAN);
   };
 
   const handleSignIn = () => {

@@ -20,9 +20,25 @@ export const ScanContent = () => {
   const activeRequestRef = useRef<symbol | null>(null);
   const isGeneratingRef = useRef(false);
   const MAX_RETRY_ATTEMPTS = 3;
+  const { inviteCode } = Core.useOnboardingStore();
 
   const isIOS = typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
   const fallbackUrl = isIOS ? Config.APP_STORE_URL : Config.PLAY_STORE_URL;
+
+  /**
+   * Temporary hack to create a signup deeplink from the signin url still using the old pubky sdk.
+   * The new sdk will handle the creation of the signup deeplink out of the box.
+   * But until then, we need to use this hack.
+   * @param signinUrl Signin url from the old pubky sdk.
+   * @returns New Signup deeplink.
+   */
+  function createSignupDeeplink(signinUrl: string) {
+    const url = URL.parse(signinUrl)!;
+    url.host = 'signup';
+    url.searchParams.set('hs', Libs.Env.NEXT_PUBLIC_HOMESERVER);
+    url.searchParams.set('st', inviteCode);
+    return url.toString();
+  }
 
   const fetchUrl = async (options?: { viaRetry?: boolean }) => {
     const requestId = Symbol('fetchUrl');
@@ -39,7 +55,9 @@ export const ScanContent = () => {
       const data = await Core.AuthController.getAuthUrl();
       if (!data) return;
 
-      const { url: generatedUrl, promise } = data;
+      const { url: deprecatedSigninUrl, promise } = data;
+
+      const signupUrl = createSignupDeeplink(deprecatedSigninUrl);
 
       // Always attach handlers to avoid unhandled rejections even if unmounted
       promise
@@ -76,7 +94,7 @@ export const ScanContent = () => {
       // Guard against late responses from previous calls
       if (activeRequestRef.current !== requestId || !isMountedRef.current) return;
 
-      if (generatedUrl) setUrl(generatedUrl);
+      if (signupUrl) setUrl(signupUrl);
       retryCountRef.current = 0;
     } catch (error) {
       retryCountRef.current += 1;
