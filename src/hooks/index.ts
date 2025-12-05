@@ -35,3 +35,4 @@ export * from './useHotTags';
 export * from './useUserStream';
 export * from './useTagInput';
 export * from './useProfileForm';
+export * from './useBookmarksStreamId';
