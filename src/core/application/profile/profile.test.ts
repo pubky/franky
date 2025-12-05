@@ -186,7 +186,7 @@ describe('ProfileApplication', () => {
     });
   });
 
-  describe('update', () => {
+  describe('updateStatus', () => {
     const testPubky = 'pxnu33x7jtpx9ar1ytsi4yxbp6a5o36gwhffs8zoxmbuptici1jy' as Pubky;
 
     beforeEach(async () => {
@@ -227,7 +227,7 @@ describe('ProfileApplication', () => {
       const requestSpy = vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
       // Execute
-      await ProfileApplication.update({ pubky: testPubky, status: 'vacationing' });
+      await ProfileApplication.updateStatus({ pubky: testPubky, status: 'vacationing' });
 
       // Verify UserNormalizer called with complete profile data
       expect(normalizerSpy).toHaveBeenCalledWith(
@@ -273,14 +273,14 @@ describe('ProfileApplication', () => {
       vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.update({ pubky: testPubky, status: '' });
+      await ProfileApplication.updateStatus({ pubky: testPubky, status: '' });
 
       const updatedUser = await Core.UserDetailsModel.findById(testPubky);
       expect(updatedUser!.status).toBeNull();
     });
 
     it('throws error when user not found', async () => {
-      await expect(ProfileApplication.update({ pubky: testPubky, status: 'available' })).rejects.toThrow(
+      await expect(ProfileApplication.updateStatus({ pubky: testPubky, status: 'available' })).rejects.toThrow(
         'User profile not found',
       );
     });
@@ -304,7 +304,7 @@ describe('ProfileApplication', () => {
       vi.spyOn(Core.UserNormalizer, 'to').mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockRejectedValue(new Error('Network error'));
 
-      await expect(ProfileApplication.update({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
+      await expect(ProfileApplication.updateStatus({ pubky: testPubky, status: 'vacationing' })).rejects.toThrow(
         'Network error',
       );
 
@@ -334,7 +334,7 @@ describe('ProfileApplication', () => {
         .mockReturnValue(mockUserResult as unknown as UserResult);
       vi.spyOn(Core.HomeserverService, 'request').mockResolvedValue(undefined as unknown as void);
 
-      await ProfileApplication.update({ pubky: testPubky, status: 'busy' });
+      await ProfileApplication.updateStatus({ pubky: testPubky, status: 'busy' });
 
       // Verify normalizer called with empty strings/arrays for null values
       expect(normalizerSpy).toHaveBeenCalledWith(

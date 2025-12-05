@@ -5,20 +5,28 @@ import * as Organisms from '@/organisms';
 import * as Libs from '@/libs';
 import * as Atoms from '@/atoms';
 import * as Hooks from '@/hooks';
-import * as Core from '@/core';
 
-export const CreateProfileForm = () => {
-  const { pubky, setShowWelcomeDialog } = Core.useOnboardingStore();
+export const EditProfileForm = () => {
+  const { userDetails, currentUserPubky } = Hooks.useCurrentUserProfile();
 
   const { state, errors, handlers, cropDialog, fileInputRef, isSubmitDisabled } = Hooks.useProfileForm({
-    mode: 'create',
-    pubky,
-    setShowWelcomeDialog,
+    mode: 'edit',
+    pubky: currentUserPubky,
+    userDetails,
   });
+
+  if (state.isLoading) {
+    return (
+      <Atoms.Container className="flex w-full flex-1 flex-col items-center justify-center gap-6">
+        <Atoms.Spinner size="lg" />
+        <Atoms.Typography>Loading profile...</Atoms.Typography>
+      </Atoms.Container>
+    );
+  }
 
   return (
     <>
-      <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="create-profile-form">
+      <Atoms.Container className="flex w-full flex-1 flex-col gap-6 lg:flex-none" data-testid="edit-profile-form">
         <Atoms.Card className="rounded-md bg-card p-6 md:p-12 lg:flex lg:flex-row lg:gap-12">
           {/* Profile Section */}
           <Atoms.Container className="w-full gap-6">
@@ -118,12 +126,12 @@ export const CreateProfileForm = () => {
                 {state.avatarPreview ? (
                   <Atoms.AvatarImage
                     src={state.avatarPreview}
-                    alt={
-                      state.avatarFile ? `Selected avatar preview: ${state.avatarFile.name}` : 'Selected avatar preview'
-                    }
+                    alt={state.avatarFile ? `Selected avatar preview: ${state.avatarFile.name}` : 'Current avatar'}
                   />
                 ) : (
-                  <Atoms.AvatarFallback className="text-4xl">SN</Atoms.AvatarFallback>
+                  <Atoms.AvatarFallback className="text-4xl">
+                    {state.name ? state.name.substring(0, 2).toUpperCase() : 'SN'}
+                  </Atoms.AvatarFallback>
                 )}
               </Atoms.Avatar>
             </Atoms.Container>
@@ -162,14 +170,29 @@ export const CreateProfileForm = () => {
             </Atoms.Container>
           </Atoms.Container>
         </Atoms.Card>
-        <Molecules.ProfileNavigation
-          className="onboarding-nav mt-auto lg:pt-0"
-          backButtonDisabled={true}
-          continueButtonDisabled={isSubmitDisabled}
-          continueButtonLoading={state.isSaving}
-          continueText={state.submitText}
-          onContinue={handlers.handleSubmit}
-        />
+
+        {/* Navigation Buttons */}
+        <Atoms.Container className="mt-auto flex-row justify-between">
+          <Atoms.Button
+            variant="outline"
+            size="lg"
+            onClick={handlers.handleCancel}
+            disabled={state.isSaving}
+            className="rounded-full px-8"
+          >
+            Cancel
+          </Atoms.Button>
+          <Atoms.Button
+            size="lg"
+            onClick={handlers.handleSubmit}
+            disabled={isSubmitDisabled}
+            data-testid="save-profile-button"
+            className="rounded-full px-8"
+          >
+            {state.isSaving && <Atoms.Spinner size="sm" className="mr-2" />}
+            {state.submitText}
+          </Atoms.Button>
+        </Atoms.Container>
       </Atoms.Container>
 
       <Organisms.DialogCropImage

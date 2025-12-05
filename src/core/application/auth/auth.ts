@@ -5,25 +5,20 @@ export class AuthApplication {
 
   /**
    * Signs up a new user in the homeserver with the provided keypair and authentication credentials.
-   * Also PUTs the user's last_read file in the homeserver.
    *
    * @param params - The authentication parameters containing user credentials
    * @param params.keypair - The cryptographic keypair for the user
    * @param params.signupToken - Invitation code for user registration
    * @param params.secretKey - Secret key for homeserver service
-   * @param params.lastRead - User's last read timestamp
    * @returns Session and pubky of the signed up user
    */
   static async signUp({
     keypair,
     signupToken,
     secretKey,
-    lastRead,
   }: Core.TAuthenticateKeypairParams): Promise<Core.TAuthenticateKeypairResult> {
     const homeserverService = Core.HomeserverService.getInstance(secretKey);
-    const signUpResult = await homeserverService.signup(keypair, signupToken);
-    await Core.HomeserverService.request(Core.HomeserverAction.PUT, lastRead.meta.url, lastRead.last_read.toJson());
-    return signUpResult;
+    return await homeserverService.signup(keypair, signupToken);
   }
 
   /**

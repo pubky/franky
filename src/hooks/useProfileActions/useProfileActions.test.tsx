@@ -205,16 +205,13 @@ describe('useProfileActions', () => {
   });
 
   describe('onEdit', () => {
-    it('logs to console (not implemented yet)', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
+    it('navigates to settings edit route', () => {
       const { result } = renderHook(() => useProfileActions(defaultProps));
 
       result.current.onEdit();
 
-      expect(consoleSpy).toHaveBeenCalledWith('Edit clicked');
-
-      consoleSpy.mockRestore();
+      expect(mockPush).toHaveBeenCalledWith('/settings/edit');
+      expect(mockPush).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -295,13 +292,13 @@ describe('useProfileActions', () => {
       expect(mockCopyToClipboard).toHaveBeenCalledWith('https://new-link.com/profile/user');
     });
 
-    it('handlers maintain stability based on their dependencies', () => {
+    it('handlers change correctly when props update', () => {
       const { result, rerender } = renderHook(({ publicKey, link }) => useProfileActions({ publicKey, link }), {
         initialProps: defaultProps,
       });
 
-      const firstOnEdit = result.current.onEdit;
-      const firstOnStatusChange = result.current.onStatusChange;
+      const firstOnCopyPublicKey = result.current.onCopyPublicKey;
+      const firstOnCopyLink = result.current.onCopyLink;
 
       // Rerender with different props
       rerender({
@@ -309,9 +306,9 @@ describe('useProfileActions', () => {
         link: 'https://new-link.com',
       });
 
-      // onEdit and onStatusChange don't depend on props, so they should remain stable
-      expect(result.current.onEdit).toBe(firstOnEdit);
-      expect(result.current.onStatusChange).toBe(firstOnStatusChange);
+      // onCopyPublicKey and onCopyLink depend on props, so they should change
+      expect(result.current.onCopyPublicKey).not.toBe(firstOnCopyPublicKey);
+      expect(result.current.onCopyLink).not.toBe(firstOnCopyLink);
     });
   });
 
