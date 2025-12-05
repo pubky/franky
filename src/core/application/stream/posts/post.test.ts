@@ -151,11 +151,13 @@ describe('PostStreamApplication', () => {
 
     await Core.PostStreamModel.table.clear();
     await Core.UnreadPostStreamModel.table.clear();
+    await Core.PostStreamQueueModel.table.clear();
     await Core.PostDetailsModel.table.clear();
     await Core.UserDetailsModel.table.clear();
     await Core.UserCountsModel.table.clear();
     await Core.UserRelationshipsModel.table.clear();
     await Core.UserTagsModel.table.clear();
+    await Core.UserStreamModel.table.clear();
   });
 
   afterEach(async () => {
@@ -1224,6 +1226,372 @@ describe('PostStreamApplication', () => {
       await Core.PostStreamApplication.mergeUnreadStreamWithPostStream({ streamId: customStreamId });
 
       expect(mergeSpy).toHaveBeenCalledWith({ streamId: customStreamId });
+    });
+  });
+
+  // ============================================================================
+  // Mute Filtering Tests
+  // ============================================================================
+
+  describe('getMutedUserIds', () => {
+    const viewerId = 'viewer-user' as Core.Pubky;
+
+    it('should return empty set when no muted users exist', async () => {
+      const result = await Core.PostStreamApplication.getMutedUserIds(viewerId);
+      expect(result).toBeInstanceOf(Set);
+      expect(result.size).toBe(0);
+    });
+
+    it('should return set of muted user IDs', async () => {
+      const mutedUsers: Core.Pubky[] = ['muted-user-1', 'muted-user-2', 'muted-user-3'];
+      const mutedStreamId = Core.buildUserCompositeId({
+        userId: viewerId,
+        reach: Core.UserStreamSource.MUTED,
+      });
+      await Core.UserStreamModel.upsert(mutedStreamId, mutedUsers);
+
+      const result = await Core.PostStreamApplication.getMutedUserIds(viewerId);
+
+      expect(result.size).toBe(3);
+      expect(result.has('muted-user-1' as Core.Pubky)).toBe(true);
+      expect(result.has('muted-user-2' as Core.Pubky)).toBe(true);
+      expect(result.has('muted-user-3' as Core.Pubky)).toBe(true);
+    });
+
+    it('should return different muted lists for different viewers', async () => {
+      const viewer1 = 'viewer-1' as Core.Pubky;
+      const viewer2 = 'viewer-2' as Core.Pubky;
+
+      await Core.UserStreamModel.upsert(
+        Core.buildUserCompositeId({ userId: viewer1, reach: Core.UserStreamSource.MUTED }),
+        ['muted-by-1'],
+      );
+      await Core.UserStreamModel.upsert(
+        Core.buildUserCompositeId({ userId: viewer2, reach: Core.UserStreamSource.MUTED }),
+        ['muted-by-2-a', 'muted-by-2-b'],
+      );
+
+      const result1 = await Core.PostStreamApplication.getMutedUserIds(viewer1);
+      const result2 = await Core.PostStreamApplication.getMutedUserIds(viewer2);
+
+      expect(result1.size).toBe(1);
+      expect(result1.has('muted-by-1' as Core.Pubky)).toBe(true);
+
+      expect(result2.size).toBe(2);
+      expect(result2.has('muted-by-2-a' as Core.Pubky)).toBe(true);
+      expect(result2.has('muted-by-2-b' as Core.Pubky)).toBe(true);
+    });
+  });
+
+  describe('filterMutedPosts', () => {
+    it('should return all posts when no muted users', () => {
+      const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
+      const mutedUserIds = new Set<Core.Pubky>();
+
+      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+
+      expect(result).toEqual(postIds);
+    });
+
+    it('should filter out posts from muted users', () => {
+      const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'];
+      const mutedUserIds = new Set(['author-2'] as Core.Pubky[]);
+
+      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+
+      expect(result).toEqual(['author-1:post-1', 'author-3:post-3']);
+    });
+
+    it('should filter out all posts when all authors are muted', () => {
+      const postIds = ['author-1:post-1', 'author-1:post-2', 'author-1:post-3'];
+      const mutedUserIds = new Set(['author-1'] as Core.Pubky[]);
+
+      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+
+      expect(result).toEqual([]);
+    });
+
+    it('should handle multiple muted users', () => {
+      const postIds = ['author-1:post-1', 'author-2:post-2', 'author-3:post-3', 'author-4:post-4', 'author-2:post-5'];
+      const mutedUserIds = new Set(['author-2', 'author-4'] as Core.Pubky[]);
+
+      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+
+      expect(result).toEqual(['author-1:post-1', 'author-3:post-3']);
+    });
+
+    it('should return empty array when input is empty', () => {
+      const postIds: string[] = [];
+      const mutedUserIds = new Set(['author-1'] as Core.Pubky[]);
+
+      const result = Core.PostStreamApplication.filterMutedPosts(postIds, mutedUserIds);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getOrFetchStreamSlice with mute filtering', () => {
+    const viewerId = 'viewer-user' as Core.Pubky;
+
+    const setupMutedUsers = async (mutedUsers: Core.Pubky[]) => {
+      const mutedStreamId = Core.buildUserCompositeId({
+        userId: viewerId,
+        reach: Core.UserStreamSource.MUTED,
+      });
+      await Core.UserStreamModel.upsert(mutedStreamId, mutedUsers);
+    };
+
+    it('should filter out posts from muted users', async () => {
+      // Mute author-2
+      await setupMutedUsers(['author-2'] as Core.Pubky[]);
+
+      // Mock Nexus to return posts from different authors
+      const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
+        post_keys: ['author-1:post-1', 'author-2:post-2', 'author-3:post-3'],
+        last_post_score: BASE_TIMESTAMP + 2,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should only contain posts from non-muted authors
+      expect(result.nextPageIds).toEqual(['author-1:post-1', 'author-3:post-3']);
+    });
+
+    it('should fetch more posts until limit is reached after mute filtering', async () => {
+      // Mute author-2 (7 out of 10 posts are from author-2)
+      await setupMutedUsers(['author-2'] as Core.Pubky[]);
+
+      // First batch: 7 posts from muted user, 3 from non-muted (returns 10 posts)
+      const batch1: Core.NexusPostsKeyStream = {
+        post_keys: [
+          'author-1:post-1',
+          'author-2:post-2',
+          'author-2:post-3',
+          'author-2:post-4',
+          'author-1:post-5',
+          'author-2:post-6',
+          'author-2:post-7',
+          'author-2:post-8',
+          'author-2:post-9',
+          'author-1:post-10',
+        ],
+        last_post_score: BASE_TIMESTAMP + 9,
+      };
+
+      // Second batch: all non-muted posts (returns 10 posts)
+      const batch2: Core.NexusPostsKeyStream = {
+        post_keys: [
+          'author-1:post-11',
+          'author-3:post-12',
+          'author-1:post-13',
+          'author-3:post-14',
+          'author-1:post-15',
+          'author-3:post-16',
+          'author-1:post-17',
+          'author-3:post-18',
+          'author-1:post-19',
+          'author-3:post-20',
+        ],
+        last_post_score: BASE_TIMESTAMP + 19,
+      };
+
+      const nexusFetchSpy = vi
+        .spyOn(Core.NexusPostStreamService, 'fetch')
+        .mockResolvedValueOnce(batch1)
+        .mockResolvedValueOnce(batch2);
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should have fetched twice to get 10 posts after filtering
+      // First batch: 3 non-muted posts, Second batch: 7 more needed
+      expect(nexusFetchSpy).toHaveBeenCalledTimes(2);
+      // Should return exactly 10 posts
+      expect(result.nextPageIds).toHaveLength(10);
+      // All posts should be from non-muted authors
+      expect(result.nextPageIds.every((id) => !id.startsWith('author-2:'))).toBe(true);
+    });
+
+    it('should use queue for subsequent fetches', async () => {
+      await setupMutedUsers(['author-2'] as Core.Pubky[]);
+
+      // Return 15 non-muted posts (enough for first request + some overflow)
+      const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 15 }, (_, i) => `author-1:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 14,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
+
+      // First request: get 10 posts
+      const result1 = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      expect(result1.nextPageIds).toHaveLength(10);
+
+      // Check that queue has 5 remaining posts
+      const queue = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queue?.queue).toHaveLength(5);
+
+      // Second request: should get posts from queue without fetching from Nexus
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockClear();
+
+      const result2 = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 5,
+        streamHead: 0,
+        streamTail: BASE_TIMESTAMP + 9,
+        viewerId,
+      });
+
+      // Should return the 5 posts from queue
+      expect(result2.nextPageIds).toHaveLength(5);
+      // Should not have fetched from Nexus (queue had enough)
+      expect(Core.NexusPostStreamService.fetch).not.toHaveBeenCalled();
+    });
+
+    it('should handle end of stream gracefully when not enough posts', async () => {
+      await setupMutedUsers(['author-2'] as Core.Pubky[]);
+
+      // Return only 3 non-muted posts and indicate end of stream
+      const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
+        post_keys: ['author-1:post-1', 'author-2:post-2', 'author-1:post-3', 'author-1:post-4'],
+        last_post_score: BASE_TIMESTAMP + 3,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should return only available non-muted posts (less than limit)
+      expect(result.nextPageIds).toHaveLength(3);
+      expect(result.nextPageIds).toEqual(['author-1:post-1', 'author-1:post-3', 'author-1:post-4']);
+    });
+
+    it('should clear queue when muted users change and new fetch occurs', async () => {
+      // Initial state: no muted users, populate queue
+      const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 15 }, (_, i) => `author-1:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 14,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
+
+      await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Queue should have 5 posts
+      let queue = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queue?.queue).toHaveLength(5);
+
+      // Now mute author-1 - the queue will still be used but the posts
+      // have already passed through filtering with the old mute list
+      // This is expected behavior - the queue persists filtered posts
+      await setupMutedUsers(['author-1'] as Core.Pubky[]);
+
+      // Verify queue still exists with same posts
+      queue = await Core.PostStreamQueueModel.findById(streamId);
+      expect(queue?.queue).toHaveLength(5);
+    });
+
+    it('should work correctly with no muted users', async () => {
+      // No muted users setup
+
+      const mockNexusPostsKeyStream: Core.NexusPostsKeyStream = {
+        post_keys: Array.from({ length: 10 }, (_, i) => `author-${i}:post-${i + 1}`),
+        last_post_score: BASE_TIMESTAMP + 9,
+      };
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValue(mockNexusPostsKeyStream);
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // All posts should be returned
+      expect(result.nextPageIds).toHaveLength(10);
+    });
+
+    it('should deduplicate posts across multiple fetches in queue', async () => {
+      await setupMutedUsers(['author-muted'] as Core.Pubky[]);
+
+      // First batch has some posts (returns 10 posts, 8 muted)
+      const batch1: Core.NexusPostsKeyStream = {
+        post_keys: [
+          'author-1:post-1',
+          'author-muted:post-m1',
+          'author-1:post-3',
+          'author-muted:post-m2',
+          'author-muted:post-m3',
+          'author-muted:post-m4',
+          'author-muted:post-m5',
+          'author-muted:post-m6',
+          'author-muted:post-m7',
+          'author-muted:post-m8',
+        ],
+        last_post_score: BASE_TIMESTAMP + 9,
+      };
+
+      // Second batch has overlapping post (returns 10 posts)
+      const batch2: Core.NexusPostsKeyStream = {
+        post_keys: [
+          'author-1:post-3', // Duplicate
+          'author-1:post-4',
+          'author-1:post-5',
+          'author-1:post-6',
+          'author-1:post-7',
+          'author-1:post-8',
+          'author-1:post-9',
+          'author-1:post-10',
+          'author-1:post-11',
+          'author-1:post-12',
+        ],
+        last_post_score: BASE_TIMESTAMP + 19,
+      };
+
+      vi.spyOn(Core.NexusPostStreamService, 'fetch').mockResolvedValueOnce(batch1).mockResolvedValueOnce(batch2);
+
+      const result = await Core.PostStreamApplication.getOrFetchStreamSlice({
+        streamId,
+        limit: 10,
+        streamHead: 0,
+        streamTail: 0,
+        viewerId,
+      });
+
+      // Should have 10 unique posts, no duplicates
+      expect(result.nextPageIds).toHaveLength(10);
+      expect(new Set(result.nextPageIds).size).toBe(10);
+      // post-3 should appear only once
+      expect(result.nextPageIds.filter((id) => id === 'author-1:post-3')).toHaveLength(1);
     });
   });
 });

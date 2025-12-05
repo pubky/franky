@@ -8,6 +8,33 @@ export class PostStreamApplication {
   // Public API
   // ============================================================================
 
+  /**
+   * Retrieves muted user IDs for a given viewer from the local muted stream.
+   * Returns an empty Set if no muted users exist.
+   */
+  static async getMutedUserIds(viewerId: Core.Pubky): Promise<Set<Core.Pubky>> {
+    const mutedStreamId = Core.buildUserCompositeId({
+      userId: viewerId,
+      reach: Core.UserStreamSource.MUTED,
+    });
+    const mutedStream = await Core.LocalStreamUsersService.findById(mutedStreamId);
+    return new Set(mutedStream?.stream ?? []);
+  }
+
+  /**
+   * Filters out posts from muted users.
+   * Post IDs are in composite format: "authorPubky:postId"
+   */
+  static filterMutedPosts(postIds: string[], mutedUserIds: Set<Core.Pubky>): string[] {
+    if (mutedUserIds.size === 0) {
+      return postIds;
+    }
+    return postIds.filter((postId) => {
+      const { pubky: authorId } = Core.parseCompositeId(postId);
+      return !mutedUserIds.has(authorId);
+    });
+  }
+
   static async getCachedLastPostTimestamp({ streamId }: Core.TStreamIdParams): Promise<number> {
     try {
       const postStream = await Core.PostStreamModel.findById(streamId);
@@ -45,6 +72,165 @@ export class PostStreamApplication {
   }
 
   static async getOrFetchStreamSlice({
+    streamId,
+    streamHead,
+    streamTail,
+    lastPostId,
+    limit,
+    viewerId,
+  }: Core.TFetchStreamParams): Promise<Core.TPostStreamChunkResponse> {
+    // Get muted users for filtering
+    const mutedUserIds = await this.getMutedUserIds(viewerId);
+
+    Libs.Logger.info('[MuteFilter] getOrFetchStreamSlice called', {
+      streamId,
+      limit,
+      mutedCount: mutedUserIds.size,
+      mutedUsers: mutedUserIds.size > 0 ? Array.from(mutedUserIds).slice(0, 5) : [],
+    });
+
+    // Check if we have queued posts from a previous fetch
+    const existingQueue = await Core.PostStreamQueueModel.findById(streamId);
+
+    if (existingQueue && existingQueue.queue.length >= limit) {
+      // Dequeue exactly `limit` posts
+      const nextPageIds = existingQueue.queue.slice(0, limit);
+      const remainingQueue = existingQueue.queue.slice(limit);
+
+      Libs.Logger.info('[MuteFilter] Serving from queue', {
+        streamId,
+        queueSize: existingQueue.queue.length,
+        returning: nextPageIds.length,
+        remainingInQueue: remainingQueue.length,
+      });
+
+      // Persist updated queue
+      await Core.PostStreamQueueModel.upsert({
+        id: streamId,
+        queue: remainingQueue,
+        streamTail: existingQueue.streamTail,
+      });
+
+      // Get cache miss post IDs for background fetching
+      const cacheMissPostIds = await this.getNotPersistedPostsInCache(nextPageIds);
+
+      return { nextPageIds, cacheMissPostIds, timestamp: existingQueue.streamTail };
+    }
+
+    // Start with any existing queued posts
+    let accumulatedPosts = existingQueue?.queue ?? [];
+    let currentStreamTail = existingQueue?.streamTail ?? streamTail;
+    let allCacheMissPostIds: string[] = [];
+    let latestTimestamp: number | undefined;
+    let endOfStream = false;
+    let fetchCount = 0;
+
+    // TODO: Add max fetches cap to prevent infinite loops in heavily-muted feeds
+
+    // First fetch uses the full cache-aware logic
+    let isFirstFetch = true;
+
+    Libs.Logger.info('[MuteFilter] Starting fetch loop', {
+      streamId,
+      initialQueueSize: accumulatedPosts.length,
+      targetLimit: limit,
+    });
+
+    // Keep fetching until we have enough posts or reach end of stream
+    while (accumulatedPosts.length < limit && !endOfStream) {
+      fetchCount++;
+      let result: Core.TPostStreamChunkResponse;
+
+      if (isFirstFetch) {
+        // First fetch uses full cache-aware logic
+        result = await this.fetchStreamSliceInternal({
+          streamId,
+          streamHead,
+          streamTail: currentStreamTail,
+          lastPostId,
+          limit,
+          viewerId,
+        });
+        isFirstFetch = false;
+      } else {
+        // Subsequent fetches go directly to Nexus to avoid cache interference
+        result = await this.fetchStreamFromNexus({
+          streamId,
+          limit,
+          streamTail: currentStreamTail,
+          streamHead: Core.SKIP_FETCH_NEW_POSTS,
+          viewerId,
+        });
+      }
+
+      // Filter out muted users' posts
+      const filteredPosts = this.filterMutedPosts(result.nextPageIds, mutedUserIds);
+      const filteredOutCount = result.nextPageIds.length - filteredPosts.length;
+
+      // Deduplicate against already accumulated posts
+      const newPosts = filteredPosts.filter((id) => !accumulatedPosts.includes(id));
+      accumulatedPosts = [...accumulatedPosts, ...newPosts];
+
+      Libs.Logger.info('[MuteFilter] Fetch iteration', {
+        streamId,
+        fetchCount,
+        fetchedFromSource: result.nextPageIds.length,
+        filteredOut: filteredOutCount,
+        newPostsAdded: newPosts.length,
+        totalAccumulated: accumulatedPosts.length,
+        targetLimit: limit,
+      });
+
+      allCacheMissPostIds = [...allCacheMissPostIds, ...result.cacheMissPostIds];
+      latestTimestamp = result.timestamp;
+
+      // Update cursor for next iteration
+      if (result.timestamp !== undefined) {
+        currentStreamTail = result.timestamp;
+      }
+
+      // End of stream conditions:
+      // 1. Nexus returned fewer posts than requested
+      // 2. Nexus returned no posts (empty response)
+      if (result.nextPageIds.length < limit || result.nextPageIds.length === 0) {
+        endOfStream = true;
+        Libs.Logger.info('[MuteFilter] End of stream reached', {
+          streamId,
+          reason: result.nextPageIds.length === 0 ? 'empty response' : 'fewer than limit',
+        });
+      }
+    }
+
+    // Dequeue exactly `limit` posts (or all if end of stream)
+    const nextPageIds = accumulatedPosts.slice(0, limit);
+    const remainingQueue = accumulatedPosts.slice(limit);
+
+    Libs.Logger.info('[MuteFilter] Fetch complete', {
+      streamId,
+      totalFetches: fetchCount,
+      returning: nextPageIds.length,
+      savingToQueue: remainingQueue.length,
+      endOfStream,
+    });
+
+    // Persist queue state for next call
+    await Core.PostStreamQueueModel.upsert({
+      id: streamId,
+      queue: remainingQueue,
+      streamTail: currentStreamTail,
+    });
+
+    // Deduplicate cache miss IDs
+    const cacheMissPostIds = [...new Set(allCacheMissPostIds)];
+
+    return { nextPageIds, cacheMissPostIds, timestamp: latestTimestamp };
+  }
+
+  /**
+   * Internal method that performs the actual fetch without mute filtering.
+   * This is the original getOrFetchStreamSlice logic, now used as a building block.
+   */
+  private static async fetchStreamSliceInternal({
     streamId,
     streamHead,
     streamTail,
