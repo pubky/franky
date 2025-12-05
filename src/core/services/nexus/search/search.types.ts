@@ -15,5 +15,8 @@ export type TPrefixSearchParams = Core.TPaginationParams & {
 
 export type TSearchQueryParams = Core.TTagSearchParams | Core.TPrefixSearchParams;
 
+// Common return type for search results (array of IDs/labels)
+export type TSearchResult = string[];
+
 // Path parameters that should NOT be added to query string
 export const SEARCH_PATH_PARAMS = ['tag', 'prefix'] as const;
