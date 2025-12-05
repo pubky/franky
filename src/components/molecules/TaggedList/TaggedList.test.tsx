@@ -12,27 +12,27 @@ vi.mock('@/molecules', async (importOriginal) => {
   };
 });
 
+const mockTags: TagWithAvatars[] = [
+  {
+    label: 'bitcoin',
+    taggers: [
+      { id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1' },
+      { id: 'user2', avatarUrl: 'https://cdn.example.com/avatar/user2' },
+    ],
+    taggers_count: 2,
+    relationship: false,
+  },
+  {
+    label: 'satoshi',
+    taggers: [{ id: 'user3', avatarUrl: 'https://cdn.example.com/avatar/user3' }],
+    taggers_count: 1,
+    relationship: false,
+  },
+];
+
+const mockOnTagToggle = vi.fn();
+
 describe('TaggedList', () => {
-  const mockTags: TagWithAvatars[] = [
-    {
-      label: 'bitcoin',
-      taggers: [
-        { id: 'user1', avatarUrl: 'https://cdn.example.com/avatar/user1' },
-        { id: 'user2', avatarUrl: 'https://cdn.example.com/avatar/user2' },
-      ],
-      taggers_count: 2,
-      relationship: false,
-    },
-    {
-      label: 'satoshi',
-      taggers: [{ id: 'user3', avatarUrl: 'https://cdn.example.com/avatar/user3' }],
-      taggers_count: 1,
-      relationship: false,
-    },
-  ];
-
-  const mockOnTagToggle = vi.fn();
-
   it('renders all tags', () => {
     render(<TaggedList tags={mockTags} onTagToggle={mockOnTagToggle} />);
 
@@ -50,6 +50,13 @@ describe('TaggedList', () => {
     render(<TaggedList tags={mockTags} onTagToggle={mockOnTagToggle} />);
     const items = screen.getAllByTestId('tagged-item');
     expect(items).toHaveLength(2);
+  });
+});
+
+describe('TaggedList - Snapshots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockOnTagToggle.mockClear();
   });
 
   it('matches snapshot with tags', () => {

@@ -117,6 +117,61 @@ export class ProfileApplication {
   }
 
   /**
+   * Updates full user profile in both homeserver and local database.
+   * Follows local-first pattern: updates homeserver first, then local DB.
+   *
+   * @param params - Parameters containing user's public key and profile data
+   */
+  static async updateProfile({
+    pubky,
+    name,
+    bio,
+    image,
+    links,
+  }: {
+    pubky: Core.Pubky;
+    name: string;
+    bio: string;
+    image: string | null;
+    links: { title: string; url: string }[];
+  }) {
+    try {
+      // Get current user details from local DB
+      const currentUser = await Core.UserDetailsModel.findById(pubky);
+      if (!currentUser) {
+        throw new Error('User profile not found');
+      }
+
+      // Build complete user object with updated fields
+      const { user, meta } = Core.UserNormalizer.to(
+        {
+          name,
+          bio,
+          image: image ?? '',
+          links: links.map((link) => ({ title: link.title, url: link.url })),
+          status: currentUser.status ?? '',
+        },
+        pubky,
+      );
+
+      // Update homeserver with complete profile
+      await Core.HomeserverService.request(Core.HomeserverAction.PUT, meta.url, user.toJson());
+
+      // Update local database after successful homeserver sync
+      await Core.UserDetailsModel.upsert({
+        ...currentUser,
+        name,
+        bio,
+        image,
+        links: links.length > 0 ? links : null,
+      });
+    } catch (error) {
+      console.error('Failed to update profile', { error, pubky });
+      throw error;
+    }
+  }
+
+  /**
    * Updates user status in both homeserver and local database.
    * Follows local-first pattern: updates homeserver first, then local DB.
    *
@@ -128,7 +183,7 @@ export class ProfileApplication {
    * @see https://github.com/pubky/pubky-app-specs#pubkyappuser
    * @param params - Parameters containing user's public key and status
    */
-  static async update({ pubky, status }: { pubky: Core.Pubky; status: string }) {
+  static async updateStatus({ pubky, status }: { pubky: Core.Pubky; status: string }) {
     try {
       // Get current user details from local DB
       const currentUser = await Core.UserDetailsModel.findById(pubky);
@@ -158,7 +213,7 @@ export class ProfileApplication {
         status: status || null,
       });
     } catch (error) {
-      console.error('Failed to update status', { error, pubky, status });
+      Libs.Logger.error('Failed to update status', { error, pubky, status });
       throw error;
     }
   }

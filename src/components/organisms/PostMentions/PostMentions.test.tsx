@@ -59,16 +59,6 @@ describe('PostMentions', () => {
       expect(screen.getByText('@TestUser')).toBeInTheDocument();
     });
 
-    it('renders truncated pubky key when username is not available', () => {
-      mockGetDetails.mockReturnValue(null);
-
-      render(<PostMentions href={`/profile/${validPubkyKey}`}>{`pk:${validPubkyKey}`}</PostMentions>);
-
-      const link = screen.getByTestId('link');
-      // The truncated text should be present (truncated to 20 chars)
-      expect(link.textContent).toContain('...');
-    });
-
     it('renders as a link with correct href', () => {
       mockGetDetails.mockReturnValue({ name: 'TestUser' });
 

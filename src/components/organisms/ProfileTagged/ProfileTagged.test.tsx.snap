@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ProfileTagged > matches snapshot 1`] = `
+exports[`ProfileTagged - Snapshots > matches snapshot 1`] = `
 <div
   class="mx-auto w-full flex-col flex gap-3"
   data-testid="container"
@@ -18,5 +18,33 @@ exports[`ProfileTagged > matches snapshot 1`] = `
   >
     TaggedSection
   </div>
+</div>
+`;
+
+exports[`ProfileTagged - Snapshots > matches snapshot for empty state 1`] = `
+<div
+  data-testid="tagged-empty"
+>
+  TaggedEmpty
+</div>
+`;
+
+exports[`ProfileTagged - Snapshots > matches snapshot for loading state 1`] = `
+<div
+  class="mx-auto w-full flex-col flex items-center justify-center gap-3"
+  data-testid="container"
+>
+  <div
+    aria-label="Loading"
+    class="animate-spin rounded-full border-b-2 border-brand h-8 w-8"
+    data-testid="spinner"
+    role="status"
+  />
+  <p
+    class="text-xl font-semibold text-muted-foreground"
+    data-testid="typography"
+  >
+    Loading tags...
+  </p>
 </div>
 `;
